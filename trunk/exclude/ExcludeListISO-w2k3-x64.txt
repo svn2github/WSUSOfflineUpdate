@@ -1,0 +1,14 @@
+*ofc*
+*o2k*
+*oxp*
+*w2k\/*
+*wxp*
+*w2k3\/*
+*w60*
+*win\/*
+*.au3
+*reg.exe
+*msxsl.exe
+*invcif.exe
+*invcm.exe
+*xslt*
