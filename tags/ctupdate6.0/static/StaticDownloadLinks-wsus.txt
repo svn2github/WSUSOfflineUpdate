@@ -1,0 +1,2 @@
+http://update.microsoft.com/redist/wuredist.cab
+http://download.windowsupdate.com/microsoftupdate/v6/wsusscan/wsusscn2.cab
