@@ -1,10 +1,10 @@
-; *** c't Offline Update 6.0 - Generator ***
+; *** c't Offline Update 6.1 - Generator ***
 ; ***  Author: T. Wittrock, RZ Uni Kiel  ***
 ; ***   USB-Option added by Ch. Riedel   ***
 
 #include <GUIConstants.au3>
 
-Dim Const $caption              = "Offline Update 6.0"
+Dim Const $caption              = "Offline Update 6.1"
 Dim Const $title                = $caption & " - Generator"
 
 ; INI file constants

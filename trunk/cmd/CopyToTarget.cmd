@@ -101,13 +101,16 @@ goto CreateImage
 
 :CreateImage
 rem *** Copy client tree ***
-if not exist %OUTPUT_PATH%\nul goto NoOutputPath
 if not exist %SystemRoot%\system32\xcopy.exe goto NoXCopy
 title Copying client tree for %*...
 echo Copying client tree for %*...
 pushd ..\client
-%SystemRoot%\system32\xcopy.exe *.* %OUTPUT_PATH% /E /Q /Y /EXCLUDE:%USB_FILTER%
-if errorlevel 1 goto XCopyError
+%SystemRoot%\system32\xcopy.exe *.* %OUTPUT_PATH% /E /I /Q /Y /EXCLUDE:%USB_FILTER%
+if %errorlevel% NEQ 0 (
+  popd
+  if exist %USB_FILTER% del %USB_FILTER%
+  goto XCopyError
+)
 popd
 if exist %USB_FILTER% del %USB_FILTER%
 goto EoF
@@ -126,12 +129,6 @@ echo Usage2: %~n0 {all ^| all-x86 ^| all-x64 ^| w2k ^| wxp ^| w2k3 ^| w2k3-x64 ^
 echo.
 goto Error
 
-:NoOutputPath
-echo.
-echo ERROR: Output path %OUTPUT_PATH% not found.
-echo.
-goto Error
-
 :NoXCopy
 echo.
 echo ERROR: Utility %SystemRoot%\system32\xcopy.exe not found.
@@ -144,11 +141,12 @@ echo ERROR: Copying failed.
 echo.
 goto Error
 
-:Error
-if exist %USB_FILTER% del %USB_FILTER%
-set MKUSB_ERROR=1 
-
 :EoF
 title %ComSpec%
-if "%MKUSB_ERROR%"=="1" verify other 2>nul
 endlocal
+exit /b 0
+
+:Error
+title %ComSpec%
+endlocal
+verify other 2>nul

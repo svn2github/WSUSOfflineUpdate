@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set CTUPDATE_VERSION=6.0
+set CTUPDATE_VERSION=6.1a (r181)
 set UPDATE_LOGFILE=%SystemRoot%\ctupdate.log
 title %~n0 %*
 echo Starting offline update (v. %CTUPDATE_VERSION%)...
@@ -841,8 +841,8 @@ goto Cleanup
 
 :NoMissingIds
 echo.
-echo No missing updates found. Nothing to do!
-echo %DATE% %TIME% - Info: No missing updates found >>%UPDATE_LOGFILE%
+echo No missing update found. Nothing to do!
+echo %DATE% %TIME% - Info: No missing update found >>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 

@@ -1,10 +1,10 @@
-; *** c't Offline Update 6.0 - Installer ***
+; *** c't Offline Update 6.1 - Installer ***
 ; ***  Author: T. Wittrock, RZ Uni Kiel  ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 
-Dim Const $caption                  = "Offline Update 6.0 - Installer"
+Dim Const $caption                  = "Offline Update 6.1 - Installer"
 
 ; Registry constants
 Dim Const $reg_key_wsh_hklm         = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings"
@@ -342,17 +342,31 @@ If ( (@OSVersion = "WIN_XP") AND (@OSServicePack = "") ) Then
     Exit(1)
   EndIf
 EndIf
-If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (@OSServicePack = "") ) Then
+If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (@OSServicePack <> "Service Pack 2") ) Then
   If ShowGUIInGerman() Then
     MsgBox(0x2040, "Information", "Unter Windows Vista / Server 2008 müssen Sie" _
-                          & @LF & "nach der Installation des Service Packs 1" _
+                          & @LF & "nach der Installation der Service Packs 1 und 2" _
                           & @LF & "und dem obligaten Neustart" _
                           & @LF & "die Installation der Updates manuell wiederaufnehmen.")
   Else
     MsgBox(0x2040, "Information", "Under Windows Vista / Server 2008, you have to manually resume" _
                           & @LF & "the installation of updates after installation" _
-                          & @LF & "of Service Pack 1 and obligatory reboot.")
+                          & @LF & "of Service Packs 1 and 2 and mandatory reboot.")
   EndIf
+  GUICtrlSetState($ie8, $GUI_UNCHECKED)
+  GUICtrlSetState($ie8, $GUI_DISABLE)
+  GUICtrlSetState($dotnet, $GUI_UNCHECKED)
+  GUICtrlSetState($dotnet, $GUI_DISABLE)
+  GUICtrlSetState($powershell, $GUI_UNCHECKED)
+  GUICtrlSetState($powershell, $GUI_DISABLE)
+  GUICtrlSetState($office, $GUI_UNCHECKED)
+  GUICtrlSetState($office, $GUI_DISABLE)
+  GUICtrlSetState($converters, $GUI_UNCHECKED)
+  GUICtrlSetState($converters, $GUI_DISABLE)
+  GUICtrlSetState($autoreboot, $GUI_CHECKED)
+  GUICtrlSetState($autoreboot, $GUI_DISABLE)
+  GUICtrlSetState($showlog, $GUI_UNCHECKED)
+  GUICtrlSetState($showlog, $GUI_DISABLE)
 EndIf
 While 1
   Switch GUIGetMsg()
@@ -400,7 +414,8 @@ While 1
       EndIf
 
     Case $autoreboot         ; Automatic reboot check box toggled
-      If BitAND(GUICtrlRead($autoreboot), $GUI_CHECKED) = $GUI_CHECKED Then
+      If ( (BitAND(GUICtrlRead($autoreboot), $GUI_CHECKED) = $GUI_CHECKED) _
+       AND (@OSVersion <> "WIN_VISTA") AND (@OSVersion <> "WIN_2008") ) Then
         If ShowGUIInGerman() Then
           If MsgBox(0x2134, "Warnung", "Die Option 'Automatisch neu starten und fortsetzen' verursachte auf manchen Systemen Probleme." _
                                & @LF & "Möchten Sie fortsetzen?") = 7 Then

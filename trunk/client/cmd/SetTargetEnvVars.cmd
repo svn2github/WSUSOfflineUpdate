@@ -90,13 +90,21 @@ goto SetOfficeName
 :Windows6.0
 rem *** Windows Vista / Server 2008 ***
 set OS_NAME=w60
-set OS_SP_VERSION_TARGET_MAJOR=1
-set OS_SP_TARGET_ID=KB936330
 set MSI_VERSION_TARGET_MAJOR=4
 set MSI_VERSION_TARGET_MINOR=0
 set MSI_TARGET_ID=KB942288
 set PSH_TARGET_ID=KB928439
 if /i "%1"=="/instie8" (set IE_VERSION_TARGET_MAJOR=8) else (set IE_VERSION_TARGET_MAJOR=7)
+if "%OS_SP_VERSION_MAJOR%"=="" goto SetOfficeName
+goto Windows%OS_VERSION_MAJOR%.%OS_VERSION_MINOR%.%OS_SP_VERSION_MAJOR%
+:Windows6.0.0
+set OS_SP_VERSION_TARGET_MAJOR=1
+set OS_SP_TARGET_ID=KB936330
+goto SetOfficeName
+:Windows6.0.1
+:Windows6.0.2
+set OS_SP_VERSION_TARGET_MAJOR=2
+set OS_SP_TARGET_ID=KB948465
 goto SetOfficeName
 
 :SetOfficeName

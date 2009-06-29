@@ -1,4 +1,7 @@
-#/bin/bash
+#!/bin/bash
+
+# Author: Tobias Breitling
+
 cd ..
 GetFileSize()
 {
@@ -9,7 +12,10 @@ InValidParam()
 {
 echo
 echo ERROR: Invalid parameter "$1"
-echo Usage: "$0 {enu | deu | nld | esn | fra | ptg | ptb | ita | rus | plk | ell | csy | dan | nor | sve | fin}"
+echo Usage: "$0 language"
+echo "Supported languages:"
+echo enu, deu, nld, esn, fra, ptg, ptb, ita, rus, plk, ell, csy
+echo dan, nor, sve, fin, jpn, kor, chs, cht, hun, trk, ara, heb
 echo
 exit
 }
@@ -127,8 +133,64 @@ LANGUAGE_SYM="FI"
 SCRIPT_FILENAME="SCRIPT$LANGUAGE_SYM.CAB"
 }
 
+jpn()
+{
+LANGUAGE_CODE="0411"
+LANGUAGE_SYM="JA"
+SCRIPT_FILENAME="SCRIPT$LANGUAGE_SYM.CAB"
+}
+
+kor()
+{
+LANGUAGE_CODE="0412"
+LANGUAGE_SYM="KO"
+SCRIPT_FILENAME="SCRIPT$LANGUAGE_SYM.CAB"
+}
+
+chs()
+{
+LANGUAGE_CODE="0004"
+LANGUAGE_SYM="CN"
+SCRIPT_FILENAME="SCRIPT$LANGUAGE_SYM.CAB"
+}
+
+cht()
+{
+LANGUAGE_CODE="0404"
+LANGUAGE_SYM="TW"
+SCRIPT_FILENAME="SCRIPT$LANGUAGE_SYM.CAB"
+}
+
+hun()
+{
+LANGUAGE_CODE="040E"
+LANGUAGE_SYM="HU"
+SCRIPT_FILENAME="SCRIPT$LANGUAGE_SYM.CAB"
+}
+
+trk()
+{
+LANGUAGE_CODE="041F"
+LANGUAGE_SYM="TR"
+SCRIPT_FILENAME="SCRIPT$LANGUAGE_SYM.CAB"
+}
+
+ara()
+{
+LANGUAGE_CODE="0401"
+LANGUAGE_SYM="AR"
+SCRIPT_FILENAME="SCRIPT$LANGUAGE_SYM.CAB"
+}
+
+heb()
+{
+LANGUAGE_CODE="040D"
+LANGUAGE_SYM="HE"
+SCRIPT_FILENAME="SCRIPT$LANGUAGE_SYM.CAB"
+}
+
 lang=""
-langlist=("enu" "deu" "nld" "esn" "fra" "ptg" "ptb" "ita" "rus" "plk" "ell" "csy" "dan" "nor" "sve" "fin")
+langlist=("enu" "deu" "nld" "esn" "fra" "ptg" "ptb" "ita" "rus" "plk" "ell" "csy" "dan" "nor" "sve" "fin" "jpn" "kor" "chs" "cht" "hun" "trk" "ara" "heb")
 for i in ${langlist[@]}
   do
    if [ "$1" == "$i" ]

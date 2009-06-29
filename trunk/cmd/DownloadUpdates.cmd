@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set CTUPDATE_VERSION=6.0
+set CTUPDATE_VERSION=6.1a (r181)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting download (v. %CTUPDATE_VERSION%) for %1 %2...

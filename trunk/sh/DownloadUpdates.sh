@@ -1,4 +1,8 @@
-#/bin/bash
+#!/bin/bash
+
+# c't Offline Update Downloader for Linux Systems
+# http://www.heise.de/ct/projekte/offlineupdate/
+# Authors: Tobias Breitling, Stefan Joehnke
 
 printusage()
 {
@@ -340,7 +344,7 @@ syslist=("w2k" "wxp" "wxp-x64" "w2k3" "w2k3-x64" "w60" "w60-x64" "oxp" "o2k" "o2
  echo "[6] Windows Vista              [12] All 32bit"
  echo "[7] Windows Vista 64bit        [13] All 64bit"  
  echo 
- read -n 2 syschoice
+ read syschoice
  echo
  let syschoice=syschoice-1
 
@@ -355,6 +359,7 @@ syslist=("w2k" "wxp" "wxp-x64" "w2k3" "w2k3-x64" "w60" "w60-x64" "oxp" "o2k" "o2
  then
  	sys="w2k3-x64"
  fi
+
  if [ "$sys" == "" ]
   then
    echo Program aborted.
@@ -405,7 +410,7 @@ getservicepack()
 {
 EXCLUDE_SP="1"
   echo Download Service Packs? [y/n]
-  read -n 1 -s addsp
+  read addsp
  if [ "$addsp" == "y" ] 
   then
    EXCLUDE_SP="0"
@@ -420,7 +425,7 @@ dotnet="0"
 if [ "$sys" != "o2k" -o "$sys" != "oxp" -o "$sys" != "o2k3" -o "$sys" != "o2k7" -o "$sys" != "w2k" ]
 then
 	echo Download .Net-Framework? [y/n]
-	read -n 1 -s adddotnet
+	read adddotnet
 	if [ "$adddotnet" == "y" ]
 	then 
 		dotnet="1"
@@ -440,7 +445,7 @@ makeiso()
 {
 createiso="0"
 	echo Create ISO-Image after download? [y/n]
-	read -n 1 -s addiso
+	read addiso
 if [ "$addiso" == "y" ]
 then
 	createiso="1"
@@ -509,34 +514,6 @@ if [ "$1" == "" ]
   makeiso
 fi
 
-if [ "$sys" == "all-x64" ]
-	then
-		./DownloadUpdates.sh w2k3-x64 $lang $param2 $param3 $param4 $param5
-		./DownloadUpdates.sh w60-x64 $lang $param2 $param3 $param4 $param5
-		if [ "$param1" == "/makeiso" ]
-			then
-				./CreateISOImage.sh $sys $lang $param2 $param3
-		fi
-		exit
-fi
-
-if [ "$sys" == "all-x86" ]
-	then
-		./DownloadUpdates.sh w2k3 $lang $param2 $param3 $param4 $param5
-		./DownloadUpdates.sh wxp $lang $param2 $param3 $param4 $param5
-		./DownloadUpdates.sh w2k $lang $param2 $param3 $param4 $param5
-		./DownloadUpdates.sh w60 $lang $param2 $param3 $param4 $param5
-		./DownloadUpdates.sh o2k $lang $param2 $param3 $param4 $param5
-		./DownloadUpdates.sh oxp $lang $param2 $param3 $param4 $param5
-		./DownloadUpdates.sh o2k3 $lang $param2 $param3 $param4 $param5
-		./DownloadUpdates.sh o2k7 $lang $param2 $param3 $param4 $param5
-		if [ "$param1" == "/makeiso" ]
-			then
-				./CreateISOImage.sh $sys $lang $param2 $param3
-		fi
-		exit
-fi
-
 #set proxy
 if [ "$http_proxy" != "" ]
  then
@@ -562,6 +539,63 @@ dos2unix ../static/*
 
 printheader
 
+echo Your choice
+echo System: $sys
+echo Language: $lang
+echo Parameter: $param1 $param2 $param3
+echo Proxy: $http_proxy
+
+if [ "$sys" == "w2k" ]
+ 	then
+ 		regexe="../client/bin/reg.exe"
+ 		if [ ! -f "$regexe" ]
+ 			then
+ 				echo "ERROR: ../client/bin/reg.exe not found!"
+ 				echo "Please manually copy that file from a Windows 2000 or XP system"
+ 				echo "to the directory ../client/bin."
+ 				exit
+ 		fi
+fi 
+ 
+if [ "$externparam" != "1" ]
+ then 
+  echo
+  echo Do you want to download now? [y/n] 
+  read response
+ else
+  response="y"
+fi
+
+if [ "$response" = "y" ] ;
+then
+if [ "$sys" == "all-x64" ]
+	then
+		./DownloadUpdates.sh w2k3-x64 $lang $param2 $param3 $param4 $param5
+		./DownloadUpdates.sh w60-x64 $lang $param2 $param3 $param4 $param5
+		if [ "$param1" == "/makeiso" ]
+			then
+			/bin/bash ./CreateISOImage.sh $sys $lang $param2 $param3
+		fi
+		exit
+fi
+
+if [ "$sys" == "all-x86" ]
+	then
+		./DownloadUpdates.sh w2k3 $lang $param2 $param3 $param4 $param5
+		./DownloadUpdates.sh wxp $lang $param2 $param3 $param4 $param5
+		./DownloadUpdates.sh w2k $lang $param2 $param3 $param4 $param5
+		./DownloadUpdates.sh w60 $lang $param2 $param3 $param4 $param5
+		./DownloadUpdates.sh o2k $lang $param2 $param3 $param4 $param5
+		./DownloadUpdates.sh oxp $lang $param2 $param3 $param4 $param5
+		./DownloadUpdates.sh o2k3 $lang $param2 $param3 $param4 $param5
+		./DownloadUpdates.sh o2k7 $lang $param2 $param3 $param4 $param5
+		if [ "$param1" == "/makeiso" ]
+			then
+				/bin/bash ./CreateISOImage.sh $sys $lang $param2 $param3
+		fi
+		exit
+fi
+echo
 echo Downloading IfAdmin tool...
 wget -nv -c -N -i ../static/StaticDownloadLink-ifadmin.txt -P ../client/bin
 
@@ -811,18 +845,7 @@ cat ../temp/StaticUrls-dotnet.txt >> ../temp/Urls.txt
 echo 
 echo "***************************************"
 echo Found `cat ../temp/Urls.txt|grep -c http:` patches ...
-
-if [ "$externparam" != "1" ]
- then 
-  echo
-  echo Do you want to download now? [y/n] 
-  read -n 1 -s response
- else
-  response="y"
-fi
  
-if [ "$response" = "y" ] ;
-then
  #create needed dirs
  mkdir -p ../client/win/$lang
  mkdir -p ../client/$sys/
@@ -855,7 +878,7 @@ fi
  if [ "$sys" == "w2k" ] ;
   then
    wget -nv -c -N -i ../temp/StaticUrls-ie6-$lang.txt -P ../client/win/$lang/ie6setup
-   ./FIXIE6SetupDir.sh $lang
+   /bin/bash ./FIXIE6SetupDir.sh $lang
  fi
 if [ "$dotnet" == "1" ]
 then 	
@@ -943,6 +966,6 @@ fi
 
 if [ "$createiso" == "1" ]
 	then
-		./CreateISOImage.sh $sys $lang $param2 $param3
+		/bin/bash ./CreateISOImage.sh $sys $lang $param2 $param3
 fi 
 

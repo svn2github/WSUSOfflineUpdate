@@ -1,8 +1,9 @@
-#/bin/bash
+#!/bin/bash
 
-#set workdir
-cd $( dirname $0 )
-rm ../temp/ExcludeListISO*
+# c't Offline Update ISO-Maker for Linux Systems
+# http://www.heise.de/ct/projekte/offlineupdate/
+# Author: Stefan Joehnke
+
 printusage()
 {
 echo ERROR Invalid parameter: $1 $2 $3 $4
@@ -115,6 +116,10 @@ dotnet="0"
 }
 
 evaluateparams $1 $2 $3 $4
+
+#set workdir
+cd $( dirname $0 )
+rm ../temp/ExcludeListISO*
 
 echo "Creating ISO-Filter..."
 
