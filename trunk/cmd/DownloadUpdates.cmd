@@ -160,14 +160,6 @@ if "%OS_AUTODTS%"=="1" (
   )
 )
 
-rem *** Download IfAdmin tool ***
-if exist ..\client\bin\IfAdmin.exe goto SkipIfAdmin
-echo Downloading/validating IfAdmin tool...
-%WGET_PATH% -N -i ..\static\StaticDownloadLink-ifadmin.txt -P ..\client\bin
-if errorlevel 1 goto DownloadError
-echo %DATE% %TIME% - Info: Downloaded/validated IfAdmin tool >>%DOWNLOAD_LOGFILE%
-:SkipIfAdmin
-
 rem *** Download Microsoft extract tool ***
 if exist ..\bin\extract.exe goto SkipExtract
 echo Downloading Microsoft extract tool...
