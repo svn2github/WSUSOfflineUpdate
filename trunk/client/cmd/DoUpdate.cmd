@@ -10,12 +10,12 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set CTUPDATE_VERSION=6.1a (r181)
+set CTUPDATE_VERSION=6.1a (r5)
 set UPDATE_LOGFILE=%SystemRoot%\ctupdate.log
 title %~n0 %*
-echo Starting offline update (v. %CTUPDATE_VERSION%)...
+echo Starting WSUS offline update (v. %CTUPDATE_VERSION%)...
 if exist %UPDATE_LOGFILE% echo. >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Starting offline update (v. %CTUPDATE_VERSION%) on %COMPUTERNAME% (user: %USERNAME%) >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Starting WSUS offline update (v. %CTUPDATE_VERSION%) on %COMPUTERNAME% (user: %USERNAME%) >>%UPDATE_LOGFILE%
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
@@ -83,7 +83,7 @@ if errorlevel 1 goto Cleanup
 if "%OS_NAME%"=="" goto NoOSName
 
 rem *** Echo OS properties ***
-echo Found Operating System caption: %OS_CAPTION%
+echo Found OS caption: %OS_CAPTION%
 echo Found Microsoft Windows version: %OS_VERSION_MAJOR%.%OS_VERSION_MINOR%.%OS_VERSION_BUILD% (%OS_NAME% %OS_ARCHITECTURE% %OS_LANGUAGE% sp%OS_SP_VERSION_MAJOR%)
 rem echo Found Windows Update Agent version: %WUA_VERSION_MAJOR%.%WUA_VERSION_MINOR%.%WUA_VERSION_BUILD%.%WUA_VERSION_REVISION%
 rem echo Found Windows Installer version: %MSI_VERSION_MAJOR%.%MSI_VERSION_MINOR%.%MSI_VERSION_BUILD%.%MSI_VERSION_REVISION%
@@ -108,7 +108,7 @@ if "%O2K3_VERSION_MAJOR%" NEQ "" (
 if "%O2K7_VERSION_MAJOR%" NEQ "" (
   echo Found Microsoft Office 2007 %O2K7_VERSION_APP% version: %O2K7_VERSION_MAJOR%.%O2K7_VERSION_MINOR%.%O2K7_VERSION_BUILD%.%O2K7_VERSION_REVISION% ^(o2k7 %O2K7_LANGUAGE% sp%O2K7_SP_VERSION%^)
 )
-echo %DATE% %TIME% - Info: Found Operating System caption '%OS_CAPTION%' >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found OS caption '%OS_CAPTION%' >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft Windows version %OS_VERSION_MAJOR%.%OS_VERSION_MINOR%.%OS_VERSION_BUILD% (%OS_NAME% %OS_ARCHITECTURE% %OS_LANGUAGE% sp%OS_SP_VERSION_MAJOR%) >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows Update Agent version %WUA_VERSION_MAJOR%.%WUA_VERSION_MINOR%.%WUA_VERSION_BUILD%.%WUA_VERSION_REVISION% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows Installer version %MSI_VERSION_MAJOR%.%MSI_VERSION_MINOR%.%MSI_VERSION_BUILD%.%MSI_VERSION_REVISION% >>%UPDATE_LOGFILE%
@@ -160,28 +160,28 @@ rem *** Check medium content ***
 echo Checking medium content...
 if /i "%OS_ARCHITECTURE%"=="x64" (
   if exist ..\%OS_NAME%-%OS_ARCHITECTURE%\%OS_LANGUAGE%\nul (
-    echo Info: Medium supports Microsoft Windows ^(%OS_NAME%-%OS_ARCHITECTURE% %OS_LANGUAGE%^).
+    echo Medium supports Microsoft Windows ^(%OS_NAME%-%OS_ARCHITECTURE% %OS_LANGUAGE%^).
     echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME%-%OS_ARCHITECTURE% %OS_LANGUAGE%^) >>%UPDATE_LOGFILE%
     goto CheckOfficeMedium
   )
   if exist ..\%OS_NAME%-%OS_ARCHITECTURE%\glb\nul (
-    echo Info: Medium supports Microsoft Windows ^(%OS_NAME%-%OS_ARCHITECTURE% glb^).
+    echo Medium supports Microsoft Windows ^(%OS_NAME%-%OS_ARCHITECTURE% glb^).
     echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME%-%OS_ARCHITECTURE% glb^) >>%UPDATE_LOGFILE%
     goto CheckOfficeMedium
   )
 ) else (
   if exist ..\%OS_NAME%\%OS_LANGUAGE%\nul (
-    echo Info: Medium supports Microsoft Windows ^(%OS_NAME% %OS_LANGUAGE%^).
+    echo Medium supports Microsoft Windows ^(%OS_NAME% %OS_LANGUAGE%^).
     echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME% %OS_LANGUAGE%^) >>%UPDATE_LOGFILE%
     goto CheckOfficeMedium
   )
   if exist ..\%OS_NAME%\glb\nul (
-    echo Info: Medium supports Microsoft Windows ^(%OS_NAME% glb^).
+    echo Medium supports Microsoft Windows ^(%OS_NAME% glb^).
     echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME% glb^) >>%UPDATE_LOGFILE%
     goto CheckOfficeMedium
   )
 )
-echo Info: Medium does not support Microsoft Windows (%OS_NAME% %OS_LANGUAGE%).
+echo Medium does not support Microsoft Windows (%OS_NAME% %OS_LANGUAGE%).
 echo %DATE% %TIME% - Info: Medium does not support Microsoft Windows (%OS_NAME% %OS_LANGUAGE%) >>%UPDATE_LOGFILE%
 if "%IGNORE_OFFICE%"=="/ignoreoffice" goto InvalidMedium
 if "%OFFICE_NAME%"=="" goto InvalidMedium
@@ -190,26 +190,26 @@ if "%OFFICE_NAME%"=="" goto InvalidMedium
 if "%IGNORE_OFFICE%"=="/ignoreoffice" goto ProperMedium
 if "%OFFICE_NAME%"=="" goto ProperMedium
 if exist ..\%OFFICE_NAME%\%OFFICE_LANGUAGE%\nul (
-  echo Info: Medium supports Microsoft Office ^(%OFFICE_NAME% %OFFICE_LANGUAGE%^).
+  echo Medium supports Microsoft Office ^(%OFFICE_NAME% %OFFICE_LANGUAGE%^).
   echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(%OFFICE_NAME% %OFFICE_LANGUAGE%^) >>%UPDATE_LOGFILE%
   goto ProperMedium
 )
 if exist ..\%OFFICE_NAME%\glb\nul (
-  echo Info: Medium supports Microsoft Office ^(%OFFICE_NAME% glb^).
+  echo Medium supports Microsoft Office ^(%OFFICE_NAME% glb^).
   echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(%OFFICE_NAME% glb^) >>%UPDATE_LOGFILE%
   goto ProperMedium
 )
 if exist ..\%OFFICE_NAME%-%OS_ARCHITECTURE%\%OFFICE_LANGUAGE%\nul (
-  echo Info: Medium supports Microsoft Office ^(%OFFICE_NAME%-%OS_ARCHITECTURE% %OFFICE_LANGUAGE%^).
+  echo Medium supports Microsoft Office ^(%OFFICE_NAME%-%OS_ARCHITECTURE% %OFFICE_LANGUAGE%^).
   echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(%OFFICE_NAME%-%OS_ARCHITECTURE% %OFFICE_LANGUAGE%^) >>%UPDATE_LOGFILE%
   goto ProperMedium
 )
 if exist ..\%OFFICE_NAME%-%OS_ARCHITECTURE%\glb\nul (
-  echo Info: Medium supports Microsoft Office ^(%OFFICE_NAME%-%OS_ARCHITECTURE% glb^).
+  echo Medium supports Microsoft Office ^(%OFFICE_NAME%-%OS_ARCHITECTURE% glb^).
   echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(%OFFICE_NAME%-%OS_ARCHITECTURE% glb^) >>%UPDATE_LOGFILE%
   goto ProperMedium
 )
-echo Info: Medium does not support Microsoft Office (%OFFICE_NAME% %OFFICE_LANGUAGE%).
+echo Medium does not support Microsoft Office (%OFFICE_NAME% %OFFICE_LANGUAGE%).
 echo %DATE% %TIME% - Info: Medium does not support Microsoft Office (%OFFICE_NAME% %OFFICE_LANGUAGE%) >>%UPDATE_LOGFILE%
 :ProperMedium
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# c't Offline Update Downloader for Linux Systems
+# WSUS Offline Update Downloader for Linux Systems
 # http://www.heise.de/ct/projekte/offlineupdate/
 # Authors: Tobias Breitling, Stefan Joehnke
 
@@ -478,7 +478,7 @@ printheader()
 {
 clear
 echo "**********************************************************"
-echo "***            c't Offline Update Downloader           ***"
+echo "***            WSUS Offline Update Downloader          ***"
 echo "***                  for Linux Systems                 ***"
 echo "***                                                    ***"
 echo "***   http://www.heise.de/ct/projekte/offlineupdate/   ***"

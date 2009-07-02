@@ -19,7 +19,7 @@ popd
 rem *** Compile AutoIt-Scripts ***
 echo Compiling AutoIt-Scripts...
 pushd %TARGET_DIR_LONG%
-for /R %%i in (*.au3) do %~dps0bin\Aut2Exe.exe /in "%%i" /icon %~dps0ico\ct.ico /comp 4 /nodecompile /nopack
+for /R %%i in (*.au3) do %~dps0bin\Aut2Exe.exe /in "%%i" /icon %~dps0ico\okshield.ico /comp 4 /nodecompile /nopack
 popd
 goto EoF
 

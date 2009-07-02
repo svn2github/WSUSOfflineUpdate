@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# c't Offline Update ISO-Maker for Linux Systems
+# WSUS Offline Update ISO-Maker for Linux Systems
 # http://www.heise.de/ct/projekte/offlineupdate/
 # Author: Stefan Joehnke
 
@@ -30,7 +30,7 @@ printheader()
 {
 clear
 echo "**********************************************************"
-echo "***            c't Offline Update ISO-Maker            ***"
+echo "***            WSUS Offline Update ISO-Maker           ***"
 echo "***                  for Linux Systems                 ***"
 echo "***                                                    ***"
 echo "***   http://www.heise.de/ct/projekte/offlineupdate/   ***"

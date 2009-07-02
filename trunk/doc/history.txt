@@ -1,5 +1,5 @@
 ................................................................................
-c't Offline Update 6.0                                 (mailto:kav@ctmagazin.de)
+WSUS Offline Update 6.1
 Author: Torsten Wittrock                        (mailto:wittrock@rz.uni-kiel.de)
 ................................................................................
 
