@@ -4,9 +4,8 @@
 *w2k*
 *w60*
 *-x64*
-*ie6setup*
-*ie6.0sp1*
-*oe6.0sp1*
+*ie6*
+*oe6*
 *directx8*
 *windowsmedia7*
 *windowsmedia8*

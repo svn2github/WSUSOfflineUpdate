@@ -10,16 +10,16 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set CTUPDATE_VERSION=6.1a (r5)
+set WSUSUPDATE_VERSION=6.1a (r7)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
-echo Starting download (v. %CTUPDATE_VERSION%) for %1 %2...
+echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
 if exist %DOWNLOAD_LOGFILE% (
   echo. >>%DOWNLOAD_LOGFILE%
   echo -------------------------------------------------------------------------------- >>%DOWNLOAD_LOGFILE%
   echo. >>%DOWNLOAD_LOGFILE%
 )
-echo %DATE% %TIME% - Info: Starting download (v. %CTUPDATE_VERSION%) for %1 %2 >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Starting download (v. %WSUSUPDATE_VERSION%) for %1 %2 >>%DOWNLOAD_LOGFILE%
 
 for %%i in (w2k wxp w2k3 w2k3-x64 o2k oxp o2k3 o2k7 o2k7-x64) do (
   if /i "%1"=="%%i" (

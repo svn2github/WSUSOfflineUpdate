@@ -59,9 +59,7 @@ set OS_SP_TARGET_ID=KB936929
 set MSI_VERSION_TARGET_MAJOR=4
 set MSI_VERSION_TARGET_MINOR=5
 set MSI_TARGET_ID=KB942288
-if /i "%1"=="/instie8" (set IE_VERSION_TARGET_MAJOR=8) else (
-  if /i "%1"=="/instie7" (set IE_VERSION_TARGET_MAJOR=7) else (set IE_VERSION_TARGET_MAJOR=6)
-)
+if /i "%1"=="/instie8" (set IE_VERSION_TARGET_MAJOR=8) else (set IE_VERSION_TARGET_MAJOR=7)
 for %%i in (chs cht deu esn fra ita jpn kor ptb rus) do (
   if "%%i"=="%OS_LANGUAGE%" set PSH_TARGET_ID=KB926140
 )
@@ -76,9 +74,7 @@ set OS_SP_TARGET_ID=KB914961
 set MSI_VERSION_TARGET_MAJOR=4
 set MSI_VERSION_TARGET_MINOR=5
 set MSI_TARGET_ID=KB942288
-if /i "%1"=="/instie8" (set IE_VERSION_TARGET_MAJOR=8) else (
-  if /i "%1"=="/instie7" (set IE_VERSION_TARGET_MAJOR=7) else (set IE_VERSION_TARGET_MAJOR=6)
-)
+if /i "%1"=="/instie8" (set IE_VERSION_TARGET_MAJOR=8) else (set IE_VERSION_TARGET_MAJOR=7)
 if /i "%OS_ARCHITECTURE%"=="x86" (
   for %%i in (chs cht deu esn fra ita jpn kor ptb rus) do (
     if "%%i"=="%OS_LANGUAGE%" set PSH_TARGET_ID=KB926140

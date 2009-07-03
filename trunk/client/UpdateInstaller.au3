@@ -22,7 +22,6 @@ Dim Const $ini_section_installation = "Installation"
 Dim Const $ini_section_control      = "Control"
 Dim Const $ini_section_messaging    = "Messaging"
 Dim Const $ini_value_backup         = "backup"
-Dim Const $ini_value_ie7            = "instie7"
 Dim Const $ini_value_ie8            = "instie8"
 Dim Const $ini_value_dotnet         = "instdotnet"
 Dim Const $ini_value_powershell     = "instpsh"
@@ -35,7 +34,7 @@ Dim Const $disabled                 = "Disabled"
 
 Dim Const $txtwidth = 240, $txtheight = 20, $txtxoffset = 10, $btnwidth = 80, $btnheight = 25
 
-Dim $maindlg, $scriptdir, $netdrives, $i, $strpos, $inifilename, $backup, $ie7, $ie8, $dotnet, $powershell, $office, $converters, $autoreboot, $showlog, $btn_start, $btn_exit, $options, $txtypos
+Dim $maindlg, $scriptdir, $netdrives, $i, $strpos, $inifilename, $backup, $ie8, $dotnet, $powershell, $office, $converters, $autoreboot, $showlog, $btn_start, $btn_exit, $options, $txtypos
 
 Func ShowGUIInGerman()
   If ($CmdLine[0] > 0) Then
@@ -86,7 +85,7 @@ EndFunc
 AutoItSetOption("GUICloseOnESC", 0)
 AutoItSetOption("TrayAutoPause", 0)
 AutoItSetOption("TrayIconHide", 1)
-$maindlg = GUICreate($caption, $txtwidth + 2 * $txtxoffset, 275)
+$maindlg = GUICreate($caption, $txtwidth + 2 * $txtxoffset, 255)
 GUISetFont(8.5, 400, 0, "Sans Serif")
 
 $scriptdir = "" 
@@ -136,24 +135,6 @@ Else
   EndIf
 EndIf
 
-; Install IE7
-$txtypos = $txtypos + $txtheight
-If ShowGUIInGerman() Then
-  $ie7 = GUICtrlCreateCheckbox("Internet Explorer 7 installieren", $txtxoffset, $txtypos, $txtwidth, $txtheight)
-Else
-  $ie7 = GUICtrlCreateCheckbox("Install Internet Explorer 7", $txtxoffset, $txtypos, $txtwidth, $txtheight)
-EndIf
-If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (IEVersion() = "7") OR (IEVersion() = "8") ) Then  
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-  GUICtrlSetState(-1, $GUI_DISABLE)
-Else  
-  If IniRead($inifilename, $ini_section_installation, $ini_value_ie7, $enabled) = $enabled Then
-    GUICtrlSetState(-1, $GUI_CHECKED)
-  Else
-    GUICtrlSetState(-1, $GUI_UNCHECKED)
-  EndIf
-EndIf
-
 ; Install IE8
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
@@ -165,14 +146,10 @@ If ( (@OSVersion = "WIN_2000") OR (IEVersion() = "8") ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else  
-  If ( (IniRead($inifilename, $ini_section_installation, $ini_value_ie8, $disabled) = $enabled) AND (BitAND(GUICtrlRead($ie7), $GUI_CHECKED) <> $GUI_CHECKED) ) Then
+  If IniRead($inifilename, $ini_section_installation, $ini_value_ie8, $disabled) = $enabled Then
     GUICtrlSetState(-1, $GUI_CHECKED)
-    GUICtrlSetState($ie7, $GUI_DISABLE)
   Else
     GUICtrlSetState(-1, $GUI_UNCHECKED)
-    If BitAND(GUICtrlRead($ie7), $GUI_CHECKED) = $GUI_CHECKED Then
-      GUICtrlSetState(-1, $GUI_DISABLE)
-    EndIf
   EndIf
 EndIf
 
@@ -384,26 +361,6 @@ While 1
         GUICtrlSetState($converters, $GUI_DISABLE)
       EndIf
 
-    Case $ie7                ; IE7 check box toggled
-      If ( (BitAND(GUICtrlRead($ie7), $GUI_CHECKED) = $GUI_CHECKED) _
-        OR (@OSVersion = "WIN_2000") _
-        OR (IEVersion() = "8") ) Then  
-        GUICtrlSetState($ie8, $GUI_UNCHECKED)
-        GUICtrlSetState($ie8, $GUI_DISABLE)
-      Else
-        GUICtrlSetState($ie8, $GUI_ENABLE)
-      EndIf
-
-    Case $ie8                ; IE8 check box toggled
-      If ( (BitAND(GUICtrlRead($ie8), $GUI_CHECKED) = $GUI_CHECKED) _
-        OR (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") _
-        OR (IEVersion() = "7") OR (IEVersion() = "8") ) Then  
-        GUICtrlSetState($ie7, $GUI_UNCHECKED)
-        GUICtrlSetState($ie7, $GUI_DISABLE)
-      Else
-        GUICtrlSetState($ie7, $GUI_ENABLE)
-      EndIf
-
     Case $dotnet             ; .NET check box toggled
       If ( (BitAND(GUICtrlRead($dotnet), $GUI_CHECKED) = $GUI_CHECKED) _
        AND (@OSVersion <> "WIN_2008") AND (NOT PowerShellInstalled()) ) Then  
@@ -432,9 +389,6 @@ While 1
     Case $btn_start          ; Start Button pressed
       If BitAND(GUICtrlRead($backup), $GUI_CHECKED) <> $GUI_CHECKED Then
         $options = $options & " /nobackup"
-      EndIf
-      If BitAND(GUICtrlRead($ie7), $GUI_CHECKED) = $GUI_CHECKED Then
-        $options = $options & " /instie7"
       EndIf
       If BitAND(GUICtrlRead($ie8), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instie8"

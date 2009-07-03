@@ -10,20 +10,19 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set CTUPDATE_VERSION=6.1a (r5)
+set WSUSUPDATE_VERSION=6.1a (r7)
 set UPDATE_LOGFILE=%SystemRoot%\ctupdate.log
 title %~n0 %*
-echo Starting WSUS offline update (v. %CTUPDATE_VERSION%)...
+echo Starting WSUS Offline Update (v. %WSUSUPDATE_VERSION%)...
 if exist %UPDATE_LOGFILE% echo. >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Starting WSUS offline update (v. %CTUPDATE_VERSION%) on %COMPUTERNAME% (user: %USERNAME%) >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Starting WSUS offline update (v. %WSUSUPDATE_VERSION%) on %COMPUTERNAME% (user: %USERNAME%) >>%UPDATE_LOGFILE%
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/nobackup /instie7 /instie8 /instdotnet /instpsh /ignoreoffice /instofccnvs /autoreboot /showlog /all /excludestatics) do (
+for %%i in (/nobackup /instie8 /instdotnet /instpsh /ignoreoffice /instofccnvs /autoreboot /showlog /all /excludestatics) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected >>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/nobackup" set BACKUP_MODE=/nobackup
-if /i "%1"=="/instie7" set INSTALL_IE7=/instie7
 if /i "%1"=="/instie8" set INSTALL_IE8=/instie8
 if /i "%1"=="/instdotnet" set INSTALL_DOTNET=/instdotnet
 if /i "%1"=="/instpsh" set INSTALL_PSH=/instpsh
@@ -78,7 +77,7 @@ if "%OS_ARCHITECTURE%"=="" set OS_ARCHITECTURE=%PROCESSOR_ARCHITECTURE%
 if "%OS_LANGUAGE%"=="" goto UnsupLang
 
 rem *** Set target environment variables ***
-call SetTargetEnvVars.cmd %INSTALL_IE8% %INSTALL_IE7%
+call SetTargetEnvVars.cmd %INSTALL_IE8%
 if errorlevel 1 goto Cleanup
 if "%OS_NAME%"=="" goto NoOSName
 
@@ -678,7 +677,7 @@ if "%RECALL_REQUIRED%"=="1" (
   if "%BOOT_MODE%"=="/autoreboot" (
     if not "%USERNAME%"=="WSUSUpdateAdmin" (
       echo Preparing automatic recall...
-      call PrepareRecall.cmd %~f0 %BACKUP_MODE% %INSTALL_IE7% %INSTALL_IE8% %INSTALL_DOTNET% %INSTALL_PSH% %IGNORE_OFFICE% %INSTALL_CONVERTERS% %BOOT_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES%
+      call PrepareRecall.cmd %~f0 %BACKUP_MODE% %INSTALL_IE8% %INSTALL_DOTNET% %INSTALL_PSH% %IGNORE_OFFICE% %INSTALL_CONVERTERS% %BOOT_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES%
     )
     echo Rebooting...
     %CSCRIPT_PATH% //Nologo //E:vbs Reboot.vbs

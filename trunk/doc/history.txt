@@ -263,10 +263,12 @@ Version 6.0 -- 20.05.09
 - Fix: Sleep.vbs was not found on SafeRmDir.cmd calls in DownloadUpdates.cmd (Thanks to "siggibaer") 
 --------------------------------------------------------------------------------
 Version 6.1 -- ??.??.09
-- Windows Vista / Server 2008 Service Pack 2 integrated
+- Windows Vista / Server 2008 Service Pack 2 All Language Standalone integrated
+- Mandatory installation of IE7 on Windows XP and Windows Server 2003 (x86/x64) systems
 - Fix: Download exclude list for Windows XP updated since Microsoft modified the "List of fixes included in Windows XP SP3" (http://support.microsoft.com/kb/946480/en-us) on March 27, 2009 (Thanks to "SPiKE0815") 
 - Fix: Download exclude lists for Operating Systems refined since windowsxp-kb956572-x86-enu* was missing (Thanks to "SMarki") 
 - Fix: CopyToTarget.cmd did not create missing target directories and did not report all copying errors (Thanks to Christian Riedel)
+- Fix: Invalid installation sequence for .NET Framework 3.5 SP1 Family Update (kb958481, kb958483 and kb958484) (Thanks to "siggibaer") 
 - Fix: Warning about 'automatic reboot' option removed for Windows Vista and Server 2008 target systems
 - Fix (defect #75): Linux download script will now wait for <Enter> confirmation on any user input (Thanks to Stefan Jöhnke)
 - Fix (defect #76): Linux download script will now ask for all required user input before starting downloading (Thanks to Stefan Jöhnke)
