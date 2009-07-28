@@ -1,8 +1,9 @@
 #!/bin/bash
 
-# Author: Tobias Breitling
+# Author: Tobias Breitling, Stefan Jöhnke
 
 cd ..
+
 GetFileSize()
 {
 FileSize=$(ls -l "$1"| tr -s " " | cut -d " " -f 5)
@@ -10,16 +11,17 @@ FileSize=$(ls -l "$1"| tr -s " " | cut -d " " -f 5)
 
 InValidParam()
 {
-echo
-echo ERROR: Invalid parameter "$1"
-echo Usage: "$0 language"
-echo "Supported languages:"
-echo enu, deu, nld, esn, fra, ptg, ptb, ita, rus, plk, ell, csy
-echo dan, nor, sve, fin, jpn, kor, chs, cht, hun, trk, ara, heb
-echo
-exit
-}
+cat << END
 
+ERROR: Invalid parameter "$1"
+Usage: $0 language
+Supported languages:
+enu, deu, nld, esn, fra, ptg, ptb, ita, rus, plk, ell, csy
+dan, nor, sve, fin, jpn, kor, chs, cht, hun, trk, ara, heb
+
+END
+exit 1
+}
 
 deu()
 {
@@ -191,110 +193,145 @@ SCRIPT_FILENAME="SCRIPT$LANGUAGE_SYM.CAB"
 
 lang=""
 langlist=("enu" "deu" "nld" "esn" "fra" "ptg" "ptb" "ita" "rus" "plk" "ell" "csy" "dan" "nor" "sve" "fin" "jpn" "kor" "chs" "cht" "hun" "trk" "ara" "heb")
-for i in ${langlist[@]}
-  do
-   if [ "$1" == "$i" ]
-    then
-     lang="$1"
-   fi
-  done
-if [ "$lang" == "" ]
- then
-  InValidParam
+for i in ${langlist[@]}; do
+	if [ "$1" == "$i" ]; then
+		lang="$1"
+	fi
+done
+
+if [ "$lang" == "" ]; then
+	InValidParam
 fi
 
 "$lang"
 
 cd client/win/$lang/ie6setup
 echo Creating iesetup.dir file...
-echo >  iesetup.dir
+echo > iesetup.dir
 
-echo Creating filelist.dat file...
-echo [General] > filelist.dat
-echo Version=1 >> filelist.dat
-echo [BASEIE40_W2K] >> filelist.dat
-echo Version=6,0,2800,1106 >> filelist.dat
-echo Locale=$LANGUAGE_SYM >> filelist.dat
-echo GUID={89820200-ECBD-11cf-8B85-00AA005B4383} >> filelist.dat
+# Create filelist.dat
+echo "Creating filelist.dat file..."
+
+cat << END > filelist.dat
+[General]
+Version=1
+[BASEIE40_W2K]
+Version=6,0,2800,1106
+Locale=$LANGUAGE_SYM
+GUID={89820200-ECBD-11cf-8B85-00AA005B4383}
+END
+
 GetFileSize CRLUPD.CAB
-echo URL0=$FileSize,CRLUPD.CAB >> filelist.dat
+echo "URL0=$FileSize,CRLUPD.CAB" >> filelist.dat
 GetFileSize IEW2K_1.CAB
-echo URL1=$FileSize,IEW2K_1.CAB >> filelist.dat
+echo "URL1=$FileSize,IEW2K_1.CAB" >> filelist.dat
 GetFileSize IEW2K_2.CAB
-echo URL2=$FileSize,IEW2K_2.CAB >> filelist.dat
+echo "URL2=$FileSize,IEW2K_2.CAB" >> filelist.dat
 GetFileSize IEW2K_3.CAB
-echo URL3=$FileSize,IEW2K_3.CAB >> filelist.dat
+echo "URL3=$FileSize,IEW2K_3.CAB" >> filelist.dat
 GetFileSize IEW2K_4.CAB
-echo URL4=$FileSize,IEW2K_4.CAB >> filelist.dat
-echo [IEEX] >> filelist.dat
-echo Version=6,0,2800,1106 >> filelist.dat
-echo Locale=$LANGUAGE_SYM >> filelist.dat
-echo GUID={0fde1f56-0d59-4fd7-9624-e3df6b419d0f} >> filelist.dat
-GetFileSize IEEXINST.CAB
-echo URL0=$FileSize,IEEXINST.CAB >> filelist.dat
-echo [BRANDING.CAB] >> filelist.dat
-echo Version=6,0,2800,1106 >> filelist.dat
-echo Locale=en >> filelist.dat
-echo GUID=\>{60B49E34-C7CC-11D0-8953-00A0C90347FF}MICROS >> filelist.dat
-GetFileSize BRANDING.CAB
-echo URL0=$FileSize,BRANDING.CAB >> filelist.dat
-echo [MailNews_W2K] >> filelist.dat
-echo Version=6,0,2800,1106 >> filelist.dat
-echo Locale=$LANGUAGE_SYM >> filelist.dat
-echo GUID={44BBA840-CC51-11CF-AAFA-00AA00B6015C} >> filelist.dat
-GetFileSize MAILNEWS.CAB
-echo URL0=$FileSize,MAILNEWS.CAB >> filelist.dat
-GetFileSize WAB.CAB
-echo URL1=$FileSize,WAB.CAB >> filelist.dat
-GetFileSize OEEXCEP.CAB
-echo URL2=$FileSize,OEEXCEP.CAB >> filelist.dat
-echo [mediaplayer_W2K] >> filelist.dat
-echo Version=6,4,9,1121 >> filelist.dat
-echo Locale=EN >> filelist.dat
-echo GUID={22d6f312-b0f6-11d0-94ab-0080c74c7e95} >> filelist.dat
-GetFileSize MPLAY2U.CAB
-echo URL0=$FileSize,MPLAY2U.CAB >> filelist.dat
-echo [MSVBScript_W2K] >> filelist.dat
-echo Version=5,6,0,7426 >> filelist.dat
-echo Locale=$LANGUAGE_SYM >> filelist.dat
-echo GUID={4f645220-306d-11d2-995d-00c04f98bbc9} >> filelist.dat
-GetFileSize $SCRIPT_FILENAME
-echo URL0=$FileSize,$SCRIPT_FILENAME >> filelist.dat
-echo [IEReadme] >> filelist.dat
-echo Version=6,0,2800,1106 >> filelist.dat
-echo Locale=* >> filelist.dat
-echo GUID={0fde1f56-0d59-4fd7-9624-e3df6b419d0e} >> filelist.dat
-GetFileSize README.CAB
-echo URL0=$FileSize,README.CAB >> filelist.dat
+echo "URL4=$FileSize,IEW2K_4.CAB" >> filelist.dat
 
-echo Creating iesetup.ini file...
-echo [Options] > iesetup.ini
-echo Language=$LANGUAGE_CODE >> iesetup.ini
-echo Shell_Integration=0 >> iesetup.ini
-echo Win95=0 >> iesetup.ini
-echo Millen=0 >> iesetup.ini
-echo NTx86=0 >> iesetup.ini
-echo W2K=6.0.2800.1411 >> iesetup.ini
-echo NTalpha=0 >> iesetup.ini
-echo [Version] >> iesetup.ini
-echo Signature=Active Setup >> iesetup.ini
-echo [Downloaded Files] >> iesetup.ini
-echo BRANDING.CAB=1 >> iesetup.ini
-echo CRLUPD.CAB=1 >> iesetup.ini
-echo filelist.dat=1 >> iesetup.ini
-echo ie6setup.exe=1 >> iesetup.ini
-echo IEEXINST.CAB=1 >> iesetup.ini
-echo iesetup.dir=1 >> iesetup.ini
-echo iesetup.ini=1 >> iesetup.ini
-echo IEW2K_1.CAB=1 >> iesetup.ini
-echo IEW2K_2.CAB=1 >> iesetup.ini
-echo IEW2K_3.CAB=1 >> iesetup.ini
-echo IEW2K_4.CAB=1 >> iesetup.ini
-echo MAILNEWS.CAB=1 >> iesetup.ini
-echo MPLAY2U.CAB=1 >> iesetup.ini
-echo OEEXCEP.CAB=1 >> iesetup.ini
-echo README.CAB=1 >> iesetup.ini
-echo $SCRIPT_FILENAME=1 >> iesetup.ini
-echo WAB.CAB=1 >> iesetup.ini
+cat << END >> filelist.dat
+[IEEX]
+Version=6,0,2800,1106
+Locale=$LANGUAGE_SYM
+GUID={0fde1f56-0d59-4fd7-9624-e3df6b419d0f}
+END
+
+GetFileSize IEEXINST.CAB
+
+cat << END >> filelist.dat
+URL0=$FileSize,IEEXINST.CAB
+[BRANDING.CAB]
+Version=6,0,2800,1106
+Locale=en
+GUID=\>{60B49E34-C7CC-11D0-8953-00A0C90347FF}MICROS
+END
+
+GetFileSize BRANDING.CAB
+
+cat << END >> filelist.dat
+URL0=$FileSize,BRANDING.CAB
+[MailNews_W2K]
+Version=6,0,2800,1106
+Locale=$LANGUAGE_SYM
+GUID={44BBA840-CC51-11CF-AAFA-00AA00B6015C}
+END
+
+GetFileSize MAILNEWS.CAB
+echo "URL0=$FileSize,MAILNEWS.CAB" >> filelist.dat
+GetFileSize WAB.CAB
+echo "URL1=$FileSize,WAB.CAB" >> filelist.dat
+GetFileSize OEEXCEP.CAB
+
+cat << END >> filelist.dat
+URL2=$FileSize,OEEXCEP.CAB
+[mediaplayer_W2K]
+Version=6,4,9,1121
+Locale=EN
+GUID={22d6f312-b0f6-11d0-94ab-0080c74c7e95}
+END
+
+GetFileSize MPLAY2U.CAB
+
+cat << END >> filelist.dat
+URL0=$FileSize,MPLAY2U.CAB
+[MSVBScript_W2K]
+Version=5,6,0,7426
+Locale=$LANGUAGE_SYM
+GUID={4f645220-306d-11d2-995d-00c04f98bbc9}
+END
+
+GetFileSize $SCRIPT_FILENAME
+
+cat << END >> filelist.dat
+URL0=$FileSize,$SCRIPT_FILENAME
+[IEReadme]
+eVersion=6,0,2800,1106
+Locale=*
+GUID={0fde1f56-0d59-4fd7-9624-e3df6b419d0e}
+END
+
+GetFileSize README.CAB
+echo "URL0=$FileSize,README.CAB" >> filelist.dat
+
+# Create iesetup.ini
+echo "Creating iesetup.ini file..."
+
+cat << END > iesetup.ini
+[Options]
+Language=$LANGUAGE_CODE
+Shell_Integration=0
+Win95=0
+Millen=0
+NTx86=0
+W2K=6.0.2800.1411
+NTalpha=0
+[Version]
+Signature=Active Setup
+[Downloaded Files]
+BRANDING.CAB=1
+CRLUPD.CAB=1
+filelist.dat=1
+ie6setup.exe=1
+IEEXINST.CAB=1
+iesetup.dir=1
+iesetup.ini=1
+IEW2K_1.CAB=1
+IEW2K_2.CAB=1
+IEW2K_3.CAB=1
+IEW2K_4.CAB=1
+MAILNEWS.CAB=1
+MPLAY2U.CAB=1
+OEEXCEP.CAB=1
+README.CAB=1
+$SCRIPT_FILENAME=1
+WAB.CAB=1
+END
 
 cd ../../../../sh
+
+exit 0
+
+# EOF

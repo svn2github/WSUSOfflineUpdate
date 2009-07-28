@@ -1,6 +1,6 @@
 ................................................................................
 WSUS Offline Update 6.1
-Author: Torsten Wittrock                        (mailto:wittrock@rz.uni-kiel.de)
+Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
 Publications Version 3.0
@@ -270,7 +270,9 @@ Version 6.1 -- ??.??.09
 - Fix: CopyToTarget.cmd did not create missing target directories and did not report all copying errors (Thanks to Christian Riedel)
 - Fix: Invalid installation sequence for .NET Framework 3.5 SP1 Family Update (kb958481, kb958483 and kb958484) (Thanks to "siggibaer") 
 - Fix: Warning about 'automatic reboot' option removed for Windows Vista and Server 2008 target systems
+- Fix: Invalid conditional statements in DoUpdate.cmd corrected (Thanks to "b737x")
 - Fix (defect #75): Linux download script will now wait for <Enter> confirmation on any user input (Thanks to Stefan Jöhnke)
 - Fix (defect #76): Linux download script will now ask for all required user input before starting downloading (Thanks to Stefan Jöhnke)
 - Fix (defect #77): Linux download script will now call sub-script using /bin/bash <SubScript.sh> (Thanks to Stefan Jöhnke)
 - Fix (defect #78): Linux scripts contained invalid shebang (Thanks to "kl_eisbaer")
+- Fix: Further improvements for Linux scripts (Thanks to Walter Schiessberg and Stefan Jöhnke)

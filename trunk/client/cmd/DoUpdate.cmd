@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.1a (r7)
+set WSUSUPDATE_VERSION=6.1a (r8)
 set UPDATE_LOGFILE=%SystemRoot%\ctupdate.log
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSUPDATE_VERSION%)...
@@ -328,7 +328,7 @@ if errorlevel 1 (
     ) else (
       call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i /quiet %BACKUP_MODE% /norestart
     )
-    if errorlevel 0 set RECALL_REQUIRED=1
+    if not errorlevel 1 set RECALL_REQUIRED=1
   )
 )
 :SkipMSIInst
@@ -353,7 +353,7 @@ if errorlevel 1 (
   echo Installing most recent Windows Script Host...
   for /F %%i in ('dir /B %WSH_FILENAME%') do (
     call InstallOSUpdate.cmd ..\win\%OS_LANGUAGE%\%%i /q:a /r:n
-    if errorlevel 0 set RECALL_REQUIRED=1
+    if not errorlevel 1 set RECALL_REQUIRED=1
   )
 )
 :SkipWSHInst
@@ -379,7 +379,7 @@ if not exist %IE_FILENAME% (
 )
 echo Installing Internet Explorer 6...
 call InstallOSUpdate.cmd %IE_FILENAME% /q:a /r:n
-if errorlevel 0 set RECALL_REQUIRED=1
+if not errorlevel 1 set RECALL_REQUIRED=1
 goto SkipIEInst 
 
 :IEwxp
@@ -424,7 +424,7 @@ if errorlevel 1 (
     ) else (
       call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i /quiet /update-no /no-default %BACKUP_MODE% /norestart
     )
-    if errorlevel 0 set REBOOT_REQUIRED=1
+    if not errorlevel 1 set REBOOT_REQUIRED=1
   )
 )
 goto SkipIEInst
@@ -442,7 +442,7 @@ if errorlevel 1 (
     ) else (
       call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANGUAGE%\%%i /quiet /update-no /no-default %BACKUP_MODE% /norestart
     )
-    if errorlevel 0 set RECALL_REQUIRED=1
+    if not errorlevel 1 set RECALL_REQUIRED=1
   )
 )
 :SkipIEInst
@@ -878,10 +878,10 @@ if "%USERNAME%"=="WSUSUpdateAdmin" (
   if "%AU_SERVICE_STARTED%"=="1" (
     echo Stopping service 'automatic updates' ^(wuauserv^)...
     %SystemRoot%\system32\net.exe stop wuauserv >nul
-    if errorlevel 0 (
-      echo %DATE% %TIME% - Info: Stopped service 'automatic updates' ^(wuauserv^) >>%UPDATE_LOGFILE%
-    ) else (
+    if errorlevel 1 (
       echo %DATE% %TIME% - Warning: Stopping of service 'automatic updates' ^(wuauserv^) failed >>%UPDATE_LOGFILE%
+    ) else (
+      echo %DATE% %TIME% - Info: Stopped service 'automatic updates' ^(wuauserv^) >>%UPDATE_LOGFILE%
     )
   )
   if "%SHOW_LOG%"=="/showlog" start %SystemRoot%\system32\notepad.exe %UPDATE_LOGFILE%
