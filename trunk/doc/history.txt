@@ -262,9 +262,11 @@ Version 6.0 -- 20.05.09
 - Fix: Download exclude list for Windows 2000 updated to avoid windows2000-directx8* files
 - Fix: Sleep.vbs was not found on SafeRmDir.cmd calls in DownloadUpdates.cmd (Thanks to "siggibaer") 
 --------------------------------------------------------------------------------
-Version 6.1 -- ??.??.09
+Version 6.1 -- 30.07.09
+- INSTALLATION HINT: In spite of the different directory name inside the archive, you still may unpack v. 6.1 into an existing structure, overwriting existing files
 - Windows Vista / Server 2008 Service Pack 2 All Language Standalone integrated
 - Mandatory installation of IE7 on Windows XP and Windows Server 2003 (x86/x64) systems
+- UpdateInstaller script will now check if .NET Framework 3.5 SP1 installation package exists
 - Fix: Download exclude list for Windows XP updated since Microsoft modified the "List of fixes included in Windows XP SP3" (http://support.microsoft.com/kb/946480/en-us) on March 27, 2009 (Thanks to "SPiKE0815") 
 - Fix: Download exclude lists for Operating Systems refined since windowsxp-kb956572-x86-enu* was missing (Thanks to "SMarki") 
 - Fix: CopyToTarget.cmd did not create missing target directories and did not report all copying errors (Thanks to Christian Riedel)
@@ -276,3 +278,4 @@ Version 6.1 -- ??.??.09
 - Fix (defect #77): Linux download script will now call sub-script using /bin/bash <SubScript.sh> (Thanks to Stefan Jöhnke)
 - Fix (defect #78): Linux scripts contained invalid shebang (Thanks to "kl_eisbaer")
 - Fix: Further improvements for Linux scripts (Thanks to Walter Schiessberg and Stefan Jöhnke)
+--------------------------------------------------------------------------------

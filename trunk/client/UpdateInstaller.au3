@@ -32,6 +32,9 @@ Dim Const $ini_value_showlog        = "showlog"
 Dim Const $enabled                  = "Enabled"
 Dim Const $disabled                 = "Disabled"
 
+; Paths
+Dim Const $path_rel_instdotnet      = "\dotnet\dotnetfx35.exe"
+
 Dim Const $txtwidth = 240, $txtheight = 20, $txtxoffset = 10, $btnwidth = 80, $btnheight = 25
 
 Dim $maindlg, $scriptdir, $netdrives, $i, $strpos, $inifilename, $backup, $ie8, $dotnet, $powershell, $office, $converters, $autoreboot, $showlog, $btn_start, $btn_exit, $options, $txtypos
@@ -74,6 +77,10 @@ EndFunc
 
 Func DotNet35Version()
   Return RegRead($reg_key_dotnet35, $reg_val_version)
+EndFunc
+
+Func DotNet35InstPresent()
+  Return FileExists(@ScriptDir & $path_rel_instdotnet)
 EndFunc
 
 Func PowerShellInstalled()
@@ -160,7 +167,7 @@ If ShowGUIInGerman() Then
 Else
   $dotnet = GUICtrlCreateCheckbox("Install .NET Framework 3.5 SP1", $txtxoffset, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (DotNet35Version() = $target_version_dotnet35) ) Then
+If ( (@OSVersion = "WIN_2000") OR (DotNet35Version() = $target_version_dotnet35) OR (NOT DotNet35InstPresent()) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else  
