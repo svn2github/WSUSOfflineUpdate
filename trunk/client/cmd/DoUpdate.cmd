@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.2a (r11)
+set WSUSUPDATE_VERSION=6.2a (r12)
 set UPDATE_LOGFILE=%SystemRoot%\ctupdate.log
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSUPDATE_VERSION%)...
@@ -420,9 +420,9 @@ if errorlevel 1 (
   echo Installing Internet Explorer 8...
   for /F %%i in ('dir /B %IE_FILENAME%') do (
     if /i "%OS_ARCHITECTURE%"=="x64" (
-      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\glb\%%i /quiet /update-no /no-default %BACKUP_MODE% /norestart
+      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\glb\%%i /quiet /update-no /no-default /norestart
     ) else (
-      call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i /quiet /update-no /no-default %BACKUP_MODE% /norestart
+      call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i /quiet /update-no /no-default /norestart
     )
     if not errorlevel 1 set REBOOT_REQUIRED=1
   )
@@ -438,9 +438,17 @@ if errorlevel 1 (
   if "%INSTALL_IE8%"=="/instie8" (echo Installing Internet Explorer 8...) else (echo Installing Internet Explorer 7...)
   for /F %%i in ('dir /B %IE_FILENAME%') do (
     if /i "%OS_ARCHITECTURE%"=="x64" (
-      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\%OS_LANGUAGE%\%%i /quiet /update-no /no-default %BACKUP_MODE% /norestart
+      if "%INSTALL_IE8%"=="/instie8" (
+        call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\%OS_LANGUAGE%\%%i /quiet /update-no /no-default /norestart
+      ) else (
+        call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\%OS_LANGUAGE%\%%i /quiet /update-no /no-default %BACKUP_MODE% /norestart
+      )
     ) else (
-      call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANGUAGE%\%%i /quiet /update-no /no-default %BACKUP_MODE% /norestart
+      if "%INSTALL_IE8%"=="/instie8" (
+        call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANGUAGE%\%%i /quiet /update-no /no-default /norestart
+      ) else (
+        call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANGUAGE%\%%i /quiet /update-no /no-default %BACKUP_MODE% /norestart
+      )
     )
     if not errorlevel 1 set RECALL_REQUIRED=1
   )
