@@ -284,3 +284,4 @@ Version 6.2 -- ??.??.09
 - ISO creation filters for Windows XP and Server 2003 exclude patches for .NET 1.x and .NET 2 SP 0/1 now
 - Fix: Linux scripts contained invalid Windows (<CR><LF>) instead of Unix (<LF>) line feeds (Thanks to Ronald Warsow, "Frank", "fatwou" and http://www.dos2unix.org/)
 - Fix: IE8 installation files were called with invalid /nobackup switch (Thanks to "dierk09bl")
+- Fix: DownloadUpdates.sh didn't work under Slackware because of missing dos2unix tool (Thanks to Helmut Hullen) 

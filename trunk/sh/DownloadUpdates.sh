@@ -89,6 +89,16 @@ else
 fi
 
 if [ ! -x "$D" ]; then
+
+# neu, fuer Slackware
+alias $D >/dev/null 2>&1 && return 0
+
+test -s /etc/slackware-version && {
+    alias dos2unix='recode ibmpc..lat1'
+    return 0
+    }
+
+# Ende Slackware-Einschub
 	cat << END
 
 Please install dos2unix.
