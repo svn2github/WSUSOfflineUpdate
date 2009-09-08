@@ -1,3 +1,2 @@
 http://www.download.windowsupdate.com/msdownload/update/v3-19990518/cabpool/windowsserver2003.windowsxp-kb914961-sp2-x64-jpn_c725a8c4e03803b12a9ac8820e964dbc377a80dc.exe
-http://download.microsoft.com/download/F/9/F/F9F5DF56-1994-4847-902B-1AABBEF2BC2F/IE8-WindowsServer2003-x64-JPN.exe
 http://download.microsoft.com/download/f/0/e/f0ea865c-8af9-4349-87e4-caebde447d72/WindowsServer2003.WindowsXP-KB926140-v5-x64-JPN.exe

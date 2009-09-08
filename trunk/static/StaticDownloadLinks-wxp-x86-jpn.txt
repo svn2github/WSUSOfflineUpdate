@@ -1,3 +1,2 @@
 http://download.microsoft.com/download/e/4/a/e4a9e704-eea9-452e-bef2-79f29cbe116e/WindowsXP-KB936929-SP3-x86-JPN.exe
-http://download.microsoft.com/download/0/5/7/05716044-2806-40DA-8332-D3ED79BC8F68/IE8-WindowsXP-x86-JPN.exe
 http://download.microsoft.com/download/f/2/1/f214024a-feb3-4138-97e0-b08bc76f77ee/WindowsXP-KB926140-v5-x86-JPN.exe

@@ -1,2 +1,1 @@
 http://download.microsoft.com/download/9/8/2/982c99b3-d968-4a5c-973e-12e97a38bbf9/WindowsXP-KB936929-SP3-x86-DAN.exe
-http://download.microsoft.com/download/C/5/A/C5AC24F9-EE0A-4F0D-91B7-D8E08239C93B/IE8-WindowsXP-x86-DAN.exe

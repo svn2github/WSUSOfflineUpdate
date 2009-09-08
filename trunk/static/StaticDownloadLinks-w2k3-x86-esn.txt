@@ -1,3 +1,2 @@
 http://www.download.windowsupdate.com/msdownload/update/v3-19990518/cabpool/windowsserver2003-kb914961-sp2-x86-esn_38d7fba08bdebdaf567ae626042e860bf525306e.exe
-http://download.microsoft.com/download/4/2/D/42D5D0F4-7016-4D91-BB5F-933E1A4DDEED/IE8-WindowsServer2003-x86-ESN.exe
 http://download.microsoft.com/download/c/f/0/cf070ab9-5760-4d63-8896-e4a765ffccbc/WindowsServer2003-KB926140-v5-x86-ESN.exe

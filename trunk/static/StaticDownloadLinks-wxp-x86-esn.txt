@@ -1,3 +1,2 @@
 http://download.microsoft.com/download/9/4/2/942080a4-ba69-496b-a379-d3b26d37b647/WindowsXP-KB936929-SP3-x86-ESN.exe
-http://download.microsoft.com/download/3/3/5/3352706D-AE43-4832-BE17-A3AEAEE85FBE/IE8-WindowsXP-x86-ESN.exe
 http://download.microsoft.com/download/6/3/9/6398cc58-363b-4fa7-8a6e-ff8e29b047fe/WindowsXP-KB926140-v5-x86-ESN.exe

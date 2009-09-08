@@ -1,2 +1,1 @@
 http://www.download.windowsupdate.com/msdownload/update/v3-19990518/cabpool/windowsserver2003-kb914961-sp2-x86-sve_fba6d5c90dc7c15ae750c98cf407a0f148bbfee5.exe
-http://download.microsoft.com/download/7/D/E/7DEB7F53-3AD8-4850-A182-78939AA25BD2/IE8-WindowsServer2003-x86-SVE.exe

@@ -1,3 +1,2 @@
 http://download.microsoft.com/download/9/4/d/94d3f80a-2c0d-4ce1-a983-52f946b62c78/WindowsXP-KB936929-SP3-x86-ITA.exe
-http://download.microsoft.com/download/7/9/9/7996C6A7-F7A8-4D14-86A2-EE78567FB144/IE8-WindowsXP-x86-ITA.exe
 http://download.microsoft.com/download/2/1/d/21de50db-1836-48b9-8299-0741543cbb28/WindowsXP-KB926140-v5-x86-ITA.exe

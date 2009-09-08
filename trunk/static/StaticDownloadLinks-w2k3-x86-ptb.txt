@@ -1,3 +1,2 @@
 http://www.download.windowsupdate.com/msdownload/update/v3-19990518/cabpool/windowsserver2003-kb914961-sp2-x86-ptb_73a2c9a9a28f1203aba9f1852c64247467494652.exe
-http://download.microsoft.com/download/A/6/0/A609FEAF-4544-4EF0-9E7D-3B9714963111/IE8-WindowsServer2003-x86-PTB.exe
 http://download.microsoft.com/download/c/0/2/c02e30c4-3e83-46b5-97cd-ee6423268776/WindowsServer2003-KB926140-v5-x86-PTB.exe

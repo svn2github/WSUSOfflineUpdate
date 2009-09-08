@@ -1,2 +1,1 @@
 http://www.download.windowsupdate.com/msdownload/update/v3-19990518/cabpool/windowsserver2003-kb914961-sp2-x86-ptg_d8b921ee4bb0e0d2831f249e99c64264ae9098db.exe
-http://download.microsoft.com/download/5/0/C/50CD98B2-F8DB-48BD-B658-79EE6FA128F9/IE8-WindowsServer2003-x86-PTG.exe

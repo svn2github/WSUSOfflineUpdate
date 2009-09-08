@@ -1,2 +1,1 @@
 http://download.microsoft.com/download/4/6/5/465a583a-96a4-4000-80c5-4eef5eb0fac3/WindowsXP-KB936929-SP3-x86-PLK.exe
-http://download.microsoft.com/download/2/0/C/20C9DC22-2E3E-4B3C-AC23-11C6A4E3E592/IE8-WindowsXP-x86-PLK.exe

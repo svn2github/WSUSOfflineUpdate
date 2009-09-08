@@ -1,3 +1,2 @@
 http://download.microsoft.com/download/1/e/7/1e758534-7b22-400c-9c46-d19d24ec7374/WindowsXP-KB936929-SP3-x86-DEU.exe
-http://download.microsoft.com/download/7/7/7/777F0C67-5404-4420-890A-2F517022F4C0/IE8-WindowsXP-x86-DEU.exe
 http://download.microsoft.com/download/1/e/4/1e45ea8d-d597-47dc-add8-acf5b01ea97d/WindowsXP-KB926140-v5-x86-DEU.exe

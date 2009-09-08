@@ -1,3 +1,2 @@
 http://download.microsoft.com/download/7/9/a/79aaf123-878f-4945-933c-7b13c64576ab/WindowsXP-KB936929-SP3-x86-KOR.exe
-http://download.microsoft.com/download/B/B/0/BB0A25CB-C624-4DC7-8451-20C04D87D6A0/IE8-WindowsXP-x86-KOR.exe
 http://download.microsoft.com/download/a/8/4/a84fdb40-67d7-4a04-95ca-7bda4aaf9ece/WindowsXP-KB926140-v5-x86-KOR.exe
