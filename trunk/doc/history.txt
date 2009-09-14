@@ -283,6 +283,7 @@ Version 6.2 -- ??.??.09
 - CopyToTarget.cmd script will now show filenames while copying
 - ISO creation filters for Windows XP and Server 2003 exclude patches for .NET 1.x and .NET 2 SP 0/1 now
 - Static download definitions for IE8 installation packages removed for wxp and w2k3 (x86 and x64) since Microsoft added them to wsusscn2.cab
+- DirectX End-User Runtimes updated to August 2009 (Thanks to "Gerby")
 - Fix: Linux scripts contained invalid Windows (<CR><LF>) instead of Unix (<LF>) line feeds (Thanks to Ronald Warsow, "Frank", "fatwou" and http://www.dos2unix.org/)
 - Fix: IE8 installation files were called with invalid /nobackup switch (Thanks to "dierk09bl")
 - Fix: DownloadUpdates.sh didn't work under Slackware because of missing dos2unix tool (Thanks to Helmut Hullen) 
