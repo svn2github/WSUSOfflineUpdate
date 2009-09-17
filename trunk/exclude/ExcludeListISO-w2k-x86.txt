@@ -6,6 +6,8 @@
 *w60*
 *-x64*
 *windowsxp*
+*ndp*
+*windowsrightsmanagementservices*
 *.au3
 *msxsl.exe
 *invcif.exe

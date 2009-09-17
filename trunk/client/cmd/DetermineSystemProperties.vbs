@@ -29,7 +29,7 @@ Private Const strBuildNumbers_O2k3            = "5604,5612,5510,5529,5614,5516;6
 Private Const strBuildNumbers_O2k7            = "4518,4518,4518,4518,4518,4518;6211,6214,6212,6211,6211,6211;6425,6425,6423,6425,6423,6423"
 
 Dim wshShell, objFileSystem, objCmdFile, objWMIService, objWMIQuery, arrayOfficeNames, arrayOfficeVersions, arrayOfficeAppNames, arrayOfficeExeNames
-Dim strArgument, strSystemFolder, strTempFolder, strWUAFileName, strMSIFileName, strWSHFileName, strWMPFileName, strCmdFileName, strOSVersion, strOfficeInstallPath, strOfficeExeVersion, strProduct, languageCode, i, j
+Dim strArgument, strSystemFolder, strTempFolder, strWUAFileName, strMSIFileName, strWSHFileName, strRDPFileName, strWMPFileName, strCmdFileName, strOSVersion, strOfficeInstallPath, strOfficeExeVersion, strProduct, languageCode, i, j
 
 Private Function RegRead(objShell, strValueName)
   On Error Resume Next  'Turn error reporting off
@@ -253,6 +253,7 @@ strWUAFileName = strSystemFolder & "\wuaueng.dll"
 strMSIFileName = strSystemFolder & "\msi.dll"
 strWSHFileName = strSystemFolder & "\vbscript.dll"
 strWMPFileName = strSystemFolder & "\wmp.dll"
+strRDPFileName = strSystemFolder & "\mstsc.exe"
 strCmdFileName = strTempFolder & "\SetSystemEnvVars.cmd"
 
 Set objFileSystem = CreateObject("Scripting.FileSystemObject")
@@ -310,7 +311,14 @@ WriteDXName2File objCmdFile, RegRead(wshShell, strRegKeyDirectX & strRegValVersi
 WriteVersion2File objCmdFile, "DOTNET_VERSION", RegRead(wshShell, strRegKeyDotNet35 & strRegValVersion)
 
 ' Determine Windows PowerShell 1.0 installation state
-WriteVersion2File objCmdFile, "PSH_INSTALLED", RegRead(wshShell, strRegKeyPowerShell1 & strRegValInstall)
+objCmdFile.WriteLine("set PSH_INSTALLED=" & RegRead(wshShell, strRegKeyPowerShell1 & strRegValInstall))
+
+' Determine Remote Desktop Connection (Terminal Services Client) version
+If objFileSystem.FileExists(strRDPFileName) Then
+  WriteVersion2File objCmdFile, "RDP_VERSION", objFileSystem.GetFileVersion(strRDPFileName)
+Else
+  WriteVersion2File objCmdFile, "RDP_VERSION", ""
+End If
 
 ' Determine Windows Media Player version
 If objFileSystem.FileExists(strWMPFileName) Then

@@ -6,6 +6,7 @@
 
 Dim Const $caption              = "WSUS Offline Update 6.1"
 Dim Const $title                = $caption & " - Generator"
+Dim Const $downloadURL          = "http://download.wsusoffline.net/"
 
 ; INI file constants
 Dim Const $ini_section_w2k      = "Windows 2000"
@@ -59,6 +60,7 @@ Dim Const $misc_token_cleanup   = "cleanupdownloads"
 Dim Const $misc_token_verify    = "verifydownloads"
 Dim Const $misc_token_proxy     = "proxy"
 Dim Const $misc_token_wsus      = "wsus"
+Dim Const $misc_token_chkver    = "checkouversion"
 Dim Const $misc_token_minimize  = "minimizeondownload"
 
 Dim $maindlg, $inifilename, $tabitemfocused, $excludesp, $dotnet, $cleanupdownloads, $verifydownloads, $skipdownload
@@ -712,6 +714,35 @@ Dim $result = ""
   If BitAND(GUICtrlRead($chkboxdotnet), $GUI_CHECKED) = $GUI_CHECKED Then
     $result = $result & " /includedotnet"
   EndIf
+  Return $result
+EndFunc
+
+Func RunVersionCheck()
+Dim $result
+
+  DisableGUI()
+  $result = RunWait(@ComSpec & " /D /C CheckOUVersion.cmd", @ScriptDir & "\cmd", @SW_SHOWMINNOACTIVE)
+  If $result = 0 Then
+    $result = @error
+  EndIf
+  If $result <> 0 Then
+    If ShowGUIInGerman() Then
+      $result = MsgBox(0x2023, "Versionsprüfung", "Sie setzen " & $caption & " ein. Eine neue Version ist verfügbar." _
+                                          & @LF & "Möchten Sie nun die Download-Seite (" & $downloadURL & ") besuchen?")
+    Else
+      $result = MsgBox(0x2023, "Version check", "You use " & $caption & ". A new version is available." _
+                                        & @LF & "Do you want to visit the download site (" & $downloadURL & ") now?")
+    EndIf
+    Switch $result
+      Case 6  ; Yes
+        $result = -1
+      Case 7  ; No
+        $result = 0
+      Case Else
+        $result = 1
+    EndSwitch
+  EndIf
+  EnableGUI()
   Return $result
 EndFunc
 
@@ -2872,6 +2903,16 @@ While 1
       EndIf
 
     Case $btn_start         ; Start button pressed
+      If IniRead($inifilename, $ini_section_misc, $misc_token_chkver, $enabled) = $enabled Then
+        Switch RunVersionCheck()
+          Case -1 ; Yes
+            Run(@ComSpec & " /D /C start " & $downloadURL)
+            ExitLoop
+          Case 1  ; Cancel / Close
+            ContinueLoop
+          Case Else
+        EndSwitch
+      EndIf
       If IniRead($inifilename, $ini_section_misc, $misc_token_minimize, $disabled) = $enabled Then
         WinSetState($maindlg, $maindlg, @SW_MINIMIZE)
       EndIf
