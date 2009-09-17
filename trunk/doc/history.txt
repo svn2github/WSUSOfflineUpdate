@@ -289,5 +289,6 @@ Version 6.2 -- ??.??.09
 - DirectX End-User Runtimes updated to August 2009 (Thanks to "Gerby")
 - Fix: Linux scripts contained invalid Windows (<CR><LF>) instead of Unix (<LF>) line feeds (Thanks to Ronald Warsow, "Frank", "fatwou" and http://www.dos2unix.org/)
 - Fix: IE8 installation files were called with invalid /nobackup switch (Thanks to "dierk09bl")
+- Fix: Download exclude lists for Windows XP and Windows Server 2003 (x86/x64) updated to avoid *-js56-x86* files (Thanks to "takkoholiker")
 - Fix: DownloadUpdates.sh script didn't work under Slackware because of missing dos2unix tool (Thanks to Helmut Hullen) 
 - Fix: DetermineSystemProperties.vbs set invalid environment variable %PSH_INSTALLED_MAJOR% instead of %PSH_INSTALLED%
