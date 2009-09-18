@@ -1,70 +1,72 @@
-; *** WSUS Offline Update 6.1 - Generator ***
+; *** WSUS Offline Update 6.2 - Generator ***
 ; ***  Author: T. Wittrock, RZ Uni Kiel   ***
 ; ***   USB-Option added by Ch. Riedel    ***
 
 #include <GUIConstants.au3>
 
-Dim Const $caption              = "WSUS Offline Update 6.1"
-Dim Const $title                = $caption & " - Generator"
-Dim Const $downloadURL          = "http://download.wsusoffline.net/"
+Dim Const $caption                = "WSUS Offline Update 6.2"
+Dim Const $title                  = $caption & " - Generator"
+Dim Const $downloadURL            = "http://download.wsusoffline.net/"
+Dim Const $donationURL            = "http://www.wsusoffline.net/donate.html"
 
 ; INI file constants
-Dim Const $ini_section_w2k      = "Windows 2000"
-Dim Const $ini_section_wxp      = "Windows XP"
-Dim Const $ini_section_w2k3     = "Windows Server 2003"
-Dim Const $ini_section_w2k3_x64 = "Windows Server 2003 x64"
-Dim Const $ini_section_w60      = "Windows Vista"
-Dim Const $ini_section_w60_x64  = "Windows Vista x64"
-Dim Const $ini_section_o2k      = "Office 2000"
-Dim Const $ini_section_oxp      = "Office XP"
-Dim Const $ini_section_o2k3     = "Office 2003"
-Dim Const $ini_section_o2k7     = "Office 2007"
-Dim Const $ini_section_o2k7_x64 = "Office 2007 x64"
-Dim Const $ini_section_iso      = "ISO Images"
-Dim Const $ini_section_usb      = "USB Images"
-Dim Const $ini_section_misc     = "Miscellaneous"
-Dim Const $enabled              = "Enabled"
-Dim Const $disabled             = "Disabled"
-Dim Const $lang_token_glb       = "glb"
-Dim Const $lang_token_enu       = "enu"
-Dim Const $lang_token_fra       = "fra"
-Dim Const $lang_token_esn       = "esn"
-Dim Const $lang_token_jpn       = "jpn"
-Dim Const $lang_token_kor       = "kor"
-Dim Const $lang_token_rus       = "rus"
-Dim Const $lang_token_ptg       = "ptg"
-Dim Const $lang_token_ptb       = "ptb"
-Dim Const $lang_token_deu       = "deu"
-Dim Const $lang_token_nld       = "nld"
-Dim Const $lang_token_ita       = "ita"
-Dim Const $lang_token_chs       = "chs"
-Dim Const $lang_token_cht       = "cht"
-Dim Const $lang_token_plk       = "plk"
-Dim Const $lang_token_hun       = "hun"
-Dim Const $lang_token_csy       = "csy"
-Dim Const $lang_token_sve       = "sve"
-Dim Const $lang_token_trk       = "trk"
-Dim Const $lang_token_ell       = "ell"
-Dim Const $lang_token_ara       = "ara"
-Dim Const $lang_token_heb       = "heb"
-Dim Const $lang_token_dan       = "dan"
-Dim Const $lang_token_nor       = "nor"
-Dim Const $lang_token_fin       = "fin"
-Dim Const $iso_token_cd         = "single"
-Dim Const $iso_token_dvd        = "cross-platform"
-Dim Const $usb_token_copy       = "copy"
-Dim Const $usb_token_path       = "path"
-Dim Const $misc_token_nostatics = "excludestatics"
-Dim Const $misc_token_dotnet    = "includedotnet"
-Dim Const $misc_token_cleanup   = "cleanupdownloads"
-Dim Const $misc_token_verify    = "verifydownloads"
-Dim Const $misc_token_proxy     = "proxy"
-Dim Const $misc_token_wsus      = "wsus"
-Dim Const $misc_token_chkver    = "checkouversion"
-Dim Const $misc_token_minimize  = "minimizeondownload"
+Dim Const $ini_section_w2k        = "Windows 2000"
+Dim Const $ini_section_wxp        = "Windows XP"
+Dim Const $ini_section_w2k3       = "Windows Server 2003"
+Dim Const $ini_section_w2k3_x64   = "Windows Server 2003 x64"
+Dim Const $ini_section_w60        = "Windows Vista"
+Dim Const $ini_section_w60_x64    = "Windows Vista x64"
+Dim Const $ini_section_o2k        = "Office 2000"
+Dim Const $ini_section_oxp        = "Office XP"
+Dim Const $ini_section_o2k3       = "Office 2003"
+Dim Const $ini_section_o2k7       = "Office 2007"
+Dim Const $ini_section_o2k7_x64   = "Office 2007 x64"
+Dim Const $ini_section_iso        = "ISO Images"
+Dim Const $ini_section_usb        = "USB Images"
+Dim Const $ini_section_misc       = "Miscellaneous"
+Dim Const $enabled                = "Enabled"
+Dim Const $disabled               = "Disabled"
+Dim Const $lang_token_glb         = "glb"
+Dim Const $lang_token_enu         = "enu"
+Dim Const $lang_token_fra         = "fra"
+Dim Const $lang_token_esn         = "esn"
+Dim Const $lang_token_jpn         = "jpn"
+Dim Const $lang_token_kor         = "kor"
+Dim Const $lang_token_rus         = "rus"
+Dim Const $lang_token_ptg         = "ptg"
+Dim Const $lang_token_ptb         = "ptb"
+Dim Const $lang_token_deu         = "deu"
+Dim Const $lang_token_nld         = "nld"
+Dim Const $lang_token_ita         = "ita"
+Dim Const $lang_token_chs         = "chs"
+Dim Const $lang_token_cht         = "cht"
+Dim Const $lang_token_plk         = "plk"
+Dim Const $lang_token_hun         = "hun"
+Dim Const $lang_token_csy         = "csy"
+Dim Const $lang_token_sve         = "sve"
+Dim Const $lang_token_trk         = "trk"
+Dim Const $lang_token_ell         = "ell"
+Dim Const $lang_token_ara         = "ara"
+Dim Const $lang_token_heb         = "heb"
+Dim Const $lang_token_dan         = "dan"
+Dim Const $lang_token_nor         = "nor"
+Dim Const $lang_token_fin         = "fin"
+Dim Const $iso_token_cd           = "single"
+Dim Const $iso_token_dvd          = "cross-platform"
+Dim Const $usb_token_copy         = "copy"
+Dim Const $usb_token_path         = "path"
+Dim Const $misc_token_nostatics   = "excludestatics"
+Dim Const $misc_token_dotnet      = "includedotnet"
+Dim Const $misc_token_cleanup     = "cleanupdownloads"
+Dim Const $misc_token_verify      = "verifydownloads"
+Dim Const $misc_token_proxy       = "proxy"
+Dim Const $misc_token_wsus        = "wsus"
+Dim Const $misc_token_chkver      = "checkouversion"
+Dim Const $misc_token_minimize    = "minimizeondownload"
+Dim Const $misc_token_showdonate  = "showdonate"
 
 Dim $maindlg, $inifilename, $tabitemfocused, $excludesp, $dotnet, $cleanupdownloads, $verifydownloads, $skipdownload
-Dim $cdiso, $dvdiso, $usbcopy, $usbpath, $usbfsf, $btn_start, $btn_proxy, $btn_wsus, $btn_exit, $proxy, $wsus, $dummy
+Dim $cdiso, $dvdiso, $usbcopy, $usbpath, $usbfsf, $btn_start, $btn_proxy, $btn_wsus, $btn_donate, $btn_exit, $proxy, $wsus, $dummy
 Dim $w2k_enu, $wxp_enu, $w2k3_enu, $w2k3_x64_enu, $o2k_enu, $oxp_enu, $o2k3_enu, $o2k7_enu  ; English
 Dim $w2k_fra, $wxp_fra, $w2k3_fra, $w2k3_x64_fra, $o2k_fra, $oxp_fra, $o2k3_fra, $o2k7_fra  ; French
 Dim $w2k_esn, $wxp_esn, $w2k3_esn, $w2k3_x64_esn, $o2k_esn, $oxp_esn, $o2k3_esn, $o2k7_esn  ; Spanish
@@ -457,6 +459,9 @@ Func DisableGUI()
   GUICtrlSetState($skipdownload, $GUI_DISABLE)
   GUICtrlSetState($btn_proxy, $GUI_DISABLE)
   GUICtrlSetState($btn_wsus, $GUI_DISABLE)
+  If $btn_donate <> 0 Then
+    GUICtrlSetState($btn_donate, $GUI_DISABLE)
+  EndIf
   GUICtrlSetState($btn_exit, $GUI_DISABLE)
 
   Return 0
@@ -660,6 +665,9 @@ Func EnableGUI()
   GUICtrlSetState($skipdownload, $GUI_ENABLE)
   GUICtrlSetState($btn_proxy, $GUI_ENABLE)
   GUICtrlSetState($btn_wsus, $GUI_ENABLE)
+  If $btn_donate <> 0 Then
+    GUICtrlSetState($btn_donate, $GUI_ENABLE)
+  EndIf
   GUICtrlSetState($btn_exit, $GUI_ENABLE)
 
   Return 0
@@ -715,6 +723,10 @@ Dim $result = ""
     $result = $result & " /includedotnet"
   EndIf
   Return $result
+EndFunc
+
+Func RunDonationSite()
+  Run(@ComSpec & " /D /C start " & $donationURL)
 EndFunc
 
 Func RunVersionCheck()
@@ -2759,20 +2771,36 @@ Else
 EndIf
 
 ;  Proxy button
-$btn_proxy = GUICtrlCreateButton("Proxy...", 2* $txtxoffset + $groupwidth / 2 - $btnwidth, $txtypos, $btnwidth, $btnheight)
+$txtxpos = 2* $txtxoffset + $groupwidth / 2 - $btnwidth
+$btn_proxy = GUICtrlCreateButton("Proxy...", $txtxpos, $txtypos, $btnwidth, $btnheight)
 GUICtrlSetResizing (-1, $GUI_DOCKBOTTOM)
 $proxy = IniRead($inifilename, $ini_section_misc, $misc_token_proxy, "")
 
 ;  WSUS button
-$btn_wsus = GUICtrlCreateButton("WSUS...", 2 * $txtxoffset + $groupwidth / 2, $txtypos, $btnwidth, $btnheight)
+$txtxpos = 2 * $txtxoffset + $groupwidth / 2
+$btn_wsus = GUICtrlCreateButton("WSUS...", $txtxpos, $txtypos, $btnwidth, $btnheight)
 GUICtrlSetResizing (-1, $GUI_DOCKBOTTOM)
 $wsus = IniRead($inifilename, $ini_section_misc, $misc_token_wsus, "")
 
-;  Exit button
-If ShowGUIInGerman() Then
-  $btn_exit = GUICtrlCreateButton("Ende", 3 * $txtxoffset + $groupwidth - $btnwidth, $txtypos, $btnwidth, $btnheight)
+;  Donate button
+$txtxpos = 2.5 * $txtxoffset + 3 * $groupwidth / 4 - $btnwidth / 2
+If IniRead($inifilename, $ini_section_misc, $misc_token_showdonate, $enabled) = $enabled Then
+  If ShowGUIInGerman() Then
+    $btn_donate = GUICtrlCreateButton("Spenden...", $txtxpos, $txtypos, $btnwidth, $btnheight)
+  Else
+    $btn_donate = GUICtrlCreateButton("Donate...", $txtxpos, $txtypos, $btnwidth, $btnheight)
+  EndIf
+  GUICtrlSetResizing (-1, $GUI_DOCKBOTTOM)
 Else
-  $btn_exit = GUICtrlCreateButton("Exit", 3 * $txtxoffset + $groupwidth - $btnwidth, $txtypos, $btnwidth, $btnheight)
+  $btn_donate = 0
+EndIf
+
+;  Exit button
+$txtxpos = 3 * $txtxoffset + $groupwidth - $btnwidth
+If ShowGUIInGerman() Then
+  $btn_exit = GUICtrlCreateButton("Ende", $txtxpos, $txtypos, $btnwidth, $btnheight)
+Else
+  $btn_exit = GUICtrlCreateButton("Exit", $txtxpos, $txtypos, $btnwidth, $btnheight)
 EndIf
 GUICtrlSetResizing (-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM)
 
@@ -2901,6 +2929,9 @@ While 1
       If @error = 0 Then
         $wsus = $dummy
       EndIf
+      
+    Case $btn_donate        ; Donate button pressed
+      RunDonationSite()
 
     Case $btn_start         ; Start button pressed
       If IniRead($inifilename, $ini_section_misc, $misc_token_chkver, $enabled) = $enabled Then
