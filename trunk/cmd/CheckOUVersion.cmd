@@ -11,6 +11,16 @@ cd "%~p0"
 set WGET_PATH=..\bin\wget.exe
 if not exist %WGET_PATH% goto NoWGet
 
+:EvalParams
+if "%1"=="" goto NoMoreParams
+if /i "%1"=="/proxy" (
+  set http_proxy=%2
+  shift /1
+)
+shift /1
+goto EvalParams
+
+:NoMoreParams
 rem *** Check WSUS Offline Update version ***
 title Checking WSUS Offline Update version...
 echo Checking WSUS Offline Update version...
@@ -34,7 +44,7 @@ goto Error
 
 :DownloadError
 echo.
-echo ERROR: Download failure for %1 %2.
+echo ERROR: Download failure for http://download.wsusoffline.net/StaticDownloadLink-recent.txt.
 echo.
 goto Error
 

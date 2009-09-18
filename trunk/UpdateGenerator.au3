@@ -729,11 +729,15 @@ Func RunDonationSite()
   Run(@ComSpec & " /D /C start " & $donationURL)
 EndFunc
 
-Func RunVersionCheck()
+Func RunVersionCheck($strproxy)
 Dim $result
 
   DisableGUI()
-  $result = RunWait(@ComSpec & " /D /C CheckOUVersion.cmd", @ScriptDir & "\cmd", @SW_SHOWMINNOACTIVE)
+  If $strproxy <> "" Then
+    $result = RunWait(@ComSpec & " /D /C CheckOUVersion.cmd /proxy " & $strproxy, @ScriptDir & "\cmd", @SW_SHOWMINNOACTIVE)
+  Else
+    $result = RunWait(@ComSpec & " /D /C CheckOUVersion.cmd", @ScriptDir & "\cmd", @SW_SHOWMINNOACTIVE)
+  EndIf
   If $result = 0 Then
     $result = @error
   EndIf
@@ -2935,7 +2939,7 @@ While 1
 
     Case $btn_start         ; Start button pressed
       If IniRead($inifilename, $ini_section_misc, $misc_token_chkver, $enabled) = $enabled Then
-        Switch RunVersionCheck()
+        Switch RunVersionCheck($proxy)
           Case -1 ; Yes
             Run(@ComSpec & " /D /C start " & $downloadURL)
             ExitLoop
