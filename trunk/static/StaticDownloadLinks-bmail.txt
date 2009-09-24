@@ -1,2 +1,0 @@
-http://www.ctan.org/get/tools/zip/info-zip/WIN32/unz552xN.exe
-http://www.beyondlogic.org/solutions/cmdlinemail/bmailv107.zip

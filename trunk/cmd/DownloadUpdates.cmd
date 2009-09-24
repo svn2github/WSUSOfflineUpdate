@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.2a (r20)
+set WSUSUPDATE_VERSION=6.2a (r21)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -195,20 +195,6 @@ popd
 move "%TEMP%\mkisofs\mkisofs.exe" ..\bin >nul
 call ..\client\cmd\SafeRmDir.cmd "%TEMP%\mkisofs"
 :SkipMkIsoFs
-
-rem *** Download Bmail tool ***
-if exist ..\client\bin\bmail.exe goto SkipBmail
-echo Downloading Bmail tool...
-%WGET_PATH% -N -i ..\static\StaticDownloadLinks-bmail.txt -P "%TEMP%\bmail"
-if errorlevel 1 goto DownloadError
-echo %DATE% %TIME% - Info: Downloaded Bmail tool >>%DOWNLOAD_LOGFILE%
-pushd "%TEMP%\bmail"
-unz552xN.exe unzip.exe
-for /F %%i in ('dir /B *.zip') do unzip.exe %%i
-popd
-move "%TEMP%\bmail\bmail.exe" ..\client\bin >nul
-call ..\client\cmd\SafeRmDir.cmd "%TEMP%\bmail"
-:SkipBmail
 
 rem *** Download Microsoft file checksum integrity verifier tool ***
 if "%VERIFY_DOWNLOADS%" NEQ "1" goto SkipFCIV
