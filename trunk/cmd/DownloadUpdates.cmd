@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.2a (r21)
+set WSUSUPDATE_VERSION=6.2a (r22)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -115,7 +115,8 @@ if exist ..\bin\cygintl-8.dll (
 if exist ..\bin\cygwin1.dll (
   if exist ..\bin\mkisofs.exe del ..\bin\mkisofs.exe
   del ..\bin\cygwin1.dll 
-) 
+)
+if exist ..\static\StaticDownloadLinks-mkisofs.txt del ..\static\StaticDownloadLinks-mkisofs.txt
 
 rem *** Determine state of automatic daylight time setting ***
 echo Determining state of automatic daylight time setting...
@@ -181,19 +182,29 @@ if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded/validated Microsoft XSL processor frontend >>%DOWNLOAD_LOGFILE%
 :SkipMSXSL
 
+rem *** Download unzip tool ***
+if exist ..\bin\unzip.exe goto SkipUnzip
+echo Downloading unzip tool...
+%WGET_PATH% -N -i ..\static\StaticDownloadLink-unzip.txt -P ..\bin
+if errorlevel 1 goto DownloadError
+echo %DATE% %TIME% - Info: Downloaded unzip tool >>%DOWNLOAD_LOGFILE%
+pushd ..\bin
+unz600xn.exe unzip.exe
+del unz600xn.exe
+popd
+:SkipUnzip
+
 rem *** Download mkisofs tool ***
 if "%SKIP_MKISOFS%"=="1" goto SkipMkIsoFs
 if exist ..\bin\mkisofs.exe goto SkipMkIsoFs
 echo Downloading mkisofs tool...
-%WGET_PATH% -N -i ..\static\StaticDownloadLinks-mkisofs.txt -P "%TEMP%\mkisofs"
+%WGET_PATH% -N -i ..\static\StaticDownloadLink-mkisofs.txt -P ..\bin
 if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded mkisofs tool >>%DOWNLOAD_LOGFILE%
-pushd "%TEMP%\mkisofs"
-unz552xN.exe unzip.exe
-for /F %%i in ('dir /B *.zip') do unzip.exe %%i mkisofs.exe
+pushd ..\bin
+for /F %%i in ('dir /B cdrtools*.zip') do unzip.exe %%i mkisofs.exe
+del /Q cdrtools*.zip
 popd
-move "%TEMP%\mkisofs\mkisofs.exe" ..\bin >nul
-call ..\client\cmd\SafeRmDir.cmd "%TEMP%\mkisofs"
 :SkipMkIsoFs
 
 rem *** Download Microsoft file checksum integrity verifier tool ***
