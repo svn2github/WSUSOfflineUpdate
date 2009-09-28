@@ -287,6 +287,7 @@ Version 6.2 -- ??.??.09
 - ISO creation filters for Windows XP and Server 2003 exclude patches for .NET 1.x and .NET 2 SP 0/1 now
 - Static download definitions for IE8 installation packages removed for wxp and w2k3 (x86 and x64) since Microsoft added them to wsusscn2.cab
 - DirectX End-User Runtimes updated to August 2009 (Thanks to "Gerby")
+- Update for Root Certificates (rootsupd.exe/kb931125) updated to September 2009 (Thanks to "Denniss")
 - Fix: Linux scripts contained invalid Windows (<CR><LF>) instead of Unix (<LF>) line feeds (Thanks to Ronald Warsow, "Frank", "fatwou" and http://www.dos2unix.org/)
 - Fix: IE8 installation files were called with invalid /nobackup switch (Thanks to "dierk09bl")
 - Fix: Download exclude lists for Windows XP and Windows Server 2003 (x86/x64) updated to avoid *-js56-x86* files (Thanks to "takkoholiker")
