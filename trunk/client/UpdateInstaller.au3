@@ -326,7 +326,7 @@ If ( (@OSVersion = "WIN_XP") AND (@OSServicePack = "") ) Then
     Exit(1)
   EndIf
 EndIf
-If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (@OSServicePack <> "Service Pack 2") ) Then
+If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (@OSBuild <= 6002) AND (@OSServicePack <> "Service Pack 2") ) Then
   If ShowGUIInGerman() Then
     MsgBox(0x2040, "Information", "Unter Windows Vista / Server 2008 müssen Sie" _
                           & @LF & "nach der Installation der Service Packs 1 und 2" _

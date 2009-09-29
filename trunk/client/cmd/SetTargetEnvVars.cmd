@@ -36,7 +36,7 @@ if %OS_VERSION_MAJOR% EQU 5 (
   if %OS_VERSION_MINOR% GTR 2 goto SetOfficeName
 )
 if %OS_VERSION_MAJOR% EQU 6 (
-  if %OS_VERSION_MINOR% GTR 0 goto SetOfficeName
+  if %OS_VERSION_MINOR% GTR 1 goto SetOfficeName
 )
 goto Windows%OS_VERSION_MAJOR%.%OS_VERSION_MINOR%
 
@@ -106,6 +106,7 @@ goto SetOfficeName
 :Windows6.1
 rem *** Windows 7 / Server 2008 R2 ***
 set OS_NAME=w61
+set OS_SP_VERSION_TARGET_MAJOR=0
 set MSI_VERSION_TARGET_MAJOR=5
 set MSI_VERSION_TARGET_MINOR=0
 set MSI_TARGET_ID=KB942288
