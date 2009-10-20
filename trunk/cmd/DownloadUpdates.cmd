@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.2a (r24)
+set WSUSUPDATE_VERSION=6.2a (r26)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -117,6 +117,7 @@ if exist ..\bin\cygwin1.dll (
   del ..\bin\cygwin1.dll 
 )
 if exist ..\static\StaticDownloadLinks-mkisofs.txt del ..\static\StaticDownloadLinks-mkisofs.txt
+if exist ..\client\cmd\Reboot.vbs del ..\client\cmd\Reboot.vbs
 
 rem *** Determine state of automatic daylight time setting ***
 echo Determining state of automatic daylight time setting...

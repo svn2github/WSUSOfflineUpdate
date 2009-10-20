@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.2a (r24)
+set WSUSUPDATE_VERSION=6.2a (r26)
 set UPDATE_LOGFILE=%SystemRoot%\ctupdate.log
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSUPDATE_VERSION%)...
@@ -19,16 +19,18 @@ echo %DATE% %TIME% - Info: Starting WSUS offline update (v. %WSUSUPDATE_VERSION%
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/nobackup /instie8 /instdotnet /instpsh /ignoreoffice /instofccnvs /autoreboot /showlog /all /excludestatics) do (
+for %%i in (/nobackup /instie7 /instie8 /instdotnet /instpsh /ignoreoffice /instofccnvs /autoreboot /shutdown /showlog /all /excludestatics) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected >>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/nobackup" set BACKUP_MODE=/nobackup
-if /i "%1"=="/instie8" set INSTALL_IE8=/instie8
+if /i "%1"=="/instie7" set INSTALL_IE=/instie7
+if /i "%1"=="/instie8" set INSTALL_IE=/instie8
 if /i "%1"=="/instdotnet" set INSTALL_DOTNET=/instdotnet
 if /i "%1"=="/instpsh" set INSTALL_PSH=/instpsh
 if /i "%1"=="/ignoreoffice" set IGNORE_OFFICE=/ignoreoffice
 if /i "%1"=="/instofccnvs" set INSTALL_CONVERTERS=/instofccnvs
 if /i "%1"=="/autoreboot" set BOOT_MODE=/autoreboot
+if /i "%1"=="/shutdown" set FINISH_MODE=/shutdown
 if /i "%1"=="/showlog" set SHOW_LOG=/showlog
 if /i "%1"=="/all" set LIST_MODE_IDS=/all
 if /i "%1"=="/excludestatics" set LIST_MODE_UPDATES=/excludestatics
@@ -77,7 +79,7 @@ if "%OS_ARCHITECTURE%"=="" set OS_ARCHITECTURE=%PROCESSOR_ARCHITECTURE%
 if "%OS_LANGUAGE%"=="" goto UnsupLang
 
 rem *** Set target environment variables ***
-call SetTargetEnvVars.cmd %INSTALL_IE8%
+call SetTargetEnvVars.cmd %INSTALL_IE%
 if errorlevel 1 goto Cleanup
 if "%OS_NAME%"=="" goto NoOSName
 
@@ -383,7 +385,7 @@ if not errorlevel 1 set RECALL_REQUIRED=1
 goto SkipIEInst 
 
 :IEwxp
-if "%INSTALL_IE8%"=="/instie8" (
+if "%INSTALL_IE%"=="/instie8" (
   set IE_FILENAME=..\%OS_NAME%\%OS_LANGUAGE%\IE8-WindowsXP-%OS_ARCHITECTURE%-%OS_LANGUAGE%*.exe
 ) else (
   set IE_FILENAME=..\%OS_NAME%\%OS_LANGUAGE%\ie7-windowsxp-%OS_ARCHITECTURE%-%OS_LANGUAGE%*.exe
@@ -392,13 +394,13 @@ goto IEwxp2k3
 
 :IEw2k3
 if /i "%OS_ARCHITECTURE%"=="x64" (
-  if "%INSTALL_IE8%"=="/instie8" (
+  if "%INSTALL_IE%"=="/instie8" (
     set IE_FILENAME=..\%OS_NAME%-%OS_ARCHITECTURE%\%OS_LANGUAGE%\IE8-WindowsServer2003-%OS_ARCHITECTURE%-%OS_LANGUAGE%*.exe
   ) else (
     set IE_FILENAME=..\%OS_NAME%-%OS_ARCHITECTURE%\%OS_LANGUAGE%\ie7-windowsserver2003-%OS_ARCHITECTURE%-%OS_LANGUAGE%*.exe
   ) 
 ) else (
-  if "%INSTALL_IE8%"=="/instie8" (
+  if "%INSTALL_IE%"=="/instie8" (
     set IE_FILENAME=..\%OS_NAME%\%OS_LANGUAGE%\IE8-WindowsServer2003-%OS_ARCHITECTURE%-%OS_LANGUAGE%*.exe
   ) else (
     set IE_FILENAME=..\%OS_NAME%\%OS_LANGUAGE%\ie7-windowsserver2003-%OS_ARCHITECTURE%-%OS_LANGUAGE%*.exe
@@ -435,16 +437,16 @@ if errorlevel 1 (
   echo Warning: File %IE_FILENAME% not found. 
   echo %DATE% %TIME% - Warning: File %IE_FILENAME% not found >>%UPDATE_LOGFILE%
 ) else (
-  if "%INSTALL_IE8%"=="/instie8" (echo Installing Internet Explorer 8...) else (echo Installing Internet Explorer 7...)
+  if "%INSTALL_IE%"=="/instie8" (echo Installing Internet Explorer 8...) else (echo Installing Internet Explorer 7...)
   for /F %%i in ('dir /B %IE_FILENAME%') do (
     if /i "%OS_ARCHITECTURE%"=="x64" (
-      if "%INSTALL_IE8%"=="/instie8" (
+      if "%INSTALL_IE%"=="/instie8" (
         call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\%OS_LANGUAGE%\%%i /quiet /update-no /no-default /norestart
       ) else (
         call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\%OS_LANGUAGE%\%%i /quiet /update-no /no-default %BACKUP_MODE% /norestart
       )
     ) else (
-      if "%INSTALL_IE8%"=="/instie8" (
+      if "%INSTALL_IE%"=="/instie8" (
         call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANGUAGE%\%%i /quiet /update-no /no-default /norestart
       ) else (
         call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANGUAGE%\%%i /quiet /update-no /no-default %BACKUP_MODE% /norestart
@@ -685,10 +687,10 @@ if "%RECALL_REQUIRED%"=="1" (
   if "%BOOT_MODE%"=="/autoreboot" (
     if not "%USERNAME%"=="WSUSUpdateAdmin" (
       echo Preparing automatic recall...
-      call PrepareRecall.cmd %~f0 %BACKUP_MODE% %INSTALL_IE8% %INSTALL_DOTNET% %INSTALL_PSH% %IGNORE_OFFICE% %INSTALL_CONVERTERS% %BOOT_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES%
+      call PrepareRecall.cmd %~f0 %BACKUP_MODE% %INSTALL_IE% %INSTALL_DOTNET% %INSTALL_PSH% %IGNORE_OFFICE% %INSTALL_CONVERTERS% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES%
     )
     echo Rebooting...
-    %CSCRIPT_PATH% //Nologo //E:vbs Reboot.vbs
+    %CSCRIPT_PATH% //Nologo //E:vbs Shutdown.vbs /reboot
   ) else (
     echo.
     echo Installation successful. Please reboot your system now and recall Update afterwards.
@@ -703,13 +705,23 @@ if "%RECALL_REQUIRED%"=="1" (
       call CleanupRecall.cmd
       del /Q "%TEMP%\wsusadmin-recall.*"
     )
-    echo Rebooting...
-    %CSCRIPT_PATH% //Nologo //E:vbs Reboot.vbs
+    if "%FINISH_MODE%"=="/shutdown" (
+      echo Shutting down...
+      %CSCRIPT_PATH% //Nologo //E:vbs Shutdown.vbs
+    ) else (
+      echo Rebooting...
+      %CSCRIPT_PATH% //Nologo //E:vbs Shutdown.vbs /reboot
+    )
   ) else (
-    echo.
-    echo Installation successful. Please reboot your system now.
-    echo %DATE% %TIME% - Info: Installation successful >>%UPDATE_LOGFILE%
-    echo.
+    if "%FINISH_MODE%"=="/shutdown" (
+      echo Shutting down...
+      %CSCRIPT_PATH% //Nologo //E:vbs Shutdown.vbs
+    ) else (
+      echo.
+      echo Installation successful. Please reboot your system now.
+      echo %DATE% %TIME% - Info: Installation successful >>%UPDATE_LOGFILE%
+      echo.
+    )
   )
 )
 goto EoF
@@ -881,7 +893,7 @@ if "%USERNAME%"=="WSUSUpdateAdmin" (
   call CleanupRecall.cmd
   del /Q "%TEMP%\wsusadmin-recall.*"
   echo Rebooting...
-  %CSCRIPT_PATH% //Nologo //E:vbs Reboot.vbs
+  %CSCRIPT_PATH% //Nologo //E:vbs Shutdown.vbs /reboot
 ) else (
   if "%AU_SERVICE_STARTED%"=="1" (
     echo Stopping service 'automatic updates' ^(wuauserv^)...
