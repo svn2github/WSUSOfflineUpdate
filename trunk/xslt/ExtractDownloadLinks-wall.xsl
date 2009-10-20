@@ -4,7 +4,15 @@
 
 <xsl:template match="*">
   <xsl:choose>
+    <xsl:when test="name()='Update'">
+      <xsl:value-of select="@UpdateId"/>
+      <xsl:text>,</xsl:text>
+      <xsl:value-of select="@RevisionId"/>
+      <xsl:text>&#10;</xsl:text>
+    </xsl:when>
     <xsl:when test="name()='FileLocation'">
+      <xsl:value-of select="@Id"/>
+      <xsl:text>,</xsl:text>
       <xsl:value-of select="@Url"/>
       <xsl:text>&#10;</xsl:text>
     </xsl:when>

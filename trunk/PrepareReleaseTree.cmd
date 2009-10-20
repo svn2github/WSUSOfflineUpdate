@@ -31,15 +31,15 @@ goto EoF
 
 :NoParam
 echo.
-echo ERROR: Invalid parameter %1
-echo Usage: %~n0 TargetDirectory
+echo ERROR: Missing parameter %1
+echo Usage: %~n0 ^<TargetDirectory^>
 echo.
 goto EoF
 
 :InvalidParam
 echo.
 echo ERROR: Target directory %TARGET_DIR% not found.
-echo Usage: %~n0 TargetDirectory
+echo Usage: %~n0 ^<TargetDirectory^>
 echo.
 goto EoF
 

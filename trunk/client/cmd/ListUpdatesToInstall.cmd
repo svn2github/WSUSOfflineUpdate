@@ -60,28 +60,28 @@ if exist ..\static\StaticUpdateIds-%OFFICE_NAME%-%OS_ARCHITECTURE%.txt (
 rem *** List update files ***
 if not exist "%TEMP%\MissingUpdateIds.txt" goto NoMissingUpdateIds
 if exist "%TEMP%\UpdatesToInstall.txt" del "%TEMP%\UpdatesToInstall.txt"
-for /F "usebackq" %%i in ("%TEMP%\MissingUpdateIds.txt") do (
+for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do (
   if exist "%TEMP%\Update.txt" del "%TEMP%\Update.txt"
   %SystemRoot%\system32\find.exe /I "%%i" ..\exclude\ExcludeList.txt >nul 2>&1
   if errorlevel 1 (
-    for %%j in (%OS_NAME%-%OS_ARCHITECTURE% %OS_NAME% win) do (
-      for %%k in (%OS_LANGUAGE% glb) do (
-        call ListUpdateFile.cmd ie%IE_VERSION_MAJOR%-*%%i ..\%%j\%%k
-        call ListUpdateFile.cmd windowsmedia%WMP_VERSION_MAJOR%-*%%i ..\%%j\%%k
-        call ListUpdateFile.cmd windowsmedia-*%%i ..\%%j\%%k
-        call ListUpdateFile.cmd mdac%MDAC_VERSION_MAJOR%%MDAC_VERSION_MINOR%-*%%i ..\%%j\%%k
-        call ListUpdateFile.cmd windows2000*%%i ..\%%j\%%k /searchleftmost
-        call ListUpdateFile.cmd windowsxp*%%i ..\%%j\%%k /searchleftmost
-        call ListUpdateFile.cmd windowsserver2003*%%i ..\%%j\%%k /searchleftmost
-        call ListUpdateFile.cmd windows6.0*%%i ..\%%j\%%k /searchleftmost
-        call ListUpdateFile.cmd windows*%%i ..\%%j\%%k /searchleftmost
-        call ListUpdateFile.cmd %%i ..\%%j\%%k
+    for %%k in (%OS_NAME%-%OS_ARCHITECTURE% %OS_NAME% win) do (
+      for %%l in (%OS_LANGUAGE% glb) do (
+        call ListUpdateFile.cmd ie%IE_VERSION_MAJOR%-*%%i ..\%%k\%%l
+        call ListUpdateFile.cmd windowsmedia%WMP_VERSION_MAJOR%-*%%i ..\%%k\%%l
+        call ListUpdateFile.cmd windowsmedia-*%%i ..\%%k\%%l
+        call ListUpdateFile.cmd mdac%MDAC_VERSION_MAJOR%%MDAC_VERSION_MINOR%-*%%i ..\%%k\%%l
+        call ListUpdateFile.cmd windows2000*%%i ..\%%k\%%l /searchleftmost
+        call ListUpdateFile.cmd windowsxp*%%i ..\%%k\%%l /searchleftmost
+        call ListUpdateFile.cmd windowsserver2003*%%i ..\%%k\%%l /searchleftmost
+        call ListUpdateFile.cmd windows6.0*%%i ..\%%k\%%l /searchleftmost
+        call ListUpdateFile.cmd windows*%%i ..\%%k\%%l /searchleftmost
+        call ListUpdateFile.cmd %%i ..\%%k\%%l
       )
     )
     if "%IGNORE_OFFICE%"=="" (
-      for %%j in (%OFFICE_NAME%-%OS_ARCHITECTURE% %OFFICE_NAME% ofc o2k oxp o2k3 o2k7 o2k7-x64) do (
-        for %%k in (%OFFICE_LANGUAGE% glb) do (
-          call ListUpdateFile.cmd %%i ..\%%j\%%k
+      for %%k in (%OFFICE_NAME%-%OS_ARCHITECTURE% %OFFICE_NAME% ofc o2k oxp o2k3 o2k7 o2k7-x64) do (
+        for %%l in (%OFFICE_LANGUAGE% glb) do (
+          call ListUpdateFile.cmd %%i ..\%%k\%%l
         )
       )
     )

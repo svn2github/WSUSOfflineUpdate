@@ -28,8 +28,9 @@ If objSearchResult.Updates.Count > 0 Then
   Set objIDFile = CreateObject("Scripting.FileSystemObject").CreateTextFile(strTextFileName, True)
   For Each objUpdate In objSearchResult.Updates
     If objUpdate.KBArticleIDs.Count > 0 Then
-      objIDFile.WriteLine(objUpdate.KBArticleIDs.Item(0))
+      objIDFile.Write(objUpdate.KBArticleIDs.Item(0) & ",")
     End If
+    objIDFile.WriteLine(objUpdate.Identity.UpdateID)
   Next
   objIDFile.Close
 End If
