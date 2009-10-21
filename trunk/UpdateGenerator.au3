@@ -1,6 +1,7 @@
 ; *** WSUS Offline Update 6.2 - Generator ***
 ; ***  Author: T. Wittrock, RZ Uni Kiel   ***
 ; ***   USB-Option added by Ch. Riedel    ***
+; *** Dialog scaling added by Th. Baisch  ***
 
 #include <GUIConstants.au3>
 
@@ -8,6 +9,10 @@ Dim Const $caption                = "WSUS Offline Update 6.2"
 Dim Const $title                  = $caption & " - Generator"
 Dim Const $downloadURL            = "http://download.wsusoffline.net/"
 Dim Const $donationURL            = "http://www.wsusoffline.net/donate.html"
+
+; Registry constants
+Dim Const $reg_key_fontdpi        = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontDPI"
+Dim Const $reg_val_logpixels      = "LogPixels"
 
 ; INI file constants
 Dim Const $ini_section_w2k        = "Windows 2000"
@@ -93,9 +98,8 @@ Dim $w2k_nor, $wxp_nor, $w2k3_nor, $o2k_nor, $oxp_nor, $o2k3_nor, $o2k7_nor ; No
 Dim $w2k_fin, $wxp_fin, $w2k3_fin, $o2k_fin, $oxp_fin, $o2k3_fin, $o2k7_fin ; Finnish
 Dim $w60_glb, $w60_x64_glb                                                  ; Windows Vista / Windows Server 2008 (global)  
 
-Dim Const $txtheight = 20, $btnwidth = 80, $btnheight = 25
-Dim Const $txtxoffset = 10, $txtyoffset = 10, $txtgrpyoffset = 15
-Dim $groupwidth, $groupheight, $txtwidth, $txtxpos, $txtypos
+Dim $dlgheight, $groupwidth, $groupheight, $txtwidth, $txtheight, $btnwidth, $btnheight
+Dim $txtgrpyoffset, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
 
 Func ShowGUIInGerman()
   If ($CmdLine[0] > 0) Then
@@ -1084,19 +1088,33 @@ Func SaveSettings()
   Return 0
 EndFunc
 
+Func CalcGUISize ()
+  Dim $reg_val
+  
+  $reg_val = RegRead($reg_key_fontdpi, $reg_val_logpixels)
+  $dlgheight = 575 * $reg_val / 96
+  If ShowGUIInGerman() Then
+    $txtwidth = 90 * $reg_val / 96
+  Else
+    $txtwidth = 80 * $reg_val / 96
+  EndIf
+  $txtheight = 20 * $reg_val / 96
+  $btnwidth = 80 * $reg_val / 96
+  $btnheight = 25 * $reg_val / 96  
+  $txtgrpyoffset = 15 * $reg_val / 96
+  $txtxoffset = 10 * $reg_val / 96
+  $txtyoffset = 10 * $reg_val / 96
+  Return 0
+EndFunc	
 
 ;  Main Dialog
 AutoItSetOption("GUICloseOnESC", 0)
 AutoItSetOption("TrayAutoPause", 0)
 AutoItSetOption("TrayIconHide", 1)
-If ShowGUIInGerman() Then
-  $txtwidth = 90
-Else
-  $txtwidth = 80
-EndIf
+CalcGUISize()
 $groupwidth = 8 * $txtwidth + 2 * $txtxoffset
 $groupheight = 4 * $txtheight 
-$maindlg = GUICreate($title, $groupwidth + 4 * $txtxoffset, 575)
+$maindlg = GUICreate($title, $groupwidth + 4 * $txtxoffset, $dlgheight)
 GUISetFont(8.5, 400, 0, "Sans Serif")
 $inifilename = StringLeft(@ScriptFullPath, StringInStr(@ScriptFullPath, ".", 0, -1)) & "ini"
 

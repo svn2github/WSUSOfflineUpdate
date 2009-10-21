@@ -1,5 +1,6 @@
 ; *** WSUS Offline Update 6.2 - Installer ***
 ; ***  Author: T. Wittrock, RZ Uni Kiel   ***
+; *** Dialog scaling added by Th. Baisch  ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
@@ -12,9 +13,11 @@ Dim Const $reg_key_wsh_hkcu         = "HKEY_CURRENT_USER\Software\Microsoft\Wind
 Dim Const $reg_key_ie               = "HKEY_LOCAL_MACHINE\Software\Microsoft\Internet Explorer"
 Dim Const $reg_key_dotnet35         = "HKEY_LOCAL_MACHINE\Software\Microsoft\NET Framework Setup\NDP\v3.5"
 Dim Const $reg_key_powershell1      = "HKEY_LOCAL_MACHINE\Software\Microsoft\PowerShell\1"
+Dim Const $reg_key_fontdpi          = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontDPI"
 Dim Const $reg_val_enabled          = "Enabled"
 Dim Const $reg_val_version          = "Version"
 Dim Const $reg_val_install          = "Install"
+Dim Const $reg_val_logpixels        = "LogPixels"
 Dim Const $target_version_dotnet35  = "3.5.30729.01"
 
 ; INI file constants
@@ -37,7 +40,7 @@ Dim Const $disabled                 = "Disabled"
 ; Paths
 Dim Const $path_rel_instdotnet      = "\dotnet\dotnetfx35.exe"
 
-Dim Const $txtwidth = 240, $txtheight = 20, $txtxoffset = 10, $btnwidth = 80, $btnheight = 25
+Dim $dlgheight, $txtwidth, $txtheight, $txtxoffset, $btnwidth, $btnheight
 
 Dim $maindlg, $scriptdir, $netdrives, $i, $strpos, $inifilename, $backup, $ie7, $ie8, $dotnet, $powershell, $office, $converters, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $txtypos
 
@@ -89,12 +92,25 @@ Func PowerShellInstalled()
   Return RegRead($reg_key_powershell1, $reg_val_install) = "1"
 EndFunc
 
+Func CalcGUISize ()
+  Dim $reg_val
+  
+  $reg_val = RegRead($reg_key_fontdpi, $reg_val_logpixels)
+  $dlgheight = 295 * $reg_val / 96
+  $txtwidth = 240 * $reg_val / 96
+  $txtheight = 20 * $reg_val / 96
+  $txtxoffset = 10 * $reg_val / 96
+  $btnwidth = 80 * $reg_val / 96
+  $btnheight = 25 * $reg_val / 96
+  Return 0
+EndFunc	
 
 ; Main Dialog
 AutoItSetOption("GUICloseOnESC", 0)
 AutoItSetOption("TrayAutoPause", 0)
 AutoItSetOption("TrayIconHide", 1)
-$maindlg = GUICreate($caption, $txtwidth + 2 * $txtxoffset, 295)
+CalcGUISize()
+$maindlg = GUICreate($caption, $txtwidth + 2 * $txtxoffset, $dlgheight)
 GUISetFont(8.5, 400, 0, "Sans Serif")
 
 $scriptdir = "" 

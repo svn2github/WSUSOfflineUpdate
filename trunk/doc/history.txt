@@ -284,6 +284,7 @@ Version 6.2 -- ??.??.09
 - SetTargetEnvVars.cmd script supports Windows version 6.1 (Windows 7 / Server 2008 R2) now
 - Installation of IE7 remade optional
 - Automatic shutdown after updating option added (Thanks to "gw_1966")
+- UpdateGenerator and UpdateInstaller dialogs will now be scaled dependent on system's font size (dpi) setting (Thanks to Thomas Baisch)
 - CopyToTarget.cmd script will now show filenames while copying
 - ISO creation filters for Windows 2000 exclude patches for .NET and Windows Rights Management Services now
 - ISO creation filters for Windows XP and Server 2003 exclude patches for .NET 1.x and .NET 2 SP 0/1 now
@@ -294,4 +295,6 @@ Version 6.2 -- ??.??.09
 - Fix: IE8 installation files were called with invalid /nobackup switch (Thanks to "dierk09bl")
 - Fix: Download exclude lists for Windows XP and Windows Server 2003 (x86/x64) updated to avoid *-js56-x86* files (Thanks to "takkoholiker")
 - Fix: DownloadUpdates.sh script didn't work under Slackware because of missing dos2unix tool (Thanks to Helmut Hullen) 
-- Fix: DetermineSystemProperties.vbs set invalid environment variable %PSH_INSTALLED_MAJOR% instead of %PSH_INSTALLED%
+- Fix: DetermineSystemProperties.vbs script set invalid environment variable %PSH_INSTALLED_MAJOR% instead of %PSH_INSTALLED%
+- Fix: CopyToTarget.cmd script contained invalid usage instructions (Thanks to "rsleegers")
+- Fix: Download exclude list for Windows XP modified since Offline Update missed patch IE7-WindowsXP-KB938127-v2-x86-DEU.exe

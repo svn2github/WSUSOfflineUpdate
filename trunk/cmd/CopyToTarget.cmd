@@ -124,8 +124,8 @@ exit /b 1
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %*
-echo Usage1: %~n0 {w2k ^| wxp ^| w2k3 ^| w2k3-x64 ^| o2k ^| oxp ^| o2k3 ^| o2k7 ^| o2k7-x64} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/includedotnet] [/outputpath ^<OutputPath^>]
-echo Usage2: %~n0 {all ^| all-x86 ^| all-x64 ^| w2k ^| wxp ^| w2k3 ^| w2k3-x64 ^| w60 ^| w60-x64 ^| o2k ^| oxp ^| o2k3 ^| o2k7 ^| o2k7-x64 ^| enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/includedotnet] [/outputpath ^<OutputPath^>]
+echo Usage1: %~n0 {w2k ^| wxp ^| w2k3 ^| w2k3-x64 ^| o2k ^| oxp ^| o2k3 ^| o2k7 ^| o2k7-x64} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} ^<OutputPath^> [/excludesp] [/includedotnet]
+echo Usage2: %~n0 {all ^| all-x86 ^| all-x64 ^| w2k ^| wxp ^| w2k3 ^| w2k3-x64 ^| w60 ^| w60-x64 ^| o2k ^| oxp ^| o2k3 ^| o2k7 ^| o2k7-x64 ^| enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} ^<OutputPath^> [/excludesp] [/includedotnet]
 echo.
 goto Error
 
