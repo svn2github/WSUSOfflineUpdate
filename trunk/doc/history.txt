@@ -280,8 +280,8 @@ Version 6.1 -- 30.07.09
 - Fix: Further improvements for Linux scripts (Thanks to Walter Schiessberg and Stefan Jöhnke)
 --------------------------------------------------------------------------------
 Version 6.2 -- ??.??.09
+- Support added for Microsoft Windows 7 and Server 2008 R2 
 - WSUS Offline Update will now check for new versions of itself when starting download
-- SetTargetEnvVars.cmd script supports Windows version 6.1 (Windows 7 / Server 2008 R2) now
 - Installation of IE7 remade optional
 - Automatic shutdown after updating option added (Thanks to "gw_1966")
 - UpdateGenerator and UpdateInstaller dialogs will now be scaled dependent on system's font size (dpi) setting (Thanks to Thomas Baisch)

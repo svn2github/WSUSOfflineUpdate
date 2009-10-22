@@ -15,7 +15,7 @@ for %%i in (w2k wxp w2k3 w2k3-x64 o2k oxp o2k3 o2k7 o2k7-x64) do (
     goto V1EvalParams
   )
 )
-for %%i in (w60 w60-x64) do (
+for %%i in (w60 w60-x64 w61 w61-x64) do (
   if /i "%1"=="%%i" (
     if /i "%2"=="glb" shift /2
     goto V1EvalParams
@@ -86,7 +86,7 @@ goto :eof
 rem *** Create ISO filter ***
 echo Creating ISO filter for %1...
 set ISO_FILTER="%TEMP%\ExcludeListISO-%1.txt"
-for %%i in (all all-x86 all-x64 w2k wxp w2k3 w2k3-x64 w60 w60-x64 o2k oxp o2k3 o2k7 o2k7-x64) do (if /i "%1"=="%%i" goto V1CopyFilter)
+for %%i in (all all-x86 all-x64 w2k wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 o2k oxp o2k3 o2k7 o2k7-x64) do (if /i "%1"=="%%i" goto V1CopyFilter)
 set ISO_IMAGE=wsusoffline-%1-x86.iso
 set ISO_VOLID=ctou_%1-x86
 copy /Y ..\exclude\ExcludeListISO-all-x86.txt %ISO_FILTER% >nul
@@ -135,7 +135,7 @@ exit /b 1
 echo.
 echo ERROR: Invalid parameter: %*
 echo Usage1: %~n0 {w2k ^| wxp ^| w2k3 ^| w2k3-x64 ^| o2k ^| oxp ^| o2k3 ^| o2k7 ^| o2k7-x64} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/includedotnet] [/outputpath ^<OutputPath^>]
-echo Usage2: %~n0 {all ^| all-x86 ^| all-x64 ^| w2k ^| wxp ^| w2k3 ^| w2k3-x64 ^| w60 ^| w60-x64 ^| o2k ^| oxp ^| o2k3 ^| o2k7 ^| o2k7-x64 ^| enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/includedotnet] [/outputpath ^<OutputPath^>]
+echo Usage2: %~n0 {all ^| all-x86 ^| all-x64 ^| w2k ^| wxp ^| w2k3 ^| w2k3-x64 ^| w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| o2k ^| oxp ^| o2k3 ^| o2k7 ^| o2k7-x64 ^| enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/includedotnet] [/outputpath ^<OutputPath^>]
 echo.
 goto Error
 

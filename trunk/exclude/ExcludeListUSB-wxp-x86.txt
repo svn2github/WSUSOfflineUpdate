@@ -6,9 +6,11 @@ o2k7\
 w2k\
 w2k3\
 w60\
+w61\
 o2k7-x64\
 w2k3-x64\
 w60-x64\
+w61-x64\
 ie6setup\  
 ie6.0sp1  
 oe6.0sp1  

@@ -7,5 +7,6 @@ w2k\
 wxp\
 w2k3\
 w60\
+w61\
 win\
 .au3

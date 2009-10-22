@@ -38,7 +38,12 @@ if /i "%2"=="/errorsaswarnings" (
 
 echo %1 | %SystemRoot%\system32\find.exe /I ".exe" >nul 2>&1
 if not errorlevel 1 goto InstExe
-if /i "%OS_NAME%" NEQ "w60" goto UnsupType
+
+if /i "%OS_NAME%" EQU "w60" goto FindCabMsu
+if /i "%OS_NAME%" EQU "w61" goto FindCabMsu
+goto UnsupType
+
+:FindCabMsu
 echo %1 | %SystemRoot%\system32\find.exe /I ".cab" >nul 2>&1
 if not errorlevel 1 goto InstCabMsu
 echo %1 | %SystemRoot%\system32\find.exe /I ".msu" >nul 2>&1

@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.2a (r27)
+set WSUSUPDATE_VERSION=6.2a (r28)
 set UPDATE_LOGFILE=%SystemRoot%\ctupdate.log
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSUPDATE_VERSION%)...
@@ -244,6 +244,7 @@ set RECALL_REQUIRED=1
 goto Installed
 
 :SPw60
+:SPw61
 echo %DATE% %TIME% - Info: Installing most recent Service Pack for Windows Vista >>%UPDATE_LOGFILE%
 call InstallListedUpdates.cmd /unattend /forcerestart
 if errorlevel 1 goto InstError
@@ -254,6 +255,7 @@ goto Installed
 
 rem *** Install DirectX End-User Runtime ***
 if "%OS_NAME%"=="w60" goto SkipDirectXInst
+if "%OS_NAME%"=="w61" goto SkipDirectXInst
 echo Checking DirectX version...
 if %DIRECTX_VERSION_MAJOR% LSS %DIRECTX_VERSION_TARGET_MAJOR% goto InstallDirectX
 if %DIRECTX_VERSION_MAJOR% GTR %DIRECTX_VERSION_TARGET_MAJOR% goto SkipDirectXInst
@@ -361,6 +363,7 @@ if errorlevel 1 (
 :SkipWSHInst
 
 rem *** Install Internet Explorer ***
+if "%OS_NAME%"=="w61" goto SkipIEInst
 echo Checking Internet Explorer version...
 if %IE_VERSION_MAJOR% LSS %IE_VERSION_TARGET_MAJOR% goto InstallIE
 if %IE_VERSION_MAJOR% GTR %IE_VERSION_TARGET_MAJOR% goto SkipIEInst
@@ -408,29 +411,6 @@ if /i "%OS_ARCHITECTURE%"=="x64" (
 )
 goto IEwxp2k3
 
-:IEw60
-if /i "%OS_ARCHITECTURE%"=="x64" (
-  set IE_FILENAME=..\%OS_NAME%-%OS_ARCHITECTURE%\glb\IE8-WindowsVista-%OS_ARCHITECTURE%-%OS_LANGUAGE%*.exe
-) else (
-  set IE_FILENAME=..\%OS_NAME%\glb\IE8-WindowsVista-%OS_ARCHITECTURE%-%OS_LANGUAGE%*.exe
-)
-dir /B %IE_FILENAME% >nul 2>&1
-if errorlevel 1 (
-  echo Warning: File %IE_FILENAME% not found. 
-  echo %DATE% %TIME% - Warning: File %IE_FILENAME% not found >>%UPDATE_LOGFILE%
-) else (
-  echo Installing Internet Explorer 8...
-  for /F %%i in ('dir /B %IE_FILENAME%') do (
-    if /i "%OS_ARCHITECTURE%"=="x64" (
-      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\glb\%%i /quiet /update-no /no-default /norestart
-    ) else (
-      call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i /quiet /update-no /no-default /norestart
-    )
-    if not errorlevel 1 set REBOOT_REQUIRED=1
-  )
-)
-goto SkipIEInst
-
 :IEwxp2k3
 dir /B %IE_FILENAME% >nul 2>&1
 if errorlevel 1 (
@@ -455,6 +435,32 @@ if errorlevel 1 (
     if not errorlevel 1 set RECALL_REQUIRED=1
   )
 )
+goto SkipIEInst
+
+:IEw60
+if /i "%OS_ARCHITECTURE%"=="x64" (
+  set IE_FILENAME=..\%OS_NAME%-%OS_ARCHITECTURE%\glb\IE8-WindowsVista-%OS_ARCHITECTURE%-%OS_LANGUAGE%*.exe
+) else (
+  set IE_FILENAME=..\%OS_NAME%\glb\IE8-WindowsVista-%OS_ARCHITECTURE%-%OS_LANGUAGE%*.exe
+)
+dir /B %IE_FILENAME% >nul 2>&1
+if errorlevel 1 (
+  echo Warning: File %IE_FILENAME% not found. 
+  echo %DATE% %TIME% - Warning: File %IE_FILENAME% not found >>%UPDATE_LOGFILE%
+) else (
+  echo Installing Internet Explorer 8...
+  for /F %%i in ('dir /B %IE_FILENAME%') do (
+    if /i "%OS_ARCHITECTURE%"=="x64" (
+      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\glb\%%i /quiet /update-no /no-default /norestart
+    ) else (
+      call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i /quiet /update-no /no-default /norestart
+    )
+    if not errorlevel 1 set REBOOT_REQUIRED=1
+  )
+)
+goto SkipIEInst
+
+:IEw61
 :SkipIEInst
 
 rem *** Install .NET Framework 3.5 SP1 ***

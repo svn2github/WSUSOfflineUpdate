@@ -4,6 +4,7 @@
 *w2k*
 *wxp*
 *win\/*
+*w61\/*
 *-x64*
 *.au3
 *reg.exe

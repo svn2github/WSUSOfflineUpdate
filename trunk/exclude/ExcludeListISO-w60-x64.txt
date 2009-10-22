@@ -3,8 +3,9 @@
 *oxp*
 *w2k*
 *wxp*
-*w60\/*
 *win\/*
+*w60\/*
+*w61*
 *.au3
 *reg.exe
 *msxsl.exe

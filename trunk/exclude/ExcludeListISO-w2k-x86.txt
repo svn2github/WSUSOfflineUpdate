@@ -3,7 +3,7 @@
 *oxp*
 *wxp*
 *w2k3*
-*w60*
+*w6*
 *-x64*
 *windowsxp*
 *ndp*

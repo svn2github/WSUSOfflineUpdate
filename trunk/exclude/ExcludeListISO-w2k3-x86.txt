@@ -3,7 +3,7 @@
 *oxp*
 *w2k\/*
 *wxp*
-*w60*
+*w6*
 *-x64*
 *ie6setup*  
 *ie6.0sp1*  

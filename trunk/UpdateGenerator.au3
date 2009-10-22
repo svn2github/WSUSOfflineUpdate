@@ -21,6 +21,8 @@ Dim Const $ini_section_w2k3       = "Windows Server 2003"
 Dim Const $ini_section_w2k3_x64   = "Windows Server 2003 x64"
 Dim Const $ini_section_w60        = "Windows Vista"
 Dim Const $ini_section_w60_x64    = "Windows Vista x64"
+Dim Const $ini_section_w61        = "Windows 7"
+Dim Const $ini_section_w61_x64    = "Windows Server 2008 R2"
 Dim Const $ini_section_o2k        = "Office 2000"
 Dim Const $ini_section_oxp        = "Office XP"
 Dim Const $ini_section_o2k3       = "Office 2003"
@@ -97,6 +99,7 @@ Dim $w2k_dan, $wxp_dan, $w2k3_dan, $o2k_dan, $oxp_dan, $o2k3_dan, $o2k7_dan ; Da
 Dim $w2k_nor, $wxp_nor, $w2k3_nor, $o2k_nor, $oxp_nor, $o2k3_nor, $o2k7_nor ; Norwegian
 Dim $w2k_fin, $wxp_fin, $w2k3_fin, $o2k_fin, $oxp_fin, $o2k3_fin, $o2k7_fin ; Finnish
 Dim $w60_glb, $w60_x64_glb                                                  ; Windows Vista / Windows Server 2008 (global)  
+Dim $w61_glb, $w61_x64_glb                                                  ; Windows 7 / Windows Server 2008 R2 (global)  
 
 Dim $dlgheight, $groupwidth, $groupheight, $txtwidth, $txtheight, $btnwidth, $btnheight
 Dim $txtgrpyoffset, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
@@ -350,6 +353,8 @@ Func DisableGUI()
 ;  GUICtrlSetState($w2k3_fin, $GUI_DISABLE)
   GUICtrlSetState($w60_glb, $GUI_DISABLE)
   GUICtrlSetState($w60_x64_glb, $GUI_DISABLE)
+  GUICtrlSetState($w61_glb, $GUI_DISABLE)
+  GUICtrlSetState($w61_x64_glb, $GUI_DISABLE)
 
   GUICtrlSetState($o2k_enu, $GUI_DISABLE)
   GUICtrlSetState($oxp_enu, $GUI_DISABLE)
@@ -554,6 +559,8 @@ Func EnableGUI()
 ;  GUICtrlSetState($w2k3_fin, $GUI_ENABLE)
   GUICtrlSetState($w60_glb, $GUI_ENABLE)
   GUICtrlSetState($w60_x64_glb, $GUI_ENABLE)
+  GUICtrlSetState($w61_glb, $GUI_ENABLE)
+  GUICtrlSetState($w61_x64_glb, $GUI_ENABLE)
 
   GUICtrlSetState($o2k_enu, $GUI_ENABLE)
   GUICtrlSetState($oxp_enu, $GUI_ENABLE)
@@ -963,9 +970,13 @@ Func SaveSettings()
   IniWrite($inifilename, $ini_section_w2k3_x64, $lang_token_ptb, CheckBoxState2String($w2k3_x64_ptb))
   IniWrite($inifilename, $ini_section_w2k3_x64, $lang_token_deu, CheckBoxState2String($w2k3_x64_deu))
 
-;  Windows Vista group
+;  Windows Vista / Server 2008 group
   IniWrite($inifilename, $ini_section_w60, $lang_token_glb, CheckBoxState2String($w60_glb))
   IniWrite($inifilename, $ini_section_w60_x64, $lang_token_glb, CheckBoxState2String($w60_x64_glb))
+
+;  Windows 7 / Server 2008 R2 group
+  IniWrite($inifilename, $ini_section_w61, $lang_token_glb, CheckBoxState2String($w61_glb))
+  IniWrite($inifilename, $ini_section_w61_x64, $lang_token_glb, CheckBoxState2String($w61_x64_glb))
 
 ;  Office 2000 group
   IniWrite($inifilename, $ini_section_o2k, $lang_token_enu, CheckBoxState2String($o2k_enu))
@@ -1092,7 +1103,7 @@ Func CalcGUISize ()
   Dim $reg_val
   
   $reg_val = RegRead($reg_key_fontdpi, $reg_val_logpixels)
-  $dlgheight = 575 * $reg_val / 96
+  $dlgheight = 615 * $reg_val / 96
   If ShowGUIInGerman() Then
     $txtwidth = 90 * $reg_val / 96
   Else
@@ -1130,7 +1141,7 @@ EndIf
 
 ;  Tab control
 $txtypos = $txtypos + $txtheight
-GuiCtrlCreateTab($txtxpos, $txtypos, $groupwidth + 2 * $txtxoffset, 5 * $groupheight - 4 * $txtheight + 3.5 * $txtyoffset)
+GuiCtrlCreateTab($txtxpos, $txtypos, $groupwidth + 2 * $txtxoffset, 6 * $groupheight - 6 * $txtheight + 3.5 * $txtyoffset)
 
 ;  Operating Systems' Tab
 If ShowGUIInGerman() Then
@@ -1795,11 +1806,11 @@ Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
 
-;  Windows Vista group
+;  Windows Vista / Server 2008 group
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
 GUICtrlCreateGroup("Windows Vista / Server 2008", $txtxpos, $txtypos, $groupwidth, $groupheight - 2 * $txtheight)
-;  Windows Vista global
+;  Windows Vista / Server 2008 global
 $txtypos = $txtypos + $txtgrpyoffset
 $txtxpos = $txtxpos + $txtxoffset
 If ShowGUIInGerman() Then
@@ -1812,7 +1823,7 @@ If IniRead($inifilename, $ini_section_w60, $lang_token_glb, $disabled) = $enable
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
-;  Windows Vista x64 global
+;  Windows Vista / Server 2008 x64 global
 $txtxpos = $txtxpos + $groupwidth / 2 - $txtxoffset
 If ShowGUIInGerman() Then
   $w60_x64_glb = GUICtrlCreateCheckbox("x64 Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
@@ -1820,6 +1831,36 @@ Else
   $w60_x64_glb = GUICtrlCreateCheckbox("x64 Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
 EndIf
 If IniRead($inifilename, $ini_section_w60_x64, $lang_token_glb, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+
+;  Windows 7 / Server 2008 R2 group
+$txtxpos = 2 * $txtxoffset
+$txtypos = $txtypos + 2.5 * $txtyoffset
+GUICtrlCreateGroup("Windows 7 / Server 2008 R2", $txtxpos, $txtypos, $groupwidth, $groupheight - 2 * $txtheight)
+;  Windows 7 global
+$txtypos = $txtypos + $txtgrpyoffset
+$txtxpos = $txtxpos + $txtxoffset
+If ShowGUIInGerman() Then
+  $w61_glb = GUICtrlCreateCheckbox("Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
+Else
+  $w61_glb = GUICtrlCreateCheckbox("Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
+EndIf
+If IniRead($inifilename, $ini_section_w61, $lang_token_glb, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows 7 / Server 2008 R2 x64 global
+$txtxpos = $txtxpos + $groupwidth / 2 - $txtxoffset
+If ShowGUIInGerman() Then
+  $w61_x64_glb = GUICtrlCreateCheckbox("x64 Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
+Else
+  $w61_x64_glb = GUICtrlCreateCheckbox("x64 Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
+EndIf
+If IniRead($inifilename, $ini_section_w61_x64, $lang_token_glb, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -2639,6 +2680,7 @@ GUICtrlSetState($tabitemfocused, $GUI_SHOW)
 ;  Options group
 $txtxpos = $txtxoffset
 $txtypos = $txtypos + 4 * $txtyoffset
+$txtypos = 6 * $groupheight - 6 * $txtheight + 7 * $txtyoffset
 If ShowGUIInGerman() Then
   GUICtrlCreateGroup("Optionen", $txtxpos, $txtypos, $groupwidth + 2 * $txtxoffset,  $groupheight - $txtheight)
 Else
@@ -2978,6 +3020,16 @@ While 1
       EndIf
       If BitAND(GUICtrlRead($w60_x64_glb), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("w60-x64 glb", DetermineDownloadSwitches($excludesp, $dotnet, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($excludesp, $dotnet), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If BitAND(GUICtrlRead($w61_glb), $GUI_CHECKED) = $GUI_CHECKED Then
+        If RunScripts("w61 glb", DetermineDownloadSwitches($excludesp, $dotnet, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($excludesp, $dotnet), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If BitAND(GUICtrlRead($w61_x64_glb), $GUI_CHECKED) = $GUI_CHECKED Then
+        If RunScripts("w61-x64 glb", DetermineDownloadSwitches($excludesp, $dotnet, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($excludesp, $dotnet), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
@@ -4148,7 +4200,8 @@ While 1
           OR (BitAND(GUICtrlRead($w2k3_x64_rus), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($w2k3_x64_ptb), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($w2k3_x64_deu), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w60_x64_glb), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+          OR (BitAND(GUICtrlRead($w60_x64_glb), $GUI_CHECKED) = $GUI_CHECKED) _
+          OR (BitAND(GUICtrlRead($w61_x64_glb), $GUI_CHECKED) = $GUI_CHECKED) ) Then
           If RunISOCreationScript("all-x64", DetermineISOSwitches($excludesp, $dotnet)) <> 0 Then
             ContinueLoop
           EndIf
