@@ -279,8 +279,9 @@ Version 6.1 -- 30.07.09
 - Fix (defect #78): Linux scripts contained invalid shebang (Thanks to "kl_eisbaer")
 - Fix: Further improvements for Linux scripts (Thanks to Walter Schiessberg and Stefan Jöhnke)
 --------------------------------------------------------------------------------
-Version 6.2 -- ??.??.09
-- Support added for Microsoft Windows 7 and Server 2008 R2 
+Version 6.2 -- 23.10.09
+- Support added for Microsoft Windows 7 and Server 2008 R2
+- Office updates up to 10/2009 integrated by static definitions (Thanks to "Denniss") 
 - WSUS Offline Update will now check for new versions of itself when starting download
 - Installation of IE7 remade optional
 - Automatic shutdown after updating option added (Thanks to "gw_1966")
@@ -298,3 +299,4 @@ Version 6.2 -- ??.??.09
 - Fix: DetermineSystemProperties.vbs script set invalid environment variable %PSH_INSTALLED_MAJOR% instead of %PSH_INSTALLED%
 - Fix: CopyToTarget.cmd script contained invalid usage instructions (Thanks to "rsleegers")
 - Fix: Download exclude list for Windows XP modified since Offline Update missed patch IE7-WindowsXP-KB938127-v2-x86-DEU.exe
+--------------------------------------------------------------------------------

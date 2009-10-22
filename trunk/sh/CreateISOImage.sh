@@ -20,7 +20,7 @@ Invalid or missing parameter: "$@"
 Usage: `basename $0` [system] [language] [parameter]
 
 Supported systems:
-w2k, wxp, wxp-x64, w2k3, w2k3-x64, w60, w60-x64, oxp, o2k, o2k3, o2k7, all-x64, all-x86
+w2k, wxp, wxp-x64, w2k3, w2k3-x64, w60, w60-x64, w61, w61-x64, oxp, o2k, o2k3, o2k7, all-x64, all-x86
 
 Supported languages:
 enu, deu, nld, esn, fra, ptg, ptb, ita, rus, plk, ell, csy
@@ -83,7 +83,7 @@ fi
 
 evaluateparams()
 {
-syslist=("w2k" "wxp" "wxp-x64" "w2k3" "w2k3-x64" "w60" "w60-x64" "oxp" "o2k" "o2k3" "o2k7" "all-x64" "all-x86")
+syslist=("w2k" "wxp" "wxp-x64" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "oxp" "o2k" "o2k3" "o2k7" "all-x64" "all-x86")
 langlist=("enu" "deu" "nld" "esn" "fra" "ptg" "ptb" "ita" "rus" "plk" "ell" "csy" "dan" "nor" "sve" "fin" "jpn" "kor" "chs" "cht" "hun" "trk" "ara" "heb")
 paramlist=("/excludesp" "/dotnet")
 EXCLUDE_SP="0"
@@ -104,7 +104,7 @@ for i in ${langlist[@]}; do
 	fi
 done
 
-if [ "$sys" == "w60" -o "$sys" == "w60-x64" ]; then
+if [ "$sys" == "w60" -o "$sys" == "w60-x64" -o "$sys" == "w61" -o "$sys" == "w61-x64" ]; then
 	echo "Setting language to glb..."
 	lang="glb"
 fi
