@@ -1,0 +1,3 @@
+http://www.autoitscript.com/autoit3/
+http://www.mingw.org/
+http://www.gnu.org/software/wget/
