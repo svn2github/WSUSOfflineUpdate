@@ -14,10 +14,12 @@ Dim Const $reg_key_ie               = "HKEY_LOCAL_MACHINE\Software\Microsoft\Int
 Dim Const $reg_key_dotnet35         = "HKEY_LOCAL_MACHINE\Software\Microsoft\NET Framework Setup\NDP\v3.5"
 Dim Const $reg_key_powershell1      = "HKEY_LOCAL_MACHINE\Software\Microsoft\PowerShell\1"
 Dim Const $reg_key_fontdpi          = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontDPI"
+Dim Const $reg_key_windowmetrics    = "HKEY_CURRENT_USER\Control Panel\Desktop\WindowMetrics"
 Dim Const $reg_val_enabled          = "Enabled"
 Dim Const $reg_val_version          = "Version"
 Dim Const $reg_val_install          = "Install"
 Dim Const $reg_val_logpixels        = "LogPixels"
+Dim Const $reg_val_applieddpi       = "AppliedDPI"
 Dim Const $target_version_dotnet35  = "3.5.30729.01"
 
 ; INI file constants
@@ -92,10 +94,14 @@ Func PowerShellInstalled()
   Return RegRead($reg_key_powershell1, $reg_val_install) = "1"
 EndFunc
 
-Func CalcGUISize ()
+Func CalcGUISize()
   Dim $reg_val
   
-  $reg_val = RegRead($reg_key_fontdpi, $reg_val_logpixels)
+  If (@OSVersion = "WIN_2000") Then
+    $reg_val = RegRead($reg_key_fontdpi, $reg_val_logpixels)
+  Else
+    $reg_val = RegRead($reg_key_windowmetrics, $reg_val_applieddpi)
+  EndIf
   $dlgheight = 295 * $reg_val / 96
   $txtwidth = 240 * $reg_val / 96
   $txtheight = 20 * $reg_val / 96

@@ -1,4 +1,5 @@
 http://download.microsoft.com/download/3/9/A/39A9BC06-AB8C-4097-80D7-755012D9B9C3/office2007spuninstall.exe
+http://download.microsoft.com/download/3/c/e/3ceae427-3fa8-482b-8a47-ba858d449380/office2007-kb943597-fullfile-x86-glb.exe
 http://download.microsoft.com/download/1/7/8/1786AB14-3416-4642-8894-8D0C59F3DA08/office2007-kb967642-fullfile-x86-glb.exe
 http://download.microsoft.com/download/A/5/7/A5744568-0A7D-4B3D-A04C-766DD23AED1A/office2007-kb969559-fullfile-x86-glb.exe
 http://download.microsoft.com/download/A/5/0/A504B378-65F4-400C-973E-E5EC7AEE87E5/powerpoint2007-kb957789-fullfile-x86-glb.exe

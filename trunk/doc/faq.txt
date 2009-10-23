@@ -6,7 +6,7 @@ Beim Ausschluss von Updates vom Download muss prinzipiell zwischen statisch defi
   a) Statisch definierte Updates
     Wollen Sie statisch definierte Updates vom Download ausschließen, so aktivieren Sie im "UpdateGenerator" vor dem Herunterladen die Option "Exclude statically defined updates". Bitte beachten Sie, dass beim folgenden Download entsprechende Dateien, die Sie bereits zu einem früheren Zeitpunkt heruntergeladen haben, gelöscht werden.
   b) Dynamische ermittelte Updates
-    Wollen Sie dynamisch ermittelte Updates vom Download ausschließen, so tragen Sie deren "knowledge base ids" (KBxxxxxx bzw. nur xxxxxx) in die zugehörige Datei "ExcludeList-<Plattform>*.txt" im Verzeichnis "exclude" ein.
+    Wollen Sie dynamisch ermittelte Updates vom Download ausschließen, so tragen Sie deren "knowledge base ids" (KBxxxxxx bzw. nur xxxxxx) in die zugehörige Datei "ExcludeList-<Plattform>[-<Architektur>].txt" im Verzeichnis "exclude" ein.
      
 2. Ausschluss von Updates von der Installation
 Beim Ausschluss von Updates von der Installation muss ebenfalls zwischen statisch definierten Updates und dynamisch ermittelten unterschieden werden.
@@ -22,14 +22,16 @@ Beim Ausschluss von Updates von der Installation muss ebenfalls zwischen statisc
     Wollen Sie dynamisch ermittelte Updates von der Installation ausschließen, so tragen Sie deren "knowledge base ids" (KBxxxxxx bzw. nur xxxxxx) in die Datei "ExcludeList.txt" im Verzeichnis "client\exclude" ein. Das Update wird nun nicht mehr berücksichtigt; bei der Installation erhalten Sie eine entsprechende Warnung.
     Bereits ausgeschlossene Updates sind folgende:
     - KB816093 (Sicherheitsupdate für Microsoft VM)
-    - KB823718 (Sicherheitsupdate für Microsoft Data Access Components)
-    - KB832483 (Sicherheitsupdate für Microsoft Data Access Components)
-    - KB926874 (Internet Explorer 7 (wird ggf. explizit installiert))
     - KB890830 (Windows-Tool zum Entfernen bösartiger Software (MSRT))
+    - KB926874 (Internet Explorer 7 (wird ggf. explizit installiert))
+    - KB940767 (Internet Explorer 7 (wird ggf. explizit installiert))
+    - KB944036 (Internet Explorer 8 (wird ggf. explizit installiert))
     - KB326585 (Office 2000 Service Pack 3 (wird ggf. implizit installiert))
     - KB832671 (Office XP Service Pack 3 (wird ggf. implizit installiert))
-    - KB887616 (Office 2003 Service Pack 2 (veraltet))
     - KB923618 (Office 2003 Service Pack 3 (wird ggf. implizit installiert))
+    - KB953195 (Office 2007 Service Pack 2 (wird ggf. implizit installiert))
+    - KB813715 (Office 2000-Update für italienische Grammatiktools)
+    - KB936929 (Windows XP Service Pack 3 (wird ggf. explizit installiert))
     
 Bitte bedenken Sie dabei, dass Sie durch den Ausschluss von Updates die Sicherheit des Computers beeinträchtigen können.  
 --------------------------------------------------------------------------------
@@ -37,10 +39,10 @@ F: Kann ich Updates dem Download und/oder der Installation hinzufügen?
 A: Ja, Sie haben die Möglichkeit, das Verhalten der Download- und Update-Skripte Ihren Bedürfnissen entsprechend anzupassen, indem Sie Updates vom Download oder der Installation ausschließen oder hinzufügen. Zum Hinzufügen von Updates gehen Sie bitte wie folgt vor:
 
 1. Hinzufügen von Updates zum Download
-Möchten Sie dem Download ein Update hinzufügen, so tragen Sie dessen Download-URL in die entsprechende Datei StaticDownloadLinks-<Plattform>-*<Sprache>.txt im Verzeichnis "static" ein.
+Möchten Sie dem Download ein Update hinzufügen, so tragen Sie dessen Download-URL in die entsprechende Datei StaticDownloadLinks-<Plattform>[-<Architektur>]-<Sprache>.txt im Verzeichnis "static" ein.
   
 2. Hinzufügen von Updates zur Installation
-Möchten Sie ein Update zur Installation hinzufügen, so tragen Sie dessen "knowledge base id" (KBxxxxxx bzw. nur xxxxxx) in die entsprechende Datei StaticUpdateIds-<Plattform>*.txt im Verzeichnis "client\static" ein. Damit erreichen Sie, dass dieses Update immer installiert wird, allerdings auch dann, wenn es bereits vorhanden ist.
+Möchten Sie ein Update zur Installation hinzufügen, so tragen Sie dessen "knowledge base id" (KBxxxxxx bzw. nur xxxxxx) in die entsprechende Datei StaticUpdateIds-<Plattform>[-<Architektur>].txt im Verzeichnis "client\static" ein. Damit erreichen Sie, dass dieses Update immer installiert wird, allerdings auch dann, wenn es bereits vorhanden ist.
 --------------------------------------------------------------------------------
 F: Ich habe das neueste Service Pack für meine Zielplattform bereits und möchte es nicht erneut herunterladen. Kann ich es in das Offline Update integrieren?
 A: Ja, unter folgenden Voraussetzungen: Zunächst müssen Sie Ihr vorhandenes Service Pack in das richtige Verzeichnis kopieren, für ein XP-SP2 auf deutsch also unter "...\client\wxp\deu". Ferner müssen Dateiname und -größe mit den Eigenschaften auf dem Microsoft-Server übereinstimmen, im konkreten Beispiel also "WindowsXP-KB835935-SP2-DEU.exe" mit 277.936.872 Bytes. Da der Download mittels "wget" mit dem Parameter "-N" erfolgt, darf die lokale Datei schließlich auch nicht älter sein als die auf dem Microsoft-Server vorhandene.  
@@ -69,11 +71,11 @@ F: Bei der Installation der Updates erhalte ich eine Warnung, dass das Update KB
 A: Beim Update KB890830 handelt es sich genau genommen nicht um ein Update, sondern um das "Malicious Software Removal Tool (MSRT)". Dieses prüft nach einem Neustart des Rechners diesen einmalig auf Schädlingsbefall, kann aber hinsichtlich Aktualität und Erkennungsrate nicht mit kommerziellen Virenscannern konkurrieren. Da es darüber hinaus in vielen Versionen in Microsofts Katalogdatei wsusscn2.cab aufgeführt ist, wird es schon beim Download der Updates herausgefiltert.
 --------------------------------------------------------------------------------
 F: Bei der Installation der Updates erhalte ich Warnungen, dass weitere Updates nicht gefunden werden konnten. Was hat es damit auf sich?
-A: Vom Offline Update werden standardmäßig nur Updates heruntergeladen, die in Microsofts Katalogdateien wsusscn2.cab bzw. invcif.exe aufgeführt sind. Dies sind mindestens alle kritischen und sicherheitsrelevanten Updates, jedoch nicht alle empfohlenen oder optionalen. Bei Bedarf können Sie die vermissten Updates manuell hinzufügen (s.o.).
+A: Vom Offline Update werden standardmäßig nur Updates heruntergeladen, die in Microsofts Katalogdatei wsusscn2.cab aufgeführt sind. Dies sind mindestens alle kritischen und sicherheitsrelevanten Updates, jedoch nicht alle empfohlenen oder optionalen. Bei Bedarf können Sie die vermissten Updates manuell hinzufügen (s.o.).
 --------------------------------------------------------------------------------
 F: Bei der Installation der Updates erhalte ich merkwürdige Fehlermeldungen auf der Konsole, z.B. "D:\Downloads\Updates\Windows\ctupdate30\client\cmd\DetermineSystemProperties.vbs(92, 3) (null): 0x80041014", das Skript bricht daraufhin ab. Woran liegt das und was kann ich dagegen tun?
 A: Für einen fehlerfreien Ablauf benötigt das Installationsskript korrekte Installationen der Windows-Dienste bzw. -Komponenten "Automatische Updates (WUA)", "Windows Script Host (WSH)" und "Windows Management Instrumentation (WMI)".
-Bitte prüfen Sie zunächst, ob Sie diese Komponenten über System-Werkzeuge wie beispielsweise TweakUI, xp-AntiSpy o.ä. in ihrer Funktionalität eingeschränkt oder sogar deaktiviert haben.
+Bitte prüfen Sie zunächst, ob Sie diese Komponenten über System-Werkzeuge wie beispielsweise TweakUI, nLite, xp-AntiSpy o.ä. in ihrer Funktionalität eingeschränkt oder sogar deaktiviert haben.
 Ist das nicht der Fall, werden diese Fehler meist durch eine fehlerhafte WMI-Registrierung verursacht. Zur Überprüfung können Sie das WMI-Diagnoseprogramm von Microsoft (http://www.microsoft.com/germany/technet/scriptcenter/topics/help/wmidiag.mspx, englisch http://www.microsoft.com/technet/scriptcenter/topics/help/wmidiag.mspx) einsetzen. Weiterführende technische Informationen und Anleitungen zur Fehlerbehebung bis hin zur Neuerstellung des WMI-Repositories finden Sie unter http://www.microsoft.com/technet/scriptcenter/topics/help/wmi.mspx.  
 --------------------------------------------------------------------------------
 F: Bei der Installation der Updates erhalte die Fehlermeldung: "...\ListMissingUpdateIds.vbs(15, 1) (null): Es war keine Signatur im Antragsteller vorhanden." Wie kann ich Abhilfe schaffen? 
@@ -83,30 +85,6 @@ F: Mein Virenscanner meldet, das heruntergeladene Archiv sei infiziert. Was kann
 A: Dies ist ein Fehlalarm! Das Archiv enthält kompilierte AutoIT-Skripte, die manche Anti-Viren-Produkte leider pauschal als Malware bemängeln.
    Sie können die Unbedenklichkeit der Skripte verifizieren, indem Sie die mitgelieferten Quelltextdateien (*.au3) mit AutoIT (http://www.autoitscript.com/autoit3/) selbst übersetzen oder indem Sie das heruntergeladene Archiv auf VirusTotal (http://www.virustotal.com/) von einer Vielzahl von Virenscannern überprüfen lassen.
    Weiterhin können Sie zur Verbesserung der Erkennung Ihres Anti-Viren-Produktes beitragen, indem Sie Ihrem Hersteller die "falsch positiv" erkannten Dateien zusenden.
---------------------------------------------------------------------------------
-F: Ich habe die Option "automatic reboot and recall" verwendet; nun wird bei jedem Neustart und bei jeder Abmeldung der Benutzer "WSUSUpdateAdmin" automatisch angemeldet. Wie kann ich das verhindern und den Originalzustand des Rechners wiederherstellen?
-A: Dieser Effekt tritt sehr selten auf. Bitte helfen Sie dabei, die Software zu verbessern, indem Sie dem Entwicklungsteam die Umstände so detailliert wie möglich schildern.
-Zur "Bereinigung" des Rechners gehen Sie bitte wie folgt vor:
-  - Brechen Sie ggf. das laufende Update-Skript mit <Strg>C ab
-  - Führen Sie das Skript "CleanupRecall.cmd" im Verzeichnis "cmd" aus und starten Sie danach den Rechner neu.
-
-Hilft dies nicht, gehen Sie bitte wie folgt vor:
-  - Melden Sie den "WSUSUpdateAdmin" ab. Halten Sie dabei die Taste <Shift> (<Umschalt>) gedrückt, bis der Anmeldedialog erscheint.
-  - Melden Sie sich als "Administrator" an.
-  - Prüfen Sie, ob eine Datei %SystemRoot%\wsusbak-winlogon.reg existiert
-    - Wenn ja, Starten Sie den Registrierungseditor ([Start - Ausführen...] regedit), löschen Sie den Schlüssel "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" und fügen Sie die gesicherten Werte dieses Schlüssels mit einem Doppelklick auf die Datei %SystemRoot%\wsusbak-winlogon.reg in die Registrierung ein. Löschen Sie die Datei %SystemRoot%\wsusbak-winlogon.reg.
-    - Wenn nein, Starten Sie den Registrierungseditor ([Start - Ausführen...] regedit) und manipulieren Sie einige Werte des Schlüssels "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" wie folgt:
-      - DefaultUserName: Administrator (oder ein Benutzer Ihrer Wahl)
-      - DefaultPassword: Wert löschen
-      - AutoAdminLogon: Wert löschen
-      - ForceAutoLogon: Wert löschen
-  - Löschen Sie in der Computerverwaltung das Benutzerkonto "WSUSUpdateAdmin"
-  - Löschen Sie das Benutzerprofil des "WSUSUpdateAdmin", also i.d.R. das Verzeichnis "WSUSUpdateAdmin" unter "C:\Dokumente und Einstellungen".
-  - Starten Sie den Rechner neu.
---------------------------------------------------------------------------------
-F: Nach der Installation von Patches mit dem Offline Update erscheint bei jedem Neustart des Rechners eine leere Box ohne jeglichen lesbaren Inhalt. Erst wenn ich auf "OK" klicke, fährt das System ordentlich hoch.
-A: Die Ursache dieses seltenen Verhaltens ist noch unklar. Bitte melden Sie sich als Administrator an, prüfen Sie, ob in der Windows-Registrierung unter "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" ein Wert namens "WSUSOfflineUpdate" oder unter "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" Werte namens "DeleteWSUSUpdateAdminProfile" oder "ShowOfflineUpdateLogFile" zu finden sind und löschen sie diese gegebenenfalls.
-Finden Sie die genannten Einträge nicht, ist dieser Effekt nicht direkt auf das Offline Update zurückzuführen. Für weitere Hinweise ist das Team dankbar.    
 --------------------------------------------------------------------------------
 F: Beim Herunterladen der Office-Updates erhalte ich Meldungen der Form "ERROR 404: Not Found.". Verwendet das Offline Update hier fehlerhafte URLs?
 A: Nein. Die URLs der herunterzuladenden Updates werden aus Microsofts Katalogdatei patchdata.xml, die in der Datei invcif.exe enthalten ist, zur Laufzeit ermittelt. Die ungültigen URLs, die Microsoft hier aus nicht nachvollziehbaren Gründen eingetragen hat, wurden für das Offline Update durch korrekte statische Definitionen in den Dateien "StaticDownloadLinks-*.txt" ersetzt; die betreffenden Updates werden also dennoch heruntergeladen.
@@ -137,3 +115,28 @@ A: Wahrscheinlich hat der Benutzer, mit dem Sie sich nach Abschluss der Installa
 F: Unter Windows Vista oder Server 2008 verhindert die Benutzerkontensteuerung (UAC), dass %TEMP%\extract\extract_s.exe ausgeführt wird. Was kann ich dagegen tun?
 A: Die Ausführung von extract_s.exe nur zum Entpacken des Programms extract.exe nach ...\bin, sofern extract.exe dort noch nicht vorhanden ist, also nur beim ersten Download.
 Bitte führen Sie daher UpdateGenerator.exe bzw. DownloadUpdates.cmd unter Windows Vista oder Server 2008 beim ersten Mal als Administrator aus.
+--------------------------------------------------------------------------------
+F: Ich habe die Option "automatic reboot and recall" verwendet; nun wird bei jedem Neustart und bei jeder Abmeldung der Benutzer "WSUSUpdateAdmin" automatisch angemeldet. Wie kann ich das verhindern und den Originalzustand des Rechners wiederherstellen?
+A: Dieser Effekt tritt sehr selten auf. Bitte helfen Sie dabei, die Software zu verbessern, indem Sie dem Entwicklungsteam die Umstände so detailliert wie möglich schildern.
+Zur "Bereinigung" des Rechners gehen Sie bitte wie folgt vor:
+  - Brechen Sie ggf. das laufende Update-Skript mit <Strg>C ab
+  - Führen Sie das Skript "CleanupRecall.cmd" im Verzeichnis "cmd" aus und starten Sie danach den Rechner neu.
+
+Hilft dies nicht, gehen Sie bitte wie folgt vor:
+  - Melden Sie den "WSUSUpdateAdmin" ab. Halten Sie dabei die Taste <Shift> (<Umschalt>) gedrückt, bis der Anmeldedialog erscheint.
+  - Melden Sie sich als "Administrator" an.
+  - Prüfen Sie, ob eine Datei %SystemRoot%\wsusbak-winlogon.reg existiert
+    - Wenn ja, Starten Sie den Registrierungseditor ([Start - Ausführen...] regedit), löschen Sie den Schlüssel "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" und fügen Sie die gesicherten Werte dieses Schlüssels mit einem Doppelklick auf die Datei %SystemRoot%\wsusbak-winlogon.reg in die Registrierung ein. Löschen Sie die Datei %SystemRoot%\wsusbak-winlogon.reg.
+    - Wenn nein, Starten Sie den Registrierungseditor ([Start - Ausführen...] regedit) und manipulieren Sie einige Werte des Schlüssels "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" wie folgt:
+      - DefaultUserName: Administrator (oder ein Benutzer Ihrer Wahl)
+      - DefaultPassword: Wert löschen
+      - AutoAdminLogon: Wert löschen
+      - ForceAutoLogon: Wert löschen
+  - Löschen Sie in der Computerverwaltung das Benutzerkonto "WSUSUpdateAdmin"
+  - Löschen Sie das Benutzerprofil des "WSUSUpdateAdmin", also i.d.R. das Verzeichnis "WSUSUpdateAdmin" unter "C:\Dokumente und Einstellungen".
+  - Starten Sie den Rechner neu.
+--------------------------------------------------------------------------------
+F: Nach der Installation von Patches mit dem Offline Update erscheint bei jedem Neustart des Rechners eine leere Box ohne jeglichen lesbaren Inhalt. Erst wenn ich auf "OK" klicke, fährt das System ordentlich hoch.
+A: Die Ursache dieses seltenen Verhaltens ist noch unklar. Bitte melden Sie sich als Administrator an, prüfen Sie, ob in der Windows-Registrierung unter "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" ein Wert namens "WSUSOfflineUpdate" oder unter "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" Werte namens "DeleteWSUSUpdateAdminProfile" oder "ShowOfflineUpdateLogFile" zu finden sind und löschen sie diese gegebenenfalls.
+Finden Sie die genannten Einträge nicht, ist dieser Effekt nicht direkt auf das Offline Update zurückzuführen. Für weitere Hinweise ist das Team dankbar.    
+--------------------------------------------------------------------------------

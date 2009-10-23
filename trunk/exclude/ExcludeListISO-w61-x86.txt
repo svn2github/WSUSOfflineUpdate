@@ -1,3 +1,4 @@
+*dotnet\/*
 *ofc*
 *o2k*
 *oxp*

@@ -12,6 +12,8 @@ Dim Const $donationURL            = "http://www.wsusoffline.net/donate.html"
 
 ; Registry constants
 Dim Const $reg_key_fontdpi        = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontDPI"
+Dim Const $reg_key_windowmetrics  = "HKEY_CURRENT_USER\Control Panel\Desktop\WindowMetrics"
+Dim Const $reg_val_applieddpi     = "AppliedDPI"
 Dim Const $reg_val_logpixels      = "LogPixels"
 
 ; INI file constants
@@ -1099,10 +1101,14 @@ Func SaveSettings()
   Return 0
 EndFunc
 
-Func CalcGUISize ()
+Func CalcGUISize()
   Dim $reg_val
   
-  $reg_val = RegRead($reg_key_fontdpi, $reg_val_logpixels)
+  If (@OSVersion = "WIN_2000") Then
+    $reg_val = RegRead($reg_key_fontdpi, $reg_val_logpixels)
+  Else
+    $reg_val = RegRead($reg_key_windowmetrics, $reg_val_applieddpi)
+  EndIf
   $dlgheight = 615 * $reg_val / 96
   If ShowGUIInGerman() Then
     $txtwidth = 90 * $reg_val / 96
