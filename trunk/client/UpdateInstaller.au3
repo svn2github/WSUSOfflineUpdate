@@ -1,11 +1,11 @@
-; *** WSUS Offline Update 6.2 - Installer ***
+; *** WSUS Offline Update 6.3 - Installer ***
 ; ***  Author: T. Wittrock, RZ Uni Kiel   ***
 ; *** Dialog scaling added by Th. Baisch  ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 
-Dim Const $caption                  = "WSUS Offline Update 6.2 - Installer"
+Dim Const $caption                  = "WSUS Offline Update 6.3 - Installer"
 
 ; Registry constants
 Dim Const $reg_key_wsh_hklm         = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings"
@@ -20,6 +20,9 @@ Dim Const $reg_val_version          = "Version"
 Dim Const $reg_val_install          = "Install"
 Dim Const $reg_val_logpixels        = "LogPixels"
 Dim Const $reg_val_applieddpi       = "AppliedDPI"
+
+; Defaults
+Dim Const $default_logpixels        = 96
 Dim Const $target_version_dotnet35  = "3.5.30729.01"
 
 ; INI file constants
@@ -97,17 +100,19 @@ EndFunc
 Func CalcGUISize()
   Dim $reg_val
   
-  If (@OSVersion = "WIN_2000") Then
+  $reg_val = RegRead($reg_key_windowmetrics, $reg_val_applieddpi)
+  If ($reg_val = "") Then
     $reg_val = RegRead($reg_key_fontdpi, $reg_val_logpixels)
-  Else
-    $reg_val = RegRead($reg_key_windowmetrics, $reg_val_applieddpi)
   EndIf
-  $dlgheight = 295 * $reg_val / 96
-  $txtwidth = 240 * $reg_val / 96
-  $txtheight = 20 * $reg_val / 96
-  $txtxoffset = 10 * $reg_val / 96
-  $btnwidth = 80 * $reg_val / 96
-  $btnheight = 25 * $reg_val / 96
+  If ($reg_val = "") Then
+    $reg_val = $default_logpixels
+  EndIf
+  $dlgheight = 295 * $reg_val / $default_logpixels
+  $txtwidth = 240 * $reg_val / $default_logpixels
+  $txtheight = 20 * $reg_val / $default_logpixels
+  $txtxoffset = 10 * $reg_val / $default_logpixels
+  $btnwidth = 80 * $reg_val / $default_logpixels
+  $btnheight = 25 * $reg_val / $default_logpixels
   Return 0
 EndFunc	
 

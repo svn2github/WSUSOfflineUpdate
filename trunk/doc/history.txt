@@ -300,3 +300,5 @@ Version 6.2 -- 23.10.09
 - Fix: CopyToTarget.cmd script contained invalid usage instructions (Thanks to "rsleegers")
 - Fix: Download exclude list for Windows XP modified since Offline Update missed patch IE7-WindowsXP-KB938127-v2-x86-DEU.exe
 --------------------------------------------------------------------------------
+Version 6.3 -- ??.??.09
+- Fix: UpdateGenerator and UpdateInstaller dialog scaling could lead to zero size dialog dimensions (Thanks to "MG8371")

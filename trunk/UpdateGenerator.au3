@@ -1,11 +1,11 @@
-; *** WSUS Offline Update 6.2 - Generator ***
+; *** WSUS Offline Update 6.3 - Generator ***
 ; ***  Author: T. Wittrock, RZ Uni Kiel   ***
 ; ***   USB-Option added by Ch. Riedel    ***
 ; *** Dialog scaling added by Th. Baisch  ***
 
 #include <GUIConstants.au3>
 
-Dim Const $caption                = "WSUS Offline Update 6.2"
+Dim Const $caption                = "WSUS Offline Update 6.3"
 Dim Const $title                  = $caption & " - Generator"
 Dim Const $downloadURL            = "http://download.wsusoffline.net/"
 Dim Const $donationURL            = "http://www.wsusoffline.net/donate.html"
@@ -15,6 +15,9 @@ Dim Const $reg_key_fontdpi        = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windo
 Dim Const $reg_key_windowmetrics  = "HKEY_CURRENT_USER\Control Panel\Desktop\WindowMetrics"
 Dim Const $reg_val_applieddpi     = "AppliedDPI"
 Dim Const $reg_val_logpixels      = "LogPixels"
+
+; Defaults
+Dim Const $default_logpixels      = 96
 
 ; INI file constants
 Dim Const $ini_section_w2k        = "Windows 2000"
@@ -1104,23 +1107,25 @@ EndFunc
 Func CalcGUISize()
   Dim $reg_val
   
-  If (@OSVersion = "WIN_2000") Then
+  $reg_val = RegRead($reg_key_windowmetrics, $reg_val_applieddpi)
+  If ($reg_val = "") Then
     $reg_val = RegRead($reg_key_fontdpi, $reg_val_logpixels)
-  Else
-    $reg_val = RegRead($reg_key_windowmetrics, $reg_val_applieddpi)
   EndIf
-  $dlgheight = 615 * $reg_val / 96
+  If ($reg_val = "") Then
+    $reg_val = $default_logpixels
+  EndIf
+  $dlgheight = 615 * $reg_val / $default_logpixels
   If ShowGUIInGerman() Then
-    $txtwidth = 90 * $reg_val / 96
+    $txtwidth = 90 * $reg_val / $default_logpixels
   Else
-    $txtwidth = 80 * $reg_val / 96
+    $txtwidth = 80 * $reg_val / $default_logpixels
   EndIf
-  $txtheight = 20 * $reg_val / 96
-  $btnwidth = 80 * $reg_val / 96
-  $btnheight = 25 * $reg_val / 96  
-  $txtgrpyoffset = 15 * $reg_val / 96
-  $txtxoffset = 10 * $reg_val / 96
-  $txtyoffset = 10 * $reg_val / 96
+  $txtheight = 20 * $reg_val / $default_logpixels
+  $btnwidth = 80 * $reg_val / $default_logpixels
+  $btnheight = 25 * $reg_val / $default_logpixels  
+  $txtgrpyoffset = 15 * $reg_val / $default_logpixels
+  $txtxoffset = 10 * $reg_val / $default_logpixels
+  $txtyoffset = 10 * $reg_val / $default_logpixels
   Return 0
 EndFunc	
 
