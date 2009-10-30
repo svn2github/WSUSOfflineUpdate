@@ -473,9 +473,7 @@ Func DisableGUI()
   GUICtrlSetState($skipdownload, $GUI_DISABLE)
   GUICtrlSetState($btn_proxy, $GUI_DISABLE)
   GUICtrlSetState($btn_wsus, $GUI_DISABLE)
-  If $btn_donate <> 0 Then
-    GUICtrlSetState($btn_donate, $GUI_DISABLE)
-  EndIf
+  GUICtrlSetState($btn_donate, $GUI_DISABLE)
   GUICtrlSetState($btn_exit, $GUI_DISABLE)
 
   Return 0
@@ -681,9 +679,7 @@ Func EnableGUI()
   GUICtrlSetState($skipdownload, $GUI_ENABLE)
   GUICtrlSetState($btn_proxy, $GUI_ENABLE)
   GUICtrlSetState($btn_wsus, $GUI_ENABLE)
-  If $btn_donate <> 0 Then
-    GUICtrlSetState($btn_donate, $GUI_ENABLE)
-  EndIf
+  GUICtrlSetState($btn_donate, $GUI_ENABLE)
   GUICtrlSetState($btn_exit, $GUI_ENABLE)
 
   Return 0
@@ -2835,7 +2831,7 @@ EndIf
 $txtxpos = $txtxoffset
 $txtypos = $txtypos + $txtgrpyoffset + $txtheight
 $btn_start = GUICtrlCreateButton("Start", $txtxpos, $txtypos, $btnwidth, $btnheight)
-GUICtrlSetResizing (-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM)
 
 ;  Skip download checkbox
 $txtxpos = $txtxpos + $btnwidth + $txtxoffset
@@ -2848,26 +2844,25 @@ EndIf
 ;  Proxy button
 $txtxpos = 2* $txtxoffset + $groupwidth / 2 - $btnwidth
 $btn_proxy = GUICtrlCreateButton("Proxy...", $txtxpos, $txtypos, $btnwidth, $btnheight)
-GUICtrlSetResizing (-1, $GUI_DOCKBOTTOM)
+GUICtrlSetResizing(-1, $GUI_DOCKBOTTOM)
 $proxy = IniRead($inifilename, $ini_section_misc, $misc_token_proxy, "")
 
 ;  WSUS button
 $txtxpos = 2 * $txtxoffset + $groupwidth / 2
 $btn_wsus = GUICtrlCreateButton("WSUS...", $txtxpos, $txtypos, $btnwidth, $btnheight)
-GUICtrlSetResizing (-1, $GUI_DOCKBOTTOM)
+GUICtrlSetResizing(-1, $GUI_DOCKBOTTOM)
 $wsus = IniRead($inifilename, $ini_section_misc, $misc_token_wsus, "")
 
 ;  Donate button
 $txtxpos = 2.5 * $txtxoffset + 3 * $groupwidth / 4 - $btnwidth / 2
-If IniRead($inifilename, $ini_section_misc, $misc_token_showdonate, $enabled) = $enabled Then
-  If ShowGUIInGerman() Then
-    $btn_donate = GUICtrlCreateButton("Spenden...", $txtxpos, $txtypos, $btnwidth, $btnheight)
-  Else
-    $btn_donate = GUICtrlCreateButton("Donate...", $txtxpos, $txtypos, $btnwidth, $btnheight)
-  EndIf
-  GUICtrlSetResizing (-1, $GUI_DOCKBOTTOM)
+If ShowGUIInGerman() Then
+  $btn_donate = GUICtrlCreateButton("Spenden...", $txtxpos, $txtypos, $btnwidth, $btnheight)
 Else
-  $btn_donate = 0
+  $btn_donate = GUICtrlCreateButton("Donate...", $txtxpos, $txtypos, $btnwidth, $btnheight)
+EndIf
+GUICtrlSetResizing(-1, $GUI_DOCKBOTTOM)
+If IniRead($inifilename, $ini_section_misc, $misc_token_showdonate, $enabled) = $disabled Then
+  GUICtrlSetState(-1, $GUI_HIDE)
 EndIf
 
 ;  Exit button
@@ -2877,7 +2872,7 @@ If ShowGUIInGerman() Then
 Else
   $btn_exit = GUICtrlCreateButton("Exit", $txtxpos, $txtypos, $btnwidth, $btnheight)
 EndIf
-GUICtrlSetResizing (-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM)
+GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM)
 
 ; GUI message loop
 GUISetState()
