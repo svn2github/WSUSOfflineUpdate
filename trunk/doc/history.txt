@@ -302,3 +302,4 @@ Version 6.2 -- 23.10.09
 --------------------------------------------------------------------------------
 Version 6.3 -- ??.??.09
 - Fix: UpdateGenerator and UpdateInstaller dialog scaling could lead to zero size dialog dimensions (Thanks to "MG8371")
+- Fix: CopyToTarget.cmd script will now only copy newer files (Thanks to "Georg")

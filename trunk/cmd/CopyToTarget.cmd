@@ -105,7 +105,7 @@ if not exist %SystemRoot%\system32\xcopy.exe goto NoXCopy
 title Copying client tree for %*...
 echo Copying client tree for %*...
 pushd ..\client
-%SystemRoot%\system32\xcopy.exe *.* %OUTPUT_PATH% /E /I /Y /EXCLUDE:%USB_FILTER%
+%SystemRoot%\system32\xcopy.exe *.* %OUTPUT_PATH% /D /E /I /Y /EXCLUDE:%USB_FILTER%
 if %errorlevel% NEQ 0 (
   popd
   if exist %USB_FILTER% del %USB_FILTER%

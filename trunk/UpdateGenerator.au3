@@ -78,7 +78,7 @@ Dim Const $misc_token_minimize    = "minimizeondownload"
 Dim Const $misc_token_showdonate  = "showdonate"
 
 Dim $maindlg, $inifilename, $tabitemfocused, $excludesp, $dotnet, $cleanupdownloads, $verifydownloads, $skipdownload
-Dim $cdiso, $dvdiso, $usbcopy, $usbpath, $usbfsf, $btn_start, $btn_proxy, $btn_wsus, $btn_donate, $btn_exit, $proxy, $wsus, $dummy
+Dim $cdiso, $dvdiso, $usbcopy, $usblbl, $usbpath, $usbfsf, $btn_start, $btn_proxy, $btn_wsus, $btn_donate, $btn_exit, $proxy, $wsus, $dummy
 Dim $w2k_enu, $wxp_enu, $w2k3_enu, $w2k3_x64_enu, $o2k_enu, $oxp_enu, $o2k3_enu, $o2k7_enu  ; English
 Dim $w2k_fra, $wxp_fra, $w2k3_fra, $w2k3_x64_fra, $o2k_fra, $oxp_fra, $o2k3_fra, $o2k7_fra  ; French
 Dim $w2k_esn, $wxp_esn, $w2k3_esn, $w2k3_x64_esn, $o2k_esn, $oxp_esn, $o2k3_esn, $o2k7_esn  ; Spanish
@@ -466,6 +466,7 @@ Func DisableGUI()
   GUICtrlSetState($cdiso, $GUI_DISABLE)
   GUICtrlSetState($dvdiso, $GUI_DISABLE)
   GUICtrlSetState($usbcopy, $GUI_DISABLE)
+  GUICtrlSetState($usblbl, $GUI_DISABLE)
   GUICtrlSetState($usbpath, $GUI_DISABLE)
   GUICtrlSetState($usbfsf, $GUI_DISABLE)
 
@@ -672,6 +673,7 @@ Func EnableGUI()
   GUICtrlSetState($dvdiso, $GUI_ENABLE)
   GUICtrlSetState($usbcopy, $GUI_ENABLE)
   If BitAND(GUICtrlRead($usbcopy), $GUI_CHECKED) = $GUI_CHECKED Then
+    GUICtrlSetState($usblbl, $GUI_ENABLE)
     GUICtrlSetState($usbpath, $GUI_ENABLE)
     GUICtrlSetState($usbfsf, $GUI_ENABLE)
   EndIf
@@ -2810,19 +2812,21 @@ EndIf
 ;  USB target
 $txtxpos = $txtxpos + $groupwidth / 2
 If ShowGUIInGerman() Then
-  GUICtrlCreateLabel("Verzeichnis:", $txtxpos, $txtypos, $txtwidth - 20, $txtheight)
+  $usblbl = GUICtrlCreateLabel("Verzeichnis:", $txtxpos, $txtypos, $txtwidth - 20, $txtheight)
 Else
-  GUICtrlCreateLabel("Directory:", $txtxpos, $txtypos, $txtwidth - 20, $txtheight)
+  $usblbl = GUICtrlCreateLabel("Directory:", $txtxpos, $txtypos, $txtwidth - 20, $txtheight)
 EndIf
 $txtxpos = $txtxpos + $txtwidth - 20
-$usbpath = GUICtrlCreateInput(IniRead($inifilename, $ini_section_usb, $usb_token_path, ""), $txtxpos, $txtypos, $groupwidth / 2 - ($txtwidth - 20) - $txtheight, $txtheight)
+$usbpath = GUICtrlCreateInput(IniRead($inifilename, $ini_section_usb, $usb_token_path, ""), $txtxpos, $txtypos - 2, $groupwidth / 2 - ($txtwidth - 20) - $txtheight, $txtheight)
 ;  USB FSF button - FileSelectFolder
 $txtxpos = $txtxpos + $groupwidth / 2 - ($txtwidth - 20) - $txtheight
-$usbfsf = GUICtrlCreateButton("...", $txtxpos, $txtypos, $txtheight, $txtheight)
+$usbfsf = GUICtrlCreateButton("...", $txtxpos, $txtypos - 2, $txtheight, $txtheight)
 If BitAND(GUICtrlRead($usbcopy), $GUI_CHECKED) = $GUI_CHECKED Then
+  GUICtrlSetState($usblbl, $GUI_ENABLE)
   GUICtrlSetState($usbpath, $GUI_ENABLE)
   GUICtrlSetState($usbfsf, $GUI_ENABLE)
 Else
+  GUICtrlSetState($usblbl, $GUI_DISABLE)
   GUICtrlSetState($usbpath, $GUI_DISABLE)
   GUICtrlSetState($usbfsf, $GUI_DISABLE)
 EndIf
@@ -2937,9 +2941,11 @@ While 1
 
     Case $usbcopy           ; USB copy button pressed
       If BitAND(GUICtrlRead($usbcopy), $GUI_CHECKED) = $GUI_CHECKED Then
+        GUICtrlSetState($usblbl, $GUI_ENABLE)
         GUICtrlSetState($usbpath, $GUI_ENABLE)
         GUICtrlSetState($usbfsf, $GUI_ENABLE)
       Else
+        GUICtrlSetState($usblbl, $GUI_DISABLE)
         GUICtrlSetState($usbpath, $GUI_DISABLE)
         GUICtrlSetState($usbfsf, $GUI_DISABLE)
       EndIf
