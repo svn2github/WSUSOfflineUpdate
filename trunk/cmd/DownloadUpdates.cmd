@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.3a (r34)
+set WSUSUPDATE_VERSION=6.3a (r35)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -118,6 +118,8 @@ if exist ..\bin\cygwin1.dll (
 )
 if exist ..\static\StaticDownloadLinks-mkisofs.txt del ..\static\StaticDownloadLinks-mkisofs.txt
 if exist ..\client\cmd\Reboot.vbs del ..\client\cmd\Reboot.vbs
+if exist ..\client\bin\msxsl.exe move /Y ..\client\bin\msxsl.exe ..\bin >nul
+if exist ..\client\xslt\nul rd /S /Q ..\client\xslt
 
 rem *** Determine state of automatic daylight time setting ***
 echo Determining state of automatic daylight time setting...
@@ -176,9 +178,9 @@ call ..\client\cmd\SafeRmDir.cmd "%TEMP%\extract"
 :SkipExtract
 
 rem *** Download Microsoft XSL processor frontend ***
-if exist ..\client\bin\msxsl.exe goto SkipMSXSL
+if exist ..\bin\msxsl.exe goto SkipMSXSL
 echo Downloading/validating Microsoft XSL processor frontend...
-%WGET_PATH% -N -i ..\static\StaticDownloadLink-msxsl.txt -P ..\client\bin
+%WGET_PATH% -N -i ..\static\StaticDownloadLink-msxsl.txt -P ..\bin
 if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded/validated Microsoft XSL processor frontend >>%DOWNLOAD_LOGFILE%
 :SkipMSXSL
@@ -234,8 +236,8 @@ del ..\client\wsus\wuredist.cab
 
 rem *** Determine update urls for Windows Update Agent ***
 echo Determining update urls for Windows Update Agent...
-if not exist ..\client\bin\msxsl.exe goto NoMSXSL
-..\client\bin\msxsl.exe ..\client\wsus\wuredist.xml ..\xslt\ExtractDownloadLinks-wua-%TARGET_ARCHITECTURE%.xsl -o "%TEMP%\DownloadLinks-wua.txt"
+if not exist ..\bin\msxsl.exe goto NoMSXSL
+..\bin\msxsl.exe ..\client\wsus\wuredist.xml ..\xslt\ExtractDownloadLinks-wua-%TARGET_ARCHITECTURE%.xsl -o "%TEMP%\DownloadLinks-wua.txt"
 if errorlevel 1 goto DownloadError
 del ..\client\wsus\wuredist.xml
 
@@ -320,7 +322,7 @@ if exist ..\static\StaticDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.txt (
   ) 
 )
 :SkipStatics
-if not exist ..\client\bin\msxsl.exe goto NoMSXSL
+if not exist ..\bin\msxsl.exe goto NoMSXSL
 for %%i in (win w2k wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64) do (if /i "%1"=="%%i" goto DetermineWindows)
 for %%i in (ofc o2k oxp o2k3 o2k7 o2k7-x64) do (if /i "%1"=="%%i" goto DetermineOffice)
 goto DoDownload
@@ -335,11 +337,11 @@ if not exist ..\bin\extract.exe goto NoExtract
 del "%TEMP%\package.cab"
 
 if exist ..\xslt\ExtractDownloadLinks-%1-%2.xsl (
-  ..\client\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractDownloadLinks-%1-%2.xsl -o "%TEMP%\DownloadLinks-%1-%2.txt"
+  ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractDownloadLinks-%1-%2.xsl -o "%TEMP%\DownloadLinks-%1-%2.txt"
   if errorlevel 1 goto DownloadError
 )
 if exist ..\xslt\ExtractDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.xsl (
-  ..\client\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.xsl -o "%TEMP%\DownloadLinks-%1-%2.txt"
+  ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.xsl -o "%TEMP%\DownloadLinks-%1-%2.txt"
   if errorlevel 1 goto DownloadError
 )
 del "%TEMP%\package.xml"
@@ -370,11 +372,11 @@ popd
 call ..\client\cmd\SafeRmDir.cmd "%TEMP%\inventory"
 
 if exist ..\xslt\ExtractDownloadLinks-%1-%2.xsl (
-  ..\client\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractDownloadLinks-%1-%2.xsl -o "%TEMP%\DownloadLinks-%1-%2.txt"
+  ..\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractDownloadLinks-%1-%2.xsl -o "%TEMP%\DownloadLinks-%1-%2.txt"
   if errorlevel 1 goto DownloadError
 )
 if exist ..\xslt\ExtractDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.xsl (
-  ..\client\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.xsl -o "%TEMP%\DownloadLinks-%1-%2.txt"
+  ..\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.xsl -o "%TEMP%\DownloadLinks-%1-%2.txt"
   if errorlevel 1 goto DownloadError
 )
 if not exist "%TEMP%\DownloadLinks-%1-%2.txt" (
@@ -382,15 +384,15 @@ if not exist "%TEMP%\DownloadLinks-%1-%2.txt" (
   goto DoDownload
 )
 if exist ..\xslt\ExtractValidIds-%1-%TARGET_ARCHITECTURE%.xsl (
-  ..\client\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractValidIds-%1-%TARGET_ARCHITECTURE%.xsl -o "%TEMP%\ValidIds-%1.txt"
+  ..\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractValidIds-%1-%TARGET_ARCHITECTURE%.xsl -o "%TEMP%\ValidIds-%1.txt"
 ) else (
-  ..\client\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractValidIds-%1.xsl -o "%TEMP%\ValidIds-%1.txt"
+  ..\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractValidIds-%1.xsl -o "%TEMP%\ValidIds-%1.txt"
 )
 if errorlevel 1 goto DownloadError
 if exist ..\xslt\ExtractExpiredIds-%1-%TARGET_ARCHITECTURE%.xsl (
-  ..\client\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractExpiredIds-%1-%TARGET_ARCHITECTURE%.xsl -o "%TEMP%\ExpiredIds-%1.txt"
+  ..\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractExpiredIds-%1-%TARGET_ARCHITECTURE%.xsl -o "%TEMP%\ExpiredIds-%1.txt"
 ) else (
-  ..\client\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractExpiredIds-%1.xsl -o "%TEMP%\ExpiredIds-%1.txt"
+  ..\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractExpiredIds-%1.xsl -o "%TEMP%\ExpiredIds-%1.txt"
 )
 if errorlevel 1 goto DownloadError
 del "%TEMP%\patchdata.xml"
@@ -617,8 +619,8 @@ goto Error
 
 :NoMSXSL
 echo.
-echo ERROR: Microsoft XSL processor frontend ..\client\bin\msxsl.exe not found.
-echo %DATE% %TIME% - Error: Microsoft XSL processor frontend ..\client\bin\msxsl.exe not found >>%DOWNLOAD_LOGFILE%
+echo ERROR: Microsoft XSL processor frontend ..\bin\msxsl.exe not found.
+echo %DATE% %TIME% - Error: Microsoft XSL processor frontend ..\bin\msxsl.exe not found >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 

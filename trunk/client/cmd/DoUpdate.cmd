@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.3a (r34)
+set WSUSUPDATE_VERSION=6.3a (r35)
 set UPDATE_LOGFILE=%SystemRoot%\ctupdate.log
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSUPDATE_VERSION%)...
@@ -612,67 +612,14 @@ if exist "%TEMP%\MissingUpdateIds.txt" del "%TEMP%\MissingUpdateIds.txt"
 %CSCRIPT_PATH% //Nologo //E:vbs ListMissingUpdateIds.vbs %LIST_MODE_IDS%
 
 rem *** List ids of installed updates ***
-if "%LIST_MODE_IDS%"=="/all" goto SkipListInstalled
-if "%LIST_MODE_UPDATES%"=="/excludestatics" goto SkipListInstalled
+if "%LIST_MODE_IDS%"=="/all" goto ListInstFiles
+if "%LIST_MODE_UPDATES%"=="/excludestatics" goto ListInstFiles
 echo Listing ids of installed updates...
 if exist "%TEMP%\InstalledUpdateIds.txt" del "%TEMP%\InstalledUpdateIds.txt"
 %CSCRIPT_PATH% //Nologo //E:vbs ListInstalledUpdateIds.vbs
 
-:SkipListInstalled
-if exist "%TEMP%\wsusscn2.cab" del "%TEMP%\wsusscn2.cab"
-
-rem *** Extract Office inventory packages ***
-if "%IGNORE_OFFICE%"=="/ignoreoffice" goto ListInstFiles
-if "%OFFICE_NAME%"=="" goto ListInstFiles
-if not exist ..\%OFFICE_NAME%\%OFFICE_LANGUAGE%\nul (
-  if not exist ..\%OFFICE_NAME%\glb\nul goto ListInstFiles
-)
-echo Extracting Office inventory packages...
-if not exist ..\wsus\invcif.exe (
-  echo Warning: Office inventory catalog file ..\wsus\invcif.exe not found. 
-  echo %DATE% %TIME% - Warning: Office inventory catalog file ..\wsus\invcif.exe not found >>%UPDATE_LOGFILE%
-  goto ListInstFiles
-)
-if not exist ..\wsus\invcm.exe (
-  echo Warning: Office inventory tool ..\wsus\invcm.exe not found. 
-  echo %DATE% %TIME% - Warning: Office inventory tool ..\wsus\invcm.exe not found >>%UPDATE_LOGFILE%
-  goto ListInstFiles
-)
-if not exist ..\bin\msxsl.exe (
-  echo Warning: Microsoft XSL processor frontend ..\bin\msxsl.exe not found. 
-  echo %DATE% %TIME% - Warning: Microsoft XSL processor frontend ..\bin\msxsl.exe not found >>%UPDATE_LOGFILE%
-  goto ListInstFiles
-)
-..\wsus\invcm.exe /T:"%TEMP%\inventory" /C /Q
-..\wsus\invcif.exe /T:"%TEMP%\inventory\cifs" /C /Q
-"%TEMP%\inventory\inventory.exe" /s "%TEMP%\inventory\cifs" /o "%TEMP%\inventory\cifs"
-"%TEMP%\inventory\convert.exe" /d "%TEMP%\inventory\cifs" /o "%TEMP%\inventory.xml"
-call SafeRmDir.cmd "%TEMP%\inventory"
-
-rem *** List ids of missing Office updates ***
-echo Listing ids of missing Office updates...
-if "%LIST_MODE_IDS%"=="/all" (
-  ..\bin\msxsl.exe "%TEMP%\inventory.xml" ..\xslt\ExtractAllOfficeUpdateIds.xsl -o "%TEMP%\MissingOfficeUpdateIds.txt"
-) else (
-  ..\bin\msxsl.exe "%TEMP%\inventory.xml" ..\xslt\ExtractMissingOfficeUpdateIds.xsl -o "%TEMP%\MissingOfficeUpdateIds.txt"
-)
-del "%TEMP%\inventory.xml"
-if not exist "%TEMP%\MissingOfficeUpdateIds.txt" goto ListInstFiles 
-for %%i in ("%TEMP%\MissingOfficeUpdateIds.txt") do (
-  if "%%~zi"=="0" (
-    del "%TEMP%\MissingOfficeUpdateIds.txt"
-    goto ListInstFiles
-  )
-)
-if exist "%TEMP%\MissingUpdateIds.txt" (
-  %SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\MissingOfficeUpdateIds.txt" "%TEMP%\MissingUpdateIds.txt" >"%TEMP%\MissingOSUpdateIds.txt"
-  del "%TEMP%\MissingUpdateIds.txt"
-  ren "%TEMP%\MissingOSUpdateIds.txt" MissingUpdateIds.txt
-)
-for /F "usebackq" %%i in ("%TEMP%\MissingOfficeUpdateIds.txt") do echo %%i>>"%TEMP%\MissingUpdateIds.txt"
-del "%TEMP%\MissingOfficeUpdateIds.txt"
-
 :ListInstFiles
+if exist "%TEMP%\wsusscn2.cab" del "%TEMP%\wsusscn2.cab"
 rem *** List update files ***
 if not exist "%TEMP%\MissingUpdateIds.txt" (
   if "%REBOOT_REQUIRED%"=="1" (goto Installed) else (goto NoMissingIds)
