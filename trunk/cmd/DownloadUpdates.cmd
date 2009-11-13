@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.3
+set WSUSUPDATE_VERSION=6.3+ (r40)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -127,6 +127,8 @@ if exist ..\exclude\ExcludeListISO-o2k.txt del ..\exclude\ExcludeListISO-o2k.txt
 if exist ..\exclude\ExcludeListUSB-o2k.txt del ..\exclude\ExcludeListUSB-o2k.txt
 del /Q ..\static\*o2k-*.* >nul 2>&1
 del /Q ..\xslt\*o2k-*.* >nul 2>&1
+if exist ..\xslt\ExtractExpiredIds-o2k.xsl del ..\xslt\ExtractExpiredIds-o2k.xsl
+if exist ..\xslt\ExtractValidIds-o2k.xsl del ..\xslt\ExtractValidIds-o2k.xsl
 
 rem *** Determine state of automatic daylight time setting ***
 echo Determining state of automatic daylight time setting...

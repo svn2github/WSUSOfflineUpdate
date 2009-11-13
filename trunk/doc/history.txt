@@ -309,3 +309,5 @@ Version 6.3 -- 13.11.09
 - Fix: UpdateGenerator and UpdateInstaller dialog scaling could lead to zero size dialog dimensions (Thanks to "MG8371")
 - Fix: DownloadUpdates.cmd will set FTP proxy for wget now (Thanks to "LauxAimoEwa")
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.09
+- Fix: Removed o2k remainders in xslt directory

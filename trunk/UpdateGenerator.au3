@@ -711,7 +711,7 @@ Dim $result
       $result = MsgBox(0x2023, "Versionsprüfung", "Sie setzen " & $caption & " ein. Eine neue Version ist verfügbar." _
                                           & @LF & "Möchten Sie nun die Download-Seite (" & $downloadURL & ") besuchen?")
     Else
-      $result = MsgBox(0x2023, "Version check", "You use " & $caption & ". A new version is available." _
+      $result = MsgBox(0x2023, "Version check", "You are using " & $caption & ". A new version is available." _
                                         & @LF & "Do you want to visit the download site (" & $downloadURL & ") now?")
     EndIf
     Switch $result
