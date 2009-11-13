@@ -1,0 +1,9 @@
+*o2k*
+*w2k*
+*wxp*
+*w6*
+*win*
+*-x64*
+*.au3
+*invcif.exe
+*invcm.exe
