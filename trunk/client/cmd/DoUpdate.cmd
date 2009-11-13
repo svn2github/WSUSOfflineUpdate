@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.3a (r36)
+set WSUSUPDATE_VERSION=6.3a (r37)
 set UPDATE_LOGFILE=%SystemRoot%\ctupdate.log
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSUPDATE_VERSION%)...
@@ -19,7 +19,7 @@ echo %DATE% %TIME% - Info: Starting WSUS offline update (v. %WSUSUPDATE_VERSION%
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/nobackup /instie7 /instie8 /instdotnet /instpsh /ignoreoffice /instofccnvs /autoreboot /shutdown /showlog /all /excludestatics) do (
+for %%i in (/nobackup /instie7 /instie8 /instdotnet /instpsh /instofccnvs /autoreboot /shutdown /showlog /all /excludestatics) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected >>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/nobackup" set BACKUP_MODE=/nobackup
@@ -27,7 +27,6 @@ if /i "%1"=="/instie7" set INSTALL_IE=/instie7
 if /i "%1"=="/instie8" set INSTALL_IE=/instie8
 if /i "%1"=="/instdotnet" set INSTALL_DOTNET=/instdotnet
 if /i "%1"=="/instpsh" set INSTALL_PSH=/instpsh
-if /i "%1"=="/ignoreoffice" set IGNORE_OFFICE=/ignoreoffice
 if /i "%1"=="/instofccnvs" set INSTALL_CONVERTERS=/instofccnvs
 if /i "%1"=="/autoreboot" set BOOT_MODE=/autoreboot
 if /i "%1"=="/shutdown" set FINISH_MODE=/shutdown
@@ -67,7 +66,7 @@ if "%USERNAME%"=="WSUSUpdateAdmin" (
 
 rem *** Determine system's properties ***
 echo Determining system's properties...
-%CSCRIPT_PATH% //Nologo //E:vbs DetermineSystemProperties.vbs %IGNORE_OFFICE%
+%CSCRIPT_PATH% //Nologo //E:vbs DetermineSystemProperties.vbs
 if errorlevel 1 goto NoSysEnvVars
 
 rem *** Set environment variables for system's properties ***
@@ -94,12 +93,6 @@ rem echo Found Microsoft Data Access Components version: %MDAC_VERSION_MAJOR%.%M
 rem echo Found Microsoft DirectX version: %DIRECTX_VERSION_MAJOR%.%DIRECTX_VERSION_MINOR%.%DIRECTX_VERSION_BUILD%.%DIRECTX_VERSION_REVISION% (%DIRECTX_NAME%)
 rem echo Found Microsoft .NET Framework 3.5 version: %DOTNET_VERSION_MAJOR%.%DOTNET_VERSION_MINOR%.%DOTNET_VERSION_BUILD%.%DOTNET_VERSION_REVISION%
 rem echo Found Windows Media Player version: %WMP_VERSION_MAJOR%.%WMP_VERSION_MINOR%.%WMP_VERSION_BUILD%.%WMP_VERSION_REVISION%
-if "%IGNORE_OFFICE%"=="/ignoreoffice" (
-  echo Info: Skipped detection of Microsoft Office as requested.
-)
-if "%O2K_VERSION_MAJOR%" NEQ "" (
-  echo Found Microsoft Office 2000 %O2K_VERSION_APP% version: %O2K_VERSION_MAJOR%.%O2K_VERSION_MINOR%.%O2K_VERSION_BUILD%.%O2K_VERSION_REVISION% ^(o2k %O2K_LANGUAGE% sp%O2K_SP_VERSION%^)
-)
 if "%OXP_VERSION_MAJOR%" NEQ "" (
   echo Found Microsoft Office XP %OXP_VERSION_APP% version: %OXP_VERSION_MAJOR%.%OXP_VERSION_MINOR%.%OXP_VERSION_BUILD%.%OXP_VERSION_REVISION% ^(oxp %OXP_LANGUAGE% sp%OXP_SP_VERSION%^)
 )
@@ -119,12 +112,6 @@ echo %DATE% %TIME% - Info: Found Microsoft Data Access Components version %MDAC_
 echo %DATE% %TIME% - Info: Found Microsoft DirectX version %DIRECTX_VERSION_MAJOR%.%DIRECTX_VERSION_MINOR%.%DIRECTX_VERSION_BUILD%.%DIRECTX_VERSION_REVISION% (%DIRECTX_NAME%) >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 3.5 version %DOTNET_VERSION_MAJOR%.%DOTNET_VERSION_MINOR%.%DOTNET_VERSION_BUILD%.%DOTNET_VERSION_REVISION% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows Media Player version %WMP_VERSION_MAJOR%.%WMP_VERSION_MINOR%.%WMP_VERSION_BUILD%.%WMP_VERSION_REVISION% >>%UPDATE_LOGFILE%
-if "%IGNORE_OFFICE%"=="/ignoreoffice" (
-  echo %DATE% %TIME% - Info: Skipped detection of Microsoft Office as requested >>%UPDATE_LOGFILE%
-)
-if "%O2K_VERSION_MAJOR%" NEQ "" (
-  echo %DATE% %TIME% - Info: Found Microsoft Office 2000 %O2K_VERSION_APP% version %O2K_VERSION_MAJOR%.%O2K_VERSION_MINOR%.%O2K_VERSION_BUILD%.%O2K_VERSION_REVISION% ^(o2k %O2K_LANGUAGE% sp%O2K_SP_VERSION%^) >>%UPDATE_LOGFILE%
-)
 if "%OXP_VERSION_MAJOR%" NEQ "" (
   echo %DATE% %TIME% - Info: Found Microsoft Office XP %OXP_VERSION_APP% version %OXP_VERSION_MAJOR%.%OXP_VERSION_MINOR%.%OXP_VERSION_BUILD%.%OXP_VERSION_REVISION% ^(oxp %OXP_LANGUAGE% sp%OXP_SP_VERSION%^) >>%UPDATE_LOGFILE%
 )
@@ -139,11 +126,6 @@ rem *** Check Operating System architecture ***
 for %%i in (x86 x64) do (if /i "%OS_ARCHITECTURE%"=="%%i" goto ValidArch)
 goto UnsupArch
 :ValidArch
-
-rem *** Check Operating System Service Pack level ***
-if "%OS_NAME%"=="wxp" (
-  if 0 EQU %OS_SP_VERSION_MAJOR% goto UnsupSP
-)
 
 rem *** Check availability of /autoreboot switch ***
 if "%BOOT_MODE%"=="/autoreboot" (
@@ -184,11 +166,9 @@ if /i "%OS_ARCHITECTURE%"=="x64" (
 )
 echo Medium does not support Microsoft Windows (%OS_NAME% %OS_LANGUAGE%).
 echo %DATE% %TIME% - Info: Medium does not support Microsoft Windows (%OS_NAME% %OS_LANGUAGE%) >>%UPDATE_LOGFILE%
-if "%IGNORE_OFFICE%"=="/ignoreoffice" goto InvalidMedium
 if "%OFFICE_NAME%"=="" goto InvalidMedium
 
 :CheckOfficeMedium
-if "%IGNORE_OFFICE%"=="/ignoreoffice" goto ProperMedium
 if "%OFFICE_NAME%"=="" goto ProperMedium
 if exist ..\%OFFICE_NAME%\%OFFICE_LANGUAGE%\nul (
   echo Medium supports Microsoft Office ^(%OFFICE_NAME% %OFFICE_LANGUAGE%^).
@@ -222,7 +202,6 @@ echo %OS_SP_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics
 if errorlevel 1 goto ListError
 if not exist "%TEMP%\UpdatesToInstall.txt" (
-  if "%IGNORE_OFFICE%"=="/ignoreoffice" goto NoUpdates
   if "%OFFICE_NAME%"=="" goto NoUpdates
   echo Warning: Windows Service Pack installation file not found.
   echo %DATE% %TIME% - Warning: Windows Service Pack installation file not found >>%UPDATE_LOGFILE%
@@ -231,8 +210,20 @@ if not exist "%TEMP%\UpdatesToInstall.txt" (
 echo Installing most recent Windows Service Pack...
 goto SP%OS_NAME%
 
-:SPw2k
 :SPwxp
+if 0 EQU %OS_SP_VERSION_MAJOR% (
+  if not exist %REG_PATH% goto NoReg
+  echo Faking Windows XP Service Pack 1...
+  %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\Control\Windows /v CSDVersion /t REG_DWORD /d 0x100 /f >nul 2>&1
+  if errorlevel 1 (
+    echo Warning: Faking of Windows XP Service Pack 1 failed.
+    echo %DATE% %TIME% - Warning: Faking of Windows XP Service Pack 1 failed >>%UPDATE_LOGFILE%
+    goto SkipSPInst
+  ) else (
+    echo %DATE% %TIME% - Info: Faked Windows XP Service Pack 1 >>%UPDATE_LOGFILE%
+  )
+)
+:SPw2k
 :SPw2k3
 if "%BACKUP_MODE%"=="/nobackup" (
   call InstallListedUpdates.cmd /u /z /n
@@ -514,7 +505,6 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
 :SkipPShInst
 
 if "%RECALL_REQUIRED%"=="1" goto Installed
-if "%IGNORE_OFFICE%"=="/ignoreoffice" goto CheckAUService
 if "%OFFICE_NAME%"=="" goto CheckAUService
 if not exist ..\%OFFICE_NAME%\%OFFICE_LANGUAGE%\nul (
   if not exist ..\%OFFICE_NAME%\glb\nul goto CheckAUService
@@ -522,12 +512,6 @@ if not exist ..\%OFFICE_NAME%\%OFFICE_LANGUAGE%\nul (
 rem *** Check Office Service Pack versions ***
 echo Checking Office Service Pack versions...
 if exist "%TEMP%\MissingUpdateIds.txt" del "%TEMP%\MissingUpdateIds.txt"
-if "%O2K_VERSION_MAJOR%"=="" goto SkipSPo2k
-if %O2K_SP_VERSION% LSS %O2K_SP_VERSION_TARGET% (
-  if "%O2K_PREC_SP_TARGET_ID%" NEQ "" echo %O2K_PREC_SP_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
-  echo %O2K_SP_TARGET_ID% >>"%TEMP%\MissingUpdateIds.txt"
-)
-:SkipSPo2k
 if "%OXP_VERSION_MAJOR%"=="" goto SkipSPoxp
 if %OXP_SP_VERSION% LSS %OXP_SP_VERSION_TARGET% echo %OXP_SP_TARGET_ID% >>"%TEMP%\MissingUpdateIds.txt"
 :SkipSPoxp
@@ -551,7 +535,6 @@ rem *** Check installation state of Office Converter/Compatibility Packs ***
 if "%INSTALL_CONVERTERS%" NEQ "/instofccnvs" goto CheckAUService
 goto CNV%OFFICE_NAME%
 
-:CNVo2k
 :CNVoxp
 :CNVo2k3
 echo Checking installation state of Office Converter/Compatibility Packs...
@@ -625,7 +608,7 @@ if not exist "%TEMP%\MissingUpdateIds.txt" (
   if "%REBOOT_REQUIRED%"=="1" (goto Installed) else (goto NoMissingIds)
 )
 echo Listing update files...
-call ListUpdatesToInstall.cmd %LIST_MODE_UPDATES% %IGNORE_OFFICE%
+call ListUpdatesToInstall.cmd %LIST_MODE_UPDATES%
 if errorlevel 1 goto ListError
 
 :InstallUpdates
@@ -640,7 +623,7 @@ if "%RECALL_REQUIRED%"=="1" (
   if "%BOOT_MODE%"=="/autoreboot" (
     if not "%USERNAME%"=="WSUSUpdateAdmin" (
       echo Preparing automatic recall...
-      call PrepareRecall.cmd %~f0 %BACKUP_MODE% %INSTALL_IE% %INSTALL_DOTNET% %INSTALL_PSH% %IGNORE_OFFICE% %INSTALL_CONVERTERS% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES%
+      call PrepareRecall.cmd %~f0 %BACKUP_MODE% %INSTALL_IE% %INSTALL_DOTNET% %INSTALL_PSH% %INSTALL_CONVERTERS% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES%
     )
     echo Rebooting...
     %CSCRIPT_PATH% //Nologo //E:vbs Shutdown.vbs /reboot
@@ -745,13 +728,6 @@ goto Cleanup
 echo.
 echo ERROR: Unsupported Operating System architecture (%OS_ARCHITECTURE%).
 echo %DATE% %TIME% - Error: Unsupported Operating System architecture (%OS_ARCHITECTURE%) >>%UPDATE_LOGFILE%
-echo.
-goto Cleanup
-
-:UnsupSP
-echo.
-echo ERROR: Unsupported Operating System Service Pack level (%OS_NAME% sp%OS_SP_VERSION_MAJOR%).
-echo %DATE% %TIME% - Error: Unsupported Operating System Service Pack level (%OS_NAME% sp%OS_SP_VERSION_MAJOR%) >>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 

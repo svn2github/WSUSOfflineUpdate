@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.3a (r36)
+set WSUSUPDATE_VERSION=6.3a (r37)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -21,7 +21,7 @@ if exist %DOWNLOAD_LOGFILE% (
 )
 echo %DATE% %TIME% - Info: Starting download (v. %WSUSUPDATE_VERSION%) for %1 %2 >>%DOWNLOAD_LOGFILE%
 
-for %%i in (w2k wxp w2k3 w2k3-x64 o2k oxp o2k3 o2k7 o2k7-x64) do (
+for %%i in (w2k wxp w2k3 w2k3-x64 oxp o2k3 o2k7 o2k7-x64) do (
   if /i "%1"=="%%i" (
     for %%j in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%2"=="%%j" goto EvalParams)
   )
@@ -120,6 +120,12 @@ if exist ..\static\StaticDownloadLinks-mkisofs.txt del ..\static\StaticDownloadL
 if exist ..\client\cmd\Reboot.vbs del ..\client\cmd\Reboot.vbs
 if exist ..\client\bin\msxsl.exe move /Y ..\client\bin\msxsl.exe ..\bin >nul
 if exist ..\client\xslt\nul rd /S /Q ..\client\xslt
+if exist ..\client\static\StaticUpdateIds-o2k.txt del ..\client\static\StaticUpdateIds-o2k.txt
+if exist ..\exclude\ExcludeList-o2k.txt del ..\exclude\ExcludeList-o2k.txt
+if exist ..\exclude\ExcludeListISO-o2k.txt del ..\exclude\ExcludeListISO-o2k.txt
+if exist ..\exclude\ExcludeListUSB-o2k.txt del ..\exclude\ExcludeListUSB-o2k.txt
+del /Q ..\static\*o2k-*.* >nul 2>&1
+del /Q ..\xslt\*o2k-*.* >nul 2>&1
 
 rem *** Determine state of automatic daylight time setting ***
 echo Determining state of automatic daylight time setting...
@@ -275,7 +281,7 @@ for %%i in (w2k wxp w2k3) do (
     if errorlevel 1 goto Error
   )
 )
-for %%i in (o2k oxp o2k3) do (
+for %%i in (oxp o2k3) do (
   if /i "%1"=="%%i" (
     call :DownloadCore ofc glb
     if errorlevel 1 goto Error
@@ -283,7 +289,7 @@ for %%i in (o2k oxp o2k3) do (
     if errorlevel 1 goto Error
   )
 )
-for %%i in (w2k wxp w2k3 w2k3-x64 o2k oxp o2k3 o2k7 o2k7-x64) do (
+for %%i in (w2k wxp w2k3 w2k3-x64 oxp o2k3 o2k7 o2k7-x64) do (
   if /i "%1"=="%%i" (
     call :DownloadCore %1 glb
     if errorlevel 1 goto Error
@@ -324,7 +330,7 @@ if exist ..\static\StaticDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.txt (
 :SkipStatics
 if not exist ..\bin\msxsl.exe goto NoMSXSL
 for %%i in (win w2k wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64) do (if /i "%1"=="%%i" goto DetermineWindows)
-for %%i in (ofc o2k oxp o2k3 o2k7 o2k7-x64) do (if /i "%1"=="%%i" goto DetermineOffice)
+for %%i in (ofc oxp o2k3 o2k7 o2k7-x64) do (if /i "%1"=="%%i" goto DetermineOffice)
 goto DoDownload
 
 :DetermineWindows
@@ -549,7 +555,7 @@ exit /b 1
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %1 %2 %3 %4
-echo Usage1: %~n0 {w2k ^| wxp ^| w2k3 ^| w2k3-x64 ^| o2k ^| oxp ^| o2k3 ^| o2k7 ^| o2k7-x64} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>]
+echo Usage1: %~n0 {w2k ^| wxp ^| w2k3 ^| w2k3-x64 ^| oxp ^| o2k3 ^| o2k7 ^| o2k7-x64} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>]
 echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>]
 echo %DATE% %TIME% - Error: Invalid parameter: %1 %2 %3 %4 >>%DOWNLOAD_LOGFILE%
 echo.

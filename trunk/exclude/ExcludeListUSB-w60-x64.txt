@@ -14,7 +14,5 @@ w2k3-x64\
 w61-x64\
 .au3
 reg.exe
-msxsl.exe
 invcif.exe
 invcm.exe
-xslt\

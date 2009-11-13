@@ -6,13 +6,13 @@ Private Const strRegKeyIE                     = "HKLM\Software\Microsoft\Interne
 Private Const strRegKeyMDAC                   = "HKLM\Software\Microsoft\DataAccess\"
 Private Const strRegKeyDirectX                = "HKLM\Software\Microsoft\DirectX\"
 Private Const strRegKeyDotNet35               = "HKLM\Software\Microsoft\NET Framework Setup\NDP\v3.5\"
-Private Const strRegKeyPowerShell1             = "HKLM\Software\Microsoft\PowerShell\1\"
+Private Const strRegKeyPowerShell1            = "HKLM\Software\Microsoft\PowerShell\1\"
 Private Const strRegValVersion                = "Version"
 Private Const strRegValInstall                = "Install"
 Private Const strRegKeyOfficePrefix_Mx86      = "HKLM\Software\Microsoft\Office\"
 Private Const strRegKeyOfficePrefix_Mx64      = "HKLM\Software\Wow6432Node\Microsoft\Office\"
 Private Const strRegKeyOfficePrefix_User      = "HKCU\Software\Microsoft\Office\"
-Private Const strRegKeyOfficeInfixes_Version  = "9.0,10.0,11.0,12.0"
+Private Const strRegKeyOfficeInfixes_Version  = "10.0,11.0,12.0"
 Private Const strRegKeyOfficeSuffix_InstRoot  = "\Common\InstallRoot\"
 Private Const strRegKeyOfficeSuffix_Language  = "\Common\LanguageResources\"
 Private Const strRegKeyOfficeSuffix_Version   = "\Common\ProductVersion\"
@@ -20,16 +20,16 @@ Private Const strRegValOfficePath             = "Path"
 Private Const strRegValOfficeLanguage_Inst    = "SKULanguage"
 Private Const strRegValOfficeLanguage_User    = "InstallLanguage"
 Private Const strRegValOfficeVersion          = "LastProduct"
-Private Const strOfficeNames                  = "o2k,oxp,o2k3,o2k7"
+Private Const strOfficeNames                  = "oxp,o2k3,o2k7"
 Private Const strOfficeAppNames               = "Word,Excel,Outlook,Powerpoint,Access,FrontPage"
 Private Const strOfficeExeNames               = "WINWORD.EXE,EXCEL.EXE,OUTLOOK.EXE,POWERPNT.EXE,MSACCESS.EXE,FRONTPG.EXE"
-Private Const strBuildNumbers_O2k             = "2720,2720,2711,2716,2720,2720;3821,3821,3821,3821,3821,3821;4402,4402,4527,4527,4402,4426;6926,6926,6627,6620,6926,6625"
 Private Const strBuildNumbers_Oxp             = "2627,2614,2627,2623,2627,2623;3416,3506,3416,3506,3409,3402;4219,4302,4024,4205,4302,4128;6612,6501,6626,6501,6501,6308"
 Private Const strBuildNumbers_O2k3            = "5604,5612,5510,5529,5614,5516;6359,6355,6353,6361,6355,6356;6568,6560,6565,6564,6566,6552;8169,8169,8169,8169,8166,8164"
 Private Const strBuildNumbers_O2k7            = "4518,4518,4518,4518,4518,4518;6211,6214,6212,6211,6211,6211;6425,6425,6423,6425,6423,6423"
+Private Const idxBuild                        = 2
 
 Dim wshShell, objFileSystem, objCmdFile, objWMIService, objWMIQuery, arrayOfficeNames, arrayOfficeVersions, arrayOfficeAppNames, arrayOfficeExeNames
-Dim strArgument, strSystemFolder, strTempFolder, strWUAFileName, strMSIFileName, strWSHFileName, strRDPFileName, strWMPFileName, strCmdFileName, strOSVersion, strOfficeInstallPath, strOfficeExeVersion, strProduct, languageCode, i, j
+Dim strSystemFolder, strTempFolder, strWUAFileName, strMSIFileName, strWSHFileName, strRDPFileName, strWMPFileName, strCmdFileName, strOSVersion, strOfficeInstallPath, strOfficeExeVersion, strProduct, languageCode, i, j
 
 Private Function RegRead(objShell, strValueName)
   On Error Resume Next  'Turn error reporting off
@@ -205,26 +205,19 @@ Dim strRegVal
 End Function
 
 Private Function OfficeSPVersion(strExeVersion, idxApp)
-Dim arrayVersion, arraySPs, arrayBuilds, idxBuild, i
+Dim arrayVersion, arraySPs, arrayBuilds, i
 
   OfficeSPVersion = 0
   arrayVersion = Split(strExeVersion, ".")
   Select Case CInt(arrayVersion(0))
-    Case 9
-      arraySPs = Split(strBuildNumbers_O2k, ";")
-      idxBuild = 3
     Case 10
       arraySPs = Split(strBuildNumbers_Oxp, ";")
-      idxBuild = 2
     Case 11
       arraySPs = Split(strBuildNumbers_O2k3, ";")
-      idxBuild = 2
     Case 12
       arraySPs = Split(strBuildNumbers_O2k7, ";")
-      idxBuild = 2
     Case Else
       arraySPs = Split("0,0,0,0,0,0", ";")
-      idxBuild = 2
   End Select
   If UBound(arrayVersion) < idxBuild Then
     Exit Function
@@ -242,11 +235,6 @@ End Function
 
 ' Main
 Set wshShell = WScript.CreateObject("WScript.Shell")
-If WScript.Arguments.Count = 0 Then
-  strArgument = ""
-Else
-  strArgument = WScript.Arguments(0)
-End If
 strSystemFolder = wshShell.ExpandEnvironmentStrings("%SystemRoot%") & "\system32"
 strTempFolder = wshShell.ExpandEnvironmentStrings("%TEMP%")
 strWUAFileName = strSystemFolder & "\wuaueng.dll"
@@ -328,41 +316,39 @@ Else
 End If
 
 ' Determine Office version
-If LCase(strArgument) <> "/ignoreoffice" Then
-  arrayOfficeNames = Split(strOfficeNames, ",")
-  arrayOfficeVersions = Split(strRegKeyOfficeInfixes_Version, ",")
-  arrayOfficeAppNames = Split(strOfficeAppNames, ",")
-  arrayOfficeExeNames = Split(strOfficeExeNames, ",")
-  For i = 0 To UBound(arrayOfficeNames)
-    strOfficeInstallPath = OfficeInstallPath(wshShell, arrayOfficeVersions(i)) 
-    If strOfficeInstallPath <> "" Then
-      For j = 0 To UBound(arrayOfficeExeNames)
-        If objFileSystem.FileExists(strOfficeInstallPath & arrayOfficeExeNames(j)) Then
-          objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_VERSION_APP=" & arrayOfficeAppNames(j))
-          strOfficeExeVersion = objFileSystem.GetFileVersion(strOfficeInstallPath & arrayOfficeExeNames(j)) 
-          WriteVersion2File objCmdFile, UCase(arrayOfficeNames(i)) & "_VERSION", strOfficeExeVersion  
-          objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_SP_VERSION=" & OfficeSPVersion(strOfficeExeVersion, j))
-          languageCode = OfficeLanguageCode(wshShell, arrayOfficeVersions(i))
-          objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_LANGUAGE_CODE=" & languageCode)
-          If languageCode = 0 Then
-            objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_LANGUAGE=%OS_LANGUAGE%")
-          Else
-            WriteLanguage2File objCmdFile, UCase(arrayOfficeNames(i)) & "_LANGUAGE", languageCode
-          End If
-          Exit For
+arrayOfficeNames = Split(strOfficeNames, ",")
+arrayOfficeVersions = Split(strRegKeyOfficeInfixes_Version, ",")
+arrayOfficeAppNames = Split(strOfficeAppNames, ",")
+arrayOfficeExeNames = Split(strOfficeExeNames, ",")
+For i = 0 To UBound(arrayOfficeNames)
+  strOfficeInstallPath = OfficeInstallPath(wshShell, arrayOfficeVersions(i)) 
+  If strOfficeInstallPath <> "" Then
+    For j = 0 To UBound(arrayOfficeExeNames)
+      If objFileSystem.FileExists(strOfficeInstallPath & arrayOfficeExeNames(j)) Then
+        objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_VERSION_APP=" & arrayOfficeAppNames(j))
+        strOfficeExeVersion = objFileSystem.GetFileVersion(strOfficeInstallPath & arrayOfficeExeNames(j)) 
+        WriteVersion2File objCmdFile, UCase(arrayOfficeNames(i)) & "_VERSION", strOfficeExeVersion  
+        objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_SP_VERSION=" & OfficeSPVersion(strOfficeExeVersion, j))
+        languageCode = OfficeLanguageCode(wshShell, arrayOfficeVersions(i))
+        objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_LANGUAGE_CODE=" & languageCode)
+        If languageCode = 0 Then
+          objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_LANGUAGE=%OS_LANGUAGE%")
+        Else
+          WriteLanguage2File objCmdFile, UCase(arrayOfficeNames(i)) & "_LANGUAGE", languageCode
         End If
-      Next
-    End If
-  Next
-  For Each strProduct In CreateObject("WindowsInstaller.Installer").Products
-    If UCase(strProduct) = "{6EECB283-E65F-40EF-86D3-D51BF02A8D43}" Then
-      objCmdFile.WriteLine("set OFFICE_CONVERTER_PACK=1")
-    End If
-    If UCase(strProduct) = "{90120000-0020-0407-0000-0000000FF1CE}" Then
-      objCmdFile.WriteLine("set OFFICE_COMPATIBILITY_PACK=1")
-    End If
-  Next
-End If
+        Exit For
+      End If
+    Next
+  End If
+Next
+For Each strProduct In CreateObject("WindowsInstaller.Installer").Products
+  If UCase(strProduct) = "{6EECB283-E65F-40EF-86D3-D51BF02A8D43}" Then
+    objCmdFile.WriteLine("set OFFICE_CONVERTER_PACK=1")
+  End If
+  If UCase(strProduct) = "{90120000-0020-0407-0000-0000000FF1CE}" Then
+    objCmdFile.WriteLine("set OFFICE_COMPATIBILITY_PACK=1")
+  End If
+Next
 
 '
 ' Perform the following WMI queries last, since they might fail if WMI is damaged 

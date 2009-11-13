@@ -2571,9 +2571,9 @@ GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM)
 ;  Skip download checkbox
 $txtxpos = $txtxpos + $btnwidth + $txtxoffset
 If ShowGUIInGerman() Then
-  $skipdownload = GUICtrlCreateCheckbox("Ohne Download", $txtxpos, $txtypos, 2 * $txtwidth, $txtheight)
+  $skipdownload = GUICtrlCreateCheckbox("Ohne Download", $txtxpos, $txtypos + 2, 2 * $txtwidth, $txtheight)
 Else
-  $skipdownload = GUICtrlCreateCheckbox("Skip download", $txtxpos, $txtypos, 2 * $txtwidth, $txtheight)
+  $skipdownload = GUICtrlCreateCheckbox("Skip download", $txtxpos, $txtypos + 2, 2 * $txtwidth, $txtheight)
 EndIf
 
 ;  Proxy button

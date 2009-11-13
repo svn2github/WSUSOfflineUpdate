@@ -9,7 +9,5 @@
 *ndp*
 *windowsrightsmanagementservices*
 *.au3
-*msxsl.exe
 *invcif.exe
 *invcm.exe
-*xslt*

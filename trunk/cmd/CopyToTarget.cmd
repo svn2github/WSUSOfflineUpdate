@@ -9,7 +9,7 @@ if errorlevel 1 goto NoExtensions
 cd "%~p0"
 
 for %%i in (all all-x86 all-x64 enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%1"=="%%i" goto V1EvalParams)
-for %%i in (w2k wxp w2k3 w2k3-x64 o2k oxp o2k3 o2k7 o2k7-x64) do (
+for %%i in (w2k wxp w2k3 w2k3-x64 oxp o2k3 o2k7 o2k7-x64) do (
   if /i "%1"=="%%i" (
     for %%j in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%2"=="%%j" goto V2EvalParams)
     goto V1EvalParams
@@ -79,7 +79,7 @@ goto :eof
 rem *** Create USB filter ***
 echo Creating USB filter for %1...
 set USB_FILTER=..\ExcludeListUSB-%1.txt
-for %%i in (all all-x86 all-x64 w2k wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 o2k oxp o2k3 o2k7 o2k7-x64) do (if /i "%1"=="%%i" goto V1CopyFilter)
+for %%i in (all all-x86 all-x64 w2k wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 oxp o2k3 o2k7 o2k7-x64) do (if /i "%1"=="%%i" goto V1CopyFilter)
 copy /Y ..\exclude\ExcludeListUSB-all-x86.txt %USB_FILTER% >nul
 call :LocaleFilter %1 
 call :ExtendFilter
@@ -124,8 +124,8 @@ exit /b 1
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %*
-echo Usage1: %~n0 {w2k ^| wxp ^| w2k3 ^| w2k3-x64 ^| o2k ^| oxp ^| o2k3 ^| o2k7 ^| o2k7-x64} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} ^<OutputPath^> [/excludesp] [/includedotnet]
-echo Usage2: %~n0 {all ^| all-x86 ^| all-x64 ^| w2k ^| wxp ^| w2k3 ^| w2k3-x64 ^| w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| o2k ^| oxp ^| o2k3 ^| o2k7 ^| o2k7-x64 ^| enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} ^<OutputPath^> [/excludesp] [/includedotnet]
+echo Usage1: %~n0 {w2k ^| wxp ^| w2k3 ^| w2k3-x64 ^| oxp ^| o2k3 ^| o2k7 ^| o2k7-x64} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} ^<OutputPath^> [/excludesp] [/includedotnet]
+echo Usage2: %~n0 {all ^| all-x86 ^| all-x64 ^| w2k ^| wxp ^| w2k3 ^| w2k3-x64 ^| w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| oxp ^| o2k3 ^| o2k7 ^| o2k7-x64 ^| enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} ^<OutputPath^> [/excludesp] [/includedotnet]
 echo.
 goto Error
 

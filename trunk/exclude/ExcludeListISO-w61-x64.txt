@@ -9,7 +9,5 @@
 *w61\/*
 *.au3
 *reg.exe
-*msxsl.exe
 *invcif.exe
 *invcm.exe
-*xslt*

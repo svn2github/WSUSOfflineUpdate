@@ -18,7 +18,6 @@ if "%OS_ARCHITECTURE%"=="" goto NoOSArch
 :EvalParam
 if "%1"=="" goto NoParam
 if /i "%1"=="/excludestatics" set EXCLUDE_STATICS=/excludestatics
-if /i "%1"=="/ignoreoffice" set IGNORE_OFFICE=/ignoreoffice
 shift /1
 goto EvalParam
 :NoParam
@@ -35,7 +34,6 @@ if exist ..\static\StaticUpdateIds-%OS_NAME%-%OS_ARCHITECTURE%.txt (
     )
   )
 )
-if "%IGNORE_OFFICE%"=="/ignoreoffice" goto ExcludeStatics
 if exist ..\static\StaticUpdateIds-%OFFICE_NAME%.txt (
   if exist "%TEMP%\InstalledUpdateIds.txt" (
     %SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\InstalledUpdateIds.txt" ..\static\StaticUpdateIds-%OFFICE_NAME%.txt >>"%TEMP%\MissingUpdateIds.txt"
@@ -78,11 +76,9 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
         call ListUpdateFile.cmd %%i ..\%%k\%%l
       )
     )
-    if "%IGNORE_OFFICE%"=="" (
-      for %%k in (%OFFICE_NAME%-%OS_ARCHITECTURE% %OFFICE_NAME% ofc o2k oxp o2k3 o2k7 o2k7-x64) do (
-        for %%l in (%OFFICE_LANGUAGE% glb) do (
-          call ListUpdateFile.cmd %%i ..\%%k\%%l
-        )
+    for %%k in (%OFFICE_NAME%-%OS_ARCHITECTURE% %OFFICE_NAME% ofc oxp o2k3 o2k7 o2k7-x64) do (
+      for %%l in (%OFFICE_LANGUAGE% glb) do (
+        call ListUpdateFile.cmd %%i ..\%%k\%%l
       )
     )
     if exist "%TEMP%\Update.txt" (

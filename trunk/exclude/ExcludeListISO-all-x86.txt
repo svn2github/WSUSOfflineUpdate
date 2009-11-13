@@ -1,2 +1,4 @@
 *-x64*
 *.au3
+*invcif.exe
+*invcm.exe

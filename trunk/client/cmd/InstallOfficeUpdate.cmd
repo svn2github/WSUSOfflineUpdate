@@ -26,13 +26,12 @@ if /i "%2"=="/errorsaswarnings" (
 )
 
 rem *** Check proper Office version ***
-for %%i in (ofc o2k oxp o2k3 o2k7 o2k7-x64) do (
+for %%i in (ofc oxp o2k3 o2k7 o2k7-x64) do (
   echo %1 | %SystemRoot%\system32\find.exe /I "\%%i\" >nul 2>&1
   if not errorlevel 1 goto %%i
 )
 goto UnsupVersion
 
-:o2k
 :oxp
 :o2k3
 for /F "tokens=3 delims=\." %%i in ("%1") do (

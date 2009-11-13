@@ -34,7 +34,6 @@ Dim Const $ini_value_ie7            = "instie7"
 Dim Const $ini_value_ie8            = "instie8"
 Dim Const $ini_value_dotnet         = "instdotnet"
 Dim Const $ini_value_powershell     = "instpsh"
-Dim Const $ini_value_office         = "updateoffice"
 Dim Const $ini_value_converters     = "instofccnvs"
 Dim Const $ini_value_autoreboot     = "autoreboot"
 Dim Const $ini_value_shutdown       = "shutdown"
@@ -47,7 +46,7 @@ Dim Const $path_rel_instdotnet      = "\dotnet\dotnetfx35.exe"
 
 Dim $dlgheight, $txtwidth, $txtheight, $txtxoffset, $btnwidth, $btnheight
 
-Dim $maindlg, $scriptdir, $netdrives, $i, $strpos, $inifilename, $backup, $ie7, $ie8, $dotnet, $powershell, $office, $converters, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $txtypos
+Dim $maindlg, $scriptdir, $netdrives, $i, $strpos, $inifilename, $backup, $ie7, $ie8, $dotnet, $powershell, $converters, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $txtypos
 
 Func ShowGUIInGerman()
   If ($CmdLine[0] > 0) Then
@@ -107,7 +106,7 @@ Func CalcGUISize()
   If ($reg_val = "") Then
     $reg_val = $default_logpixels
   EndIf
-  $dlgheight = 295 * $reg_val / $default_logpixels
+  $dlgheight = 275 * $reg_val / $default_logpixels
   $txtwidth = 240 * $reg_val / $default_logpixels
   $txtheight = 20 * $reg_val / $default_logpixels
   $txtxoffset = 10 * $reg_val / $default_logpixels
@@ -249,25 +248,12 @@ Else
   EndIf
 EndIf
 
-; Update Office products
-$txtypos = $txtypos + $txtheight
-If ShowGUIInGerman() Then
-  $office = GUICtrlCreateCheckbox("Office-Produkte aktualisieren", $txtxoffset, $txtypos, $txtwidth, $txtheight)
-Else
-  $office = GUICtrlCreateCheckbox("Update Office products", $txtxoffset, $txtypos, $txtwidth, $txtheight)
-EndIf
-If IniRead($inifilename, $ini_section_installation, $ini_value_office, $enabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-
 ; Install file format converters for Office
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
-  $converters = GUICtrlCreateCheckbox("Dateiformat-Konverter installieren", 3 * $txtxoffset, $txtypos, $txtwidth - 2 * $txtxoffset, $txtheight)
+  $converters = GUICtrlCreateCheckbox("Office-Dateiformat-Konverter installieren", $txtxoffset, $txtypos, $txtwidth - 2 * $txtxoffset, $txtheight)
 Else
-  $converters = GUICtrlCreateCheckbox("Install file format converters", 3 * $txtxoffset, $txtypos, $txtwidth - 2 * $txtxoffset, $txtheight)
+  $converters = GUICtrlCreateCheckbox("Install Office file format converters", $txtxoffset, $txtypos, $txtwidth - 2 * $txtxoffset, $txtheight)
 EndIf
 If IniRead($inifilename, $ini_section_installation, $ini_value_converters, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
@@ -407,8 +393,6 @@ If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (@OSBuild <
   GUICtrlSetState($dotnet, $GUI_DISABLE)
   GUICtrlSetState($powershell, $GUI_UNCHECKED)
   GUICtrlSetState($powershell, $GUI_DISABLE)
-  GUICtrlSetState($office, $GUI_UNCHECKED)
-  GUICtrlSetState($office, $GUI_DISABLE)
   GUICtrlSetState($converters, $GUI_UNCHECKED)
   GUICtrlSetState($converters, $GUI_DISABLE)
   GUICtrlSetState($autoreboot, $GUI_CHECKED)
@@ -423,14 +407,6 @@ While 1
 
     Case $btn_exit           ; Exit Button pressed
       ExitLoop
-
-    Case $office             ; Update Office products check box toggled
-      If BitAND(GUICtrlRead($office), $GUI_CHECKED) = $GUI_CHECKED Then
-        GUICtrlSetState($converters, $GUI_ENABLE)
-      Else
-        GUICtrlSetState($converters, $GUI_UNCHECKED)
-        GUICtrlSetState($converters, $GUI_DISABLE)
-      EndIf
 
     Case $ie7                ; IE7 check box toggled  
       If ( (BitAND(GUICtrlRead($ie7), $GUI_CHECKED) = $GUI_CHECKED) _  
@@ -492,9 +468,6 @@ While 1
       EndIf
       If BitAND(GUICtrlRead($powershell), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instpsh"
-      EndIf
-      If BitAND(GUICtrlRead($office), $GUI_CHECKED) <> $GUI_CHECKED Then
-        $options = $options & " /ignoreoffice"
       EndIf
       If BitAND(GUICtrlRead($converters), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instofccnvs"

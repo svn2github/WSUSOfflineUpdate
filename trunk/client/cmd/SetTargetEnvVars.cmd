@@ -119,14 +119,6 @@ set PSH_TARGET_ID=KB928439
 goto SetOfficeName
 
 :SetOfficeName
-if "%O2K_VERSION_MAJOR%"=="" goto NoO2k
-rem *** Office 2000 ***
-set OFFICE_NAME=o2k
-set OFFICE_LANGUAGE=%O2K_LANGUAGE%
-set O2K_SP_VERSION_TARGET=3
-set O2K_SP_TARGET_ID=O2kSp3
-if %O2K_SP_VERSION% EQU 0 set O2K_PREC_SP_TARGET_ID=o2ksr1adl
-:NoO2k
 if "%OXP_VERSION_MAJOR%"=="" goto NoOxp
 rem *** Office XP ***
 set OFFICE_NAME=oxp

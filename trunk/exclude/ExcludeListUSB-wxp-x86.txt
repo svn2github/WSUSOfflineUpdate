@@ -26,7 +26,5 @@ windows2000
 directx_
 .au3
 reg.exe
-msxsl.exe
 invcif.exe
 invcm.exe
-xslt\

@@ -17,7 +17,7 @@ if not exist "%TEMP%\UpdatesToInstall.txt" goto NoUpdates
 
 for /F "delims=: tokens=1*" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\UpdatesToInstall.txt"') do set LINES_COUNT=%%i
 for /F "delims=: tokens=1*" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\UpdatesToInstall.txt"') do (
-  for %%k in (ofc o2k oxp o2k3 o2k7 o2k7-x64) do (
+  for %%k in (ofc oxp o2k3 o2k7 o2k7-x64) do (
     echo %%j | %SystemRoot%\system32\find.exe /I "\%%k\" >nul 2>&1
     if not errorlevel 1 (
       echo Installing update %%i of %LINES_COUNT%...
