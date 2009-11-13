@@ -300,10 +300,12 @@ Version 6.2 -- 23.10.09
 - Fix: CopyToTarget.cmd script contained invalid usage instructions (Thanks to "rsleegers")
 - Fix: Download exclude list for Windows XP modified since Offline Update missed patch IE7-WindowsXP-KB938127-v2-x86-DEU.exe
 --------------------------------------------------------------------------------
-Version 6.3 -- ??.??.09
+Version 6.3 -- 13.11.09
 - Support removed for Office 2000 since Microsoft discontinued support for it on July 14th, 2009 (see http://support.microsoft.com/lifecycle/?p1=2484)
 - Office updates up to 11/2009 integrated by static definitions
 - WSUS Offline Update will now fake SP1 on Windows XP SP0 target systems (Thanks to "Ralph")
 - CopyToTarget.cmd script will now only copy newer files (Thanks to "Georg")
 - Installation part won't any longer evaluate the "Office Update Inventory Tool Catalog" (invcif.exe) since Microsoft discontinued support for it on August 1st, 2009 (see http://office.microsoft.com/OfficeUpdate/catalog/inventory/InventoryCatalog.html)
 - Fix: UpdateGenerator and UpdateInstaller dialog scaling could lead to zero size dialog dimensions (Thanks to "MG8371")
+- Fix: DownloadUpdates.cmd will set FTP proxy for wget now (Thanks to "LauxAimoEwa")
+--------------------------------------------------------------------------------

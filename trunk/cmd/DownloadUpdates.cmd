@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.3a (r37)
+set WSUSUPDATE_VERSION=6.3
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -47,6 +47,7 @@ if /i "%3"=="/exitonerror" set EXIT_ON_ERROR=1
 if /i "%3"=="/skipmkisofs" set SKIP_MKISOFS=1
 if /i "%3"=="/proxy" (
   set http_proxy=%4
+  set ftp_proxy=%4
   shift /3
 )
 if /i "%3"=="/wsus" (
