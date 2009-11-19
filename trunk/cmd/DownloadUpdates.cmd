@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.3+ (r40)
+set WSUSUPDATE_VERSION=6.3+ (r41)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -47,7 +47,6 @@ if /i "%3"=="/exitonerror" set EXIT_ON_ERROR=1
 if /i "%3"=="/skipmkisofs" set SKIP_MKISOFS=1
 if /i "%3"=="/proxy" (
   set http_proxy=%4
-  set ftp_proxy=%4
   shift /3
 )
 if /i "%3"=="/wsus" (
@@ -129,6 +128,7 @@ del /Q ..\static\*o2k-*.* >nul 2>&1
 del /Q ..\xslt\*o2k-*.* >nul 2>&1
 if exist ..\xslt\ExtractExpiredIds-o2k.xsl del ..\xslt\ExtractExpiredIds-o2k.xsl
 if exist ..\xslt\ExtractValidIds-o2k.xsl del ..\xslt\ExtractValidIds-o2k.xsl
+if exist ..\static\StaticDownloadLink-unzip.txt del ..\static\StaticDownloadLink-unzip.txt 
 
 rem *** Determine state of automatic daylight time setting ***
 echo Determining state of automatic daylight time setting...
@@ -193,18 +193,6 @@ echo Downloading/validating Microsoft XSL processor frontend...
 if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded/validated Microsoft XSL processor frontend >>%DOWNLOAD_LOGFILE%
 :SkipMSXSL
-
-rem *** Download unzip tool ***
-if exist ..\bin\unzip.exe goto SkipUnzip
-echo Downloading unzip tool...
-%WGET_PATH% -N -i ..\static\StaticDownloadLink-unzip.txt -P ..\bin
-if errorlevel 1 goto DownloadError
-echo %DATE% %TIME% - Info: Downloaded unzip tool >>%DOWNLOAD_LOGFILE%
-pushd ..\bin
-unz600xn.exe unzip.exe
-del unz600xn.exe
-popd
-:SkipUnzip
 
 rem *** Download mkisofs tool ***
 if "%SKIP_MKISOFS%"=="1" goto SkipMkIsoFs

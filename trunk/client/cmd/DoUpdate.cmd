@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.3+ (r40)
+set WSUSUPDATE_VERSION=6.3+ (r41)
 set UPDATE_LOGFILE=%SystemRoot%\ctupdate.log
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSUPDATE_VERSION%)...
