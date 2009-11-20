@@ -4,11 +4,16 @@
 
 <xsl:template match="*">
   <xsl:choose>
-    <xsl:when test="name()='FileLocation'">
-      <xsl:value-of select="@Id"/>
-      <xsl:text>,</xsl:text>
-      <xsl:value-of select="@Url"/>
+    <xsl:when test="name()='Update'">
+      <xsl:value-of select="@UpdateId"/>
+      <xsl:apply-templates select="*"/>
       <xsl:text>&#10;</xsl:text>
+    </xsl:when>
+    <xsl:when test="name()='Category'">
+      <xsl:text>,</xsl:text>
+      <xsl:value-of select="@Type"/>
+      <xsl:text>=</xsl:text>
+      <xsl:value-of select="@Id"/>
     </xsl:when>
     <xsl:otherwise>
       <xsl:apply-templates select="*"/>

@@ -9,7 +9,10 @@ ExtractDownloadLinks-oall-deu.xsl
 ExtractDownloadLinks-oall-enu.xsl
 ExtractDownloadLinks-oall-fra.xsl
 ExtractDownloadLinks-wall.xsl
+ExtractUpdateCategories.xsl
+ExtractUpdatePayloadFiles.xsl
 ExtractDownloadLinks-oall.cmd
 ExtractDownloadLinks-wall.cmd
+ExtractUpdateCategoriesAndPayloadFiles.cmd
 PrepareProductionTree.cmd
 PrepareReleaseTree.cmd
