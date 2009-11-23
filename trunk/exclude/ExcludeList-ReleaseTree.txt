@@ -11,8 +11,11 @@ ExtractDownloadLinks-oall-fra.xsl
 ExtractDownloadLinks-wall.xsl
 ExtractUpdateCategories.xsl
 ExtractUpdatePayloadFiles.xsl
+ExtractUpdateCategoriesAndFileIds.xsl
+ExtractUpdateFileIdsAndLocations.xsl
 ExtractDownloadLinks-oall.cmd
 ExtractDownloadLinks-wall.cmd
-ExtractUpdateCategoriesAndPayloadFiles.cmd
+ExtractUpdateCategoriesAndFileIds.cmd
+ExtractUpdateFileIdsAndLocations.cmd
 PrepareProductionTree.cmd
 PrepareReleaseTree.cmd
