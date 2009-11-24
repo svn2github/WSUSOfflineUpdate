@@ -311,4 +311,5 @@ Version 6.3 -- 13.11.09
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.09
 - Info-Zip's UnZip integrated because of persistent FTP download problems - FTP proxy for wget removed because it's not used any longer
+- Fix: ISO volume ids and installation log file name adjusted to fit to project's new name (Thanks to "LigH")
 - Fix: Removed o2k remainders in xslt directory

@@ -1,7 +1,7 @@
 @echo off
 rem *** Author: T. Wittrock, RZ Uni Kiel ***
 
-if "%UPDATE_LOGFILE%"=="" set UPDATE_LOGFILE=%SystemRoot%\ctupdate.log
+if "%UPDATE_LOGFILE%"=="" set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 
 if "%OS_NAME%"=="" goto NoOSName
 if "%REG_PATH%"=="" goto NoRegPath

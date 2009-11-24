@@ -5,7 +5,7 @@ verify other 2>nul
 setlocal enableextensions
 if errorlevel 1 goto NoExtensions
 
-if "%UPDATE_LOGFILE%"=="" set UPDATE_LOGFILE=%SystemRoot%\ctupdate.log
+if "%UPDATE_LOGFILE%"=="" set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 
 if "%1"=="" goto NoParam
 if not exist %1 goto InvalidParam

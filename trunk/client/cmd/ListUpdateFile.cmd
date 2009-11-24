@@ -6,7 +6,7 @@ setlocal enableextensions
 if errorlevel 1 goto NoExtensions
 
 if "%DIRCMD%" NEQ "" set DIRCMD=
-if "%UPDATE_LOGFILE%"=="" set UPDATE_LOGFILE=%SystemRoot%\ctupdate.log
+if "%UPDATE_LOGFILE%"=="" set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 
 if "%1"=="" goto NoParam
 if "%2"=="" goto NoParam

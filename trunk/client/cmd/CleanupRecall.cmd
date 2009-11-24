@@ -3,7 +3,7 @@ rem *** Author: T. Wittrock, RZ Uni Kiel ***
 
 setlocal
 
-if "%UPDATE_LOGFILE%"=="" set UPDATE_LOGFILE=%SystemRoot%\ctupdate.log
+if "%UPDATE_LOGFILE%"=="" set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 
 %~d0
 cd "%~p0"
