@@ -173,7 +173,7 @@ cat ../temp/ExcludeListISOtmp-${sys}.txt | grep "\/" | sed 's/\\\/\*//' | sed 's
 rm ../temp/ExcludeListISOtmp-${sys}.txt
 
 echo "Creating ISO image for $sys $lang..."
-$iso_tool -iso-level 4 -joliet -joliet-long -rational-rock -exclude-list ../temp/ExcludeListISO-${sys}.txt -output ../iso/wsusoffline-${sys}-$lang.iso -volid ctou_${sys}_${lang} ../client
+$iso_tool -iso-level 4 -joliet -joliet-long -rational-rock -exclude-list ../temp/ExcludeListISO-${sys}.txt -output ../iso/wsusoffline-${sys}-$lang.iso -volid wou_${sys}_${lang} ../client
 rm ../client/builddate.txt
 echo "done."
 

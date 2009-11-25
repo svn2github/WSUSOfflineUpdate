@@ -310,6 +310,7 @@ Version 6.3 -- 13.11.09
 - Fix: DownloadUpdates.cmd will set FTP proxy for wget now (Thanks to "LauxAimoEwa")
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.09
+- Installed updates' determination implementation changed in order to enhance performance and become independent of WUA   
 - Info-Zip's UnZip integrated because of persistent FTP download problems - FTP proxy for wget removed because it's not used any longer
 - Fix: ISO volume ids and installation log file name adjusted to fit to project's new name (Thanks to "LigH")
 - Fix: Removed o2k remainders in xslt directory
