@@ -310,6 +310,7 @@ Version 6.3 -- 13.11.09
 - Fix: DownloadUpdates.cmd will set FTP proxy for wget now (Thanks to "LauxAimoEwa")
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.09
+- Digital signatures of downloaded files will be verified if corresponding option is selected (Thanks to "friday123") 
 - Installed updates' determination implementation changed in order to enhance performance and become independent of WUA   
 - Update for Root Certificates (rootsupd.exe/kb931125) updated to November 2009 (Thanks to "Gerby")
 - Info-Zip's UnZip integrated because of persistent FTP download problems - FTP proxy for wget removed because it's not used any longer

@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.3+ (r46)
+set WSUSUPDATE_VERSION=6.3+ (r47)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -207,17 +207,30 @@ del /Q cdrtools*.zip
 popd
 :SkipMkIsoFs
 
-rem *** Download Microsoft file checksum integrity verifier tool ***
+rem *** Download Microsoft file checksum integrity verification tool ***
 if "%VERIFY_DOWNLOADS%" NEQ "1" goto SkipFCIV
 if exist ..\bin\fciv.exe goto SkipFCIV
-echo Downloading Microsoft file checksum integrity verifier tool...
+echo Downloading Microsoft file checksum integrity verification tool...
 %WGET_PATH% -N -i ..\static\StaticDownloadLink-fciv.txt -P "%TEMP%\fciv"
 if errorlevel 1 goto DownloadError
-echo %DATE% %TIME% - Info: Downloaded Microsoft file checksum integrity verifier tool >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Downloaded Microsoft file checksum integrity verification tool >>%DOWNLOAD_LOGFILE%
 "%TEMP%\fciv\windows-kb841290-x86-enu.exe" /T:"%TEMP%\fciv" /C /Q
 move "%TEMP%\fciv\fciv.exe" ..\bin >nul
 call ..\client\cmd\SafeRmDir.cmd "%TEMP%\fciv"
 :SkipFCIV
+
+rem *** Download Sysinternals' digital file signature verification tool ***
+if "%VERIFY_DOWNLOADS%" NEQ "1" goto SkipSigCheck
+if exist ..\bin\sigcheck.exe goto SkipSigCheck
+echo Downloading Sysinternals' digital file signature verification tool...
+%WGET_PATH% -N -i ..\static\StaticDownloadLink-sigcheck.txt -P ..\bin
+if errorlevel 1 goto DownloadError
+echo %DATE% %TIME% - Info: Downloaded Sysinternals' digital file signature verification tool >>%DOWNLOAD_LOGFILE%
+pushd ..\bin
+unzip.exe Sigcheck.zip sigcheck.exe
+del Sigcheck.zip
+popd
+:SkipSigCheck
 
 rem *** Download most recent files for WSUS functionality ***
 echo Downloading/validating most recent files for WSUS functionality...
@@ -506,8 +519,18 @@ for /F %%i in ('dir /A:-D /B ..\client\%1\%2\*.*') do (
 echo %DATE% %TIME% - Info: Cleaned up client directory for %1 %2 >>%DOWNLOAD_LOGFILE%
 
 :EndDownload
-rem *** Create integrity database for %1 %2 ***
 if "%VERIFY_DOWNLOADS%"=="1" (
+  rem *** Verifying digital file signatures for %1 %2 ***
+  if not exist ..\bin\sigcheck.exe goto NoSigCheck
+  echo Verifying digital file signatures for %1 %2...
+  ..\bin\sigcheck.exe -accepteula -q -s -u -v ..\client\%1\%2 >"%TEMP%\sigcheck-%1-%2.txt"
+  for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-%1-%2.txt") do (
+    echo Warning: File %%i is unsigned.
+    echo %DATE% %TIME% - Warning: File %%i is unsigned >>%DOWNLOAD_LOGFILE%
+  ) 
+  if exist "%TEMP%\sigcheck-%1-%2.txt" del "%TEMP%\sigcheck-%1-%2.txt"
+  echo %DATE% %TIME% - Info: Verified digital file signatures for %1 %2 >>%DOWNLOAD_LOGFILE%
+  rem *** Create integrity database for %1 %2 ***
   if not exist ..\bin\fciv.exe goto NoFCIV
   echo Creating integrity database for %1 %2...
   ..\bin\fciv.exe ..\client\%1\%2 -r -type *.exe -type *.cab -sha1 -xml ..\fciv\sha1-%1-%2.xml >nul 2>&1
@@ -623,8 +646,15 @@ goto Error
 
 :NoFCIV
 echo.
-echo ERROR: Microsoft file checksum integrity verifier ..\bin\fciv.exe not found.
-echo %DATE% %TIME% - Error: Microsoft file checksum integrity verifier ..\bin\fciv.exe not found >>%DOWNLOAD_LOGFILE%
+echo ERROR: Microsoft file checksum integrity verification tool ..\bin\fciv.exe not found.
+echo %DATE% %TIME% - Error: Microsoft file checksum integrity verification tool ..\bin\fciv.exe not found >>%DOWNLOAD_LOGFILE%
+echo.
+goto Error
+
+:NoSigCheck
+echo.
+echo ERROR: Sysinternals' digital file signature verification tool ..\bin\sigcheck.exe not found.
+echo %DATE% %TIME% - Error: Sysinternals' digital file signature verification tool ..\bin\sigcheck.exe not found >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 
