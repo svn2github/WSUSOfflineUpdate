@@ -25,7 +25,7 @@ for /F "delims=: tokens=1*" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TE
       if errorlevel 1 goto InstError
     )
   )
-  for %%k in (%OS_NAME%-%OS_ARCHITECTURE% %OS_NAME% win) do (
+  for %%k in (dotnet %OS_NAME%-%OS_ARCHITECTURE% %OS_NAME% win) do (
     echo %%j | %SystemRoot%\system32\find.exe /I "\%%k\" >nul 2>&1
     if not errorlevel 1 (
       echo Installing update %%i of %LINES_COUNT%...

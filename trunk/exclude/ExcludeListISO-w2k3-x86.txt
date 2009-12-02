@@ -13,9 +13,6 @@
 *windowsmedia8*
 *mdac25*
 *mdac27*
-*ndp1*
-*ndp20-*
-*ndp20sp1-*
 *windows2000*
 *windowsxp*
 *directx_*

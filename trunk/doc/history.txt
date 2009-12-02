@@ -314,5 +314,6 @@ Version ?.? -- ??.??.09
 - Installed updates' determination implementation changed in order to enhance performance and become independent of WUA   
 - Update for Root Certificates (rootsupd.exe/kb931125) updated to November 2009 (Thanks to "Gerby")
 - Info-Zip's UnZip integrated because of persistent FTP download problems - FTP proxy for wget removed because it's not used any longer
+- Fix: Windows Vista ISO images and USB copies did not contain .NET Framework 3.5 SP1 Family Update files KB958483 and KB958484 (Thanks to "wsususer")  
 - Fix: ISO volume ids and installation log file name adjusted to fit to project's new name (Thanks to "LigH")
 - Fix: Removed o2k remainders in xslt directory

@@ -7,6 +7,7 @@
 *win\/*
 *w60*
 *w61\/*
+*-x86*
 *.au3
 *reg.exe
 *invcif.exe

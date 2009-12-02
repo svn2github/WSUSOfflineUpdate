@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.3+ (r47)
+set WSUSUPDATE_VERSION=6.3+ (r48)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -128,7 +128,15 @@ del /Q ..\static\*o2k-*.* >nul 2>&1
 del /Q ..\xslt\*o2k-*.* >nul 2>&1
 if exist ..\xslt\ExtractExpiredIds-o2k.xsl del ..\xslt\ExtractExpiredIds-o2k.xsl
 if exist ..\xslt\ExtractValidIds-o2k.xsl del ..\xslt\ExtractValidIds-o2k.xsl
-if exist ..\static\StaticDownloadLink-unzip.txt del ..\static\StaticDownloadLink-unzip.txt 
+if exist ..\static\StaticDownloadLink-unzip.txt del ..\static\StaticDownloadLink-unzip.txt
+if exist ..\client\win\glb\ndp*.* (
+  if not exist ..\client\dotnet\glb\nul md ..\client\dotnet\glb
+  move /Y ..\client\win\glb\ndp*.* ..\client\dotnet\glb >nul
+)
+if exist ..\client\w2k3-x64\glb\ndp*.* (
+  if not exist ..\client\dotnet\glb\nul md ..\client\dotnet\glb
+  move /Y ..\client\w2k3-x64\glb\ndp*.* ..\client\dotnet\glb >nul
+)
 
 rem *** Determine state of automatic daylight time setting ***
 echo Determining state of automatic daylight time setting...
@@ -275,6 +283,8 @@ echo Downloading/validating installation files for .NET Framework 3.5 SP1...
 %WGET_PATH% -N -i ..\static\StaticDownloadLink-dotnet.txt -P ..\client\dotnet
 if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded/validated installation files for .NET Framework 3.5 SP1 >>%DOWNLOAD_LOGFILE%
+call :DownloadCore dotnet glb
+if errorlevel 1 goto Error
 :SkipDotNet
 
 for %%i in (w2k wxp w2k3) do (
@@ -333,7 +343,7 @@ if exist ..\static\StaticDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.txt (
 )
 :SkipStatics
 if not exist ..\bin\msxsl.exe goto NoMSXSL
-for %%i in (win w2k wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64) do (if /i "%1"=="%%i" goto DetermineWindows)
+for %%i in (dotnet win w2k wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64) do (if /i "%1"=="%%i" goto DetermineWindows)
 for %%i in (ofc oxp o2k3 o2k7 o2k7-x64) do (if /i "%1"=="%%i" goto DetermineOffice)
 goto DoDownload
 

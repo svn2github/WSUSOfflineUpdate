@@ -1,3 +1,4 @@
+*dotnet\/*
 *ofc*
 *o2k*
 *oxp*
@@ -6,7 +7,6 @@
 *w6*
 *-x64*
 *windowsxp*
-*ndp*
 *windowsrightsmanagementservices*
 *.au3
 *invcif.exe

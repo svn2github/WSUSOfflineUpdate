@@ -5,11 +5,11 @@
 <xsl:template match="*">
   <xsl:choose>
     <xsl:when test="name()='FileLocation'">
-      <xsl:if test="contains(@Url, '/capicom') and contains(@Url, '.exe')">
+      <xsl:if test="contains(@Url, '/ndp') and contains(@Url, '-x86_') and contains(@Url, '.exe')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>
-      <xsl:if test="contains(@Url, '/q') and contains(@Url, '_mdac_securitypatch_') and contains(@Url, '.exe')">
+      <xsl:if test="contains(@Url, '/ndp') and contains(@Url, '-x64') and contains(@Url, '.exe')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>

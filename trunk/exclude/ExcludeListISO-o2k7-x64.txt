@@ -8,6 +8,7 @@
 *w2k3*
 *w6*
 *win\/*
+*ndp*-x86*
 *.au3
 *invcif.exe
 *invcm.exe
