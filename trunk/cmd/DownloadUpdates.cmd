@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.3+ (r48)
+set WSUSUPDATE_VERSION=6.3+ (r49)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -132,10 +132,12 @@ if exist ..\static\StaticDownloadLink-unzip.txt del ..\static\StaticDownloadLink
 if exist ..\client\win\glb\ndp*.* (
   if not exist ..\client\dotnet\glb\nul md ..\client\dotnet\glb
   move /Y ..\client\win\glb\ndp*.* ..\client\dotnet\glb >nul
+  if exist ..\fciv\sha1-win-glb.xml del ..\fciv\sha1-win-glb.xml 
 )
 if exist ..\client\w2k3-x64\glb\ndp*.* (
   if not exist ..\client\dotnet\glb\nul md ..\client\dotnet\glb
   move /Y ..\client\w2k3-x64\glb\ndp*.* ..\client\dotnet\glb >nul
+  if exist ..\fciv\sha1-w2k3-x64-glb.xml del ..\fciv\sha1-w2k3-x64-glb.xml 
 )
 
 rem *** Determine state of automatic daylight time setting ***

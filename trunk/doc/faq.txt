@@ -64,14 +64,18 @@ A: Ja, sofern Sie der Freigabe lokal über die Funktion "Netzlaufwerk verbinden..
 Auf die Funktion "automatic reboot and recall" müssen Sie bei einem Aufruf über das Netzwerk ebenfalls verzichten, da die Freigabe dem neu angelegten Benutzerkonto "WSUSUpdateAdmin" ggf. nicht zur Verfügung steht.
 Bitte bedenken Sie auch, dass eine Patch-Installation über das Netzwerk dem Gedanken des Offline Updates zuwiderläuft und der Rechner in diesem Zeitraum möglicherweise angreifbar ist.
 --------------------------------------------------------------------------------
-F: Kann ich die Installation der Updates erzwingen, auch wenn sie bereits auf dem Zielsystem installiert sind?
-A: Ja, aber nicht über die GUI (UpdateInstaller.exe). Bitte rufen Sie dazu "Update.cmd" mit dem Parameter "/all" auf, also z.B. "Update.cmd /autoreboot /showlog /all".
+F: Ein Update wird immer wieder installiert, obwohl es auf dem Zielsystem schon vorhanden ist. Woran liegt das und was kann ich dagegen tun?
+A: Dieses Verhalten zeigt sich gelegentlich bei Kernel-Updates auf OEM-Systemen; die Ursache liegt also bei Microsoft.
+Sie können solche Updates manuell mit dem Parameter "/o" (alternativ "/overwriteoem", vgl. http://support.microsoft.com/kb/262841) installieren, um dieses Problem zu beheben.
 --------------------------------------------------------------------------------
 F: Bei der Installation der Updates erhalte ich eine Warnung, dass das Update KB890830 übersprungen wurde. Warum ist es nicht integriert?
 A: Beim Update KB890830 handelt es sich genau genommen nicht um ein Update, sondern um das "Malicious Software Removal Tool (MSRT)". Dieses prüft nach einem Neustart des Rechners diesen einmalig auf Schädlingsbefall, kann aber hinsichtlich Aktualität und Erkennungsrate nicht mit kommerziellen Virenscannern konkurrieren. Da es darüber hinaus in vielen Versionen in Microsofts Katalogdatei wsusscn2.cab aufgeführt ist, wird es schon beim Download der Updates herausgefiltert.
 --------------------------------------------------------------------------------
 F: Bei der Installation der Updates erhalte ich Warnungen, dass weitere Updates nicht gefunden werden konnten. Was hat es damit auf sich?
 A: Vom Offline Update werden standardmäßig nur Updates heruntergeladen, die in Microsofts Katalogdatei wsusscn2.cab aufgeführt sind. Dies sind mindestens alle kritischen und sicherheitsrelevanten Updates, jedoch nicht alle empfohlenen oder optionalen. Bei Bedarf können Sie die vermissten Updates manuell hinzufügen (s.o.).
+--------------------------------------------------------------------------------
+F: Kann ich die Installation der Updates erzwingen, auch wenn sie bereits auf dem Zielsystem installiert sind?
+A: Ja, aber nicht über die GUI (UpdateInstaller.exe). Bitte rufen Sie dazu "Update.cmd" mit dem Parameter "/all" auf, also z.B. "Update.cmd /autoreboot /showlog /all".
 --------------------------------------------------------------------------------
 F: Bei der Installation der Updates erhalte ich merkwürdige Fehlermeldungen auf der Konsole, z.B. "D:\Downloads\Updates\Windows\ctupdate30\client\cmd\DetermineSystemProperties.vbs(92, 3) (null): 0x80041014", das Skript bricht daraufhin ab. Woran liegt das und was kann ich dagegen tun?
 A: Für einen fehlerfreien Ablauf benötigt das Installationsskript korrekte Installationen der Windows-Dienste bzw. -Komponenten "Automatische Updates (WUA)", "Windows Script Host (WSH)" und "Windows Management Instrumentation (WMI)".

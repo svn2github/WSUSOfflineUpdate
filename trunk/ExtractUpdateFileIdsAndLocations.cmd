@@ -4,7 +4,7 @@ rem *** Author: T. Wittrock, RZ Uni Kiel ***
 if not exist "%TEMP%\msxsl.exe" .\bin\wget.exe -N -i .\static\StaticDownloadLink-msxsl.txt -P "%TEMP%"
 if not exist "%TEMP%\wsusscn2.cab" (
   .\bin\wget.exe -N -i .\static\StaticDownloadLinks-wsus.txt -P "%TEMP%"
-  del "%TEMP%\wuredist.cab"
+  if exist "%TEMP%\wuredist.cab" del "%TEMP%\wuredist.cab"
 ) 
 if exist "%TEMP%\package.cab" del "%TEMP%\package.cab"
 if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
