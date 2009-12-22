@@ -842,5 +842,9 @@ goto EoF
 cd ..
 echo %DATE% %TIME% - Info: Ending update >>%UPDATE_LOGFILE%
 title %ComSpec%
-if "%RECALL_REQUIRED%"=="1" verify other 2>nul
+if "%RECALL_REQUIRED%"=="1" (
+  verify other 2>nul
+  exit /b 3010
+)
+if "%REBOOT_REQUIRED%"=="1" exit /b 3010
 endlocal

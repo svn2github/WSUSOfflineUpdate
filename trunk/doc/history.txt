@@ -312,6 +312,7 @@ Version 6.3 -- 13.11.09
 Version ?.? -- ??.??.09
 - Digital signatures of downloaded files will be verified if corresponding option is selected (Thanks to "friday123") 
 - Installed updates' determination implementation changed in order to enhance performance and become independent of WUA   
+- DoUpdate.cmd script will exit with errorlevel 3010 now if reboot/recall is required and automatic reboot is disabled (Thanks to "icnocop")
 - Update for Root Certificates (rootsupd.exe/kb931125) updated to November 2009 (Thanks to "Gerby")
 - Info-Zip's UnZip integrated because of persistent FTP download problems - FTP proxy for wget removed because it's not used any longer
 - Fix: Windows Vista ISO images and USB copies did not contain .NET Framework 3.5 SP1 Family Update files KB958483 and KB958484 (Thanks to "wsususer")  

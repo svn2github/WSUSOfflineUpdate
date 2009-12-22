@@ -2206,11 +2206,11 @@ Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
 
-;  Discontinued Products' Tab
+;  Legacy systems' Tab
 If ShowGUIInGerman() Then
-  GuiCtrlCreateTabItem("Abgekündigte Produkte")
+  GuiCtrlCreateTabItem("Altsysteme")
 Else
-  GuiCtrlCreateTabItem("Discontinued Products")
+  GuiCtrlCreateTabItem("Legacy systems")
 EndIf
 
 ;  Windows 2000 group
