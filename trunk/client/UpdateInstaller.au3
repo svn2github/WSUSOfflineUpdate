@@ -1,11 +1,11 @@
-; *** WSUS Offline Update 6.3 - Installer ***
+; *** WSUS Offline Update 6.4 - Installer ***
 ; ***  Author: T. Wittrock, RZ Uni Kiel   ***
 ; *** Dialog scaling added by Th. Baisch  ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 
-Dim Const $caption                  = "WSUS Offline Update 6.3 - Installer"
+Dim Const $caption                  = "WSUS Offline Update 6.4 - Installer"
 
 ; Registry constants
 Dim Const $reg_key_wsh_hklm         = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings"
@@ -159,7 +159,7 @@ If ShowGUIInGerman() Then
 Else
   $backup = GUICtrlCreateCheckbox("Back up existing system files", $txtxoffset, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) Then
+If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
   GUICtrlSetState(-1, $GUI_CHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else
@@ -177,7 +177,8 @@ If ShowGUIInGerman() Then
 Else
   $ie7 = GUICtrlCreateCheckbox("Install Internet Explorer 7", $txtxoffset, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (IEVersion() = "7") OR (IEVersion() = "8") ) Then
+If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
+  OR (IEVersion() = "7") OR (IEVersion() = "8") ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else  
@@ -264,13 +265,13 @@ EndIf
 ;  Automatic reboot and recall
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
-  If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) Then
+  If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
     $autoreboot = GUICtrlCreateCheckbox("Automatisch neu starten", $txtxoffset, $txtypos, $txtwidth, $txtheight)
   Else
     $autoreboot = GUICtrlCreateCheckbox("Automatisch neu starten und fortsetzen", $txtxoffset, $txtypos, $txtwidth, $txtheight)
   EndIf
 Else
-  If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) Then
+  If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
     $autoreboot = GUICtrlCreateCheckbox("Automatic reboot", $txtxoffset, $txtypos, $txtwidth, $txtheight)
   Else
     $autoreboot = GUICtrlCreateCheckbox("Automatic reboot and recall", $txtxoffset, $txtypos, $txtwidth, $txtheight)
@@ -376,7 +377,7 @@ If ( (@OSVersion = "WIN_XP") AND (@OSServicePack = "") ) Then
     Exit(1)
   EndIf
 EndIf
-If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (@OSBuild <= 6002) AND (@OSServicePack <> "Service Pack 2") ) Then
+If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (@OSServicePack <> "Service Pack 2") ) Then
   If ShowGUIInGerman() Then
     MsgBox(0x2040, "Information", "Unter Windows Vista / Server 2008 müssen Sie" _
                           & @LF & "nach der Installation der Service Packs 1 und 2" _
@@ -420,7 +421,7 @@ While 1
      
     Case $ie8                ; IE8 check box toggled  
       If ( (BitAND(GUICtrlRead($ie8), $GUI_CHECKED) = $GUI_CHECKED) _  
-        OR (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") _  
+        OR (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _  
         OR (IEVersion() = "7") OR (IEVersion() = "8") ) Then    
         GUICtrlSetState($ie7, $GUI_UNCHECKED)  
         GUICtrlSetState($ie7, $GUI_DISABLE)  
@@ -439,7 +440,7 @@ While 1
 
     Case $autoreboot         ; Automatic reboot check box toggled
       If ( (BitAND(GUICtrlRead($autoreboot), $GUI_CHECKED) = $GUI_CHECKED) _
-       AND (@OSVersion <> "WIN_VISTA") AND (@OSVersion <> "WIN_2008") ) Then
+       AND (@OSVersion <> "WIN_VISTA") AND (@OSVersion <> "WIN_2008") AND (@OSVersion <> "WIN_7") AND (@OSVersion <> "WIN_2008R2") ) Then
         If ShowGUIInGerman() Then
           If MsgBox(0x2134, "Warnung", "Die Option 'Automatisch neu starten und fortsetzen' verursachte auf manchen Systemen Probleme." _
                                & @LF & "Möchten Sie fortsetzen?") = 7 Then

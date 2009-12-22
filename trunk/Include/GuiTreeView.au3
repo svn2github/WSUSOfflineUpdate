@@ -1,43 +1,45 @@
 #include-once
-#include <TreeViewConstants.au3>
-#include <Memory.au3>
-#include <WinAPI.au3>
-#include <GuiImageList.au3>
-#include <StructureConstants.au3>
-#include <SendMessage.au3>
-#include <UDFGlobalID.au3>
+
+#include "TreeViewConstants.au3"
+#include "GuiImageList.au3"
+#include "Memory.au3"
+#include "WinAPI.au3"
+#include "StructureConstants.au3"
+#include "SendMessage.au3"
+#include "UDFGlobalID.au3"
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: TreeView
-; AutoIt Version: 3.2.3++
-; Language:       English
-; Description ...: A TreeView control is a window that displays a hierarchical list of items, such as the headings in a document,
+; AutoIt Version : 3.2.3++
+; Language ......: English
+; Description ...: Functions that assist with TreeView control management.
+;                  A TreeView control is a window that displays a hierarchical list of items, such as the headings in a document,
 ;                  the entries in an index, or the files and directories on a disk. Each item consists of a label and an optional
 ;                  bitmapped image, and each item can have a list of subitems associated with it.  By clicking an item, the  user
 ;                  can expand or collapse the associated list of subitems.
+; Author(s) .....: Paul Campbell (PaulIA), Gary Frost (gafrost), Holger Kotsch
+; Dll(s) ........: user32.dll, comctl32.dll, shell32.dll
 ; ===============================================================================================================================
 
 ; Default treeview item extended structure
-; http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/commctls/treeview/structures/tvitemex.asp
+; http://msdn.microsoft.com/en-us/library/bb773459.aspx
 ; Min.OS: 2K, NT4 with IE 4.0, 98, 95 with IE 4.0
 
 ; #VARIABLES# ===================================================================================================================
 Global $__ghTVLastWnd
 Global $Debug_TV = False
+; ===============================================================================================================================
+
+; #CONSTANTS# ===================================================================================================================
 Global Const $__TREEVIEWCONSTANT_ClassName = "SysTreeView32"
 Global Const $__TREEVIEWCONSTANT_WM_SETREDRAW = 0x000B
-Global Const $__TREEVIEWCONSTANT_WS_VISIBLE = 0x10000000
-Global Const $__TREEVIEWCONSTANT_WS_CHILD = 0x40000000
 Global Const $__TREEVIEWCONSTANT_DEFAULT_GUI_FONT = 17
 ; ===============================================================================================================================
 
-;==============================================================================================================================
-; ===============================================================================================================================
-; depricated functions will no longer work
-; ===============================================================================================================================
 ; #OLD_FUNCTIONS#================================================================================================================
 ; Old Function/Name                      ; --> New Function/Name/Replacement(s)
-; ===============================================================================================================================
+;
+; deprecated functions will no longer work
 ;_GUICtrlTreeViewDeleteAllItems           ; --> _GUICtrlTreeView_DeleteAll
 ;_GUICtrlTreeViewDeleteItem               ; --> _GUICtrlTreeView_Delete
 ;_GUICtrlTreeViewExpand                   ; --> _GUICtrlTreeView_Expand
@@ -63,8 +65,8 @@ Global Const $__TREEVIEWCONSTANT_DEFAULT_GUI_FONT = 17
 ;_GUICtrlTreeViewSort                     ; --> _GUICtrlTreeView_Sort
 
 ; #NO_DOC_FUNCTION# =============================================================================================================
-; Not working/documented/implimented at this time
-; ===============================================================================================================================
+; Not working/documented/implrmented at this time
+;
 ;_GUICtrlTreeView_GetOverlayImageIndex
 ;_GUICtrlTreeView_MapAccIDToItem
 ;_GUICtrlTreeView_MapItemToAccID
@@ -187,15 +189,57 @@ Global Const $__TREEVIEWCONSTANT_DEFAULT_GUI_FONT = 17
 ;_GUICtrlTreeView_Sort
 ; ===============================================================================================================================
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-;_GUICtrlTreeView_AddItem
-;_GUICtrlTreeView_DebugPrint
-;_GUICtrlTreeView_ExpandItem
-;_GUICtrlTreeView_GetItem
-;_GUICtrlTreeView_ReverseColorOder
-;_GUICtrlTreeView_SetItem
-;_GUICtrlTreeView_ValidateClassName
-;==============================================================================================================================
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+;$tagTVINSERTSTRUCT
+;__GUICtrlTreeView_AddItem
+;__GUICtrlTreeView_ExpandItem
+;__GUICtrlTreeView_GetItem
+;__GUICtrlTreeView_ReverseColorOrder
+;__GUICtrlTreeView_SetItem
+; ===============================================================================================================================
+
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: $tagTVINSERTSTRUCT
+; Description ...: Contains information used to add a new item to a tree-view control
+; Fields ........: Parent        - Handle to the parent item. If this member is $TVI_ROOT, the item is inserted at the root
+;                  InsertAfter   - Handle to the item after which the new item is to be inserted, or one of the following values:
+;                  |$TVI_FIRST - Inserts the item at the beginning of the list
+;                  |$TVI_LAST  - Inserts the item at the end of the list
+;                  |$TVI_ROOT  - Add the item as a root item
+;                  |$TVI_SORT  - Inserts the item into the list in alphabetical order
+;                  Mask          - Flags that indicate which of the other structure members contain valid data:
+;                  |$TVIF_CHILDREN      - The Children member is valid
+;                  |$TVIF_DI_SETITEM    - The will retain the supplied information and will not request it again
+;                  |$TVIF_HANDLE        - The hItem member is valid
+;                  |$TVIF_IMAGE         - The Image member is valid
+;                  |$TVIF_INTEGRAL      - The Integral member is valid
+;                  |$TVIF_PARAM         - The Param member is valid
+;                  |$TVIF_SELECTEDIMAGE - The SelectedImage member is valid
+;                  |$TVIF_STATE         - The State and StateMask members are valid
+;                  |$TVIF_TEXT          - The Text and TextMax members are valid
+;                  hItem         - Item to which this structure refers
+;                  State         - Set of bit flags and image list indexes that indicate the item's state. When setting the state
+;                  +of an item, the StateMask member indicates the bits of this member that are valid.  When retrieving the state
+;                  +of an item, this member returns the current state for the bits indicated in  the  StateMask  member.  Bits  0
+;                  +through 7 of this member contain the item state flags. Bits 8 through 11 of this member specify the one based
+;                  +overlay image index.
+;                  StateMask     - Bits of the state member that are valid.  If you are retrieving an item's state, set the  bits
+;                  +of the stateMask member to indicate the bits to be returned in the state member. If you are setting an item's
+;                  +state, set the bits of the stateMask member to indicate the bits of the state member that you want to set.
+;                  Text          - Pointer to a null-terminated string that contains the item text.
+;                  TextMax       - Size of the buffer pointed to by the Text member, in characters
+;                  Image         - Index in the image list of the icon image to use when the item is in the nonselected state
+;                  SelectedImage - Index in the image list of the icon image to use when the item is in the selected state
+;                  Children      - Flag that indicates whether the item has associated child items. This member can be one of the
+;                  +following values:
+;                  |0 - The item has no child items
+;                  |1 - The item has one or more child items
+;                  Param         - A value to associate with the item
+;                  Integral      - Height of the item
+; Author ........: Paul Campbell (PaulIA)
+; Remarks .......:
+; ===============================================================================================================================
+Global Const $tagTVINSERTSTRUCT = "handle Parent;handle InsertAfter;" & $tagTVITEM
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _GUICtrlTreeView_Add
@@ -213,12 +257,11 @@ Global Const $__TREEVIEWCONSTANT_DEFAULT_GUI_FONT = 17
 ; Remarks .......: The item is added as the last sibling of $hSibling. If the control is sorted, the function inserts the item in
 ;                  the correct sort order position rather than as the last child of $hSibling.
 ; Related .......: _GUICtrlTreeView_AddFirst
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_Add($hWnd, $hSibling, $sText, $iImage = -1, $iSelImage = -1)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
-	Return _GUICtrlTreeView_AddItem($hWnd, $hSibling, $sText, $TVNA_ADD, $iImage, $iSelImage)
+	Return __GUICtrlTreeView_AddItem($hWnd, $hSibling, $sText, $TVNA_ADD, $iImage, $iSelImage)
 EndFunc   ;==>_GUICtrlTreeView_Add
 
 ; #FUNCTION# ====================================================================================================================
@@ -238,11 +281,11 @@ EndFunc   ;==>_GUICtrlTreeView_Add
 ;                  control is sorted, this function inserts the item in the correct sort order position, rather than as the  last
 ;                  child of $hParent.
 ; Related .......: _GUICtrlTreeView_AddChildFirst
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_AddChild($hWnd, $hParent, $sText, $iImage = -1, $iSelImage = -1)
-	Return _GUICtrlTreeView_AddItem($hWnd, $hParent, $sText, $TVNA_ADDCHILD, $iImage, $iSelImage)
+	Return __GUICtrlTreeView_AddItem($hWnd, $hParent, $sText, $TVNA_ADDCHILD, $iImage, $iSelImage)
 EndFunc   ;==>_GUICtrlTreeView_AddChild
 
 ; #FUNCTION# ====================================================================================================================
@@ -260,11 +303,11 @@ EndFunc   ;==>_GUICtrlTreeView_AddChild
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......: The item is added as the first child of $hParent. Items that appear after the added item are moved down.
 ; Related .......: _GUICtrlTreeView_AddChild
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_AddChildFirst($hWnd, $hParent, $sText, $iImage = -1, $iSelImage = -1)
-	Return _GUICtrlTreeView_AddItem($hWnd, $hParent, $sText, $TVNA_ADDCHILDFIRST, $iImage, $iSelImage)
+	Return __GUICtrlTreeView_AddItem($hWnd, $hParent, $sText, $TVNA_ADDCHILDFIRST, $iImage, $iSelImage)
 EndFunc   ;==>_GUICtrlTreeView_AddChildFirst
 
 ; #FUNCTION# ====================================================================================================================
@@ -282,17 +325,17 @@ EndFunc   ;==>_GUICtrlTreeView_AddChildFirst
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......: The item is added as the first sibling of $hSibling.  Items that appear after the added item are moved down.
 ; Related .......: _GUICtrlTreeView_Add
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_AddFirst($hWnd, $hSibling, $sText, $iImage = -1, $iSelImage = -1)
-	Return _GUICtrlTreeView_AddItem($hWnd, $hSibling, $sText, $TVNA_ADDFIRST, $iImage, $iSelImage)
+	Return __GUICtrlTreeView_AddItem($hWnd, $hSibling, $sText, $TVNA_ADDFIRST, $iImage, $iSelImage)
 EndFunc   ;==>_GUICtrlTreeView_AddFirst
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _GUICtrlTreeView_AddItem
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __GUICtrlTreeView_AddItem
 ; Description ...: Add a new item
-; Syntax.........: _GUICtrlTreeView_AddItem($hWnd, $hRelative, $sText, $iMethod[, $iImage = -1[, $iSelImage = -1]])
+; Syntax.........: __GUICtrlTreeView_AddItem($hWnd, $hRelative, $sText, $iMethod[, $iImage = -1[, $iSelImage = -1]])
 ; Parameters ....: $hWnd        - Handle to the control
 ;                  $hRelative   - Handle to an existing item that will be either parent or sibling to the new item
 ;                  $sText       - The text for the new item
@@ -311,16 +354,13 @@ EndFunc   ;==>_GUICtrlTreeView_AddFirst
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......: This function is for interall use only and should not normally be called by the end user
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
-Func _GUICtrlTreeView_AddItem($hWnd, $hRelative, $sText, $iMethod, $iImage = -1, $iSelImage = -1, $iParam = 0)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+Func __GUICtrlTreeView_AddItem($hWnd, $hRelative, $sText, $iMethod, $iImage = -1, $iSelImage = -1, $iParam = 0)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
 
-	Local $iAddMode, $hItem, $hItemID, $pMemory, $tMemMap, $pText, $iBuffer, $pBuffer, $tBuffer
-	Local $iInsert, $pInsert, $tInsert, $hResult, $iMask
-	Local $fUnicode = _GUICtrlTreeView_GetUnicodeFormat($hWnd)
-
+	Local $iAddMode
 	Switch $iMethod
 		Case $TVNA_ADD, $TVNA_ADDCHILD
 			$iAddMode = $TVTA_ADD
@@ -330,6 +370,7 @@ Func _GUICtrlTreeView_AddItem($hWnd, $hRelative, $sText, $iMethod, $iImage = -1,
 			$iAddMode = $TVTA_INSERT
 	EndSwitch
 
+	Local $hItem, $hItemID = 0
 	If $hRelative <> 0x00000000 Then
 		Switch $iMethod
 			Case $TVNA_ADD, $TVNA_ADDFIRST
@@ -345,16 +386,18 @@ Func _GUICtrlTreeView_AddItem($hWnd, $hRelative, $sText, $iMethod, $iImage = -1,
 
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	$iBuffer = StringLen($sText) + 1
+	Local $iBuffer = StringLen($sText) + 1
+	Local $tBuffer
+	Local $fUnicode = _GUICtrlTreeView_GetUnicodeFormat($hWnd)
 	If $fUnicode Then
-		$iBuffer *= 2
 		$tBuffer = DllStructCreate("wchar Text[" & $iBuffer & "]")
+		$iBuffer *= 2
 	Else
 		$tBuffer = DllStructCreate("char Text[" & $iBuffer & "]")
 	EndIf
-	$pBuffer = DllStructGetPtr($tBuffer)
-	$tInsert = DllStructCreate($tagTVINSERTSTRUCT)
-	$pInsert = DllStructGetPtr($tInsert)
+	Local $pBuffer = DllStructGetPtr($tBuffer)
+	Local $tInsert = DllStructCreate($tagTVINSERTSTRUCT)
+	Local $pInsert = DllStructGetPtr($tInsert)
 	Switch $iAddMode
 		Case $TVTA_ADDFIRST
 			DllStructSetData($tInsert, "InsertAfter", $TVI_FIRST)
@@ -363,7 +406,7 @@ Func _GUICtrlTreeView_AddItem($hWnd, $hRelative, $sText, $iMethod, $iImage = -1,
 		Case $TVTA_INSERT
 			DllStructSetData($tInsert, "InsertAfter", $hItemID)
 	EndSwitch
-	$iMask = BitOR($TVIF_TEXT, $TVIF_PARAM)
+	Local $iMask = BitOR($TVIF_TEXT, $TVIF_PARAM)
 	If $iImage >= 0 Then $iMask = BitOR($iMask, $TVIF_IMAGE)
 	If $iSelImage >= 0 Then $iMask = BitOR($iMask, $TVIF_SELECTEDIMAGE)
 	DllStructSetData($tBuffer, "Text", $sText)
@@ -374,29 +417,27 @@ Func _GUICtrlTreeView_AddItem($hWnd, $hRelative, $sText, $iMethod, $iImage = -1,
 	DllStructSetData($tInsert, "SelectedImage", $iSelImage)
 	DllStructSetData($tInsert, "Param", $iParam)
 
+	Local $hResult
 	If _WinAPI_InProcess($hWnd, $__ghTVLastWnd) Then
 		DllStructSetData($tInsert, "Text", $pBuffer)
-		If $fUnicode Then
-			$hResult = _SendMessage($hWnd, $TVM_INSERTITEMW, 0, $pInsert, 0, "wparam", "ptr", "hwnd")
-		Else
-			$hResult = _SendMessage($hWnd, $TVM_INSERTITEM, 0, $pInsert, 0, "wparam", "ptr", "hwnd")
-		EndIf
+		$hResult = _SendMessage($hWnd, $TVM_INSERTITEMW, 0, $pInsert, 0, "wparam", "ptr", "handle")
 	Else
-		$iInsert = DllStructGetSize($tInsert)
-		$pMemory = _MemInit($hWnd, $iInsert + $iBuffer, $tMemMap)
-		$pText = $pMemory + $iInsert
+		Local $iInsert = DllStructGetSize($tInsert)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iInsert + $iBuffer, $tMemMap)
+		Local $pText = $pMemory + $iInsert
 		_MemWrite($tMemMap, $pInsert, $pMemory, $iInsert)
 		_MemWrite($tMemMap, $pBuffer, $pText, $iBuffer)
 		DllStructSetData($tInsert, "Text", $pText)
 		If $fUnicode Then
-			$hResult = _SendMessage($hWnd, $TVM_INSERTITEMW, 0, $pMemory, 0, "wparam", "ptr", "hwnd")
+			$hResult = _SendMessage($hWnd, $TVM_INSERTITEMW, 0, $pMemory, 0, "wparam", "ptr", "handle")
 		Else
-			$hResult = _SendMessage($hWnd, $TVM_INSERTITEM, 0, $pMemory, 0, "wparam", "ptr", "hwnd")
+			$hResult = _SendMessage($hWnd, $TVM_INSERTITEMA, 0, $pMemory, 0, "wparam", "ptr", "handle")
 		EndIf
 		_MemFree($tMemMap)
 	EndIf
 	Return $hResult
-EndFunc   ;==>_GUICtrlTreeView_AddItem
+EndFunc   ;==>__GUICtrlTreeView_AddItem
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _GUICtrlTreeView_BeginUpdate
@@ -409,11 +450,12 @@ EndFunc   ;==>_GUICtrlTreeView_AddItem
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_EndUpdate
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_BeginUpdate($hWnd)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $__TREEVIEWCONSTANT_WM_SETREDRAW) = 0
@@ -434,21 +476,26 @@ EndFunc   ;==>_GUICtrlTreeView_BeginUpdate
 ; Modified.......: Gary Frost
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_ClickItem($hWnd, $hItem, $sButton = "left", $fMove = False, $iClicks = 1, $iSpeed = 0)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
-	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
-	Local $tPoint, $tRect, $iX, $iY, $iMode, $aPos
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
 
-	$tRect = _GUICtrlTreeView_DisplayRectEx($hWnd, $hItem, True)
-	$tPoint = _WinAPI_PointFromRect($tRect)
+	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
+
+	Local $tRect = _GUICtrlTreeView_DisplayRectEx($hWnd, $hItem, True)
+	If @error Then Return SetError(@error, @error, 0)
+	; Always click on the left-most portion of the control, not the center.  A
+	; very wide control may be off-screen which means clicking on it's center
+	; will click outside the window.
+	Local $tPoint = _WinAPI_PointFromRect($tRect, False)
 	_WinAPI_ClientToScreen($hWnd, $tPoint)
+	Local $iX, $iY
 	_WinAPI_GetXYFromPoint($tPoint, $iX, $iY)
-	$iMode = Opt("MouseCoordMode", 1)
+	Local $iMode = Opt("MouseCoordMode", 1)
 	If Not $fMove Then
-		$aPos = MouseGetPos()
+		Local $aPos = MouseGetPos()
 		_WinAPI_ShowCursor(False)
 		MouseClick($sButton, $iX, $iY, $iClicks, $iSpeed)
 		MouseMove($aPos[0], $aPos[1], 0)
@@ -457,13 +504,14 @@ Func _GUICtrlTreeView_ClickItem($hWnd, $hItem, $sButton = "left", $fMove = False
 		MouseClick($sButton, $iX, $iY, $iClicks, $iSpeed)
 	EndIf
 	Opt("MouseCoordMode", $iMode)
+	Return 1
 EndFunc   ;==>_GUICtrlTreeView_ClickItem
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _GUICtrlTreeView_Create
 ; Description ...: Create a TreeView control
 ; Syntax.........: _GUICtrlTreeView_Create($hWnd, $iX, $iY[, $iWidth=150[, $iHeight=150[, $iStyle=0x00000037[, $iExStyle=0x00000000]]]])
-; Parameters ....: $hParent     - Handle to parent or owner window
+; Parameters ....: $hWnd        - Handle to parent or owner window
 ;                  $iX          - Horizontal position of the control
 ;                  $iY          - Vertical position of the control
 ;                  $iWidth      - Control width
@@ -511,27 +559,28 @@ EndFunc   ;==>_GUICtrlTreeView_ClickItem
 ; Modified.......: Gary Frost
 ; Remarks .......: This function is for Advanced users and for learning how the control works.
 ; Related .......: _GUICtrlTreeView_Destroy
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_Create($hWnd, $iX, $iY, $iWidth = 150, $iHeight = 150, $iStyle = 0x00000037, $iExStyle = 0x00000000)
-	If Not IsHWnd($hWnd) Then _WinAPI_ShowError("Invalid Window handle for _GUICtrlTreeView_Create 1st parameter")
+	If Not IsHWnd($hWnd) Then
+		; Invalid Window handle for _GUICtrlTreeView_Create 1st parameter
+		Return SetError(1, 0, 0)
+	EndIf
 
-	Local $hTree, $nCtrlID
 
 	If $iWidth = -1 Then $iWidth = 150
 	If $iHeight = -1 Then $iHeight = 150
-	If $iStyle = -1 Then $iStyle = 0x00000037
+	If $iStyle = -1 Then $iStyle = BitOR($TVS_SHOWSELALWAYS, $TVS_DISABLEDRAGDROP, $TVS_LINESATROOT, $TVS_HASLINES, $TVS_HASBUTTONS)
 	If $iExStyle = -1 Then $iExStyle = 0x00000000
 
-	$iStyle = BitOR($iStyle, $__TREEVIEWCONSTANT_WS_CHILD, $__TREEVIEWCONSTANT_WS_VISIBLE)
+	$iStyle = BitOR($iStyle, $__UDFGUICONSTANT_WS_CHILD, $__UDFGUICONSTANT_WS_VISIBLE)
 
-	$nCtrlID = _UDF_GetNextGlobalID($hWnd)
+	Local $nCtrlID = __UDF_GetNextGlobalID($hWnd)
 	If @error Then Return SetError(@error, @extended, 0)
 
-	$hTree = _WinAPI_CreateWindowEx($iExStyle, $__TREEVIEWCONSTANT_ClassName, "", $iStyle, $iX, $iY, $iWidth, $iHeight, $hWnd, $nCtrlID)
+	Local $hTree = _WinAPI_CreateWindowEx($iExStyle, $__TREEVIEWCONSTANT_ClassName, "", $iStyle, $iX, $iY, $iWidth, $iHeight, $hWnd, $nCtrlID)
 	_WinAPI_SetFont($hTree, _WinAPI_GetStockObject($__TREEVIEWCONSTANT_DEFAULT_GUI_FONT))
-	_GUICtrlTreeView_SetUnicodeFormat($hTree, False)
 	Return $hTree
 EndFunc   ;==>_GUICtrlTreeView_Create
 
@@ -549,14 +598,15 @@ EndFunc   ;==>_GUICtrlTreeView_Create
 ;                  to display during a drag operation.  You must implement your own method of creating a drag  cursor.   You  are
 ;                  responsible for destroying the image list when it is no longer needed.
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_CreateDragImage($hWnd, $hItem)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Return _SendMessage($hWnd, $TVM_CREATEDRAGIMAGE, 0, $hItem, 0, "wparam", "hwnd", "hwnd")
+	Return _SendMessage($hWnd, $TVM_CREATEDRAGIMAGE, 0, $hItem, 0, "wparam", "handle", "handle")
 EndFunc   ;==>_GUICtrlTreeView_CreateDragImage
 
 ; #FUNCTION# ====================================================================================================================
@@ -572,35 +622,13 @@ EndFunc   ;==>_GUICtrlTreeView_CreateDragImage
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_CreateSolidBitMap($hWnd, $iColor, $iWidth, $iHeight)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 	Return _WinAPI_CreateSolidBitmap($hWnd, $iColor, $iWidth, $iHeight)
 EndFunc   ;==>_GUICtrlTreeView_CreateSolidBitMap
-
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _GUICtrlTreeView_DebugPrint
-; Description ...: Used for debugging when creating examples
-; Syntax.........: _GUICtrlTreeView_DebugPrint($hWnd[, $iLine = @ScriptLineNumber])
-; Parameters ....: $sText       - String to printed to console
-;                  $iLine       - Line number function was called from
-; Return values .: None
-; Author ........: Gary Frost (gafrost)
-; Modified.......:
-; Remarks .......: For Internal Use Only
-; Related .......:
-; Link ..........;
-; Example .......;
-; ===============================================================================================================================
-Func _GUICtrlTreeView_DebugPrint($sText, $iLine = @ScriptLineNumber)
-	ConsoleWrite( _
-			"!===========================================================" & @LF & _
-			"+======================================================" & @LF & _
-			"-->Line(" & StringFormat("%04d", $iLine) & "):" & @TAB & $sText & @LF & _
-			"+======================================================" & @LF)
-EndFunc   ;==>_GUICtrlTreeView_DebugPrint
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _GUICtrlTreeView_Delete
@@ -614,21 +642,22 @@ EndFunc   ;==>_GUICtrlTreeView_DebugPrint
 ; Modified.......: re-written by Holger Kotsch, re-written again by Gary Frost
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_DeleteAll, _GUICtrlTreeView_DeleteChildren
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_Delete($hWnd, $hItem = 0)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If $hItem = 0 Then $hItem = 0x00000000
 
 	If IsHWnd($hWnd) Then
 		If $hItem = 0x00000000 Then
-			$hItem = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CARET, 0, 0, "wparam", "hwnd", "hwnd")
-			If $hItem <> 0x00000000 Then Return _SendMessage($hWnd, $TVM_DELETEITEM, 0, $hItem, 0, "wparam", "hwnd", "hwnd") <> 0
+			$hItem = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CARET, 0, 0, "wparam", "handle", "handle")
+			If $hItem <> 0x00000000 Then Return _SendMessage($hWnd, $TVM_DELETEITEM, 0, $hItem, 0, "wparam", "handle", "hwnd") <> 0
 			Return False
 		Else
 			If GUICtrlDelete($hItem) Then Return True
-			Return _SendMessage($hWnd, $TVM_DELETEITEM, 0, $hItem, 0, "wparam", "hwnd", "hwnd") <> 0
+			Return _SendMessage($hWnd, $TVM_DELETEITEM, 0, $hItem, 0, "wparam", "handle", "hwnd") <> 0
 		EndIf
 	Else
 		If $hItem = 0x00000000 Then
@@ -653,11 +682,12 @@ EndFunc   ;==>_GUICtrlTreeView_Delete
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_Delete, _GUICtrlTreeView_DeleteChildren
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_DeleteAll($hWnd)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	Local $Count
 	If IsHWnd($hWnd) Then
 		_SendMessage($hWnd, $TVM_DELETEITEM, 0, $TVI_ROOT)
@@ -685,16 +715,15 @@ EndFunc   ;==>_GUICtrlTreeView_DeleteAll
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_Delete, _GUICtrlTreeView_DeleteAll
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_DeleteChildren($hWnd, $hItem)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
 
 	Local $fResult
-
 	If IsHWnd($hWnd) Then
-		$fResult = _SendMessage($hWnd, $TVM_EXPAND, BitOR($TVE_COLLAPSE, $TVE_COLLAPSERESET), $hItem, 0, "wparam", "hwnd")
+		$fResult = _SendMessage($hWnd, $TVM_EXPAND, BitOR($TVE_COLLAPSE, $TVE_COLLAPSERESET), $hItem, 0, "wparam", "handle")
 	Else
 		$fResult = GUICtrlSendMsg($hWnd, $TVM_EXPAND, BitOR($TVE_COLLAPSE, $TVE_COLLAPSERESET), $hItem)
 	EndIf
@@ -712,34 +741,32 @@ EndFunc   ;==>_GUICtrlTreeView_DeleteChildren
 ; Modified.......:
 ; Remarks .......: Restricted to only be used on TreeViews created with _GUICtrlTreeView_Create
 ; Related .......: _GUICtrlTreeView_Create
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_Destroy(ByRef $hWnd)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
-	Local $Destroyed, $iResult
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+;~ 	If Not _WinAPI_IsClassName($hWnd, $__TREEVIEWCONSTANT_ClassName) Then Return SetError(2, 2, False)
 
-	If _WinAPI_IsClassName($hWnd, $__TREEVIEWCONSTANT_ClassName) Then
-		If IsHWnd($hWnd) Then
-			If _WinAPI_InProcess($hWnd, $__ghTVLastWnd) Then
-				Local $nCtrlID = _WinAPI_GetDlgCtrlID($hWnd)
-				Local $hParent = _WinAPI_GetParent($hWnd)
-				$Destroyed = _WinAPI_DestroyWindow($hWnd)
-				$iResult = _UDF_FreeGlobalID($hParent, $nCtrlID)
-				If Not $iResult Then
-					; can check for errors here if needed, for debug
-				EndIf
-			Else
-				_WinAPI_ShowMsg("Not Allowed to Destroy Other Applications TreeView(s)")
-				Return SetError(1, 1, False)
+	Local $Destroyed = 0
+	If IsHWnd($hWnd) Then
+		If _WinAPI_InProcess($hWnd, $__ghTVLastWnd) Then
+			Local $nCtrlID = _WinAPI_GetDlgCtrlID($hWnd)
+			Local $hParent = _WinAPI_GetParent($hWnd)
+			$Destroyed = _WinAPI_DestroyWindow($hWnd)
+			Local $iRet = __UDF_FreeGlobalID($hParent, $nCtrlID)
+			If Not $iRet Then
+				; can check for errors here if needed, for debug
 			EndIf
 		Else
-			$Destroyed = GUICtrlDelete($hWnd)
+			; Not Allowed to Destroy Other Applications Control(s)
+			Return SetError(1, 1, False)
 		EndIf
-		If $Destroyed Then $hWnd = 0
-		Return $Destroyed <> 0
+	Else
+		$Destroyed = GUICtrlDelete($hWnd)
 	EndIf
-	Return SetError(2, 2, False)
+	If $Destroyed Then $hWnd = 0
+	Return $Destroyed <> 0
 EndFunc   ;==>_GUICtrlTreeView_Destroy
 
 ; #FUNCTION# ====================================================================================================================
@@ -759,18 +786,19 @@ EndFunc   ;==>_GUICtrlTreeView_Destroy
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_DisplayRectEx
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_DisplayRect($hWnd, $hItem, $fTextOnly = False)
-	Local $aRect[4], $tRect
 
-	$tRect = _GUICtrlTreeView_DisplayRectEx($hWnd, $hItem, $fTextOnly)
+	Local $tRect = _GUICtrlTreeView_DisplayRectEx($hWnd, $hItem, $fTextOnly)
+	If @error Then Return SetError(@error, @error, 0)
+	Local $aRect[4]
 	$aRect[0] = DllStructGetData($tRect, "Left")
 	$aRect[1] = DllStructGetData($tRect, "Top")
 	$aRect[2] = DllStructGetData($tRect, "Right")
 	$aRect[3] = DllStructGetData($tRect, "Bottom")
-	Return SetError(@error, @error, $aRect)
+	Return $aRect
 EndFunc   ;==>_GUICtrlTreeView_DisplayRect
 
 ; #FUNCTION# ====================================================================================================================
@@ -787,35 +815,39 @@ EndFunc   ;==>_GUICtrlTreeView_DisplayRect
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_DisplayRect, $tagRECT
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_DisplayRectEx($hWnd, $hItem, $fTextOnly = False)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
-	Local $iRect, $pRect, $tRect, $pMemory, $tMemMap, $iResult
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
 
-	$tRect = DllStructCreate($tagRECT)
-	$pRect = DllStructGetPtr($tRect)
+	Local $tRect = DllStructCreate($tagRECT)
+	Local $pRect = DllStructGetPtr($tRect)
+	Local $iRet
 	If IsHWnd($hWnd) Then
+		; RECT is expected to point to the item in its first member.
 		DllStructSetData($tRect, "Left", $hItem)
 		If _WinAPI_InProcess($hWnd, $__ghTVLastWnd) Then
-			$iResult = _SendMessage($hWnd, $TVM_GETITEMRECT, $fTextOnly, $pRect, 0, "wparam", "ptr")
+			$iRet = _SendMessage($hWnd, $TVM_GETITEMRECT, $fTextOnly, $pRect, 0, "wparam", "ptr")
 		Else
-			$iRect = DllStructGetSize($tRect)
-			$pMemory = _MemInit($hWnd, $iRect, $tMemMap)
+			Local $iRect = DllStructGetSize($tRect)
+			Local $tMemMap
+			Local $pMemory = _MemInit($hWnd, $iRect, $tMemMap)
 			_MemWrite($tMemMap, $pRect)
-			$iResult = _SendMessage($hWnd, $TVM_GETITEMRECT, $fTextOnly, $pMemory, 0, "wparam", "ptr")
+			$iRet = _SendMessage($hWnd, $TVM_GETITEMRECT, $fTextOnly, $pMemory, 0, "wparam", "ptr")
 			_MemRead($tMemMap, $pMemory, $pRect, $iRect)
 			_MemFree($tMemMap)
 		EndIf
 	Else
 		If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
+		; RECT is expected to point to the item in its first member.
 		DllStructSetData($tRect, "Left", $hItem)
-		$iResult = GUICtrlSendMsg($hWnd, $TVM_GETITEMRECT, $fTextOnly, $pRect)
+		$iRet = GUICtrlSendMsg($hWnd, $TVM_GETITEMRECT, $fTextOnly, $pRect)
 	EndIf
 
-	If $iResult = 0 Then DllStructSetData($tRect, "Left", 0)
-	Return SetError($iResult = 0, $iResult = 0, $tRect)
+	; On failure ensure Left is set to 0 and not the item handle.
+	If Not $iRet Then DllStructSetData($tRect, "Left", 0)
+	Return SetError($iRet = 0, $iRet, $tRect)
 EndFunc   ;==>_GUICtrlTreeView_DisplayRectEx
 
 ; #FUNCTION# ====================================================================================================================
@@ -829,20 +861,22 @@ EndFunc   ;==>_GUICtrlTreeView_DisplayRectEx
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
-; Related .......: _GUICtrlTreeView_EndEdit
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUICtrlTreeView_EndEdit, _GUICtrlTreeView_GetEditControl
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_EditText($hWnd, $hItem)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	_WinAPI_SetFocus($hWnd)
-	If _GUICtrlTreeView_GetUnicodeFormat($hWnd) Then
-		Return _SendMessage($hWnd, $TVM_EDITLABELW, 0, $hItem, 0, "wparam", "hwnd", "hwnd")
+	Local $fUnicode = _GUICtrlTreeView_GetUnicodeFormat($hWnd)
+	If $fUnicode Then
+		Return _SendMessage($hWnd, $TVM_EDITLABELW, 0, $hItem, 0, "wparam", "handle", "hwnd")
 	Else
-		Return _SendMessage($hWnd, $TVM_EDITLABEL, 0, $hItem, 0, "wparam", "hwnd", "hwnd")
+		Return _SendMessage($hWnd, $TVM_EDITLABELA, 0, $hItem, 0, "wparam", "handle", "hwnd")
 	EndIf
 EndFunc   ;==>_GUICtrlTreeView_EditText
 
@@ -859,11 +893,12 @@ EndFunc   ;==>_GUICtrlTreeView_EditText
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_EditText
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_EndEdit($hWnd, $fCancel = False)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $TVM_ENDEDITLABELNOW, $fCancel) <> 0
@@ -880,11 +915,12 @@ EndFunc   ;==>_GUICtrlTreeView_EndEdit
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_BeginUpdate
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_EndUpdate($hWnd)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $__TREEVIEWCONSTANT_WM_SETREDRAW, 1) = 0
@@ -901,15 +937,16 @@ EndFunc   ;==>_GUICtrlTreeView_EndUpdate
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetVisible
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_EnsureVisible($hWnd, $hItem)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Return _SendMessage($hWnd, $TVM_ENSUREVISIBLE, 0, $hItem, 0, "wparam", "hwnd") <> 0
+	Return _SendMessage($hWnd, $TVM_ENSUREVISIBLE, 0, $hItem, 0, "wparam", "handle") <> 0
 EndFunc   ;==>_GUICtrlTreeView_EnsureVisible
 
 ; #FUNCTION# ====================================================================================================================
@@ -917,6 +954,7 @@ EndFunc   ;==>_GUICtrlTreeView_EnsureVisible
 ; Description ...: Expands or collapses the list of child items associated with the specified parent item, if any
 ; Syntax.........: _GUICtrlTreeView_Expand($hWnd[, $hItem = 0[, $fExpand = True]])
 ; Parameters ....: $hWnd        - Handle to the control
+;                  $hItem       - Handle to the item
 ;                  $fExpand     - Expand or Collapse, use the following values:
 ;                  | True       - Expand items
 ;                  |False       - Collapse items
@@ -924,48 +962,47 @@ EndFunc   ;==>_GUICtrlTreeView_EnsureVisible
 ; Author ........: Holger Kotsch
 ; Modified.......: Gary Frost
 ; Remarks .......:
-; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUICtrlTreeView_ExpandedOnce, _GUICtrlTreeView_GetExpanded
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_Expand($hWnd, $hItem = 0, $fExpand = True)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $hItem_tmp
 	If $hItem = 0 Then $hItem = 0x00000000
 
 	If $hItem = 0x00000000 Then
 		$hItem = $TVI_ROOT
 	Else
 		If Not IsHWnd($hItem) Then
-			$hItem_tmp = GUICtrlGetHandle($hItem)
+			Local $hItem_tmp = GUICtrlGetHandle($hItem)
 			If $hItem_tmp <> 0x00000000 Then $hItem = $hItem_tmp
 		EndIf
 	EndIf
 
 	If $fExpand Then
-		_GUICtrlTreeView_ExpandItem($hWnd, $TVE_EXPAND, $hItem)
+		__GUICtrlTreeView_ExpandItem($hWnd, $TVE_EXPAND, $hItem)
 	Else
-		_GUICtrlTreeView_ExpandItem($hWnd, $TVE_COLLAPSE, $hItem)
+		__GUICtrlTreeView_ExpandItem($hWnd, $TVE_COLLAPSE, $hItem)
 	EndIf
 EndFunc   ;==>_GUICtrlTreeView_Expand
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _GUICtrlTreeView_ExpandItem($hWnd, $iExpand, $hItem)
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __GUICtrlTreeView_ExpandItem($hWnd, $iExpand, $hItem)
 ; Description ...: Expands/Collapes the item and child(ren), if any
-; Syntax.........: _GUICtrlTreeView_ExpandItem($hWnd, $iExpand, $hItem)
+; Syntax.........: __GUICtrlTreeView_ExpandItem($hWnd, $iExpand, $hItem)
 ; Parameters ....: $hWnd  - Handle to the control
 ; Return values .:
 ; Author ........: Holger Kotsch
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
-Func _GUICtrlTreeView_ExpandItem($hWnd, $iExpand, $hItem)
-	Local $h_child
+Func __GUICtrlTreeView_ExpandItem($hWnd, $iExpand, $hItem)
 	If Not IsHWnd($hWnd) Then
 
 		If $hItem = 0x00000000 Then
@@ -977,18 +1014,18 @@ Func _GUICtrlTreeView_ExpandItem($hWnd, $iExpand, $hItem)
 		$hWnd = GUICtrlGetHandle($hWnd)
 	EndIf
 
-	_SendMessage($hWnd, $TVM_EXPAND, $iExpand, $hItem, 0, "wparam", "hwnd")
+	_SendMessage($hWnd, $TVM_EXPAND, $iExpand, $hItem, 0, "wparam", "handle")
 
-	If $iExpand = $TVE_EXPAND And $hItem > 0 Then _SendMessage($hWnd, $TVM_ENSUREVISIBLE, 0, $hItem, 0, "wparam", "hwnd")
+	If $iExpand = $TVE_EXPAND And $hItem > 0 Then _SendMessage($hWnd, $TVM_ENSUREVISIBLE, 0, $hItem, 0, "wparam", "handle")
 
-	$hItem = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CHILD, $hItem, 0, "wparam", "hwnd")
+	$hItem = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CHILD, $hItem, 0, "wparam", "handle")
 
 	While $hItem <> 0x00000000
-		$h_child = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CHILD, $hItem, 0, "wparam", "hwnd")
-		If $h_child <> 0x00000000 Then _GUICtrlTreeView_ExpandItem($hWnd, $iExpand, $hItem)
-		$hItem = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_NEXT, $hItem, 0, "wparam", "hwnd")
+		Local $h_child = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CHILD, $hItem, 0, "wparam", "handle")
+		If $h_child <> 0x00000000 Then __GUICtrlTreeView_ExpandItem($hWnd, $iExpand, $hItem)
+		$hItem = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_NEXT, $hItem, 0, "wparam", "handle")
 	WEnd
-EndFunc   ;==>_GUICtrlTreeView_ExpandItem
+EndFunc   ;==>__GUICtrlTreeView_ExpandItem
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _GUICtrlTreeView_ExpandedOnce
@@ -1002,8 +1039,8 @@ EndFunc   ;==>_GUICtrlTreeView_ExpandItem
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_Expand
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_ExpandedOnce($hWnd, $hItem)
 	Return BitAND(_GUICtrlTreeView_GetState($hWnd, $hItem), $TVIS_EXPANDEDONCE) <> 0
@@ -1023,17 +1060,17 @@ EndFunc   ;==>_GUICtrlTreeView_ExpandedOnce
 ; Modified.......:
 ; Remarks .......: The search is case insensitive
 ; Related .......: _GUICtrlTreeView_FindItemEx
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_FindItem($hWnd, $sText, $fInStr = False, $hStart = 0)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
-	Local $sItem
 
 	If $hStart = 0 Then $hStart = _GUICtrlTreeView_GetFirstItem($hWnd)
 	While $hStart <> 0x00000000
-		$sItem = _GUICtrlTreeView_GetText($hWnd, $hStart)
+		Local $sItem = _GUICtrlTreeView_GetText($hWnd, $hStart)
 		Switch $fInStr
 			Case False
 				If $sItem = $sText Then Return $hStart
@@ -1057,26 +1094,27 @@ EndFunc   ;==>_GUICtrlTreeView_FindItem
 ; Modified.......:
 ; Remarks .......: The search is case insensitive
 ; Related .......: _GUICtrlTreeView_FindItem
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_FindItemEx($hWnd, $sPath, $hStart = 0)
-	Local $iIndex, $aParts, $sDelimiter = Opt("GUIDataSeparatorChar")
+	Local $sDelimiter = Opt("GUIDataSeparatorChar")
 
-	$iIndex = 1
-	$aParts = StringSplit($sPath, $sDelimiter)
+	Local $iIndex = 1
+	Local $aParts = StringSplit($sPath, $sDelimiter)
 	If $hStart = 0 Then $hStart = _GUICtrlTreeView_GetFirstItem($hWnd)
 	While ($iIndex <= $aParts[0]) And ($hStart <> 0x00000000)
 		If StringStripWS(_GUICtrlTreeView_GetText($hWnd, $hStart), 3) = StringStripWS($aParts[$iIndex], 3) Then
 			If $iIndex = $aParts[0] Then Return $hStart
 			$iIndex += 1
-			_GUICtrlTreeView_ExpandItem($hWnd, $TVE_EXPAND, $hStart)
+			__GUICtrlTreeView_ExpandItem($hWnd, $TVE_EXPAND, $hStart)
 			$hStart = _GUICtrlTreeView_GetFirstChild($hWnd, $hStart)
 		Else
 			$hStart = _GUICtrlTreeView_GetNextSibling($hWnd, $hStart)
-			_GUICtrlTreeView_ExpandItem($hWnd, $TVE_COLLAPSE, $hStart)
+			__GUICtrlTreeView_ExpandItem($hWnd, $TVE_COLLAPSE, $hStart)
 		EndIf
 	WEnd
+	Return $hStart
 EndFunc   ;==>_GUICtrlTreeView_FindItemEx
 
 ; #FUNCTION# ====================================================================================================================
@@ -1089,11 +1127,12 @@ EndFunc   ;==>_GUICtrlTreeView_FindItemEx
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_SetBkColor
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetBkColor($hWnd)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Local $tc = Hex(String(_SendMessage($hWnd, $TVM_GETBKCOLOR)), 6)
@@ -1112,8 +1151,8 @@ EndFunc   ;==>_GUICtrlTreeView_GetBkColor
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_SetBold
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetBold($hWnd, $hItem)
 	Return BitAND(_GUICtrlTreeView_GetState($hWnd, $hItem), $TVIS_BOLD) <> 0
@@ -1131,19 +1170,19 @@ EndFunc   ;==>_GUICtrlTreeView_GetBold
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_SetChecked
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetChecked($hWnd, $hItem)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $tItem
-	$tItem = DllStructCreate($tagTVITEMEX)
+	Local $tItem = DllStructCreate($tagTVITEMEX)
 	DllStructSetData($tItem, "Mask", $TVIF_STATE)
 	DllStructSetData($tItem, "hItem", $hItem)
-	_GUICtrlTreeView_GetItem($hWnd, $tItem)
+	__GUICtrlTreeView_GetItem($hWnd, $tItem)
 	Return BitAND(DllStructGetData($tItem, "State"), $TVIS_CHECKED) = $TVIS_CHECKED
 EndFunc   ;==>_GUICtrlTreeView_GetChecked
 
@@ -1158,23 +1197,24 @@ EndFunc   ;==>_GUICtrlTreeView_GetChecked
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetCount, _GUICtrlTreeView_GetSiblingCount
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetChildCount($hWnd, $hItem)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $hNext, $iResult
+	Local $iRet = 0
 
-	$hNext = _GUICtrlTreeView_GetFirstChild($hWnd, $hItem)
+	Local $hNext = _GUICtrlTreeView_GetFirstChild($hWnd, $hItem)
 	If $hNext = 0x00000000 Then Return -1
 	Do
-		$iResult += 1
+		$iRet += 1
 		$hNext = _GUICtrlTreeView_GetNextSibling($hWnd, $hNext)
 	Until $hNext = 0x00000000
-	Return $iResult
+	Return $iRet
 EndFunc   ;==>_GUICtrlTreeView_GetChildCount
 
 ; #FUNCTION# ====================================================================================================================
@@ -1189,20 +1229,19 @@ EndFunc   ;==>_GUICtrlTreeView_GetChildCount
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_SetChildren
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetChildren($hWnd, $hItem)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $tItem
-
-	$tItem = DllStructCreate($tagTVITEMEX)
+	Local $tItem = DllStructCreate($tagTVITEMEX)
 	DllStructSetData($tItem, "Mask", $TVIF_CHILDREN)
 	DllStructSetData($tItem, "hItem", $hItem)
-	_GUICtrlTreeView_GetItem($hWnd, $tItem)
+	__GUICtrlTreeView_GetItem($hWnd, $tItem)
 	Return DllStructGetData($tItem, "Children") <> 0
 EndFunc   ;==>_GUICtrlTreeView_GetChildren
 
@@ -1216,11 +1255,12 @@ EndFunc   ;==>_GUICtrlTreeView_GetChildren
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetChildCount, _GUICtrlTreeView_GetSiblingCount
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetCount($hWnd)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $TVM_GETCOUNT)
@@ -1238,8 +1278,8 @@ EndFunc   ;==>_GUICtrlTreeView_GetCount
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_SetCut
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetCut($hWnd, $hItem)
 	Return BitAND(_GUICtrlTreeView_GetState($hWnd, $hItem), $TVIS_CUT) <> 0
@@ -1257,8 +1297,8 @@ EndFunc   ;==>_GUICtrlTreeView_GetCut
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_SetDropTarget
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetDropTarget($hWnd, $hItem)
 	Return BitAND(_GUICtrlTreeView_GetState($hWnd, $hItem), $TVIS_DROPHILITED) <> 0
@@ -1275,14 +1315,15 @@ EndFunc   ;==>_GUICtrlTreeView_GetDropTarget
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_EditText
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetEditControl($hWnd)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Return _SendMessage($hWnd, $TVM_GETEDITCONTROL, 0, 0, 0, "wparam", "lparam", "hwnd")
+	Return _SendMessage($hWnd, $TVM_GETEDITCONTROL, 0, 0, 0, "wparam", "lparam", "handle")
 EndFunc   ;==>_GUICtrlTreeView_GetEditControl
 
 ; #FUNCTION# ====================================================================================================================
@@ -1297,8 +1338,8 @@ EndFunc   ;==>_GUICtrlTreeView_GetEditControl
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_Expand
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetExpanded($hWnd, $hItem)
 	Return BitAND(_GUICtrlTreeView_GetState($hWnd, $hItem), $TVIS_EXPANDED) <> 0
@@ -1316,15 +1357,15 @@ EndFunc   ;==>_GUICtrlTreeView_GetExpanded
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetLastChild, _GUICtrlTreeView_GetNextChild, _GUICtrlTreeView_GetPrevChild
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetFirstChild($hWnd, $hItem)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Return _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CHILD, $hItem, 0, "wparam", "hwnd", "hwnd")
+	Return _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CHILD, $hItem, 0, "wparam", "handle", "handle")
 EndFunc   ;==>_GUICtrlTreeView_GetFirstChild
 
 ; #FUNCTION# ====================================================================================================================
@@ -1337,15 +1378,16 @@ EndFunc   ;==>_GUICtrlTreeView_GetFirstChild
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
-; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUICtrlTreeView_GetFirstVisible
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetFirstItem($hWnd)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Return _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_ROOT, 0, 0, "wparam", "lparam", "hwnd")
+	Return _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_ROOT, 0, 0, "wparam", "lparam", "handle")
 EndFunc   ;==>_GUICtrlTreeView_GetFirstItem
 
 ; #FUNCTION# ====================================================================================================================
@@ -1359,30 +1401,31 @@ EndFunc   ;==>_GUICtrlTreeView_GetFirstItem
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetFirstItem
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetFirstVisible($hWnd)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Return _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_FIRSTVISIBLE, 0, 0, "wparam", "lparam", "hwnd")
+	Return _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_FIRSTVISIBLE, 0, 0, "wparam", "lparam", "handle")
 EndFunc   ;==>_GUICtrlTreeView_GetFirstVisible
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _GUICtrlTreeView_GetFocused
-; Description ...: Indicates whether the item appears to have focus
+; Description ...: Indicates whether the item has focus
 ; Syntax.........: _GUICtrlTreeView_GetFocused($hWnd, $hItem)
 ; Parameters ....: $hWnd        - Handle to the control
 ;                  $hItem       - Handle to the item
-; Return values .: True         - Item appears to have focus
-;                  False        - Item does not appear to have focus
+; Return values .: True         - Item has focus
+;                  False        - Item does not have focus
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_SetFocused
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetFocused($hWnd, $hItem)
 	Return BitAND(_GUICtrlTreeView_GetState($hWnd, $hItem), $TVIS_FOCUSED) <> 0
@@ -1398,11 +1441,12 @@ EndFunc   ;==>_GUICtrlTreeView_GetFocused
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_SetHeight
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetHeight($hWnd)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $TVM_GETITEMHEIGHT)
@@ -1420,18 +1464,18 @@ EndFunc   ;==>_GUICtrlTreeView_GetHeight
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_SetImageIndex
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetImageIndex($hWnd, $hItem)
-	Local $tItem
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
 
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 
-	$tItem = DllStructCreate($tagTVITEMEX)
+	Local $tItem = DllStructCreate($tagTVITEMEX)
 	DllStructSetData($tItem, "Mask", $TVIF_IMAGE)
 	DllStructSetData($tItem, "hItem", $hItem)
-	_GUICtrlTreeView_GetItem($hWnd, $tItem)
+	__GUICtrlTreeView_GetItem($hWnd, $tItem)
 	Return DllStructGetData($tItem, "Image")
 EndFunc   ;==>_GUICtrlTreeView_GetImageIndex
 
@@ -1446,20 +1490,17 @@ EndFunc   ;==>_GUICtrlTreeView_GetImageIndex
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetImageListIconHandle($hWnd, $iIndex)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $hImageList, $hIcon
-
-	$hImageList = _SendMessage($hWnd, $TVM_GETIMAGELIST, 0, 0, 0, "wparam", "lparam", "hwnd")
-	$hIcon = DllCall("comctl32.dll", "hwnd", "ImageList_GetIcon", _
-			"hwnd", $hImageList, _
-			"int", $iIndex, _
-			"int", 0)
+	Local $hImageList = _SendMessage($hWnd, $TVM_GETIMAGELIST, 0, 0, 0, "wparam", "lparam", "handle")
+	Local $hIcon = DllCall("comctl32.dll", "handle", "ImageList_GetIcon", "handle", $hImageList, "int", $iIndex, "uint", 0)
+	If @error Then Return SetError(@error, @extended, 0)
 	Return $hIcon[0]
 EndFunc   ;==>_GUICtrlTreeView_GetImageListIconHandle
 
@@ -1473,11 +1514,12 @@ EndFunc   ;==>_GUICtrlTreeView_GetImageListIconHandle
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_SetIndent
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetIndent($hWnd)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $TVM_GETINDENT)
@@ -1493,11 +1535,12 @@ EndFunc   ;==>_GUICtrlTreeView_GetIndent
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_SetInsertMarkColor
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetInsertMarkColor($hWnd)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $TVM_GETINSERTMARKCOLOR)
@@ -1513,42 +1556,39 @@ EndFunc   ;==>_GUICtrlTreeView_GetInsertMarkColor
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......: The incremental search string is used to select an item based on characters typed by the user
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetISearchString($hWnd)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $iBuffer, $pBuffer, $tBuffer, $pMemory, $tMemMap
 	Local $fUnicode = _GUICtrlTreeView_GetUnicodeFormat($hWnd)
-
+	Local $iBuffer
 	If $fUnicode Then
 		$iBuffer = _SendMessage($hWnd, $TVM_GETISEARCHSTRINGW) + 1
 	Else
-		$iBuffer = _SendMessage($hWnd, $TVM_GETISEARCHSTRING) + 1
+		$iBuffer = _SendMessage($hWnd, $TVM_GETISEARCHSTRINGA) + 1
 	EndIf
 	If $iBuffer = 1 Then Return ""
 
+	Local $tBuffer
 	If $fUnicode Then
-		$iBuffer *= 2
 		$tBuffer = DllStructCreate("wchar Text[" & $iBuffer & "]")
+		$iBuffer *= 2
 	Else
 		$tBuffer = DllStructCreate("char Text[" & $iBuffer & "]")
 	EndIf
-	$pBuffer = DllStructGetPtr($tBuffer)
+	Local $pBuffer = DllStructGetPtr($tBuffer)
 	If _WinAPI_InProcess($hWnd, $__ghTVLastWnd) Then
-		If $fUnicode Then
-			_SendMessage($hWnd, $TVM_GETISEARCHSTRINGW, 0, $pBuffer, 0, "wparam", "ptr")
-		Else
-			_SendMessage($hWnd, $TVM_GETISEARCHSTRING, 0, $pBuffer, 0, "wparam", "ptr")
-		EndIf
+		_SendMessage($hWnd, $TVM_GETISEARCHSTRINGW, 0, $pBuffer, 0, "wparam", "ptr")
 	Else
-		$pMemory = _MemInit($hWnd, $iBuffer, $tMemMap)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iBuffer, $tMemMap)
 		If $fUnicode Then
 			_SendMessage($hWnd, $TVM_GETISEARCHSTRINGW, 0, $pMemory, 0, "wparam", "ptr")
 		Else
-			_SendMessage($hWnd, $TVM_GETISEARCHSTRING, 0, $pMemory, 0, "wparam", "ptr")
+			_SendMessage($hWnd, $TVM_GETISEARCHSTRINGA, 0, $pMemory, 0, "wparam", "ptr")
 		EndIf
 		_MemRead($tMemMap, $pMemory, $pBuffer, $iBuffer)
 		_MemFree($tMemMap)
@@ -1557,10 +1597,10 @@ Func _GUICtrlTreeView_GetISearchString($hWnd)
 	Return DllStructGetData($tBuffer, "Text")
 EndFunc   ;==>_GUICtrlTreeView_GetISearchString
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _GUICtrlTreeView_GetItem
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __GUICtrlTreeView_GetItem
 ; Description ...: Retrieves some or all of a item's attributes
-; Syntax.........: _GUICtrlTreeView_GetItem($hWnd, ByRef $tItem)
+; Syntax.........: __GUICtrlTreeView_GetItem($hWnd, ByRef $tItem)
 ; Parameters ....: $hWnd        - Handle to the control
 ;                  $tItem       - $tagTVITEMEX structure used to request/receive item information
 ;                  +the item
@@ -1569,45 +1609,42 @@ EndFunc   ;==>_GUICtrlTreeView_GetISearchString
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......: This function is used internally and should not normally be called by the end user
-; Related .......: _GUICtrlTreeView_SetItem
-; Link ..........;
-; Example .......;
+; Related .......: __GUICtrlTreeView_SetItem
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
-Func _GUICtrlTreeView_GetItem($hWnd, ByRef $tItem)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+Func __GUICtrlTreeView_GetItem($hWnd, ByRef $tItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
-	Local $iItem, $pItem, $pMemory, $tMemMap, $iResult
+
 	Local $fUnicode = _GUICtrlTreeView_GetUnicodeFormat($hWnd)
 
-	$pItem = DllStructGetPtr($tItem)
+	Local $pItem = DllStructGetPtr($tItem)
+	Local $iRet
 	If IsHWnd($hWnd) Then
 		If _WinAPI_InProcess($hWnd, $__ghTVLastWnd) Then
-			If $fUnicode Then
-				$iResult = _SendMessage($hWnd, $TVM_GETITEMW, 0, $pItem, 0, "wparam", "ptr")
-			Else
-				$iResult = _SendMessage($hWnd, $TVM_GETITEM, 0, $pItem, 0, "wparam", "ptr")
-			EndIf
+			$iRet = _SendMessage($hWnd, $TVM_GETITEMW, 0, $pItem, 0, "wparam", "ptr")
 		Else
-			$iItem = DllStructGetSize($tItem)
-			$pMemory = _MemInit($hWnd, $iItem, $tMemMap)
+			Local $iItem = DllStructGetSize($tItem)
+			Local $tMemMap
+			Local $pMemory = _MemInit($hWnd, $iItem, $tMemMap)
 			_MemWrite($tMemMap, $pItem)
 			If $fUnicode Then
-				$iResult = _SendMessage($hWnd, $TVM_GETITEMW, 0, $pMemory, 0, "wparam", "ptr")
+				$iRet = _SendMessage($hWnd, $TVM_GETITEMW, 0, $pMemory, 0, "wparam", "ptr")
 			Else
-				$iResult = _SendMessage($hWnd, $TVM_GETITEM, 0, $pMemory, 0, "wparam", "ptr")
+				$iRet = _SendMessage($hWnd, $TVM_GETITEMA, 0, $pMemory, 0, "wparam", "ptr")
 			EndIf
 			_MemRead($tMemMap, $pMemory, $pItem, $iItem)
 			_MemFree($tMemMap)
 		EndIf
 	Else
 		If $fUnicode Then
-			$iResult = GUICtrlSendMsg($hWnd, $TVM_GETITEMW, 0, $pItem)
+			$iRet = GUICtrlSendMsg($hWnd, $TVM_GETITEMW, 0, $pItem)
 		Else
-			$iResult = GUICtrlSendMsg($hWnd, $TVM_GETITEM, 0, $pItem)
+			$iRet = GUICtrlSendMsg($hWnd, $TVM_GETITEMA, 0, $pItem)
 		EndIf
 	EndIf
-	Return $iResult = True
-EndFunc   ;==>_GUICtrlTreeView_GetItem
+	Return $iRet <> 0
+EndFunc   ;==>__GUICtrlTreeView_GetItem
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _GUICtrlTreeView_GetItemByIndex
@@ -1622,13 +1659,11 @@ EndFunc   ;==>_GUICtrlTreeView_GetItem
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_Index
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetItemByIndex($hWnd, $hItem, $iIndex)
-	Local $hResult
-
-	$hResult = _GUICtrlTreeView_GetFirstChild($hWnd, $hItem)
+	Local $hResult = _GUICtrlTreeView_GetFirstChild($hWnd, $hItem)
 	While ($hResult <> 0x00000000) And ($iIndex > 0)
 		$hResult = _GUICtrlTreeView_GetNextSibling($hWnd, $hResult)
 		$iIndex -= 1
@@ -1648,20 +1683,20 @@ EndFunc   ;==>_GUICtrlTreeView_GetItemByIndex
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetItemHandle($hWnd, $hItem = 0)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
-	Local $hTempItem
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If $hItem = 0 Then $hItem = 0x00000000
 	If IsHWnd($hWnd) Then
-		If $hItem = 0x00000000 Then $hItem = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_ROOT, 0, 0, "wparam", "lparam", "hwnd")
+		If $hItem = 0x00000000 Then $hItem = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_ROOT, 0, 0, "wparam", "lparam", "handle")
 	Else
 		If $hItem = 0x00000000 Then
 			$hItem = GUICtrlSendMsg($hWnd, $TVM_GETNEXTITEM, $TVGN_ROOT, 0)
 		Else
-			$hTempItem = GUICtrlGetHandle($hItem)
+			Local $hTempItem = GUICtrlGetHandle($hItem)
 			If $hTempItem <> 0x00000000 Then $hItem = $hTempItem
 		EndIf
 	EndIf
@@ -1681,29 +1716,26 @@ EndFunc   ;==>_GUICtrlTreeView_GetItemHandle
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_SetItemParam
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetItemParam($hWnd, $hItem = 0)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
 
-	Local $tItem, $hTempItem
-	If $hItem = 0 Then $hItem = 0x00000000
-	Local $fUnicode = _GUICtrlTreeView_GetUnicodeFormat($hWnd)
-
-	$tItem = DllStructCreate($tagTVITEMEX)
+	Local $tItem = DllStructCreate($tagTVITEMEX)
 	DllStructSetData($tItem, "Mask", $TVIF_PARAM)
 	DllStructSetData($tItem, "Param", 0)
+	Local $fUnicode = _GUICtrlTreeView_GetUnicodeFormat($hWnd)
 	If IsHWnd($hWnd) Then
 		; get the handle to item selected
-		If $hItem = 0x00000000 Then $hItem = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CARET, 0, 0, "wparam", "lparam", "hwnd")
+		If $hItem = 0x00000000 Then $hItem = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CARET, 0, 0, "wparam", "lparam", "handle")
 		If $hItem = 0x00000000 Then Return False
 		DllStructSetData($tItem, "hItem", $hItem)
 		; get the item properties
 		If $fUnicode Then
 			If _SendMessage($hWnd, $TVM_GETITEMW, 0, DllStructGetPtr($tItem), 0, "wparam", "ptr") = 0 Then Return False
 		Else
-			If _SendMessage($hWnd, $TVM_GETITEM, 0, DllStructGetPtr($tItem), 0, "wparam", "ptr") = 0 Then Return False
+			If _SendMessage($hWnd, $TVM_GETITEMA, 0, DllStructGetPtr($tItem), 0, "wparam", "ptr") = 0 Then Return False
 		EndIf
 	Else
 		; get the handle to item selected
@@ -1711,7 +1743,7 @@ Func _GUICtrlTreeView_GetItemParam($hWnd, $hItem = 0)
 			$hItem = GUICtrlSendMsg($hWnd, $TVM_GETNEXTITEM, $TVGN_CARET, 0)
 			If $hItem = 0x00000000 Then Return False
 		Else
-			$hTempItem = GUICtrlGetHandle($hItem)
+			Local $hTempItem = GUICtrlGetHandle($hItem)
 			If $hTempItem <> 0x00000000 Then
 				$hItem = $hTempItem
 			Else
@@ -1723,7 +1755,7 @@ Func _GUICtrlTreeView_GetItemParam($hWnd, $hItem = 0)
 		If $fUnicode Then
 			If GUICtrlSendMsg($hWnd, $TVM_GETITEMW, 0, DllStructGetPtr($tItem)) = 0 Then Return False
 		Else
-			If GUICtrlSendMsg($hWnd, $TVM_GETITEM, 0, DllStructGetPtr($tItem)) = 0 Then Return False
+			If GUICtrlSendMsg($hWnd, $TVM_GETITEMA, 0, DllStructGetPtr($tItem)) = 0 Then Return False
 		EndIf
 	EndIf
 
@@ -1742,15 +1774,13 @@ EndFunc   ;==>_GUICtrlTreeView_GetItemParam
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetFirstChild, _GUICtrlTreeView_GetNextChild, _GUICtrlTreeView_GetPrevChild
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetLastChild($hWnd, $hItem)
-	Local $hNext, $hResult
-
-	$hResult = _GUICtrlTreeView_GetFirstChild($hWnd, $hItem)
+	Local $hResult = _GUICtrlTreeView_GetFirstChild($hWnd, $hItem)
 	If $hResult <> 0x00000000 Then
-		$hNext = $hResult
+		Local $hNext = $hResult
 		Do
 			$hResult = $hNext
 			$hNext = _GUICtrlTreeView_GetNextSibling($hWnd, $hNext)
@@ -1769,11 +1799,12 @@ EndFunc   ;==>_GUICtrlTreeView_GetLastChild
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_SetLineColor
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetLineColor($hWnd)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Local $tc = Hex(String(_SendMessage($hWnd, $TVM_GETLINECOLOR)), 6)
@@ -1793,22 +1824,21 @@ EndFunc   ;==>_GUICtrlTreeView_GetLineColor
 ; Remarks .......: If the calling item is the last item, _GUICtrlTreeView_GetNext returns 0, otherwise it  will  return  the  next  item
 ;                  including items that aren't visible and child items.  To get the next item at the same level  as  the  calling
 ;                  item use _GUICtrlTreeView_GetNextSibling.  To get the next visible item, use _GUICtrlTreeView_GetNextVisible.
-; Related .......: _GUICtrlTreeView_GetNextVisible
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUICtrlTreeView_GetNextVisible, _GUICtrlTreeView_GetNextSibling, _GUICtrlTreeView_GetPrev
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetNext($hWnd, $hItem)
-	Local $hNext, $hParent, $hResult
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	$hResult = 0
+	Local $hResult = 0
 	If $hItem <> 0x00000000 And $hItem <> 0 Then
-		$hNext = _GUICtrlTreeView_GetFirstChild($hWnd, $hItem)
+		Local $hNext = _GUICtrlTreeView_GetFirstChild($hWnd, $hItem)
 		If $hNext = 0x00000000 Then
 			$hNext = _GUICtrlTreeView_GetNextSibling($hWnd, $hItem)
 		EndIf
-		$hParent = $hItem
+		Local $hParent = $hItem
 		While ($hNext = 0x00000000) And ($hParent <> 0x00000000)
 			$hParent = _GUICtrlTreeView_GetParentHandle($hWnd, $hParent)
 			If $hParent = 0x00000000 Then
@@ -1835,8 +1865,8 @@ EndFunc   ;==>_GUICtrlTreeView_GetNext
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetFirstChild, _GUICtrlTreeView_GetLastChild, _GUICtrlTreeView_GetPrevChild
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetNextChild($hWnd, $hItem)
 	Return _GUICtrlTreeView_GetNextSibling($hWnd, $hItem)
@@ -1853,16 +1883,17 @@ EndFunc   ;==>_GUICtrlTreeView_GetNextChild
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
-; Related .......: _GUICtrlTreeView_GetNext
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUICtrlTreeView_GetNext, _GUICtrlTreeView_GetPrevSibling
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetNextSibling($hWnd, $hItem)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Return _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_NEXT, $hItem, 0, "wparam", "hwnd", "hwnd")
+	Return _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_NEXT, $hItem, 0, "wparam", "handle", "handle")
 EndFunc   ;==>_GUICtrlTreeView_GetNextSibling
 
 ; #FUNCTION# ====================================================================================================================
@@ -1876,16 +1907,17 @@ EndFunc   ;==>_GUICtrlTreeView_GetNextSibling
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:  The specified item must be visible
-; Related .......: _GUICtrlTreeView_GetNext
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUICtrlTreeView_GetNext, _GUICtrlTreeView_GetPrevVisible
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetNextVisible($hWnd, $hItem)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Return _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_NEXTVISIBLE, $hItem, 0, "wparam", "hwnd", "hwnd")
+	Return _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_NEXTVISIBLE, $hItem, 0, "wparam", "handle", "handle")
 EndFunc   ;==>_GUICtrlTreeView_GetNextVisible
 
 ; #FUNCTION# ====================================================================================================================
@@ -1899,14 +1931,15 @@ EndFunc   ;==>_GUICtrlTreeView_GetNextVisible
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_SetNormalImageList
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetNormalImageList($hWnd)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Return _SendMessage($hWnd, $TVM_GETIMAGELIST, $TVSIL_NORMAL, 0, 0, "wparam", "lparam", "hwnd")
+	Return _SendMessage($hWnd, $TVM_GETIMAGELIST, $TVSIL_NORMAL, 0, 0, "wparam", "lparam", "handle")
 EndFunc   ;==>_GUICtrlTreeView_GetNormalImageList
 
 ; #NO_DOC_FUNCTION# =============================================================================================================
@@ -1921,17 +1954,15 @@ EndFunc   ;==>_GUICtrlTreeView_GetNormalImageList
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_SetOverlayImageIndex
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetOverlayImageIndex($hWnd, $hItem)
-	Local $tItem
-
-	$tItem = DllStructCreate($tagTVITEMEX)
+	Local $tItem = DllStructCreate($tagTVITEMEX)
 	DllStructSetData($tItem, "Mask", $TVIF_STATE)
 	DllStructSetData($tItem, "hItem", $hItem)
 	DllStructSetData($tItem, "StateMask", $TVIS_OVERLAYMASK)
-	_GUICtrlTreeView_GetItem($hWnd, $tItem)
+	__GUICtrlTreeView_GetItem($hWnd, $tItem)
 	Return DllStructGetData($tItem, "Image")
 EndFunc   ;==>_GUICtrlTreeView_GetOverlayImageIndex
 
@@ -1947,27 +1978,27 @@ EndFunc   ;==>_GUICtrlTreeView_GetOverlayImageIndex
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetParentHandle($hWnd, $hItem = 0)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 ;~ 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $hParent
 	If $hItem = 0 Then $hItem = 0x00000000
 
 	; get the handle to item selected
 	If $hItem = 0x00000000 Then
 		If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
-		$hItem = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CARET, 0, 0, "wparam", "hwnd", "hwnd")
+		$hItem = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CARET, 0, 0, "wparam", "handle", "handle")
 		If $hItem = 0x00000000 Then Return False
 	Else
 		If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 		If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 	EndIf
 	; get the handle of the parent item
-	$hParent = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_PARENT, $hItem, 0, "wparam", "hwnd", "hwnd")
+	Local $hParent = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_PARENT, $hItem, 0, "wparam", "handle", "handle")
 
 	Return $hParent
 EndFunc   ;==>_GUICtrlTreeView_GetParentHandle
@@ -1984,34 +2015,35 @@ EndFunc   ;==>_GUICtrlTreeView_GetParentHandle
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetParentParam($hWnd, $hItem = 0)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
-	Local $hParent, $tTVITEM, $hTempItem
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If $hItem = 0 Then $hItem = 0x00000000
 
-	$tTVITEM = DllStructCreate($tagTVITEMEX)
+	Local $tTVITEM = DllStructCreate($tagTVITEMEX)
 	DllStructSetData($tTVITEM, "Mask", $TVIF_PARAM)
 	DllStructSetData($tTVITEM, "Param", 0)
 
+	Local $hParent
 	If IsHWnd($hWnd) Then
 		; get the handle to item selected
-		If $hItem = 0x00000000 Then $hItem = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CARET, 0, 0, "wparam", "hwnd", "hwnd")
+		If $hItem = 0x00000000 Then $hItem = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CARET, 0, 0, "wparam", "handle", "handle")
 		If $hItem = 0x00000000 Then Return False
 		; get the handle of the parent item
-		$hParent = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_PARENT, $hItem, 0, "wparam", "hwnd", "hwnd")
+		$hParent = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_PARENT, $hItem, 0, "wparam", "handle", "handle")
 		DllStructSetData($tTVITEM, "hItem", $hParent)
 		; get the item properties
-		If _SendMessage($hWnd, $TVM_GETITEM, 0, DllStructGetPtr($tTVITEM), 0, "wparam", "ptr") = 0 Then Return False
+		If _SendMessage($hWnd, $TVM_GETITEMA, 0, DllStructGetPtr($tTVITEM), 0, "wparam", "ptr") = 0 Then Return False
 	Else
 		; get the handle to item selected
 		If $hItem = 0x00000000 Then
 			$hItem = GUICtrlSendMsg($hWnd, $TVM_GETNEXTITEM, $TVGN_CARET, 0)
 			If $hItem = 0x00000000 Then Return False
 		Else
-			$hTempItem = GUICtrlGetHandle($hItem)
+			Local $hTempItem = GUICtrlGetHandle($hItem)
 			If $hTempItem <> 0x00000000 Then
 				$hItem = $hTempItem
 			Else
@@ -2022,7 +2054,7 @@ Func _GUICtrlTreeView_GetParentParam($hWnd, $hItem = 0)
 		$hParent = GUICtrlSendMsg($hWnd, $TVM_GETNEXTITEM, $TVGN_PARENT, $hItem)
 		DllStructSetData($tTVITEM, "hItem", $hParent)
 		; get the item properties
-		If GUICtrlSendMsg($hWnd, $TVM_GETITEM, 0, DllStructGetPtr($tTVITEM)) = 0 Then Return False
+		If GUICtrlSendMsg($hWnd, $TVM_GETITEMA, 0, DllStructGetPtr($tTVITEM)) = 0 Then Return False
 	EndIf
 
 	Return DllStructGetData($tTVITEM, "Param")
@@ -2043,17 +2075,16 @@ EndFunc   ;==>_GUICtrlTreeView_GetParentParam
 ;                  calling item use  _GUICtrlTreeView_GetPrevChild. To get the previous visible item, use
 ;                  _GUICtrlTreeView_GetPrevVisible.
 ; Related .......: _GUICtrlTreeView_GetNext, _GUICtrlTreeView_GetPrevChild, _GUICtrlTreeView_GetPrevVisible
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetPrev($hWnd, $hItem)
-	Local $hPrev, $hResult
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	$hResult = _GUICtrlTreeView_GetPrevChild($hWnd, $hItem)
+	Local $hResult = _GUICtrlTreeView_GetPrevChild($hWnd, $hItem)
 	If $hResult <> 0x00000000 Then
-		$hPrev = $hResult
+		Local $hPrev = $hResult
 		Do
 			$hResult = $hPrev
 			$hPrev = _GUICtrlTreeView_GetLastChild($hWnd, $hPrev)
@@ -2075,9 +2106,9 @@ EndFunc   ;==>_GUICtrlTreeView_GetPrev
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......:
 ; Remarks .......:
-; Related .......: _GUICtrlTreeView_GetNextChild
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUICtrlTreeView_GetNextChild, _GUICtrlTreeView_GetFirstChild, _GUICtrlTreeView_GetLastChild, _GUICtrlTreeView_GetPrev
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetPrevChild($hWnd, $hItem)
 	Return _GUICtrlTreeView_GetPrevSibling($hWnd, $hItem)
@@ -2095,15 +2126,16 @@ EndFunc   ;==>_GUICtrlTreeView_GetPrevChild
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetNextSibling
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetPrevSibling($hWnd, $hItem)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Return _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_PREVIOUS, $hItem, 0, "wparam", "hwnd", "hwnd")
+	Return _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_PREVIOUS, $hItem, 0, "wparam", "handle", "handle")
 EndFunc   ;==>_GUICtrlTreeView_GetPrevSibling
 
 ; #FUNCTION# ====================================================================================================================
@@ -2117,16 +2149,17 @@ EndFunc   ;==>_GUICtrlTreeView_GetPrevSibling
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
-; Related .......: _GUICtrlTreeView_GetNextVisible
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUICtrlTreeView_GetNextVisible, _GUICtrlTreeView_GetPrev
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetPrevVisible($hWnd, $hItem)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Return _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_PREVIOUSVISIBLE, $hItem, 0, "wparam", "hwnd", "hwnd")
+	Return _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_PREVIOUSVISIBLE, $hItem, 0, "wparam", "handle", "handle")
 EndFunc   ;==>_GUICtrlTreeView_GetPrevVisible
 
 ; #FUNCTION# ====================================================================================================================
@@ -2141,11 +2174,12 @@ EndFunc   ;==>_GUICtrlTreeView_GetPrevVisible
 ;                  adjusted so that the scroll will take place within the maximum scroll time.  A scroll operation may take less
 ;                  time than the maximum.
 ; Related .......: _GUICtrlTreeView_SetScrollTime
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetScrollTime($hWnd)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $TVM_GETSCROLLTIME)
@@ -2163,8 +2197,8 @@ EndFunc   ;==>_GUICtrlTreeView_GetScrollTime
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_SetSelected
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetSelected($hWnd, $hItem)
 	Return BitAND(_GUICtrlTreeView_GetState($hWnd, $hItem), $TVIS_SELECTED) <> 0
@@ -2181,20 +2215,19 @@ EndFunc   ;==>_GUICtrlTreeView_GetSelected
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_SetSelectedImageIndex
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetSelectedImageIndex($hWnd, $hItem)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $tItem
-
-	$tItem = DllStructCreate($tagTVITEMEX)
+	Local $tItem = DllStructCreate($tagTVITEMEX)
 	DllStructSetData($tItem, "Mask", $TVIF_SELECTEDIMAGE)
 	DllStructSetData($tItem, "hItem", $hItem)
-	_GUICtrlTreeView_GetItem($hWnd, $tItem)
+	__GUICtrlTreeView_GetItem($hWnd, $tItem)
 	Return DllStructGetData($tItem, "SelectedImage")
 EndFunc   ;==>_GUICtrlTreeView_GetSelectedImageIndex
 
@@ -2208,14 +2241,15 @@ EndFunc   ;==>_GUICtrlTreeView_GetSelectedImageIndex
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetSelection($hWnd)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Return _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CARET, 0, 0, "wparam", "hwnd", "hwnd")
+	Return _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CARET, 0, 0, "wparam", "handle", "handle")
 EndFunc   ;==>_GUICtrlTreeView_GetSelection
 
 ; #FUNCTION# ====================================================================================================================
@@ -2229,33 +2263,34 @@ EndFunc   ;==>_GUICtrlTreeView_GetSelection
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetCount, _GUICtrlTreeView_GetChildCount
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetSiblingCount($hWnd, $hItem)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $hNext, $iResult = 0, $hParent
+	Local $hNext, $iRet = 0
 
-	$hParent = _GUICtrlTreeView_GetParentHandle($hWnd, $hItem)
+	Local $hParent = _GUICtrlTreeView_GetParentHandle($hWnd, $hItem)
 	If $hParent <> 0x00000000 Then
 		$hNext = _GUICtrlTreeView_GetFirstChild($hWnd, $hParent)
 		If $hNext = 0x00000000 Then Return -1
 		Do
-			$iResult += 1
+			$iRet += 1
 			$hNext = _GUICtrlTreeView_GetNextSibling($hWnd, $hNext)
 		Until $hNext = 0x00000000
 	Else
 		$hNext = _GUICtrlTreeView_GetFirstItem($hWnd)
 		If $hNext = 0x00000000 Then Return -1
 		Do
-			$iResult += 1
+			$iRet += 1
 			$hNext = _GUICtrlTreeView_GetNextSibling($hWnd, $hNext)
 		Until $hNext = 0x00000000
 	EndIf
-	Return $iResult
+	Return $iRet
 EndFunc   ;==>_GUICtrlTreeView_GetSiblingCount
 
 ; #FUNCTION# ====================================================================================================================
@@ -2270,34 +2305,34 @@ EndFunc   ;==>_GUICtrlTreeView_GetSiblingCount
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_SetState
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetState($hWnd, $hItem = 0)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
-	Local $tTVITEM, $iSize, $tMemMap, $pItem, $pMemory
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If $hItem = 0 Then $hItem = 0x00000000
 
 	$hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If $hItem = 0x00000000 Then Return SetError(1, 1, 0)
 
-	$tTVITEM = DllStructCreate($tagTVITEMEX)
-	$pItem = DllStructGetPtr($tTVITEM)
+	Local $tTVITEM = DllStructCreate($tagTVITEMEX)
+	Local $pItem = DllStructGetPtr($tTVITEM)
 	DllStructSetData($tTVITEM, "Mask", $TVIF_STATE)
 	DllStructSetData($tTVITEM, "hItem", $hItem)
 
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 	If _WinAPI_InProcess($hWnd, $__ghTVLastWnd) Then
-		_SendMessage($hWnd, $TVM_GETITEM, 0, $pItem)
+		_SendMessage($hWnd, $TVM_GETITEMA, 0, $pItem)
 	Else
-		$iSize = DllStructGetSize($tTVITEM)
-		$pMemory = _MemInit($hWnd, $iSize, $tMemMap)
+		Local $iSize = DllStructGetSize($tTVITEM)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iSize, $tMemMap)
 		_MemWrite($tMemMap, $pItem)
-		_SendMessage($hWnd, $TVM_GETITEM, 0, $pMemory)
+		_SendMessage($hWnd, $TVM_GETITEMA, 0, $pMemory)
 		_MemRead($tMemMap, $pMemory, $pItem, $iSize)
 		_MemFree($tMemMap)
 	EndIf
-;~ 	If _SendMessage($hWnd, $TVM_GETITEM, 0, $pItem) = 0 Then Return 0
 
 	Return DllStructGetData($tTVITEM, "State")
 EndFunc   ;==>_GUICtrlTreeView_GetState
@@ -2313,19 +2348,18 @@ EndFunc   ;==>_GUICtrlTreeView_GetState
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_SetStateImageIndex
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetStateImageIndex($hWnd, $hItem)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	$hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 
-	Local $tItem
-
-	$tItem = DllStructCreate($tagTVITEMEX)
+	Local $tItem = DllStructCreate($tagTVITEMEX)
 	DllStructSetData($tItem, "Mask", $TVIF_STATE)
 	DllStructSetData($tItem, "hItem", $hItem)
-	_GUICtrlTreeView_GetItem($hWnd, $tItem)
+	__GUICtrlTreeView_GetItem($hWnd, $tItem)
 	Return BitShift(BitAND(DllStructGetData($tItem, "State"), $TVIS_STATEIMAGEMASK), 12)
 EndFunc   ;==>_GUICtrlTreeView_GetStateImageIndex
 
@@ -2340,14 +2374,15 @@ EndFunc   ;==>_GUICtrlTreeView_GetStateImageIndex
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_SetStateImageList
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetStateImageList($hWnd)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Return _SendMessage($hWnd, $TVM_GETIMAGELIST, $TVSIL_STATE, 0, 0, "wparam", "hwnd", "hwnd")
+	Return _SendMessage($hWnd, $TVM_GETIMAGELIST, $TVSIL_STATE, 0, 0, "wparam", "handle", "handle")
 EndFunc   ;==>_GUICtrlTreeView_GetStateImageList
 
 ; #FUNCTION# ====================================================================================================================
@@ -2362,27 +2397,27 @@ EndFunc   ;==>_GUICtrlTreeView_GetStateImageList
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_SetText
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetText($hWnd, $hItem = 0)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	If $hItem = 0x00000000 Then Return SetError(1, 1, "")
 
-	Local $tTVITEM, $tText, $pBuffer, $iItem, $pMemory, $pText, $tMemMap, $pItem
+	Local $tTVITEM = DllStructCreate($tagTVITEMEX)
+	Local $tText
 	Local $fUnicode = _GUICtrlTreeView_GetUnicodeFormat($hWnd)
-
-	$tTVITEM = DllStructCreate($tagTVITEMEX)
 	If $fUnicode Then
 		$tText = DllStructCreate("wchar Buffer[4096]"); create a text 'area' for receiving the text
 	Else
 		$tText = DllStructCreate("char Buffer[4096]"); create a text 'area' for receiving the text
 	EndIf
-	$pBuffer = DllStructGetPtr($tText)
-	$pItem = DllStructGetPtr($tTVITEM)
+	Local $pBuffer = DllStructGetPtr($tText)
+	Local $pItem = DllStructGetPtr($tTVITEM)
 
 	DllStructSetData($tTVITEM, "Mask", $TVIF_TEXT)
 	DllStructSetData($tTVITEM, "hItem", $hItem)
@@ -2390,21 +2425,18 @@ Func _GUICtrlTreeView_GetText($hWnd, $hItem = 0)
 
 	If _WinAPI_InProcess($hWnd, $__ghTVLastWnd) Then
 		DllStructSetData($tTVITEM, "Text", $pBuffer)
-		If $fUnicode Then
-			_SendMessage($hWnd, $TVM_GETITEMW, 0, $pItem, 0, "wparam", "ptr")
-		Else
-			_SendMessage($hWnd, $TVM_GETITEM, 0, $pItem, 0, "wparam", "ptr")
-		EndIf
+		_SendMessage($hWnd, $TVM_GETITEMW, 0, $pItem, 0, "wparam", "ptr")
 	Else
-		$iItem = DllStructGetSize($tTVITEM)
-		$pMemory = _MemInit($hWnd, $iItem + 4096, $tMemMap)
-		$pText = $pMemory + $iItem
+		Local $iItem = DllStructGetSize($tTVITEM)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iItem + 4096, $tMemMap)
+		Local $pText = $pMemory + $iItem
 		DllStructSetData($tTVITEM, "Text", $pText)
 		_MemWrite($tMemMap, $pItem, $pMemory, $iItem)
 		If $fUnicode Then
 			_SendMessage($hWnd, $TVM_GETITEMW, 0, $pMemory, 0, "wparam", "ptr")
 		Else
-			_SendMessage($hWnd, $TVM_GETITEM, 0, $pMemory, 0, "wparam", "ptr")
+			_SendMessage($hWnd, $TVM_GETITEMA, 0, $pMemory, 0, "wparam", "ptr")
 		EndIf
 		_MemRead($tMemMap, $pText, $pBuffer, 4096)
 		_MemFree($tMemMap)
@@ -2423,11 +2455,12 @@ EndFunc   ;==>_GUICtrlTreeView_GetText
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_SetTextColor
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetTextColor($hWnd)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Local $tc = Hex(String(_SendMessage($hWnd, $TVM_GETTEXTCOLOR)), 6)
@@ -2445,11 +2478,12 @@ EndFunc   ;==>_GUICtrlTreeView_GetTextColor
 ; Remarks .......: When created, controls automatically create a ToolTip control.  To cause a control not to use ToolTips, create
 ;                  the control with the $TVS_NOTOOLTIPS style
 ; Related .......: _GUICtrlTreeView_SetToolTips
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetToolTips($hWnd)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $TVM_GETTOOLTIPS, 0, 0, 0, "wparam", "lparam", "hwnd")
@@ -2468,11 +2502,12 @@ EndFunc   ;==>_GUICtrlTreeView_GetToolTips
 ; Remarks .......: Use Opt("GUIDataSeparatorChar", param) to change the separator char used
 ;                  If $hItem is 0 then an attempt to use current selected is used
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetTree($hWnd, $hItem = 0)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If $hItem = 0 Then
 		$hItem = 0x00000000
 	Else
@@ -2480,14 +2515,15 @@ Func _GUICtrlTreeView_GetTree($hWnd, $hItem = 0)
 	EndIf
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $szPath = "", $hParent, $sSeparator = Opt("GUIDataSeparatorChar")
+	Local $szPath = ""
 
-	If $hItem = 0x00000000 Then $hItem = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CARET, 0, 0, "wparam", "hwnd", "hwnd")
+	If $hItem = 0x00000000 Then $hItem = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CARET, 0, 0, "wparam", "handle", "handle")
 	If $hItem <> 0x00000000 Then
 		$szPath = _GUICtrlTreeView_GetText($hWnd, $hItem)
 
+		Local $hParent, $sSeparator = Opt("GUIDataSeparatorChar")
 		Do; Get now the parent item handle if there is one
-			$hParent = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_PARENT, $hItem, 0, "wparam", "hwnd", "hwnd")
+			$hParent = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_PARENT, $hItem, 0, "wparam", "handle", "handle")
 			If $hParent <> 0x00000000 Then $szPath = _GUICtrlTreeView_GetText($hWnd, $hParent) & $sSeparator & $szPath
 			$hItem = $hParent
 		Until $hItem = 0x00000000
@@ -2507,11 +2543,12 @@ EndFunc   ;==>_GUICtrlTreeView_GetTree
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_SetUnicodeFormat
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetUnicodeFormat($hWnd)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $TVM_GETUNICODEFORMAT) <> 0
@@ -2529,34 +2566,35 @@ EndFunc   ;==>_GUICtrlTreeView_GetUnicodeFormat
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_EnsureVisible
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetVisible($hWnd, $hItem)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $iRect, $pRect, $tRect, $pMemory, $tMemMap, $iResult, $iControlHeight
-
-	$tRect = DllStructCreate($tagRECT)
-	$pRect = DllStructGetPtr($tRect)
+	Local $tRect = DllStructCreate($tagRECT)
+	Local $pRect = DllStructGetPtr($tRect)
 	DllStructSetData($tRect, "Left", $hItem)
+	Local $iRet
 	If _WinAPI_InProcess($hWnd, $__ghTVLastWnd) Then
-		$iResult = _SendMessage($hWnd, $TVM_GETITEMRECT, True, $pRect, 0, "wparam", "ptr")
+		$iRet = _SendMessage($hWnd, $TVM_GETITEMRECT, True, $pRect, 0, "wparam", "ptr")
 	Else
-		$iRect = DllStructGetSize($tRect)
-		$pMemory = _MemInit($hWnd, $iRect, $tMemMap)
+		Local $iRect = DllStructGetSize($tRect)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iRect, $tMemMap)
 		_MemWrite($tMemMap, $pRect)
-		$iResult = _SendMessage($hWnd, $TVM_GETITEMRECT, True, $pMemory, 0, "wparam", "ptr")
+		$iRet = _SendMessage($hWnd, $TVM_GETITEMRECT, True, $pMemory, 0, "wparam", "ptr")
 		_MemRead($tMemMap, $pMemory, $pRect, $iRect)
 		_MemFree($tMemMap)
 	EndIf
-	If $iResult = 0 Then Return False ; item is child item, collapsed and not visible
+	If $iRet = 0 Then Return False ; item is child item, collapsed and not visible
 
 	; item may not be collapsed or may be at the root level the above will give a rect even it isn't in the view
 	; check to see if it is visible to the eye
-	$iControlHeight = _WinAPI_GetWindowHeight($hWnd)
+	Local $iControlHeight = _WinAPI_GetWindowHeight($hWnd)
 	If DllStructGetData($tRect, "Top") >= $iControlHeight Or _
 			DllStructGetData($tRect, "Bottom") <= 0 Then
 		Return False
@@ -2578,11 +2616,12 @@ EndFunc   ;==>_GUICtrlTreeView_GetVisible
 ;                  the return value is the number of items that can be fully visible.  If you can see all of 20 items and part of
 ;                  one more item, the return value is 20 not 21.
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_GetVisibleCount($hWnd)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $TVM_GETVISIBLECOUNT)
@@ -2611,26 +2650,25 @@ EndFunc   ;==>_GUICtrlTreeView_GetVisibleCount
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_HitTestItem, _GUICtrlTreeView_HitTestEx
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_HitTest($hWnd, $iX, $iY)
-	Local $iFlags, $iResult, $tHitTest
-
-	$tHitTest = _GUICtrlTreeView_HitTestEx($hWnd, $iX, $iY)
-	$iFlags = DllStructGetData($tHitTest, "Flags")
-	If BitAND($iFlags, $TVHT_NOWHERE) <> 0 Then $iResult = BitOR($iResult, 1)
-	If BitAND($iFlags, $TVHT_ONITEMICON) <> 0 Then $iResult = BitOR($iResult, 2)
-	If BitAND($iFlags, $TVHT_ONITEMLABEL) <> 0 Then $iResult = BitOR($iResult, 4)
-	If BitAND($iFlags, $TVHT_ONITEMINDENT) <> 0 Then $iResult = BitOR($iResult, 8)
-	If BitAND($iFlags, $TVHT_ONITEMBUTTON) <> 0 Then $iResult = BitOR($iResult, 16)
-	If BitAND($iFlags, $TVHT_ONITEMRIGHT) <> 0 Then $iResult = BitOR($iResult, 32)
-	If BitAND($iFlags, $TVHT_ONITEMSTATEICON) <> 0 Then $iResult = BitOR($iResult, 64)
-	If BitAND($iFlags, $TVHT_ABOVE) <> 0 Then $iResult = BitOR($iResult, 128)
-	If BitAND($iFlags, $TVHT_BELOW) <> 0 Then $iResult = BitOR($iResult, 256)
-	If BitAND($iFlags, $TVHT_TORIGHT) <> 0 Then $iResult = BitOR($iResult, 512)
-	If BitAND($iFlags, $TVHT_TOLEFT) <> 0 Then $iResult = BitOR($iResult, 1024)
-	Return $iResult
+	Local $tHitTest = _GUICtrlTreeView_HitTestEx($hWnd, $iX, $iY)
+	Local $iFlags = DllStructGetData($tHitTest, "Flags")
+	Local $iRet = 0
+	If BitAND($iFlags, $TVHT_NOWHERE) <> 0 Then $iRet = BitOR($iRet, 1)
+	If BitAND($iFlags, $TVHT_ONITEMICON) <> 0 Then $iRet = BitOR($iRet, 2)
+	If BitAND($iFlags, $TVHT_ONITEMLABEL) <> 0 Then $iRet = BitOR($iRet, 4)
+	If BitAND($iFlags, $TVHT_ONITEMINDENT) <> 0 Then $iRet = BitOR($iRet, 8)
+	If BitAND($iFlags, $TVHT_ONITEMBUTTON) <> 0 Then $iRet = BitOR($iRet, 16)
+	If BitAND($iFlags, $TVHT_ONITEMRIGHT) <> 0 Then $iRet = BitOR($iRet, 32)
+	If BitAND($iFlags, $TVHT_ONITEMSTATEICON) <> 0 Then $iRet = BitOR($iRet, 64)
+	If BitAND($iFlags, $TVHT_ABOVE) <> 0 Then $iRet = BitOR($iRet, 128)
+	If BitAND($iFlags, $TVHT_BELOW) <> 0 Then $iRet = BitOR($iRet, 256)
+	If BitAND($iFlags, $TVHT_TORIGHT) <> 0 Then $iRet = BitOR($iRet, 512)
+	If BitAND($iFlags, $TVHT_TOLEFT) <> 0 Then $iRet = BitOR($iRet, 1024)
+	Return $iRet
 EndFunc   ;==>_GUICtrlTreeView_HitTest
 
 ; #FUNCTION# ====================================================================================================================
@@ -2645,24 +2683,24 @@ EndFunc   ;==>_GUICtrlTreeView_HitTest
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_HitTest, _GUICtrlTreeView_HitTestItem, $tagTVHITTESTINFO
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_HitTestEx($hWnd, $iX, $iY)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $iHitTest, $pHitTest, $tHitTest, $pMemory, $tMemMap
-
-	$tHitTest = DllStructCreate($tagTVHITTESTINFO)
-	$pHitTest = DllStructGetPtr($tHitTest)
+	Local $tHitTest = DllStructCreate($tagTVHITTESTINFO)
+	Local $pHitTest = DllStructGetPtr($tHitTest)
 	DllStructSetData($tHitTest, "X", $iX)
 	DllStructSetData($tHitTest, "Y", $iY)
 	If _WinAPI_InProcess($hWnd, $__ghTVLastWnd) Then
 		_SendMessage($hWnd, $TVM_HITTEST, 0, $pHitTest, 0, "wparam", "ptr")
 	Else
-		$iHitTest = DllStructGetSize($tHitTest)
-		$pMemory = _MemInit($hWnd, $iHitTest, $tMemMap)
+		Local $iHitTest = DllStructGetSize($tHitTest)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iHitTest, $tMemMap)
 		_MemWrite($tMemMap, $pHitTest)
 		_SendMessage($hWnd, $TVM_HITTEST, 0, $pMemory, 0, "wparam", "ptr")
 		_MemRead($tMemMap, $pMemory, $pHitTest, $iHitTest)
@@ -2682,14 +2720,12 @@ EndFunc   ;==>_GUICtrlTreeView_HitTestEx
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......:
 ; Remarks .......:
-; Related .......: _GUICtrlTreeView_HitTest
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUICtrlTreeView_HitTest, _GUICtrlTreeView_HitTestEx
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_HitTestItem($hWnd, $iX, $iY)
-	Local $tHitTest
-
-	$tHitTest = _GUICtrlTreeView_HitTestEx($hWnd, $iX, $iY)
+	Local $tHitTest = _GUICtrlTreeView_HitTestEx($hWnd, $iX, $iY)
 	Return DllStructGetData($tHitTest, "Item")
 EndFunc   ;==>_GUICtrlTreeView_HitTestItem
 
@@ -2704,36 +2740,36 @@ EndFunc   ;==>_GUICtrlTreeView_HitTestItem
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......: If $hItem is a child item the index is the position under the parent
 ;                  If $hItem has no parent this function will get the index of that item
-; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUICtrlTreeView_GetItemByIndex
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_Index($hWnd, $hItem)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $hNext, $iResult, $hParent
-
-	$iResult = -1
-	$hParent = _GUICtrlTreeView_GetParentHandle($hWnd, $hItem)
+	Local $iRet = -1
+	Local $hParent = _GUICtrlTreeView_GetParentHandle($hWnd, $hItem)
+	Local $hNext
 	If $hParent <> 0x00000000 Then
 		$hNext = _GUICtrlTreeView_GetFirstChild($hWnd, $hParent)
 		While $hNext <> 0x00000000
-			$iResult += 1
+			$iRet += 1
 			If $hNext = $hItem Then ExitLoop
 			$hNext = _GUICtrlTreeView_GetNextSibling($hWnd, $hNext)
 		WEnd
 	Else
 		$hNext = _GUICtrlTreeView_GetFirstItem($hWnd)
 		While $hNext <> 0x00000000
-			$iResult += 1
+			$iRet += 1
 			If $hNext = $hItem Then ExitLoop
 			$hNext = _GUICtrlTreeView_GetNextSibling($hWnd, $hNext)
 		WEnd
 	EndIf
-	If $hNext = 0x00000000 Then $iResult = -1
-	Return $iResult
+	If $hNext = 0x00000000 Then $iRet = -1
+	Return $iRet
 EndFunc   ;==>_GUICtrlTreeView_Index
 
 ; #FUNCTION# ====================================================================================================================
@@ -2752,28 +2788,27 @@ EndFunc   ;==>_GUICtrlTreeView_Index
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_InsertItem($hWnd, $sItem_Text, $hItem_Parent = 0, $hItem_After = 0, $iImage = -1, $iSelImage = -1)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
 
-	Local $hItem_tmp, $tTVI, $tText, $iMask, $hIcon, $pBuffer, $pInsert, $hItem, $iInsert, $iBuffer
-	Local $pMemory, $tMemMap, $pText
+	Local $tTVI = DllStructCreate($tagTVINSERTSTRUCT)
+	Local $pInsert = DllStructGetPtr($tTVI)
+
+	Local $iBuffer = StringLen($sItem_Text) + 1
+	Local $tText
 	Local $fUnicode = _GUICtrlTreeView_GetUnicodeFormat($hWnd)
-
-	$tTVI = DllStructCreate($tagTVINSERTSTRUCT)
-	$pInsert = DllStructGetPtr($tTVI)
-
-	$iBuffer = StringLen($sItem_Text) + 1
 	If $fUnicode Then
-		$iBuffer *= 2
 		$tText = DllStructCreate("wchar Buffer[" & $iBuffer & "]")
+		$iBuffer *= 2
 	Else
 		$tText = DllStructCreate("char Buffer[" & $iBuffer & "]")
 	EndIf
-	$pBuffer = DllStructGetPtr($tText)
+	Local $pBuffer = DllStructGetPtr($tText)
 
+	Local $hItem_tmp
 	If $hItem_Parent = 0 Then ; setting to root level
 		$hItem_Parent = $TVI_ROOT
 	ElseIf Not IsHWnd($hItem_Parent) Then ; control created by autoit create
@@ -2801,18 +2836,19 @@ Func _GUICtrlTreeView_InsertItem($hWnd, $sItem_Text, $hItem_Parent = 0, $hItem_A
 
 	DllStructSetData($tText, "Buffer", $sItem_Text)
 
-	$iMask = $TVIF_TEXT
+	Local $hIcon
+	Local $iMask = $TVIF_TEXT
 	If $iImage >= 0 Then
 		$iMask = BitOR($iMask, $TVIF_IMAGE)
 		$iMask = BitOR($iMask, $TVIF_IMAGE)
 		DllStructSetData($tTVI, "Image", $iImage)
 	Else
-
 		$hIcon = _GUICtrlTreeView_GetImageListIconHandle($hWnd, 0)
 		If $hIcon <> 0x00000000 Then
 			$iMask = BitOR($iMask, $TVIF_IMAGE)
 			DllStructSetData($tTVI, "Image", 0)
-			DllCall("user32.dll", "int", "DestroyIcon", "hwnd", $hIcon)
+			DllCall("user32.dll", "int", "DestroyIcon", "handle", $hIcon)
+			; No @error test because results are unimportant.
 		EndIf
 	EndIf
 
@@ -2825,7 +2861,8 @@ Func _GUICtrlTreeView_InsertItem($hWnd, $sItem_Text, $hItem_Parent = 0, $hItem_A
 		If $hIcon <> 0x00000000 Then
 			$iMask = BitOR($iMask, $TVIF_SELECTEDIMAGE)
 			DllStructSetData($tTVI, "SelectedImage", 0)
-			DllCall("user32.dll", "int", "DestroyIcon", "hwnd", $hIcon)
+			DllCall("user32.dll", "int", "DestroyIcon", "handle", $hIcon)
+			; No @error test because results are unimportant.
 		EndIf
 	EndIf
 
@@ -2837,24 +2874,23 @@ Func _GUICtrlTreeView_InsertItem($hWnd, $sItem_Text, $hItem_Parent = 0, $hItem_A
 	DllStructSetData($tTVI, "Param", 0)
 
 
+	Local $hItem
 	If _WinAPI_InProcess($hWnd, $__ghTVLastWnd) Then
 		DllStructSetData($tTVI, "Text", $pBuffer)
-		If $fUnicode Then
-			$hItem = _SendMessage($hWnd, $TVM_INSERTITEMW, 0, $pInsert, 0, "wparam", "ptr")
-		Else
-			$hItem = _SendMessage($hWnd, $TVM_INSERTITEM, 0, $pInsert, 0, "wparam", "ptr")
-		EndIf
+		$hItem = _SendMessage($hWnd, $TVM_INSERTITEMW, 0, $pInsert, 0, "wparam", "ptr")
+
 	Else
-		$iInsert = DllStructGetSize($tTVI)
-		$pMemory = _MemInit($hWnd, $iInsert + $iBuffer, $tMemMap)
-		$pText = $pMemory + $iInsert
+		Local $iInsert = DllStructGetSize($tTVI)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iInsert + $iBuffer, $tMemMap)
+		Local $pText = $pMemory + $iInsert
 		_MemWrite($tMemMap, $pInsert, $pMemory, $iInsert)
 		_MemWrite($tMemMap, $pBuffer, $pText, $iBuffer)
 		DllStructSetData($tTVI, "Text", $pText)
 		If $fUnicode Then
 			$hItem = _SendMessage($hWnd, $TVM_INSERTITEMW, 0, $pMemory, 0, "wparam", "ptr")
 		Else
-			$hItem = _SendMessage($hWnd, $TVM_INSERTITEM, 0, $pMemory, 0, "wparam", "ptr")
+			$hItem = _SendMessage($hWnd, $TVM_INSERTITEMA, 0, $pMemory, 0, "wparam", "ptr")
 		EndIf
 		_MemFree($tMemMap)
 	EndIf
@@ -2873,8 +2909,8 @@ EndFunc   ;==>_GUICtrlTreeView_InsertItem
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_IsFirstItem($hWnd, $hItem)
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
@@ -2896,11 +2932,12 @@ EndFunc   ;==>_GUICtrlTreeView_IsFirstItem
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_IsParent($hWnd, $hParent, $hItem)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hParent) Then $hParent = _GUICtrlTreeView_GetItemHandle($hWnd, $hParent)
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
@@ -2919,19 +2956,17 @@ EndFunc   ;==>_GUICtrlTreeView_IsParent
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_Level($hWnd, $hItem)
-	Local $hNext, $iResult
-
-	$iResult = 0
-	$hNext = _GUICtrlTreeView_GetParentHandle($hWnd, $hItem)
+	Local $iRet = 0
+	Local $hNext = _GUICtrlTreeView_GetParentHandle($hWnd, $hItem)
 	While $hNext <> 0x00000000
-		$iResult += 1
+		$iRet += 1
 		$hNext = _GUICtrlTreeView_GetParentHandle($hWnd, $hNext)
 	WEnd
-	Return $iResult
+	Return $iRet
 EndFunc   ;==>_GUICtrlTreeView_Level
 
 ; #NO_DOC_FUNCTION# =============================================================================================================
@@ -2947,14 +2982,15 @@ EndFunc   ;==>_GUICtrlTreeView_Level
 ;+
 ;                  When you add an item to a control an HTREEITEM returns, which uniquely identifies the item.
 ; Related .......: _GUICtrlTreeView_MapItemToAccID
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_MapAccIDToItem($hWnd, $iID)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Return _SendMessage($hWnd, $TVM_MAPACCIDTOHTREEITEM, $iID, 0, 0, "wparam", "lparam", "hwnd")
+	Return _SendMessage($hWnd, $TVM_MAPACCIDTOHTREEITEM, $iID, 0, 0, "wparam", "lparam", "handle")
 EndFunc   ;==>_GUICtrlTreeView_MapAccIDToItem
 
 ; #NO_DOC_FUNCTION# =============================================================================================================
@@ -2970,34 +3006,35 @@ EndFunc   ;==>_GUICtrlTreeView_MapAccIDToItem
 ;+
 ;                  When you add an item to a control an HTREEITEM returns, which uniquely identifies the item.
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_MapItemToAccID($hWnd, $hTreeItem)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hTreeItem) Then $hTreeItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hTreeItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Return _SendMessage($hWnd, $TVM_MAPHTREEITEMTOACCID, $hTreeItem, 0, 0, "hwnd")
+	Return _SendMessage($hWnd, $TVM_MAPHTREEITEMTOACCID, $hTreeItem, 0, 0, "handle")
 EndFunc   ;==>_GUICtrlTreeView_MapItemToAccID
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _GUICtrlTreeView_ReverseColorOder
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __GUICtrlTreeView_ReverseColorOrder
 ; Description ...: Convert Hex RGB or BGR Color to Hex RGB or BGR Color
-; Syntax.........: _GUICtrlTreeView_ReverseColorOder($vColor)
+; Syntax.........: __GUICtrlTreeView_ReverseColorOrder($vColor)
 ; Parameters ....: $vColor      - Hex Color
 ; Return values .: Success      - Hex RGB or BGR Color
 ; Author ........: Gary Frost (gafrost)
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
-Func _GUICtrlTreeView_ReverseColorOder($vColor)
+Func __GUICtrlTreeView_ReverseColorOrder($vColor)
 	Local $tc = Hex(String($vColor), 6)
 	Return '0x' & StringMid($tc, 5, 2) & StringMid($tc, 3, 2) & StringMid($tc, 1, 2)
-EndFunc   ;==>_GUICtrlTreeView_ReverseColorOder
+EndFunc   ;==>__GUICtrlTreeView_ReverseColorOrder
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _GUICtrlTreeView_SelectItem
@@ -3015,16 +3052,17 @@ EndFunc   ;==>_GUICtrlTreeView_ReverseColorOder
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SelectItem($hWnd, $hItem, $iFlag = 0)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	If $iFlag = 0 Then $iFlag = $TVGN_CARET
-	Return _SendMessage($hWnd, $TVM_SELECTITEM, $iFlag, $hItem, 0, "wparam", "hwnd") <> 0
+	Return _SendMessage($hWnd, $TVM_SELECTITEM, $iFlag, $hItem, 0, "wparam", "handle") <> 0
 EndFunc   ;==>_GUICtrlTreeView_SelectItem
 
 ; #FUNCTION# ====================================================================================================================
@@ -3040,8 +3078,8 @@ EndFunc   ;==>_GUICtrlTreeView_SelectItem
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SelectItemByIndex($hWnd, $hItem, $iIndex)
 	Return _GUICtrlTreeView_SelectItem($hWnd, _GUICtrlTreeView_GetItemByIndex($hWnd, $hItem, $iIndex))
@@ -3058,14 +3096,15 @@ EndFunc   ;==>_GUICtrlTreeView_SelectItemByIndex
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetBkColor
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetBkColor($hWnd, $vRGBColor)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Return _GUICtrlTreeView_ReverseColorOder(_SendMessage($hWnd, $TVM_SETBKCOLOR, 0, Int(_GUICtrlTreeView_ReverseColorOder($vRGBColor))))
+	Return __GUICtrlTreeView_ReverseColorOrder(_SendMessage($hWnd, $TVM_SETBKCOLOR, 0, Int(__GUICtrlTreeView_ReverseColorOrder($vRGBColor))))
 EndFunc   ;==>_GUICtrlTreeView_SetBkColor
 
 ; #FUNCTION# ====================================================================================================================
@@ -3081,8 +3120,8 @@ EndFunc   ;==>_GUICtrlTreeView_SetBkColor
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetBold
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetBold($hWnd, $hItem, $fFlag = True)
 	Return _GUICtrlTreeView_SetState($hWnd, $hItem, $TVIS_BOLD, $fFlag)
@@ -3103,17 +3142,16 @@ EndFunc   ;==>_GUICtrlTreeView_SetBold
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetChecked
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetChecked($hWnd, $hItem, $fCheck = True)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $tItem
-
-	$tItem = DllStructCreate($tagTVITEMEX)
+	Local $tItem = DllStructCreate($tagTVITEMEX)
 	DllStructSetData($tItem, "Mask", $TVIF_STATE)
 	DllStructSetData($tItem, "hItem", $hItem)
 	If ($fCheck) Then
@@ -3122,7 +3160,7 @@ Func _GUICtrlTreeView_SetChecked($hWnd, $hItem, $fCheck = True)
 		DllStructSetData($tItem, "State", 0x1000)
 	EndIf
 	DllStructSetData($tItem, "StateMask", 0xf000)
-	Return _GUICtrlTreeView_SetItem($hWnd, $tItem)
+	Return __GUICtrlTreeView_SetItem($hWnd, $tItem)
 EndFunc   ;==>_GUICtrlTreeView_SetChecked
 
 ; #FUNCTION# ====================================================================================================================
@@ -3141,17 +3179,16 @@ EndFunc   ;==>_GUICtrlTreeView_SetChecked
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetCheckedByIndex($hWnd, $hItem, $iIndex, $fCheck = True)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $hChild
-
-	$hChild = _GUICtrlTreeView_GetItemByIndex($hWnd, $hItem, $iIndex)
+	Local $hChild = _GUICtrlTreeView_GetItemByIndex($hWnd, $hItem, $iIndex)
 	Return _GUICtrlTreeView_SetChecked($hWnd, $hChild, $fCheck)
 EndFunc   ;==>_GUICtrlTreeView_SetCheckedByIndex
 
@@ -3170,21 +3207,20 @@ EndFunc   ;==>_GUICtrlTreeView_SetCheckedByIndex
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetChildren
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetChildren($hWnd, $hItem, $fFlag = True)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $tItem
-
-	$tItem = DllStructCreate($tagTVITEMEX)
+	Local $tItem = DllStructCreate($tagTVITEMEX)
 	DllStructSetData($tItem, "Mask", BitOR($TVIF_HANDLE, $TVIF_CHILDREN))
 	DllStructSetData($tItem, "hItem", $hItem)
 	DllStructSetData($tItem, "Children", $fFlag)
-	Return _GUICtrlTreeView_SetItem($hWnd, $tItem)
+	Return __GUICtrlTreeView_SetItem($hWnd, $tItem)
 EndFunc   ;==>_GUICtrlTreeView_SetChildren
 
 ; #FUNCTION# ====================================================================================================================
@@ -3202,11 +3238,12 @@ EndFunc   ;==>_GUICtrlTreeView_SetChildren
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetCut
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetCut($hWnd, $hItem, $fFlag = True)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
@@ -3228,8 +3265,8 @@ EndFunc   ;==>_GUICtrlTreeView_SetCut
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetDropTarget
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetDropTarget($hWnd, $hItem, $fFlag = True)
 	If $fFlag Then
@@ -3237,6 +3274,7 @@ Func _GUICtrlTreeView_SetDropTarget($hWnd, $hItem, $fFlag = True)
 	ElseIf _GUICtrlTreeView_GetDropTarget($hWnd, $hItem) Then
 		Return _GUICtrlTreeView_SelectItem($hWnd, 0)
 	EndIf
+	Return False
 EndFunc   ;==>_GUICtrlTreeView_SetDropTarget
 
 ; #FUNCTION# ====================================================================================================================
@@ -3254,8 +3292,8 @@ EndFunc   ;==>_GUICtrlTreeView_SetDropTarget
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetFocused
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetFocused($hWnd, $hItem, $fFlag = True)
 	Return _GUICtrlTreeView_SetState($hWnd, $hItem, $TVIS_FOCUSED, $fFlag)
@@ -3274,11 +3312,12 @@ EndFunc   ;==>_GUICtrlTreeView_SetFocused
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetHeight
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetHeight($hWnd, $iHeight)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $TVM_SETITEMHEIGHT, $iHeight)
@@ -3299,11 +3338,12 @@ EndFunc   ;==>_GUICtrlTreeView_SetHeight
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetIcon($hWnd, $hItem = 0, $sIconFile = "", $iIconID = 0, $iImageMode = 6)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If $hItem = 0 Then $hItem = 0x00000000
 
 	If $hItem <> 0x00000000 And Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
@@ -3313,36 +3353,34 @@ Func _GUICtrlTreeView_SetIcon($hWnd, $hItem = 0, $sIconFile = "", $iIconID = 0, 
 
 	Local $tTVITEM = DllStructCreate($tagTVITEMEX)
 
-	Local $st_icon = DllStructCreate("int")
-	Local $i_count = DllCall("shell32.dll", "int", "ExtractIconEx", _
-			"str", $sIconFile, _
-			"int", $iIconID, _
-			"ptr", 0, _
-			"ptr", DllStructGetPtr($st_icon), _
-			"int", 1)
+	Local $tIcon = DllStructCreate("handle")
+	Local $i_count = DllCall("shell32.dll", "uint", "ExtractIconExW", "wstr", $sIconFile, "int", $iIconID, _
+			"handle", 0, "handle", DllStructGetPtr($tIcon), "uint", 1)
+	If @error Then Return SetError(@error, @extended, 0)
 	If $i_count[0] = 0 Then Return 0
 
-	Local $hImageList = _SendMessage($hWnd, $TVM_GETIMAGELIST, 0, 0, 0, "wparam", "lparam", "hwnd")
+	Local $hImageList = _SendMessage($hWnd, $TVM_GETIMAGELIST, 0, 0, 0, "wparam", "lparam", "handle")
 	If $hImageList = 0x00000000 Then
-		$hImageList = DllCall("comctl32.dll", "hwnd", "ImageList_Create", _
-				"int", 16, _
-				"int", 16, _
-				"int", 0x0021, _
-				"int", 0, _
-				"int", 1)
+		$hImageList = DllCall("comctl32.dll", "handle", "ImageList_Create", "int", 16, "int", 16, "uint", 0x0021, "int", 0, "int", 1)
+		If @error Then Return SetError(@error, @extended, 0)
 		$hImageList = $hImageList[0]
 		If $hImageList = 0 Then Return SetError(1, 1, False)
 
-		_SendMessage($hWnd, $TVM_SETIMAGELIST, 0, $hImageList, 0, "wparam", "hwnd")
+		_SendMessage($hWnd, $TVM_SETIMAGELIST, 0, $hImageList, 0, "wparam", "handle")
 	EndIf
 
-	Local $hIcon = DllStructGetData($st_icon, 1)
-	Local $i_icon = DllCall("comctl32.dll", "int", "ImageList_AddIcon", _
-			"hwnd", $hImageList, _
-			"hwnd", $hIcon)
+	Local $hIcon = DllStructGetData($tIcon, 1)
+	Local $i_icon = DllCall("comctl32.dll", "int", "ImageList_AddIcon", "handle", $hImageList, "handle", $hIcon)
 	$i_icon = $i_icon[0]
+	If @error Then
+		Local $iError = @error, $iExtended = @extended
+		DllCall("user32.dll", "int", "DestroyIcon", "handle", $hIcon)
+		; No @error test because results are unimportant.
+		Return SetError($iError, $iExtended, 0)
+	EndIf
 
-	DllCall("user32.dll", "int", "DestroyIcon", "hwnd", $hIcon)
+	DllCall("user32.dll", "int", "DestroyIcon", "handle", $hIcon)
+	; No @error test because results are unimportant.
 
 	Local $iMask = BitOR($TVIF_IMAGE, $TVIF_SELECTEDIMAGE)
 
@@ -3363,7 +3401,7 @@ Func _GUICtrlTreeView_SetIcon($hWnd, $hItem = 0, $sIconFile = "", $iIconID = 0, 
 	DllStructSetData($tTVITEM, "Mask", $iMask)
 	DllStructSetData($tTVITEM, "hItem", $hItem)
 
-	Return _GUICtrlTreeView_SetItem($hWnd, $tTVITEM)
+	Return __GUICtrlTreeView_SetItem($hWnd, $tTVITEM)
 EndFunc   ;==>_GUICtrlTreeView_SetIcon
 
 ; #FUNCTION# ====================================================================================================================
@@ -3379,21 +3417,20 @@ EndFunc   ;==>_GUICtrlTreeView_SetIcon
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetImageIndex
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetImageIndex($hWnd, $hItem, $iIndex)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $tItem
-
-	$tItem = DllStructCreate($tagTVITEMEX)
+	Local $tItem = DllStructCreate($tagTVITEMEX)
 	DllStructSetData($tItem, "Mask", BitOR($TVIF_HANDLE, $TVIF_IMAGE))
 	DllStructSetData($tItem, "hItem", $hItem)
 	DllStructSetData($tItem, "Image", $iIndex)
-	Return _GUICtrlTreeView_SetItem($hWnd, $tItem)
+	Return __GUICtrlTreeView_SetItem($hWnd, $tItem)
 EndFunc   ;==>_GUICtrlTreeView_SetImageIndex
 
 ; #FUNCTION# ====================================================================================================================
@@ -3408,11 +3445,12 @@ EndFunc   ;==>_GUICtrlTreeView_SetImageIndex
 ; Remarks .......: If the $iIndent parameter is less than the system-defined minimum width, the new width is set to the
 ;                  system-defined minimum.
 ; Related .......: _GUICtrlTreeView_GetIndent
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetIndent($hWnd, $iIndent)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	_SendMessage($hWnd, $TVM_SETINDENT, $iIndent)
@@ -3434,15 +3472,16 @@ EndFunc   ;==>_GUICtrlTreeView_SetIndent
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetInsertMark($hWnd, $hItem, $fAfter = True)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Return _SendMessage($hWnd, $TVM_SETINSERTMARK, $fAfter, $hItem, 0, "wparam", "hwnd") <> 0
+	Return _SendMessage($hWnd, $TVM_SETINSERTMARK, $fAfter, $hItem, 0, "wparam", "handle") <> 0
 EndFunc   ;==>_GUICtrlTreeView_SetInsertMark
 
 ; #FUNCTION# ====================================================================================================================
@@ -3456,20 +3495,21 @@ EndFunc   ;==>_GUICtrlTreeView_SetInsertMark
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetInsertMarkColor
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetInsertMarkColor($hWnd, $iColor)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $TVM_SETINSERTMARKCOLOR, 0, $iColor)
 EndFunc   ;==>_GUICtrlTreeView_SetInsertMarkColor
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _GUICtrlTreeView_SetItem
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __GUICtrlTreeView_SetItem
 ; Description ...: Sets some or all of a items attributes
-; Syntax.........: _GUICtrlTreeView_SetItem($hWnd, ByRef $tItem)
+; Syntax.........: __GUICtrlTreeView_SetItem($hWnd, ByRef $tItem)
 ; Parameters ....: $hWnd        - Handle to the control
 ;                  $tItem       - $tagTVITEMEX structure that contains the new item attributes
 ; Return values .: Success      - True
@@ -3477,37 +3517,33 @@ EndFunc   ;==>_GUICtrlTreeView_SetInsertMarkColor
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......: This function is used internally and should not normally be called by the end user
-; Related .......: _GUICtrlTreeView_GetItem
-; Link ..........;
-; Example .......;
+; Related .......: __GUICtrlTreeView_GetItem
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
-Func _GUICtrlTreeView_SetItem($hWnd, ByRef $tItem)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+Func __GUICtrlTreeView_SetItem($hWnd, ByRef $tItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $iItem, $pItem, $pMemory, $tMemMap, $iResult
 	Local $fUnicode = _GUICtrlTreeView_GetUnicodeFormat($hWnd)
 
-	$pItem = DllStructGetPtr($tItem)
+	Local $pItem = DllStructGetPtr($tItem)
+	Local $iRet
 	If _WinAPI_InProcess($hWnd, $__ghTVLastWnd) Then
-		If $fUnicode Then
-			$iResult = _SendMessage($hWnd, $TVM_SETITEMW, 0, $pItem, 0, "wparam", "ptr")
-		Else
-			$iResult = _SendMessage($hWnd, $TVM_SETITEM, 0, $pItem, 0, "wparam", "ptr")
-		EndIf
+		$iRet = _SendMessage($hWnd, $TVM_SETITEMW, 0, $pItem, 0, "wparam", "ptr")
 	Else
-		$iItem = DllStructGetSize($tItem)
-		$pMemory = _MemInit($hWnd, $iItem, $tMemMap)
+		Local $iItem = DllStructGetSize($tItem)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iItem, $tMemMap)
 		_MemWrite($tMemMap, $pItem)
 		If $fUnicode Then
-			$iResult = _SendMessage($hWnd, $TVM_SETITEMW, 0, $pMemory, 0, "wparam", "ptr")
+			$iRet = _SendMessage($hWnd, $TVM_SETITEMW, 0, $pMemory, 0, "wparam", "ptr")
 		Else
-			$iResult = _SendMessage($hWnd, $TVM_SETITEM, 0, $pMemory, 0, "wparam", "ptr")
+			$iRet = _SendMessage($hWnd, $TVM_SETITEMA, 0, $pMemory, 0, "wparam", "ptr")
 		EndIf
 		_MemFree($tMemMap)
 	EndIf
-	Return $iResult = True
-EndFunc   ;==>_GUICtrlTreeView_SetItem
+	Return $iRet <> 0
+EndFunc   ;==>__GUICtrlTreeView_SetItem
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _GUICtrlTreeView_SetItemHeight
@@ -3525,19 +3561,18 @@ EndFunc   ;==>_GUICtrlTreeView_SetItem
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetItemHeight($hWnd, $hItem, $iIntegral)
-	Local $tItem, $fResult
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 
 	_GUICtrlTreeView_BeginUpdate($hWnd)
-	$tItem = DllStructCreate($tagTVITEMEX)
+	Local $tItem = DllStructCreate($tagTVITEMEX)
 	DllStructSetData($tItem, "Mask", BitOR($TVIF_HANDLE, $TVIF_INTEGRAL))
 	DllStructSetData($tItem, "hItem", $hItem)
 	DllStructSetData($tItem, "Integral", $iIntegral)
-	$fResult = _GUICtrlTreeView_SetItem($hWnd, $tItem)
+	Local $fResult = __GUICtrlTreeView_SetItem($hWnd, $tItem)
 	_GUICtrlTreeView_EndUpdate($hWnd)
 	Return $fResult
 EndFunc   ;==>_GUICtrlTreeView_SetItemHeight
@@ -3555,18 +3590,17 @@ EndFunc   ;==>_GUICtrlTreeView_SetItemHeight
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetItemParam
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetItemParam($hWnd, $hItem, $iParam)
-	Local $tItem, $fResult
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 
-	$tItem = DllStructCreate($tagTVITEMEX)
+	Local $tItem = DllStructCreate($tagTVITEMEX)
 	DllStructSetData($tItem, "Mask", BitOR($TVIF_HANDLE, $TVIF_PARAM))
 	DllStructSetData($tItem, "hItem", $hItem)
 	DllStructSetData($tItem, "Param", $iParam)
-	$fResult = _GUICtrlTreeView_SetItem($hWnd, $tItem)
+	Local $fResult = __GUICtrlTreeView_SetItem($hWnd, $tItem)
 	Return $fResult
 EndFunc   ;==>_GUICtrlTreeView_SetItemParam
 
@@ -3581,14 +3615,15 @@ EndFunc   ;==>_GUICtrlTreeView_SetItemParam
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetLineColor
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetLineColor($hWnd, $vRGBColor)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Return _GUICtrlTreeView_ReverseColorOder(_SendMessage($hWnd, $TVM_SETLINECOLOR, 0, Int(_GUICtrlTreeView_ReverseColorOder($vRGBColor))))
+	Return __GUICtrlTreeView_ReverseColorOrder(_SendMessage($hWnd, $TVM_SETLINECOLOR, 0, Int(__GUICtrlTreeView_ReverseColorOrder($vRGBColor))))
 EndFunc   ;==>_GUICtrlTreeView_SetLineColor
 
 ; #FUNCTION# ====================================================================================================================
@@ -3602,14 +3637,15 @@ EndFunc   ;==>_GUICtrlTreeView_SetLineColor
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetNormalImageList
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetNormalImageList($hWnd, $hImageList)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Return _SendMessage($hWnd, $TVM_SETIMAGELIST, $TVSIL_NORMAL, $hImageList, 0, "wparam", "hwnd", "hwnd")
+	Return _SendMessage($hWnd, $TVM_SETIMAGELIST, $TVSIL_NORMAL, $hImageList, 0, "wparam", "handle", "handle")
 EndFunc   ;==>_GUICtrlTreeView_SetNormalImageList
 
 ; #NO_DOC_FUNCTION# =============================================================================================================
@@ -3625,22 +3661,21 @@ EndFunc   ;==>_GUICtrlTreeView_SetNormalImageList
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetOverlayImageIndex
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetOverlayImageIndex($hWnd, $hItem, $iIndex)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $tItem
-
-	$tItem = DllStructCreate($tagTVITEMEX)
+	Local $tItem = DllStructCreate($tagTVITEMEX)
 	DllStructSetData($tItem, "Mask", BitOR($TVIF_HANDLE, $TVIF_STATE))
 	DllStructSetData($tItem, "hItem", $hItem)
 	DllStructSetData($tItem, "State", BitShift($iIndex, -8))
 	DllStructSetData($tItem, "StateMask", $TVIS_OVERLAYMASK)
-	Return _GUICtrlTreeView_SetItem($hWnd, $tItem)
+	Return __GUICtrlTreeView_SetItem($hWnd, $tItem)
 EndFunc   ;==>_GUICtrlTreeView_SetOverlayImageIndex
 
 ; #FUNCTION# ====================================================================================================================
@@ -3656,11 +3691,12 @@ EndFunc   ;==>_GUICtrlTreeView_SetOverlayImageIndex
 ;                  adjusted so that the scroll will take place within the maximum scroll time.  A scroll operation may take  less
 ;                  time than the maximum.
 ; Related .......: _GUICtrlTreeView_GetScrollTime
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetScrollTime($hWnd, $iTime)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $TVM_SETSCROLLTIME, $iTime)
@@ -3679,8 +3715,8 @@ EndFunc   ;==>_GUICtrlTreeView_SetScrollTime
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetSelected
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetSelected($hWnd, $hItem, $fFlag = True)
 	Return _GUICtrlTreeView_SetState($hWnd, $hItem, $TVIS_SELECTED, $fFlag)
@@ -3699,21 +3735,20 @@ EndFunc   ;==>_GUICtrlTreeView_SetSelected
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetSelectedImageIndex
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetSelectedImageIndex($hWnd, $hItem, $iIndex)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $tItem
-
-	$tItem = DllStructCreate($tagTVITEMEX)
+	Local $tItem = DllStructCreate($tagTVITEMEX)
 	DllStructSetData($tItem, "Mask", BitOR($TVIF_HANDLE, $TVIF_SELECTEDIMAGE))
 	DllStructSetData($tItem, "hItem", $hItem)
 	DllStructSetData($tItem, "SelectedImage", $iIndex)
-	Return _GUICtrlTreeView_SetItem($hWnd, $tItem)
+	Return __GUICtrlTreeView_SetItem($hWnd, $tItem)
 EndFunc   ;==>_GUICtrlTreeView_SetSelectedImageIndex
 
 ; #FUNCTION# ====================================================================================================================
@@ -3737,11 +3772,12 @@ EndFunc   ;==>_GUICtrlTreeView_SetSelectedImageIndex
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......: State values can BitOr'ed together as for example BitOr($TVIS_SELECTED, $TVIS_BOLD).
 ; Related .......: _GUICtrlTreeView_GetState
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetState($hWnd, $hItem, $iState = 0, $iSetState = True)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If $hItem = 0x00000000 Or ($iState = 0 And $iSetState = False) Then Return False
 
@@ -3757,7 +3793,7 @@ Func _GUICtrlTreeView_SetState($hWnd, $hItem, $iState = 0, $iSetState = True)
 	DllStructSetData($tTVITEM, "StateMask", $iState)
 	If $iSetState Then DllStructSetData($tTVITEM, "StateMask", BitOR($iSetState, $iState))
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
-	Return _GUICtrlTreeView_SetItem($hWnd, $tTVITEM)
+	Return __GUICtrlTreeView_SetItem($hWnd, $tTVITEM)
 EndFunc   ;==>_GUICtrlTreeView_SetState
 
 ; #FUNCTION# ====================================================================================================================
@@ -3773,27 +3809,26 @@ EndFunc   ;==>_GUICtrlTreeView_SetState
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......: This is a 1 based index list
 ; Related .......: _GUICtrlTreeView_GetStateImageIndex
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetStateImageIndex($hWnd, $hItem, $iIndex)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	If $iIndex = 0 Then
-		_WinAPI_ShowError("Invalid index for State Image" & @LF & "State Image List is One-based list", False)
-		Return False
+ 		; Invalid index for State Image" & @LF & "State Image List is One-based list
+		Return SetError(1, 0, False)
 	EndIf
 
-	Local $tItem
-
-	$tItem = DllStructCreate($tagTVITEMEX)
+	Local $tItem = DllStructCreate($tagTVITEMEX)
 	DllStructSetData($tItem, "Mask", $TVIF_STATE)
 	DllStructSetData($tItem, "hItem", $hItem)
 	DllStructSetData($tItem, "State", BitShift($iIndex, -12))
 	DllStructSetData($tItem, "StateMask", $TVIS_STATEIMAGEMASK)
-	Return _GUICtrlTreeView_SetItem($hWnd, $tItem)
+	Return __GUICtrlTreeView_SetItem($hWnd, $tItem)
 EndFunc   ;==>_GUICtrlTreeView_SetStateImageIndex
 
 ; #FUNCTION# ====================================================================================================================
@@ -3808,11 +3843,12 @@ EndFunc   ;==>_GUICtrlTreeView_SetStateImageIndex
 ; Modified.......:
 ; Remarks .......: This is a 1 based index list
 ; Related .......: _GUICtrlTreeView_GetStateImageList
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetStateImageList($hWnd, $hImageList)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	; haven't figured out why but the state image list appears to use a 1 based index
@@ -3823,7 +3859,7 @@ Func _GUICtrlTreeView_SetStateImageList($hWnd, $hImageList)
 	For $x = $iCount - 1 To 1 Step -1
 		_GUIImageList_Swap($hImageList, $x, $x - 1)
 	Next
-	Return _SendMessage($hWnd, $TVM_SETIMAGELIST, $TVSIL_STATE, $hImageList, 0, "wparam", "hwnd", "hwnd")
+	Return _SendMessage($hWnd, $TVM_SETIMAGELIST, $TVSIL_STATE, $hImageList, 0, "wparam", "handle", "handle")
 EndFunc   ;==>_GUICtrlTreeView_SetStateImageList
 
 ; #FUNCTION# ====================================================================================================================
@@ -3832,61 +3868,56 @@ EndFunc   ;==>_GUICtrlTreeView_SetStateImageList
 ; Syntax.........: _GUICtrlTreeView_SetText($hWnd[, $hItem = 0[, $sText = ""]])
 ; Parameters ....: $hWnd        - Handle to the control
 ;                  $hItem       - item ID/handle to set the icon
-;                  $sItem_Text  - The new item text
+;                  $sText       - The new item text
 ; Return values .: Success      - True
 ;                  Failure      - False
 ; Author ........: Holger Kotsch
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetText
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetText($hWnd, $hItem = 0, $sText = "")
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
-
-	If $hItem = 0 Then $hItem = 0x00000000
-	Local $tTVITEM, $pItem, $iBuffer, $tBuffer, $pBuffer, $fResult, $iItem
-	Local $pMemory, $tMemMap, $pText
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
 
 	If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 	If $hItem = 0x00000000 Or $sText = "" Then Return SetError(1, 1, 0)
 
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
-	Local $fUnicode = _GUICtrlTreeView_GetUnicodeFormat($hWnd)
 
-	$tTVITEM = DllStructCreate($tagTVITEMEX)
-	$pItem = DllStructGetPtr($tTVITEM)
-	$iBuffer = StringLen($sText) + 1
+	Local $tTVITEM = DllStructCreate($tagTVITEMEX)
+	Local $pItem = DllStructGetPtr($tTVITEM)
+	Local $iBuffer = StringLen($sText) + 1
+	Local $tBuffer
+	Local $fUnicode = _GUICtrlTreeView_GetUnicodeFormat($hWnd)
 	If $fUnicode Then
-		$iBuffer *= 2
 		$tBuffer = DllStructCreate("wchar Buffer[" & $iBuffer & "]")
+		$iBuffer *= 2
 	Else
 		$tBuffer = DllStructCreate("char Buffer[" & $iBuffer & "]")
 	EndIf
-	$pBuffer = DllStructGetPtr($tBuffer)
+	Local $pBuffer = DllStructGetPtr($tBuffer)
 	DllStructSetData($tBuffer, "Buffer", $sText)
 	DllStructSetData($tTVITEM, "Mask", BitOR($TVIF_HANDLE, $TVIF_TEXT))
 	DllStructSetData($tTVITEM, "hItem", $hItem)
 	DllStructSetData($tTVITEM, "TextMax", $iBuffer)
+	Local $fResult
 	If _WinAPI_InProcess($hWnd, $__ghTVLastWnd) Then
 		DllStructSetData($tTVITEM, "Text", $pBuffer)
-		If $fUnicode Then
-			$fResult = _SendMessage($hWnd, $TVM_SETITEMW, 0, $pItem, 0, "wparam", "ptr")
-		Else
-			$fResult = _SendMessage($hWnd, $TVM_SETITEM, 0, $pItem, 0, "wparam", "ptr")
-		EndIf
+		$fResult = _SendMessage($hWnd, $TVM_SETITEMW, 0, $pItem, 0, "wparam", "ptr")
 	Else
-		$iItem = DllStructGetSize($tTVITEM)
-		$pMemory = _MemInit($hWnd, $iItem + $iBuffer, $tMemMap)
-		$pText = $pMemory + $iItem
+		Local $iItem = DllStructGetSize($tTVITEM)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iItem + $iBuffer, $tMemMap)
+		Local $pText = $pMemory + $iItem
 		DllStructSetData($tTVITEM, "Text", $pText)
 		_MemWrite($tMemMap, $pItem, $pMemory, $iItem)
 		_MemWrite($tMemMap, $pBuffer, $pText, $iBuffer)
 		If $fUnicode Then
 			$fResult = _SendMessage($hWnd, $TVM_SETITEMW, 0, $pMemory, 0, "wparam", "ptr")
 		Else
-			$fResult = _SendMessage($hWnd, $TVM_SETITEM, 0, $pMemory, 0, "wparam", "ptr")
+			$fResult = _SendMessage($hWnd, $TVM_SETITEMA, 0, $pMemory, 0, "wparam", "ptr")
 		EndIf
 		_MemFree($tMemMap)
 	EndIf
@@ -3905,14 +3936,14 @@ EndFunc   ;==>_GUICtrlTreeView_SetText
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetTextColor
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetTextColor($hWnd, $vRGBColor)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Return _GUICtrlTreeView_ReverseColorOder(_SendMessage($hWnd, $TVM_SETTEXTCOLOR, 0, Int(_GUICtrlTreeView_ReverseColorOder($vRGBColor))))
+	Return __GUICtrlTreeView_ReverseColorOrder(_SendMessage($hWnd, $TVM_SETTEXTCOLOR, 0, Int(__GUICtrlTreeView_ReverseColorOrder($vRGBColor))))
 EndFunc   ;==>_GUICtrlTreeView_SetTextColor
 
 ; #FUNCTION# ====================================================================================================================
@@ -3927,11 +3958,12 @@ EndFunc   ;==>_GUICtrlTreeView_SetTextColor
 ; Remarks .......: When created, controls automatically create a ToolTip control.  To cause a control not to use ToolTips, create
 ;                  the control with the DllStructGetData($TVS_NOTOOLTIPS style, "")
 ; Related .......: _GUICtrlTreeView_GetToolTips
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetToolTips($hWnd, $hToolTip)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $TVM_SETTOOLTIPS, $hToolTip, 0, 0, "wparam", "int", "hwnd")
@@ -3950,11 +3982,12 @@ EndFunc   ;==>_GUICtrlTreeView_SetToolTips
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _GUICtrlTreeView_GetUnicodeFormat
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_SetUnicodeFormat($hWnd, $iFormat = True)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $TVM_SETUNICODEFORMAT, $iFormat)
@@ -3970,20 +4003,20 @@ EndFunc   ;==>_GUICtrlTreeView_SetUnicodeFormat
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlTreeView_Sort($hWnd)
-	If $Debug_TV Then _GUICtrlTreeView_ValidateClassName($hWnd)
+	If $Debug_TV Then __UDF_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
+
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $hItem, $i, $hChild, $i_Recursive = 1
-	Local $a_tree
+	Local $hItem, $a_tree
 	For $i = 0 To _GUICtrlTreeView_GetCount($hWnd)
 		If $i == 0 Then
-			$hItem = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CHILD, $TVI_ROOT, 0, "wparam", "hwnd", "hwnd")
+			$hItem = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CHILD, $TVI_ROOT, 0, "wparam", "handle", "handle")
 		Else
-			$hItem = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_NEXT, $hItem, 0, "wparam", "hwnd", "hwnd")
+			$hItem = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_NEXT, $hItem, 0, "wparam", "handle", "handle")
 		EndIf
 		If IsArray($a_tree) Then
 			ReDim $a_tree[UBound($a_tree) + 1]
@@ -3993,33 +4026,16 @@ Func _GUICtrlTreeView_Sort($hWnd)
 		$a_tree[UBound($a_tree) - 1] = $hItem
 	Next
 	If IsArray($a_tree) Then
+		Local $hChild, $i_Recursive = 1
 		For $i = 0 To UBound($a_tree) - 1
-			_SendMessage($hWnd, $TVM_SORTCHILDREN, $i_Recursive, $a_tree[$i], 0, "wparam", "hwnd") ; sort the items in root
+			_SendMessage($hWnd, $TVM_SORTCHILDREN, $i_Recursive, $a_tree[$i], 0, "wparam", "handle") ; sort the items in root
 			Do ; sort all the children
-				$hChild = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CHILD, $hItem, 0, "wparam", "hwnd", "hwnd")
+				$hChild = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CHILD, $hItem, 0, "wparam", "handle", "handle")
 				If $hChild > 0 Then
-					_SendMessage($hWnd, $TVM_SORTCHILDREN, $i_Recursive, $hChild, 0, "wparam", "hwnd")
+					_SendMessage($hWnd, $TVM_SORTCHILDREN, $i_Recursive, $hChild, 0, "wparam", "handle")
 				EndIf
 				$hItem = $hChild
 			Until $hItem = 0x00000000
 		Next
 	EndIf
 EndFunc   ;==>_GUICtrlTreeView_Sort
-
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _GUICtrlTreeView_ValidateClassName
-; Description ...: Used for debugging when creating examples
-; Syntax.........: _GUICtrlTreeView_ValidateClassName($hWnd)
-; Parameters ....: $hWnd        - Handle to the control
-; Return values .: None
-; Author ........: Gary Frost (gafrost)
-; Modified.......:
-; Remarks .......: For Internal Use Only
-; Related .......:
-; Link ..........;
-; Example .......;
-; ===============================================================================================================================
-Func _GUICtrlTreeView_ValidateClassName($hWnd)
-	_GUICtrlTreeView_DebugPrint("This is for debugging only, set the debug variable to false before submitting")
-	_WinAPI_ValidateClassName($hWnd, $__TREEVIEWCONSTANT_ClassName)
-EndFunc   ;==>_GUICtrlTreeView_ValidateClassName

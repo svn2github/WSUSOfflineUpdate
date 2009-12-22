@@ -1,26 +1,31 @@
 #include-once
-#include <WinAPI.au3>
-#include <Security.au3>
-#include <Date.au3>
-#include <StructureConstants.au3>
+
+#include "WinAPI.au3"
+#include "StructureConstants.au3"
+#include "Date.au3"
+#include "Security.au3"
+
 
 ; #INDEX# =======================================================================================================================
-; Title .........: Event Log
-; AutoIt Version: 3.2.3++
-; Language:       English
-; Description:    When an error occurs, the system administrator or support technicians must determine what  caused  the  error,
-;                 attempt to recover any lost data, and prevent the error from recurring.  It is helpful  if  applications,  the
-;                 operating system, and other system services record important events such as low-memory conditions or excessive
-;                 attempts to access a disk.  Then the system administrator can  use  the  event  log  to  help  determine  what
-;                 conditions caused the error and the context in which it occurred.  By periodically viewing the event log,  the
-;                 system administrator may be able to identify problems (such as a failing hard drive) before they cause damage.
+; Title .........: Event_Log
+; AutoIt Version : 3.2.3++
+; Language ......: English
+; Description ...: Functions that assist Windows System logs.
+; Description ...: When an error occurs, the system administrator or support technicians must determine what  caused  the  error,
+;                  attempt to recover any lost data, and prevent the error from recurring.  It is helpful  if  applications,  the
+;                  operating system, and other system services record important events such as low-memory conditions or excessive
+;                  attempts to access a disk.  Then the system administrator can  use  the  event  log  to  help  determine  what
+;                  conditions caused the error and the context in which it occurred.  By periodically viewing the event log,  the
+;                  system administrator may be able to identify problems (such as a failing hard drive) before they cause damage.
+; Author(s) .....: Paul Campbell (PaulIA), Gary Frost
+; Dll ...........: advapi32.dll
 ; ===============================================================================================================================
 
 ; #VARIABLES# ===================================================================================================================
 Global $gsSourceName
 ; ===============================================================================================================================
-; Event Log Constants
-; ===============================================================================================================================
+
+; #CONSTANTS# ===================================================================================================================
 Global Const $EVENTLOG_SUCCESS = 0x00000000
 Global Const $EVENTLOG_ERROR_TYPE = 0x00000001
 Global Const $EVENTLOG_WARNING_TYPE = 0x00000002
@@ -32,12 +37,11 @@ Global Const $EVENTLOG_SEEK_READ = 0x00000002
 Global Const $EVENTLOG_FORWARDS_READ = 0x00000004
 Global Const $EVENTLOG_BACKWARDS_READ = 0x00000008
 
-Global Const $__EVENTLOG_LOAD_LIBRARY_AS_DATAFILE = 0x02
-Global Const $__EVENTLOG_FORMAT_MESSAGE_FROM_HMODULE = 0x0800
-Global Const $__EVENTLOG_FORMAT_MESSAGE_IGNORE_INSERTS = 0x0200
-
+Global Const $__EVENTLOG_LOAD_LIBRARY_AS_DATAFILE = 0x00000002
+Global Const $__EVENTLOG_FORMAT_MESSAGE_FROM_HMODULE = 0x00000800
+Global Const $__EVENTLOG_FORMAT_MESSAGE_IGNORE_INSERTS = 0x00000200
 ; ===============================================================================================================================
-;==============================================================================================================================
+
 ; #CURRENT# =====================================================================================================================
 ;_EventLog__Backup
 ;_EventLog__Clear
@@ -54,18 +58,18 @@ Global Const $__EVENTLOG_FORMAT_MESSAGE_IGNORE_INSERTS = 0x0200
 ;_EventLog__Report
 ; ===============================================================================================================================
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-;_EventLog__DecodeCategory
-;_EventLog__DecodeComputer
-;_EventLog__DecodeData
-;_EventLog__DecodeDate
-;_EventLog__DecodeDesc
-;_EventLog__DecodeEventID
-;_EventLog__DecodeSource
-;_EventLog__DecodeStrings
-;_EventLog__DecodeTime
-;_EventLog__DecodeTypeStr
-;==============================================================================================================================
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+;__EventLog_DecodeCategory
+;__EventLog_DecodeComputer
+;__EventLog_DecodeData
+;__EventLog_DecodeDate
+;__EventLog_DecodeDesc
+;__EventLog_DecodeEventID
+;__EventLog_DecodeSource
+;__EventLog_DecodeStrings
+;__EventLog_DecodeTime
+;__EventLog_DecodeTypeStr
+; ===============================================================================================================================
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _EventLog__Backup
@@ -80,14 +84,13 @@ Global Const $__EVENTLOG_FORMAT_MESSAGE_IGNORE_INSERTS = 0x0200
 ; Remarks .......: The function does not clear the event log.  The function fails if the user does not  have  the  SE_BACKUP_NAME
 ;                  privilege.
 ; Related .......: _EventLog__OpenBackup
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _EventLog__Backup($hEventLog, $sFileName)
-	Local $aResult
-
-	$aResult = DllCall("AdvAPI32.dll", "int", "BackupEventLogA", "hwnd", $hEventLog, "str", $sFileName)
-	Return SetError(_WinAPI_GetLastError(), 0, $aResult[0] <> 0)
+	Local $aResult = DllCall("advapi32.dll", "bool", "BackupEventLogW", "handle", $hEventLog, "wstr", $sFileName)
+	If @error Then Return SetError(@error, @extended, False)
+	Return $aResult[0] <> 0
 EndFunc   ;==>_EventLog__Backup
 
 ; #FUNCTION# ====================================================================================================================
@@ -103,17 +106,17 @@ EndFunc   ;==>_EventLog__Backup
 ; Remarks .......: This function fails if the event log is empty or a file already exists with the same name as sFileName.  After
 ;                  this function returns, any handles that reference the cleared event log cannot be used to read the log.
 ; Related .......: _EventLog__Open
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _EventLog__Clear($hEventLog, $sFileName)
-	Local $aResult, $fTemp = False
-
+	Local $fTemp = False
 	If StringLen($sFileName) = 0 Then
 		$sFileName = @TempDir & "\_EventLog_tempbackup.bak"
 		$fTemp = True
 	EndIf
-	$aResult = DllCall("Advapi32.dll", "int", "ClearEventLogA", "hwnd", $hEventLog, "str", $sFileName)
+	Local $aResult = DllCall("advapi32.dll", "bool", "ClearEventLogW", "handle", $hEventLog, "wstr", $sFileName)
+	If @error Then Return SetError(@error, @extended, False)
 	If $fTemp Then FileDelete($sFileName)
 	Return $aResult[0] <> 0
 EndFunc   ;==>_EventLog__Clear
@@ -128,15 +131,14 @@ EndFunc   ;==>_EventLog__Clear
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
-; Related .......: _EventLog__Open
-; Link ..........;
-; Example .......; Yes
+; Related .......: _EventLog__Open, _EventLog__Notify, _EventLog__OpenBackup, _EventLog__Read, _EventLog__Report
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _EventLog__Close($hEventLog)
-	Local $aResult
-
-	$aResult = DllCall("AdvAPI32.dll", "int", "CloseEventLog", "hwnd", $hEventLog)
-	Return SetError(_WinAPI_GetLastError(), 0, $aResult[0] <> 0)
+	Local $aResult = DllCall("advapi32.dll", "bool", "CloseEventLog", "handle", $hEventLog)
+	If @error Then Return SetError(@error, @extended, False)
+	Return $aResult[0] <> 0
 EndFunc   ;==>_EventLog__Close
 
 ; #FUNCTION# ====================================================================================================================
@@ -150,64 +152,69 @@ EndFunc   ;==>_EventLog__Close
 ; Modified.......:
 ; Remarks .......: The oldest record in an event log is not necessarily record number 1.  To determine the record number  of  the
 ;                  oldest record in an event log, use the _EventLog__Oldest function.
-; Related .......: _EventLog__Oldest
-; Link ..........;
-; Example .......; Yes
+; Related .......: _EventLog__Oldest, _EventLog__Full
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _EventLog__Count($hEventLog)
-	Local $tRecords, $aResult
-
-	$tRecords = DllStructCreate("int")
-	$aResult = DllCall("AdvAPI32.dll", "int", "GetNumberOfEventLogRecords", "hwnd", $hEventLog, "ptr", DllStructGetPtr($tRecords))
-	If $aResult[0] = 0 Then DllStructSetData($tRecords, 1, -1)
-	Return SetError($aResult[0] = 0, 0, DllStructGetData($tRecords, 1))
+	Local $aResult = DllCall("advapi32.dll", "bool", "GetNumberOfEventLogRecords", "handle", $hEventLog, "dword*", 0)
+	If @error Then Return SetError(@error, @extended, -1)
+	If $aResult[0] = 0 Then Return  -1
+	Return $aResult[2]
 EndFunc   ;==>_EventLog__Count
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _EventLog__DecodeCategory
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __EventLog_DecodeCategory
 ; Description ...: Decodes an event category for an event record
-; Syntax.........: _EventLog__DecodeCategory($tEventLog)
+; Syntax.........: __EventLog_DecodeCategory($tEventLog)
 ; Parameters ....: $tEventLog   - tagEVENTLOGRECORD structure
 ; Return values .: Success      - Event category
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......: This function is used internally
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
-Func _EventLog__DecodeCategory($tEventLog)
+Func __EventLog_DecodeCategory($tEventLog)
 	Return DllStructGetData($tEventLog, "EventCategory")
-EndFunc   ;==>_EventLog__DecodeCategory
+EndFunc   ;==>__EventLog_DecodeCategory
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _EventLog__DecodeComputer
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __EventLog_DecodeComputer
 ; Description ...: Decodes the computer name from an event log record
-; Syntax.........: _EventLog__DecodeComputer($tEventLog)
+; Syntax.........: __EventLog_DecodeComputer($tEventLog)
 ; Parameters ....: $tEventLog   - tagEVENTLOGRECORD structure
 ; Return values .: Success      - Computer name
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......: This function is used internally
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
-Func _EventLog__DecodeComputer($tEventLog)
-	Local $pEventLog, $tBuffer, $iOffset
-
-	$pEventLog = DllStructGetPtr($tEventLog)
-	$iOffset = DllStructGetSize($tEventLog)
-	$tBuffer = DllStructCreate("char Text[4096]", $pEventLog + $iOffset)
-	$iOffset = $iOffset + StringLen(DllStructGetData($tBuffer, "Text")) + 1
-	$tBuffer = DllStructCreate("char Text[4096]", $pEventLog + $iOffset)
+Func __EventLog_DecodeComputer($tEventLog)
+	Local $pEventLog = DllStructGetPtr($tEventLog)
+	; The buffer length doesn't need to extend past UserSidOffset since
+	; the string appears before that.
+	Local $iLength = DllStructGetData($tEventLog, "UserSidOffset") - 1
+	; This points to the start of the variable length data.
+	Local $iOffset = DllStructGetSize($tEventLog)
+	; Offset the buffer with the Source string length which appears right
+	; before the Computer name.
+	Local $tBuffer
+	$iOffset += StringLen(__EventLog_DecodeSource($tBuffer)) + 1
+	; Adjust the length to be a difference instead of absolute address.
+	$iLength -= $iOffset
+	; Adjust the buffer to point to the start of the Computer string.
+	$tBuffer = DllStructCreate("wchar Text[" & $iLength & "]", $pEventLog + $iOffset)
 	Return DllStructGetData($tBuffer, "Text")
-EndFunc   ;==>_EventLog__DecodeComputer
+EndFunc   ;==>__EventLog_DecodeComputer
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _EventLog__DecodeData
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __EventLog_DecodeData
 ; Description ...: Decodes the event specific binary data from an event log record
-; Syntax.........: _EventLog__DecodeData($tEventLog)
+; Syntax.........: __EventLog_DecodeData($tEventLog)
 ; Parameters ....: $tEventLog   - tagEVENTLOGRECORD structure
 ; Return values .: Success      - Array with the following format:
 ;                  |[0] - Number of bytes in array
@@ -218,89 +225,83 @@ EndFunc   ;==>_EventLog__DecodeComputer
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......: This function is used internally
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
-Func _EventLog__DecodeData($tEventLog)
-	Local $iI, $pEventLog, $tBuffer, $iOffset, $iLength
-
-	$pEventLog = DllStructGetPtr($tEventLog)
-	$iOffset = DllStructGetData($tEventLog, "DataOffset")
-	$iLength = DllStructGetData($tEventLog, "DataLength")
-	$tBuffer = DllStructCreate("byte[" & $iLength & "]", $pEventLog + $iOffset)
+Func __EventLog_DecodeData($tEventLog)
+	Local $pEventLog = DllStructGetPtr($tEventLog)
+	Local $iOffset = DllStructGetData($tEventLog, "DataOffset")
+	Local $iLength = DllStructGetData($tEventLog, "DataLength")
+	Local $tBuffer = DllStructCreate("byte[" & $iLength & "]", $pEventLog + $iOffset)
 	Local $aData[$iLength + 1]
 	$aData[0] = $iLength
 	For $iI = 1 To $iLength
 		$aData[$iI] = DllStructGetData($tBuffer, 1, $iI)
 	Next
 	Return $aData
-EndFunc   ;==>_EventLog__DecodeData
+EndFunc   ;==>__EventLog_DecodeData
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _EventLog__DecodeDate
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __EventLog_DecodeDate
 ; Description ...: Converts an event log time to a date string
-; Syntax.........: _EventLog__DecodeDate($iEventTime)
+; Syntax.........: __EventLog_DecodeDate($iEventTime)
 ; Parameters ....: $iEventTime  - Event log time to be converted
 ; Return values .: Success      - Date string in the format of mm/dd/yyyy
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......: This function is used internally
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
-Func _EventLog__DecodeDate($iEventTime)
-	Local $pInt64, $tInt64, $iMonth, $iDay, $iYear, $tFileTime, $tLocalTime, $tSystTime
-
-	$tInt64 = DllStructCreate("int64")
-	$pInt64 = DllStructGetPtr($tInt64)
-	$tFileTime = DllStructCreate($tagFILETIME, $pInt64)
+Func __EventLog_DecodeDate($iEventTime)
+	Local $tInt64 = DllStructCreate("int64")
+	Local $pInt64 = DllStructGetPtr($tInt64)
+	Local $tFileTime = DllStructCreate($tagFILETIME, $pInt64)
 	DllStructSetData($tInt64, 1, ($iEventTime * 10000000) + 116444736000000000)
-	$tLocalTime = _Date_Time_FileTimeToLocalFileTime(DllStructGetPtr($tFileTime))
-	$tSystTime = _Date_Time_FileTimeToSystemTime(DllStructGetPtr($tLocalTime))
-	$iMonth = DllStructGetData($tSystTime, "Month")
-	$iDay = DllStructGetData($tSystTime, "Day")
-	$iYear = DllStructGetData($tSystTime, "Year")
+	Local $tLocalTime = _Date_Time_FileTimeToLocalFileTime(DllStructGetPtr($tFileTime))
+	Local $tSystTime = _Date_Time_FileTimeToSystemTime(DllStructGetPtr($tLocalTime))
+	Local $iMonth = DllStructGetData($tSystTime, "Month")
+	Local $iDay = DllStructGetData($tSystTime, "Day")
+	Local $iYear = DllStructGetData($tSystTime, "Year")
 	Return StringFormat("%02d/%02d/%04d", $iMonth, $iDay, $iYear)
-EndFunc   ;==>_EventLog__DecodeDate
+EndFunc   ;==>__EventLog_DecodeDate
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _EventLog__DecodeDesc
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __EventLog_DecodeDesc
 ; Description ...: Decodes the description strings for an event record
-; Syntax.........: _EventLog__DecodeDesc($tEventLog)
+; Syntax.........: __EventLog_DecodeDesc($tEventLog)
 ; Parameters ....: $tEventLog   - tagEVENTLOGRECORD structure
 ; Return values .: Success      - Description
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......: This function is used internally
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
-Func _EventLog__DecodeDesc($tEventLog)
-	Local $iI, $sKey, $hDLL, $iEventID, $iFlags, $sSource, $aMsgDLL, $sDesc, $pBuffer, $tBuffer, $aStrings
+Func __EventLog_DecodeDesc($tEventLog)
+	Local $aStrings = __EventLog_DecodeStrings($tEventLog)
+	Local $sSource = __EventLog_DecodeSource($tEventLog)
+	Local $iEventID = DllStructGetData($tEventLog, "EventID")
+	Local $sKey = "HKLM\SYSTEM\CurrentControlSet\Services\Eventlog\" & $gsSourceName & "\" & $sSource
+	Local $aMsgDLL = StringSplit(_WinAPI_ExpandEnvironmentStrings(RegRead($sKey, "EventMessageFile")), ";")
 
-	$aStrings = _EventLog__DecodeStrings($tEventLog)
-	$sSource = _EventLog__DecodeSource($tEventLog)
-	$iEventID = DllStructGetData($tEventLog, "EventID")
-	$sKey = "HKLM\SYSTEM\CurrentControlSet\Services\Eventlog\" & $gsSourceName & "\" & $sSource
-	$aMsgDLL = StringSplit(_WinAPI_ExpandEnvironmentStrings(RegRead($sKey, "EventMessageFile")), ";")
-
-	$sDesc = ""
+	Local $iFlags = BitOR($__EVENTLOG_FORMAT_MESSAGE_FROM_HMODULE, $__EVENTLOG_FORMAT_MESSAGE_IGNORE_INSERTS)
+	Local $sDesc = ""
 	For $iI = 1 To $aMsgDLL[0]
-		$hDLL = _WinAPI_LoadLibraryEx($aMsgDLL[$iI], $__EVENTLOG_LOAD_LIBRARY_AS_DATAFILE)
+		Local $hDLL = _WinAPI_LoadLibraryEx($aMsgDLL[$iI], $__EVENTLOG_LOAD_LIBRARY_AS_DATAFILE)
 		If $hDLL = 0 Then ContinueLoop
-		$tBuffer = DllStructCreate("char Text[4096]")
-		$pBuffer = DllStructGetPtr($tBuffer)
-		$iFlags = BitOR($__EVENTLOG_FORMAT_MESSAGE_FROM_HMODULE, $__EVENTLOG_FORMAT_MESSAGE_IGNORE_INSERTS)
+		Local $tBuffer = DllStructCreate("wchar Text[4096]")
+		Local $pBuffer = DllStructGetPtr($tBuffer)
 		_WinAPI_FormatMessage($iFlags, $hDLL, $iEventID, 0, $pBuffer, 4096, 0)
 		_WinAPI_FreeLibrary($hDLL)
-		$sDesc = $sDesc & DllStructGetData($tBuffer, "Text")
+		$sDesc &= DllStructGetData($tBuffer, "Text")
 	Next
 
 	If $sDesc = "" Then
 		For $iI = 1 To $aStrings[0]
-			$sDesc = $sDesc & $aStrings[$iI]
+			$sDesc &= $aStrings[$iI]
 		Next
 	Else
 		For $iI = 1 To $aStrings[0]
@@ -308,51 +309,56 @@ Func _EventLog__DecodeDesc($tEventLog)
 		Next
 	EndIf
 	Return StringStripWS($sDesc, 3)
-EndFunc   ;==>_EventLog__DecodeDesc
+EndFunc   ;==>__EventLog_DecodeDesc
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _EventLog__DecodeEventID
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __EventLog_DecodeEventID
 ; Description ...: Decodes an event ID for an event record
-; Syntax.........: _EventLog__DecodeEventID($tEventLog)
+; Syntax.........: __EventLog_DecodeEventID($tEventLog)
 ; Parameters ....: $tEventLog   - tagEVENTLOGRECORD structure
 ; Return values .: Success      - Event ID
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......: This function is used internally
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
-Func _EventLog__DecodeEventID($tEventLog)
+Func __EventLog_DecodeEventID($tEventLog)
 	Return BitAND(DllStructGetData($tEventLog, "EventID"), 0x7FFF)
-EndFunc   ;==>_EventLog__DecodeEventID
+EndFunc   ;==>__EventLog_DecodeEventID
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _EventLog__DecodeSource
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __EventLog_DecodeSource
 ; Description ...: Decodes the event source from an event log record
-; Syntax.........: _EventLog__DecodeSource($tEventLog)
+; Syntax.........: __EventLog_DecodeSource($tEventLog)
 ; Parameters ....: $tEventLog   - tagEVENTLOGRECORD structure
 ; Return values .: Success      - Source name
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......: This function is used internally
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
-Func _EventLog__DecodeSource($tEventLog)
-	Local $pEventLog, $tBuffer, $iOffset
-
-	$pEventLog = DllStructGetPtr($tEventLog)
-	$iOffset = DllStructGetSize($tEventLog)
-	$tBuffer = DllStructCreate("char Text[4096]", $pEventLog + $iOffset)
+Func __EventLog_DecodeSource($tEventLog)
+    Local $pEventLog = DllStructGetPtr($tEventLog)
+	; The buffer length doesn't need to extend past UserSidOffset since
+	; the string appears before that.
+	Local $iLength = DllStructGetData($tEventLog, "UserSidOffset") - 1
+	; This points to the start of the variable length data.
+	Local $iOffset = DllStructGetSize($tEventLog)
+	; Adjust the length to be a difference instead of absolute address.
+	$iLength -= $iOffset
+	; Initialize the buffer to the start of the variable length data
+	Local $tBuffer = DllStructCreate("wchar Text[" & $iLength & "]", $pEventLog + $iOffset)
 	Return DllStructGetData($tBuffer, "Text")
-EndFunc   ;==>_EventLog__DecodeSource
+EndFunc   ;==>__EventLog_DecodeSource
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _EventLog__DecodeStrings
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __EventLog_DecodeStrings
 ; Description ...: Decodes the insertion strings from an event log record
-; Syntax.........: _EventLog__DecodeStrings($tEventLog)
+; Syntax.........: __EventLog_DecodeStrings($tEventLog)
 ; Parameters ....: $tEventLog   - tagEVENTLOGRECORD structure
 ; Return values .: Success      - Array with the following format:
 ;                  |[0] - Number of strings in array
@@ -363,63 +369,62 @@ EndFunc   ;==>_EventLog__DecodeSource
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......: This function is used internally
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
-Func _EventLog__DecodeStrings($tEventLog)
-	Local $iI, $pEventLog, $tBuffer, $iNumStrs, $iOffset
-
-	$pEventLog = DllStructGetPtr($tEventLog)
-	$iNumStrs = DllStructGetData($tEventLog, "NumStrings")
-	$iOffset = DllStructGetData($tEventLog, "StringOffset")
-	$tBuffer = DllStructCreate("char Text[4096]", $pEventLog + $iOffset)
+Func __EventLog_DecodeStrings($tEventLog)
+	Local $pEventLog = DllStructGetPtr($tEventLog)
+	Local $iNumStrs = DllStructGetData($tEventLog, "NumStrings")
+	Local $iOffset = DllStructGetData($tEventLog, "StringOffset")
+	; The data offset is used to calculate buffer sizes.
+	Local $iDataOffset = DllStructGetData($tEventLog, "DataOffset")
+	Local $tBuffer = DllStructCreate("wchar Text[" & $iDataOffset - $iOffset & "]", $pEventLog + $iOffset)
 
 	Local $aStrings[$iNumStrs + 1]
 	$aStrings[0] = $iNumStrs
 	For $iI = 1 To $iNumStrs
 		$aStrings[$iI] = DllStructGetData($tBuffer, "Text")
-		$iOffset = $iOffset + StringLen($aStrings[$iI]) + 1
-		$tBuffer = DllStructCreate("char Text[4096]", $pEventLog + $iOffset)
+		$iOffset += StringLen($aStrings[$iI]) + 1
+		$tBuffer = DllStructCreate("wchar Text[" & $iDataOffset - $iOffset & "]", $pEventLog + $iOffset)
 	Next
 	Return $aStrings
-EndFunc   ;==>_EventLog__DecodeStrings
+EndFunc   ;==>__EventLog_DecodeStrings
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _EventLog__DecodeTime
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __EventLog_DecodeTime
 ; Description ...: Converts an event log time to a date time
-; Syntax.........: _EventLog__DecodeTime($iEventTime)
+; Syntax.........: __EventLog_DecodeTime($iEventTime)
 ; Parameters ....: $iEventTime  - Event log time to be converted
 ; Return values .: Success      - Time string in the format of hh:mm:ss am/pm
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......: This function is used internally
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
-Func _EventLog__DecodeTime($iEventTime)
-	Local $pInt64, $tInt64, $iHours, $iMinutes, $iSeconds, $tFileTime, $tLocalTime, $tSystTime, $sAMPM = "AM"
-
-	$tInt64 = DllStructCreate("int64")
-	$pInt64 = DllStructGetPtr($tInt64)
-	$tFileTime = DllStructCreate($tagFILETIME, $pInt64)
+Func __EventLog_DecodeTime($iEventTime)
+	Local $tInt64 = DllStructCreate("int64")
+	Local $pInt64 = DllStructGetPtr($tInt64)
+	Local $tFileTime = DllStructCreate($tagFILETIME, $pInt64)
 	DllStructSetData($tInt64, 1, ($iEventTime * 10000000) + 116444736000000000)
-	$tLocalTime = _Date_Time_FileTimeToLocalFileTime(DllStructGetPtr($tFileTime))
-	$tSystTime = _Date_Time_FileTimeToSystemTime(DllStructGetPtr($tLocalTime))
-	$iHours = DllStructGetData($tSystTime, "Hour")
-	$iMinutes = DllStructGetData($tSystTime, "Minute")
-	$iSeconds = DllStructGetData($tSystTime, "Second")
+	Local $tLocalTime = _Date_Time_FileTimeToLocalFileTime(DllStructGetPtr($tFileTime))
+	Local $tSystTime = _Date_Time_FileTimeToSystemTime(DllStructGetPtr($tLocalTime))
+	Local $iHours = DllStructGetData($tSystTime, "Hour")
+	Local $iMinutes = DllStructGetData($tSystTime, "Minute")
+	Local $iSeconds = DllStructGetData($tSystTime, "Second")
+	Local $sAMPM = "AM"
 	If $iHours > 11 Then
 		$sAMPM = "PM"
 		$iHours = $iHours - 12
 	EndIf
 	Return StringFormat("%02d:%02d:%02d %s", $iHours, $iMinutes, $iSeconds, $sAMPM)
-EndFunc   ;==>_EventLog__DecodeTime
+EndFunc   ;==>__EventLog_DecodeTime
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _EventLog__DecodeTypeStr
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __EventLog_DecodeTypeStr
 ; Description ...: Decodes an event type to an event string
-; Syntax.........: _EventLog__DecodeTypeStr($iEventType)
+; Syntax.........: __EventLog_DecodeTypeStr($iEventType)
 ; Parameters ....: $iEventType  - Event type
 ; Return values .: Success      - String indicating the event type
 ;                  Failure      - Unknown event type ID
@@ -427,10 +432,10 @@ EndFunc   ;==>_EventLog__DecodeTime
 ; Modified.......:
 ; Remarks .......: This function is used internally
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
-Func _EventLog__DecodeTypeStr($iEventType)
+Func __EventLog_DecodeTypeStr($iEventType)
 	Select
 		Case $iEventType = $EVENTLOG_SUCCESS
 			Return "Success"
@@ -447,9 +452,9 @@ Func _EventLog__DecodeTypeStr($iEventType)
 		Case Else
 			Return $iEventType
 	EndSelect
-EndFunc   ;==>_EventLog__DecodeTypeStr
+EndFunc   ;==>__EventLog_DecodeTypeStr
 
-; #INTERNAL_USE_ONLY#============================================================================================================
+; #INTERNAL_USE_ONLY# ===========================================================================================================
 ; Name...........: _EventLog__DecodeUserName
 ; Description ...: Decodes the user name from an event log record
 ; Syntax.........: _EventLog__DecodeUserName($tEventLog)
@@ -459,16 +464,14 @@ EndFunc   ;==>_EventLog__DecodeTypeStr
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......: This function is used internally
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
 Func _EventLog__DecodeUserName($tEventLog)
-	Local $pEventLog, $pAcctSID, $aAcctInfo
-
-	$pEventLog = DllStructGetPtr($tEventLog)
+	Local $pEventLog = DllStructGetPtr($tEventLog)
 	If DllStructGetData($tEventLog, "UserSidLength") = 0 Then Return ""
-	$pAcctSID = $pEventLog + DllStructGetData($tEventLog, "UserSidOffset")
-	$aAcctInfo = _Security__LookupAccountSid($pAcctSID)
+	Local $pAcctSID = $pEventLog + DllStructGetData($tEventLog, "UserSidOffset")
+	Local $aAcctInfo = _Security__LookupAccountSid($pAcctSID)
 	Return $aAcctInfo[1]
 EndFunc   ;==>_EventLog__DecodeUserName
 
@@ -482,15 +485,14 @@ EndFunc   ;==>_EventLog__DecodeUserName
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
-; Related .......: _EventLog__RegisterSource
-; Link ..........;
-; Example .......;
+; Related .......: _EventLog__RegisterSource, _EventLog__Notify
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
 Func _EventLog__DeregisterSource($hEventLog)
-	Local $aResult
-
-	$aResult = DllCall("AdvAPI32.dll", "int", "DeregisterEventSource", "hwnd", $hEventLog)
-	Return SetError(_WinAPI_GetLastError(), 0, $aResult[0] <> 0)
+	Local $aResult = DllCall("advapi32.dll", "bool", "DeregisterEventSource", "handle", $hEventLog)
+	If @error Then Return SetError(@error, @extended, False)
+	Return $aResult[0] <> 0
 EndFunc   ;==>_EventLog__DeregisterSource
 
 ; #FUNCTION# ====================================================================================================================
@@ -504,17 +506,13 @@ EndFunc   ;==>_EventLog__DeregisterSource
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......: _EventLog__Count, _EventLog__Oldest
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _EventLog__Full($hEventLog)
-	Local $pBuffer, $pNeeded, $tBuffer
-
-	$tBuffer = DllStructCreate("int;int")
-	$pBuffer = DllStructGetPtr($tBuffer, 1)
-	$pNeeded = DllStructGetPtr($tBuffer, 2)
-	DllCall("AdvAPI32.dll", "int", "GetEventLogInformation", "hwnd", $hEventLog, "int", 0, "ptr", $pBuffer, "int", 4, "ptr", $pNeeded)
-	Return SetError(_WinAPI_GetLastError(), 0, DllStructGetData($tBuffer, 1) <> 0)
+	Local $aResult = DllCall("advapi32.dll", "bool", "GetEventLogInformation", "handle", $hEventLog, "dword", 0, "dword*", 0, "dword", 4, "dword*", 0)
+	If @error Then Return SetError(@error, @extended, False)
+	Return $aResult[3] <> 0
 EndFunc   ;==>_EventLog__Full
 
 ; #FUNCTION# ====================================================================================================================
@@ -537,14 +535,13 @@ EndFunc   ;==>_EventLog__Full
 ;                  notification.  The system will continue to notify you of changes until you close the handle to the event  log.
 ;                  To close the event log, use the _EventLog__Close or _EventLog__DeregisterSource function.
 ; Related .......: _EventLog__Close, _EventLog__DeregisterSource
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _EventLog__Notify($hEventLog, $hEvent)
-	Local $aResult
-
-	$aResult = DllCall("AdvAPI32.dll", "int", "NotifyChangeEventLog", "hwnd", $hEventLog, "hwnd", $hEvent)
-	Return SetError(_WinAPI_GetLastError(), 0, $aResult[0] <> 0)
+	Local $aResult = DllCall("advapi32.dll", "bool", "NotifyChangeEventLog", "handle", $hEventLog, "handle", $hEvent)
+	If @error Then Return SetError(@error, @extended, False)
+	Return $aResult[0] <> 0
 EndFunc   ;==>_EventLog__Notify
 
 ; #FUNCTION# ====================================================================================================================
@@ -557,16 +554,14 @@ EndFunc   ;==>_EventLog__Notify
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......: The oldest record in an event log is not necessarily record number 1
-; Related .......: _EventLog__Count
-; Link ..........;
-; Example .......; Yes
+; Related .......: _EventLog__Count, _EventLog__Notify
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _EventLog__Oldest($hEventLog)
-	Local $tBuffer
-
-	$tBuffer = DllStructCreate("int")
-	DllCall("AdvAPI32.dll", "int", "GetOldestEventLogRecord", "hwnd", $hEventLog, "ptr", DllStructGetPtr($tBuffer))
-	Return SetError(_WinAPI_GetLastError(), 0, DllStructGetData($tBuffer, 1))
+	Local $aResult = DllCall("advapi32.dll", "bool", "GetOldestEventLogRecord", "handle", $hEventLog, "dword*", 0)
+	If @error Then Return SetError(@error, @extended, 0)
+	Return $aResult[2]
 EndFunc   ;==>_EventLog__Oldest
 
 ; #FUNCTION# ====================================================================================================================
@@ -575,22 +570,21 @@ EndFunc   ;==>_EventLog__Oldest
 ; Syntax.........: _EventLog__Open($sServerName, $sSourceName)
 ; Parameters ....: $sServerName - The UNC name of the server on where the event log will be opened.  If blank, the  operation  is
 ;                  +performed on the local computer.
-;                  $sSource     - The name of the log
+;                  $sSourceName - The name of the log
 ; Return values .: Success      - The handle to the event log
 ;                  Failure      - 0
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......: To close the handle to the event log, use the _EventLog__Close function
-; Related .......: _EventLog__Close
-; Link ..........;
-; Example .......; Yes
+; Related .......: _EventLog__Close, _EventLog__Clear, _EventLog__Read, _EventLog__Report
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _EventLog__Open($sServerName, $sSourceName)
-	Local $aResult
-
 	$gsSourceName = $sSourceName
-	$aResult = DllCall("AdvAPI32.dll", "hwnd", "OpenEventLogA", "str", $sServerName, "str", $sSourceName)
-	Return SetError(_WinAPI_GetLastError(), 0, $aResult[0])
+	Local $aResult = DllCall("advapi32.dll", "handle", "OpenEventLogW", "wstr", $sServerName, "wstr", $sSourceName)
+	If @error Then Return SetError(@error, @extended, 0)
+	Return $aResult[0]
 EndFunc   ;==>_EventLog__Open
 
 ; #FUNCTION# ====================================================================================================================
@@ -605,15 +599,14 @@ EndFunc   ;==>_EventLog__Open
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......: If the backup filename specifies a remote server, $sServerName must be blank
-; Related .......: _EventLog__Close
-; Link ..........;
-; Example .......; Yes
+; Related .......: _EventLog__Close, _EventLog__Backup
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _EventLog__OpenBackup($sServerName, $sFileName)
-	Local $aResult
-
-	$aResult = DllCall("AdvAPI32.dll", "hwnd", "OpenBackupEventLogA", "str", $sServerName, "str", $sFileName)
-	Return SetError(_WinAPI_GetLastError(), 0, $aResult[0])
+	Local $aResult = DllCall("advapi32.dll", "handle", "OpenBackupEventLogW", "wstr", $sServerName, "wstr", $sFileName)
+	If @error Then Return SetError(@error, @extended, 0)
+	Return $aResult[0]
 EndFunc   ;==>_EventLog__OpenBackup
 
 ; #FUNCTION# ====================================================================================================================
@@ -652,11 +645,12 @@ EndFunc   ;==>_EventLog__OpenBackup
 ; Remarks .......: When this function returns successfully, the read position in the event log  is  adjusted  by  the  number  of
 ;                  records read. Though multiple records can be read, this function returns one record at a time for sanity sake.
 ; Related .......: _EventLog__Close, _EventLog__Open
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _EventLog__Read($hEventLog, $fRead = True, $fForward = True, $iOffset = 0)
-	Local $iReadFlags, $pBuffer, $tBuffer, $pBytesRead, $iBytesMin, $pBytesMin, $tEventLog, $aEvent[15], $aResult
+	Local $iReadFlags, $aEvent[15]
+	$aEvent[0] = False; in cas of error
 
 	If $fRead Then
 		$iReadFlags = $EVENTLOG_SEQUENTIAL_READ
@@ -669,36 +663,38 @@ Func _EventLog__Read($hEventLog, $fRead = True, $fForward = True, $iOffset = 0)
 		$iReadFlags = BitOR($iReadFlags, $EVENTLOG_BACKWARDS_READ)
 	EndIf
 
-	$tBuffer = DllStructCreate($tagEVENTREAD)
-	$pBuffer = DllStructGetPtr($tBuffer, "Buffer")
-	$pBytesRead = DllStructGetPtr($tBuffer, "BytesRead")
-	$pBytesMin = DllStructGetPtr($tBuffer, "BytesMin")
-	$aResult = DllCall("AdvAPI32.dll", "int", "ReadEventLogA", "hwnd", $hEventLog, "dword", $iReadFlags, "dword", $iOffset, "ptr", _
-			$pBuffer, "dword", 0, "ptr", $pBytesRead, "ptr", $pBytesMin)
+	; First call gets the size for the buffer.  A fake buffer is passed because
+	; the function demands the buffer be non-NULL even when requesting the size.
+	Local $tBuffer = DllStructCreate("wchar[1]")
+	Local $pBuffer = DllStructGetPtr($tBuffer)
+	Local $aResult = DllCall("advapi32.dll", "bool", "ReadEventLogW", "handle", $hEventLog, "dword", $iReadFlags, "dword", $iOffset, _
+			"ptr", $pBuffer, "dword", 0, "dword*", 0, "dword*", 0)
+	If @error Then Return SetError(@error, @extended, $aEvent)
 
-	$iBytesMin = DllStructGetData($tBuffer, "BytesMin")
-	$aResult = DllCall("AdvAPI32.dll", "int", "ReadEventLogA", "hwnd", $hEventLog, "dword", $iReadFlags, "dword", $iOffset, "ptr", _
-			$pBuffer, "dword", $iBytesMin, "ptr", $pBytesRead, "ptr", $pBytesMin)
-	If $aResult[0] = 0 Then Return SetError(_WinAPI_GetLastError(), 0, $aEvent)
+	; Allocate the buffer and repeat the call obtaining the information.
+	Local $iBytesMin = $aResult[7]
+	$tBuffer = DllStructCreate("wchar[" & $iBytesMin + 1 & "]")
+	$pBuffer = DllStructGetPtr($tBuffer)
+	$aResult = DllCall("advapi32.dll", "bool", "ReadEventLogW", "handle", $hEventLog, "dword", $iReadFlags, "dword", $iOffset, _
+			"ptr", $pBuffer, "dword", $iBytesMin, "dword*", 0, "dword*", 0)
+	If @error Or Not $aResult[0] Then Return SetError(@error, @extended, $aEvent)
 
-	$tEventLog = DllStructCreate($tagEVENTLOGRECORD, $pBuffer)
-	$aEvent[0] = ($aResult[0] <> 0)
-	If $aEvent[0] Then
-		$aEvent[ 1] = DllStructGetData($tEventLog, "RecordNumber")
-		$aEvent[ 2] = _EventLog__DecodeDate(DllStructGetData($tEventLog, "TimeGenerated"))
-		$aEvent[ 3] = _EventLog__DecodeTime(DllStructGetData($tEventLog, "TimeGenerated"))
-		$aEvent[ 4] = _EventLog__DecodeDate(DllStructGetData($tEventLog, "TimeWritten"))
-		$aEvent[ 5] = _EventLog__DecodeTime(DllStructGetData($tEventLog, "TimeWritten"))
-		$aEvent[ 6] = _EventLog__DecodeEventID($tEventLog)
-		$aEvent[ 7] = DllStructGetData($tEventLog, "EventType")
-		$aEvent[ 8] = _EventLog__DecodeTypeStr(DllStructGetData($tEventLog, "EventType"))
-		$aEvent[ 9] = _EventLog__DecodeCategory($tEventLog)
-		$aEvent[10] = _EventLog__DecodeSource($tEventLog)
-		$aEvent[11] = _EventLog__DecodeComputer($tEventLog)
-		$aEvent[12] = _EventLog__DecodeUserName($tEventLog)
-		$aEvent[13] = _EventLog__DecodeDesc($tEventLog)
-		$aEvent[14] = _EventLog__DecodeData($tEventLog)
-	EndIf
+	Local $tEventLog = DllStructCreate($tagEVENTLOGRECORD, $pBuffer)
+	$aEvent[ 0] = True
+	$aEvent[ 1] = DllStructGetData($tEventLog, "RecordNumber")
+	$aEvent[ 2] = __EventLog_DecodeDate(DllStructGetData($tEventLog, "TimeGenerated"))
+	$aEvent[ 3] = __EventLog_DecodeTime(DllStructGetData($tEventLog, "TimeGenerated"))
+	$aEvent[ 4] = __EventLog_DecodeDate(DllStructGetData($tEventLog, "TimeWritten"))
+	$aEvent[ 5] = __EventLog_DecodeTime(DllStructGetData($tEventLog, "TimeWritten"))
+	$aEvent[ 6] = __EventLog_DecodeEventID($tEventLog)
+	$aEvent[ 7] = DllStructGetData($tEventLog, "EventType")
+	$aEvent[ 8] = __EventLog_DecodeTypeStr(DllStructGetData($tEventLog, "EventType"))
+	$aEvent[ 9] = __EventLog_DecodeCategory($tEventLog)
+	$aEvent[10] = __EventLog_DecodeSource($tEventLog)
+	$aEvent[11] = __EventLog_DecodeComputer($tEventLog)
+	$aEvent[12] = _EventLog__DecodeUserName($tEventLog)
+	$aEvent[13] = __EventLog_DecodeDesc($tEventLog)
+	$aEvent[14] = __EventLog_DecodeData($tEventLog)
 	Return $aEvent
 EndFunc   ;==>_EventLog__Read
 
@@ -719,15 +715,14 @@ EndFunc   ;==>_EventLog__Read
 ;                  specified for looking up descriptions of the event identifiers for the source.  To close  the  handle  to  the
 ;                  event log, use the DeregisterEventSource function.
 ; Related .......: _EventLog__DeregisterSource
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
 Func _EventLog__RegisterSource($sServerName, $sSourceName)
-	Local $aResult
-
 	$gsSourceName = $sSourceName
-	$aResult = DllCall("AdvAPI32.dll", "hwnd", "RegisterEventSourceA", "str", $sServerName, "str", $sSourceName)
-	Return SetError(_WinAPI_GetLastError(), 0, $aResult[0])
+	Local $aResult = DllCall("advapi32.dll", "handle", "RegisterEventSourceW", "wstr", $sServerName, "wstr", $sSourceName)
+	If @error Then Return SetError(@error, @extended, 0)
+	Return $aResult[0]
 EndFunc   ;==>_EventLog__RegisterSource
 
 ; #FUNCTION# ====================================================================================================================
@@ -760,31 +755,32 @@ EndFunc   ;==>_EventLog__RegisterSource
 ;                  identified by the hEventLog parameter. This function adds the time, the entry's length, and the offsets before
 ;                  storing the entry in the log.
 ; Related .......: _EventLog__Close, _EventLog__Open
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _EventLog__Report($hEventLog, $iType, $iCategory, $iEventID, $sUserName, $sDesc, $aData)
-	Local $iI, $pSID, $tSID, $pPtr, $tPtr, $iDesc, $pDesc, $tDesc, $iData, $pData, $tData, $aResult
+	Local $pSID = 0, $tSID
 
 	If $sUserName <> "" Then
 		$tSID = _Security__GetAccountSid($sUserName)
 		$pSID = DllStructGetPtr($tSID)
 	EndIf
 
-	$iData = $aData[0]
-	$tData = DllStructCreate("byte[" & $iData & "]")
-	$pData = DllStructGetPtr($tData)
-	$iDesc = StringLen($sDesc) + 1
-	$tDesc = DllStructCreate("char[" & $iDesc & "]")
-	$pDesc = DllStructGetPtr($tDesc)
-	$tPtr = DllStructCreate("ptr")
-	$pPtr = DllStructGetPtr($tPtr)
+	Local $iData = $aData[0]
+	Local $tData = DllStructCreate("byte[" & $iData & "]")
+	Local $pData = DllStructGetPtr($tData)
+	Local $iDesc = StringLen($sDesc) + 1
+	Local $tDesc = DllStructCreate("wchar[" & $iDesc & "]")
+	Local $pDesc = DllStructGetPtr($tDesc)
+	Local $tPtr = DllStructCreate("ptr")
+	Local $pPtr = DllStructGetPtr($tPtr)
 	DllStructSetData($tPtr, 1, $pDesc)
 	DllStructSetData($tDesc, 1, $sDesc)
 	For $iI = 1 To $iData
 		DllStructSetData($tData, 1, $aData[$iI], $iI)
 	Next
-	$aResult = DllCall("AdvAPI32.dll", "int", "ReportEventA", "hwnd", $hEventLog, "short", $iType, "short", $iCategory, "int", $iEventID, _
-			"ptr", $pSID, "short", 1, "int", $iData, "ptr", $pPtr, "ptr", $pData)
-	Return SetError(_WinAPI_GetLastError(), 0, $aResult[0] <> 0)
+	Local $aResult = DllCall("advapi32.dll", "bool", "ReportEventW", "handle", $hEventLog, "word", $iType, "word", $iCategory, _
+			"dword", $iEventID, "ptr", $pSID, "word", 1, "dword", $iData, "ptr", $pPtr, "ptr", $pData)
+	If @error Then Return SetError(@error, @extended, False)
+	Return $aResult[0] <> 0
 EndFunc   ;==>_EventLog__Report

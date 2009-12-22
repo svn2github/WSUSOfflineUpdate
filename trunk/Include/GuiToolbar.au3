@@ -1,34 +1,36 @@
 #include-once
-#include <Memory.au3>
-#include <WinAPI.au3>
-#include <ToolbarConstants.au3>
-#include <StructureConstants.au3>
-#include <SendMessage.au3>
-#include <UDFGlobalID.au3>
+
+#include "ToolbarConstants.au3"
+#include "Memory.au3"
+#include "WinAPI.au3"
+#include "StructureConstants.au3"
+#include "SendMessage.au3"
+#include "UDFGlobalID.au3"
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: Toolbar
-; AutoIt Version: 3.2.3++
-; Language:       English
-; Description ...: A toolbar is a control window that contains one or more buttons.  Each button, when clicked by a user, sends a
+; AutoIt Version : 3.2.3++
+; Language ......: English
+; Description ...: Functions that assist with Toolbar control management.
+;                  A toolbar is a control window that contains one or more buttons.  Each button, when clicked by a user, sends a
 ;                  command message to the parent window.  Typically, the  buttons  in  a  toolbar  correspond  to  items  in  the
 ;                  application's menu, providing an additional and more direct way  for  the  user  to  access  an  application's
 ;                  commands.
-; Author ........: Paul Campbell (PaulIA)
+; Author(s) .....: Paul Campbell (PaulIA)
 ; ===============================================================================================================================
 
 ; #VARIABLES# ===================================================================================================================
 Global $gh_TBLastWnd
 Global $Debug_TB = False
+; ===============================================================================================================================
+
+; #CONSTANTS# ===================================================================================================================
 Global Const $__TOOLBARCONSTANT_ClassName = "ToolbarWindow32"
 Global Const $__TOOLBARCONSTANT_WS_CLIPSIBLINGS = 0x04000000
-Global Const $__TOOLBARCONSTANT_WS_VISIBLE = 0x10000000
-Global Const $__TOOLBARCONSTANT_WS_CHILD = 0x40000000
 Global Const $__TOOLBARCONSTANT_LR_LOADFROMFILE = 0x0010
 Global Const $__TOOLBARCONSTANT_HINST_COMMCTRL = -1
 ; ===============================================================================================================================
 
-;==============================================================================================================================
 ; #CURRENT# =====================================================================================================================
 ;_GUICtrlToolbar_AddBitmap
 ;_GUICtrlToolbar_AddButton
@@ -142,13 +144,64 @@ Global Const $__TOOLBARCONSTANT_HINST_COMMCTRL = -1
 ;_GUICtrlToolbar_SetWindowTheme
 ; ===============================================================================================================================
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-;_GUICtrlToolbar_AutoSize
-;_GUICtrlToolbar_ButtonStructSize
-;_GUICtrlToolbar_DebugPrint
-;_GUICtrlToolbar_SetStyleEx
-;_GUICtrlToolbar_ValidateClassName
-;==============================================================================================================================
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+;$tagTBADDBITMAP
+;$tagTBINSERTMARK
+;$tagTBMETRICS
+;__GUICtrlToolbar_AutoSize
+;__GUICtrlToolbar_ButtonStructSize
+;__GUICtrlToolbar_SetStyleEx
+; ===============================================================================================================================
+
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: $tagTBADDBITMAP
+; Description ...: Adds a bitmap that contains button images to a toolbar
+; Fields ........: hInst - Handle to the module instance with the executable file that contains a bitmap resource.  To use bitmap
+;                  +handles instead of resource IDs, set this member to 0.  You can add the system-defined button bitmaps to  the
+;                  +list by specifying $HINST_COMMCTRL as the hInst member and one of the following values as the ID member:
+;                  |$IDB_STD_LARGE_COLOR  - Adds large, color standard bitmaps
+;                  |$IDB_STD_SMALL_COLOR  - Adds small, color standard bitmaps
+;                  |$IDB_VIEW_LARGE_COLOR - Adds large, color view bitmaps
+;                  |$IDB_VIEW_SMALL_COLOR - Adds small, color view bitmaps
+;                  ID    - If hInst is 0, set this member to the bitmap handle of the bitmap with the button  images.  Otherwise,
+;                  +set it to the resource identifier of the bitmap with the button images.
+; Author ........: Paul Campbell (PaulIA)
+; Remarks .......:
+; ===============================================================================================================================
+Global Const $tagTBADDBITMAP = "handle hInst;uint_ptr ID"
+
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: $tagTBINSERTMARK
+; Description ...: Contains information on the insertion mark in a toolbar control
+; Fields ........: Button - Zero based index of the insertion mark. If this member is -1, there is no insertion mark
+;                  Flags  - Defines where the insertion mark is in relation to Button. This can be one of the following values:
+;                  |0                   - The insertion mark is to the left of the specified button
+;                  |$TBIMHT_AFTER       - The insertion mark is to the right of the specified button
+;                  |$TBIMHT_BACKGROUND  - The insertion mark is on the background of the toolbar.  This flag is  only  used  with
+;                  +the $TB_INSERTMARKHITTEST message.
+; Author ........: Paul Campbell (PaulIA)
+; Remarks .......:
+; ===============================================================================================================================
+Global Const $tagTBINSERTMARK = "int Button;dword Flags"
+
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: $tagTBMETRICS
+; Description ...: Defines the metrics of a toolbar that are used to shrink or expand toolbar items
+; Fields ........: Size     - Size of this structure, in bytes
+;                  Mask     - Mask that determines the metric to retrieve. It can be any combination of the following:
+;                  |$TBMF_PAD           - Retrieve the XPad and YPad values
+;                  |$TBMF_BARPAD        - Retrieve the XBarPad and YBarPad values
+;                  |$TBMF_BUTTONSPACING - Retrieve the XSpacing and YSpacing values
+;                  XPad     - Width of the padding inside the toolbar buttons
+;                  YPad     - Height of the padding inside the toolbar buttons
+;                  XBarPad  - Width of the toolbar. Not used.
+;                  YBarPad  - Height of the toolbar. Not used.
+;                  XSpacing - Width of the space between toolbar buttons
+;                  YSpacing - Height of the space between toolbar buttons
+; Author ........: Paul Campbell (PaulIA)
+; Remarks .......:
+; ===============================================================================================================================
+Global Const $tagTBMETRICS = "uint Size;dword Mask;int XPad;int YPad;int XBarPad;int YBarPad;int XSpacing;int YSpacing"
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _GUICtrlToolbar_AddBitmap
@@ -194,28 +247,29 @@ Global Const $__TOOLBARCONSTANT_HINST_COMMCTRL = -1
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......: Gary Frost
 ; Remarks .......:
-; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUICtrlToolbar_LoadBitmap
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_AddBitmap($hWnd, $iButtons, $hInst, $iID)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iBitmap, $pBitmap, $tBitmap, $pMemory, $tMemMap, $iResult
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
 
-	$tBitmap = DllStructCreate($tagTBADDBITMAP)
-	$pBitmap = DllStructGetPtr($tBitmap)
+	Local $tBitmap = DllStructCreate($tagTBADDBITMAP)
+	Local $pBitmap = DllStructGetPtr($tBitmap)
 	DllStructSetData($tBitmap, "hInst", $hInst)
 	DllStructSetData($tBitmap, "ID", $iID)
+	Local $iRet
 	If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
-		$iResult = _SendMessage($hWnd, $TB_ADDBITMAP, $iButtons, $pBitmap, 0, "wparam", "ptr")
+		$iRet = _SendMessage($hWnd, $TB_ADDBITMAP, $iButtons, $pBitmap, 0, "wparam", "ptr")
 	Else
-		$iBitmap = DllStructGetSize($tBitmap)
-		$pMemory = _MemInit($hWnd, $iBitmap, $tMemMap)
+		Local $iBitmap = DllStructGetSize($tBitmap)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iBitmap, $tMemMap)
 		_MemWrite($tMemMap, $pBitmap, $pMemory, $iBitmap)
-		$iResult = _SendMessage($hWnd, $TB_ADDBITMAP, $iButtons, $pMemory, 0, "wparam", "ptr")
+		$iRet = _SendMessage($hWnd, $TB_ADDBITMAP, $iButtons, $pMemory, 0, "wparam", "ptr")
 		_MemFree($tMemMap)
 	EndIf
-	Return $iResult
+	Return $iRet
 EndFunc   ;==>_GUICtrlToolbar_AddBitmap
 
 ; #FUNCTION# ====================================================================================================================
@@ -255,42 +309,40 @@ EndFunc   ;==>_GUICtrlToolbar_AddBitmap
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......: Gary Frost
 ; Remarks .......:
-; Related .......: _GUICtrlToolbar_DeleteButton
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUICtrlToolbar_DeleteButton, _GUICtrlToolbar_InsertButton
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_AddButton($hWnd, $iID, $iImage, $iString = 0, $iStyle = 0, $iState = 4, $iParam = 0)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iButton, $pButton, $tButton, $pMemory, $tMemMap, $iResult
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Local $fUnicode = _GUICtrlToolbar_GetUnicodeFormat($hWnd)
 
-	$tButton = DllStructCreate($tagTBBUTTON)
-	$pButton = DllStructGetPtr($tButton)
+	Local $tButton = DllStructCreate($tagTBBUTTON)
+	Local $pButton = DllStructGetPtr($tButton)
 	DllStructSetData($tButton, "Bitmap", $iImage)
 	DllStructSetData($tButton, "Command", $iID)
 	DllStructSetData($tButton, "State", $iState)
 	DllStructSetData($tButton, "Style", $iStyle)
 	DllStructSetData($tButton, "Param", $iParam)
 	DllStructSetData($tButton, "String", $iString)
+	Local $iRet
 	If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
-		If $fUnicode Then
-			$iResult = _SendMessage($hWnd, $TB_ADDBUTTONSW, 1, $pButton, 0, "wparam", "ptr")
-		Else
-			$iResult = _SendMessage($hWnd, $TB_ADDBUTTONS, 1, $pButton, 0, "wparam", "ptr")
-		EndIf
+		$iRet = _SendMessage($hWnd, $TB_ADDBUTTONSW, 1, $pButton, 0, "wparam", "ptr")
 	Else
-		$iButton = DllStructGetSize($tButton)
-		$pMemory = _MemInit($hWnd, $iButton, $tMemMap)
+		Local $iButton = DllStructGetSize($tButton)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iButton, $tMemMap)
 		_MemWrite($tMemMap, $pButton, $pMemory, $iButton)
 		If $fUnicode Then
-			$iResult = _SendMessage($hWnd, $TB_ADDBUTTONSW, 1, $pMemory, 0, "wparam", "ptr")
+			$iRet = _SendMessage($hWnd, $TB_ADDBUTTONSW, 1, $pMemory, 0, "wparam", "ptr")
 		Else
-			$iResult = _SendMessage($hWnd, $TB_ADDBUTTONS, 1, $pMemory, 0, "wparam", "ptr")
+			$iRet = _SendMessage($hWnd, $TB_ADDBUTTONSA, 1, $pMemory, 0, "wparam", "ptr")
 		EndIf
 		_MemFree($tMemMap)
 	EndIf
-	_GUICtrlToolbar_AutoSize($hWnd)
-	Return $iResult <> 0
+	__GUICtrlToolbar_AutoSize($hWnd)
+	Return $iRet <> 0
 EndFunc   ;==>_GUICtrlToolbar_AddButton
 
 ; #FUNCTION# ====================================================================================================================
@@ -304,11 +356,12 @@ EndFunc   ;==>_GUICtrlToolbar_AddButton
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_AddButtonSep($hWnd, $iWidth = 6)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	_GUICtrlToolbar_AddButton($hWnd, 0, $iWidth, 0, $BTNS_SEP)
 EndFunc   ;==>_GUICtrlToolbar_AddButtonSep
 
@@ -323,47 +376,46 @@ EndFunc   ;==>_GUICtrlToolbar_AddButtonSep
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......: Gary Frost
 ; Remarks .......:
-; Related .......: _GUICtrlToolbar_GetString
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUICtrlToolbar_GetStrings
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_AddString($hWnd, $sString)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iBuffer, $pBuffer, $tBuffer, $tMemMap, $pMemory, $iResult
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Local $fUnicode = _GUICtrlToolbar_GetUnicodeFormat($hWnd)
 
-	$iBuffer = StringLen($sString) + 2
+	Local $iBuffer = StringLen($sString) + 2
+	Local $tBuffer
 	If $fUnicode Then
-		$iBuffer *= 2
 		$tBuffer = DllStructCreate("wchar Text[" & $iBuffer & "]")
+		$iBuffer *= 2
 	Else
 		$tBuffer = DllStructCreate("char Text[" & $iBuffer & "]")
 	EndIf
-	$pBuffer = DllStructGetPtr($tBuffer)
+	Local $pBuffer = DllStructGetPtr($tBuffer)
 	DllStructSetData($tBuffer, "Text", $sString)
+	Local $iRet
 	If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
-		If $fUnicode Then
-			$iResult = _SendMessage($hWnd, $TB_ADDSTRINGW, 0, $pBuffer, 0, "wparam", "ptr")
-		Else
-			$iResult = _SendMessage($hWnd, $TB_ADDSTRING, 0, $pBuffer, 0, "wparam", "ptr")
-		EndIf
+		$iRet = _SendMessage($hWnd, $TB_ADDSTRINGW, 0, $pBuffer, 0, "wparam", "ptr")
 	Else
-		$pMemory = _MemInit($hWnd, $iBuffer, $tMemMap)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iBuffer, $tMemMap)
 		_MemWrite($tMemMap, $pBuffer, $pMemory, $iBuffer)
 		If $fUnicode Then
-			$iResult = _SendMessage($hWnd, $TB_ADDSTRINGW, 0, $pMemory, 0, "wparam", "ptr")
+			$iRet = _SendMessage($hWnd, $TB_ADDSTRINGW, 0, $pMemory, 0, "wparam", "ptr")
 		Else
-			$iResult = _SendMessage($hWnd, $TB_ADDSTRING, 0, $pMemory, 0, "wparam", "ptr")
+			$iRet = _SendMessage($hWnd, $TB_ADDSTRINGA, 0, $pMemory, 0, "wparam", "ptr")
 		EndIf
 		_MemFree($tMemMap)
 	EndIf
-	Return $iResult
+	Return $iRet
 EndFunc   ;==>_GUICtrlToolbar_AddString
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _GUICtrlToolbar_AutoSize
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __GUICtrlToolbar_AutoSize
 ; Description ...: Causes a toolbar to be resized
-; Syntax.........: _GUICtrlToolbar_AutoSize($hWnd)
+; Syntax.........: __GUICtrlToolbar_AutoSize($hWnd)
 ; Parameters ....: $hWnd        - Handle to the control
 ; Return values .:
 ; Author ........: Paul Campbell (PaulIA)
@@ -372,13 +424,12 @@ EndFunc   ;==>_GUICtrlToolbar_AddString
 ;                  bitmap size or by adding strings for the first time.  Normally, you do not need to use this function as it  is
 ;                  called internally as needed.
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
-Func _GUICtrlToolbar_AutoSize($hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+Func __GUICtrlToolbar_AutoSize($hWnd)
 	_SendMessage($hWnd, $TB_AUTOSIZE)
-EndFunc   ;==>_GUICtrlToolbar_AutoSize
+EndFunc   ;==>__GUICtrlToolbar_AutoSize
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _GUICtrlToolbar_ButtonCount
@@ -390,18 +441,19 @@ EndFunc   ;==>_GUICtrlToolbar_AutoSize
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_ButtonCount($hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_BUTTONCOUNT)
 EndFunc   ;==>_GUICtrlToolbar_ButtonCount
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _GUICtrlToolbar_ButtonStructSize
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __GUICtrlToolbar_ButtonStructSize
 ; Description ...: Specifies the size of the $tagTBBUTTON structure
-; Syntax.........: _GUICtrlToolbar_ButtonStructSize($hWnd)
+; Syntax.........: __GUICtrlToolbar_ButtonStructSize($hWnd)
 ; Parameters ....: $hWnd        - Handle to the control
 ; Return values .:
 ; Author ........: Paul Campbell (PaulIA)
@@ -409,16 +461,15 @@ EndFunc   ;==>_GUICtrlToolbar_ButtonCount
 ; Remarks .......: This function is used to tell the control the size of a $tagTBBUTTON structure.  Normally, you do not  need  to
 ;                  use this function as it is called internally when the control is created.
 ; Related .......: $tagTBBUTTON
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
-Func _GUICtrlToolbar_ButtonStructSize($hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $tButton
+Func __GUICtrlToolbar_ButtonStructSize($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
 
-	$tButton = DllStructCreate($tagTBBUTTON)
+	Local $tButton = DllStructCreate($tagTBBUTTON)
 	_SendMessage($hWnd, $TB_BUTTONSTRUCTSIZE, DllStructGetSize($tButton), 0, 0, "wparam", "ptr")
-EndFunc   ;==>_GUICtrlToolbar_ButtonStructSize
+EndFunc   ;==>__GUICtrlToolbar_ButtonStructSize
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _GUICtrlToolbar_CheckButton
@@ -435,11 +486,12 @@ EndFunc   ;==>_GUICtrlToolbar_ButtonStructSize
 ; Modified.......:
 ; Remarks .......: When a button is checked, it is displayed in the pressed state
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_CheckButton($hWnd, $iCommandID, $fCheck = True)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_CHECKBUTTON, $iCommandID, $fCheck) <> 0
 EndFunc   ;==>_GUICtrlToolbar_CheckButton
 
@@ -460,14 +512,13 @@ EndFunc   ;==>_GUICtrlToolbar_CheckButton
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_ClickButton, _GUICtrlToolbar_ClickIndex
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_ClickAccel($hWnd, $cAccel, $sButton = "left", $fMove = False, $iClicks = 1, $iSpeed = 1)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iID
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
 
-	$iID = _GUICtrlToolbar_MapAccelerator($hWnd, $cAccel)
+	Local $iID = _GUICtrlToolbar_MapAccelerator($hWnd, $cAccel)
 	_GUICtrlToolbar_ClickButton($hWnd, $iID, $sButton, $fMove, $iClicks, $iSpeed)
 EndFunc   ;==>_GUICtrlToolbar_ClickAccel
 
@@ -488,20 +539,20 @@ EndFunc   ;==>_GUICtrlToolbar_ClickAccel
 ; Modified.......: Gary Frost
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_ClickAccel, _GUICtrlToolbar_ClickIndex
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_ClickButton($hWnd, $iCommandID, $sButton = "left", $fMove = False, $iClicks = 1, $iSpeed = 1)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $tPoint, $tRect, $iX, $iY, $iMode, $aPos
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
 
-	$tRect = _GUICtrlToolbar_GetButtonRectEx($hWnd, $iCommandID)
-	$tPoint = _WinAPI_PointFromRect($tRect)
+	Local $tRect = _GUICtrlToolbar_GetButtonRectEx($hWnd, $iCommandID)
+	Local $tPoint = _WinAPI_PointFromRect($tRect)
 	$tPoint = _WinAPI_ClientToScreen($hWnd, $tPoint)
+	Local $iX, $iY
 	_WinAPI_GetXYFromPoint($tPoint, $iX, $iY)
-	$iMode = Opt("MouseCoordMode", 1)
+	Local $iMode = Opt("MouseCoordMode", 1)
 	If Not $fMove Then
-		$aPos = MouseGetPos()
+		Local $aPos = MouseGetPos()
 		_WinAPI_ShowCursor(False)
 		MouseClick($sButton, $iX, $iY, $iClicks, $iSpeed)
 		MouseMove($aPos[0], $aPos[1], 0)
@@ -529,14 +580,13 @@ EndFunc   ;==>_GUICtrlToolbar_ClickButton
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_ClickAccel, _GUICtrlToolbar_ClickButton
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_ClickIndex($hWnd, $iIndex, $sButton = "left", $fMove = False, $iClicks = 1, $iSpeed = 1)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iCommandID
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
 
-	$iCommandID = _GUICtrlToolbar_IndexToCommand($hWnd, $iIndex)
+	Local $iCommandID = _GUICtrlToolbar_IndexToCommand($hWnd, $iIndex)
 	_GUICtrlToolbar_ClickButton($hWnd, $iCommandID, $sButton, $fMove, $iClicks, $iSpeed)
 EndFunc   ;==>_GUICtrlToolbar_ClickIndex
 
@@ -552,11 +602,12 @@ EndFunc   ;==>_GUICtrlToolbar_ClickIndex
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_IndexToCommand
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_CommandToIndex($hWnd, $iCommandID)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_COMMANDTOINDEX, $iCommandID)
 EndFunc   ;==>_GUICtrlToolbar_CommandToIndex
 
@@ -635,20 +686,17 @@ EndFunc   ;==>_GUICtrlToolbar_CommandToIndex
 ; Modified.......: Gary Frost
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_Destroy
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_Create($hWnd, $iStyle = 0x00000800, $iExStyle = 0x00000000)
-	Local $hTool, $nCtrlID
+	$iStyle = BitOR($iStyle, $__UDFGUICONSTANT_WS_CHILD, $__TOOLBARCONSTANT_WS_CLIPSIBLINGS, $__UDFGUICONSTANT_WS_VISIBLE)
 
-	$iStyle = BitOR($iStyle, $__TOOLBARCONSTANT_WS_CHILD, $__TOOLBARCONSTANT_WS_CLIPSIBLINGS, $__TOOLBARCONSTANT_WS_VISIBLE)
-
-	$nCtrlID = _UDF_GetNextGlobalID($hWnd)
+	Local $nCtrlID = __UDF_GetNextGlobalID($hWnd)
 	If @error Then Return SetError(@error, @extended, 0)
 
-	$hTool = _WinAPI_CreateWindowEx($iExStyle, $__TOOLBARCONSTANT_ClassName, "", $iStyle, 0, 0, 0, 0, $hWnd, $nCtrlID)
-	_GUICtrlToolbar_ButtonStructSize($hTool)
-	_GUICtrlToolbar_SetUnicodeFormat($hTool)
+	Local $hTool = _WinAPI_CreateWindowEx($iExStyle, $__TOOLBARCONSTANT_ClassName, "", $iStyle, 0, 0, 0, 0, $hWnd, $nCtrlID)
+	__GUICtrlToolbar_ButtonStructSize($hTool)
 	Return $hTool
 EndFunc   ;==>_GUICtrlToolbar_Create
 
@@ -663,35 +711,14 @@ EndFunc   ;==>_GUICtrlToolbar_Create
 ; Remarks .......: The toolbar must handle the $TBN_QUERYINSERT and $TBN_QUERYDELETE  notifications  for  the  Customize  Toolbar
 ;                  dialog box to appear. If the toolbar does not handle those notifications, $TB_CUSTOMIZE has no effect.
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_Customize($hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_CUSTOMIZE)
 EndFunc   ;==>_GUICtrlToolbar_Customize
-
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _GUICtrlToolbar_DebugPrint
-; Description ...: Used for debugging when creating examples
-; Syntax.........: _GUICtrlToolbar_DebugPrint($hWnd[, $iLine = @ScriptLineNumber])
-; Parameters ....: $sText       - String to printed to console
-;                  $iLine       - Line number function was called from
-; Return values .: None
-; Author ........: Gary Frost (gafrost)
-; Modified.......:
-; Remarks .......: For Internal Use Only
-; Related .......:
-; Link ..........;
-; Example .......;
-; ===============================================================================================================================
-Func _GUICtrlToolbar_DebugPrint($sText, $iLine = @ScriptLineNumber)
-	ConsoleWrite( _
-			"!===========================================================" & @LF & _
-			"+======================================================" & @LF & _
-			"-->Line(" & StringFormat("%04d", $iLine) & "):" & @TAB & $sText & @LF & _
-			"+======================================================" & @LF)
-EndFunc   ;==>_GUICtrlToolbar_DebugPrint
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _GUICtrlToolbar_DeleteButton
@@ -705,14 +732,13 @@ EndFunc   ;==>_GUICtrlToolbar_DebugPrint
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_AddButton
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_DeleteButton($hWnd, $iCommandID)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iIndex
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
 
-	$iIndex = _GUICtrlToolbar_CommandToIndex($hWnd, $iCommandID)
+	Local $iIndex = _GUICtrlToolbar_CommandToIndex($hWnd, $iCommandID)
 	If $iIndex = -1 Then Return SetError(-1, 0, False)
 	Return _SendMessage($hWnd, $TB_DELETEBUTTON, $iIndex) <> 0
 EndFunc   ;==>_GUICtrlToolbar_DeleteButton
@@ -728,31 +754,28 @@ EndFunc   ;==>_GUICtrlToolbar_DeleteButton
 ; Modified.......:
 ; Remarks .......: Restricted to only be used on Listbox created with _GUICtrlToolbar_Create
 ; Related .......: _GUICtrlToolbar_Create
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_Destroy(ByRef $hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+	If Not _WinAPI_IsClassName($hWnd, $__TOOLBARCONSTANT_ClassName) Then Return SetError(2, 2, False)
 
-	Local $Destroyed, $iResult
-
-	If _WinAPI_IsClassName($hWnd, $__TOOLBARCONSTANT_ClassName) Then
-		If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
-			Local $nCtrlID = _WinAPI_GetDlgCtrlID($hWnd)
-			Local $hParent = _WinAPI_GetParent($hWnd)
-			$Destroyed = _WinAPI_DestroyWindow($hWnd)
-			$iResult = _UDF_FreeGlobalID($hParent, $nCtrlID)
-			If Not $iResult Then
-				; can check for errors here if needed, for debug
-			EndIf
-		Else
-			_WinAPI_ShowMsg("Not Allowed to Destroy Other Applications ListView(s)")
-			Return SetError(1, 1, False)
+	Local $Destroyed = 0
+	If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
+		Local $nCtrlID = _WinAPI_GetDlgCtrlID($hWnd)
+		Local $hParent = _WinAPI_GetParent($hWnd)
+		$Destroyed = _WinAPI_DestroyWindow($hWnd)
+		Local $iRet = __UDF_FreeGlobalID($hParent, $nCtrlID)
+		If Not $iRet Then
+			; can check for errors here if needed, for debug
 		EndIf
-		If $Destroyed Then $hWnd = 0
-		Return $Destroyed <> 0
+	Else
+		; Not Allowed to Destroy Other Applications Control(s)
+		Return SetError(1, 1, False)
 	EndIf
-	Return SetError(2, 2, False)
+	If $Destroyed Then $hWnd = 0
+	Return $Destroyed <> 0
 EndFunc   ;==>_GUICtrlToolbar_Destroy
 
 ; #FUNCTION# ====================================================================================================================
@@ -770,11 +793,12 @@ EndFunc   ;==>_GUICtrlToolbar_Destroy
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_HideButton
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_EnableButton($hWnd, $iCommandID, $fEnable = True)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_ENABLEBUTTON, $iCommandID, $fEnable) <> 0
 EndFunc   ;==>_GUICtrlToolbar_EnableButton
 
@@ -790,22 +814,22 @@ EndFunc   ;==>_GUICtrlToolbar_EnableButton
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_FindToolbar($hWnd, $sText)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iI, $iJ, $iCommandID, $hToolbar
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
+	Local $iCommandID, $hToolbar
 
 	If Not _WinAPI_IsWindow($hWnd) Then
 		$hWnd = WinGetHandle($hWnd)
 		If @error Then Return SetError(-1, -1, 0)
 	EndIf
-	_WinAPI_EnumWindowsInit()
-	_WinAPI_EnumWindowsChild($hWnd)
-	For $iI = 1 To $winapi_gaWinList[0][0]
-		If $winapi_gaWinList[$iI][1] = $__TOOLBARCONSTANT_ClassName Then
-			$hToolbar = $winapi_gaWinList[$iI][0]
+	Local $aWinList = _WinAPI_EnumWindows(True, $hWnd)
+	For $iI = 1 To $aWinList[0][0]
+		If $aWinList[$iI][1] = $__TOOLBARCONSTANT_ClassName Then
+			$hToolbar = $aWinList[$iI][0]
 			For $iJ = 0 To _GUICtrlToolbar_ButtonCount($hToolbar) - 1
 				$iCommandID = _GUICtrlToolbar_IndexToCommand($hToolbar, $iJ)
 				If _GUICtrlToolbar_GetButtonText($hToolbar, $iCommandID) = $sText Then Return $hToolbar
@@ -827,11 +851,12 @@ EndFunc   ;==>_GUICtrlToolbar_FindToolbar
 ; Remarks .......: Anchor highlighting means that the last highlighted  item  will  remain  highlighted  until  another  item  is
 ;                  highlighted. This occurs even if the cursor leaves the toolbar control.
 ; Related .......: _GUICtrlToolbar_SetAnchorHighlight
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetAnchorHighlight($hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_GETANCHORHIGHLIGHT) <> 0
 EndFunc   ;==>_GUICtrlToolbar_GetAnchorHighlight
 
@@ -848,11 +873,12 @@ EndFunc   ;==>_GUICtrlToolbar_GetAnchorHighlight
 ; Remarks .......: The value returned is only advisory. The control recommends large or small bitmaps based upon whether the user
 ;                  has chosen large or small fonts.
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetBitmapFlags($hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_GETBITMAPFLAGS)
 EndFunc   ;==>_GUICtrlToolbar_GetBitmapFlags
 
@@ -867,11 +893,12 @@ EndFunc   ;==>_GUICtrlToolbar_GetBitmapFlags
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetButtonBitmap
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetButtonBitmap($hWnd, $iCommandID)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_GETBITMAP, $iCommandID)
 EndFunc   ;==>_GUICtrlToolbar_GetButtonBitmap
 
@@ -909,13 +936,13 @@ EndFunc   ;==>_GUICtrlToolbar_GetButtonBitmap
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetButtonInfo
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetButtonInfo($hWnd, $iCommandID)
-	Local $tButton, $aButton[5]
+	Local $aButton[5]
 
-	$tButton = _GUICtrlToolbar_GetButtonInfoEx($hWnd, $iCommandID)
+	Local $tButton = _GUICtrlToolbar_GetButtonInfoEx($hWnd, $iCommandID)
 	$aButton[0] = DllStructGetData($tButton, "Image")
 	$aButton[1] = DllStructGetData($tButton, "State")
 	$aButton[2] = DllStructGetData($tButton, "Style")
@@ -935,38 +962,35 @@ EndFunc   ;==>_GUICtrlToolbar_GetButtonInfo
 ; Modified.......: Gary Frost
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetButtonInfoEx, $tagTBBUTTONINFO
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetButtonInfoEx($hWnd, $iCommandID)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iButton, $pButton, $tButton, $iMask, $pMemory, $tMemMap, $iResult
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
 	Local $fUnicode = _GUICtrlToolbar_GetUnicodeFormat($hWnd)
 
-	$tButton = DllStructCreate($tagTBBUTTONINFO)
-	$pButton = DllStructGetPtr($tButton)
-	$iButton = DllStructGetSize($tButton)
-	$iMask = BitOR($TBIF_IMAGE, $TBIF_STATE, $TBIF_STYLE, $TBIF_LPARAM, $TBIF_SIZE)
+	Local $tButton = DllStructCreate($tagTBBUTTONINFO)
+	Local $pButton = DllStructGetPtr($tButton)
+	Local $iButton = DllStructGetSize($tButton)
+	Local $iMask = BitOR($TBIF_IMAGE, $TBIF_STATE, $TBIF_STYLE, $TBIF_LPARAM, $TBIF_SIZE)
 	DllStructSetData($tButton, "Size", $iButton)
 	DllStructSetData($tButton, "Mask", $iMask)
+	Local $iRet
 	If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
-		If $fUnicode Then
-			$iResult = _SendMessage($hWnd, $TB_GETBUTTONINFOW, $iCommandID, $pButton, 0, "wparam", "ptr")
-		Else
-			$iResult = _SendMessage($hWnd, $TB_GETBUTTONINFO, $iCommandID, $pButton, 0, "wparam", "ptr")
-		EndIf
+		$iRet = _SendMessage($hWnd, $TB_GETBUTTONINFOW, $iCommandID, $pButton, 0, "wparam", "ptr")
 	Else
-		$pMemory = _MemInit($hWnd, $iButton, $tMemMap)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iButton, $tMemMap)
 		_MemWrite($tMemMap, $pButton, $pMemory, $iButton)
 		If $fUnicode Then
-			$iResult = _SendMessage($hWnd, $TB_GETBUTTONINFOW, $iCommandID, $pMemory, 0, "wparam", "ptr")
+			$iRet = _SendMessage($hWnd, $TB_GETBUTTONINFOW, $iCommandID, $pMemory, 0, "wparam", "ptr")
 		Else
-			$iResult = _SendMessage($hWnd, $TB_GETBUTTONINFO, $iCommandID, $pMemory, 0, "wparam", "ptr")
+			$iRet = _SendMessage($hWnd, $TB_GETBUTTONINFOA, $iCommandID, $pMemory, 0, "wparam", "ptr")
 		EndIf
 		_MemRead($tMemMap, $pMemory, $pButton, $iButton)
 		_MemFree($tMemMap)
 	EndIf
-	Return SetError($iResult = -1, 0, $tButton)
+	Return SetError($iRet = -1, 0, $tButton)
 EndFunc   ;==>_GUICtrlToolbar_GetButtonInfoEx
 
 ; #FUNCTION# ====================================================================================================================
@@ -980,13 +1004,11 @@ EndFunc   ;==>_GUICtrlToolbar_GetButtonInfoEx
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetButtonParam
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetButtonParam($hWnd, $iCommandID)
-	Local $tButton
-
-	$tButton = _GUICtrlToolbar_GetButtonInfoEx($hWnd, $iCommandID)
+	Local $tButton = _GUICtrlToolbar_GetButtonInfoEx($hWnd, $iCommandID)
 	Return DllStructGetData($tButton, "Param")
 EndFunc   ;==>_GUICtrlToolbar_GetButtonParam
 
@@ -1005,13 +1027,13 @@ EndFunc   ;==>_GUICtrlToolbar_GetButtonParam
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetButtonRectEx
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetButtonRect($hWnd, $iCommandID)
-	Local $tRect, $aRect[4]
+	Local $aRect[4]
 
-	$tRect = _GUICtrlToolbar_GetButtonRectEx($hWnd, $iCommandID)
+	Local $tRect = _GUICtrlToolbar_GetButtonRectEx($hWnd, $iCommandID)
 	$aRect[0] = DllStructGetData($tRect, "Left")
 	$aRect[1] = DllStructGetData($tRect, "Top")
 	$aRect[2] = DllStructGetData($tRect, "Right")
@@ -1030,20 +1052,20 @@ EndFunc   ;==>_GUICtrlToolbar_GetButtonRect
 ; Modified.......: Gary Frost
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetButtonRect, $tagRECT
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetButtonRectEx($hWnd, $iCommandID)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iRect, $pRect, $tRect, $pMemory, $tMemMap
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
 
-	$tRect = DllStructCreate($tagRECT)
-	$pRect = DllStructGetPtr($tRect)
+	Local $tRect = DllStructCreate($tagRECT)
+	Local $pRect = DllStructGetPtr($tRect)
 	If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
 		_SendMessage($hWnd, $TB_GETRECT, $iCommandID, $pRect, 0, "wparam", "ptr")
 	Else
-		$iRect = DllStructGetSize($tRect)
-		$pMemory = _MemInit($hWnd, $iRect, $tMemMap)
+		Local $iRect = DllStructGetSize($tRect)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iRect, $tMemMap)
 		_SendMessage($hWnd, $TB_GETRECT, $iCommandID, $pMemory, 0, "wparam", "ptr")
 		_MemRead($tMemMap, $pMemory, $pRect, $iRect)
 		_MemFree($tMemMap)
@@ -1063,16 +1085,17 @@ EndFunc   ;==>_GUICtrlToolbar_GetButtonRectEx
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetButtonSize
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetButtonSize($hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iResult, $aSize[2]
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
 
-	$iResult = _SendMessage($hWnd, $TB_GETBUTTONSIZE)
-	$aSize[0] = _WinAPI_HiWord($iResult)
-	$aSize[1] = _WinAPI_LoWord($iResult)
+	Local $aSize[2]
+
+	Local $iRet = _SendMessage($hWnd, $TB_GETBUTTONSIZE)
+	$aSize[0] = _WinAPI_HiWord($iRet)
+	$aSize[1] = _WinAPI_LoWord($iRet)
 	Return $aSize
 EndFunc   ;==>_GUICtrlToolbar_GetButtonSize
 
@@ -1096,11 +1119,12 @@ EndFunc   ;==>_GUICtrlToolbar_GetButtonSize
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetButtonState
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetButtonState($hWnd, $iCommandID)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_GETSTATE, $iCommandID)
 EndFunc   ;==>_GUICtrlToolbar_GetButtonState
 
@@ -1124,13 +1148,11 @@ EndFunc   ;==>_GUICtrlToolbar_GetButtonState
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetButtonStyle
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetButtonStyle($hWnd, $iCommandID)
-	Local $tButton
-
-	$tButton = _GUICtrlToolbar_GetButtonInfoEx($hWnd, $iCommandID)
+	Local $tButton = _GUICtrlToolbar_GetButtonInfoEx($hWnd, $iCommandID)
 	Return DllStructGetData($tButton, "Style")
 EndFunc   ;==>_GUICtrlToolbar_GetButtonStyle
 
@@ -1144,48 +1166,48 @@ EndFunc   ;==>_GUICtrlToolbar_GetButtonStyle
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......: Gary Frost
 ; Remarks .......:
-; Related .......: _GUICtrlToolbar_SetButtonText
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUICtrlToolbar_SetButtonText, _GUICtrlToolbar_GetString
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetButtonText($hWnd, $iCommandID)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iBuffer, $pBuffer, $tBuffer, $pMemory, $tMemMap, $iResult
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Local $fUnicode = _GUICtrlToolbar_GetUnicodeFormat($hWnd)
 
+	Local $iBuffer
 	If $fUnicode Then
 		$iBuffer = _SendMessage($hWnd, $TB_GETBUTTONTEXTW, $iCommandID)
 	Else
-		$iBuffer = _SendMessage($hWnd, $TB_GETBUTTONTEXT, $iCommandID)
+		$iBuffer = _SendMessage($hWnd, $TB_GETBUTTONTEXTA, $iCommandID)
 	EndIf
 	If $iBuffer = 0 Then Return SetError(True, 0, "")
 	If $iBuffer = 1 Then Return SetError(False, 0, "")
 	If $iBuffer <= -1 Then Return SetError(False, -1, "")
 	$iBuffer += 1
+	Local $tBuffer
 	If $fUnicode Then
-		$iBuffer *= 2
 		$tBuffer = DllStructCreate("wchar Text[" & $iBuffer & "]")
+		$iBuffer *= 2
 	Else
 		$tBuffer = DllStructCreate("char Text[" & $iBuffer & "]")
 	EndIf
-	$pBuffer = DllStructGetPtr($tBuffer)
+	Local $pBuffer = DllStructGetPtr($tBuffer)
+	Local $iRet
 	If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
-		If $fUnicode Then
-			$iResult = _SendMessage($hWnd, $TB_GETBUTTONTEXTW, $iCommandID, $pBuffer, 0, "wparam", "ptr")
-		Else
-			$iResult = _SendMessage($hWnd, $TB_GETBUTTONTEXT, $iCommandID, $pBuffer, 0, "wparam", "ptr")
-		EndIf
+		$iRet = _SendMessage($hWnd, $TB_GETBUTTONTEXTW, $iCommandID, $pBuffer, 0, "wparam", "ptr")
 	Else
-		$pMemory = _MemInit($hWnd, $iBuffer, $tMemMap)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iBuffer, $tMemMap)
 		If $fUnicode Then
-			$iResult = _SendMessage($hWnd, $TB_GETBUTTONTEXTW, $iCommandID, $pMemory, 0, "wparam", "ptr")
+			$iRet = _SendMessage($hWnd, $TB_GETBUTTONTEXTW, $iCommandID, $pMemory, 0, "wparam", "ptr")
 		Else
-			$iResult = _SendMessage($hWnd, $TB_GETBUTTONTEXT, $iCommandID, $pMemory, 0, "wparam", "ptr")
+			$iRet = _SendMessage($hWnd, $TB_GETBUTTONTEXTA, $iCommandID, $pMemory, 0, "wparam", "ptr")
 		EndIf
 		_MemRead($tMemMap, $pMemory, $pBuffer, $iBuffer)
 		_MemFree($tMemMap)
 	EndIf
-	Return SetError($iResult > 0, 0, DllStructGetData($tBuffer, "Text"))
+	Return SetError($iRet > 0, 0, DllStructGetData($tBuffer, "Text"))
 EndFunc   ;==>_GUICtrlToolbar_GetButtonText
 
 ; #FUNCTION# ====================================================================================================================
@@ -1200,28 +1222,29 @@ EndFunc   ;==>_GUICtrlToolbar_GetButtonText
 ; Modified.......: Gary Frost
 ; Remarks .......: The control uses the color scheme information when drawing the 3-D elements in the control
 ; Related .......: _GUICtrlToolbar_SetColorScheme
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetColorScheme($hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $aColor[2], $iColor, $pColor, $tColor, $tMemMap, $pMemory, $iResult
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+	Local $aColor[2], $iRet
 
-	$tColor = DllStructCreate($tagCOLORSCHEME)
-	$pColor = DllStructGetPtr($tColor)
-	$iColor = DllStructGetSize($tColor)
+	Local $tColor = DllStructCreate($tagCOLORSCHEME)
+	Local $iColor = DllStructGetSize($tColor)
+	Local $pColor = DllStructGetPtr($tColor)
 	DllStructSetData($tColor, "Size", $iColor)
 	If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
-		$iResult = _SendMessage($hWnd, $TB_GETCOLORSCHEME, 0, $pColor, 0, "wparam", "ptr")
+		$iRet = _SendMessage($hWnd, $TB_GETCOLORSCHEME, 0, $pColor, 0, "wparam", "ptr")
 	Else
-		$pMemory = _MemInit($hWnd, $iColor, $tMemMap)
-		$iResult = _SendMessage($hWnd, $TB_GETCOLORSCHEME, 0, $pMemory, 0, "wparam", "ptr")
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iColor, $tMemMap)
+		$iRet = _SendMessage($hWnd, $TB_GETCOLORSCHEME, 0, $pMemory, 0, "wparam", "ptr")
 		_MemRead($tMemMap, $pMemory, $pColor, $iColor)
 		_MemFree($tMemMap)
 	EndIf
 	$aColor[0] = DllStructGetData($tColor, "BtnHighlight")
 	$aColor[1] = DllStructGetData($tColor, "BtnShadow")
-	Return SetError($iResult = 0, 0, $aColor)
+	Return SetError($iRet = 0, 0, $aColor)
 EndFunc   ;==>_GUICtrlToolbar_GetColorScheme
 
 ; #FUNCTION# ====================================================================================================================
@@ -1235,11 +1258,12 @@ EndFunc   ;==>_GUICtrlToolbar_GetColorScheme
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetDisabledImageList
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetDisabledImageList($hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_GETDISABLEDIMAGELIST)
 EndFunc   ;==>_GUICtrlToolbar_GetDisabledImageList
 
@@ -1257,11 +1281,12 @@ EndFunc   ;==>_GUICtrlToolbar_GetDisabledImageList
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetExtendedStyle
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetExtendedStyle($hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_GETEXTENDEDSTYLE)
 EndFunc   ;==>_GUICtrlToolbar_GetExtendedStyle
 
@@ -1276,11 +1301,12 @@ EndFunc   ;==>_GUICtrlToolbar_GetExtendedStyle
 ; Modified.......:
 ; Remarks .......: A button is considered hot when the cursor is over it
 ; Related .......: _GUICtrlToolbar_SetHotImageList
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetHotImageList($hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_GETHOTIMAGELIST)
 EndFunc   ;==>_GUICtrlToolbar_GetHotImageList
 
@@ -1295,11 +1321,12 @@ EndFunc   ;==>_GUICtrlToolbar_GetHotImageList
 ; Modified.......:
 ; Remarks .......:  A button is considered hot when the cursor is over it
 ; Related .......: _GUICtrlToolbar_SetHotItem
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetHotItem($hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_GETHOTITEM)
 EndFunc   ;==>_GUICtrlToolbar_GetHotItem
 
@@ -1314,11 +1341,12 @@ EndFunc   ;==>_GUICtrlToolbar_GetHotItem
 ; Modified.......:
 ; Remarks .......: A toolbar control uses this image list to display buttons when they are not hot or disabled
 ; Related .......: _GUICtrlToolbar_SetImageList
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetImageList($hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_GETIMAGELIST)
 EndFunc   ;==>_GUICtrlToolbar_GetImageList
 
@@ -1337,27 +1365,29 @@ EndFunc   ;==>_GUICtrlToolbar_GetImageList
 ; Modified.......: Gary Frost
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetInsertMark
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetInsertMark($hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iMark, $pMark, $tMark, $pMemory, $tMemMap, $aMark[2], $iResult
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
 
-	$tMark = DllStructCreate($tagTBINSERTMARK)
-	$pMark = DllStructGetPtr($tMark)
+	Local $aMark[2], $iRet
+
+	Local $tMark = DllStructCreate($tagTBINSERTMARK)
+	Local $pMark = DllStructGetPtr($tMark)
 	If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
-		$iResult = _SendMessage($hWnd, $TB_GETINSERTMARK, 0, $pMark, 0, "wparam", "ptr")
+		$iRet = _SendMessage($hWnd, $TB_GETINSERTMARK, 0, $pMark, 0, "wparam", "ptr")
 	Else
-		$iMark = DllStructGetSize($tMark)
-		$pMemory = _MemInit($hWnd, $iMark, $tMemMap)
-		$iResult = _SendMessage($hWnd, $TB_GETINSERTMARK, 0, $pMemory, 0, "wparam", "ptr")
+		Local $iMark = DllStructGetSize($tMark)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iMark, $tMemMap)
+		$iRet = _SendMessage($hWnd, $TB_GETINSERTMARK, 0, $pMemory, 0, "wparam", "ptr")
 		_MemRead($tMemMap, $pMemory, $pMark, $iMark)
 		_MemFree($tMemMap)
 	EndIf
 	$aMark[0] = DllStructGetData($tMark, "Button")
 	$aMark[1] = DllStructGetData($tMark, "Flags")
-	Return SetError($iResult <> 0, 0, $aMark)
+	Return SetError($iRet <> 0, 0, $aMark)
 EndFunc   ;==>_GUICtrlToolbar_GetInsertMark
 
 ; #FUNCTION# ====================================================================================================================
@@ -1370,11 +1400,12 @@ EndFunc   ;==>_GUICtrlToolbar_GetInsertMark
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetInsertMarkColor
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetInsertMarkColor($hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_GETINSERTMARKCOLOR)
 EndFunc   ;==>_GUICtrlToolbar_GetInsertMarkColor
 
@@ -1390,27 +1421,29 @@ EndFunc   ;==>_GUICtrlToolbar_GetInsertMarkColor
 ; Modified.......: Gary Frost
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetMaxSize($hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iSize, $pSize, $tSize, $pMemory, $tMemMap, $aSize[2], $iResult
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
 
-	$tSize = DllStructCreate($tagSIZE)
-	$pSize = DllStructGetPtr($tSize)
+	Local $aSize[2], $iRet
+
+	Local $tSize = DllStructCreate($tagSIZE)
+	Local $pSize = DllStructGetPtr($tSize)
 	If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
-		$iResult = _SendMessage($hWnd, $TB_GETMAXSIZE, 0, $pSize, 0, "wparam", "ptr")
+		$iRet = _SendMessage($hWnd, $TB_GETMAXSIZE, 0, $pSize, 0, "wparam", "ptr")
 	Else
-		$iSize = DllStructGetSize($tSize)
-		$pMemory = _MemInit($hWnd, $iSize, $tMemMap)
-		$iResult = _SendMessage($hWnd, $TB_GETMAXSIZE, 0, $pMemory, 0, "wparam", "ptr")
+		Local $iSize = DllStructGetSize($tSize)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iSize, $tMemMap)
+		$iRet = _SendMessage($hWnd, $TB_GETMAXSIZE, 0, $pMemory, 0, "wparam", "ptr")
 		_MemRead($tMemMap, $pMemory, $pSize, $iSize)
 		_MemFree($tMemMap)
 	EndIf
 	$aSize[0] = DllStructGetData($tSize, "X")
 	$aSize[1] = DllStructGetData($tSize, "Y")
-	Return SetError($iResult = 0, 0, $aSize)
+	Return SetError($iRet = 0, 0, $aSize)
 EndFunc   ;==>_GUICtrlToolbar_GetMaxSize
 
 ; #FUNCTION# ====================================================================================================================
@@ -1427,23 +1460,24 @@ EndFunc   ;==>_GUICtrlToolbar_GetMaxSize
 ; Modified.......: Gary Frost
 ; Remarks .......: Minimum OS - Windows XP
 ; Related .......: _GUICtrlToolbar_SetMetrics
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetMetrics($hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iMask, $iMetrics, $pMetrics, $tMetrics, $pMemory, $tMemMap, $aMetrics[4]
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+	Local $aMetrics[4]
 
-	$tMetrics = DllStructCreate($tagTBMETRICS)
-	$pMetrics = DllStructGetPtr($tMetrics)
-	$iMetrics = DllStructGetSize($tMetrics)
-	$iMask = BitOR($TBMF_PAD, $TBMF_BUTTONSPACING)
+	Local $tMetrics = DllStructCreate($tagTBMETRICS)
+	Local $iMetrics = DllStructGetSize($tMetrics)
+	Local $pMetrics = DllStructGetPtr($tMetrics)
+	Local $iMask = BitOR($TBMF_PAD, $TBMF_BUTTONSPACING)
 	DllStructSetData($tMetrics, "Size", $iMetrics)
 	DllStructSetData($tMetrics, "Mask", $iMask)
 	If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
 		_SendMessage($hWnd, $TB_GETMETRICS, 0, $pMetrics, 0, "wparam", "ptr")
 	Else
-		$pMemory = _MemInit($hWnd, $iMetrics, $tMemMap)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iMetrics, $tMemMap)
 		_SendMessage($hWnd, $TB_GETMETRICS, 0, $pMemory, 0, "wparam", "ptr")
 		_MemRead($tMemMap, $pMemory, $pMetrics, $iMetrics)
 		_MemFree($tMemMap)
@@ -1467,14 +1501,15 @@ EndFunc   ;==>_GUICtrlToolbar_GetMetrics
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetPadding
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetPadding($hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iPad, $aPad[2]
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
 
-	$iPad = _SendMessage($hWnd, $TB_GETPADDING)
+	Local $aPad[2]
+
+	Local $iPad = _SendMessage($hWnd, $TB_GETPADDING)
 	$aPad[0] = _WinAPI_LoWord($iPad)
 	$aPad[1] = _WinAPI_HiWord($iPad)
 	Return $aPad
@@ -1490,11 +1525,12 @@ EndFunc   ;==>_GUICtrlToolbar_GetPadding
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetRows
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetRows($hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_GETROWS)
 EndFunc   ;==>_GUICtrlToolbar_GetRows
 
@@ -1511,45 +1547,46 @@ EndFunc   ;==>_GUICtrlToolbar_GetRows
 ;                  to the text string currently being displayed by a button. To retrieve a button's current text string, send use
 ;                  _GUICtrlToolbar_GetButtonText.
 ; Related .......: _GUICtrlToolbar_AddString, _GUICtrlToolbar_GetButtonText
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetString($hWnd, $iIndex)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iBuffer, $pBuffer, $tBuffer, $tMemMap, $pMemory, $iResult
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Local $fUnicode = _GUICtrlToolbar_GetUnicodeFormat($hWnd)
 
+	Local $iBuffer
 	If $fUnicode Then
 		$iBuffer = _SendMessage($hWnd, $TB_GETSTRINGW, _WinAPI_MakeLong(0, $iIndex), 0, 0, "long") + 1
 	Else
-		$iBuffer = _SendMessage($hWnd, $TB_GETSTRING, _WinAPI_MakeLong(0, $iIndex), 0, 0, "long") + 1
+		$iBuffer = _SendMessage($hWnd, $TB_GETSTRINGA, _WinAPI_MakeLong(0, $iIndex), 0, 0, "long") + 1
 	EndIf
+
 	If $iBuffer = 0 Then Return SetError(-1, 0, "")
-	If $iBuffer = 1 Then Return SetError(0, 0, "")
+	If $iBuffer = 1 Then Return ""
+	Local $tBuffer
 	If $fUnicode Then
-		$iBuffer *= 2
 		$tBuffer = DllStructCreate("wchar Text[" & $iBuffer & "]")
+		$iBuffer *= 2
 	Else
 		$tBuffer = DllStructCreate("char Text[" & $iBuffer & "]")
 	EndIf
-	$pBuffer = DllStructGetPtr($tBuffer)
+	Local $pBuffer = DllStructGetPtr($tBuffer)
+	Local $iRet
 	If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
-		If $fUnicode Then
-			$iResult = _SendMessage($hWnd, $TB_GETSTRINGW, _WinAPI_MakeLong($iBuffer, $iIndex), $pBuffer, 0, "long", "ptr")
-		Else
-			$iResult = _SendMessage($hWnd, $TB_GETSTRING, _WinAPI_MakeLong($iBuffer, $iIndex), $pBuffer, 0, "long", "ptr")
-		EndIf
+		$iRet = _SendMessage($hWnd, $TB_GETSTRINGW, _WinAPI_MakeLong($iBuffer, $iIndex), $pBuffer, 0, "long", "ptr")
 	Else
-		$pMemory = _MemInit($hWnd, $iBuffer, $tMemMap)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iBuffer, $tMemMap)
 		If $fUnicode Then
-			$iResult = _SendMessage($hWnd, $TB_GETSTRINGW, _WinAPI_MakeLong($iBuffer, $iIndex), $pMemory, 0, "long", "ptr")
+			$iRet = _SendMessage($hWnd, $TB_GETSTRINGW, _WinAPI_MakeLong($iBuffer, $iIndex), $pMemory, 0, "long", "ptr")
 		Else
-			$iResult = _SendMessage($hWnd, $TB_GETSTRING, _WinAPI_MakeLong($iBuffer, $iIndex), $pMemory, 0, "long", "ptr")
+			$iRet = _SendMessage($hWnd, $TB_GETSTRINGA, _WinAPI_MakeLong($iBuffer, $iIndex), $pMemory, 0, "long", "ptr")
 		EndIf
 		_MemRead($tMemMap, $pMemory, $pBuffer, $iBuffer)
 		_MemFree($tMemMap)
 	EndIf
-	Return SetError($iResult = -1, 0, DllStructGetData($tBuffer, "Text"))
+	Return SetError($iRet = -1, 0, DllStructGetData($tBuffer, "Text"))
 EndFunc   ;==>_GUICtrlToolbar_GetString
 
 ; #FUNCTION# ====================================================================================================================
@@ -1570,11 +1607,12 @@ EndFunc   ;==>_GUICtrlToolbar_GetString
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetStyle
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetStyle($hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_GETSTYLE)
 EndFunc   ;==>_GUICtrlToolbar_GetStyle
 
@@ -1589,8 +1627,8 @@ EndFunc   ;==>_GUICtrlToolbar_GetStyle
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetStyleAltDrag
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetStyleAltDrag($hWnd)
 	Return BitAND(_GUICtrlToolbar_GetStyle($hWnd), $TBSTYLE_ALTDRAG) <> 0
@@ -1607,8 +1645,8 @@ EndFunc   ;==>_GUICtrlToolbar_GetStyleAltDrag
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetStyleCustomErase
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetStyleCustomErase($hWnd)
 	Return BitAND(_GUICtrlToolbar_GetStyle($hWnd), $TBSTYLE_CUSTOMERASE) <> 0
@@ -1625,8 +1663,8 @@ EndFunc   ;==>_GUICtrlToolbar_GetStyleCustomErase
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetStyleFlat
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetStyleFlat($hWnd)
 	Return BitAND(_GUICtrlToolbar_GetStyle($hWnd), $TBSTYLE_FLAT) <> 0
@@ -1643,8 +1681,8 @@ EndFunc   ;==>_GUICtrlToolbar_GetStyleFlat
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetStyleList
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetStyleList($hWnd)
 	Return BitAND(_GUICtrlToolbar_GetStyle($hWnd), $TBSTYLE_LIST) <> 0
@@ -1661,8 +1699,8 @@ EndFunc   ;==>_GUICtrlToolbar_GetStyleList
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetStyleRegisterDrop
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetStyleRegisterDrop($hWnd)
 	Return BitAND(_GUICtrlToolbar_GetStyle($hWnd), $TBSTYLE_REGISTERDROP) <> 0
@@ -1679,8 +1717,8 @@ EndFunc   ;==>_GUICtrlToolbar_GetStyleRegisterDrop
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetStyleToolTips
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetStyleToolTips($hWnd)
 	Return BitAND(_GUICtrlToolbar_GetStyle($hWnd), $TBSTYLE_TOOLTIPS) <> 0
@@ -1697,8 +1735,8 @@ EndFunc   ;==>_GUICtrlToolbar_GetStyleToolTips
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetStyleTransparent
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetStyleTransparent($hWnd)
 	Return BitAND(_GUICtrlToolbar_GetStyle($hWnd), $TBSTYLE_TRANSPARENT) <> 0
@@ -1715,8 +1753,8 @@ EndFunc   ;==>_GUICtrlToolbar_GetStyleTransparent
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetStyleWrapable
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetStyleWrapable($hWnd)
 	Return BitAND(_GUICtrlToolbar_GetStyle($hWnd), $TBSTYLE_WRAPABLE) <> 0
@@ -1732,11 +1770,12 @@ EndFunc   ;==>_GUICtrlToolbar_GetStyleWrapable
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetTextRows($hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_GETTEXTROWS)
 EndFunc   ;==>_GUICtrlToolbar_GetTextRows
 
@@ -1751,11 +1790,12 @@ EndFunc   ;==>_GUICtrlToolbar_GetTextRows
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetToolTips
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetToolTips($hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_GETTOOLTIPS)
 EndFunc   ;==>_GUICtrlToolbar_GetToolTips
 
@@ -1770,11 +1810,12 @@ EndFunc   ;==>_GUICtrlToolbar_GetToolTips
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_SetUnicodeFormat
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_GetUnicodeFormat($hWnd)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_GETUNICODEFORMAT) <> 0
 EndFunc   ;==>_GUICtrlToolbar_GetUnicodeFormat
 
@@ -1793,11 +1834,12 @@ EndFunc   ;==>_GUICtrlToolbar_GetUnicodeFormat
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_EnableButton
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_HideButton($hWnd, $iCommandID, $fHide = True)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_HIDEBUTTON, $iCommandID, $fHide) <> 0
 EndFunc   ;==>_GUICtrlToolbar_HideButton
 
@@ -1816,11 +1858,12 @@ EndFunc   ;==>_GUICtrlToolbar_HideButton
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_HighlightButton($hWnd, $iCommandID, $fHighlight = True)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_MARKBUTTON, $iCommandID, $fHighlight) <> 0
 EndFunc   ;==>_GUICtrlToolbar_HighlightButton
 
@@ -1838,27 +1881,28 @@ EndFunc   ;==>_GUICtrlToolbar_HighlightButton
 ; Modified.......: Gary Frost
 ; Remarks .......: The absolute value of the return value is the index of a separator item or the nearest nonseparator item.
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_HitTest($hWnd, $iX, $iY)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iPoint, $pPoint, $tPoint, $pMemory, $tMemMap, $iResult
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
 
-	$tPoint = DllStructCreate($tagPOINT)
-	$pPoint = DllStructGetPtr($tPoint)
+	Local $tPoint = DllStructCreate($tagPOINT)
+	Local $pPoint = DllStructGetPtr($tPoint)
 	DllStructSetData($tPoint, "X", $iX)
 	DllStructSetData($tPoint, "Y", $iY)
+	Local $iRet
 	If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
-		$iResult = _SendMessage($hWnd, $TB_HITTEST, 0, $pPoint, 0, "wparam", "ptr")
+		$iRet = _SendMessage($hWnd, $TB_HITTEST, 0, $pPoint, 0, "wparam", "ptr")
 	Else
-		$iPoint = DllStructGetSize($tPoint)
-		$pMemory = _MemInit($hWnd, $iPoint, $tMemMap)
+		Local $iPoint = DllStructGetSize($tPoint)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iPoint, $tMemMap)
 		_MemWrite($tMemMap, $pPoint, $pMemory, $iPoint)
-		$iResult = _SendMessage($hWnd, $TB_HITTEST, 0, $pMemory, 0, "wparam", "ptr")
+		$iRet = _SendMessage($hWnd, $TB_HITTEST, 0, $pMemory, 0, "wparam", "ptr")
 		_MemFree($tMemMap)
 	EndIf
-	Return $iResult
+	Return $iRet
 EndFunc   ;==>_GUICtrlToolbar_HitTest
 
 ; #FUNCTION# ====================================================================================================================
@@ -1872,20 +1916,20 @@ EndFunc   ;==>_GUICtrlToolbar_HitTest
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_CommandToIndex
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_IndexToCommand($hWnd, $iIndex)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iButton, $pButton, $tButton, $tMemMap, $pMemory
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
 
-	$tButton = DllStructCreate($tagTBBUTTON)
-	$pButton = DllStructGetPtr($tButton)
+	Local $tButton = DllStructCreate($tagTBBUTTON)
+	Local $pButton = DllStructGetPtr($tButton)
 	If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
 		_SendMessage($hWnd, $TB_GETBUTTON, $iIndex, $pButton, 0, "wparam", "ptr")
 	Else
-		$iButton = DllStructGetSize($tButton)
-		$pMemory = _MemInit($hWnd, $iButton, $tMemMap)
+		Local $iButton = DllStructGetSize($tButton)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iButton, $tMemMap)
 		_MemWrite($tMemMap, $pButton, $pMemory, $iButton)
 		_SendMessage($hWnd, $TB_GETBUTTON, $iIndex, $pMemory, 0, "wparam", "ptr")
 		_MemRead($tMemMap, $pMemory, $pButton, $iButton)
@@ -1930,21 +1974,23 @@ EndFunc   ;==>_GUICtrlToolbar_IndexToCommand
 ; Modified.......: Gary Frost
 ; Remarks .......: Inserts the new button to the left of the button at iIndex
 ; Related .......: _GUICtrlToolbar_AddButton
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_InsertButton($hWnd, $iIndex, $iID, $iImage, $sText = "", $iStyle = 0, $iState = 4, $iParam = 0)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iButton, $pButton, $tButton, $iBuffer, $pBuffer, $tBuffer, $pMemory, $tMemMap, $pText, $iResult
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Local $fUnicode = _GUICtrlToolbar_GetUnicodeFormat($hWnd)
 
-	$tButton = DllStructCreate($tagTBBUTTON)
-	$pButton = DllStructGetPtr($tButton)
-	$iBuffer = StringLen($sText) + 1
+	Local $pBuffer, $tBuffer, $iRet
+
+	Local $tButton = DllStructCreate($tagTBBUTTON)
+	Local $pButton = DllStructGetPtr($tButton)
+	Local $iBuffer = StringLen($sText) + 1
 	If $iBuffer > 1 Then
 		If $fUnicode Then
-			$iBuffer *= 2
 			$tBuffer = DllStructCreate("wchar Text[" & $iBuffer & "]")
+			$iBuffer *= 2
 		Else
 			$tBuffer = DllStructCreate("char Text[" & $iBuffer & "]")
 		EndIf
@@ -1958,28 +2004,25 @@ Func _GUICtrlToolbar_InsertButton($hWnd, $iIndex, $iID, $iImage, $sText = "", $i
 	DllStructSetData($tButton, "Style", $iStyle)
 	DllStructSetData($tButton, "Param", $iParam)
 	If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
-		If $fUnicode Then
-			$iResult = _SendMessage($hWnd, $TB_INSERTBUTTONW, $iIndex, $pButton, 0, "wparam", "ptr")
-		Else
-			$iResult = _SendMessage($hWnd, $TB_INSERTBUTTON, $iIndex, $pButton, 0, "wparam", "ptr")
-		EndIf
+		$iRet = _SendMessage($hWnd, $TB_INSERTBUTTONW, $iIndex, $pButton, 0, "wparam", "ptr")
 	Else
-		$iButton = DllStructGetSize($tButton)
-		$pMemory = _MemInit($hWnd, $iButton + $iBuffer, $tMemMap)
-		$pText = $pMemory + $iButton
+		Local $iButton = DllStructGetSize($tButton)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iButton + $iBuffer, $tMemMap)
+		Local $pText = $pMemory + $iButton
 		_MemWrite($tMemMap, $pButton, $pMemory, $iButton)
 		If $iBuffer > 1 Then
 			DllStructSetData($tButton, "String", $pText)
 			_MemWrite($tMemMap, $pBuffer, $pText, $iBuffer)
 		EndIf
 		If $fUnicode Then
-			$iResult = _SendMessage($hWnd, $TB_INSERTBUTTONW, $iIndex, $pMemory, 0, "wparam", "ptr")
+			$iRet = _SendMessage($hWnd, $TB_INSERTBUTTONW, $iIndex, $pMemory, 0, "wparam", "ptr")
 		Else
-			$iResult = _SendMessage($hWnd, $TB_INSERTBUTTON, $iIndex, $pMemory, 0, "wparam", "ptr")
+			$iRet = _SendMessage($hWnd, $TB_INSERTBUTTONA, $iIndex, $pMemory, 0, "wparam", "ptr")
 		EndIf
 		_MemFree($tMemMap)
 	EndIf
-	Return $iResult <> 0
+	Return $iRet <> 0
 EndFunc   ;==>_GUICtrlToolbar_InsertButton
 
 ; #FUNCTION# ====================================================================================================================
@@ -1999,34 +2042,36 @@ EndFunc   ;==>_GUICtrlToolbar_InsertButton
 ; Modified.......: Gary Frost
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_InsertMarkHitTest($hWnd, $iX, $iY)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iMark, $pMark, $tMark, $iPoint, $pPoint, $tPoint, $pMemory, $tMemMap, $pMarkPtr, $aMark[2], $iResult
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
 
-	$tPoint = DllStructCreate($tagPOINT)
-	$pPoint = DllStructGetPtr($tPoint)
-	$tMark = DllStructCreate($tagTBINSERTMARK)
-	$pMark = DllStructGetPtr($tMark)
+	Local $aMark[2], $iRet
+
+	Local $tPoint = DllStructCreate($tagPOINT)
+	Local $pPoint = DllStructGetPtr($tPoint)
+	Local $tMark = DllStructCreate($tagTBINSERTMARK)
+	Local $pMark = DllStructGetPtr($tMark)
 	DllStructSetData($tPoint, "X", $iX)
 	DllStructSetData($tPoint, "Y", $iY)
 	If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
-		$iResult = _SendMessage($hWnd, $TB_INSERTMARKHITTEST, $pPoint, $pMark, 0, "wparam", "ptr")
+		$iRet = _SendMessage($hWnd, $TB_INSERTMARKHITTEST, $pPoint, $pMark, 0, "wparam", "ptr")
 	Else
-		$iPoint = DllStructGetSize($tPoint)
-		$iMark = DllStructGetSize($tMark)
-		$pMemory = _MemInit($hWnd, $iPoint + $iMark, $tMemMap)
-		$pMarkPtr = $pMemory + $iPoint
+		Local $iPoint = DllStructGetSize($tPoint)
+		Local $iMark = DllStructGetSize($tMark)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iPoint + $iMark, $tMemMap)
+		Local $pMarkPtr = $pMemory + $iPoint
 		_MemWrite($tMemMap, $pPoint, $pMemory, $iPoint)
-		$iResult = _SendMessage($hWnd, $TB_INSERTMARKHITTEST, $pMemory, $pMarkPtr, 0, "wparam", "ptr")
+		$iRet = _SendMessage($hWnd, $TB_INSERTMARKHITTEST, $pMemory, $pMarkPtr, 0, "wparam", "ptr")
 		_MemRead($tMemMap, $pMarkPtr, $pMark, $iMark)
 		_MemFree($tMemMap)
 	EndIf
 	$aMark[0] = DllStructGetData($tMark, "Button")
 	$aMark[1] = DllStructGetData($tMark, "Flags")
-	Return SetError($iResult <> 0, 0, $aMark)
+	Return SetError($iRet <> 0, 0, $aMark)
 EndFunc   ;==>_GUICtrlToolbar_InsertMarkHitTest
 
 ; #FUNCTION# ====================================================================================================================
@@ -2041,11 +2086,12 @@ EndFunc   ;==>_GUICtrlToolbar_InsertMarkHitTest
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_IsButtonChecked($hWnd, $iCommandID)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_ISBUTTONCHECKED, $iCommandID) <> 0
 EndFunc   ;==>_GUICtrlToolbar_IsButtonChecked
 
@@ -2061,11 +2107,12 @@ EndFunc   ;==>_GUICtrlToolbar_IsButtonChecked
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_IsButtonEnabled($hWnd, $iCommandID)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_ISBUTTONENABLED, $iCommandID) <> 0
 EndFunc   ;==>_GUICtrlToolbar_IsButtonEnabled
 
@@ -2081,11 +2128,12 @@ EndFunc   ;==>_GUICtrlToolbar_IsButtonEnabled
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_IsButtonHidden($hWnd, $iCommandID)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_ISBUTTONHIDDEN, $iCommandID) <> 0
 EndFunc   ;==>_GUICtrlToolbar_IsButtonHidden
 
@@ -2101,11 +2149,12 @@ EndFunc   ;==>_GUICtrlToolbar_IsButtonHidden
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_IsButtonHighlighted($hWnd, $iCommandID)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_ISBUTTONHIGHLIGHTED, $iCommandID) <> 0
 EndFunc   ;==>_GUICtrlToolbar_IsButtonHighlighted
 
@@ -2121,11 +2170,12 @@ EndFunc   ;==>_GUICtrlToolbar_IsButtonHighlighted
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_IsButtonIndeterminate($hWnd, $iCommandID)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_ISBUTTONINDETERMINATE, $iCommandID) <> 0
 EndFunc   ;==>_GUICtrlToolbar_IsButtonIndeterminate
 
@@ -2141,11 +2191,12 @@ EndFunc   ;==>_GUICtrlToolbar_IsButtonIndeterminate
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_IsButtonPressed($hWnd, $iCommandID)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_ISBUTTONPRESSED, $iCommandID) <> 0
 EndFunc   ;==>_GUICtrlToolbar_IsButtonPressed
 
@@ -2161,14 +2212,13 @@ EndFunc   ;==>_GUICtrlToolbar_IsButtonPressed
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_AddBitmap
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_LoadBitmap($hWnd, $sFileName)
-	Local $aSize, $hBitmap
 
-	$aSize = _GUICtrlToolbar_GetButtonSize($hWnd)
-	$hBitmap = _WinAPI_LoadImage(0, $sFileName, 0, $aSize[1], $aSize[0], $__TOOLBARCONSTANT_LR_LOADFROMFILE)
+	Local $aSize = _GUICtrlToolbar_GetButtonSize($hWnd)
+	Local $hBitmap = _WinAPI_LoadImage(0, $sFileName, 0, $aSize[1], $aSize[0], $__TOOLBARCONSTANT_LR_LOADFROMFILE)
 	If $hBitmap = 0 Then Return SetError(-1, -1, -1)
 	Return _GUICtrlToolbar_AddBitmap($hWnd, 1, 0, $hBitmap)
 EndFunc   ;==>_GUICtrlToolbar_LoadBitmap
@@ -2195,11 +2245,12 @@ EndFunc   ;==>_GUICtrlToolbar_LoadBitmap
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_LoadImages($hWnd, $iBitMapID)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_LOADIMAGES, $iBitMapID, $__TOOLBARCONSTANT_HINST_COMMCTRL)
 EndFunc   ;==>_GUICtrlToolbar_LoadImages
 
@@ -2214,30 +2265,21 @@ EndFunc   ;==>_GUICtrlToolbar_LoadImages
 ; Modified.......: Gary Frost
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_MapAccelerator($hWnd, $cAccel)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iCommand, $pCommand, $tCommand, $pMemory, $tMemMap
-	Local $fUnicode = _GUICtrlToolbar_GetUnicodeFormat($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
 
-	$tCommand = DllStructCreate("int Data")
-	$pCommand = DllStructGetPtr($tCommand)
+	Local $tCommand = DllStructCreate("int Data")
+	Local $pCommand = DllStructGetPtr($tCommand)
 	If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
-		If $fUnicode Then
-			_SendMessage($hWnd, $TB_MAPACCELERATORW, Asc($cAccel), $pCommand, 0, "wparam", "ptr")
-		Else
-			_SendMessage($hWnd, $TB_MAPACCELERATOR, Asc($cAccel), $pCommand, 0, "wparam", "ptr")
-		EndIf
+		_SendMessage($hWnd, $TB_MAPACCELERATORW, Asc($cAccel), $pCommand, 0, "wparam", "ptr")
 	Else
-		$iCommand = DllStructGetSize($tCommand)
-		$pMemory = _MemInit($hWnd, $iCommand, $tMemMap)
-		If $fUnicode Then
-			_SendMessage($hWnd, $TB_MAPACCELERATORW, Asc($cAccel), $pMemory, 0, "wparam", "ptr")
-		Else
-			_SendMessage($hWnd, $TB_MAPACCELERATOR, Asc($cAccel), $pMemory, 0, "wparam", "ptr")
-		EndIf
+		Local $iCommand = DllStructGetSize($tCommand)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iCommand, $tMemMap)
+		_SendMessage($hWnd, $TB_MAPACCELERATORW, Asc($cAccel), $pMemory, 0, "wparam", "ptr")
 		_MemRead($tMemMap, $pMemory, $pCommand, $iCommand)
 		_MemFree($tMemMap)
 	EndIf
@@ -2257,11 +2299,12 @@ EndFunc   ;==>_GUICtrlToolbar_MapAccelerator
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_MoveButton($hWnd, $iOldPos, $iNewPos)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_MOVEBUTTON, $iOldPos, $iNewPos) <> 0
 EndFunc   ;==>_GUICtrlToolbar_MoveButton
 
@@ -2281,11 +2324,12 @@ EndFunc   ;==>_GUICtrlToolbar_MoveButton
 ; Remarks .......: This function does not fire the click event on dropdown style buttons. You should use the _GUICtrlToolbar_ClickButton
 ;                  function if you want to ensure that the button click event is fired, regardless of the button style.
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_PressButton($hWnd, $iCommandID, $fPress = True)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_PRESSBUTTON, $iCommandID, $fPress) <> 0
 EndFunc   ;==>_GUICtrlToolbar_PressButton
 
@@ -2303,11 +2347,12 @@ EndFunc   ;==>_GUICtrlToolbar_PressButton
 ; Remarks .......: Anchor highlighting means that the last highlighted  item  will  remain  highlighted  until  another  item  is
 ;                  highlighted. This occurs even if the cursor leaves the toolbar control.
 ; Related .......: _GUICtrlToolbar_GetAnchorHighlight
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetAnchorHighlight($hWnd, $fAnchor)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_SETANCHORHIGHLIGHT, $fAnchor)
 EndFunc   ;==>_GUICtrlToolbar_SetAnchorHighlight
 
@@ -2325,11 +2370,12 @@ EndFunc   ;==>_GUICtrlToolbar_SetAnchorHighlight
 ; Remarks .......: The size can be set only before adding any bitmaps to the toolbar.  If an application does not explicitly  set
 ;                  the bitmap size, the size defaults to 16 by 15 pixels.
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetBitmapSize($hWnd, $iWidth, $iHeight)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_SETBITMAPSIZE, 0, _WinAPI_MakeLong($iWidth, $iHeight), 0, "wparam", "long") <> 0
 EndFunc   ;==>_GUICtrlToolbar_SetBitmapSize
 
@@ -2346,11 +2392,12 @@ EndFunc   ;==>_GUICtrlToolbar_SetBitmapSize
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetButtonBitmap
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetButtonBitMap($hWnd, $iCommandID, $iIndex)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_CHANGEBITMAP, $iCommandID, $iIndex) <> 0
 EndFunc   ;==>_GUICtrlToolbar_SetButtonBitMap
 
@@ -2392,13 +2439,13 @@ EndFunc   ;==>_GUICtrlToolbar_SetButtonBitMap
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetButtonInfo, $tagTBBUTTONINFO
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetButtonInfo($hWnd, $iCommandID, $iImage = -3, $iState = -1, $iStyle = -1, $iWidth = -1, $iParam = -1)
-	Local $tButton, $iMask = 0
+	Local $iMask = 0
 
-	$tButton = DllStructCreate($tagTBBUTTONINFO)
+	Local $tButton = DllStructCreate($tagTBBUTTONINFO)
 	If $iImage <> -3 Then
 		$iMask = $TBIF_IMAGE
 		DllStructSetData($tButton, "Image", $iImage)
@@ -2436,39 +2483,31 @@ EndFunc   ;==>_GUICtrlToolbar_SetButtonInfo
 ; Modified.......: Gary Frost
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetButtonInfoEx, $tagTBBUTTONINFO
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetButtonInfoEx($hWnd, $iCommandID, $tButton)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iBuffer, $pBuffer, $iButton, $pButton, $pMemory, $tMemMap, $iResult
-	Local $fUnicode = _GUICtrlToolbar_GetUnicodeFormat($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
 
-	$pButton = DllStructGetPtr($tButton)
-	$iButton = DllStructGetSize($tButton)
+	Local $pButton = DllStructGetPtr($tButton)
+	Local $iButton = DllStructGetSize($tButton)
 	DllStructSetData($tButton, "Size", $iButton)
+	Local $iRet
 	If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
-		If $fUnicode Then
-			$iResult = _SendMessage($hWnd, $TB_SETBUTTONINFOW, $iCommandID, $pButton, 0, "wparam", "ptr")
-		Else
-			$iResult = _SendMessage($hWnd, $TB_SETBUTTONINFO, $iCommandID, $pButton, 0, "wparam", "ptr")
-		EndIf
+		$iRet = _SendMessage($hWnd, $TB_SETBUTTONINFOW, $iCommandID, $pButton, 0, "wparam", "ptr")
 	Else
-		$iBuffer = DllStructGetData($tButton, "TextMax")
-		$pMemory = _MemInit($hWnd, $iButton + $iBuffer, $tMemMap)
-		$pBuffer = $pMemory + $iButton
+		Local $iBuffer = DllStructGetData($tButton, "TextMax")
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iButton + $iBuffer, $tMemMap)
+		Local $pBuffer = $pMemory + $iButton
 		DllStructSetData($tButton, "Text", $pBuffer)
 		_MemWrite($tMemMap, $pButton, $pMemory, $iButton)
 		_MemWrite($tMemMap, $pBuffer, $pBuffer, $iBuffer)
-		If $fUnicode Then
-			$iResult = _SendMessage($hWnd, $TB_SETBUTTONINFOW, $iCommandID, $pMemory, 0, "wparam", "ptr")
-		Else
-			$iResult = _SendMessage($hWnd, $TB_SETBUTTONINFO, $iCommandID, $pMemory, 0, "wparam", "ptr")
-		EndIf
+		$iRet = _SendMessage($hWnd, $TB_SETBUTTONINFOW, $iCommandID, $pMemory, 0, "wparam", "ptr")
 		_MemFree($tMemMap)
 	EndIf
 
-	Return $iResult <> 0
+	Return $iRet <> 0
 EndFunc   ;==>_GUICtrlToolbar_SetButtonInfoEx
 
 ; #FUNCTION# ====================================================================================================================
@@ -2484,13 +2523,11 @@ EndFunc   ;==>_GUICtrlToolbar_SetButtonInfoEx
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetButtonParam
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetButtonParam($hWnd, $iCommandID, $iParam)
-	Local $tButton
-
-	$tButton = DllStructCreate($tagTBBUTTONINFO)
+	Local $tButton = DllStructCreate($tagTBBUTTONINFO)
 	DllStructSetData($tButton, "Mask", $TBIF_LPARAM)
 	DllStructSetData($tButton, "Param", $iParam)
 	Return _GUICtrlToolbar_SetButtonInfoEx($hWnd, $iCommandID, $tButton)
@@ -2510,11 +2547,12 @@ EndFunc   ;==>_GUICtrlToolbar_SetButtonParam
 ; Remarks .......: The size can be set only before adding any buttons to the toolbar.  If an application does not explicitly  set
 ;                  the button size, the size defaults to 24 by 22 pixels.
 ; Related .......: _GUICtrlToolbar_GetButtonSize
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetButtonSize($hWnd, $iHeight, $iWidth)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_SETBUTTONSIZE, 0, _WinAPI_MakeLong($iWidth, $iHeight), 0, "wparam", "long") <> 0
 EndFunc   ;==>_GUICtrlToolbar_SetButtonSize
 
@@ -2539,11 +2577,12 @@ EndFunc   ;==>_GUICtrlToolbar_SetButtonSize
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetButtonState
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetButtonState($hWnd, $iCommandID, $iState)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_SETSTATE, $iCommandID, $iState)
 EndFunc   ;==>_GUICtrlToolbar_SetButtonState
 
@@ -2569,13 +2608,11 @@ EndFunc   ;==>_GUICtrlToolbar_SetButtonState
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetButtonStyle
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetButtonStyle($hWnd, $iCommandID, $iStyle)
-	Local $tButton
-
-	$tButton = DllStructCreate($tagTBBUTTONINFO)
+	Local $tButton = DllStructCreate($tagTBBUTTONINFO)
 	DllStructSetData($tButton, "Mask", $TBIF_STYLE)
 	DllStructSetData($tButton, "Style", $iStyle)
 	Return _GUICtrlToolbar_SetButtonInfoEx($hWnd, $iCommandID, $tButton)
@@ -2594,21 +2631,15 @@ EndFunc   ;==>_GUICtrlToolbar_SetButtonStyle
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetButtonText
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetButtonText($hWnd, $iCommandID, $sText)
-	Local $tButton, $iBuffer, $pBuffer, $tBuffer
-
-	$iBuffer = StringLen($sText) + 1
-	If _GUICtrlToolbar_GetUnicodeFormat($hWnd) Then
-		$iBuffer *= 2
-		$tBuffer = DllStructCreate("wchar Text[" & $iBuffer * 2 & "]")
-	Else
-		$tBuffer = DllStructCreate("char Text[" & $iBuffer & "]")
-	EndIf
-	$pBuffer = DllStructGetPtr($tBuffer)
-	$tButton = DllStructCreate($tagTBBUTTONINFO)
+	Local $iBuffer = StringLen($sText) + 1
+	Local $tBuffer = DllStructCreate("wchar Text[" & $iBuffer * 2 & "]")
+	$iBuffer *= 2
+	Local $pBuffer = DllStructGetPtr($tBuffer)
+	Local $tButton = DllStructCreate($tagTBBUTTONINFO)
 	DllStructSetData($tBuffer, "Text", $sText)
 	DllStructSetData($tButton, "Mask", $TBIF_TEXT)
 	DllStructSetData($tButton, "Text", $pBuffer)
@@ -2629,11 +2660,12 @@ EndFunc   ;==>_GUICtrlToolbar_SetButtonText
 ; Modified.......: Gary Frost
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetButtonWidth($hWnd, $iMin, $iMax)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_SETBUTTONWIDTH, 0, _WinAPI_MakeLong($iMin, $iMax), 0, "wparam", "long") <> 0
 EndFunc   ;==>_GUICtrlToolbar_SetButtonWidth
 
@@ -2650,11 +2682,12 @@ EndFunc   ;==>_GUICtrlToolbar_SetButtonWidth
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetCmdID($hWnd, $iIndex, $iCommandID)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_SETCMDID, $iIndex, $iCommandID) <> 0
 EndFunc   ;==>_GUICtrlToolbar_SetCmdID
 
@@ -2670,23 +2703,23 @@ EndFunc   ;==>_GUICtrlToolbar_SetCmdID
 ; Modified.......: Gary Frost
 ; Remarks .......: The control uses the color scheme information when drawing the 3-D elements in the control
 ; Related .......: _GUICtrlToolbar_GetColorScheme
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetColorScheme($hWnd, $iHighlight, $iShadow)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iColor, $pColor, $tColor, $pMemory, $tMemMap
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
 
-	$tColor = DllStructCreate($tagCOLORSCHEME)
-	$pColor = DllStructGetPtr($tColor)
-	$iColor = DllStructGetSize($tColor)
+	Local $tColor = DllStructCreate($tagCOLORSCHEME)
+	Local $pColor = DllStructGetPtr($tColor)
+	Local $iColor = DllStructGetSize($tColor)
 	DllStructSetData($tColor, "Size", $iColor)
 	DllStructSetData($tColor, "BtnHighlight", $iHighlight)
 	DllStructSetData($tColor, "BtnShadow", $iShadow)
 	If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
 		_SendMessage($hWnd, $TB_SETCOLORSCHEME, 0, $pColor, 0, "wparam", "ptr")
 	Else
-		$pMemory = _MemInit($hWnd, $iColor, $tMemMap)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iColor, $tMemMap)
 		_MemWrite($tMemMap, $pColor, $pMemory, $iColor)
 		_SendMessage($hWnd, $TB_SETCOLORSCHEME, 0, $pMemory, 0, "wparam", "ptr")
 		_MemFree($tMemMap)
@@ -2705,11 +2738,12 @@ EndFunc   ;==>_GUICtrlToolbar_SetColorScheme
 ; Modified.......: Gary Frost
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetDisabledImageList
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetDisabledImageList($hWnd, $hImageList)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_SETDISABLEDIMAGELIST, 0, $hImageList, 0, "wparam", "hwnd")
 EndFunc   ;==>_GUICtrlToolbar_SetDisabledImageList
 
@@ -2730,11 +2764,12 @@ EndFunc   ;==>_GUICtrlToolbar_SetDisabledImageList
 ;                  $DT_CENTER flag to iMask and not specify the $DT_CENTER flag in  iDTFlags.  This  prevents  the  control  from
 ;                  passing the $DT_CENTER flag to the DrawText API.
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetDrawTextFlags($hWnd, $iMask, $iDTFlags)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_SETDRAWTEXTFLAGS, $iMask, $iDTFlags)
 EndFunc   ;==>_GUICtrlToolbar_SetDrawTextFlags
 
@@ -2753,11 +2788,12 @@ EndFunc   ;==>_GUICtrlToolbar_SetDrawTextFlags
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetExtendedStyle
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetExtendedStyle($hWnd, $iStyle)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_SETEXTENDEDSTYLE, 0, $iStyle)
 EndFunc   ;==>_GUICtrlToolbar_SetExtendedStyle
 
@@ -2773,11 +2809,12 @@ EndFunc   ;==>_GUICtrlToolbar_SetExtendedStyle
 ; Modified.......: Gary Frost
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetHotImageList
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetHotImageList($hWnd, $hImageList)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_SETHOTIMAGELIST, 0, $hImageList, 0, "wparam", "hwnd")
 EndFunc   ;==>_GUICtrlToolbar_SetHotImageList
 
@@ -2792,11 +2829,12 @@ EndFunc   ;==>_GUICtrlToolbar_SetHotImageList
 ; Modified.......:
 ; Remarks .......:  A button is considered hot when the cursor is over it
 ; Related .......: _GUICtrlToolbar_GetHotItem
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetHotItem($hWnd, $iIndex)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_SETHOTITEM, $iIndex)
 EndFunc   ;==>_GUICtrlToolbar_SetHotItem
 
@@ -2812,11 +2850,12 @@ EndFunc   ;==>_GUICtrlToolbar_SetHotItem
 ; Modified.......: Gary Frost
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetImageList
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetImageList($hWnd, $hImageList)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_SETIMAGELIST, 0, $hImageList, 0, "wparam", "hwnd")
 EndFunc   ;==>_GUICtrlToolbar_SetImageList
 
@@ -2832,11 +2871,12 @@ EndFunc   ;==>_GUICtrlToolbar_SetImageList
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetIndent($hWnd, $iIndent)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_SETINDENT, $iIndent) <> 0
 EndFunc   ;==>_GUICtrlToolbar_SetIndent
 
@@ -2853,11 +2893,12 @@ EndFunc   ;==>_GUICtrlToolbar_SetIndent
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetIndeterminate($hWnd, $iCommandID, $fState = True)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_INDETERMINATE, $iCommandID, $fState) <> 0
 EndFunc   ;==>_GUICtrlToolbar_SetIndeterminate
 
@@ -2876,22 +2917,22 @@ EndFunc   ;==>_GUICtrlToolbar_SetIndeterminate
 ; Modified.......: Gary Frost
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetInsertMark
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetInsertMark($hWnd, $iButton, $iFlags = 0)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iMark, $pMark, $tMark, $pMemory, $tMemMap
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
 
-	$tMark = DllStructCreate($tagTBINSERTMARK)
-	$pMark = DllStructGetPtr($tMark)
+	Local $tMark = DllStructCreate($tagTBINSERTMARK)
+	Local $pMark = DllStructGetPtr($tMark)
 	DllStructSetData($tMark, "Button", $iButton)
 	DllStructSetData($tMark, "Flags", $iFlags)
 	If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
 		_SendMessage($hWnd, $TB_SETINSERTMARK, 0, $pMark, 0, "wparam", "ptr")
 	Else
-		$iMark = DllStructGetSize($tMark)
-		$pMemory = _MemInit($hWnd, $iMark, $tMemMap)
+		Local $iMark = DllStructGetSize($tMark)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iMark, $tMemMap)
 		_MemWrite($tMemMap, $pMark, $pMemory, $iMark)
 		_SendMessage($hWnd, $TB_SETINSERTMARK, 0, $pMemory, 0, "wparam", "ptr")
 		_MemFree($tMemMap)
@@ -2909,11 +2950,12 @@ EndFunc   ;==>_GUICtrlToolbar_SetInsertMark
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetInsertMarkColor
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetInsertMarkColor($hWnd, $iColor)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_SETINSERTMARKCOLOR, 0, $iColor)
 EndFunc   ;==>_GUICtrlToolbar_SetInsertMarkColor
 
@@ -2929,11 +2971,12 @@ EndFunc   ;==>_GUICtrlToolbar_SetInsertMarkColor
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetMaxTextRows($hWnd, $iMaxRows)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_SETMAXTEXTROWS, $iMaxRows) <> 0
 EndFunc   ;==>_GUICtrlToolbar_SetMaxTextRows
 
@@ -2952,17 +2995,16 @@ EndFunc   ;==>_GUICtrlToolbar_SetMaxTextRows
 ; Modified.......: Gary Frost
 ; Remarks .......: Minimum OS - Windows XP
 ; Related .......: _GUICtrlToolbar_GetMetrics
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetMetrics($hWnd, $iXPad, $iYPad, $iXSpacing, $iYSpacing)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iMask, $iMetrics, $pMetrics, $tMetrics, $pMemory, $tMemMap
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
 
-	$tMetrics = DllStructCreate($tagTBMETRICS)
-	$pMetrics = DllStructGetPtr($tMetrics)
-	$iMetrics = DllStructGetSize($tMetrics)
-	$iMask = BitOR($TBMF_PAD, $TBMF_BUTTONSPACING)
+	Local $tMetrics = DllStructCreate($tagTBMETRICS)
+	Local $pMetrics = DllStructGetPtr($tMetrics)
+	Local $iMetrics = DllStructGetSize($tMetrics)
+	Local $iMask = BitOR($TBMF_PAD, $TBMF_BUTTONSPACING)
 	DllStructSetData($tMetrics, "Size", $iMetrics)
 	DllStructSetData($tMetrics, "Mask", $iMask)
 	DllStructSetData($tMetrics, "XPad", $iXPad)
@@ -2972,7 +3014,8 @@ Func _GUICtrlToolbar_SetMetrics($hWnd, $iXPad, $iYPad, $iXSpacing, $iYSpacing)
 	If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
 		_SendMessage($hWnd, $TB_SETMETRICS, 0, $pMetrics, 0, "wparam", "ptr")
 	Else
-		$pMemory = _MemInit($hWnd, $iMetrics, $tMemMap)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iMetrics, $tMemMap)
 		_MemWrite($tMemMap, $pMetrics, $pMemory, $iMetrics)
 		_SendMessage($hWnd, $TB_SETMETRICS, 0, $pMemory, 0, "wparam", "ptr")
 		_MemFree($tMemMap)
@@ -2994,11 +3037,12 @@ EndFunc   ;==>_GUICtrlToolbar_SetMetrics
 ;                  padding value is applied to both the top and bottom of the button.  Padding is only applied  to  buttons  that
 ;                  have the $TBSTYLE_AUTOSIZE style.
 ; Related .......: _GUICtrlToolbar_GetPadding
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetPadding($hWnd, $iCX, $iCY)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_SETPADDING, 0, _WinAPI_MakeLong($iCX, $iCY), 0, "wparam", "long")
 EndFunc   ;==>_GUICtrlToolbar_SetPadding
 
@@ -3016,11 +3060,12 @@ EndFunc   ;==>_GUICtrlToolbar_SetPadding
 ;                  Calling the _WinAPI_GetParent function control will return the actual parent window, not the window specified  in
 ;                  $TB_SETPARENT. To change the control's parent window, call the _WinAPI_SetParent function.
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetParent($hWnd, $hParent)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_SETPARENT, $hParent)
 EndFunc   ;==>_GUICtrlToolbar_SetParent
 
@@ -3044,24 +3089,25 @@ EndFunc   ;==>_GUICtrlToolbar_SetParent
 ; Remarks .......: Because the system does not break up button groups when setting the number of rows, the  resulting  number  of
 ;                  rows might differ from the number requested.
 ; Related .......: _GUICtrlToolbar_GetRows
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetRows($hWnd, $iRows, $fLarger = True)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iRect, $pRect, $tRect, $pMemory, $tMemMap, $aRect[4]
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
 
-	$tRect = DllStructCreate($tagRECT)
-	$pRect = DllStructGetPtr($tRect)
+	Local $tRect = DllStructCreate($tagRECT)
+	Local $pRect = DllStructGetPtr($tRect)
 	If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
 		_SendMessage($hWnd, $TB_SETROWS, _WinAPI_MakeLong($iRows, $fLarger), $pRect, 0, "long", "ptr")
 	Else
-		$iRect = DllStructGetSize($tRect)
-		$pMemory = _MemInit($hWnd, $iRect, $tMemMap)
+		Local $iRect = DllStructGetSize($tRect)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iRect, $tMemMap)
 		_SendMessage($hWnd, $TB_SETROWS, _WinAPI_MakeLong($iRows, $fLarger), $pMemory, 0, "long", "ptr")
 		_MemRead($tMemMap, $pMemory, $pRect, $iRect)
 		_MemFree($tMemMap)
 	EndIf
+	Local $aRect[4]
 	$aRect[0] = DllStructGetData($tRect, "Left")
 	$aRect[1] = DllStructGetData($tRect, "Top")
 	$aRect[2] = DllStructGetData($tRect, "Right")
@@ -3088,12 +3134,13 @@ EndFunc   ;==>_GUICtrlToolbar_SetRows
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetStyle
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetStyle($hWnd, $iStyle)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	$iStyle = BitOR($iStyle, $__TOOLBARCONSTANT_WS_CHILD, $__TOOLBARCONSTANT_WS_CLIPSIBLINGS, $__TOOLBARCONSTANT_WS_VISIBLE)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
+	$iStyle = BitOR($iStyle, $__UDFGUICONSTANT_WS_CHILD, $__TOOLBARCONSTANT_WS_CLIPSIBLINGS, $__UDFGUICONSTANT_WS_VISIBLE)
 	_SendMessage($hWnd, $TB_SETSTYLE, 0, $iStyle)
 EndFunc   ;==>_GUICtrlToolbar_SetStyle
 
@@ -3109,11 +3156,11 @@ EndFunc   ;==>_GUICtrlToolbar_SetStyle
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetStyleAltDrag
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetStyleAltDrag($hWnd, $fState = True)
-	Return _GUICtrlToolbar_SetStyleEx($hWnd, $TBSTYLE_ALTDRAG, $fState)
+	Return __GUICtrlToolbar_SetStyleEx($hWnd, $TBSTYLE_ALTDRAG, $fState)
 EndFunc   ;==>_GUICtrlToolbar_SetStyleAltDrag
 
 ; #FUNCTION# ====================================================================================================================
@@ -3128,17 +3175,17 @@ EndFunc   ;==>_GUICtrlToolbar_SetStyleAltDrag
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetStyleCustomErase
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetStyleCustomErase($hWnd, $fState = True)
-	Return _GUICtrlToolbar_SetStyleEx($hWnd, $TBSTYLE_CUSTOMERASE, $fState)
+	Return __GUICtrlToolbar_SetStyleEx($hWnd, $TBSTYLE_CUSTOMERASE, $fState)
 EndFunc   ;==>_GUICtrlToolbar_SetStyleCustomErase
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _GUICtrlToolbar_SetStyleEx
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __GUICtrlToolbar_SetStyleEx
 ; Description ...: Changes a style for the toolbar
-; Syntax.........: _GUICtrlToolbar_SetStyleEx($hWnd, $iStyle, $fStyle)
+; Syntax.........: __GUICtrlToolbar_SetStyleEx($hWnd, $iStyle, $fStyle)
 ; Parameters ....: $hWnd        - Handle to the control
 ;                  $iStyle      - Style to be changed
 ;                  $fStyle      - True to set, false to unset
@@ -3148,20 +3195,18 @@ EndFunc   ;==>_GUICtrlToolbar_SetStyleCustomErase
 ; Modified.......:
 ; Remarks .......: This function is used internally to implement the SetStylex functions
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
-Func _GUICtrlToolbar_SetStyleEx($hWnd, $iStyle, $fStyle)
-	Local $iN
-
-	$iN = _GUICtrlToolbar_GetStyle($hWnd)
+Func __GUICtrlToolbar_SetStyleEx($hWnd, $iStyle, $fStyle)
+	Local $iN = _GUICtrlToolbar_GetStyle($hWnd)
 	If $fStyle Then
 		$iN = BitOR($iN, $iStyle)
 	Else
 		$iN = BitAND($iN, BitNOT($iStyle))
 	EndIf
 	Return _GUICtrlToolbar_SetStyle($hWnd, $iN)
-EndFunc   ;==>_GUICtrlToolbar_SetStyleEx
+EndFunc   ;==>__GUICtrlToolbar_SetStyleEx
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _GUICtrlToolbar_SetStyleFlat
@@ -3175,11 +3220,11 @@ EndFunc   ;==>_GUICtrlToolbar_SetStyleEx
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetStyleFlat
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetStyleFlat($hWnd, $fState)
-	Return _GUICtrlToolbar_SetStyleEx($hWnd, $TBSTYLE_FLAT, $fState)
+	Return __GUICtrlToolbar_SetStyleEx($hWnd, $TBSTYLE_FLAT, $fState)
 EndFunc   ;==>_GUICtrlToolbar_SetStyleFlat
 
 ; #FUNCTION# ====================================================================================================================
@@ -3194,11 +3239,11 @@ EndFunc   ;==>_GUICtrlToolbar_SetStyleFlat
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetStyleList
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetStyleList($hWnd, $fState)
-	Return _GUICtrlToolbar_SetStyleEx($hWnd, $TBSTYLE_LIST, $fState)
+	Return __GUICtrlToolbar_SetStyleEx($hWnd, $TBSTYLE_LIST, $fState)
 EndFunc   ;==>_GUICtrlToolbar_SetStyleList
 
 ; #FUNCTION# ====================================================================================================================
@@ -3213,11 +3258,11 @@ EndFunc   ;==>_GUICtrlToolbar_SetStyleList
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetStyleRegisterDrop
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetStyleRegisterDrop($hWnd, $fState)
-	Return _GUICtrlToolbar_SetStyleEx($hWnd, $TBSTYLE_REGISTERDROP, $fState)
+	Return __GUICtrlToolbar_SetStyleEx($hWnd, $TBSTYLE_REGISTERDROP, $fState)
 EndFunc   ;==>_GUICtrlToolbar_SetStyleRegisterDrop
 
 ; #FUNCTION# ====================================================================================================================
@@ -3232,11 +3277,11 @@ EndFunc   ;==>_GUICtrlToolbar_SetStyleRegisterDrop
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetStyleToolTips
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetStyleToolTips($hWnd, $fState)
-	Return _GUICtrlToolbar_SetStyleEx($hWnd, $TBSTYLE_TOOLTIPS, $fState)
+	Return __GUICtrlToolbar_SetStyleEx($hWnd, $TBSTYLE_TOOLTIPS, $fState)
 EndFunc   ;==>_GUICtrlToolbar_SetStyleToolTips
 
 ; #FUNCTION# ====================================================================================================================
@@ -3251,11 +3296,11 @@ EndFunc   ;==>_GUICtrlToolbar_SetStyleToolTips
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetStyleTransparent
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetStyleTransparent($hWnd, $fState)
-	Return _GUICtrlToolbar_SetStyleEx($hWnd, $TBSTYLE_TRANSPARENT, $fState)
+	Return __GUICtrlToolbar_SetStyleEx($hWnd, $TBSTYLE_TRANSPARENT, $fState)
 EndFunc   ;==>_GUICtrlToolbar_SetStyleTransparent
 
 ; #FUNCTION# ====================================================================================================================
@@ -3270,11 +3315,11 @@ EndFunc   ;==>_GUICtrlToolbar_SetStyleTransparent
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetStyleWrapable
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetStyleWrapable($hWnd, $fState)
-	Return _GUICtrlToolbar_SetStyleEx($hWnd, $TBSTYLE_WRAPABLE, $fState)
+	Return __GUICtrlToolbar_SetStyleEx($hWnd, $TBSTYLE_WRAPABLE, $fState)
 EndFunc   ;==>_GUICtrlToolbar_SetStyleWrapable
 
 ; #FUNCTION# ====================================================================================================================
@@ -3289,11 +3334,12 @@ EndFunc   ;==>_GUICtrlToolbar_SetStyleWrapable
 ; Remarks .......: Any buttons that are added to the control before sending the calling this function will not be registered with
 ;                  the ToolTip control.
 ; Related .......: _GUICtrlToolbar_GetToolTips
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetToolTips($hWnd, $hToolTip)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	_SendMessage($hWnd, $TB_SETTOOLTIPS, $hToolTip, 0, 0, "hwnd")
 EndFunc   ;==>_GUICtrlToolbar_SetToolTips
 
@@ -3310,11 +3356,12 @@ EndFunc   ;==>_GUICtrlToolbar_SetToolTips
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlToolbar_GetUnicodeFormat
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetUnicodeFormat($hWnd, $fUnicode = False)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
+
 	Return _SendMessage($hWnd, $TB_SETUNICODEFORMAT, $fUnicode)
 EndFunc   ;==>_GUICtrlToolbar_SetUnicodeFormat
 
@@ -3329,40 +3376,22 @@ EndFunc   ;==>_GUICtrlToolbar_SetUnicodeFormat
 ; Modified.......: Gary Frost
 ; Remarks .......: Minimum OS - Windows XP
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
 Func _GUICtrlToolbar_SetWindowTheme($hWnd, $sTheme)
-	If $Debug_TB Then _GUICtrlToolbar_ValidateClassName($hWnd)
-	Local $iTheme, $pTheme, $tTheme, $pMemory, $tMemMap
+	If $Debug_TB Then __UDF_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
 
-	$tTheme = _WinAPI_MultiByteToWideChar($sTheme)
-	$pTheme = DllStructGetPtr($tTheme)
+	Local $tTheme = _WinAPI_MultiByteToWideChar($sTheme)
+	Local $pTheme = DllStructGetPtr($tTheme)
 	If _WinAPI_InProcess($hWnd, $gh_TBLastWnd) Then
 		_SendMessage($hWnd, $TB_SETWINDOWTHEME, 0, $pTheme, 0, "wparam", "ptr")
 	Else
-		$iTheme = DllStructGetSize($tTheme)
-		$pMemory = _MemInit($hWnd, $iTheme, $tMemMap)
+		Local $iTheme = DllStructGetSize($tTheme)
+		Local $tMemMap
+		Local $pMemory = _MemInit($hWnd, $iTheme, $tMemMap)
 		_MemWrite($tMemMap, $pTheme, $pMemory, $iTheme)
 		_SendMessage($hWnd, $TB_SETWINDOWTHEME, 0, $pMemory, 0, "wparam", "ptr")
 		_MemFree($tMemMap)
 	EndIf
 EndFunc   ;==>_GUICtrlToolbar_SetWindowTheme
-
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _GUICtrlToolbar_ValidateClassName
-; Description ...: Used for debugging when creating examples
-; Syntax.........: _GUICtrlToolbar_ValidateClassName($hWnd)
-; Parameters ....: $hWnd        - Handle to the control
-; Return values .: None
-; Author ........: Gary Frost (gafrost)
-; Modified.......:
-; Remarks .......: For Internal Use Only
-; Related .......:
-; Link ..........;
-; Example .......;
-; ===============================================================================================================================
-Func _GUICtrlToolbar_ValidateClassName($hWnd)
-	_GUICtrlToolbar_DebugPrint("This is for debugging only, set the debug variable to false before submitting")
-	_WinAPI_ValidateClassName($hWnd, $__TOOLBARCONSTANT_ClassName)
-EndFunc   ;==>_GUICtrlToolbar_ValidateClassName

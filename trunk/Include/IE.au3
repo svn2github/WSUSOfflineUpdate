@@ -1,4 +1,16 @@
 #include-once
+
+#include "WinAPIError.au3"
+
+; #INDEX# =======================================================================================================================
+; Title .........: Internet Explorer Automation UDF Library for AutoIt3
+; AutoIt Version : 3.2
+; Language ......: English
+; Description ...: A collection of functions for creating, attaching to, reading from and manipulating Internet Explorer.
+; Author(s) .....: DaleHohm, big_daddy
+; Dll ...........: user32.dll, ole32.dll, oleacc.dll
+; ===============================================================================================================================
+
 #Region Header
 #cs
 	Title:   Internet Explorer Automation UDF Library for AutoIt3
@@ -159,26 +171,24 @@ Global Enum Step * 2 _; NotificationMethod
 		$_IENotifyMethod_MsgBox
 #EndRegion Global Variables and Constants
 #Region Core functions
-;===============================================================================
-;
-; Function Name:    _IECreate()
-; Description:      Create an Internet Explorer Browser Window
-; Parameter(s):     $s_Url			- Optional: specifies the Url to navigate to upon creation
-;					$f_tryAttach	- Optional: specifies whether to try to attach to an existing window
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IECreate
+; Description ...: Create an Internet Explorer Browser Window
+; Parameters ....: $s_Url			- Optional: specifies the Url to navigate to upon creation
+;				   $f_tryAttach	- Optional: specifies whether to try to attach to an existing window
 ;										0 = (Default) do not try to attach
 ;										1 = Try to attach to an existing window
-;					$f_visible 		- Optional: specifies whether the browser window will be visible
+;				   $f_visible 		- Optional: specifies whether the browser window will be visible
 ;										0 = Browser Window is hidden
 ;										1 = (Default) Browser Window is visible
-;					$f_wait			- Optional: specifies whether to wait for page to load before returning
+;				   $f_wait			- Optional: specifies whether to wait for page to load before returning
 ;										0 = Return immediately, not waiting for page to load
 ;										1 = (Default) Wait for page load to complete before returning
-;					$f_takeFocus	- Optional: specifies whether to bring the attached window to focus
+;				   $f_takeFocus	- Optional: specifies whether to bring the attached window to focus
 ;										0 =  Do Not Bring window into focus
 ;										1 = (Default) bring window into focus
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success	- Returns an object variable pointing to an InternetExplorer.Application object
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success	- Returns an object variable pointing to an InternetExplorer.Application object
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 1 ($_IEStatus_GeneralError) = General Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
@@ -187,13 +197,9 @@ Global Enum Step * 2 _; NotificationMethod
 ;								- 8 ($_IEStatus_AccessIsDenied) = Access Is Denied
 ;								- 9 ($_IEStatus_ClientDisconnected) = Client Disconnected
 ;					@Extended	- Set to true (1) or false (0) depending on the success of $f_tryAttach
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IECreate($s_Url = "about:blank", $f_tryAttach = 0, $f_visible = 1, $f_wait = 1, $f_takeFocus = 1)
-
-	Local $result, $f_mustUnlock = 0
 
 	; Temporary campatability mode for pre V2.0 code
 	If $__IEAU3V1Compatibility Then
@@ -217,77 +223,60 @@ Func _IECreate($s_Url = "about:blank", $f_tryAttach = 0, $f_visible = 1, $f_wait
 		Local $oResult = _IEAttach($s_Url, "url")
 		If IsObj($oResult) Then
 			If $f_takeFocus Then WinActivate(HWnd($oResult.HWND))
-			SetError($_IEStatus_Success)
-			SetExtended(1)
-			Return $oResult
+			Return SetError($_IEStatus_Success, 1, $oResult)
 		EndIf
 	EndIf
 
-	If Not $f_visible Then
-		$result = __IELockSetForegroundWindow($LSFW_LOCK)
-		If $result Then $f_mustUnlock = 1
-	EndIf
+	Local $f_mustUnlock = 0
+	If Not $f_visible And __IELockSetForegroundWindow($LSFW_LOCK) Then $f_mustUnlock = 1
 
 	Local $o_object = ObjCreate("InternetExplorer.Application")
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IECreate", "", "Browser Object Creation Failed")
-		SetError($_IEStatus_GeneralError)
-		Return 0
+		Return SetError($_IEStatus_GeneralError, 0, 0)
 	EndIf
 
 	$o_object.visible = $f_visible
 
-	If $f_mustUnlock Then
-		$result = __IELockSetForegroundWindow($LSFW_UNLOCK)
-		If Not $result Then __IEErrorNotify("Warning", "_IECreate", "", "Foreground Window Unlock Failed!")
-		; If the unlock doesn't work we may have created an unwanted modal window
-	EndIf
+	; If the unlock doesn't work we may have created an unwanted modal window
+	If $f_mustUnlock And Not __IELockSetForegroundWindow($LSFW_UNLOCK) Then __IEErrorNotify("Warning", "_IECreate", "", "Foreground Window Unlock Failed!")
 	_IENavigate($o_object, $s_Url, $f_wait)
-	SetError(@error)
-	Return $o_object
+
+	Return SetError(@error, 0, $o_object)
 EndFunc   ;==>_IECreate
 
-;===============================================================================
-;
-; Function Name:    _IECreateEmbedded()
-; Description:		Create a Webbrowser object suitable for embedding in an AutoIt GUI
-;					with GuiCtrlCreateObj().
-; Parameter(s):		None
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success	- Returns a Webbrowser object reference
-;                   On Failure	- Returns 0 and sets @ERROR
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IECreateEmbedded
+; Description ...: Create a Webbrowser object suitable for embedding in an AutoIt GUI with GuiCtrlCreateObj().
+; Parameters ....: None
+; Return values .: On Success	- Returns a Webbrowser object reference
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 1 ($_IEStatus_GeneralError) = General Error
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IECreateEmbedded()
 
 	Local $o_object = ObjCreate("Shell.Explorer.2")
 
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IECreateEmbedded", "", "WebBrowser Object Creation Failed")
-		SetError($_IEStatus_GeneralError)
-		Return 0
+		Return SetError($_IEStatus_GeneralError, 0, 0)
 	EndIf
 	;
-	SetError($_IEStatus_Success)
-	Return $o_object
+	Return SetError($_IEStatus_Success, 0, $o_object)
 EndFunc   ;==>_IECreateEmbedded
 
-;===============================================================================
-;
-; Function Name:    _IENavigate()
-; Description:		Directs an existing browser window to navigate to the specified URL
-; Parameter(s):		$o_object 		- Object variable of an InternetExplorer.Application, Window or Frame object
-;					$s_Url 			- URL to navigate to (e.g. "http://www.autoitscript.com")
-;					$f_wait 		- Optional: specifies whether to wait for page to load before returning
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IENavigate
+; Description ...: Directs an existing browser window to navigate to the specified URL
+; Parameters ....: $o_object 		- Object variable of an InternetExplorer.Application, Window or Frame object
+;				   $s_Url 			- URL to navigate to (e.g. "http://www.autoitscript.com")
+;				   $f_wait 		- Optional: specifies whether to wait for page to load before returning
 ;										0 = Return immediately, not waiting for page to load
 ;										1 = (Default) Wait for page load to complete before returning
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns -1
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- Returns -1
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 1 ($_IEStatus_GeneralError) = General Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
@@ -296,40 +285,34 @@ EndFunc   ;==>_IECreateEmbedded
 ;								- 8 ($_IEStatus_AccessIsDenied) = Access Is Denied
 ;								- 9 ($_IEStatus_ClientDisconnected) = Client Disconnected
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IENavigate(ByRef $o_object, $s_Url, $f_wait = 1)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IENavigate", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	If Not __IEIsObjType($o_object, "documentContainer") Then
 		__IEErrorNotify("Error", "_IENavigate", "$_IEStatus_InvalidObjectType")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 	;
 	$o_object.navigate($s_Url)
 	If $f_wait Then
 		_IELoadWait($o_object)
-		SetError(@error)
-		Return -1
+		Return SetError(@error, 0, -1)
 	EndIf
-	SetError($_IEStatus_Success)
-	Return -1
+
+	Return SetError($_IEStatus_Success, 0, -1)
 EndFunc   ;==>_IENavigate
 
-;===============================================================================
-;
-; Function Name:    _IEAttach()
-; Description:		Attach to the first existing instance of Internet Explorer where the
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEAttach
+; Description ...: Attach to the first existing instance of Internet Explorer where the
 ;					search string sub-string matches based on the selected mode.
-; Parameter(s):		$s_string	- String to search for (for "embedded" or "dialogbox", use Title sub-string or HWND of window)
-;					$s_mode		- Optional: specifies search mode
+; Parameters ....: $s_string	- String to search for (for "embedded" or "dialogbox", use Title sub-string or HWND of window)
+;				   $s_mode		- Optional: specifies search mode
 ;									Title		= (Default) browser title
 ;									URL			= url of the current page
 ;									Text 		= text from the body of the current page
@@ -337,34 +320,28 @@ EndFunc   ;==>_IENavigate
 ;									HWND 		= hwnd of the browser window
 ;									Embedded 	= title sub-string or hwnd of the window embedding the control
 ;									DialogBox 	= title sub-string or hwnd of modal/modeless dialogbox
-;					$i_instance	- Optional: specifies the 1-based instance when multiple windows match the criteria.
+;				   $i_instance	- Optional: specifies the 1-based instance when multiple windows match the criteria.
 ;									For Embedded, DialogBox and HWND it specifies the embedded browser occurance within
 ;									the matching window
-; Requirement(s):   AutoIt3 V3.2 or higher
-;					On Success	- Returns an object variable pointing to the IE Window Object
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success	- Returns an object variable pointing to the IE Window Object
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 5 ($_IEStatus_InvalidValue) = Invalid Value
 ;								- 7 ($_IEStatus_NoMatch) = No Match
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEAttach($s_string, $s_mode = "Title", $i_instance = 1)
 	$s_mode = StringLower($s_mode)
-	Local $h_control, $oResult, $f_isBrowser, $s_tmp, $i_tmp
 
 	$i_instance = Int($i_instance)
 	If $i_instance < 1 Then
 		__IEErrorNotify("Error", "_IEAttach", "$_IEStatus_InvalidValue", "$i_instance < 1")
-		SetError($_IEStatus_InvalidValue, 3)
-		Return 0
+		Return SetError($_IEStatus_InvalidValue, 3, 0)
 	EndIf
 
 	If $s_mode = "embedded" Or $s_mode = "dialogbox" Then
-		Local $iWinTitleMatchMode = Opt("WinTitleMatchMode")
-		Opt("WinTitleMatchMode", 2)
+		Local $iWinTitleMatchMode = Opt("WinTitleMatchMode", 2)
 		If $s_mode = "dialogbox" And $i_instance > 1 Then
 			If IsHWnd($s_string) Then
 				$i_instance = 1
@@ -376,27 +353,26 @@ Func _IEAttach($s_string, $s_mode = "Title", $i_instance = 1)
 					$i_instance = 1
 				Else
 					__IEErrorNotify("Warning", "_IEAttach", "$_IEStatus_NoMatch")
-					SetError($_IEStatus_NoMatch, 1)
-					Return 0
+					Opt("WinTitleMatchMode", $iWinTitleMatchMode)
+					Return SetError($_IEStatus_NoMatch, 1, 0)
 				EndIf
 			EndIf
 		EndIf
-		$h_control = ControlGetHandle($s_string, "", "[CLASS:Internet Explorer_Server; INSTANCE:" & $i_instance & "]")
-		$oResult = __IEControlGetObjFromHWND($h_control)
+		Local $h_control = ControlGetHandle($s_string, "", "[CLASS:Internet Explorer_Server; INSTANCE:" & $i_instance & "]")
+		Local $oResult = __IEControlGetObjFromHWND($h_control)
 		Opt("WinTitleMatchMode", $iWinTitleMatchMode)
 		If IsObj($oResult) Then
-			SetError($_IEStatus_Success)
-			Return $oResult
+			Return SetError($_IEStatus_Success, 0, $oResult)
 		Else
 			__IEErrorNotify("Warning", "_IEAttach", "$_IEStatus_NoMatch")
-			SetError($_IEStatus_NoMatch, 1)
-			Return 0
+			Return SetError($_IEStatus_NoMatch, 1, 0)
 		EndIf
 	EndIf
 
 	Local $o_Shell = ObjCreate("Shell.Application")
 	Local $o_ShellWindows = $o_Shell.Windows(); collection of all ShellWindows (IE and File Explorer)
-	$i_tmp = 1
+	Local $i_tmp = 1
+	Local $f_NotifyStatus, $status, $f_isBrowser, $s_tmp
 	For $o_window In $o_ShellWindows
 		;------------------------------------------------------------------------------------------
 		; Check to verify that the window object is a valid browser, if not, skip it
@@ -406,11 +382,11 @@ Func _IEAttach($s_string, $s_mode = "Title", $i_instance = 1)
 		;
 		$f_isBrowser = True
 		; Trap COM errors and turn off error notification
-		Local $status = __IEInternalErrorHandlerRegister()
+		$status = __IEInternalErrorHandlerRegister()
 		If Not $status Then __IEErrorNotify("Warning", "_IEAttach", _
 				"Cannot register internal error handler, cannot trap COM errors", _
 				"Use _IEErrorHandlerRegister() to register a user error handler")
-		Local $f_NotifyStatus = _IEErrorNotify() ; save current error notify status
+		$f_NotifyStatus = _IEErrorNotify() ; save current error notify status
 		_IEErrorNotify(False)
 
 		; Check conditions to verify that the object is a browser
@@ -433,16 +409,14 @@ Func _IEAttach($s_string, $s_mode = "Title", $i_instance = 1)
 				Case "title"
 					If StringInStr($o_window.document.title, $s_string) > 0 Then
 						If $i_instance = $i_tmp Then
-							SetError($_IEStatus_Success)
-							Return $o_window
+							Return SetError($_IEStatus_Success, 0, $o_window)
 						Else
 							$i_tmp += 1
 						EndIf
 					EndIf
 				Case "instance"
 					If $i_instance = $i_tmp Then
-						SetError($_IEStatus_Success)
-						Return $o_window
+						Return SetError($_IEStatus_Success, 0, $o_window)
 					Else
 						$i_tmp += 1
 					EndIf
@@ -457,8 +431,7 @@ Func _IEAttach($s_string, $s_mode = "Title", $i_instance = 1)
 					EndIf
 					If $f_found Then
 						If $i_instance = $i_tmp Then
-							SetError($_IEStatus_Success)
-							Return $o_window
+							Return SetError($_IEStatus_Success, 0, $o_window)
 						Else
 							$i_tmp += 1
 						EndIf
@@ -466,8 +439,7 @@ Func _IEAttach($s_string, $s_mode = "Title", $i_instance = 1)
 				Case "url"
 					If StringInStr($o_window.LocationURL, $s_string) > 0 Then
 						If $i_instance = $i_tmp Then
-							SetError($_IEStatus_Success)
-							Return $o_window
+							Return SetError($_IEStatus_Success, 0, $o_window)
 						Else
 							$i_tmp += 1
 						EndIf
@@ -475,8 +447,7 @@ Func _IEAttach($s_string, $s_mode = "Title", $i_instance = 1)
 				Case "text"
 					If StringInStr($o_window.document.body.innerText, $s_string) > 0 Then
 						If $i_instance = $i_tmp Then
-							SetError($_IEStatus_Success)
-							Return $o_window
+							Return SetError($_IEStatus_Success, 0, $o_window)
 						Else
 							$i_tmp += 1
 						EndIf
@@ -484,8 +455,7 @@ Func _IEAttach($s_string, $s_mode = "Title", $i_instance = 1)
 				Case "html"
 					If StringInStr($o_window.document.body.innerHTML, $s_string) > 0 Then
 						If $i_instance = $i_tmp Then
-							SetError($_IEStatus_Success)
-							Return $o_window
+							Return SetError($_IEStatus_Success, 0, $o_window)
 						Else
 							$i_tmp += 1
 						EndIf
@@ -496,33 +466,28 @@ Func _IEAttach($s_string, $s_mode = "Title", $i_instance = 1)
 						__IEErrorNotify("Warning", "_IEAttach", "$_IEStatus_GeneralError", "$i_instance > 1 invalid with HWnd.  Setting to 1.")
 					EndIf
 					If _IEPropertyGet($o_window, "hwnd") = $s_string Then
-						SetError($_IEStatus_Success)
-						Return $o_window
+						Return SetError($_IEStatus_Success, 0, $o_window)
 					EndIf
 				Case Else
 					; Invalid Mode
 					__IEErrorNotify("Error", "_IEAttach", "$_IEStatus_InvalidValue", "Invalid Mode Specified")
-					SetError($_IEStatus_InvalidValue, 2)
-					Return 0
+					Return SetError($_IEStatus_InvalidValue, 2, 0)
 			EndSwitch
 		EndIf
 	Next
 	__IEErrorNotify("Warning", "_IEAttach", "$_IEStatus_NoMatch")
-	SetError($_IEStatus_NoMatch, 1)
-	Return 0
+	Return SetError($_IEStatus_NoMatch, 1, 0)
 EndFunc   ;==>_IEAttach
 
-;===============================================================================
-;
-; Function Name:    _IELoadWait()
-; Description:		Wait for a browser page load to complete before returning
-; Parameter(s):		$o_object 	- Object variable of an InternetExplorer.Application
-;					$i_delay	- Optional: Milliseconds to wait before checking status
-;					$i_timeout	- Optional: Period of time to wait before exiting function
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IELoadWait
+; Description ...: Wait for a browser page load to complete before returning
+; Parameters ....: $o_object 	- Object variable of an InternetExplorer.Application
+;				   $i_delay	    - Optional: Milliseconds to wait before checking status
+;				   $i_timeout	- Optional: Period of time to wait before exiting function
 ;									(default = 300000 ms aka 5 min)
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns 1
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- Returns 1
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 1 ($_IEStatus_GeneralError) = General Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
@@ -531,28 +496,24 @@ EndFunc   ;==>_IEAttach
 ;								- 8 ($_IEStatus_AccessIsDenied) = Access Is Denied
 ;								- 9 ($_IEStatus_ClientDisconnected) = Client Disconnected
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
+; Author ........: Dale Hohm
 ;
-; Developer notes:	Error codes are found in Winerror.h supplied with Visual C++ and also on MSDN
+; Remarks .......: Error codes are found in Winerror.h supplied with Visual C++ and also on MSDN
 ;					http://support.microsoft.com/kb/186063
 ;
 ;					There appear to be multiple error numbers besides 169 assigned to the "Access is Denied" description. This version
 ;					uses an OR condition rather than an AND to try to capture these.  This will be an issue in non-English language
 ;					versions of windows where the description string will not match for those other error numbers.  More research needed.
-;
-;===============================================================================
-;
+; ===============================================================================================================================
 Func _IELoadWait(ByRef $o_object, $i_delay = 0, $i_timeout = -1)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IELoadWait", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 
 	If Not __IEIsObjType($o_object, "browserdom") Then
 		__IEErrorNotify("Error", "_IELoadWait", "$_IEStatus_InvalidObjectType", ObjName($o_object))
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 
 	Local $oTemp, $f_Abort = False, $i_ErrorStatusCode = $_IEStatus_Success
@@ -681,52 +642,42 @@ Func _IELoadWait(ByRef $o_object, $i_delay = 0, $i_timeout = -1)
 
 	Switch $i_ErrorStatusCode
 		Case $_IEStatus_Success
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $_IEStatus_LoadWaitTimeout
 			__IEErrorNotify("Warning", "_IELoadWait", "$_IEStatus_LoadWaitTimeout")
-			SetError($_IEStatus_LoadWaitTimeout, 3)
-			Return 0
+			Return SetError($_IEStatus_LoadWaitTimeout, 3, 0)
 		Case $_IEStatus_AccessIsDenied
 			__IEErrorNotify("Warning", "_IELoadWait", "$_IEStatus_AccessIsDenied", _
 					"Cannot verify readyState.  Likely casue: cross-site scripting security restriction.")
-			SetError($_IEStatus_AccessIsDenied)
-			Return 0
+
+			Return SetError($_IEStatus_AccessIsDenied, 0, 0)
 		Case $_IEStatus_ClientDisconnected
 			__IEErrorNotify("Error", "_IELoadWait", "$_IEStatus_ClientDisconnected", _
 					"Browser has been deleted prior to operation.")
-			SetError($_IEStatus_ClientDisconnected)
-			Return 0
+			Return SetError($_IEStatus_ClientDisconnected, 0, 0)
 		Case Else
 			__IEErrorNotify("Error", "_IELoadWait", "$_IEStatus_GeneralError", "Invalid Error Status - Notify IE.au3 developer")
-			SetError($_IEStatus_GeneralError)
-			Return 0
+			Return SetError($_IEStatus_GeneralError, 0, 0)
 	EndSwitch
 EndFunc   ;==>_IELoadWait
 
-;===============================================================================
-;
-; Function Name:    _IELoadWaitTimeout()
-; Description:		Retrieve or set the current value in milliseconds _IELoadWait will try before timing out
-; Parameter(s):		$i_timeout	- Optional: retrieve or specify the number of milliseconds
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IELoadWaitTimeout
+; Description ...: Retrieve or set the current value in milliseconds _IELoadWait will try before timing out
+; Parameters ....: $i_timeout	- Optional: retrieve or specify the number of milliseconds
 ;								- 0 or positive integer sets timeout to this value
 ;								- -1 = (Default) returns the current timeout value
 ;									(stored in global variable $__IELoadWaitTimeout)
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- If $i_timeout = -1, returns the current timeout value, else returns 1
-;                   On Failure 	- None
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Return values .: On Success 	- If $i_timeout = -1, returns the current timeout value, else returns 1
+;                  On Failure 	- None
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IELoadWaitTimeout($i_timeout = -1)
 	If $i_timeout = -1 Then
-		SetError($_IEStatus_Success)
-		Return $__IELoadWaitTimeout
+		Return SetError($_IEStatus_Success, 0, $__IELoadWaitTimeout)
 	Else
 		$__IELoadWaitTimeout = $i_timeout
-		SetError($_IEStatus_Success)
-		Return 1
+		Return SetError($_IEStatus_Success, 0, 1)
 	EndIf
 EndFunc   ;==>_IELoadWaitTimeout
 
@@ -739,118 +690,97 @@ EndFunc   ;==>_IELoadWaitTimeout
 ; referenced in the frames.  In general, if all the referenced pages are on the same
 ; webserver these functions should work as described; if not, unexpected COM failures
 ; can occur.
-;===============================================================================
-;
-; Function Name:    _IEIsFrameSet()
-; Description:		Checks to see if the specified Window contains a FrameSet
-; Parameter(s):     $o_object 	- Object variable of an InternetExplorer.Application, Window or Frame object
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns 1 if the object references a FrameSet page
-;                   On Failure	- Returns 0 and sets @ERROR
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEIsFrameSet
+; Description ...: Checks to see if the specified Window contains a FrameSet
+; Parameters ....: $o_object 	- Object variable of an InternetExplorer.Application, Window or Frame object
+; Return values .: On Success 	- Returns 1 if the object references a FrameSet page
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEIsFrameSet(ByRef $o_object)
 	; Note: this is more reliable test for a FrameSet than checking the
 	; number of frames (document.frames.length) because iFrames embedded on a normal
 	; page are included in the frame collection even though it is not a FrameSet
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEIsFrameSet", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	If String($o_object.document.body.tagName) = "FRAMESET" Then
-		SetError($_IEStatus_Success)
-		Return 1
+		Return SetError($_IEStatus_Success, 0, 1)
 	Else
-		SetError($_IEStatus_Success)
-		Return 0
+		Return SetError($_IEStatus_Success, 0, 0)
 	EndIf
 EndFunc   ;==>_IEIsFrameSet
 
-;===============================================================================
-;
-; Function Name:    _IEFrameGetCollection()
-; Description:		Returns a collection object containing the frames in a FrameSet or the iFrames on a normal page
-; Parameter(s):		$o_object 	- Object variable of an InternetExplorer.Application, Window or Frame object
-;					$i_index	- Optional: specifies whether to return a collection or indexed instance
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEFrameGetCollection
+; Description ...: Returns a collection object containing the frames in a FrameSet or the iFrames on a normal page
+; Parameters ....: $o_object 	- Object variable of an InternetExplorer.Application, Window or Frame object
+;				   $i_index	- Optional: specifies whether to return a collection or indexed instance
 ;								- 0 or positive integer returns an indexed instance
 ;								- -1 = (Default) returns a collection
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns an object variable containing the Frames collection, @EXTENDED = Frame count
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- Returns an object variable containing the Frames collection, @EXTENDED = Frame count
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 5 ($_IEStatus_InvalidValue) = Invalid Value
 ;								- 7 ($_IEStatus_NoMatch) = No Match
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEFrameGetCollection(ByRef $o_object, $i_index = -1)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEFrameGetCollection", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	$i_index = Number($i_index)
 	Select
 		Case $i_index = -1
-			SetError($_IEStatus_Success)
-			SetExtended($o_object.document.parentwindow.frames.length)
-			Return $o_object.document.parentwindow.frames
+			Return SetError($_IEStatus_Success, $o_object.document.parentwindow.frames.length, _
+						$o_object.document.parentwindow.frames)
 		Case $i_index > -1 And $i_index < $o_object.document.parentwindow.frames.length
-			SetError($_IEStatus_Success)
-			SetExtended($o_object.document.parentwindow.frames.length)
-			Return $o_object.document.parentwindow.frames.item($i_index)
+			Return SetError($_IEStatus_Success, $o_object.document.parentwindow.frames.length, _
+						$o_object.document.parentwindow.frames.item($i_index))
 		Case $i_index < -1
 			__IEErrorNotify("Error", "_IEFrameGetCollection", "$_IEStatus_InvalidValue", "$i_index < -1")
-			SetError($_IEStatus_InvalidValue, 2)
-			Return 0
+			Return SetError($_IEStatus_InvalidValue, 2, 0)
 		Case Else
 			__IEErrorNotify("Warning", "_IEFrameGetCollection", "$_IEStatus_NoMatch")
-			SetError($_IEStatus_NoMatch, 2)
-			Return 0
+			Return SetError($_IEStatus_NoMatch, 2, 0)
 	EndSelect
 EndFunc   ;==>_IEFrameGetCollection
 
-;===============================================================================
-;
-; Function Name:    _IEFrameGetObjByName()
-; Description:		Returns an object reference to a Frame by name
-; Parameter(s):		$o_object	- Object variable of an InternetExplorer.Application, Window or Frame object
-;					$s_name		- Name of the Frame you wish to match
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns an object variable pointing to the Window object in a Frame, @EXTENDED = Frame count
-;                   On Failure	- Returns 0 and sets @ERROR
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEFrameGetObjByName
+; Description ...: Returns an object reference to a Frame by name
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Window or Frame object
+;				   $s_name		- Name of the Frame you wish to match
+; Return values .: On Success 	- Returns an object variable pointing to the Window object in a Frame, @EXTENDED = Frame count
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 4 ($_IEStatus_InvalidObjectType) = Invalid Object Type
 ;								- 7 ($_IEStatus_NoMatch) = No Match
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEFrameGetObjByName(ByRef $o_object, $s_Name)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEFrameGetObjByName", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
-	Local $oTemp, $oFrames, $oFrame
+	Local $oTemp, $oFrames
 
 	If Not __IEIsObjType($o_object, "browserdom") Then
 		__IEErrorNotify("Error", "_IEFrameGetObjByName", "$_IEStatus_InvalidObjectType")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 
 	If __IEIsObjType($o_object, "document") Then
@@ -867,37 +797,30 @@ Func _IEFrameGetObjByName(ByRef $o_object, $s_Name)
 
 	If $oFrames.length Then
 		For $oFrame In $oFrames
-			If $oFrame.name = $s_Name Then
-				SetError($_IEStatus_Success)
-				Return $oTemp.frames($s_Name)
-			EndIf
+			If $oFrame.name = $s_Name Then Return SetError($_IEStatus_Success, 0, $oTemp.frames($s_Name))
 		Next
 		__IEErrorNotify("Warning", "_IEFrameGetObjByName", "$_IEStatus_NoMatch", "No frames matching name")
-		SetError($_IEStatus_NoMatch, 2)
-		Return 0
+		Return SetError($_IEStatus_NoMatch, 2, 0)
 	Else
 		__IEErrorNotify("Warning", "_IEFrameGetObjByName", "$_IEStatus_NoMatch", "No Frames found")
-		SetError($_IEStatus_NoMatch, 2)
-		Return 0
+		Return SetError($_IEStatus_NoMatch, 2, 0)
 	EndIf
 EndFunc   ;==>_IEFrameGetObjByName
 
 #EndRegion Frame Functions
 #Region Link functions
-;===============================================================================
-;
-; Function Name:    _IELinkClickByText()
-; Description:		Simulate a mouse click on a link with text sub-string matching the string provided
-; Parameter(s):		$o_object	- Object variable of an InternetExplorer.Application, Window or Frame object
-;					$s_linkText	- Text displayed on the web page for the desired link to click
-;					$i_index	- Optional: If the link text occurs more than once, specify which instance
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IELinkClickByText
+; Description ...: Simulate a mouse click on a link with text sub-string matching the string provided
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Window or Frame object
+;				   $s_linkText	- Text displayed on the web page for the desired link to click
+;				   $i_index	- Optional: If the link text occurs more than once, specify which instance
 ;									you want to click by 0-based index
-;					$f_wait 	- Optional: specifies whether to wait for page to load before returning
+;				   $f_wait 	- Optional: specifies whether to wait for page to load before returning
 ;									0 = Return immediately, not waiting for page to load
 ;									1 = (Default) Wait for page load to complete before returning
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns -1
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- Returns -1
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 1 ($_IEStatus_GeneralError) = General Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
@@ -907,18 +830,15 @@ EndFunc   ;==>_IEFrameGetObjByName
 ;								- 8 ($_IEStatus_AccessIsDenied) = Access Is Denied
 ;								- 9 ($_IEStatus_ClientDisconnected) = Client Disconnected
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IELinkClickByText(ByRef $o_object, $s_linkText, $i_index = 0, $f_wait = 1)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IELinkClickByText", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
-	Local $found = 0, $link, $linktext, $links = $o_object.document.links
+	Local $found = 0, $linktext, $links = $o_object.document.links
 	$i_index = Number($i_index)
 	For $link In $links
 		$linktext = $link.outerText & "" ; Append empty string to prevent problem with no outerText (image) links
@@ -927,32 +847,27 @@ Func _IELinkClickByText(ByRef $o_object, $s_linkText, $i_index = 0, $f_wait = 1)
 				$link.click
 				If $f_wait Then
 					_IELoadWait($o_object)
-					SetError(@error)
-					Return -1
+					Return SetError(@error, 0, -1)
 				EndIf
-				SetError($_IEStatus_Success)
-				Return -1
+				Return SetError($_IEStatus_Success, 0, -1)
 			EndIf
 			$found = $found + 1
 		EndIf
 	Next
 	__IEErrorNotify("Warning", "_IELinkClickByText", "$_IEStatus_NoMatch")
-	SetError($_IEStatus_NoMatch) ; Could be caused by parameter 2, 3 or both
-	Return 0
+	Return SetError($_IEStatus_NoMatch, 0, 0) ; Could be caused by parameter 2, 3 or both
 EndFunc   ;==>_IELinkClickByText
 
-;===============================================================================
-;
-; Function Name:    _IELinkClickByIndex()
-; Description:		Simulate a mouse click on a link by 0-based index (in source order)
-; Parameter(s):		$o_object	- Object variable of an InternetExplorer.Application, Window or Frame object
-;					$i_index	- Optional: 0-based index of the link you wish to match
-;					$f_wait 	- Optional: specifies whether to wait for page to load before returning
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IELinkClickByIndex
+; Description ...: Simulate a mouse click on a link by 0-based index (in source order)
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Window or Frame object
+;				   $i_index	- Optional: 0-based index of the link you wish to match
+;				   $f_wait 	- Optional: specifies whether to wait for page to load before returning
 ;									0 = Return immediately, not waiting for page to load
 ;									1 = (Default) Wait for page load to complete before returning
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns -1
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- Returns -1
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 1 ($_IEStatus_GeneralError) = General Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
@@ -962,15 +877,12 @@ EndFunc   ;==>_IELinkClickByText
 ;								- 8 ($_IEStatus_AccessIsDenied) = Access Is Denied
 ;								- 9 ($_IEStatus_ClientDisconnected) = Client Disconnected
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IELinkClickByIndex(ByRef $o_object, $i_index, $f_wait = 1)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IELinkClickByIndex", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	Local $oLinks = $o_object.document.links, $oLink
@@ -980,85 +892,71 @@ Func _IELinkClickByIndex(ByRef $o_object, $i_index, $f_wait = 1)
 		$oLink.click
 		If $f_wait Then
 			_IELoadWait($o_object)
-			SetError(@error)
-			Return -1
+			Return SetError(@error, 0, -1)
 		EndIf
-		SetError($_IEStatus_Success)
-		Return -1
+		Return SetError($_IEStatus_Success, 0, -1)
 	Else
 		__IEErrorNotify("Warning", "_IELinkClickByIndex", "$_IEStatus_NoMatch")
-		SetError($_IEStatus_NoMatch, 2)
-		Return 0
+		Return SetError($_IEStatus_NoMatch, 2, 0)
 	EndIf
 EndFunc   ;==>_IELinkClickByIndex
 
-;===============================================================================
-;
-; Function Name:    _IELinkGetCollection()
-; Description:		Returns a collection object containing all links in the document
-; Parameter(s):		$o_object	- Object variable of an InternetExplorer.Application, Window or Frame object
-;					$i_index	- Optional: specifies whether to return a collection or indexed instance
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IELinkGetCollection
+; Description ...: Returns a collection object containing all links in the document
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Window or Frame object
+;				   $i_index	- Optional: specifies whether to return a collection or indexed instance
 ;								- 0 or positive integer returns an indexed instance
 ;								- -1 = (Default) returns a collection
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns an object collection of all links in the document, @EXTENDED = link count
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- Returns an object collection of all links in the document, @EXTENDED = link count
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 5 ($_IEStatus_InvalidValue) = Invalid Value
 ;								- 7 ($_IEStatus_NoMatch) = No Match
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IELinkGetCollection(ByRef $o_object, $i_index = -1)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IELinkGetCollection", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	$i_index = Number($i_index)
 	Select
 		Case $i_index = -1
-			SetError($_IEStatus_Success)
-			SetExtended($o_object.document.links.length)
-			Return $o_object.document.links
+			Return SetError($_IEStatus_Success, $o_object.document.links.length, _
+						$o_object.document.links)
 		Case $i_index > -1 And $i_index < $o_object.document.links.length
-			SetError($_IEStatus_Success)
-			SetExtended($o_object.document.links.length)
-			Return $o_object.document.links.item($i_index)
+			Return SetError($_IEStatus_Success, $o_object.document.links.length, _
+						$o_object.document.links.item($i_index))
 		Case $i_index < -1
 			__IEErrorNotify("Error", "_IELinkGetCollection", "$_IEStatus_InvalidValue")
-			SetError($_IEStatus_InvalidValue, 2)
-			Return 0
+			Return SetError($_IEStatus_InvalidValue, 2, 0)
 		Case Else
 			__IEErrorNotify("Warning", "_IELinkGetCollection", "$_IEStatus_NoMatch")
-			SetError($_IEStatus_NoMatch, 2)
-			Return 0
+			Return SetError($_IEStatus_NoMatch, 2, 0)
 	EndSelect
 EndFunc   ;==>_IELinkGetCollection
 #EndRegion Link functions
 #Region Image functions
-;===============================================================================
-;
-; Function Name:    _IEImgClick()
-; Description:		Simulate a mouse click on an image.  Match by sub-string match of alt text, name or src
-; Parameter(s):		$o_object	- Object variable of an InternetExplorer.Application, Window or Frame object
-;					$s_linkText	- Text to match the content of the attribute specified in $s_mode
-;					$s_mode		- Optional: specifies search mode
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEImgClick
+; Description ...: Simulate a mouse click on an image.  Match by sub-string match of alt text, name or src
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Window or Frame object
+;				   $s_linkText	- Text to match the content of the attribute specified in $s_mode
+;				   $s_mode		- Optional: specifies search mode
 ;									src = (Default) match the url of the image
 ;									name = match the name of the image
 ;									alt = match the alternate text of the image
-;					$i_index	- Optional: If the img text occurs more than once, specify which instance
+;				   $i_index	- Optional: If the img text occurs more than once, specify which instance
 ;									you want to click by 0-based index
-;					$f_wait 	- Optional: specifies whether to wait for page to load before returning
+;				   $f_wait 	- Optional: specifies whether to wait for page to load before returning
 ;									0 = Return immediately, not waiting for page to load
 ;									1 = (Default) Wait for page load to complete before returning
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns -1
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- Returns -1
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 1 ($_IEStatus_GeneralError) = General Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
@@ -1069,18 +967,15 @@ EndFunc   ;==>_IELinkGetCollection
 ;								- 8 ($_IEStatus_AccessIsDenied) = Access Is Denied
 ;								- 9 ($_IEStatus_ClientDisconnected) = Client Disconnected
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEImgClick(ByRef $o_object, $s_linkText, $s_mode = "src", $i_index = 0, $f_wait = 1)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEImgClick", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
-	Local $linktext, $found = 0, $img, $imgs = $o_object.document.images
+	Local $linktext, $found = 0, $imgs = $o_object.document.images
 	$s_mode = StringLower($s_mode)
 	$i_index = Number($i_index)
 	For $img In $imgs
@@ -1093,158 +988,127 @@ Func _IEImgClick(ByRef $o_object, $s_linkText, $s_mode = "src", $i_index = 0, $f
 				$linktext = $img.src
 			Case Else
 				__IEErrorNotify("Error", "_IEImgClick", "$_IEStatus_InvalidValue", "Invalid mode: " & $s_mode)
-				SetError($_IEStatus_InvalidValue, 3)
-				Return 0
+				Return SetError($_IEStatus_InvalidValue, 3, 0)
 		EndSelect
 		If StringInStr($linktext, $s_linkText) Then
 			If ($found = $i_index) Then
 				$img.click
 				If $f_wait Then
 					_IELoadWait($o_object)
-					SetError(@error)
-					Return -1
+					Return SetError(@error, 0, -1)
 				EndIf
-				SetError($_IEStatus_Success)
-				Return -1
+				Return SetError($_IEStatus_Success, 0, -1)
 			EndIf
 			$found = $found + 1
 		EndIf
 	Next
 	__IEErrorNotify("Warning", "_IEImgClick", "$_IEStatus_NoMatch")
-	SetError($_IEStatus_NoMatch) ; Could be caused by parameter 2, 4 or both
-	Return 0
+	Return SetError($_IEStatus_NoMatch, 0, 0) ; Could be caused by parameter 2, 4 or both
 EndFunc   ;==>_IEImgClick
 
-;===============================================================================
-;
-; Function Name:    _IEImgGetCollection()
-; Description:		Returns a collection object variable representing the IMG tags in the document
-; Parameter(s):		$o_object	- Object variable of an InternetExplorer.Application, Window, Frame or iFrame object
-;					$i_index	- Optional: specifies whether to return a collection or indexed instance
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEImgGetCollection
+; Description ...: Returns a collection object variable representing the IMG tags in the document
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Window, Frame or iFrame object
+;				   $i_index	- Optional: specifies whether to return a collection or indexed instance
 ;								- 0 or positive integer returns an indexed instance
 ;								- -1 = (Default) returns a collection
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns an object variable with a collection of all IMG tags in the document, @EXTENDED = img count
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- Returns an object variable with a collection of all IMG tags in the document, @EXTENDED = img count
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 5 ($_IEStatus_InvalidValue) = Invalid Value
 ;								- 7 ($_IEStatus_NoMatch) = No Match
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEImgGetCollection(ByRef $o_object, $i_index = -1)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEImgGetCollection", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	Local $oTemp = _IEDocGetObj($o_object)
 	$i_index = Number($i_index)
 	Select
 		Case $i_index = -1
-			SetError($_IEStatus_Success)
-			SetExtended($oTemp.images.length)
-			Return $oTemp.images
+			Return SetError($_IEStatus_Success, $oTemp.images.length, $oTemp.images)
 		Case $i_index > -1 And $i_index < $oTemp.images.length
-			SetError($_IEStatus_Success)
-			SetExtended($oTemp.images.length)
-			Return $oTemp.images.item($i_index)
+			Return SetError($_IEStatus_Success, $oTemp.images.length, $oTemp.images.item($i_index))
 		Case $i_index < -1
 			__IEErrorNotify("Error", "_IEImgGetCollection", "$_IEStatus_InvalidValue", "$i_index < -1")
-			SetError($_IEStatus_InvalidValue, 2)
-			Return 0
+			Return SetError($_IEStatus_InvalidValue, 2, 0)
 		Case Else
 			__IEErrorNotify("Warning", "_IEImgGetCollection", "$_IEStatus_NoMatch")
-			SetError($_IEStatus_NoMatch, 1)
-			Return 0
+			Return SetError($_IEStatus_NoMatch, 1, 0)
 	EndSelect
 EndFunc   ;==>_IEImgGetCollection
 
 #EndRegion Image functions
 #Region Form functions
-;===============================================================================
-;
-; Function Name:    _IEFormGetCollection()
-; Description:		Returns a collection object variable representing the Forms in the document
-; Parameter(s):		$o_object	- Object variable of an InternetExplorer.Application, Window, Frame or iFrame object
-;					$i_index	- Optional: specifies whether to return a collection or indexed instance
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEFormGetCollection
+; Description ...: Returns a collection object variable representing the Forms in the document
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Window, Frame or iFrame object
+;				   $i_index	- Optional: specifies whether to return a collection or indexed instance
 ;								- 0 or positive integer returns an indexed instance
 ;								- -1 = (Default) returns a collection
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success	- Returns an object variable with a collection of all forms in the document, @EXTENDED = form count
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success	- Returns an object variable with a collection of all forms in the document, @EXTENDED = form count
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 5 ($_IEStatus_InvalidValue) = Invalid Value
 ;								- 7 ($_IEStatus_NoMatch) = No Match
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEFormGetCollection(ByRef $o_object, $i_index = -1)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEFormGetCollection", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	Local $oTemp = _IEDocGetObj($o_object)
 	$i_index = Number($i_index)
 	Select
 		Case $i_index = -1
-			SetError($_IEStatus_Success)
-			SetExtended($oTemp.forms.length)
-			Return $oTemp.forms
+			Return SetError($_IEStatus_Success, $oTemp.forms.length, $oTemp.forms)
 		Case $i_index > -1 And $i_index < $oTemp.forms.length
-			SetError($_IEStatus_Success)
-			SetExtended($oTemp.forms.length)
-			Return $oTemp.forms.item($i_index)
+			Return SetError($_IEStatus_Success, $oTemp.forms.length, $oTemp.forms.item($i_index))
 		Case $i_index < -1
 			__IEErrorNotify("Error", "_IEFormGetCollection", "$_IEStatus_InvalidValue", "$i_index < -1")
-			SetError($_IEStatus_InvalidValue, 2)
-			Return 0
+			Return SetError($_IEStatus_InvalidValue, 2, 0)
 		Case Else
 			__IEErrorNotify("Warning", "_IEFormGetCollection", "$_IEStatus_NoMatch")
-			SetError($_IEStatus_NoMatch, 1)
-			Return 0
+			Return SetError($_IEStatus_NoMatch, 1, 0)
 	EndSelect
 EndFunc   ;==>_IEFormGetCollection
 
-;===============================================================================
-;
-; Function Name:    _IEFormGetObjByName()
-; Description:		Returns an object reference to a Form by name
-; Parameter(s):		$o_object	- Object variable of an InternetExplorer.Application, Window or Frame object
-;					$s_name		- Specifies the name of the Form you wish to match
-;					$i_index	- Optional: If Form name occurs more than once, specifies instance by 0-based index
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEFormGetObjByName
+; Description ...: Returns an object reference to a Form by name
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Window or Frame object
+;				   $s_name		- Specifies the name of the Form you wish to match
+;				   $i_index	- Optional: If Form name occurs more than once, specifies instance by 0-based index
 ;								- 0 (Default) or positive integer returns an indexed instance
 ;								- -1 returns a collection of the specified Forms
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns an object variable pointing to the Form object, @EXTENDED = form count
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- Returns an object variable pointing to the Form object, @EXTENDED = form count
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 7 ($_IEStatus_NoMatch) = No Match
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEFormGetObjByName(ByRef $o_object, $s_Name, $i_index = 0)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEFormGetObjByName", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	;----- Determine valid collection length
-	Local $o_col, $i_length = 0
-	$o_col = $o_object.document.forms.item($s_Name)
+	Local $i_length = 0
+	Local $o_col = $o_object.document.forms.item($s_Name)
 	If IsObj($o_col) Then
 		If __IEIsObjType($o_col, "elementcollection") Then
 			$i_length = $o_col.length
@@ -1255,113 +1119,90 @@ Func _IEFormGetObjByName(ByRef $o_object, $s_Name, $i_index = 0)
 	;-----
 	$i_index = Number($i_index)
 	If $i_index = -1 Then
-		SetError($_IEStatus_Success)
-		SetExtended($i_length)
-		Return $o_object.document.forms.item($s_Name)
+		Return SetError($_IEStatus_Success, $i_length, $o_object.document.forms.item($s_Name))
 	Else
 		If IsObj($o_object.document.forms.item($s_Name, $i_index)) Then
-			SetError($_IEStatus_Success)
-			SetExtended($i_length)
-			Return $o_object.document.forms.item($s_Name, $i_index)
+			Return SetError($_IEStatus_Success, $i_length, $o_object.document.forms.item($s_Name, $i_index))
 		Else
 			__IEErrorNotify("Warning", "_IEFormGetObjByName", "$_IEStatus_NoMatch")
-			SetError($_IEStatus_NoMatch) ; Could be caused by parameter 2, 3 or both
-			Return 0
+			Return SetError($_IEStatus_NoMatch, 0, 0) ; Could be caused by parameter 2, 3 or both
 		EndIf
 	EndIf
 EndFunc   ;==>_IEFormGetObjByName
 
-;===============================================================================
-;
-; Function Name:    _IEFormElementGetCollection()
-; Description:		Returns a collection object variable representing all Form Elements within a given Form
-; Parameter(s):		$o_object	- Object variable of an InternetExplorer.Application, Form object
-;					$i_index	- Optional: specifies whether to return a collection or indexed instance
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEFormElementGetCollection
+; Description ...: Returns a collection object variable representing all Form Elements within a given Form
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Form object
+;				   $i_index	- Optional: specifies whether to return a collection or indexed instance
 ;								- 0 or positive integer returns an indexed instance
 ;								- -1 = (Default) returns a collection
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns an object variable containing the Form Elements collection, @EXTENDED = form element count
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- Returns an object variable containing the Form Elements collection, @EXTENDED = form element count
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 4 ($_IEStatus_InvalidObjectType) = Invalid Object Type
 ;								- 5 ($_IEStatus_InvalidValue) = Invalid Value
 ;								- 7 ($_IEStatus_NoMatch) = No Match
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEFormElementGetCollection(ByRef $o_object, $i_index = -1)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEFormElementGetCollection", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	If Not __IEIsObjType($o_object, "form") Then
 		__IEErrorNotify("Error", "_IEFormElementGetCollection", "$_IEStatus_InvalidObjectType")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 	;
 	$i_index = Number($i_index)
 	Select
 		Case $i_index = -1
-			SetError($_IEStatus_Success)
-			SetExtended($o_object.elements.length)
-			Return $o_object.elements
+			Return SetError($_IEStatus_Success, $o_object.elements.length, $o_object.elements)
 		Case $i_index > -1 And $i_index < $o_object.elements.length
-			SetError($_IEStatus_Success)
-			SetExtended($o_object.elements.length)
-			Return $o_object.elements.item($i_index)
+			Return SetError($_IEStatus_Success, $o_object.elements.length, $o_object.elements.item($i_index))
 		Case $i_index < -1
 			__IEErrorNotify("Error", "_IEFormElementGetCollection", "$_IEStatus_InvalidValue", "$i_index < -1")
-			SetError($_IEStatus_InvalidValue, 2)
-			Return 0
+			Return SetError($_IEStatus_InvalidValue, 2, 0)
 		Case Else
-			SetError($_IEStatus_NoMatch, 1)
-			Return 0
+			Return SetError($_IEStatus_NoMatch, 1, 0)
 	EndSelect
 EndFunc   ;==>_IEFormElementGetCollection
 
-;===============================================================================
-;
-; Function Name:    _IEFormElementGetObjByName()
-; Description:		Returns an object reference to a Form Element by name
-; Parameter(s):		$o_object	- Object variable of an InternetExplorer.Application, Form object
-;					$s_name		- Specifies the name of the Form Element you wish to match
-;					$i_index	- Optional: If the Form Element name occurs more than once, specifies instance by 0-based index
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEFormElementGetObjByName
+; Description ...: Returns an object reference to a Form Element by name
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Form object
+;				   $s_name		- Specifies the name of the Form Element you wish to match
+;				   $i_index	- Optional: If the Form Element name occurs more than once, specifies instance by 0-based index
 ;								- 0 (Default) or positive integer returns an indexed instance
 ;								- -1 returns a collection of the specified Form Elements
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns an object variable pointing to the Form Element object, @EXTENDED = form count
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- Returns an object variable pointing to the Form Element object, @EXTENDED = form count
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 4 ($_IEStatus_InvalidObjectType) = Invalid Object Type
 ;								- 7 ($_IEStatus_NoMatch) = No Match
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEFormElementGetObjByName(ByRef $o_object, $s_Name, $i_index = 0)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEFormElementGetObjByName", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	If Not __IEIsObjType($o_object, "form") Then
 		__IEErrorNotify("Error", "_IEFormElementGetObjByName", "$_IEStatus_InvalidObjectType")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 	;
 	;----- Determine valid collection length
-	Local $o_col, $i_length = 0
-	$o_col = $o_object.elements.item($s_Name)
+	Local $i_length = 0
+	Local $o_col = $o_object.elements.item($s_Name)
 	If IsObj($o_col) Then
 		If __IEIsObjType($o_col, "elementcollection") Then
 			$i_length = $o_col.length
@@ -1372,49 +1213,38 @@ Func _IEFormElementGetObjByName(ByRef $o_object, $s_Name, $i_index = 0)
 	;-----
 	$i_index = Number($i_index)
 	If $i_index = -1 Then
-		SetError($_IEStatus_Success)
-		SetExtended($i_length)
-		Return $o_object.elements.item($s_Name)
+		Return SetError($_IEStatus_Success, $i_length, $o_object.elements.item($s_Name))
 	Else
 		If IsObj($o_object.elements.item($s_Name, $i_index)) Then
-			SetError($_IEStatus_Success)
-			SetExtended($i_length)
-			Return $o_object.elements.item($s_Name, $i_index)
+			Return SetError($_IEStatus_Success, $i_length, $o_object.elements.item($s_Name, $i_index))
 		Else
 			__IEErrorNotify("Warning", "_IEFormElementGetObjByName", "$_IEStatus_NoMatch")
-			SetError($_IEStatus_NoMatch) ; Could be caused by parameter 2, 3 or both
-			Return 0
+			Return SetError($_IEStatus_NoMatch, 0, 0) ; Could be caused by parameter 2, 3 or both
 		EndIf
 	EndIf
 EndFunc   ;==>_IEFormElementGetObjByName
 
-;===============================================================================
-;
-; Function Name:    _IEFormElementGetValue()
-; Description:		Returns the value of a given Form Element
-; Parameter(s):		$o_object	- Object variable of an InternetExplorer.Application, Form Element object
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns the string value of the given Form Element
-;                   On Failure	- Returns 0 and sets @ERROR
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEFormElementGetValue
+; Description ...: Returns the value of a given Form Element
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Form Element object
+; Return values .: On Success 	- Returns the string value of the given Form Element
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 4 ($_IEStatus_InvalidObjectType) = Invalid Object Type
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEFormElementGetValue(ByRef $o_object)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEFormElementGetValue", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	If Not __IEIsObjType($o_object, "forminputelement") Then
 		__IEErrorNotify("Error", "_IEFormElementGetValue", "$_IEStatus_InvalidObjectType")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 	;
 	SetError($_IEStatus_Success)
@@ -1426,43 +1256,36 @@ Func _IEFormElementGetValue(ByRef $o_object)
 	EndIf
 EndFunc   ;==>_IEFormElementGetValue
 
-;===============================================================================
-;
-; Function Name:    _IEFormElementSetValue()
-; Description:		Set the value of a specified Form Element
-; Parameter(s):		$o_object	- Object variable of an InternetExplorer.Application, Form Element object
-;					$s_newvalue	- The new value to be set into the Form Element
-;					$f_fireEvent- Optional: specifies whether to fire an OnChange event after changing value
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEFormElementSetValue
+; Description ...: Set the value of a specified Form Element
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Form Element object
+;				   $s_newvalue	- The new value to be set into the Form Element
+;				   $f_fireEvent- Optional: specifies whether to fire an OnChange event after changing value
 ;										0 = Do not fire OnChange event after setting value
 ;										1 = (Default) fire OnChange event after setting value
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns 1
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- Returns 1
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 4 ($_IEStatus_InvalidObjectType) = Invalid Object Type
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEFormElementSetValue(ByRef $o_object, $s_newvalue, $f_fireEvent = 1)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEFormElementSetValue", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	If Not __IEIsObjType($o_object, "forminputelement") Then
 		__IEErrorNotify("Error", "_IEFormElementSetValue", "$_IEStatus_InvalidObjectType")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 	;
 	If String($o_object.type) = "file" Then
 		__IEErrorNotify("Error", "_IEFormElementSetValue", "$_IEStatus_InvalidObjectType", "Browser securuty prevents SetValue of TYPE=FILE")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 	;
 	$o_object.value = $s_newvalue
@@ -1470,63 +1293,55 @@ Func _IEFormElementSetValue(ByRef $o_object, $s_newvalue, $f_fireEvent = 1)
 		$o_object.fireEvent("OnChange")
 		$o_object.fireEvent("OnClick")
 	EndIf
-	SetError($_IEStatus_Success)
-	Return 1
+	Return SetError($_IEStatus_Success, 0, 1)
 EndFunc   ;==>_IEFormElementSetValue
 
-;===============================================================================
-;
-; Function Name:    _IEFormElementOptionSelect()
-; Description:		Set the value of a specified form element
-; Parameter(s):		$o_object	- Form Element Object of type "Select Option"
-;					$s_string	- Value used to match element - treatment based on $s_mode
-;					$f_select	- Optional: specifies whether element should be selected or deselected
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEFormElementOptionSelect
+; Description ...: Set the value of a specified form element
+; Parameters ....: $o_object	- Form Element Object of type "Select Option"
+;				   $s_string	- Value used to match element - treatment based on $s_mode
+;				   $f_select	- Optional: specifies whether element should be selected or deselected
 ;									-1 = Return selected state
 ;									0 = Deselect the element
 ;									1 = (Default) Select the element
-;					$s_mode 	- Optional: specifies search mode
+;				   $s_mode 	- Optional: specifies search mode
 ;									byValue = (Default) value of the option you wish to select
 ;									byText	= text of the option you wish to select
 ;									byIndex = 0-based index of option you wish to select
-;					$f_fireEvent- Optional: specifies whether to fire an OnChange event after changing value
+;				   $f_fireEvent- Optional: specifies whether to fire an OnChange event after changing value
 ;									0 = do not fire OnChange event after setting value
 ;									1 = (Default) fire OnChange event after setting value
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- If $f_select = -1, returns the current selected state, else returns 1
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- If $f_select = -1, returns the current selected state, else returns 1
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 4 ($_IEStatus_InvalidObjectType) = Invalid Object Type
 ;								- 5 ($_IEStatus_InvalidValue) = Invalid Value
 ;								- 7 ($_IEStatus_NoMatch) = No Match
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEFormElementOptionSelect(ByRef $o_object, $s_string, $f_select = 1, $s_mode = "byValue", $f_fireEvent = 1)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEFormElementOptionSelect", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	If Not __IEIsObjType($o_object, "formselectelement") Then
 		__IEErrorNotify("Error", "_IEFormElementOptionSelect", "$_IEStatus_InvalidObjectType")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 	;
-	Local $oItem, $oItems = $o_object.options, $iNumItems = $o_object.options.length, $f_isMultiple = $o_object.multiple
+	Local $oItems = $o_object.options, $iNumItems = $o_object.options.length, $f_isMultiple = $o_object.multiple
 
 	Switch $s_mode
 		Case "byValue"
 			For $oItem In $oItems
 				If $oItem.value = $s_string Then
 					Switch $f_select
-						Case (-1)
-							SetError($_IEStatus_Success)
-							Return $oItem.selected
+						Case -1
+							Return SetError($_IEStatus_Success, 0, $oItem.selected)
 						Case 0
 							If Not $f_isMultiple Then
 								__IEErrorNotify("Error", "_IEFormElementOptionSelect", "$_IEStatus_InvalidValue", _
@@ -1540,8 +1355,7 @@ Func _IEFormElementOptionSelect(ByRef $o_object, $s_string, $f_select = 1, $s_mo
 									$o_object.fireEvent("OnClick")
 								EndIf
 							EndIf
-							SetError($_IEStatus_Success)
-							Return 1
+							Return SetError($_IEStatus_Success, 0, 1)
 						Case 1
 							If Not $oItem.selected Then
 								$oItem.selected = True
@@ -1550,25 +1364,21 @@ Func _IEFormElementOptionSelect(ByRef $o_object, $s_string, $f_select = 1, $s_mo
 									$o_object.fireEvent("OnClick")
 								EndIf
 							EndIf
-							SetError($_IEStatus_Success)
-							Return 1
+							Return SetError($_IEStatus_Success, 0, 1)
 						Case Else
 							__IEErrorNotify("Error", "_IEFormElementOptionSelect", "$_IEStatus_InvalidValue", "Invalid $f_select value")
-							SetError($_IEStatus_InvalidValue, 3)
-							Return 0
+							Return SetError($_IEStatus_InvalidValue, 3, 0)
 					EndSwitch
 					__IEErrorNotify("Warning", "_IEFormElementOptionSelect", "$_IEStatus_NoMatch", "Value not matched")
-					SetError($_IEStatus_NoMatch, 2)
-					Return 0
+					Return SetError($_IEStatus_NoMatch, 2, 0)
 				EndIf
 			Next
 		Case "byText"
 			For $oItem In $oItems
 				If String($oItem.text) = $s_string Then
 					Switch $f_select
-						Case (-1)
-							SetError($_IEStatus_Success)
-							Return $oItem.selected
+						Case -1
+							Return SetError($_IEStatus_Success, 0, $oItem.selected)
 						Case 0
 							If Not $f_isMultiple Then
 								__IEErrorNotify("Error", "_IEFormElementOptionSelect", "$_IEStatus_InvalidValue", _
@@ -1582,8 +1392,7 @@ Func _IEFormElementOptionSelect(ByRef $o_object, $s_string, $f_select = 1, $s_mo
 									$o_object.fireEvent("OnClick")
 								EndIf
 							EndIf
-							SetError($_IEStatus_Success)
-							Return 1
+							Return SetError($_IEStatus_Success, 0, 1)
 						Case 1
 							If Not $oItem.selected Then
 								$oItem.selected = True
@@ -1592,30 +1401,25 @@ Func _IEFormElementOptionSelect(ByRef $o_object, $s_string, $f_select = 1, $s_mo
 									$o_object.fireEvent("OnClick")
 								EndIf
 							EndIf
-							SetError($_IEStatus_Success)
-							Return 1
+							Return SetError($_IEStatus_Success, 0, 1)
 						Case Else
 							__IEErrorNotify("Error", "_IEFormElementOptionSelect", "$_IEStatus_InvalidValue", "Invalid $f_select value")
-							SetError($_IEStatus_InvalidValue, 3)
-							Return 0
+							Return SetError($_IEStatus_InvalidValue, 3, 0)
 					EndSwitch
 					__IEErrorNotify("Warning", "_IEFormElementOptionSelect", "$_IEStatus_NoMatch", "Text not matched")
-					SetError($_IEStatus_NoMatch, 2)
-					Return 0
+					Return SetError($_IEStatus_NoMatch, 2, 0)
 				EndIf
 			Next
 		Case "byIndex"
 			Local $i_index = Number($s_string)
 			If $i_index < 0 Or $i_index >= $iNumItems Then
 				__IEErrorNotify("Error", "_IEFormElementOptionSelect", "$_IEStatus_InvalidValue", "Invalid index value, " & $i_index)
-				SetError($_IEStatus_InvalidValue, 2)
-				Return 0
+				Return SetError($_IEStatus_InvalidValue, 2, 0)
 			EndIf
 			$oItem = $oItems.item($i_index)
 			Switch $f_select
-				Case (-1)
-					SetError($_IEStatus_Success)
-					Return $oItems.item($i_index).selected
+				Case -1
+					Return SetError($_IEStatus_Success, 0, $oItems.item($i_index).selected)
 				Case 0
 					If Not $f_isMultiple Then
 						__IEErrorNotify("Error", "_IEFormElementOptionSelect", "$_IEStatus_InvalidValue", _
@@ -1629,8 +1433,7 @@ Func _IEFormElementOptionSelect(ByRef $o_object, $s_string, $f_select = 1, $s_mo
 							$o_object.fireEvent("OnClick")
 						EndIf
 					EndIf
-					SetError($_IEStatus_Success)
-					Return 1
+					Return SetError($_IEStatus_Success, 0, 1)
 				Case 1
 					If Not $oItem.selected Then
 						$oItems.item($i_index).selected = True
@@ -1639,67 +1442,58 @@ Func _IEFormElementOptionSelect(ByRef $o_object, $s_string, $f_select = 1, $s_mo
 							$o_object.fireEvent("OnClick")
 						EndIf
 					EndIf
-					SetError($_IEStatus_Success)
-					Return 1
+					Return SetError($_IEStatus_Success, 0, 1)
 				Case Else
 					__IEErrorNotify("Error", "_IEFormElementOptionSelect", "$_IEStatus_InvalidValue", "Invalid $f_select value")
-					SetError($_IEStatus_InvalidValue, 3)
-					Return 0
+					Return SetError($_IEStatus_InvalidValue, 3, 0)
 			EndSwitch
 		Case Else
 			__IEErrorNotify("Error", "_IEFormElementOptionSelect", "$_IEStatus_InvalidValue", "Invalid Mode")
-			SetError($_IEStatus_InvalidValue, 4)
-			Return 0
+			Return SetError($_IEStatus_InvalidValue, 4, 0)
 	EndSwitch
 EndFunc   ;==>_IEFormElementOptionSelect
 
-;===============================================================================
-;
-; Function Name:    _IEFormElementCheckboxSelect()
-; Description:		Set the value of a specified form element
-; Parameter(s):		$o_object	- Object variable of an InternetExplorer.Application, Form object
-;					$s_string	- Value used to match element - treatment based on $s_mode
-;					$s_name		- Optional: Name or Id of checkbox(es)
-;					$f_select	- Optional: specifies whether element should be checked or unchecked
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEFormElementCheckboxSelect
+; Description ...: Set the value of a specified form element
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Form object
+;				   $s_string	- Value used to match element - treatment based on $s_mode
+;				   $s_name		- Optional: Name or Id of checkbox(es)
+;				   $f_select	- Optional: specifies whether element should be checked or unchecked
 ;									-1 = Return checked state
 ;									0 = Uncheck the element
 ;									1 = (Default) Check the element
-;					$s_mode 	- Optional: specifies search mode
+;				   $s_mode 	- Optional: specifies search mode
 ;									byValue = (Default) value of the checkbox you wish to select
 ;									byIndex = 0-based index of checkbox you wish to select
-;					$f_fireEvent- Optional: specifies whether to fire an OnChange event after changing value
+;				   $f_fireEvent- Optional: specifies whether to fire an OnChange event after changing value
 ;									0 = do not fire OnChange event after setting value
 ;									1 = (Default) fire OnChange event after setting value
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- If $f_select = -1, returns the current checked state, else returns 1
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- If $f_select = -1, returns the current checked state, else returns 1
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 4 ($_IEStatus_InvalidObjectType) = Invalid Object Type
 ;								- 5 ($_IEStatus_InvalidValue) = Invalid Value
 ;								- 7 ($_IEStatus_NoMatch) = No Match
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEFormElementCheckboxSelect(ByRef $o_object, $s_string, $s_Name = "", $f_select = 1, $s_mode = "byValue", $f_fireEvent = 1)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEFormElementCheckboxSelect", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	If Not __IEIsObjType($o_object, "form") Then
 		__IEErrorNotify("Error", "_IEFormElementCheckboxSelect", "$_IEStatus_InvalidObjectType")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 	;
-	Local $iCount, $oItem, $oItems, $f_found = False
 	$s_string = String($s_string)
 	$s_Name = String($s_Name)
 
+	Local $oItems
 	If $s_Name = "" Then
 		$oItems = _IETagNameGetCollection($o_object, "input")
 	Else
@@ -1708,10 +1502,10 @@ Func _IEFormElementCheckboxSelect(ByRef $o_object, $s_string, $s_Name = "", $f_s
 
 	If Not IsObj($oItems) Then
 		__IEErrorNotify("Warning", "_IEFormElementCheckboxSelect", "$_IEStatus_NoMatch")
-		SetError($_IEStatus_NoMatch, 3)
-		Return 0
+		Return SetError($_IEStatus_NoMatch, 3, 0)
 	EndIf
 
+	Local $oItem, $f_found = False
 	Switch $s_mode
 		Case "byValue"
 			If __IEIsObjType($oItems, "forminputelement") Then
@@ -1730,7 +1524,7 @@ Func _IEFormElementCheckboxSelect(ByRef $o_object, $s_string, $s_Name = "", $f_s
 				$oItem = $oItems
 				If String($oItem.type) = "checkbox" And Number($s_string) = 0 Then $f_found = True
 			Else
-				$iCount = 0
+				Local $iCount = 0
 				For $oItem In $oItems
 					If String($oItem.type) = "checkbox" And Number($s_string) = $iCount Then
 						$f_found = True
@@ -1742,20 +1536,17 @@ Func _IEFormElementCheckboxSelect(ByRef $o_object, $s_string, $s_Name = "", $f_s
 			EndIf
 		Case Else
 			__IEErrorNotify("Error", "_IEFormElementCheckboxSelect", "$_IEStatus_InvalidValue", "Invalid Mode")
-			SetError($_IEStatus_InvalidValue, 5)
-			Return 0
+			Return SetError($_IEStatus_InvalidValue, 5, 0)
 	EndSwitch
 
 	If Not $f_found Then
 		__IEErrorNotify("Warning", "_IEFormElementCheckboxSelect", "$_IEStatus_NoMatch")
-		SetError($_IEStatus_NoMatch, 2)
-		Return 0
+		Return SetError($_IEStatus_NoMatch, 2, 0)
 	EndIf
 
 	Switch $f_select
-		Case (-1)
-			SetError($_IEStatus_Success)
-			Return $oItem.checked
+		Case -1
+			Return SetError($_IEStatus_Success, 0, $oItem.checked)
 		Case 0
 			If $oItem.checked Then
 				$oItem.checked = False
@@ -1764,8 +1555,7 @@ Func _IEFormElementCheckboxSelect(ByRef $o_object, $s_string, $s_Name = "", $f_s
 					$oItem.fireEvent("OnClick")
 				EndIf
 			EndIf
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case 1
 			If Not $oItem.checked Then
 				$oItem.checked = True
@@ -1774,70 +1564,61 @@ Func _IEFormElementCheckboxSelect(ByRef $o_object, $s_string, $s_Name = "", $f_s
 					$oItem.fireEvent("OnClick")
 				EndIf
 			EndIf
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case Else
 			__IEErrorNotify("Error", "_IEFormElementCheckboxSelect", "$_IEStatus_InvalidValue", "Invalid $f_select value")
-			SetError($_IEStatus_InvalidValue, 3)
-			Return 0
+			Return SetError($_IEStatus_InvalidValue, 3, 0)
 	EndSwitch
 
 EndFunc   ;==>_IEFormElementCheckboxSelect
 
-;===============================================================================
-;
-; Function Name:    _IEFormElementRadioSelect()
-; Description:		Set the value of a specified form element
-; Parameter(s):		$o_object	- Object variable of an InternetExplorer.Application, Form object
-;					$s_string	- Value used to match element - treatment based on $s_mode
-;					$s_name		- Name or Id of Radio Group (required)
-;					$f_select	- Optional: specifies whether element should be selected or deselected
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEFormElementRadioSelect
+; Description ...: Set the value of a specified form element
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Form object
+;				   $s_string	- Value used to match element - treatment based on $s_mode
+;				   $s_name		- Name or Id of Radio Group (required)
+;				   $f_select	- Optional: specifies whether element should be selected or deselected
 ;									-1 = Return selected state
 ;									0 = Deselect the element
 ;									1 = (Default) Select the element
-;					$s_mode 	- Optional: specifies search mode
+;				   $s_mode 	- Optional: specifies search mode
 ;									byValue = (Default) value of the radio you wish to select
 ;									byIndex = 0-based index of radio you wish to select
-;					$f_fireEvent- Optional: specifies whether to fire an OnChange event after changing value
+;				   $f_fireEvent- Optional: specifies whether to fire an OnChange event after changing value
 ;									0 = do not fire OnChange event after setting value
 ;									1 = (Default) fire OnChange event after setting value
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- If $f_select = -1, returns the current selected state, else returns 1
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- If $f_select = -1, returns the current selected state, else returns 1
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 4 ($_IEStatus_InvalidObjectType) = Invalid Object Type
 ;								- 5 ($_IEStatus_InvalidValue) = Invalid Value
 ;								- 7 ($_IEStatus_NoMatch) = No Match
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEFormElementRadioSelect(ByRef $o_object, $s_string, $s_Name, $f_select = 1, $s_mode = "byValue", $f_fireEvent = 1)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEFormElementRadioSelect", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	If Not __IEIsObjType($o_object, "form") Then
 		__IEErrorNotify("Error", "_IEFormElementRadioSelect", "$_IEStatus_InvalidObjectType")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 	;
-	Local $iCount = 0, $oItem, $oItems, $f_found = False
 	$s_string = String($s_string)
 	$s_Name = String($s_Name)
 
-	$oItems = Execute("$o_object.elements('" & $s_Name & "')")
+	Local $oItems = Execute("$o_object.elements('" & $s_Name & "')")
 	If Not IsObj($oItems) Then
 		__IEErrorNotify("Warning", "_IEFormElementRadioSelect", "$_IEStatus_NoMatch")
-		SetError($_IEStatus_NoMatch, 3)
-		Return 0
+		Return SetError($_IEStatus_NoMatch, 3, 0)
 	EndIf
 
+	Local $oItem, $f_found = False
 	Switch $s_mode
 		Case "byValue"
 			If __IEIsObjType($oItems, "forminputelement") Then
@@ -1856,7 +1637,7 @@ Func _IEFormElementRadioSelect(ByRef $o_object, $s_string, $s_Name, $f_select = 
 				$oItem = $oItems
 				If String($oItem.type) = "radio" And Number($s_string) = 0 Then $f_found = True
 			Else
-				$iCount = 0
+				Local $iCount = 0
 				For $oItem In $oItems
 					If String($oItem.type) = "radio" And Number($s_string) = $iCount Then
 						$f_found = True
@@ -1868,20 +1649,17 @@ Func _IEFormElementRadioSelect(ByRef $o_object, $s_string, $s_Name, $f_select = 
 			EndIf
 		Case Else
 			__IEErrorNotify("Error", "_IEFormElementRadioSelect", "$_IEStatus_InvalidValue", "Invalid Mode")
-			SetError($_IEStatus_InvalidValue, 5)
-			Return 0
+			Return SetError($_IEStatus_InvalidValue, 5, 0)
 	EndSwitch
 
 	If Not $f_found Then
 		__IEErrorNotify("Warning", "_IEFormElementRadioSelect", "$_IEStatus_NoMatch")
-		SetError($_IEStatus_NoMatch, 2)
-		Return 0
+		Return SetError($_IEStatus_NoMatch, 2, 0)
 	EndIf
 
 	Switch $f_select
-		Case (-1)
-			SetError($_IEStatus_Success)
-			Return $oItem.checked
+		Case -1
+			Return SetError($_IEStatus_Success, 0, $oItem.checked)
 		Case 0
 			If $oItem.checked Then
 				$oItem.checked = False
@@ -1890,8 +1668,7 @@ Func _IEFormElementRadioSelect(ByRef $o_object, $s_string, $s_Name, $f_select = 
 					$oItem.fireEvent("OnClick")
 				EndIf
 			EndIf
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case 1
 			If Not $oItem.checked Then
 				$oItem.checked = True
@@ -1900,34 +1677,30 @@ Func _IEFormElementRadioSelect(ByRef $o_object, $s_string, $s_Name, $f_select = 
 					$oItem.fireEvent("OnClick")
 				EndIf
 			EndIf
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case Else
 			__IEErrorNotify("Error", "_IEFormElementRadioSelect", "$_IEStatus_InvalidValue", "$f_select value invalid")
-			SetError($_IEStatus_InvalidValue, 4)
-			Return 0
+			Return SetError($_IEStatus_InvalidValue, 4, 0)
 	EndSwitch
 
 EndFunc   ;==>_IEFormElementRadioSelect
 
-;===============================================================================
-;
-; Function Name:    _IEFormImageClick()
-; Description:		Simulate a mouse click on an <INPUT TYPE="Image">.  Match by sub-string match of alt text, name or src
-; Parameter(s):		$o_object	- Object variable of any DOM element (will be converted to the associated document object)
-;					$s_linkText	- Value used to match element - treatment based on $s_mode
-;					$s_mode		- Optional: specifies search mode
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEFormImageClick
+; Description ...: Simulate a mouse click on an <INPUT TYPE="Image">.  Match by sub-string match of alt text, name or src
+; Parameters ....: $o_object	- Object variable of any DOM element (will be converted to the associated document object)
+;				   $s_linkText	- Value used to match element - treatment based on $s_mode
+;				   $s_mode		- Optional: specifies search mode
 ;									src = (Default) match the url of the image
 ;									name = match the name of the image
 ;									alt = match the alternate text of the image
-;					$i_index	- Optional: If the img text occurs more than once, specifies which instance
+;				   $i_index	- Optional: If the img text occurs more than once, specifies which instance
 ;									you want to click by 0-based index
-;					$f_wait 	- Optional: specifies whether to wait for page to load before returning
+;				   $f_wait 	- Optional: specifies whether to wait for page to load before returning
 ;									0 = Return immediately, not waiting for page to load
 ;									1 = (Default) Wait for page load to complete before returning
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns -1
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- Returns -1
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 1 ($_IEStatus_GeneralError) = General Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
@@ -1938,20 +1711,17 @@ EndFunc   ;==>_IEFormElementRadioSelect
 ;								- 8 ($_IEStatus_AccessIsDenied) = Access Is Denied
 ;								- 9 ($_IEStatus_ClientDisconnected) = Client Disconnected
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEFormImageClick(ByRef $o_object, $s_linkText, $s_mode = "src", $i_index = 0, $f_wait = 1)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEFormImageClick", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
-	Local $linktext, $found = 0, $img, $imgs
+	Local $linktext, $found = 0
 	Local $oTemp = _IEDocGetObj($o_object)
-	$imgs = _IETagNameGetCollection($oTemp, "input")
+	Local $imgs = _IETagNameGetCollection($oTemp, "input")
 	$s_mode = StringLower($s_mode)
 	$i_index = Number($i_index)
 	For $img In $imgs
@@ -1965,40 +1735,34 @@ Func _IEFormImageClick(ByRef $o_object, $s_linkText, $s_mode = "src", $i_index =
 					$linktext = $img.src
 				Case Else
 					__IEErrorNotify("Error", "_IEFormImageClick", "$_IEStatus_InvalidValue", "Invalid mode: " & $s_mode)
-					SetError($_IEStatus_InvalidValue, 3)
-					Return 0
+					Return SetError($_IEStatus_InvalidValue, 3, 0)
 			EndSelect
 			If StringInStr($linktext, $s_linkText) Then
 				If ($found = $i_index) Then
 					$img.click
 					If $f_wait Then
 						_IELoadWait($o_object)
-						SetError(@error)
-						Return -1
+						Return SetError(@error, 0, -1)
 					EndIf
-					SetError($_IEStatus_Success)
-					Return -1
+					Return SetError($_IEStatus_Success, 0, -1)
 				EndIf
 				$found = $found + 1
 			EndIf
 		EndIf
 	Next
 	__IEErrorNotify("Warning", "_IEFormImageClick", "$_IEStatus_NoMatch")
-	SetError($_IEStatus_NoMatch, 2)
-	Return 0
+	Return SetError($_IEStatus_NoMatch, 2, 0)
 EndFunc   ;==>_IEFormImageClick
 
-;===============================================================================
-;
-; Function Name:    _IEFormSubmit()
-; Description:		Submit a specified Form
-; Parameter(s):		$o_object	- Object variable of an InternetExplorer.Application, Form object
-;					$f_wait		- Optional: specifies whether to wait for page to load before returning
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEFormSubmit
+; Description ...: Submit a specified Form
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Form object
+;				   $f_wait		- Optional: specifies whether to wait for page to load before returning
 ;									0 = Return immediately, not waiting for page to load
 ;									1 = (Default) Wait for page load to complete before returning
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns -1
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- Returns -1
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 1 ($_IEStatus_GeneralError) = General Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
@@ -2007,149 +1771,122 @@ EndFunc   ;==>_IEFormImageClick
 ;								- 8 ($_IEStatus_AccessIsDenied) = Access Is Denied
 ;								- 9 ($_IEStatus_ClientDisconnected) = Client Disconnected
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEFormSubmit(ByRef $o_object, $f_wait = 1)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEFormSubmit", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	If Not __IEIsObjType($o_object, "form") Then
 		__IEErrorNotify("Error", "_IEFormSubmit", "$_IEStatus_InvalidObjectType")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 	;
-	SetError($_IEStatus_Success)
+
 	Local $o_window = $o_object.document.parentWindow
 	$o_object.submit
 	If $f_wait Then
 		_IELoadWait($o_window)
-		SetError(@error)
-		Return -1
+		Return SetError(@error, 0, -1)
 	EndIf
-	Return -1
+	Return SetError($_IEStatus_Success, 0, -1)
 EndFunc   ;==>_IEFormSubmit
 
-;===============================================================================
-;
-; Function Name:   _IEFormReset()
-; Description:		Reset a specified Form
-; Parameter(s):		$o_object	- Object variable of an InternetExplorer.Application, Form object
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns 1
-;                   On Failure	- Returns 0 and sets @ERROR
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEFormReset
+; Description ...: Reset a specified Form
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Form object
+; Return values .: On Success 	- Returns 1
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 4 ($_IEStatus_InvalidObjectType) = Invalid Object Type
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEFormReset(ByRef $o_object)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEFormReset", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	If Not __IEIsObjType($o_object, "form") Then
 		__IEErrorNotify("Error", "_IEFormReset", "$_IEStatus_InvalidObjectType")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 	;
-	SetError($_IEStatus_Success)
 	$o_object.reset
-	Return 1
+	Return SetError($_IEStatus_Success, 0, 1)
 EndFunc   ;==>_IEFormReset
 #EndRegion Form functions
 #Region Table functions
-;===============================================================================
-;
-; Function Name:    _IETableGetCollection()
-; Description:		Returns a collection object variable representing all the tables in a document
-; Parameter(s):		$o_object	- Object variable of an InternetExplorer.Application, Window or Frame object
-;					$i_index	- Optional: specifies whether to return a collection or indexed instance
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IETableGetCollection
+; Description ...: Returns a collection object variable representing all the tables in a document
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Window or Frame object
+;				   $i_index	- Optional: specifies whether to return a collection or indexed instance
 ;								- 0 or positive integer returns an indexed instance
 ;								- -1 = (Default) returns a collection
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns an object collection of all tables in the document, @EXTENDED = table count
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- Returns an object collection of all tables in the document, @EXTENDED = table count
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 5 ($_IEStatus_InvalidValue) = Invalid Value
 ;								- 7 ($_IEStatus_NoMatch) = No Match
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IETableGetCollection(ByRef $o_object, $i_index = -1)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IETableGetCollection", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	$i_index = Number($i_index)
 	Select
 		Case $i_index = -1
-			SetError($_IEStatus_Success)
-			SetExtended($o_object.document.GetElementsByTagName("table" ).length)
-			Return $o_object.document.GetElementsByTagName("table")
+			Return SetError($_IEStatus_Success, $o_object.document.GetElementsByTagName("table" ).length, _
+					$o_object.document.GetElementsByTagName("table"))
 		Case $i_index > -1 And $i_index < $o_object.document.GetElementsByTagName("table" ).length
-			SetError($_IEStatus_Success)
-			SetExtended($o_object.document.GetElementsByTagName("table" ).length)
-			Return $o_object.document.GetElementsByTagName("table" ).item($i_index)
+			Return SetError($_IEStatus_Success, $o_object.document.GetElementsByTagName("table" ).length, _
+					$o_object.document.GetElementsByTagName("table" ).item($i_index))
 		Case $i_index < -1
 			__IEErrorNotify("Error", "_IETableGetCollection", "$_IEStatus_InvalidValue", "$i_index < -1")
-			SetError($_IEStatus_InvalidValue, 2)
-			Return 0
+			Return SetError($_IEStatus_InvalidValue, 2, 0)
 		Case Else
 			__IEErrorNotify("Warning", "_IETableGetCollection", "$_IEStatus_NoMatch")
-			SetError($_IEStatus_NoMatch, 1)
-			Return 0
+			Return SetError($_IEStatus_NoMatch, 1, 0)
 	EndSelect
 EndFunc   ;==>_IETableGetCollection
 
-;===============================================================================
-;
-; Function Name:    _IETableWriteToArray()
-; Description:		Reads the contents of a Table into an array
-; Parameter(s):		$o_object	- Object variable of an InternetExplorer.Application, Table object
-;					$f_transpose- Boolean value.  If True, swap rows and columns in output array
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns a 2-dimensional array containing the contents of the Table
-;                   On Failure	- Returns 0 and sets @ERROR
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IETableWriteToArray
+; Description ...: Reads the contents of a Table into an array
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Table object
+;				   $f_transpose- Boolean value.  If True, swap rows and columns in output array
+; Return values .: On Success 	- Returns a 2-dimensional array containing the contents of the Table
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 4 ($_IEStatus_InvalidObjectType) = Invalid Object Type
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IETableWriteToArray(ByRef $o_object, $f_transpose = False)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IETableWriteToArray", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	If Not __IEIsObjType($o_object, "table") Then
 		__IEErrorNotify("Error", "_IETableWriteToArray", "$_IEStatus_InvalidObjectType")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 	;
-	Local $i_cols = 0, $trs, $tr, $tds, $i_col, $i_rows, $col, $row
-	$trs = $o_object.rows
+	Local $i_cols = 0, $tds, $i_col
+	Local $trs = $o_object.rows
 	For $tr In $trs
 		$tds = $tr.cells
 		$i_col = 0
@@ -2158,9 +1895,9 @@ Func _IETableWriteToArray(ByRef $o_object, $f_transpose = False)
 		Next
 		If $i_col > $i_cols Then $i_cols = $i_col
 	Next
-	$i_rows = $trs.length
+	Local $i_rows = $trs.length
 	Local $a_TableCells[$i_cols][$i_rows]
-	$row = 0
+	Local $col, $row = 0
 	For $tr In $trs
 		$tds = $tr.cells
 		$col = 0
@@ -2179,77 +1916,61 @@ Func _IETableWriteToArray(ByRef $o_object, $f_transpose = False)
 		Next
 		$a_TableCells = $aTmp
 	EndIf
-	SetError($_IEStatus_Success)
-	Return $a_TableCells
+	Return SetError($_IEStatus_Success, 0, $a_TableCells)
 EndFunc   ;==>_IETableWriteToArray
 #EndRegion Table functions
 #Region Read/Write functions
-;===============================================================================
-;
-; Function Name:    _IEBodyReadHTML()
-; Description:		Returns the HTML inside the <body> tag of the document
-; Parameter(s):     $o_object 	- Object variable of an InternetExplorer.Application, Window or Frame object
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns HTML included in the <body> of the docuement
-;                   On Failure	- Returns 0 and sets @ERROR
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEBodyReadHTML
+; Description ...: Returns the HTML inside the <body> tag of the document
+; Parameters ....: $o_object 	- Object variable of an InternetExplorer.Application, Window or Frame object
+; Return values .: On Success 	- Returns HTML included in the <body> of the docuement
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEBodyReadHTML(ByRef $o_object)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEBodyReadHTML", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
-	SetError($_IEStatus_Success)
-	Return $o_object.document.body.innerHTML
+	Return SetError($_IEStatus_Success, 0, $o_object.document.body.innerHTML)
 EndFunc   ;==>_IEBodyReadHTML
 
-;===============================================================================
-;
-; Function Name:    _IEBodyReadText()
-; Description:		Returns the Text inside the <body> tag of the document
-; Parameter(s):     $o_object 	- Object variable of an InternetExplorer.Application, Window or Frame object
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns the Text included in the <body> of the docuement
-;                   On Failure	- Returns 0 and sets @ERROR
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEBodyReadText
+; Description ...: Returns the Text inside the <body> tag of the document
+; Parameters ....: $o_object 	- Object variable of an InternetExplorer.Application, Window or Frame object
+; Return values .: On Success 	- Returns the Text included in the <body> of the docuement
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEBodyReadText(ByRef $o_object)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEBodyReadText", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	If Not __IEIsObjType($o_object, "browserdom") Then
 		__IEErrorNotify("Error", "_IEBodyReadText", "$_IEStatus_InvalidObjectType", "Expected document element")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 	;
-	SetError($_IEStatus_Success)
-	Return $o_object.document.body.innerText
+	Return SetError($_IEStatus_Success, 0, $o_object.document.body.innerText)
 EndFunc   ;==>_IEBodyReadText
 
-;===============================================================================
-;
-; Function Name:    _IEBodyWriteHTML()
-; Description:		Replaces the HTML inside the <body> tag of the document
-; Parameter(s):     $o_object 	- Object variable of an InternetExplorer.Application, Window or Frame object
-;					$s_html		- The HTML string to write to the document
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns -1
-;                   On Failure	- Returns 0 and sets @ERROR
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEBodyWriteHTML
+; Description ...: Replaces the HTML inside the <body> tag of the document
+; Parameters ....: $o_object 	- Object variable of an InternetExplorer.Application, Window or Frame object
+;				   $s_html		- The HTML string to write to the document
+; Return values .: On Success 	- Returns -1
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 1 ($_IEStatus_GeneralError) = General Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
@@ -2258,69 +1979,55 @@ EndFunc   ;==>_IEBodyReadText
 ;								- 8 ($_IEStatus_AccessIsDenied) = Access Is Denied
 ;								- 9 ($_IEStatus_ClientDisconnected) = Client Disconnected
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEBodyWriteHTML(ByRef $o_object, $s_html)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEBodyWriteHTML", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	If Not __IEIsObjType($o_object, "browserdom") Then
 		__IEErrorNotify("Error", "_IEBodyWriteHTML", "$_IEStatus_InvalidObjectType", "Expected document element")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 	;
 	$o_object.document.body.innerHTML = $s_html
 	Local $oTemp = $o_object.document
 	_IELoadWait($oTemp)
-	SetError(@error)
-	Return -1
+	Return SetError(@error, 0, -1)
 EndFunc   ;==>_IEBodyWriteHTML
 
-;===============================================================================
-;
-; Function Name:    _IEDocReadHTML()
-; Description:		Returns the full HTML source of a document
-; Parameter(s):     $o_object 	- Object variable of an InternetExplorer.Application, Window or Frame object
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns the HTML included in the <HTML> of the docuement, including the <HTML> and </HTML> tags
-;                   On Failure	- Returns 0 and sets @ERROR
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEDocReadHTML
+; Description ...: Returns the full HTML source of a document
+; Parameters ....: $o_object 	- Object variable of an InternetExplorer.Application, Window or Frame object
+; Return values .: On Success 	- Returns the HTML included in the <HTML> of the docuement, including the <HTML> and </HTML> tags
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEDocReadHTML(ByRef $o_object)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEDocReadHTML", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	If Not __IEIsObjType($o_object, "browserdom") Then
 		__IEErrorNotify("Error", "_IEDocReadHTML", "$_IEStatus_InvalidObjectType", "Expected document element")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 	;
-	SetError($_IEStatus_Success)
-	Return $o_object.document.documentElement.outerHTML
+	Return SetError($_IEStatus_Success, 0, $o_object.document.documentElement.outerHTML)
 EndFunc   ;==>_IEDocReadHTML
 
-;===============================================================================
-;
-; Function Name:    _IEDocWriteHTML()
-; Description:		Replaces the HTML for the entire document
-; Parameter(s):     $o_object 	- Object variable of an InternetExplorer.Application, Window or Frame object
-;					$s_html		- The HTML string to write to the document
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns -1
-;                   On Failure	- Returns 0 and sets @ERROR
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEDocWriteHTML
+; Description ...: Replaces the HTML for the entire document
+; Parameters ....: $o_object 	- Object variable of an InternetExplorer.Application, Window or Frame object
+;				   $s_html		- The HTML string to write to the document
+; Return values .: On Success 	- Returns -1
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 1 ($_IEStatus_GeneralError) = General Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
@@ -2329,175 +2036,143 @@ EndFunc   ;==>_IEDocReadHTML
 ;								- 8 ($_IEStatus_AccessIsDenied) = Access Is Denied
 ;								- 9 ($_IEStatus_ClientDisconnected) = Client Disconnected
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEDocWriteHTML(ByRef $o_object, $s_html)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEDocWriteHTML", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	If Not __IEIsObjType($o_object, "browserdom") Then
 		__IEErrorNotify("Error", "_IEDocWriteHTML", "$_IEStatus_InvalidObjectType", "Expected document element")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 	;
 	$o_object.document.Write($s_html)
 	$o_object.document.close()
 	Local $oTemp = $o_object.document
 	_IELoadWait($oTemp)
-	SetError(@error)
-	Return -1
+	Return SetError(@error, 0, -1)
 EndFunc   ;==>_IEDocWriteHTML
 
-;===============================================================================
-;
-; Function Name:    _IEDocInsertText()
-; Description:		Inserts text adjacent to a specified document element
-; Parameter(s):     $o_object	- Object variable of a document element
-;                   $s_string   - String containing text to insert
-;                   $s_where    - String value signifying where to insert relative to $o_object
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEDocInsertText
+; Description ...: Inserts text adjacent to a specified document element
+; Parameters ....: $o_object	- Object variable of a document element
+;                  $s_string   - String containing text to insert
+;                  $s_where    - String value signifying where to insert relative to $o_object
 ;								- BeforeBegin = before start tag of specified object
 ;								- AfterBegin = after start tag of specified object
 ;								- BeforeEnd = (Default) before end tag of specified object
 ;								- AfterEnd = after end tag of specified object
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns 1
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- Returns 1
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 4 ($_IEStatus_InvalidObjectType) = Invalid Object Type
 ;								- 5 ($_IEStatus_InvalidValue) = Invalid Value
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEDocInsertText(ByRef $o_object, $s_string, $s_where = "beforeend")
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEDocInsertText", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	If Not __IEIsObjType($o_object, "browserdom") Or __IEIsObjType($o_object, "documentcontainer") Or __IEIsObjType($o_object, "document") Then
 		__IEErrorNotify("Error", "_IEDocInsertText", "$_IEStatus_InvalidObjectType", "Expected document element")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 
 	$s_where = StringLower($s_where)
 	Select
 		Case $s_where = "beforebegin"
 			$o_object.insertAdjacentText($s_where, $s_string)
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_where = "afterbegin"
 			$o_object.insertAdjacentText($s_where, $s_string)
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_where = "beforeend"
 			$o_object.insertAdjacentText($s_where, $s_string)
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_where = "afterend"
 			$o_object.insertAdjacentText($s_where, $s_string)
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case Else
 			; Unsupported Where
 			__IEErrorNotify("Error", "_IEDocInsertText", "$_IEStatus_InvalidValue", "Invalid where value")
-			SetError($_IEStatus_InvalidValue, 3)
-			Return 0
+			Return SetError($_IEStatus_InvalidValue, 3, 0)
 	EndSelect
 EndFunc   ;==>_IEDocInsertText
 
-;===============================================================================
-;
-; Function Name:    _IEDocInsertHTML()
-; Description:		Inserts HTML adjacent to a specified document element
-; Parameter(s):     $o_object	- Object variable of a document element
-;                   $s_string   - String containing text to insert
-;                   $s_where    - String value signifying where to insert relative to $o_object
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEDocInsertHTML
+; Description ...: Inserts HTML adjacent to a specified document element
+; Parameters ....: $o_object	- Object variable of a document element
+;                  $s_string   - String containing text to insert
+;                  $s_where    - String value signifying where to insert relative to $o_object
 ;								- BeforeBegin = before start tag of specified object
 ;								- AfterBegin = after start tag of specified object
 ;								- BeforeEnd = (Default) before end tag of specified object
 ;								- AfterEnd = after end tag of specified object
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns 1
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- Returns 1
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 4 ($_IEStatus_InvalidObjectType) = Invalid Object Type
 ;								- 5 ($_IEStatus_InvalidValue) = Invalid Value
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEDocInsertHTML(ByRef $o_object, $s_string, $s_where = "beforeend")
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEDocInsertHTML", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	If Not __IEIsObjType($o_object, "browserdom") Or __IEIsObjType($o_object, "documentcontainer") Or __IEIsObjType($o_object, "document") Then
 		__IEErrorNotify("Error", "_IEDocInsertHTML", "$_IEStatus_InvalidObjectType", "Expected document element")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 
 	$s_where = StringLower($s_where)
 	Select
 		Case $s_where = "beforebegin"
 			$o_object.insertAdjacentHTML($s_where, $s_string)
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_where = "afterbegin"
 			$o_object.insertAdjacentHTML($s_where, $s_string)
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_where = "beforeend"
 			$o_object.insertAdjacentHTML($s_where, $s_string)
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_where = "afterend"
 			$o_object.insertAdjacentHTML($s_where, $s_string)
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case Else
 			; Unsupported Where
 			__IEErrorNotify("Error", "_IEDocInsertHTML", "$_IEStatus_InvalidValue", "Invalid where value")
-			SetError($_IEStatus_InvalidValue, 3)
-			Return 0
+			Return SetError($_IEStatus_InvalidValue, 3, 0)
 	EndSelect
 EndFunc   ;==>_IEDocInsertHTML
 
-;===============================================================================
-;
-; Function Name:    _IEHeadInsertEventScript()
-; Description:		Inserts a Javascript into the Head of the document
-; Parameter(s):     $o_object	- Object variable of an InternetExplorer.Application, Window or Frame object
-;                   $s_htmlFor  - The HTML element for event monitoring (e.g. "document" or an element ID)
-;                   $s_event    - The event to monitor (e.g. "onclick" or "oncontextmenu")
-;                   $s_script   - Javascript string to be executed
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns 1
-;                   On Failure	- Returns 0 and sets @ERROR
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEHeadInsertEventScript
+; Description ...: Inserts a Javascript into the Head of the document
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Window or Frame object
+;                  $s_htmlFor  - The HTML element for event monitoring (e.g. "document" or an element ID)
+;                  $s_event    - The event to monitor (e.g. "onclick" or "oncontextmenu")
+;                  $s_script   - Javascript string to be executed
+; Return values .: On Success 	- Returns 1
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEHeadInsertEventScript(ByRef $o_object, $s_htmlFor, $s_event, $s_script)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEHeadInsertEventScript", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 
 	Local $o_head = $o_object.document.all.tags("HEAD" ).Item(0)
@@ -2511,76 +2186,62 @@ Func _IEHeadInsertEventScript(ByRef $o_object, $s_htmlFor, $s_event, $s_script)
 		.text = $s_script
 	EndWith
 	$o_head.appendChild($o_script)
-	SetError($_IEStatus_Success)
-	Return 1
+	Return SetError($_IEStatus_Success, 0, 1)
 EndFunc   ;==>_IEHeadInsertEventScript
 #EndRegion Read/Write functions
 #Region Utility functions
-;===============================================================================
-;
-; Function Name:    _IEDocGetObj()
-; Description:		Given any DOM object, returns a reference to the associated document object
-; Parameter(s):		$o_object	- Object variable of an InternetExplorer.Application, Window or Frame object
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns an object variable pointing to the Document object
-;                   On Failure	- Returns 0 and sets @ERROR
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEDocGetObj
+; Description ...: Given any DOM object, returns a reference to the associated document object
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Window or Frame object
+; Return values .: On Success 	- Returns an object variable pointing to the Document object
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEDocGetObj(ByRef $o_object)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEDocGetObj", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	Switch __IEIsObjType($o_object, "document")
 		Case True
-			SetError($_IEStatus_Success)
-			Return $o_object
+			Return SetError($_IEStatus_Success, 0, $o_object)
 		Case False
-			SetError($_IEStatus_Success)
-			Return $o_object.document
+			Return SetError($_IEStatus_Success, 0, $o_object.document)
 	EndSwitch
 EndFunc   ;==>_IEDocGetObj
 
-;===============================================================================
-;
-; Function Name:    _IETagNameGetCollection()
-; Description:		Returns a collection object of all elements in the object with the specified TagName.
-; Parameter(s):		$o_object	- Object variable of an InternetExplorer.Application, Window, Frame, iFrame or any object in the DOM
-;					$s_TagName	- TagName of collection to return (e.g. IMG, TR etc.)
-;					$i_index	- Optional: specifies whether to return a collection or indexed instance
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IETagNameGetCollection
+; Description ...: Returns a collection object of all elements in the object with the specified TagName.
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Window, Frame, iFrame or any object in the DOM
+;				   $s_TagName	- TagName of collection to return (e.g. IMG, TR etc.)
+;				   $i_index	- Optional: specifies whether to return a collection or indexed instance
 ;								- 0 or positive integer returns an indexed instance
 ;								- -1 = (Default) returns a collection
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns an object variable containing the specified Tag collection, @EXTENDED = specified Tag count
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- Returns an object variable containing the specified Tag collection, @EXTENDED = specified Tag count
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 4 ($_IEStatus_InvalidObjectType) = Invalid Object Type
 ;								- 5 ($_IEStatus_InvalidValue) = Invalid Value
 ;								- 7 ($_IEStatus_NoMatch) = No Match
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IETagNameGetCollection(ByRef $o_object, $s_TagName, $i_index = -1)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IETagNameGetCollection", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	If Not __IEIsObjType($o_object, "browserdom") Then
 		__IEErrorNotify("Error", "_IETagNameGetCollection", "$_IEStatus_InvalidObjectType")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 
 	Local $oTemp
@@ -2593,56 +2254,46 @@ Func _IETagNameGetCollection(ByRef $o_object, $s_TagName, $i_index = -1)
 	$i_index = Number($i_index)
 	Select
 		Case $i_index = -1
-			SetError($_IEStatus_Success)
-			SetExtended($oTemp.GetElementsByTagName($s_TagName).length)
-			Return $oTemp.GetElementsByTagName($s_TagName)
+			Return SetError($_IEStatus_Success, $oTemp.GetElementsByTagName($s_TagName).length, _
+						$oTemp.GetElementsByTagName($s_TagName))
 		Case $i_index > -1 And $i_index < $oTemp.GetElementsByTagName($s_TagName).length
-			SetError($_IEStatus_Success)
-			SetExtended($oTemp.GetElementsByTagName($s_TagName).length)
-			Return $oTemp.GetElementsByTagName($s_TagName).item($i_index)
+			Return SetError($_IEStatus_Success, $oTemp.GetElementsByTagName($s_TagName).length, _
+						$oTemp.GetElementsByTagName($s_TagName).item($i_index))
 		Case $i_index < -1
 			__IEErrorNotify("Error", "_IETagNameGetCollection", "$_IEStatus_InvalidValue", "$i_index < -1")
-			SetError($_IEStatus_InvalidValue, 3)
-			Return 0
+			Return SetError($_IEStatus_InvalidValue, 3, 0)
 		Case Else
 			__IEErrorNotify("Error", "_IETagNameGetCollection", "$_IEStatus_NoMatch")
-			SetError($_IEStatus_NoMatch) ; Could be caused by parameter 2, 3 or both
-			Return 0
+			Return SetError($_IEStatus_NoMatch, 0, 0) ; Could be caused by parameter 2, 3 or both
 	EndSelect
 EndFunc   ;==>_IETagNameGetCollection
 
-;===============================================================================
-;
-; Function Name:    _IETagNameAllGetCollection()
-; Description:		Returns a collection object all elements in the document or document hierarchy in source order.
-; Parameter(s):		$o_object	- Object variable of an InternetExplorer.Application, Window, Frame, iFrame or any object in the DOM
-;					$i_index	- Optional: specifies whether to return a collection or indexed instance
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IETagNameAllGetCollection
+; Description ...: Returns a collection object all elements in the document or document hierarchy in source order.
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Window, Frame, iFrame or any object in the DOM
+;				   $i_index	- Optional: specifies whether to return a collection or indexed instance
 ;								- 0 or positive integer returns an indexed instance
 ;								- -1 = (Default) returns a collection
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns an object variable containing the Tag collection, @EXTENDED = Tag count
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- Returns an object variable containing the Tag collection, @EXTENDED = Tag count
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 4 ($_IEStatus_InvalidObjectType) = Invalid Object Type
 ;								- 5 ($_IEStatus_InvalidValue) = Invalid Value
 ;								- 7 ($_IEStatus_NoMatch) = No Match
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IETagNameAllGetCollection(ByRef $o_object, $i_index = -1)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IETagNameAllGetCollection", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	If Not __IEIsObjType($o_object, "browserdom") Then
 		__IEErrorNotify("Error", "_IETagNameAllGetCollection", "$_IEStatus_InvalidObjectType")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 
 	Local $oTemp
@@ -2655,132 +2306,105 @@ Func _IETagNameAllGetCollection(ByRef $o_object, $i_index = -1)
 	$i_index = Number($i_index)
 	Select
 		Case $i_index = -1
-			SetError($_IEStatus_Success)
-			SetExtended($oTemp.all.length)
-			Return $oTemp.all
+			Return SetError($_IEStatus_Success, $oTemp.all.length, $oTemp.all)
 		Case $i_index > -1 And $i_index < $oTemp.all.length
-			SetError($_IEStatus_Success)
-			SetExtended($oTemp.all.length)
-			Return $oTemp.all.item($i_index)
+			Return SetError($_IEStatus_Success, $oTemp.all.length, $oTemp.all.item($i_index))
 		Case $i_index < -1
 			__IEErrorNotify("Error", "_IETagNameAllGetCollection", "$_IEStatus_InvalidValue", "$i_index < -1")
-			SetError($_IEStatus_InvalidValue, 2)
-			Return 0
+			Return SetError($_IEStatus_InvalidValue, 2, 0)
 		Case Else
 			__IEErrorNotify("Error", "_IETagNameAllGetCollection", "$_IEStatus_NoMatch")
-			SetError($_IEStatus_NoMatch, 1)
-			Return 0
+			Return SetError($_IEStatus_NoMatch, 1, 0)
 	EndSelect
 EndFunc   ;==>_IETagNameAllGetCollection
 
-;===============================================================================
-;
-; Function Name:    _IEGetObjByName()
-; Description:		Returns an object variable by Id or name
-; Parameter(s):		$o_object	- Object variable of an InternetExplorer.Application, Window or Frame object
-;					$s_Id		- Specifies name or id of the object you wish to match
-;					$i_index	- Optional: If Name of Id occurs more than once, specifies instance by 0-based index
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEGetObjByName
+; Description ...: Returns an object variable by Id or name
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Window or Frame object
+;				   $s_Id		- Specifies name or id of the object you wish to match
+;				   $i_index	- Optional: If Name of Id occurs more than once, specifies instance by 0-based index
 ;								- 0 (Default) or positive integer returns an indexed instance
 ;								- -1 returns a collection of the specified objects
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns an object variable pointing to the specified Object, @EXTENDED = specified object count
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- Returns an object variable pointing to the specified Object, @EXTENDED = specified object count
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 7 ($_IEStatus_NoMatch) = No Match
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEGetObjByName(ByRef $o_object, $s_Id, $i_index = 0)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEGetObjByName", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	$i_index = Number($i_index)
 	If $i_index = -1 Then
-		SetError($_IEStatus_Success)
-		SetExtended($o_object.document.GetElementsByName($s_Id).length)
-		Return $o_object.document.GetElementsByName($s_Id)
+		Return SetError($_IEStatus_Success, $o_object.document.GetElementsByName($s_Id).length, _
+					$o_object.document.GetElementsByName($s_Id))
 	Else
 		If IsObj($o_object.document.GetElementsByName($s_Id).item($i_index)) Then
-			SetError($_IEStatus_Success)
-			SetExtended($o_object.document.GetElementsByName($s_Id).length)
-			Return $o_object.document.GetElementsByName($s_Id).item($i_index)
+			Return SetError($_IEStatus_Success, $o_object.document.GetElementsByName($s_Id).length, _
+					$o_object.document.GetElementsByName($s_Id).item($i_index))
 		Else
 			__IEErrorNotify("Warning", "_IEGetObjByName", "$_IEStatus_NoMatch", "Name: " & $s_Id & ", Index: " & $i_index)
-			SetError($_IEStatus_NoMatch) ; Could be caused by parameter 2, 3 or both
-			Return 0
+			Return SetError($_IEStatus_NoMatch, 0, 0) ; Could be caused by parameter 2, 3 or both
 		EndIf
 	EndIf
 EndFunc   ;==>_IEGetObjByName
 
-;===============================================================================
-;
-; Function Name:    _IEGetObjById()
-; Description:		Returns an object variable by Id or name
-; Parameter(s):		$o_object	- Object variable of an InternetExplorer.Application, Window or Frame object
-;					$s_Id		- Specifies id of the object you wish to match
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns an object variable pointing to the specified Object
-;                   On Failure	- Returns 0 and sets @ERROR
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEGetObjById
+; Description ...: Returns an object variable by Id or name
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application, Window or Frame object
+;				   $s_Id		- Specifies id of the object you wish to match
+; Return values .: On Success 	- Returns an object variable pointing to the specified Object
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 7 ($_IEStatus_NoMatch) = No Match
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEGetObjById(ByRef $o_object, $s_Id)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEGetObjById", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	If Not __IEIsObjType($o_object, "browserdom") Then
 		__IEErrorNotify("Error", "_IEGetObById", "$_IEStatus_InvalidObjectType")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 	;
 	If IsObj($o_object.document.getElementById($s_Id)) Then
-		SetError($_IEStatus_Success)
-		Return $o_object.document.getElementById($s_Id)
+		Return SetError($_IEStatus_Success, 0, $o_object.document.getElementById($s_Id))
 	Else
 		__IEErrorNotify("Warning", "_IEGetObjById", "$_IEStatus_NoMatch", $s_Id)
-		SetError($_IEStatus_NoMatch, 2)
-		Return 0
+		Return SetError($_IEStatus_NoMatch, 2, 0)
 	EndIf
 EndFunc   ;==>_IEGetObjById
 
-;===============================================================================
-;
-; Function Name:    _IEAction()
-; Description:      Perform any of a set of simple actions on the Browser
-; Parameter(s):     $o_object	- Object variable of an InternetExplorer.Application
-;					$s_action	- Action selection
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns 1
-;                   On Failure	- Returns 0 and sets @ERROR
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEAction
+; Description ...: Perform any of a set of simple actions on the Browser
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application
+;				   $s_action	- Action selection
+; Return values .: On Success 	- Returns 1
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 4 ($_IEStatus_InvalidObjectType) = Invalid Object Type
 ;								- 5 ($_IEStatus_InvalidValue) = Invalid Value
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEAction(ByRef $o_object, $s_action)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEAction", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	$s_action = StringLower($s_action)
@@ -2789,199 +2413,156 @@ Func _IEAction(ByRef $o_object, $s_action)
 		Case $s_action = "click"
 			If __IEIsObjType($o_object, "documentContainer") Then
 				__IEErrorNotify("Error", "_IEAction", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$o_object.Click()
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_action = "disable"
 			If __IEIsObjType($o_object, "documentContainer") Then
 				__IEErrorNotify("Error", "_IEAction", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$o_object.disabled = True
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_action = "enable"
 			If __IEIsObjType($o_object, "documentContainer") Then
 				__IEErrorNotify("Error", "_IEAction", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$o_object.disabled = False
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_action = "focus"
 			If __IEIsObjType($o_object, "documentContainer") Then
 				__IEErrorNotify("Error", "_IEAction", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$o_object.Focus()
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 			; Browser Object
 		Case $s_action = "copy"
 			$o_object.document.execCommand("Copy")
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_action = "cut"
 			$o_object.document.execCommand("Cut")
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_action = "paste"
 			$o_object.document.execCommand("Paste")
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_action = "delete"
 			$o_object.document.execCommand("Delete")
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_action = "saveas"
 			$o_object.document.execCommand("SaveAs")
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_action = "refresh"
 			$o_object.document.execCommand("Refresh")
 			_IELoadWait($o_object)
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_action = "selectall"
 			$o_object.document.execCommand("SelectAll")
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_action = "unselect"
 			$o_object.document.execCommand("Unselect")
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_action = "print"
 			$o_object.document.parentwindow.Print()
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_action = "printdefault"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEAction", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$o_object.execWB(6, 2)
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_action = "back"
 			If Not __IEIsObjType($o_object, "documentContainer") Then
 				__IEErrorNotify("Error", "_IEAction", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$o_object.GoBack()
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_action = "blur"
 			$o_object.Blur()
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_action = "forward"
 			If Not __IEIsObjType($o_object, "documentContainer") Then
 				__IEErrorNotify("Error", "_IEAction", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$o_object.GoForward()
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_action = "home"
 			If Not __IEIsObjType($o_object, "documentContainer") Then
 				__IEErrorNotify("Error", "_IEAction", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$o_object.GoHome()
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_action = "invisible"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEAction", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$o_object.visible = 0
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_action = "visible"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEAction", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$o_object.visible = 1
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_action = "search"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEAction", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$o_object.GoSearch()
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_action = "stop"
 			If Not __IEIsObjType($o_object, "documentContainer") Then
 				__IEErrorNotify("Error", "_IEAction", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$o_object.Stop()
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_action = "quit"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEAction", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$o_object.Quit()
 			$o_object = 0
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case Else
 			; Unsupported Action
 			__IEErrorNotify("Error", "_IEAction", "$_IEStatus_InvalidValue", "Invalid Action")
-			SetError($_IEStatus_InvalidValue, 2)
-			Return 0
+			Return SetError($_IEStatus_InvalidValue, 2, 0)
 	EndSelect
 EndFunc   ;==>_IEAction
 
-;===============================================================================
-;
-; Function Name:    _IEPropertyGet()
-; Description:      Returns a select property of the browser
-; Parameter(s):     $o_object	- Object variable of an InternetExplorer.Application
-;					$s_property	- Property selection
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Value of selected Property
-;                   On Failure	- Returns 0 and sets @ERROR
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEPropertyGet
+; Description ...: Returns a select property of the browser
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application
+;				   $s_property	- Property selection
+; Return values .: On Success 	- Value of selected Property
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 4 ($_IEStatus_InvalidObjectType) = Invalid Object Type
 ;								- 5 ($_IEStatus_InvalidValue) = Invalid Value
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEPropertyGet(ByRef $o_object, $s_property)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	If Not __IEIsObjType($o_object, "browserdom") Then
 		__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 	;
 	Local $oTemp, $iTemp
@@ -2990,8 +2571,7 @@ Func _IEPropertyGet(ByRef $o_object, $s_property)
 		Case $s_property = "browserx"
 			If __IEIsObjType($o_object, "browsercontainer") Or __IEIsObjType($o_object, "document") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$oTemp = $o_object
 			$iTemp = 0
@@ -2999,13 +2579,11 @@ Func _IEPropertyGet(ByRef $o_object, $s_property)
 				$iTemp += $oTemp.offsetLeft
 				$oTemp = $oTemp.offsetParent
 			WEnd
-			SetError($_IEStatus_Success)
-			Return $iTemp
+			Return SetError($_IEStatus_Success, 0, $iTemp)
 		Case $s_property = "browsery"
 			If __IEIsObjType($o_object, "browsercontainer") Or __IEIsObjType($o_object, "document") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$oTemp = $o_object
 			$iTemp = 0
@@ -3013,17 +2591,14 @@ Func _IEPropertyGet(ByRef $o_object, $s_property)
 				$iTemp += $oTemp.offsetTop
 				$oTemp = $oTemp.offsetParent
 			WEnd
-			SetError($_IEStatus_Success)
-			Return $iTemp
+			Return SetError($_IEStatus_Success, 0, $iTemp)
 		Case $s_property = "screenx"
 			If __IEIsObjType($o_object, "window") Or __IEIsObjType($o_object, "document") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			If __IEIsObjType($o_object, "browser") Then
-				SetError($_IEStatus_Success)
-				Return $o_object.left()
+				Return SetError($_IEStatus_Success, 0, $o_object.left())
 			Else
 				$oTemp = $o_object
 				$iTemp = 0
@@ -3032,17 +2607,15 @@ Func _IEPropertyGet(ByRef $o_object, $s_property)
 					$oTemp = $oTemp.offsetParent
 				WEnd
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $iTemp + $o_object.document.parentWindow.screenLeft
+			Return SetError($_IEStatus_Success, 0, _
+						$iTemp + $o_object.document.parentWindow.screenLeft)
 		Case $s_property = "screeny"
 			If __IEIsObjType($o_object, "window") Or __IEIsObjType($o_object, "document") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			If __IEIsObjType($o_object, "browser") Then
-				SetError($_IEStatus_Success)
-				Return $o_object.top()
+				Return SetError($_IEStatus_Success, 0, $o_object.top())
 			Else
 				$oTemp = $o_object
 				$iTemp = 0
@@ -3051,211 +2624,157 @@ Func _IEPropertyGet(ByRef $o_object, $s_property)
 					$oTemp = $oTemp.offsetParent
 				WEnd
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $iTemp + $o_object.document.parentWindow.screenTop
+			Return SetError($_IEStatus_Success, 0, _
+						$iTemp + $o_object.document.parentWindow.screenTop)
 		Case $s_property = "height"
 			If __IEIsObjType($o_object, "window") Or __IEIsObjType($o_object, "document") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			If __IEIsObjType($o_object, "browser") Then
-				SetError($_IEStatus_Success)
-				Return $o_object.Height()
+				Return SetError($_IEStatus_Success, 0, $o_object.Height())
 			Else
-				SetError($_IEStatus_Success)
-				Return $o_object.offsetHeight
+				Return SetError($_IEStatus_Success, 0, $o_object.offsetHeight)
 			EndIf
 		Case $s_property = "width"
 			If __IEIsObjType($o_object, "window") Or __IEIsObjType($o_object, "document") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			If __IEIsObjType($o_object, "browser") Then
-				SetError($_IEStatus_Success)
-				Return $o_object.Width()
+				Return SetError($_IEStatus_Success, 0, $o_object.Width())
 			Else
-				SetError($_IEStatus_Success)
-				Return $o_object.offsetWidth
+				Return SetError($_IEStatus_Success, 0, $o_object.offsetWidth)
 			EndIf
 		Case $s_property = "isdisabled"
-			SetError($_IEStatus_Success)
-			Return $o_object.isDisabled()
+			Return SetError($_IEStatus_Success, 0, $o_object.isDisabled())
 		Case $s_property = "addressbar"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $o_object.AddressBar()
+			Return SetError($_IEStatus_Success, 0, $o_object.AddressBar())
 		Case $s_property = "busy"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $o_object.Busy()
+			Return SetError($_IEStatus_Success, 0, $o_object.Busy())
 		Case $s_property = "fullscreen"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $o_object.fullScreen()
+			Return SetError($_IEStatus_Success, 0, $o_object.fullScreen())
 		Case $s_property = "hwnd"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
-			SetError($_IEStatus_Success)
-			Return HWnd($o_object.HWnd())
+			Return SetError($_IEStatus_Success, 0, HWnd($o_object.HWnd()))
 		Case $s_property = "left"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $o_object.Left()
+			Return SetError($_IEStatus_Success, 0, $o_object.Left())
 		Case $s_property = "locationname"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $o_object.LocationName()
+			Return SetError($_IEStatus_Success, 0, $o_object.LocationName())
 		Case $s_property = "locationurl"
 			If __IEIsObjType($o_object, "browser") Then
-				SetError($_IEStatus_Success)
-				Return $o_object.locationURL()
+				Return SetError($_IEStatus_Success, 0, $o_object.locationURL())
 			EndIf
 			If __IEIsObjType($o_object, "window") Then
-				SetError($_IEStatus_Success)
-				Return $o_object.location.href()
+				Return SetError($_IEStatus_Success, 0, $o_object.location.href())
 			EndIf
 			If __IEIsObjType($o_object, "document") Then
-				SetError($_IEStatus_Success)
-				Return $o_object.parentwindow.location.href()
+				Return SetError($_IEStatus_Success, 0, $o_object.parentwindow.location.href())
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $o_object.document.parentwindow.location.href()
+			Return SetError($_IEStatus_Success, 0, $o_object.document.parentwindow.location.href())
 		Case $s_property = "menubar"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $o_object.MenuBar()
+			Return SetError($_IEStatus_Success, 0, $o_object.MenuBar())
 		Case $s_property = "offline"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $o_object.OffLine()
+			Return SetError($_IEStatus_Success, 0, $o_object.OffLine())
 		Case $s_property = "readystate"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $o_object.ReadyState()
+			Return SetError($_IEStatus_Success,0, $o_object.ReadyState())
 		Case $s_property = "resizable"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $o_object.Resizable()
+			Return SetError($_IEStatus_Success, 0, $o_object.Resizable())
 		Case $s_property = "silent"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $o_object.Silent()
+			Return SetError($_IEStatus_Success, 0, $o_object.Silent())
 		Case $s_property = "statusbar"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $o_object.StatusBar()
+			Return SetError($_IEStatus_Success, 0, $o_object.StatusBar())
 		Case $s_property = "statustext"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $o_object.StatusText()
+			Return SetError($_IEStatus_Success, 0, $o_object.StatusText())
 		Case $s_property = "top"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $o_object.Top()
+			Return SetError($_IEStatus_Success, 0, $o_object.Top())
 		Case $s_property = "visible"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $o_object.Visible()
+			Return SetError($_IEStatus_Success, 0, $o_object.Visible())
 		Case $s_property = "appcodename"
-			SetError($_IEStatus_Success)
-			Return $o_object.document.parentWindow.top.navigator.appCodeName()
+			Return SetError($_IEStatus_Success, 0, $o_object.document.parentWindow.top.navigator.appCodeName())
 		Case $s_property = "appminorversion"
-			SetError($_IEStatus_Success)
-			Return $o_object.document.parentWindow.top.navigator.appMinorVersion()
+			Return SetError($_IEStatus_Success, 0, $o_object.document.parentWindow.top.navigator.appMinorVersion())
 		Case $s_property = "appname"
-			SetError($_IEStatus_Success)
-			Return $o_object.document.parentWindow.top.navigator.appName()
+			Return SetError($_IEStatus_Success, 0, $o_object.document.parentWindow.top.navigator.appName())
 		Case $s_property = "appversion"
-			SetError($_IEStatus_Success)
-			Return $o_object.document.parentWindow.top.navigator.appVersion()
+			Return SetError($_IEStatus_Success, 0, $o_object.document.parentWindow.top.navigator.appVersion())
 		Case $s_property = "browserlanguage"
-			SetError($_IEStatus_Success)
-			Return $o_object.document.parentWindow.top.navigator.browserLanguage()
+			Return SetError($_IEStatus_Success, 0, $o_object.document.parentWindow.top.navigator.browserLanguage())
 		Case $s_property = "cookieenabled"
-			SetError($_IEStatus_Success)
-			Return $o_object.document.parentWindow.top.navigator.cookieEnabled()
+			Return SetError($_IEStatus_Success, 0, $o_object.document.parentWindow.top.navigator.cookieEnabled())
 		Case $s_property = "cpuclass"
-			SetError($_IEStatus_Success)
-			Return $o_object.document.parentWindow.top.navigator.cpuClass()
+			Return SetError($_IEStatus_Success, 0, $o_object.document.parentWindow.top.navigator.cpuClass())
 		Case $s_property = "javaenabled"
-			SetError($_IEStatus_Success)
-			Return $o_object.document.parentWindow.top.navigator.javaEnabled()
+			Return SetError($_IEStatus_Success, 0, $o_object.document.parentWindow.top.navigator.javaEnabled())
 		Case $s_property = "online"
-			SetError($_IEStatus_Success)
-			Return $o_object.document.parentWindow.top.navigator.onLine()
+			Return SetError($_IEStatus_Success, 0, $o_object.document.parentWindow.top.navigator.onLine())
 		Case $s_property = "platform"
-			SetError($_IEStatus_Success)
-			Return $o_object.document.parentWindow.top.navigator.platform()
+			Return SetError($_IEStatus_Success, 0, $o_object.document.parentWindow.top.navigator.platform())
 		Case $s_property = "systemlanguage"
-			SetError($_IEStatus_Success)
-			Return $o_object.document.parentWindow.top.navigator.systemLanguage()
+			Return SetError($_IEStatus_Success, 0, $o_object.document.parentWindow.top.navigator.systemLanguage())
 		Case $s_property = "useragent"
-			SetError($_IEStatus_Success)
-			Return $o_object.document.parentWindow.top.navigator.userAgent()
+			Return SetError($_IEStatus_Success, 0, $o_object.document.parentWindow.top.navigator.userAgent())
 		Case $s_property = "userlanguage"
-			SetError($_IEStatus_Success)
-			Return $o_object.document.parentWindow.top.navigator.userLanguage()
+			Return SetError($_IEStatus_Success, 0, $o_object.document.parentWindow.top.navigator.userLanguage())
 		Case $s_property = "vcard"
 			Local $aVcard[1][29]
 			$aVcard[0][0] = "Business.City"
@@ -3290,111 +2809,91 @@ Func _IEPropertyGet(ByRef $o_object, $s_property)
 			For $i = 0 To 28
 				$aVcard[1][$i] = Execute('$o_object.document.parentWindow.top.navigator.userProfile.getAttribute("' & $aVcard[0][$i] & '")')
 			Next
-			SetError($_IEStatus_Success)
-			Return $aVcard
+			Return SetError($_IEStatus_Success, 0, $aVcard)
 		Case $s_property = "referrer"
-			SetError($_IEStatus_Success)
-			Return $o_object.document.referrer
+			Return SetError($_IEStatus_Success, 0, $o_object.document.referrer)
 		Case $s_property = "theatermode"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $o_object.TheaterMode
+			Return SetError($_IEStatus_Success, 0, $o_object.TheaterMode)
 		Case $s_property = "toolbar"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $o_object.ToolBar
+			Return SetError($_IEStatus_Success, 0, $o_object.ToolBar)
 		Case $s_property = "contenteditable"
 			If __IEIsObjType($o_object, "browser") Or __IEIsObjType($o_object, "document") Then
 				$oTemp = $o_object.document.body
 			Else
 				$oTemp = $o_object
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $oTemp.isContentEditable
+			Return SetError($_IEStatus_Success, 0, $oTemp.isContentEditable)
 		Case $s_property = "innertext"
 			If __IEIsObjType($o_object, "documentcontainer") Or __IEIsObjType($o_object, "document") Then
 				$oTemp = $o_object.document.body
 			Else
 				$oTemp = $o_object
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $oTemp.innerText
+			Return SetError($_IEStatus_Success, 0, $oTemp.innerText)
 		Case $s_property = "outertext"
 			If __IEIsObjType($o_object, "documentcontainer") Or __IEIsObjType($o_object, "document") Then
 				$oTemp = $o_object.document.body
 			Else
 				$oTemp = $o_object
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $oTemp.outerText
+			Return SetError($_IEStatus_Success, 0, $oTemp.outerText)
 		Case $s_property = "innerhtml"
 			If __IEIsObjType($o_object, "documentcontainer") Or __IEIsObjType($o_object, "document") Then
 				$oTemp = $o_object.document.body
 			Else
 				$oTemp = $o_object
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $oTemp.innerHTML
+			Return SetError($_IEStatus_Success, 0, $oTemp.innerHTML)
 		Case $s_property = "outerhtml"
 			If __IEIsObjType($o_object, "documentcontainer") Or __IEIsObjType($o_object, "document") Then
 				$oTemp = $o_object.document.body
 			Else
 				$oTemp = $o_object
 			EndIf
-			SetError($_IEStatus_Success)
-			Return $oTemp.outerHTML
+			Return SetError($_IEStatus_Success, 0, $oTemp.outerHTML)
 		Case $s_property = "title"
-			SetError($_IEStatus_Success)
-			Return $o_object.document.title
+			Return SetError($_IEStatus_Success, 0, $o_object.document.title)
 		Case $s_property = "uniqueid"
 			If __IEIsObjType($o_object, "window") Then
 				__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			Else
-				SetError($_IEStatus_Success)
-				Return $o_object.uniqueID
+				Return SetError($_IEStatus_Success, 0, $o_object.uniqueID)
 			EndIf
 		Case Else
 			; Unsupported Property
 			__IEErrorNotify("Error", "_IEPropertyGet", "$_IEStatus_InvalidValue", "Invalid Property")
-			SetError($_IEStatus_InvalidValue, 2)
-			Return 0
+			Return SetError($_IEStatus_InvalidValue, 2, 0)
 	EndSelect
 EndFunc   ;==>_IEPropertyGet
 
-;===============================================================================
-;
-; Function Name:    _IEPropertySet()
-; Description:      Set a select property of the Browser
-; Parameter(s):     $o_object	- Object variable of an InternetExplorer.Application
-;					$s_property	- Property selection
-;					$newvalue	- The new value to be set into the Browser Property
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns 1
-;                   On Failure	- Returns 0 and sets @ERROR
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEPropertySet
+; Description ...: Set a select property of the Browser
+; Parameters ....: $o_object	- Object variable of an InternetExplorer.Application
+;				   $s_property	- Property selection
+;				   $newvalue	- The new value to be set into the Browser Property
+; Return values .: On Success 	- Returns 1
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 4 ($_IEStatus_InvalidObjectType) = Invalid Object Type
 ;								- 5 ($_IEStatus_InvalidValue) = Invalid Value
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEPropertySet(ByRef $o_object, $s_property, $newvalue)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEPropertySet", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	Local $oTemp
@@ -3404,119 +2903,95 @@ Func _IEPropertySet(ByRef $o_object, $s_property, $newvalue)
 		Case $s_property = "addressbar"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertySet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$o_object.AddressBar = $newvalue
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_property = "height"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertySet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$o_object.Height = $newvalue
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_property = "left"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertySet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$o_object.Left = $newvalue
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_property = "menubar"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertySet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$o_object.MenuBar = $newvalue
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_property = "offline"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertySet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$o_object.OffLine = $newvalue
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_property = "resizable"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertySet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$o_object.Resizable = $newvalue
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_property = "statusbar"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertySet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$o_object.StatusBar = $newvalue
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_property = "statustext"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertySet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$o_object.StatusText = $newvalue
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_property = "top"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertySet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$o_object.Top = $newvalue
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_property = "width"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertySet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			$o_object.Width = $newvalue
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_property = "theatermode"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertySet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			If $newvalue Then
 				$o_object.TheaterMode = True
 			Else
 				$o_object.TheaterMode = False
 			EndIf
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_property = "toolbar"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertySet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			If $newvalue Then
 				$o_object.ToolBar = True
 			Else
 				$o_object.ToolBar = False
 			EndIf
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_property = "contenteditable"
 			If __IEIsObjType($o_object, "browser") Or __IEIsObjType($o_object, "document") Then
 				$oTemp = $o_object.document.body
@@ -3528,8 +3003,7 @@ Func _IEPropertySet(ByRef $o_object, $s_property, $newvalue)
 			Else
 				$oTemp.contentEditable = "false"
 			EndIf
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_property = "innertext"
 			If __IEIsObjType($o_object, "documentcontainer") Or __IEIsObjType($o_object, "document") Then
 				$oTemp = $o_object.document.body
@@ -3537,8 +3011,7 @@ Func _IEPropertySet(ByRef $o_object, $s_property, $newvalue)
 				$oTemp = $o_object
 			EndIf
 			$oTemp.innerText = $newvalue
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_property = "outertext"
 			If __IEIsObjType($o_object, "documentcontainer") Or __IEIsObjType($o_object, "document") Then
 				$oTemp = $o_object.document.body
@@ -3546,8 +3019,7 @@ Func _IEPropertySet(ByRef $o_object, $s_property, $newvalue)
 				$oTemp = $o_object
 			EndIf
 			$oTemp.outerText = $newvalue
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_property = "innerhtml"
 			If __IEIsObjType($o_object, "documentcontainer") Or __IEIsObjType($o_object, "document") Then
 				$oTemp = $o_object.document.body
@@ -3555,8 +3027,7 @@ Func _IEPropertySet(ByRef $o_object, $s_property, $newvalue)
 				$oTemp = $o_object
 			EndIf
 			$oTemp.innerHTML = $newvalue
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_property = "outerhtml"
 			If __IEIsObjType($o_object, "documentcontainer") Or __IEIsObjType($o_object, "document") Then
 				$oTemp = $o_object.document.body
@@ -3564,51 +3035,42 @@ Func _IEPropertySet(ByRef $o_object, $s_property, $newvalue)
 				$oTemp = $o_object
 			EndIf
 			$oTemp.outerHTML = $newvalue
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_property = "title"
 			$o_object.document.title = $newvalue
-			SetError($_IEStatus_Success)
-			Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 		Case $s_property = "silent"
 			If Not __IEIsObjType($o_object, "browser") Then
 				__IEErrorNotify("Error", "_IEPropertySet", "$_IEStatus_InvalidObjectType")
-				SetError($_IEStatus_InvalidObjectType, 1)
-				Return 0
+				Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 			EndIf
 			If $newvalue Then
 				$o_object.silent = True
 			Else
 				$o_object.silent = False
 			EndIf
-			SetError($_IEStatus_Success)
-			Return 0
+			Return SetError($_IEStatus_Success, 0, 0)
 		Case Else
 			; Unsupported Property
 			__IEErrorNotify("Error", "_IEPropertySet", "$_IEStatus_InvalidValue", "Invalid Property")
-			SetError($_IEStatus_InvalidValue, 2)
-			Return 0
+			Return SetError($_IEStatus_InvalidValue, 2, 0)
 	EndSelect
 EndFunc   ;==>_IEPropertySet
 
-;===============================================================================
-;
-; Function Name:   _IEErrorNotify()
-; Description:		Specifies whether IE.au3 automatically notifies of Warnings and Errors (to the console)
-; Parameter(s):		$f_notify	- Optional: specifies whether notification should be on or off
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEErrorNotify
+; Description ...: Specifies whether IE.au3 automatically notifies of Warnings and Errors (to the console)
+; Parameters ....: $f_notify	- Optional: specifies whether notification should be on or off
 ;								- -1 = (Default) return current setting
 ;								- True = Turn On
 ;								- False = Turn Off
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- If $f_notify = -1, returns the current notification setting, else returns 1
-;                   On Failure	- Returns 0
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Return values .: On Success 	- If $f_notify = -1, returns the current notification setting, else returns 1
+;                  On Failure	- Returns 0
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEErrorNotify($f_notify = -1)
 	Switch Number($f_notify)
-		Case (-1)
+		Case -1
 			Return $_IEErrorNotify
 		Case 0
 			$_IEErrorNotify = False
@@ -3622,111 +3084,89 @@ Func _IEErrorNotify($f_notify = -1)
 	EndSwitch
 EndFunc   ;==>_IEErrorNotify
 
-;===============================================================================
-;
-; Function Name:   _IEErrorHandlerRegister()
-; Description:		Register and enable a user COM error handler
-; Parameter(s):		$s_functionName - String variable with the name of a user-defined COM error handler
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEErrorHandlerRegister
+; Description ...: Register and enable a user COM error handler
+; Parameters ....: $s_functionName - String variable with the name of a user-defined COM error handler
 ;									  defaults to the internal COM error handler in this UDF
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns 1
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- Returns 1
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 1 ($_IEStatus_GeneralError) = General Error
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEErrorHandlerRegister($s_functionName = "__IEInternalErrorHandler")
 	$sIEUserErrorHandler = $s_functionName
 	$oIEErrorHandler = ""
 	$oIEErrorHandler = ObjEvent("AutoIt.Error", $s_functionName)
 	If IsObj($oIEErrorHandler) Then
-		SetError($_IEStatus_Success)
-		Return 1
+			Return SetError($_IEStatus_Success, 0, 1)
 	Else
 		__IEErrorNotify("Error", "_IEPropertySet", "$_IEStatus_GeneralError", _
 				"Error Handler Not Registered - Check existance of error function")
-		SetError($_IEStatus_GeneralError, 1)
-		Return 0
+		Return SetError($_IEStatus_GeneralError, 1, 0)
 	EndIf
 EndFunc   ;==>_IEErrorHandlerRegister
 
-;===============================================================================
-;
-; Function Name:   _IEErrorHandlerDeRegister()
-; Description:		Disable a registered user COM error handler
-; Parameter(s):		None
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns 1
-;                   On Failure	- None
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEErrorHandlerDeRegister
+; Description ...: Disable a registered user COM error handler
+; Parameters ....: None
+; Return values .: On Success 	- Returns 1
+;                  On Failure	- None
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEErrorHandlerDeRegister()
 	$sIEUserErrorHandler = ""
 	$oIEErrorHandler = ""
-	SetError($_IEStatus_Success)
-	Return 1
+	Return SetError($_IEStatus_Success, 0, 1)
 EndFunc   ;==>_IEErrorHandlerDeRegister
 
-;===============================================================================
-;
-; Function Name:   _IEQuit()
-; Description:		Close the browser and remove the object reference to it
-; Parameter(s):		$o_object 	- Object variable of an InternetExplorer.Application
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns 1
-;                   On Failure	- Returns 0 and sets @ERROR
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IEQuit
+; Description ...: Close the browser and remove the object reference to it
+; Parameters ....: $o_object 	- Object variable of an InternetExplorer.Application
+; Return values .: On Success 	- Returns 1
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
 ;								- 4 ($_IEStatus_InvalidObjectType) = Invalid Object Type
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IEQuit(ByRef $o_object)
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "_IEQuit", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	If Not __IEIsObjType($o_object, "browser") Then
 		__IEErrorNotify("Error", "_IEAction", "$_IEStatus_InvalidObjectType")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 	;
-	SetError($_IEStatus_Success)
 	$o_object.quit()
 	$o_object = 0
-	Return 1
+	Return SetError($_IEStatus_Success, 0, 1)
 EndFunc   ;==>_IEQuit
 
 #EndRegion Utility functions
 #Region General
-;===============================================================================
-;
-; Function Name:    _IE_Introduction()
-; Description:		Display introductory information about IE.au3 in a new browser window
-; Parameter(s):     $s_module	- Optional: specifies which module to run
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IE_Introduction
+; Description ...: Display introductory information about IE.au3 in a new browser window
+; Parameters ....: $s_module	- Optional: specifies which module to run
 ;								- basic = (Default) basic introduction
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns an object variable pointing to an InternetExplorer.Application object
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- Returns an object variable pointing to an InternetExplorer.Application object
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 5 ($_IEStatus_InvalidValue) = Invalid Value
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IE_Introduction($s_module = "basic")
-	Local $s_html
+	Local $s_html = ""
 	Switch $s_module
 		Case "basic"
 			$s_html &= "<HTML>" & @CR
@@ -3779,35 +3219,29 @@ Func _IE_Introduction($s_module = "basic")
 			$s_html &= "</HTML>"
 		Case Else
 			__IEErrorNotify("Error", "_IE_Introduction", "$_IEStatus_InvalidValue")
-			SetError($_IEStatus_InvalidValue, 1)
-			Return 0
+			Return SetError($_IEStatus_InvalidValue, 1, 0)
 	EndSwitch
 	Local $o_object = _IECreate()
 	_IEDocWriteHTML($o_object, $s_html)
-	SetError($_IEStatus_Success)
-	Return $o_object
+	Return SetError($_IEStatus_Success, 0, $o_object)
 EndFunc   ;==>_IE_Introduction
 
-;===============================================================================
-;
-; Function Name:    _IE_Example()
-; Description:		Display a new browser window pre-loaded with documents to be used in IE.au3 examples
-; Parameter(s):     $s_module	- Optional: specifies which module to run
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IE_Example
+; Description ...: Display a new browser window pre-loaded with documents to be used in IE.au3 examples
+; Parameters ....: $s_module	- Optional: specifies which module to run
 ;								- basic = (Default) simple HTML page with text, links and images
 ;								- form = simple HTML page with multiple form elements
 ;								- frameset = simple HTML page with frames
 ;								- iframe = simple HTML page with iframes
 ;								- table = simple HTML page with tables
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns an object variable pointing to an InternetExplorer.Application object
-;                   On Failure	- Returns 0 and sets @ERROR
+; Return values .: On Success 	- Returns an object variable pointing to an InternetExplorer.Application object
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 5 ($_IEStatus_InvalidValue) = Invalid Value
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IE_Example($s_module = "basic")
 	Local $s_html = "", $o_object
 	Switch $s_module
@@ -4088,21 +3522,17 @@ Func _IE_Example($s_module = "basic")
 			_IEBodyWriteHTML($oIFrameTwo, '$oIFrameTwo = _IEFrameGetObjByName($oIE, "iFrameTwo")')
 		Case Else
 			__IEErrorNotify("Error", "_IE_Example", "$_IEStatus_InvalidValue")
-			SetError($_IEStatus_InvalidValue, 1)
-			Return 0
+			Return SetError($_IEStatus_InvalidValue, 1, 0)
 	EndSwitch
 
-	SetError($_IEStatus_Success)
-	Return $o_object
+	Return SetError($_IEStatus_Success, 0, $o_object)
 EndFunc   ;==>_IE_Example
 
-;===============================================================================
-;
-; Function Name:    _IE_VersionInfo()
-; Description:		Returns an array of information about the IE.au3 version
-; Parameter(s):     None
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success 	- Returns an array ($IEAU3VersionInfo)
+; #FUNCTION# ====================================================================================================================
+; Name...........: _IE_VersionInfo
+; Description ...: Returns an array of information about the IE.au3 version
+; Parameters ....:  None
+; Return values .: On Success 	- Returns an array ($IEAU3VersionInfo)
 ;								- $IEAU3VersionInfo[0] = Release Type (T=Test or V=Production)
 ;								- $IEAU3VersionInfo[1] = Major Version
 ;								- $IEAU3VersionInfo[2] = Minor Version
@@ -4110,18 +3540,15 @@ EndFunc   ;==>_IE_Example
 ;								- $IEAU3VersionInfo[4] = Release Date (YYYYMMDD)
 ;								- $IEAU3VersionInfo[5] = Display Version (e.g. V2.0-0)
 ;                   On Failure	- None
-; Author(s):        Dale Hohm
-;
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func _IE_VersionInfo()
 	__IEErrorNotify("Information", "_IE_VersionInfo", "version " & _
 			$IEAU3VersionInfo[0] & _
 			$IEAU3VersionInfo[1] & "." & _
 			$IEAU3VersionInfo[2] & "-" & _
 			$IEAU3VersionInfo[3], "Release date: " & $IEAU3VersionInfo[4])
-	SetError($_IEStatus_Success)
-	Return $IEAU3VersionInfo
+	Return SetError($_IEStatus_Success, 0, $IEAU3VersionInfo)
 EndFunc   ;==>_IE_VersionInfo
 
 #EndRegion General
@@ -4130,53 +3557,45 @@ EndFunc   ;==>_IE_VersionInfo
 ; Internal Functions with names starting with two underscores will not be documented
 ; as user functions
 ;
-;===============================================================================
-;
-; Function Name:    __IELockSetForegroundWindow()
-; Description:		Locks (and Unlocks) current Foregrouns Window focus to prevent a new window
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __IELockSetForegroundWindow
+; Description ...: Locks (and Unlocks) current Foregrouns Window focus to prevent a new window
 ;					from stealing it (e.g. when creating invisible IE browser)
-; Parameter(s):		$nLockCode	- 1 Lock Foreground Window Focus, 2 Unlock Foreground Window Focus
-; Requirement(s):   Windows 2000/Windows ME or higher
-; Return Value(s):  On Success 	- 1
+; Parameters ....: $nLockCode	- 1 Lock Foreground Window Focus, 2 Unlock Foreground Window Focus
+; Return values .: On Success 	- 1
 ;                   On Failure 	- 0  and sets @ERROR and @EXTENDED to non-zero values
-; Author(s):        Valik
-;
-;===============================================================================
-;
+; Author ........: Valik
+; ===============================================================================================================================
 Func __IELockSetForegroundWindow($nLockCode)
-	Local $aRet = DllCall("user32.dll", "int", "LockSetForegroundWindow", "int", $nLockCode)
-	If @error Then
-		SetError(@error, @extended)
-		Return False
-	EndIf
+	Local $aRet = DllCall("user32.dll", "bool", "LockSetForegroundWindow", "uint", $nLockCode)
+	If @error Or $aRet[0] Then Return SetError(1, _WinAPI_GetLastError(), 0)
 	Return $aRet[0]
 EndFunc   ;==>__IELockSetForegroundWindow
 
-;===============================================================================
-;
-; Function Name:    __IEControlGetObjFromHWND()
-; Description:		Returns a COM Object Window reference to an embebedded Webbrowser control
-; Parameter(s):		$hWin		- HWND of a Internet Explorer_Server1 control obtained for example:
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __IEControlGetObjFromHWND
+; Description ...: Returns a COM Object Window reference to an embebedded Webbrowser control
+; Parameters ....: $hWin		- HWND of a Internet Explorer_Server1 control obtained for example:
 ;					$hwnd = ControlGetHandle("MyApp","","Internet Explorer_Server1")
-; Requirement(s):   Windows XP, Windows 2003 or higher.
-;					Windows 2000; Windows 98; Windows ME; Windows NT may install the
-;					Microsoft Active Accessibility 2.0 Redistributable:
-;					http://www.microsoft.com/downloads/details.aspx?FamilyId=9B14F6E1-888A-4F1D-B1A1-DA08EE4077DF&displaylang=en
-; Return Value(s):  On Success 	- Returns DOM Window object
+; Return values .: On Success 	- Returns DOM Window object
 ;                   On Failure 	- 0  and sets @ERROR = 1
-; Author(s):        Larry with thanks to Valik
-;
-;===============================================================================
-;
+; Author ........: Larry with thanks to Valik
+; Remarks .......: Windows XP, Windows 2003 or higher.
+;				   Windows 2000; Windows 98; Windows ME; Windows NT may install the
+;				   Microsoft Active Accessibility 2.0 Redistributable:
+;					http://www.microsoft.com/downloads/details.aspx?FamilyId=9B14F6E1-888A-4F1D-B1A1-DA08EE4077DF&displaylang=en
+; ===============================================================================================================================
 Func __IEControlGetObjFromHWND(ByRef $hWin)
-	DllCall("ole32.dll", "int", "CoInitialize", "ptr", 0)
+	Local $aRet = DllCall("ole32.dll", "long", "CoInitialize", "ptr", 0)
+	If @error Then Return SetError(2, @error, 0)
+	If $aRet[0] <> 0 Then Return SetError(4, $aRet[0], 0)
 	Local Const $WM_HTML_GETOBJECT = __IERegisterWindowMessage("WM_HTML_GETOBJECT")
 	Local Const $SMTO_ABORTIFHUNG = 0x0002
-	Local $lResult, $typUUID, $aRet, $oIE
+	Local $lResult
 
 	__IESendMessageTimeout($hWin, $WM_HTML_GETOBJECT, 0, 0, $SMTO_ABORTIFHUNG, 1000, $lResult)
 
-	$typUUID = DllStructCreate("int;short;short;byte[8]")
+	Local $typUUID = DllStructCreate("int;short;short;byte[8]")
 	DllStructSetData($typUUID, 1, 0x626FC520)
 	DllStructSetData($typUUID, 2, 0xA41E)
 	DllStructSetData($typUUID, 3, 0x11CF)
@@ -4191,55 +3610,54 @@ Func __IEControlGetObjFromHWND(ByRef $hWin)
 
 	$aRet = DllCall("oleacc.dll", "long", "ObjectFromLresult", "lresult", $lResult, "ptr", DllStructGetPtr($typUUID), _
 			"wparam", 0, "idispatch*", 0)
+	If @error Then Return SetError(3, @error, 0)
 
 	If IsObj($aRet[4]) Then
-		$oIE = $aRet[4] .Script()
+		Local $oIE = $aRet[4] .Script()
 		; $oIE is now a valid IDispatch object
 		Return $oIE.Document.parentwindow
 	Else
-		SetError(1)
-		Return 0
+		Return SetError(1, $aRet[0], 0)
 	EndIf
 EndFunc   ;==>__IEControlGetObjFromHWND
 
-;===============================================================================
-; Function Name:	__IERegisterWindowMessage()
-; Description:		Required by __IEControlGetObjFromHWND()
-; Author(s):        Larry with thanks to Valik
-;===============================================================================
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __IERegisterWindowMessage
+; Description ...: Required by __IEControlGetObjFromHWND()
+; Author ........: Larry with thanks to Valik
+; ===============================================================================================================================
 Func __IERegisterWindowMessage($sMsg)
-	Local $aRet = DllCall("user32.dll", "int", "RegisterWindowMessage", "str", $sMsg)
+	Local $aRet = DllCall("user32.dll", "uint", "RegisterWindowMessageW", "wstr", $sMsg)
 	If @error Then Return SetError(@error, @extended, 0)
+	If $aRet[0] = 0 Then Return SetError(10, _WinAPI_GetLastError(), 0)
 	Return $aRet[0]
 EndFunc   ;==>__IERegisterWindowMessage
 
-;===============================================================================
-; Function Name:	__IESendMessageTimeout()
-; Description:		Required by __IEControlGetObjFromHWND()
-; Author(s):        Larry with thanks to Valik
-;===============================================================================
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __IESendMessageTimeout
+; Description ...: Required by __IEControlGetObjFromHWND()
+; Author ........: Larry with thanks to Valik
+; ===============================================================================================================================
 Func __IESendMessageTimeout($hWnd, $msg, $wParam, $lParam, $nFlags, $nTimeout, ByRef $vOut, $r = 0, $t1 = "int", $t2 = "int")
-	Local $aRet
-	$aRet = DllCall("user32.dll", "long", "SendMessageTimeout", "hwnd", $hWnd, "int", $msg, $t1, $wParam, _
-			$t2, $lParam, "int", $nFlags, "int", $nTimeout, "int*", "")
-	If @error Then
+	Local $aRet = DllCall("user32.dll", "lresult", "SendMessageTimeout", "hwnd", $hWnd, "uint", $msg, $t1, $wParam, _
+			$t2, $lParam, "uint", $nFlags, "uint", $nTimeout, "dword_ptr*", "")
+	If @error Or $aRet[0] = 0 Then
 		$vOut = 0
-		Return SetError(@error, @extended, 0)
+		Return SetError(1, _WinAPI_GetLastError(), 0)
 	EndIf
 	$vOut = $aRet[7]
 	If $r >= 0 And $r <= 4 Then Return $aRet[$r]
 	Return $aRet
 EndFunc   ;==>__IESendMessageTimeout
 
-;===============================================================================
-; Function Name:	__IEIsObjType()
-; Description:		Check to see if an object variable is of a specific type
-; Author(s):        Dale Hohm
-;===============================================================================
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __IEIsObjType
+; Description ...: Check to see if an object variable is of a specific type
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func __IEIsObjType(ByRef $o_object, $s_type)
 	If Not IsObj($o_object) Then
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 
 	; Setup internal error handler to Trap COM errors, turn off error notification
@@ -4250,11 +3668,11 @@ Func __IEIsObjType(ByRef $o_object, $s_type)
 	Local $f_NotifyStatus = _IEErrorNotify() ; save current error notify status
 	_IEErrorNotify(False)
 	;
-	Local $s_Name = String(ObjName($o_object)), $objectOK = False, $oTemp
+	Local $s_Name = String(ObjName($o_object)), $objectOK = False
 
 	Switch $s_type
 		Case "browserdom"
-			$oTemp = $o_object.document
+			Local $oTemp = $o_object.document
 			If __IEIsObjType($o_object, "documentcontainer") Then
 				$objectOK = True
 			ElseIf __IEIsObjType($o_object, "document") Then
@@ -4282,8 +3700,7 @@ Func __IEIsObjType(ByRef $o_object, $s_type)
 			If $s_Name = "DispHTMLSelectElement" Then $objectOK = True
 		Case Else
 			; Unsupported ObjType specified
-			SetError($_IEStatus_InvalidValue, 2)
-			Return 0
+			Return SetError($_IEStatus_InvalidValue, 2, 0)
 	EndSwitch
 
 	; restore error notify and error handler status
@@ -4291,11 +3708,9 @@ Func __IEIsObjType(ByRef $o_object, $s_type)
 	__IEInternalErrorHandlerDeRegister()
 
 	If $objectOK Then
-		SetError($_IEStatus_Success)
-		Return 1
+		Return SetError($_IEStatus_Success, 0, 1)
 	Else
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 
 EndFunc   ;==>__IEIsObjType
@@ -4305,7 +3720,7 @@ Func __IEErrorNotify($s_severity, $s_func, $s_status = "", $s_message = "")
 		Local $sStr = "--> IE.au3 " & $IEAU3VersionInfo[5] & " " & $s_severity & " from function " & $s_func
 		If Not String($s_status) = "" Then $sStr &= ", " & $s_status
 		If Not String($s_message) = "" Then $sStr &= " (" & $s_message & ")"
-		ConsoleWrite($sStr & @CR)
+		ConsoleWrite($sStr & @CRLF)
 	EndIf
 	Return 1
 EndFunc   ;==>__IEErrorNotify
@@ -4314,17 +3729,14 @@ Func __IEInternalErrorHandlerRegister()
 	Local $sCurrentErrorHandler = ObjEvent("AutoIt.Error")
 	If $sCurrentErrorHandler <> "" And Not IsObj($oIEErrorHandler) Then
 		; We've got trouble... User COM Error handler assigned without using _IEUserErrorHandlerRegister
-		SetError($_IEStatus_GeneralError)
-		Return 0
+		Return SetError($_IEStatus_GeneralError, 0, 0)
 	EndIf
 	$oIEErrorHandler = ""
 	$oIEErrorHandler = ObjEvent("AutoIt.Error", "__IEInternalErrorHandler")
 	If IsObj($oIEErrorHandler) Then
-		SetError($_IEStatus_Success)
-		Return 1
+		Return SetError($_IEStatus_Success, 0, 1)
 	Else
-		SetError($_IEStatus_GeneralError)
-		Return 0
+		Return SetError($_IEStatus_GeneralError, 0, 0)
 	EndIf
 EndFunc   ;==>__IEInternalErrorHandlerRegister
 
@@ -4333,8 +3745,7 @@ Func __IEInternalErrorHandlerDeRegister()
 	If $sIEUserErrorHandler <> "" Then
 		$oIEErrorHandler = ObjEvent("AutoIt.Error", $sIEUserErrorHandler)
 	EndIf
-	SetError($_IEStatus_Success)
-	Return 1
+	Return SetError($_IEStatus_Success, 0, 1)
 EndFunc   ;==>__IEInternalErrorHandlerDeRegister
 
 Func __IEInternalErrorHandler()
@@ -4348,28 +3759,28 @@ Func __IEInternalErrorHandler()
 	$IEComErrorHelpContext = $oIEErrorHandler.HelpContext
 	$IEComErrorLastDllError = $oIEErrorHandler.LastDllError
 	$IEComErrorOutput = ""
-	$IEComErrorOutput &= "--> COM Error Encountered in " & @ScriptName & @CR
-	$IEComErrorOutput &= "----> $IEComErrorScriptline = " & $IEComErrorScriptline & @CR
-	$IEComErrorOutput &= "----> $IEComErrorNumberHex = " & $IEComErrorNumberHex & @CR
-	$IEComErrorOutput &= "----> $IEComErrorNumber = " & $IEComErrorNumber & @CR
-	$IEComErrorOutput &= "----> $IEComErrorWinDescription = " & $IEComErrorWinDescription & @CR
-	$IEComErrorOutput &= "----> $IEComErrorDescription = " & $IEComErrorDescription & @CR
-	$IEComErrorOutput &= "----> $IEComErrorSource = " & $IEComErrorSource & @CR
-	$IEComErrorOutput &= "----> $IEComErrorHelpFile = " & $IEComErrorHelpFile & @CR
-	$IEComErrorOutput &= "----> $IEComErrorHelpContext = " & $IEComErrorHelpContext & @CR
-	$IEComErrorOutput &= "----> $IEComErrorLastDllError = " & $IEComErrorLastDllError & @CR
-	If $_IEErrorNotify Or $__IEAU3Debug Then ConsoleWrite($IEComErrorOutput & @CR)
+	$IEComErrorOutput &= "--> COM Error Encountered in " & @ScriptName & @CRLF
+	$IEComErrorOutput &= "----> $IEComErrorScriptline = " & $IEComErrorScriptline & @CRLF
+	$IEComErrorOutput &= "----> $IEComErrorNumberHex = " & $IEComErrorNumberHex & @CRLF
+	$IEComErrorOutput &= "----> $IEComErrorNumber = " & $IEComErrorNumber & @CRLF
+	$IEComErrorOutput &= "----> $IEComErrorWinDescription = " & $IEComErrorWinDescription & @CRLF
+	$IEComErrorOutput &= "----> $IEComErrorDescription = " & $IEComErrorDescription & @CRLF
+	$IEComErrorOutput &= "----> $IEComErrorSource = " & $IEComErrorSource & @CRLF
+	$IEComErrorOutput &= "----> $IEComErrorHelpFile = " & $IEComErrorHelpFile & @CRLF
+	$IEComErrorOutput &= "----> $IEComErrorHelpContext = " & $IEComErrorHelpContext & @CRLF
+	$IEComErrorOutput &= "----> $IEComErrorLastDllError = " & $IEComErrorLastDllError & @CRLF
+	If $_IEErrorNotify Or $__IEAU3Debug Then ConsoleWrite($IEComErrorOutput & @CRLF)
 	SetError($_IEStatus_ComError)
 	Return
 EndFunc   ;==>__IEInternalErrorHandler
 
-;===============================================================================
-; Function Name:	__IEComErrorUnrecoverable()
-; Description:		Internal function to test a COM error condition and determine if it is considered unrecoverable
-; Parameter(s):		None, relies on Global variables
-; Return Value(s):  Unrecoverable: True, Else: False
-; Author(s):        Dale Hohm
-;===============================================================================
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __IEComErrorUnrecoverable
+; Description ...: Internal function to test a COM error condition and determine if it is considered unrecoverable
+; Parameters ....: None, relies on Global variables
+; Return values .: Unrecoverable: True, Else: False
+; Author ........: Dale Hohm
+; ===============================================================================================================================
 Func __IEComErrorUnrecoverable()
 	Select
 		;
@@ -4389,26 +3800,24 @@ EndFunc   ;==>__IEComErrorUnrecoverable
 #EndRegion Internal functions
 
 #Region ProtoType Functions
-;===============================================================================
-;
-; Function Name:    __IENavigate()
-; Description:		** Unsupported version of _IENavigate (note second underscore in function name)
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __IENavigate
+; Description ...: ** Unsupported version of _IENavigate (note second underscore in function name)
 ;					** Last 4 parameters insufficiently tested.
 ;					**    - Flags and Target can create new windows and new browser object - causing confusion
 ;					**    - Postdata needs SAFEARRAY and we have no way to create one
 ;					Directs an existing browser window to navigate to the specified URL
-; Parameter(s):		$o_object 		- Object variable of an InternetExplorer.Application, Window or Frame object
-;					$s_Url 			- URL to navigate to (e.g. "http://www.autoitscript.com")
-;					$f_wait 		- Optional: specifies whether to wait for page to load before returning
+; Parameters ....: $o_object 		- Object variable of an InternetExplorer.Application, Window or Frame object
+;				   $s_Url 			- URL to navigate to (e.g. "http://www.autoitscript.com")
+;				   $f_wait 		- Optional: specifies whether to wait for page to load before returning
 ;										0 = Return immediately, not waiting for page to load
 ;										1 = (Default) Wait for page load to complete before returning
-;					$i_flags		- URL to navigate to (e.g. "http://www.autoitscript.com")
-;					$s_target		- target frame
-;					$spostdata		- data for form method="POST", non-functional - requires safearray
-;					$s_headers		- additional headers to be passed
-; Requirement(s):   AutoIt3 V3.2 or higher, flags for Tabs require IE7 or higher
-; Return Value(s):  On Success 	- Returns -1
-;                   On Failure	- Returns 0 and sets @ERROR
+;				   $i_flags		- URL to navigate to (e.g. "http://www.autoitscript.com")
+;				   $s_target		- target frame
+;				   $spostdata		- data for form method="POST", non-functional - requires safearray
+;				   $s_headers		- additional headers to be passed
+; Return values .: On Success 	- Returns -1
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 1 ($_IEStatus_GeneralError) = General Error
 ;								- 3 ($_IEStatus_InvalidDataType) = Invalid Data Type
@@ -4417,9 +3826,9 @@ EndFunc   ;==>__IEComErrorUnrecoverable
 ;								- 8 ($_IEStatus_AccessIsDenied) = Access Is Denied
 ;								- 9 ($_IEStatus_ClientDisconnected) = Client Disconnected
 ;					@Extended	- Contains invalid parameter number
-; Author(s):        Dale Hohm
-;
-; Additional information on the navigate2 method here: http://msdn2.microsoft.com/en-us/library/aa752134(VS.85).aspx
+; Author ........: Dale Hohm
+; Remarks .......:  AutoIt3 V3.2 or higher, flags for Tabs require IE7 or higher
+; 					Additional information on the navigate2 method here: http://msdn.microsoft.com/en-us/library/aa752134.aspx
 ;
 ; Flags:
 ;    navOpenInNewWindow = 0x1,
@@ -4438,32 +3847,26 @@ EndFunc   ;==>__IEComErrorUnrecoverable
 ;    navKeepWordWheelText = 0x2000
 ;
 ; Additional documentation on the flags can be found here:
-;    http://msdn2.microsoft.com/en-us/library/aa768360(VS.85).aspx
-;
-;===============================================================================
-;
+;    http://msdn.microsoft.com/en-us/library/aa768360.aspx
+; ===============================================================================================================================
 Func __IENavigate(ByRef $o_object, $s_Url, $f_wait = 1, $i_flags = 0, $s_target = "", $s_postdata = "", $s_headers = "")
 	__IEErrorNotify("Warning", "__IENavigate", "Unsupported function called. Not fully tested.")
 	If Not IsObj($o_object) Then
 		__IEErrorNotify("Error", "__IENavigate", "$_IEStatus_InvalidDataType")
-		SetError($_IEStatus_InvalidDataType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidDataType, 1, 0)
 	EndIf
 	;
 	If Not __IEIsObjType($o_object, "documentContainer") Then
 		__IEErrorNotify("Error", "__IENavigate", "$_IEStatus_InvalidObjectType")
-		SetError($_IEStatus_InvalidObjectType, 1)
-		Return 0
+		Return SetError($_IEStatus_InvalidObjectType, 1, 0)
 	EndIf
 	;
 	$o_object.navigate($s_Url, $i_flags, $s_target, $s_postdata, $s_headers)
 	If $f_wait Then
 		_IELoadWait($o_object)
-		SetError(@error)
-		Return $o_object
+		Return SetError(@error, 0, $o_object)
 	EndIf
-	SetError($_IEStatus_Success)
-	Return $o_object
+	Return SetError($_IEStatus_Success, 0, $o_object)
 EndFunc   ;==>__IENavigate
 
 #cs
@@ -4479,7 +3882,7 @@ EndFunc   ;==>__IENavigate
 
 	$sDataToPost = "keywords=safearray&namesearch=&forums%5B%5D=all&searchsubs=1&prune=0&prune_type=newer&sort_key=last_post&sort_order=desc&search_in=posts&result_type=posts"
 	$oDataToPostBstr = __IEStringToBstr($sDataToPost) ; convert string to BSTR
-	ConsoleWrite(__IEBstrToString($oDataToPostBstr) & @CR) ; prove we can convert it back to a string
+	ConsoleWrite(__IEBstrToString($oDataToPostBstr) & @CRLF) ; prove we can convert it back to a string
 
 	$oIE = _IECreate()
 	$oIE.Navigate( $sFormAction, Default, Default, $oDataToPostBstr, $sHeader)
@@ -4489,9 +3892,8 @@ EndFunc   ;==>__IENavigate
 
 Func __IEStringToBstr($s_string, $s_charSet = "us-ascii")
 	Local Const $adTypeBinary = 1, $adTypeText = 2
-	Local $o_Stream
 
-	$o_Stream = ObjCreate("ADODB.Stream")
+	Local $o_Stream = ObjCreate("ADODB.Stream")
 
 	$o_Stream.Type = $adTypeText
 	$o_Stream.CharSet = $s_charSet
@@ -4507,9 +3909,8 @@ EndFunc   ;==>__IEStringToBstr
 
 Func __IEBstrToString($o_bstr, $s_charSet = "us-ascii")
 	Local Const $adTypeBinary = 1, $adTypeText = 2
-	Local $o_Stream
 
-	$o_Stream = ObjCreate("ADODB.Stream")
+	Local $o_Stream = ObjCreate("ADODB.Stream")
 
 	$o_Stream.Type = $adTypeBinary
 	$o_Stream.Open
@@ -4523,32 +3924,27 @@ Func __IEBstrToString($o_bstr, $s_charSet = "us-ascii")
 	Return $o_Stream.ReadText
 EndFunc   ;==>__IEBstrToString
 
-;===============================================================================
-;
-; Function Name:    __IECreateNewIE()
-; Description:		Create a Webbrowser in a seperate process
-; Parameter(s):		None
-; Requirement(s):   AutoIt3 V3.2 or higher
-; Return Value(s):  On Success	- Returns a Webbrowser object reference
-;                   On Failure	- Returns 0 and sets @ERROR
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __IECreateNewIE
+; Description ...: Create a Webbrowser in a seperate process
+; Parameters ....: None
+; Return values .: On Success	- Returns a Webbrowser object reference
+;                  On Failure	- Returns 0 and sets @ERROR
 ;					@ERROR		- 0 ($_IEStatus_Success) = No Error
 ;								- 1 ($_IEStatus_GeneralError) = General Error
-; Author(s):        Dale Hohm
-; http://msdn2.microsoft.com/en-us/library/ms536471(vs.85).aspx
-;===============================================================================
-;
+; Author ........: Dale Hohm
+; Remarks .......: http://msdn2.microsoft.com/en-us/library/ms536471(vs.85).aspx
+; ===============================================================================================================================
 Func __IECreateNewIE($s_title, $s_head = "", $s_body = "")
 
-	Local $s_html, $h_file, $s_PID, $o_object
 	Local $s_Temp = __IETempFile("", "~IE~", ".htm")
 	If @error Then
-		SetError($_IEStatus_GeneralError, 1)
 		__IEErrorNotify("Error", "_IECreateHTA", "", _
 				"Error creating temporary file in @TempDir or @ScriptDir")
-		Return 0
+		Return SetError($_IEStatus_GeneralError, 1, 0)
 	EndIf
 
-	$s_html = ''
+	Local $s_html = ''
 	$s_html &= '<HTML>' & @CR
 	$s_html &= '<HEAD>' & @CR
 	$s_html &= '<TITLE>' & $s_Temp & '</TITLE>' & @CR & $s_head & @CR
@@ -4557,24 +3953,23 @@ Func __IECreateNewIE($s_title, $s_head = "", $s_body = "")
 	$s_html &= '</BODY>' & @CR
 	$s_html &= '</HTML>'
 
-	$h_file = FileOpen($s_Temp, 2)
+	Local $h_file = FileOpen($s_Temp, 2)
 	FileWrite($h_file, $s_html)
 	FileClose($h_file)
 	If @error Then
-		SetError($_IEStatus_GeneralError, 2)
 		__IEErrorNotify("Error", "_IECreateNewIE", "", _
 				"Error creating temporary file in @TempDir or @ScriptDir")
-		Return 0
+		Return SetError($_IEStatus_GeneralError, 2, 0)
 	EndIf
 	Run(@ProgramFilesDir & "\Internet Explorer\iexplore.exe " & $s_Temp)
 
+	Local $s_PID
 	If WinWait($s_Temp, "", 60) Then
 		$s_PID = WinGetProcess($s_Temp)
 	Else
-		SetError($_IEStatus_GeneralError, 3)
 		__IEErrorNotify("Error", "_IECreateNewIE", "", _
 				"Timeout waiting for new IE window creation")
-		Return 0
+		Return SetError($_IEStatus_GeneralError, 3, 0)
 	EndIf
 
 	If Not FileDelete($s_Temp) Then
@@ -4582,31 +3977,26 @@ Func __IECreateNewIE($s_title, $s_head = "", $s_body = "")
 				"Could not delete temporary file " & FileGetLongName($s_Temp))
 	EndIf
 
-	$o_object = _IEAttach($s_Temp)
+	Local $o_object = _IEAttach($s_Temp)
 	_IELoadWait($o_object)
 	_IEPropertySet($o_object, "title", $s_title)
 
-	SetError($_IEStatus_Success, $s_PID)
-	Return $o_object
+	Return SetError($_IEStatus_Success, $s_PID, $o_object)
 EndFunc   ;==>__IECreateNewIE
 
-;========================================================================================================
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __IETempFile
+; Description ...: Generate a name for a temporary file. The file is guaranteed not to already exist.
+; Parameters ....: $s_DirectoryName    optional  Name of directory for filename, defaults to @TempDir
+;                  $s_FilePrefix       optional  File prefixname, defaults to "~"
+;                  $s_FileExtension    optional  File extenstion, defaults to ".tmp"
+;                  $i_RandomLength     optional  Number of characters to use to generate a unique name, defaults to 7
+; Return values .: Filename of a temporary file which does not exist.
+; Author ........: Dale (Klaatu) Thompson
+; Modified.......: Hans Harder - Added Optional parameters
+;
 ; Adapted from excellent _TempFile() in File.au3 for IE.au3 by Dale Hohm
-;
-; Function Name:    __IETempFile([s_DirectoryName],[s_FilePrefix], [s_FileExtension], [i_RandomLength)
-; Description:      Generate a name for a temporary file. The file is guaranteed not to already exist.
-; Parameter(s):
-;     $s_DirectoryName    optional  Name of directory for filename, defaults to @TempDir
-;     $s_FilePrefix       optional  File prefixname, defaults to "~"
-;     $s_FileExtension    optional  File extenstion, defaults to ".tmp"
-;     $i_RandomLength     optional  Number of characters to use to generate a unique name, defaults to 7
-; Requirement(s):   None.
-; Return Value(s):  Filename of a temporary file which does not exist.
-; Author(s):        Dale (Klaatu) Thompson
-;                   Hans Harder - Added Optional parameters
-; Notes:            None.
-;
-;========================================================================================================
+; ===============================================================================================================================
 Func __IETempFile($s_DirectoryName = @TempDir, $s_FilePrefix = "~", $s_FileExtension = ".tmp", $i_RandomLength = 7)
 	Local $s_TempName, $i_tmp = 0
 	; Check parameters
@@ -4623,13 +4013,11 @@ Func __IETempFile($s_DirectoryName = @TempDir, $s_FilePrefix = "~", $s_FileExten
 		$s_TempName = $s_DirectoryName & $s_FilePrefix & $s_TempName & $s_FileExtension
 		$i_tmp += 1
 		If $i_tmp > 200 Then ; If we fail over 200 times, there is something wrong
-			SetError($_IEStatus_GeneralError, 1)
-			Return 0
+			Return SetError($_IEStatus_GeneralError, 1, 0)
 		EndIf
 	Until Not FileExists($s_TempName)
 
-	SetError(0)
-	Return ($s_TempName)
+	Return $s_TempName
 EndFunc   ;==>__IETempFile
 
 #EndRegion ProtoType Functions

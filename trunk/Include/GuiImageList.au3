@@ -1,30 +1,36 @@
 #include-once
-#include <WinAPI.au3>
-#include <StructureConstants.au3>
-#include <ImageListConstants.au3>
+
+#include "ImageListConstants.au3"
+#include "WinAPI.au3"
+#include "StructureConstants.au3"
+#include "ColorConstants.au3"
 
 ; #INDEX# =======================================================================================================================
-; Title .........: Image List
-; Description ...: An image list is a collection of images of the same size, each of which can be referred to by its index. Image
+; Title .........: ImageList
+; Description ...: Functions that assist with ImageList control management.
+;                  An image list is a collection of images of the same size, each of which can be referred to by its index. Image
 ;                  lists are used to efficiently manage large sets of icons or bitmaps. All images in an image list are contained
 ;                  in a single, wide bitmap in screen device format.  An image list can also include  a  monochrome  bitmap  that
 ;                  contains masks used to draw images transparently (icon style).
-; Author ........: Paul Campbell (PaulIA)
+; Author(s)......: Paul Campbell (PaulIA)
+; Dll(s) ........: comctl32.dll
 ; ===============================================================================================================================
 
+; #CONSTANTS# ===================================================================================================================
 Global Const $__IMAGELISTCONSTANT_IMAGE_BITMAP = 0
 Global Const $__IMAGELISTCONSTANT_LR_LOADFROMFILE = 0x0010
+; ===============================================================================================================================
 
-;==============================================================================================================================
 ; #NO_DOC_FUNCTION# =============================================================================================================
 ; Not documented at this time
-; ===============================================================================================================================
+;
 ;_GUIImageList_DragShowNolock
 ;_GUIImageList_Merge
 ;_GUIImageList_Replace
 ;_GUIImageList_SetDragCursorImage
 ;_GUIImageList_SetOverlayImage
 ; ===============================================================================================================================
+
 ; #CURRENT# =====================================================================================================================
 ;_GUIImageList_Add
 ;_GUIImageList_AddMasked
@@ -57,7 +63,6 @@ Global Const $__IMAGELISTCONSTANT_LR_LOADFROMFILE = 0x0010
 ;_GUIImageList_SetImageCount
 ;_GUIImageList_Swap
 ; ===============================================================================================================================
-;==============================================================================================================================
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _GUIImageList_Add
@@ -73,14 +78,13 @@ Global Const $__IMAGELISTCONSTANT_LR_LOADFROMFILE = 0x0010
 ; Modified.......:
 ; Remarks .......: This function copies the bitmap to an internal data structure.  Be sure to use the _WinAPI_DeleteObject  function
 ;                  to delete hImage and hMask after the function returns.
-; Related .......:  _GUIImageList_AddMasked
-; Link ..........;
-; Example .......; Yes
+; Related .......:  _GUIImageList_AddMasked, _GUIImageList_AddBitmap, _GUIImageList_AddIcon
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_Add($hWnd, $hImage, $hMask = 0)
-	Local $aResult
-
-	$aResult = DllCall("ComCtl32.dll", "int", "ImageList_Add", "hwnd", $hWnd, "hwnd", $hImage, "hwnd", $hMask)
+	Local $aResult = DllCall("comctl32.dll", "int", "ImageList_Add", "handle", $hWnd, "handle", $hImage, "handle", $hMask)
+	If @error Then Return SetError(@error, @extended, -1)
 	Return $aResult[0]
 EndFunc   ;==>_GUIImageList_Add
 
@@ -100,13 +104,12 @@ EndFunc   ;==>_GUIImageList_Add
 ; Remarks .......: This function copies the bitmap to an internal data structure.  Be sure to use the _WinAPI_DeleteObject  function
 ;                  to delete hImage after the function returns. Bitmaps with color depth greater than 8 bpp are not supported.
 ; Related .......:  _GUIImageList_Add
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_AddMasked($hWnd, $hImage, $iMask = 0)
-	Local $aResult
-
-	$aResult = DllCall("ComCtl32.dll", "hwnd", "ImageList_AddMasked", "hwnd", $hWnd, "hwnd", $hImage, "int", $iMask)
+	Local $aResult = DllCall("comctl32.dll", "int", "ImageList_AddMasked", "handle", $hWnd, "handle", $hImage, "dword", $iMask)
+	If @error Then Return SetError(@error, @extended, -1)
 	Return $aResult[0]
 EndFunc   ;==>_GUIImageList_AddMasked
 
@@ -123,24 +126,23 @@ EndFunc   ;==>_GUIImageList_AddMasked
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUIImageList_Add, _GUIImageList_AddIcon
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_AddBitmap($hWnd, $sImage, $sMask = "")
-	Local $hImage, $hMask = 0, $aSize, $iResult
-
-	$aSize = _GUIImageList_GetIconSize($hWnd)
-	$hImage = _WinAPI_LoadImage(0, $sImage, $__IMAGELISTCONSTANT_IMAGE_BITMAP, $aSize[0], $aSize[1], $__IMAGELISTCONSTANT_LR_LOADFROMFILE)
+	Local $aSize = _GUIImageList_GetIconSize($hWnd)
+	Local $hImage = _WinAPI_LoadImage(0, $sImage, $__IMAGELISTCONSTANT_IMAGE_BITMAP, $aSize[0], $aSize[1], $__IMAGELISTCONSTANT_LR_LOADFROMFILE)
 	If $hImage = 0 Then Return SetError(_WinAPI_GetLastError(), 1, -1)
+	Local $hMask = 0
 	If $sMask <> "" Then
 		$hMask = _WinAPI_LoadImage(0, $sMask, $__IMAGELISTCONSTANT_IMAGE_BITMAP, $aSize[0], $aSize[1], $__IMAGELISTCONSTANT_LR_LOADFROMFILE)
 		If $hMask = 0 Then Return SetError(_WinAPI_GetLastError(), 2, -1)
 	EndIf
 
-	$iResult = _GUIImageList_Add($hWnd, $hImage, $hMask)
+	Local $iRet = _GUIImageList_Add($hWnd, $hImage, $hMask)
 	_WinAPI_DeleteObject($hImage)
 	If $hMask <> 0 Then _WinAPI_DeleteObject($hMask)
-	Return $iResult
+	Return $iRet
 EndFunc   ;==>_GUIImageList_AddBitmap
 
 ; #FUNCTION# ====================================================================================================================
@@ -157,25 +159,23 @@ EndFunc   ;==>_GUIImageList_AddBitmap
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUIImageList_Add, _GUIImageList_AddBitmap
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_AddIcon($hWnd, $sFile, $iIndex = 0, $fLarge = False)
-	Local $tIcon, $iResult, $hIcon
-
-	$tIcon = DllStructCreate("int Handle")
+	Local $iRet, $tIcon = DllStructCreate("handle Handle")
 	If $fLarge Then
-		$iResult = _WinAPI_ExtractIconEx($sFile, $iIndex, DllStructGetPtr($tIcon), 0, 1)
+		$iRet = _WinAPI_ExtractIconEx($sFile, $iIndex, DllStructGetPtr($tIcon), 0, 1)
 	Else
-		$iResult = _WinAPI_ExtractIconEx($sFile, $iIndex, 0, DllStructGetPtr($tIcon), 1)
+		$iRet = _WinAPI_ExtractIconEx($sFile, $iIndex, 0, DllStructGetPtr($tIcon), 1)
 	EndIf
-	_WinAPI_Check("_GUIImageList_AddIcon", ($iResult <= 0), -1)
+	If $iRet <= 0 Then Return SetError(-1, $iRet, 0)
 
-	$hIcon = DllStructGetData($tIcon, "Handle")
-	$iResult = _GUIImageList_ReplaceIcon($hWnd, -1, $hIcon)
-	_WinAPI_Check("_GUIImageList_AddIcon", ($iResult = -1), -2)
+	Local $hIcon = DllStructGetData($tIcon, "Handle")
+	$iRet = _GUIImageList_ReplaceIcon($hWnd, -1, $hIcon)
 	_WinAPI_DestroyIcon($hIcon)
-	Return $iResult
+	If $iRet = -1 Then Return SetError(-2, $iRet, 0)
+	Return $iRet
 EndFunc   ;==>_GUIImageList_AddIcon
 
 ; #FUNCTION# ====================================================================================================================
@@ -186,22 +186,21 @@ EndFunc   ;==>_GUIImageList_AddIcon
 ;                  $iTrack      - Index of the image to drag
 ;                  $iXHotSpot   - X coordinate of the location of the drag position relative to image upper left corner
 ;                  $iYHotSpot   - Y coordinate of the location of the drag position relative to image upper left corner
-; Return values .: Success      - The index of the first new image
-;                  Failure      - -1
+; Return values .: Success      - True
+;                  Failure      - False
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......:
 ; Remarks .......: This function creates a temporary image list that is used for dragging. In response to subsequent WM_MOUSEMOVE
 ;                  messages, you can move the drag image by using the ImageList_DragMove function. To end the drag operation, you
 ;                  can use the ImageList_EndDrag function.
 ; Related .......:  _GUIImageList_EndDrag
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_BeginDrag($hWnd, $iTrack, $iXHotSpot, $iYHotSpot)
-	Local $aResult
-
-	$aResult = DllCall("ComCtl32.dll", "int", "ImageList_BeginDrag", "hwnd", $hWnd, "int", $iTrack, "int", $iXHotSpot, "int", $iYHotSpot)
-	Return $aResult[0]
+	Local $aResult = DllCall("comctl32.dll", "bool", "ImageList_BeginDrag", "handle", $hWnd, "int", $iTrack, "int", $iXHotSpot, "int", $iYHotSpot)
+	If @error Then Return SetError(@error, @extended, False)
+	Return $aResult[0] <> 0
 EndFunc   ;==>_GUIImageList_BeginDrag
 
 ; #FUNCTION# ====================================================================================================================
@@ -217,13 +216,12 @@ EndFunc   ;==>_GUIImageList_BeginDrag
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUIImageList_Swap
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_Copy($hWnd, $iSource, $iDestination)
-	Local $aResult
-
-	$aResult = DllCall("ComCtl32.dll", "int", "ImageList_Copy", "hwnd", $hWnd, "int", $iDestination, "hwnd", $hWnd, "int", $iSource, "int", $ILCF_MOVE)
+	Local $aResult = DllCall("comctl32.dll", "bool", "ImageList_Copy", "handle", $hWnd, "int", $iDestination, "handle", $hWnd, "int", $iSource, "uint", $ILCF_MOVE)
+	If @error Then Return SetError(@error, @extended, False)
 	Return $aResult[0] <> 0
 EndFunc   ;==>_GUIImageList_Copy
 
@@ -254,18 +252,19 @@ EndFunc   ;==>_GUIImageList_Copy
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUIImageList_Destroy
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_Create($iCX = 16, $iCY = 16, $iColor = 4, $iOptions = 0, $iInitial = 4, $iGrow = 4)
-	Local $aColor[7] = [$ILC_COLOR, $ILC_COLOR4, $ILC_COLOR8, $ILC_COLOR16, $ILC_COLOR24, $ILC_COLOR32, $ILC_COLORDDB]
-	Local $iFlags, $aResult
+	Local Const $aColor[7] = [$ILC_COLOR, $ILC_COLOR4, $ILC_COLOR8, $ILC_COLOR16, $ILC_COLOR24, $ILC_COLOR32, $ILC_COLORDDB]
+	Local $iFlags = 0
 
 	If BitAND($iOptions, 1) <> 0 Then $iFlags = BitOR($iFlags, $ILC_MASK)
 	If BitAND($iOptions, 2) <> 0 Then $iFlags = BitOR($iFlags, $ILC_MIRROR)
 	If BitAND($iOptions, 4) <> 0 Then $iFlags = BitOR($iFlags, $ILC_PERITEMMIRROR)
 	$iFlags = BitOR($iFlags, $aColor[$iColor])
-	$aResult = DllCall("ComCtl32.dll", "hwnd", "ImageList_Create", "int", $iCX, "int", $iCY, "int", $iFlags, "int", $iInitial, "int", $iGrow)
+	Local $aResult = DllCall("comctl32.dll", "handle", "ImageList_Create", "int", $iCX, "int", $iCY, "uint", $iFlags, "int", $iInitial, "int", $iGrow)
+	If @error Then Return SetError(@error, @extended, 0)
 	Return $aResult[0]
 EndFunc   ;==>_GUIImageList_Create
 
@@ -280,13 +279,12 @@ EndFunc   ;==>_GUIImageList_Create
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUIImageList_Create
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_Destroy($hWnd)
-	Local $aResult
-
-	$aResult = DllCall("ComCtl32.dll", "int", "ImageList_Destroy", "hwnd", $hWnd)
+	Local $aResult = DllCall("comctl32.dll", "bool", "ImageList_Destroy", "handle", $hWnd)
+	If @error Then Return SetError(@error, @extended, False)
 	Return $aResult[0] <> 0
 EndFunc   ;==>_GUIImageList_Destroy
 
@@ -301,8 +299,8 @@ EndFunc   ;==>_GUIImageList_Destroy
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_DestroyIcon($hIcon)
 	Return _WinAPI_DestroyIcon($hIcon)
@@ -322,14 +320,13 @@ EndFunc   ;==>_GUIImageList_DestroyIcon
 ; Author ........: Gary Frost (gafrost)
 ; Modified.......:
 ; Remarks .......:
-; Related .......: _GUIImageList_BeginDrag
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUIImageList_BeginDrag, _GUIImageList_DragEnter
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_DragEnter($hWnd, $iX, $iY)
-	Local $aResult
-
-	$aResult = DllCall("ComCtl32.dll", "int", "ImageList_DragEnter", "hwnd", $hWnd, "int", $iX, "int", $iY)
+	Local $aResult = DllCall("comctl32.dll", "bool", "ImageList_DragEnter", "hwnd", $hWnd, "int", $iX, "int", $iY)
+	If @error Then Return SetError(@error, @extended, False)
 	Return $aResult[0] <> 0
 EndFunc   ;==>_GUIImageList_DragEnter
 
@@ -344,21 +341,21 @@ EndFunc   ;==>_GUIImageList_DragEnter
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUIImageList_EndDrag
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_DragLeave($hWnd)
-	Local $aResult
-
-	$aResult = DllCall("ComCtl32.dll", "int", "ImageList_DragLeave", "hwnd", $hWnd)
+	Local $aResult = DllCall("comctl32.dll", "bool", "ImageList_DragLeave", "hwnd", $hWnd)
+	If @error Then Return SetError(@error, @extended, False)
 	Return $aResult[0] <> 0
 EndFunc   ;==>_GUIImageList_DragLeave
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _GUIImageList_DragMove
 ; Description ...: Moves the image that is being dragged during a drag-and-drop operation
-; Syntax.........: _GUIImageList_DragMove($hWnd, $iX, $iY)
-; Parameters ....: $iX          - The x-coordinate at which to display the drag image.
+; Syntax.........: _GUIImageList_DragMove($iX, $iY)
+; Parameters ....: $hWnd        - Handle to the control.
+;                  $iX          - The x-coordinate at which to display the drag image.
 ;                  +The coordinate is relative to the upper-left corner of the window, not the client area
 ;                  $iY          - The y-coordinate at which to display the drag image.
 ;                  +The coordinate is relative to the upper-left corner of the window, not the client area
@@ -368,13 +365,12 @@ EndFunc   ;==>_GUIImageList_DragLeave
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_DragMove($iX, $iY)
-	Local $aResult
-
-	$aResult = DllCall("ComCtl32.dll", "int", "ImageList_DragMove", "int", $iX, "int", $iY)
+	Local $aResult = DllCall("comCtl32.dll", "bool", "ImageList_DragMove", "int", $iX, "int", $iY)
+	If @error Then Return SetError(@error, @extended, False)
 	Return $aResult[0] <> 0
 EndFunc   ;==>_GUIImageList_DragMove
 
@@ -391,13 +387,12 @@ EndFunc   ;==>_GUIImageList_DragMove
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
 Func _GUIImageList_DragShowNolock($fShow)
-	Local $aResult
-
-	$aResult = DllCall("ComCtl32.dll", "int", "ImageList_DragShowNolock", "int", $fShow)
+	Local $aResult = DllCall("comctl32.dll", "bool", "ImageList_DragShowNolock", "bool", $fShow)
+	If @error Then Return SetError(@error, @extended, False)
 	Return $aResult[0] <> 0
 EndFunc   ;==>_GUIImageList_DragShowNolock
 
@@ -421,17 +416,18 @@ EndFunc   ;==>_GUIImageList_DragShowNolock
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUIImageList_DrawEx
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_Draw($hWnd, $iIndex, $hDC, $iX, $iY, $iStyle = 0)
-	Local $iFlags, $aResult
+	Local $iFlags = 0
 
 	If BitAND($iStyle, 1) <> 0 Then $iFlags = BitOR($iFlags, $ILD_TRANSPARENT)
 	If BitAND($iStyle, 2) <> 0 Then $iFlags = BitOR($iFlags, $ILD_BLEND25)
 	If BitAND($iStyle, 4) <> 0 Then $iFlags = BitOR($iFlags, $ILD_BLEND50)
 	If BitAND($iStyle, 8) <> 0 Then $iFlags = BitOR($iFlags, $ILD_MASK)
-	$aResult = DllCall("ComCtl32.dll", "int", "ImageList_Draw", "hwnd", $hWnd, "int", $iIndex, "hwnd", $hDC, "int", $iX, "int", $iY, "uint", $iFlags)
+	Local $aResult = DllCall("comctl32.dll", "bool", "ImageList_Draw", "handle", $hWnd, "int", $iIndex, "handle", $hDC, "int", $iX, "int", $iY, "uint", $iFlags)
+	If @error Then Return SetError(@error, @extended, False)
 	Return $aResult[0] <> 0
 EndFunc   ;==>_GUIImageList_Draw
 
@@ -465,22 +461,22 @@ EndFunc   ;==>_GUIImageList_Draw
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUIImageList_Draw
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_DrawEx($hWnd, $iIndex, $hDC, $iX, $iY, $iDX = 0, $iDY = 0, $iRGBBk = 0xFFFFFFFF, $iRGBFg = 0xFFFFFFFF, $iStyle = 0)
-	Local $iFlags, $aResult
-
 	If $iDX = -1 Then $iDX = 0
 	If $iDY = -1 Then $iDY = 0
 	If $iRGBBk = -1 Then $iRGBBk = 0xFFFFFFFF
 	If $iRGBFg = -1 Then $iRGBFg = 0xFFFFFFFF
+	Local $iFlags = 0
 	If BitAND($iStyle, 1) <> 0 Then $iFlags = BitOR($iFlags, $ILD_TRANSPARENT)
 	If BitAND($iStyle, 2) <> 0 Then $iFlags = BitOR($iFlags, $ILD_BLEND25)
 	If BitAND($iStyle, 4) <> 0 Then $iFlags = BitOR($iFlags, $ILD_BLEND50)
 	If BitAND($iStyle, 8) <> 0 Then $iFlags = BitOR($iFlags, $ILD_MASK)
-	$aResult = DllCall("ComCtl32.dll", "int", "ImageList_DrawEx", "hwnd", $hWnd, "int", $iIndex, "hwnd", $hDC, "int", $iX, "int", $iY, _
-			"int", $iDX, "int", $iDY, "int", $iRGBBk, "int", $iRGBFg, "uint", $iFlags)
+	Local $aResult = DllCall("comctl32.dll", "bool", "ImageList_DrawEx", "handle", $hWnd, "int", $iIndex, "handle", $hDC, "int", $iX, "int", $iY, _
+			"int", $iDX, "int", $iDY, "dword", $iRGBBk, "dword", $iRGBFg, "uint", $iFlags)
+	If @error Then Return SetError(@error, @extended, False)
 	Return $aResult[0] <> 0
 EndFunc   ;==>_GUIImageList_DrawEx
 
@@ -496,13 +492,12 @@ EndFunc   ;==>_GUIImageList_DrawEx
 ; Remarks .......: All information contained in the original image list for normal images is copied to the new image list.
 ;                  Overlay images are not copied.
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_Duplicate($hWnd)
-	Local $aResult
-
-	$aResult = DllCall("ComCtl32.dll", "hwnd", "ImageList_Duplicate", "hwnd", $hWnd)
+	Local $aResult = DllCall("comctl32.dll", "handle", "ImageList_Duplicate", "handle", $hWnd)
+	If @error Then Return SetError(@error, @extended, 0)
 	Return $aResult[0]
 EndFunc   ;==>_GUIImageList_Duplicate
 
@@ -515,12 +510,13 @@ EndFunc   ;==>_GUIImageList_Duplicate
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......:
 ; Remarks .......:
-; Related .......:  _GUIImageList_BeginDrag
-; Link ..........;
-; Example .......; Yes
+; Related .......:  _GUIImageList_BeginDrag, _GUIImageList_DragLeave
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_EndDrag()
-	DllCall("ComCtl32.dll", "none", "ImageList_EndDrag")
+	DllCall("comctl32.dll", "none", "ImageList_EndDrag")
+	If @error Then Return SetError(@error, @extended)
 EndFunc   ;==>_GUIImageList_EndDrag
 
 ; #FUNCTION# ====================================================================================================================
@@ -533,13 +529,12 @@ EndFunc   ;==>_GUIImageList_EndDrag
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUIImageList_SetBkColor
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_GetBkColor($hWnd)
-	Local $aResult
-
-	$aResult = DllCall("ComCtl32.dll", "int", "ImageList_GetBkColor", "hwnd", $hWnd)
+	Local $aResult = DllCall("comctl32.dll", "dword", "ImageList_GetBkColor", "handle", $hWnd)
+	If @error Then Return SetError(@error, @extended, 0)
 	Return $aResult[0]
 EndFunc   ;==>_GUIImageList_GetBkColor
 
@@ -561,18 +556,19 @@ EndFunc   ;==>_GUIImageList_GetBkColor
 ; Remarks .......: It is the responsibility of the calling application to destroy the icon returned from this function
 ;                  using _GUIImageList_DestroyIcon
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_GetIcon($hWnd, $iIndex, $iStyle = 0)
-	Local $iFlags, $aResult
+	Local $iFlags = 0
 
 	If BitAND($iStyle, 1) <> 0 Then $iFlags = BitOR($iFlags, $ILD_TRANSPARENT)
 	If BitAND($iStyle, 2) <> 0 Then $iFlags = BitOR($iFlags, $ILD_BLEND25)
 	If BitAND($iStyle, 4) <> 0 Then $iFlags = BitOR($iFlags, $ILD_BLEND50)
 	If BitAND($iStyle, 8) <> 0 Then $iFlags = BitOR($iFlags, $ILD_MASK)
 
-	$aResult = DllCall("ComCtl32.dll", "hwnd", "ImageList_GetIcon", "hwnd", $hWnd, "int", $iIndex, "int", $iFlags)
+	Local $aResult = DllCall("comctl32.dll", "handle", "ImageList_GetIcon", "handle", $hWnd, "int", $iIndex, "uint", $iFlags)
+	If @error Then Return SetError(@error, @extended, 0)
 	Return $aResult[0]
 EndFunc   ;==>_GUIImageList_GetIcon
 
@@ -587,14 +583,12 @@ EndFunc   ;==>_GUIImageList_GetIcon
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......:
 ; Remarks .......:
-; Related .......: _GUIImageList_GetIconSize, _GUIImageList_GetIconWidth
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUIImageList_GetIconSize, _GUIImageList_GetIconWidth, _GUIImageList_GetIconSizeEx
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_GetIconHeight($hWnd)
-	Local $aSize
-
-	$aSize = _GUIImageList_GetIconSize($hWnd)
+	Local $aSize = _GUIImageList_GetIconSize($hWnd)
 	Return $aSize[1]
 EndFunc   ;==>_GUIImageList_GetIconHeight
 
@@ -609,14 +603,14 @@ EndFunc   ;==>_GUIImageList_GetIconHeight
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......:
 ; Remarks .......:
-; Related .......: _GUIImageList_GetIconHeight, _GUIImageList_GetIconSizeEx, _GUIImageList_GetIconWidth
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUIImageList_GetIconHeight, _GUIImageList_GetIconSizeEx, _GUIImageList_GetIconWidth, _GUIImageList_SetIconSize
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_GetIconSize($hWnd)
-	Local $tPoint, $aSize[2]
+	Local $aSize[2]
 
-	$tPoint = _GUIImageList_GetIconSizeEx($hWnd)
+	Local $tPoint = _GUIImageList_GetIconSizeEx($hWnd)
 	$aSize[0] = DllStructGetData($tPoint, "X")
 	$aSize[1] = DllStructGetData($tPoint, "Y")
 	Return $aSize
@@ -633,17 +627,16 @@ EndFunc   ;==>_GUIImageList_GetIconSize
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUIImageList_GetIconHeight, _GUIImageList_GetIconSize, _GUIImageList_GetIconWidth
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_GetIconSizeEx($hWnd)
-	Local $tPoint, $pPointX, $pPointY, $aResult
-
-	$tPoint = DllStructCreate($tagPOINT)
-	$pPointX = DllStructGetPtr($tPoint, "X")
-	$pPointY = DllStructGetPtr($tPoint, "Y")
-	$aResult = DllCall("ComCtl32.dll", "int", "ImageList_GetIconSize", "hwnd", $hWnd, "ptr", $pPointX, "ptr", $pPointY)
-	Return SetError($aResult[0] = 0, 0, $tPoint)
+	Local $tPoint = DllStructCreate($tagPOINT)
+	Local $pPointX = DllStructGetPtr($tPoint, "X")
+	Local $pPointY = DllStructGetPtr($tPoint, "Y")
+	Local $aResult = DllCall("comctl32.dll", "bool", "ImageList_GetIconSize", "hwnd", $hWnd, "ptr", $pPointX, "ptr", $pPointY)
+	If @error Then Return SetError(@error, @extended, 0)
+	Return SetExtended($aResult[0], $tPoint)
 EndFunc   ;==>_GUIImageList_GetIconSizeEx
 
 ; #FUNCTION# ====================================================================================================================
@@ -656,14 +649,12 @@ EndFunc   ;==>_GUIImageList_GetIconSizeEx
 ; Author ........: Paul Campbell (PaulIA)
 ; Modified.......:
 ; Remarks .......:
-; Related .......: _GUIImageList_GetIconHeight, _GUIImageList_GetIconSize
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUIImageList_GetIconHeight, _GUIImageList_GetIconSize, _GUIImageList_GetIconSizeEx
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_GetIconWidth($hWnd)
-	Local $aSize
-
-	$aSize = _GUIImageList_GetIconSize($hWnd)
+	Local $aSize = _GUIImageList_GetIconSize($hWnd)
 	Return $aSize[0]
 EndFunc   ;==>_GUIImageList_GetIconWidth
 
@@ -676,14 +667,13 @@ EndFunc   ;==>_GUIImageList_GetIconWidth
 ; Author ........: Gary Frost (gafrost)
 ; Modified.......:
 ; Remarks .......:
-; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUIImageList_SetImageCount
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_GetImageCount($hWnd)
-	Local $aResult
-
-	$aResult = DllCall("ComCtl32.dll", "int", "ImageList_GetImageCount", "hwnd", $hWnd)
+	Local $aResult = DllCall("comctl32.dll", "int", "ImageList_GetImageCount", "handle", $hWnd)
+	If @error Then Return SetError(@error, @extended, 0)
 	Return $aResult[0]
 EndFunc   ;==>_GUIImageList_GetImageCount
 
@@ -699,15 +689,14 @@ EndFunc   ;==>_GUIImageList_GetImageCount
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: $tagIMAGEINFO
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_GetImageInfoEx($hWnd, $iIndex)
-	Local $tImage, $aResult
-
-	$tImage = DllStructCreate($tagIMAGEINFO)
-	$aResult = DllCall("ComCtl32.dll", "hwnd", "ImageList_GetImageInfo", "hwnd", $hWnd, "int", $iIndex, "ptr", DllStructGetPtr($tImage))
-	Return SetError($aResult[0] = 0, 0, $tImage)
+	Local $tImage = DllStructCreate($tagIMAGEINFO)
+	Local $aResult = DllCall("comctl32.dll", "bool", "ImageList_GetImageInfo", "handle", $hWnd, "int", $iIndex, "ptr", DllStructGetPtr($tImage))
+	If @error Then Return SetError(@error, @extended, 0)
+	Return SetExtended($aResult[0], $tImage)
 EndFunc   ;==>_GUIImageList_GetImageInfoEx
 
 ; #NO_DOC_FUNCTION# =============================================================================================================
@@ -728,14 +717,13 @@ EndFunc   ;==>_GUIImageList_GetImageInfoEx
 ;                  The mask for the new image is the result of performing a logical OR operation on the masks
 ;                  of the two existing images.
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
 Func _GUIImageList_Merge($hWnd1, $iIndex1, $hwnd2, $iIndex2, $iDX, $iDY)
-	Local $aResult
-
-	$aResult = DllCall("ComCtl32.dll", "hwnd", "ImageList_Merge", "hwnd", $hWnd1, "int", $iIndex1, _
-			"hwnd", $hwnd2, "int", $iIndex2, "int", $iDX, "int", $iDY)
+	Local $aResult = DllCall("comctl32.dll", "handle", "ImageList_Merge", "handle", $hWnd1, "int", $iIndex1, _
+			"handle", $hwnd2, "int", $iIndex2, "int", $iDX, "int", $iDY)
+	If @error Then Return SetError(@error, @extended, 0)
 	Return $aResult[0]
 EndFunc   ;==>_GUIImageList_Merge
 
@@ -754,13 +742,12 @@ EndFunc   ;==>_GUIImageList_Merge
 ;                  For example, if you remove the image at index 0, then image 1 becomes image 0, image 2 becomes
 ;                  image 1, and so on.
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_Remove($hWnd, $iIndex = -1)
-	Local $aResult
-
-	$aResult = DllCall("ComCtl32.dll", "int", "ImageList_Remove", "hwnd", $hWnd, "int", $iIndex)
+	Local $aResult = DllCall("comctl32.dll", "bool", "ImageList_Remove", "handle", $hWnd, "int", $iIndex)
+	If @error Then Return SetError(@error, @extended, False)
 	Return $aResult[0] <> 0
 EndFunc   ;==>_GUIImageList_Remove
 
@@ -780,13 +767,12 @@ EndFunc   ;==>_GUIImageList_Remove
 ; Remarks .......: The _GUIImageList_Replace function copies the bitmap to an internal data structure.
 ;                  Be sure to use the _WinAPI_DeleteObject function to delete $hImage and $hMask after the function returns.
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
 Func _GUIImageList_Replace($hWnd, $iIndex, $hImage, $hMask = 0)
-	Local $aResult
-
-	$aResult = DllCall("ComCtl32.dll", "hwnd", "ImageList_Replace", "hwnd", $hWnd, "int", $iIndex, "hwnd", $hImage, "hwnd", $hMask)
+	Local $aResult = DllCall("comctl32.dll", "bool", "ImageList_Replace", "handle", $hWnd, "int", $iIndex, "handle", $hImage, "handle", $hMask)
+	If @error Then Return SetError(@error, @extended, False)
 	Return $aResult[0] <> 0
 EndFunc   ;==>_GUIImageList_Replace
 
@@ -805,13 +791,12 @@ EndFunc   ;==>_GUIImageList_Replace
 ;                  created by the CreateIcon function. You do not need to destroy hIcon if it was loaded by the LoadIcon function
 ;                  the system automatically frees an icon resource when it is no longer needed.
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_ReplaceIcon($hWnd, $iIndex, $hIcon)
-	Local $aResult
-
-	$aResult = DllCall("ComCtl32.dll", "int", "ImageList_ReplaceIcon", "hwnd", $hWnd, "int", $iIndex, "hwnd", $hIcon)
+	Local $aResult = DllCall("comctl32.dll", "int", "ImageList_ReplaceIcon", "handle", $hWnd, "int", $iIndex, "handle", $hIcon)
+	If @error Then Return SetError(@error, @extended, -1)
 	Return $aResult[0]
 EndFunc   ;==>_GUIImageList_ReplaceIcon
 
@@ -828,13 +813,12 @@ EndFunc   ;==>_GUIImageList_ReplaceIcon
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUIImageList_GetBkColor
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_SetBkColor($hWnd, $iClrBk)
-	Local $aResult
-
-	$aResult = DllCall("ComCtl32.dll", "int", "ImageList_SetBkColor", "hwnd", $hWnd, "int", $iClrBk)
+	Local $aResult = DllCall("comctl32.dll", "dword", "ImageList_SetBkColor", "handle", $hWnd, "dword", $iClrBk)
+	If @error Then Return SetError(@error, @extended, $CLR_NONE)
 	Return $aResult[0]
 EndFunc   ;==>_GUIImageList_SetBkColor
 
@@ -853,13 +837,12 @@ EndFunc   ;==>_GUIImageList_SetBkColor
 ; Remarks .......: Creates a new drag image by combining the specified image (typically a mouse cursor image)
 ;                  with the current drag image
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
 Func _GUIImageList_SetDragCursorImage($hWnd, $iDrag, $iDXHotSpot, $iDYHotSpot)
-	Local $aResult
-
-	$aResult = DllCall("ComCtl32.dll", "int", "ImageList_SetDragCursorImage", "hwnd", $hWnd, "int", $iDrag, "int", $iDXHotSpot, "int", $iDYHotSpot)
+	Local $aResult = DllCall("comctl32.dll", "bool", "ImageList_SetDragCursorImage", "handle", $hWnd, "int", $iDrag, "int", $iDXHotSpot, "int", $iDYHotSpot)
+	If @error Then Return SetError(@error, @extended, False)
 	Return $aResult[0] <> 0
 EndFunc   ;==>_GUIImageList_SetDragCursorImage
 
@@ -876,13 +859,12 @@ EndFunc   ;==>_GUIImageList_SetDragCursorImage
 ; Modified.......:
 ; Remarks .......: All images in an image list have the same dimensions
 ; Related .......: _GUIImageList_GetIconSize
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_SetIconSize($hWnd, $iCX, $iCY)
-	Local $aResult
-
-	$aResult = DllCall("ComCtl32.dll", "int", "ImageList_SetIconSize", "hwnd", $hWnd, "int", $iCX, "int", $iCY)
+	Local $aResult = DllCall("comctl32.dll", "bool", "ImageList_SetIconSize", "handle", $hWnd, "int", $iCX, "int", $iCY)
+	If @error Then Return SetError(@error, @extended, False)
 	Return $aResult[0] <> 0
 EndFunc   ;==>_GUIImageList_SetIconSize
 
@@ -902,14 +884,12 @@ EndFunc   ;==>_GUIImageList_SetIconSize
 ;+
 ;                  If you decrease the size of an image list by using this function, the truncated images are freed.
 ; Related .......: _GUIImageList_GetImageCount
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_SetImageCount($hWnd, $iNewCount)
-	Local $aResult
-
-	$aResult = DllCall("ComCtl32.dll", "int", "ImageList_SetImageCount", "hwnd", $hWnd, "int", $iNewCount)
-
+	Local $aResult = DllCall("comctl32.dll", "bool", "ImageList_SetImageCount", "handle", $hWnd, "uint", $iNewCount)
+	If @error Then Return SetError(@error, @extended, False)
 	Return $aResult[0] <> 0
 EndFunc   ;==>_GUIImageList_SetImageCount
 
@@ -933,13 +913,12 @@ EndFunc   ;==>_GUIImageList_SetImageCount
 ;+
 ;                  A call to this method fails and returns $E_INVALIDARG unless the image list is created using a mask.
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
 Func _GUIImageList_SetOverlayImage($hWnd, $iImage, $iOverlay)
-	Local $aResult
-
-	$aResult = DllCall("ComCtl32.dll", "int", "ImageList_SetOverlayImage", "hwnd", $hWnd, "int", $iImage, "int", $iOverlay)
+	Local $aResult = DllCall("comctl32.dll", "bool", "ImageList_SetOverlayImage", "handle", $hWnd, "int", $iImage, "int", $iOverlay)
+	If @error Then Return SetError(@error, @extended, False)
 	Return $aResult[0] <> 0
 EndFunc   ;==>_GUIImageList_SetOverlayImage
 
@@ -955,13 +934,12 @@ EndFunc   ;==>_GUIImageList_SetOverlayImage
 ; Author ........: Gary Frost (gafrost)
 ; Modified.......:
 ; Remarks .......:
-; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUIImageList_Copy
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUIImageList_Swap($hWnd, $iSource, $iDestination)
-	Local $aResult
-
-	$aResult = DllCall("ComCtl32.dll", "int", "ImageList_Copy", "hwnd", $hWnd, "int", $iDestination, "hwnd", $hWnd, "int", $iSource, "int", $ILCF_SWAP)
+	Local $aResult = DllCall("comctl32.dll", "bool", "ImageList_Copy", "handle", $hWnd, "int", $iDestination, "handle", $hWnd, "int", $iSource, "uint", $ILCF_SWAP)
+	If @error Then Return SetError(@error, @extended, False)
 	Return $aResult[0] <> 0
 EndFunc   ;==>_GUIImageList_Swap

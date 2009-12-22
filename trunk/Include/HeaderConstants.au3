@@ -1,11 +1,12 @@
 #include-once
 
-; ------------------------------------------------------------------------------
-;
-; AutoIt Version: 3.2
-; Description:    Header Constants.
-;
-; ------------------------------------------------------------------------------
+; #INDEX# =======================================================================================================================
+; Title .........: Header_Constants
+; AutoIt Version : 3.2
+; Language ......: English
+; Description ...: Constants for Header functions.
+; Author(s) .....: Valik, Gary Frost
+; ===============================================================================================================================
 
 ; #CONSTANTS# ===================================================================================================================
 Global Const $HDF_LEFT = 0x00000000
@@ -56,7 +57,7 @@ Global Const $HDM_EDITFILTER = $HDM_FIRST + 23
 Global Const $HDM_GETBITMAPMARGIN = $HDM_FIRST + 21
 Global Const $HDM_GETFOCUSEDITEM = $HDM_FIRST + 27
 Global Const $HDM_GETIMAGELIST = $HDM_FIRST + 9
-Global Const $HDM_GETITEM = $HDM_FIRST + 3
+Global Const $HDM_GETITEMA = $HDM_FIRST + 3
 Global Const $HDM_GETITEMW = $HDM_FIRST + 11
 Global Const $HDM_GETITEMCOUNT = $HDM_FIRST + 0
 Global Const $HDM_GETITEMDROPDOWNRECT = $HDM_FIRST + 25
@@ -65,7 +66,7 @@ Global Const $HDM_GETORDERARRAY = $HDM_FIRST + 17
 Global Const $HDM_GETOVERFLOWRECT = $HDM_FIRST + 26
 Global Const $HDM_GETUNICODEFORMAT = 0x2000 + 6
 Global Const $HDM_HITTEST = $HDM_FIRST + 6
-Global Const $HDM_INSERTITEM = $HDM_FIRST + 1
+Global Const $HDM_INSERTITEMA = $HDM_FIRST + 1
 Global Const $HDM_INSERTITEMW = $HDM_FIRST + 10
 Global Const $HDM_LAYOUT = $HDM_FIRST + 5
 Global Const $HDM_ORDERTOINDEX = $HDM_FIRST + 15
@@ -74,35 +75,36 @@ Global Const $HDM_SETFILTERCHANGETIMEOUT = $HDM_FIRST + 22
 Global Const $HDM_SETFOCUSEDITEM = $HDM_FIRST + 28
 Global Const $HDM_SETHOTDIVIDER = $HDM_FIRST + 19
 Global Const $HDM_SETIMAGELIST = $HDM_FIRST + 8
-Global Const $HDM_SETITEM = $HDM_FIRST + 4
+Global Const $HDM_SETITEMA = $HDM_FIRST + 4
 Global Const $HDM_SETITEMW = $HDM_FIRST + 12
 Global Const $HDM_SETORDERARRAY = $HDM_FIRST + 18
 Global Const $HDM_SETUNICODEFORMAT = 0x2000 + 5
 ; ===============================================================================================================================
 
 ; #NOTIFICATIONS# ===============================================================================================================
-Global Const $HDN_BEGINDRAG = 0xFFFFFECA ; Sent when a drag operation has begun
-Global Const $HDN_BEGINTRACK = 0xFFFFFECE ; Sent when the user has begun dragging a divider
-Global Const $HDN_DIVIDERDBLCLICK = 0xFFFFFECF ; Sent when the user double clicks the divider
-Global Const $HDN_ENDDRAG = 0xFFFFFEC9 ; Sent when a drag operation has ended
-Global Const $HDN_ENDTRACK = 0xFFFFFECD ; Sent when the user has finished dragging a divider
-Global Const $HDN_FILTERBTNCLICK = 0xFFFFFEC7 ; Sent when filter button is clicked
-Global Const $HDN_FILTERCHANGE = 0xFFFFFEC8 ; Sent when the attributes of a header control filter are being changed
-Global Const $HDN_GETDISPINFO = 0xFFFFFECB ; Sent when the control needs information about a callback
-Global Const $HDN_ITEMCHANGED = 0xFFFFFED3 ; Sent when a header item has changed
-Global Const $HDN_ITEMCHANGING = 0xFFFFFED4 ; Sent when a header item is about to change
-Global Const $HDN_ITEMCLICK = 0xFFFFFED2 ; Sent when the user clicks the control
-Global Const $HDN_ITEMDBLCLICK = 0xFFFFFED1 ; Sent when the user double clicks the control
-Global Const $HDN_TRACK = 0xFFFFFECC ; Sent when the user is dragging a divider
-Global Const $HDN_BEGINTRACKW = 0xFFFFFEBA ; [Unicode] Sent when the user has begun dragging a divider
-Global Const $HDN_DIVIDERDBLCLICKW = 0xFFFFFEBB ; [Unicode] Sent when the user double clicks the divider
-Global Const $HDN_ENDTRACKW = 0xFFFFFEB9 ; [Unicode] Sent when the user has finished dragging a divider
-Global Const $HDN_GETDISPINFOW = 0xFFFFFEB7 ; [Unicode] Sent when the control needs information about a callback
-Global Const $HDN_ITEMCHANGEDW = 0xFFFFFEBF ; [Unicode] Sent when a header item has changed
-Global Const $HDN_ITEMCHANGINGW = 0xFFFFFEC0 ; [Unicode] Sent when a header item is about to change
-Global Const $HDN_ITEMCLICKW = 0xFFFFFEBE ; [Unicode] Sent when the user clicks the control
-Global Const $HDN_ITEMDBLCLICKW = 0xFFFFFEBD ; [Unicode] Sent when the user double clicks the control
-Global Const $HDN_TRACKW = 0xFFFFFEB8 ; [Unicode] Sent when the user is dragging a divider
+Global Const $HDN_FIRST				= -300
+Global Const $HDN_BEGINDRAG			= $HDN_FIRST - 10 ; Sent when a drag operation has begun
+Global Const $HDN_BEGINTRACK		= $HDN_FIRST - 6 ; Sent when the user has begun dragging a divider
+Global Const $HDN_DIVIDERDBLCLICK	= $HDN_FIRST - 5 ; Sent when the user double clicks the divider
+Global Const $HDN_ENDDRAG			= $HDN_FIRST - 11 ; Sent when a drag operation has ended
+Global Const $HDN_ENDTRACK			= $HDN_FIRST - 7 ; Sent when the user has finished dragging a divider
+Global Const $HDN_FILTERBTNCLICK	= $HDN_FIRST - 13 ; Sent when filter button is clicked
+Global Const $HDN_FILTERCHANGE		= $HDN_FIRST - 12 ; Sent when the attributes of a header control filter are being changed
+Global Const $HDN_GETDISPINFO		= $HDN_FIRST - 9 ; Sent when the control needs information about a callback
+Global Const $HDN_ITEMCHANGED		= $HDN_FIRST - 1 ; Sent when a header item has changed
+Global Const $HDN_ITEMCHANGING		= $HDN_FIRST - 0 ; Sent when a header item is about to change
+Global Const $HDN_ITEMCLICK			= $HDN_FIRST - 2 ; Sent when the user clicks the control
+Global Const $HDN_ITEMDBLCLICK		= $HDN_FIRST - 3 ; Sent when the user double clicks the control
+Global Const $HDN_TRACK				= $HDN_FIRST - 8 ; Sent when the user is dragging a divider
+Global Const $HDN_BEGINTRACKW		= $HDN_FIRST - 26 ; [Unicode] Sent when the user has begun dragging a divider
+Global Const $HDN_DIVIDERDBLCLICKW	= $HDN_FIRST - 25 ; [Unicode] Sent when the user double clicks the divider
+Global Const $HDN_ENDTRACKW			= $HDN_FIRST - 27 ; [Unicode] Sent when the user has finished dragging a divider
+Global Const $HDN_GETDISPINFOW		= $HDN_FIRST - 29 ; [Unicode] Sent when the control needs information about a callback
+Global Const $HDN_ITEMCHANGEDW		= $HDN_FIRST - 21 ; [Unicode] Sent when a header item has changed
+Global Const $HDN_ITEMCHANGINGW		= $HDN_FIRST - 20 ; [Unicode] Sent when a header item is about to change
+Global Const $HDN_ITEMCLICKW		= $HDN_FIRST - 22 ; [Unicode] Sent when the user clicks the control
+Global Const $HDN_ITEMDBLCLICKW		= $HDN_FIRST - 23 ; [Unicode] Sent when the user double clicks the control
+Global Const $HDN_TRACKW			= $HDN_FIRST - 28 ; [Unicode] Sent when the user is dragging a divider
 ; ===============================================================================================================================
 
 ; #STYLES# ======================================================================================================================
@@ -117,5 +119,5 @@ Global Const $HDS_HORZ = 0x00000000 ; Creates a header control with a horizontal
 Global Const $HDS_HOTTRACK = 0x00000004 ; Enables hot tracking
 Global Const $HDS_NOSIZING = 0x0800 ; The user cannot drag the divider on the header control on Vista
 Global Const $HDS_OVERFLOW = 0x1000 ; A button is displayed when not all items can be displayed within the header control's rectangle on Vista
-Global Const $HDS_DEFAULT = 0x00000046 ; Default header style
+Global Const $HDS_DEFAULT = 0x00000046 ; Default header style $HDS_DRAGDROP + $HDS_HOTTRACK + $HDS_BUTTONS
 ; ===============================================================================================================================

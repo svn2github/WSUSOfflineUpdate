@@ -1,11 +1,14 @@
 #include-once
-; ------------------------------------------------------------------------------
-;
-; AutoIt Version: 3.2
-; Description:    ComboBox constants.
-;
-; ------------------------------------------------------------------------------
 
+; #INDEX# =======================================================================================================================
+; Title .........: ComboBox_Constants
+; AutoIt Version : 3.2
+; Language ......: English
+; Description ...: Constants for <a href="../appendix/GUIStyles.htm#Combo">GUI control Combo styles</a> and more.
+; Author(s) .....: Valik, Gary Frost
+; ===============================================================================================================================
+
+; #CONSTANTS# ===================================================================================================================
 ; Error checking
 Global Const $CB_ERR = -1
 Global Const $CB_ERRATTRIBUTE = -3
@@ -17,19 +20,9 @@ Global Const $CB_OKAY = 0
 Global Const $STATE_SYSTEM_INVISIBLE = 0x8000
 Global Const $STATE_SYSTEM_PRESSED = 0x8
 
-; dir attributes
-Global Const $CB_DDL_ARCHIVE = 0x20
-Global Const $CB_DDL_DIRECTORY = 0x10
-Global Const $CB_DDL_DRIVES = 0x4000
-Global Const $CB_DDL_EXCLUSIVE = 0x8000
-Global Const $CB_DDL_HIDDEN = 0x2
-Global Const $CB_DDL_READONLY = 0x1
-Global Const $CB_DDL_READWRITE = 0x0
-Global Const $CB_DDL_SYSTEM = 0x4
+; ===============================================================================================================================
 
-;================================================================================================================================
 ; ComboBox
-;================================================================================================================================
 ; #STYLES# ======================================================================================================================
 Global Const $CBS_AUTOHSCROLL = 0x40 ; Automatically scrolls the text in an edit control to the right when the user types a character at the end of the line.
 Global Const $CBS_DISABLENOSCROLL = 0x800 ; Shows a disabled vertical scroll bar
@@ -44,6 +37,7 @@ Global Const $CBS_OWNERDRAWVARIABLE = 0x20 ; Specifies that the owner of the lis
 Global Const $CBS_SIMPLE = 0x1 ; Displays the list box at all times
 Global Const $CBS_SORT = 0x100 ; Automatically sorts strings added to the list box
 Global Const $CBS_UPPERCASE = 0x2000 ; Converts to uppercase all text in both the selection field and the list
+; ===============================================================================================================================
 
 ; #MESSAGES# ====================================================================================================================
 Global Const $CBM_FIRST = 0x1700
@@ -82,10 +76,11 @@ Global Const $CB_SETEXTENDEDUI = 0x155
 Global Const $CB_SETHORIZONTALEXTENT = 0x15e
 Global Const $CB_SETITEMDATA = 0x151
 Global Const $CB_SETITEMHEIGHT = 0x153
-Global Const $CB_SETLOCALE = 0x15
+Global Const $CB_SETLOCALE = 0x159
 Global Const $CB_SETMINVISIBLE = 0x1701
 Global Const $CB_SETTOPINDEX = 0x15c
 Global Const $CB_SHOWDROPDOWN = 0x14F
+; ===============================================================================================================================
 
 ; #NOTIFICATIONS# ===============================================================================================================
 Global Const $CBN_CLOSEUP = 8
@@ -99,10 +94,9 @@ Global Const $CBN_SELCHANGE = 1
 Global Const $CBN_SELENDCANCEL = 10
 Global Const $CBN_SELENDOK = 9
 Global Const $CBN_SETFOCUS = 3
+; ===============================================================================================================================
 
-;================================================================================================================================
 ; ComboBoxEx
-;================================================================================================================================
 ; #STYLES# ======================================================================================================================
 ; ComboBox styles supported: $CBS_DROPDOWN, $CBS_DROPDOWNLIST, $CBS_SIMPLE
 Global Const $CBES_EX_CASESENSITIVE = 0x10 ; Searches in the list will be case sensitive
@@ -111,6 +105,7 @@ Global Const $CBES_EX_NOEDITIMAGEINDENT = 0x2 ; The edit box and the dropdown li
 Global Const $CBES_EX_NOSIZELIMIT = 0x8 ; Allows the ComboBoxEx control to be vertically sized smaller than its contained combo box control
 Global Const $CBES_EX_PATHWORDBREAKPROC = 0x4 ; Microsoft Windows NT only.
 ;                                                    The edit box will use the slash (/), backslash (\), and period (.) characters as word delimiters
+; ===============================================================================================================================
 
 ; #MESSAGES#=====================================================================================================================
 Global Const $__COMBOBOXCONSTANT_WM_USER = 0X400
@@ -133,6 +128,7 @@ Global Const $CBEM_SETITEMA = ($__COMBOBOXCONSTANT_WM_USER + 5)
 Global Const $CBEM_SETITEMW = ($__COMBOBOXCONSTANT_WM_USER + 12)
 Global Const $CBEM_SETUNICODEFORMAT = 0x2000 + 5
 Global Const $CBEM_SETWINDOWTHEME = 0x2000 + 11
+; ===============================================================================================================================
 
 ; #NOTIFICATIONS# ===============================================================================================================
 Global Const $CBEN_FIRST = (-800)
@@ -160,3 +156,4 @@ Global Const $CBEIF_TEXT = 0x1
 ; Control default styles
 Global Const $__COMBOBOXCONSTANT_WS_VSCROLL = 0x00200000
 Global Const $GUI_SS_DEFAULT_COMBO = BitOR($CBS_DROPDOWN, $CBS_AUTOHSCROLL, $__COMBOBOXCONSTANT_WS_VSCROLL)
+; ===============================================================================================================================

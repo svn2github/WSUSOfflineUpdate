@@ -2,12 +2,12 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: String
-; Description ...: This module contains various String functions
+; Description ...: Functions that assist with String management.
+; Author(s) .....: Jarvis Stubblefield, SmOke_N, Valik, Wes Wolfe-Wolvereness, WeaponX, Louis Horvath, JdeB, Jeremy Landes, Jon
 ; ===============================================================================================================================
 
 ; #CURRENT# =====================================================================================================================
 ;_HexToString
-;_StringAddThousandsSep
 ;_StringBetween
 ;_StringEncrypt
 ;_StringExplode
@@ -18,9 +18,6 @@
 ;_StringToHex
 ; ===============================================================================================================================
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-;==============================================================================================================================
-
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _HexToString
 ; Description ...: Convert a hex string to a string.
@@ -29,126 +26,55 @@
 ; Return values .: Success - Returns a string.
 ;                  Failure - Returns -1 and sets @error to 1.
 ; Author ........: Jarvis Stubblefield
-; Modified.......: 2005/09/04 jpm error checking
+; Modified.......: SmOke_N - (Re-write using BinaryToString for speed)
 ; Remarks .......:
 ; Related .......: _StringToHex
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _HexToString($strHex)
-	Local $strChar, $aryHex, $i, $iDec, $Char, $iOne, $iTwo
-
-	$aryHex = StringSplit($strHex, "")
-	If Mod($aryHex[0], 2) <> 0 Then
-		SetError(1)
-		Return -1
-	EndIf
-
-	For $i = 1 To $aryHex[0]
-		$iOne = $aryHex[$i]
-		$i = $i + 1
-		$iTwo = $aryHex[$i]
-		$iDec = Dec($iOne & $iTwo)
-		If @error <> 0 Then
-			SetError(1)
-			Return -1
-		EndIf
-
-		$Char = Chr($iDec)
-		$strChar &= $Char
-	Next
-
-	Return $strChar
+	If StringLeft($strHex, 2) = "0x" Then Return BinaryToString($strHex)
+	Return BinaryToString("0x" & $strHex)
 EndFunc   ;==>_HexToString
-
-; #FUNCTION# ====================================================================================================================
-; Name...........: _StringAddThousandsSep
-; Description ...: Returns the original numbered string with the Thousands delimiter inserted.
-; Syntax.........: _StringAddThousandsSep($sString[, $sThousands = -1[, $sDecimal = -1]])
-; Parameters ....: $sString    - The string to be converted.
-;                  $sThousands - Optional: The Thousands delimiter
-;                  $sDecimal   - Optional: The decimal delimiter
-; Return values .: Success - The string with Thousands delimiter added.
-; Author ........: SmOke_N (orignal _StringAddComma
-; Modified.......: Valik (complete re-write, new function name)
-; Remarks .......:
-; Related .......:
-; Link ..........;
-; Example .......; Yes
-; ===============================================================================================================================
-Func _StringAddThousandsSep($sString, $sThousands = -1, $sDecimal = -1)
-	Local $sResult = "" ; Force string
-	Local $rKey = "HKCU\Control Panel\International"
-	If $sDecimal = -1 Then $sDecimal = RegRead($rKey, "sDecimal")
-	If $sThousands = -1 Then $sThousands = RegRead($rKey, "sThousand")
-;~ 	Local $aNumber = StringRegExp($sString, "(\d+)\D?(\d*)", 1)
-	Local $aNumber = StringRegExp($sString, "(\D?\d+)\D?(\d*)", 1) ; This one works for negatives.
-	If UBound($aNumber) = 2 Then
-		Local $sLeft = $aNumber[0]
-		While StringLen($sLeft)
-			$sResult = $sThousands & StringRight($sLeft, 3) & $sResult
-			$sLeft = StringTrimRight($sLeft, 3)
-		WEnd
-;~ 		$sResult = StringTrimLeft($sResult, 1) ; Strip leading thousands separator
-		$sResult = StringTrimLeft($sResult, StringLen($sThousands)) ; Strip leading thousands separator
-		If $aNumber[1] <> "" Then $sResult &= $sDecimal & $aNumber[1]
-	EndIf
-	Return $sResult
-EndFunc   ;==>_StringAddThousandsSep
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _StringBetween
 ; Description ...: Returns the string between the start search string and the end search string.
-; Syntax.........: _StringBetween($sString, $sStart, $sEnd[, $vCase = -1[, $iSRE = -1]])
-; Parameters ....: $sString - The string to search.
-;                  $sStart  - The beginning of the string to find
-;                  $sEnd    - The end of the string to find
-;                  $vCase   - Optional: Case sensitive search. Default or -1 is not Case sensitive else Case sensitive.
-;                  $iSRE    - Optional: Toggle for regular string manipulation or StringRegExp search. Default is regular string manipulation.
+; Syntax.........: _StringBetween($s_String, $s_start, $s_end[, $v_Case = -1])
+; Parameters ....: $s_String       - The string to search.
+;                  $s_start        - The beginning of the string to find.  Passing a blank string starts at the beginning
+;                  $s_end          - The end of the string to find.  Passing a blank string searches from $s_start to end
+;                  $v_Case         - Optional: Case sensitive search. Default or -1 is not Case sensitive else Case sensitive.
 ; Return values .: Success - A 0 based $array[0] contains the first found string.
 ;                  Failure - 0
 ;                  |@Error  - 1 = No inbetween string found.
 ; Author ........: SmOke_N (Thanks to Valik for helping with the new StringRegExp (?s)(?i) isssue)
-; Modified.......:
-; Remarks .......:
+; Modified.......: SmOke_N - (Re-write for speed and accuracy)
+; Remarks .......: 2009/05/03 Script breaking change, removed 5th parameter
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
-Func _StringBetween($sString, $sStart, $sEnd, $vCase = -1, $iSRE = -1)
-	If $iSRE = -1 Or $iSRE = Default Then
-		If $vCase = -1 Or $vCase = Default Then
-			$vCase = 0
-		Else
-			$vCase = 1
-		EndIf
-		Local $sHold = '', $sSnSStart = '', $sSnSEnd = ''
-		While StringLen($sString) > 0
-			$sSnSStart = StringInStr($sString, $sStart, $vCase)
-			If Not $sSnSStart Then ExitLoop
-			$sString = StringTrimLeft($sString, ($sSnSStart + StringLen($sStart)) - 1)
-			$sSnSEnd = StringInStr($sString, $sEnd, $vCase)
-			If Not $sSnSEnd Then ExitLoop
-			$sHold &= StringLeft($sString, $sSnSEnd - 1) & Chr(1)
-			$sString = StringTrimLeft($sString, $sSnSEnd)
-		WEnd
-		If Not $sHold Then Return SetError(1, 0, 0)
-		$sHold = StringSplit(StringTrimRight($sHold, 1), Chr(1))
-		Local $avArray[UBound($sHold) - 1]
-		For $iCC = 1 To UBound($sHold) - 1
-			$avArray[$iCC - 1] = $sHold[$iCC]
-		Next
-		Return $avArray
-	Else
-		If $vCase = Default Or $vCase = -1 Then
-			$vCase = '(?i)'
-		Else
-			$vCase = ''
-		EndIf
-		Local $aArray = StringRegExp($sString, '(?s)' & $vCase & $sStart & '(.*?)' & $sEnd, 3)
-		If IsArray($aArray) Then Return $aArray
-		Return SetError(1, 0, 0)
-	EndIf
+Func _StringBetween($s_String, $s_Start, $s_End, $v_Case = -1)
+
+	; Set case type
+	Local $s_case = ""
+	If $v_Case = Default Or $v_Case = -1 Then $s_case = "(?i)"
+
+	; Escape characters
+	Local $s_pattern_escape = "(\.|\||\*|\?|\+|\(|\)|\{|\}|\[|\]|\^|\$|\\)"
+	$s_Start = StringRegExpReplace($s_Start, $s_pattern_escape, "\\$1")
+	$s_End = StringRegExpReplace($s_End, $s_pattern_escape, "\\$1")
+
+	; If you want data from beginning then replace blank start with beginning of string
+	If $s_Start = "" Then $s_Start = "\A"
+
+	; If you want data from a start to an end then replace blank with end of string
+	If $s_End = "" Then $s_End = "\z"
+
+	Local $a_ret = StringRegExp($s_String, "(?s)" & $s_case & $s_Start & "(.+?)" & $s_End, 3)
+	If @error Then Return SetError(1, 0, 0)
+	Return $a_ret
 EndFunc   ;==>_StringBetween
 
 ; #FUNCTION# ====================================================================================================================
@@ -165,16 +91,14 @@ EndFunc   ;==>_StringBetween
 ; Modified.......:
 ; Remarks .......: WARNING: This function has an extreme timespan if the encryption level or encrypted string are too large!
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _StringEncrypt($i_Encrypt, $s_EncryptText, $s_EncryptPassword, $i_EncryptLevel = 1)
 	If $i_Encrypt <> 0 And $i_Encrypt <> 1 Then
-		SetError(1)
-		Return ''
+		SetError(1, 0, '')
 	ElseIf $s_EncryptText = '' Or $s_EncryptPassword = '' Then
-		SetError(1)
-		Return ''
+		SetError(1, 0, '')
 	Else
 		If Number($i_EncryptLevel) <= 0 Or Int($i_EncryptLevel) <> $i_EncryptLevel Then $i_EncryptLevel = 1
 		Local $v_EncryptModified
@@ -294,8 +218,8 @@ EndFunc   ;==>_StringEncrypt
 ; Modified.......:
 ; Remarks .......: Use negative limit values to remove the first possible elements.
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _StringExplode($sString, $sDelimiter, $iLimit = 0)
 	If $iLimit > 0 Then
@@ -333,23 +257,20 @@ EndFunc   ;==>_StringExplode
 ; Modified.......:
 ; Remarks .......: Use negative position values to insert string from the right hand side.
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _StringInsert($s_String, $s_InsertString, $i_Position)
 	Local $i_Length, $s_Start, $s_End
 
 	If $s_String = "" Or (Not IsString($s_String)) Then
-		SetError(1) ; Source string empty / not a string
-		Return $s_String
+		Return SetError(1, 0, $s_String) ; Source string empty / not a string
 	ElseIf $s_InsertString = "" Or (Not IsString($s_String)) Then
-		SetError(2) ; Insert string empty / not a string
-		Return $s_String
+		Return SetError(2, 0, $s_String) ; Insert string empty / not a string
 	Else
 		$i_Length = StringLen($s_String) ; Take a note of the length of the source string
 		If (Abs($i_Position) > $i_Length) Or (Not IsInt($i_Position)) Then
-			SetError(3) ; Invalid position
-			Return $s_String
+			Return SetError(3, 0, $s_String) ; Invalid position
 		EndIf
 	EndIf
 
@@ -372,24 +293,24 @@ EndFunc   ;==>_StringInsert
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _StringProper
 ; Description ...: Changes a string to proper case, same a =Proper function in Excel
-; Syntax.........: _StringProper($s_Str)
-; Parameters ....: $s_Str - Input string
+; Syntax.........: _StringProper($s_String)
+; Parameters ....: $s_String - Input string
 ; Return values .: Success - Returns proper string.
 ;                  Failure - Returns "".
 ; Author ........: Jos van der Zande <jdeb at autoitscript dot com>
 ; Modified.......:
 ; Remarks .......: This function will capitalize every character following a None Apha character.
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
-Func _StringProper($s_Str)
+Func _StringProper($s_String)
 	Local $iX = 0
 	Local $CapNext = 1
 	Local $s_nStr = ""
 	Local $s_CurChar
-	For $iX = 1 To StringLen($s_Str)
-		$s_CurChar = StringMid($s_Str, $iX, 1)
+	For $iX = 1 To StringLen($s_String)
+		$s_CurChar = StringMid($s_String, $iX, 1)
 		Select
 			Case $CapNext = 1
 				If StringRegExp($s_CurChar, '[a-zA-ZÀ-ÿšœžŸ]') Then
@@ -403,7 +324,7 @@ Func _StringProper($s_Str)
 		EndSelect
 		$s_nStr &= $s_CurChar
 	Next
-	Return ($s_nStr)
+	Return $s_nStr
 EndFunc   ;==>_StringProper
 
 ; #FUNCTION# ====================================================================================================================
@@ -420,8 +341,8 @@ EndFunc   ;==>_StringProper
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _StringRepeat($sString, $iRepeatCount)
 	;==============================================
@@ -451,36 +372,32 @@ EndFunc   ;==>_StringRepeat
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _StringReverse
 ; Description ...: Reverses the contents of the specified string.
-; Syntax.........: _StringReverse($sString)
-; Parameters ....: $sString - String to reverse
+; Syntax.........: _StringReverse($s_String)
+; Parameters ....: $s_String - String to reverse
 ; Return values .: Success - Returns reversed string
 ;                  Failure - Returns an empty string and sets @error = 1
 ;                  |@Error  - 0 = No error.
 ;                  |@Error  - 1 = One of the parameters is invalid
-; Author ........: Jonathan Bennett <jon at hiddensoft com>
-; Modified.......:
+;                  |@Error  - 2 = Dll error
+; Author ........: Jon
+; Modified.......: SmOke_N (Re-written using msvcrt.dll for speed)
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
-Func _StringReverse($sString)
-	;==============================================
-	; Local Constant/Variable Declaration Section
-	;==============================================
-	Local $sReverse
-	Local $iCount
+Func _StringReverse($s_String)
 
-	If StringLen($sString) >= 1 Then
-		For $iCount = 1 To StringLen($sString)
-			$sReverse = StringMid($sString, $iCount, 1) & $sReverse
-		Next
+	Local $i_len = StringLen($s_String)
+	If $i_len < 1 Then Return SetError(1, 0, "")
 
-		Return $sReverse
-	Else
-		SetError(1)
-		Return ""
-	EndIf
+	Local $t_chars = DllStructCreate("char[" & $i_len + 1 & "]")
+	DllStructSetData($t_chars, 1, $s_String)
+
+	Local $a_rev = DllCall("msvcrt.dll", "ptr:cdecl", "_strrev", "ptr", DllStructGetPtr($t_chars))
+	If @error Or $a_rev[0] = 0 Then Return SetError(2, 0, "")
+
+	Return DllStructGetData($t_chars, 1)
 EndFunc   ;==>_StringReverse
 
 ; #FUNCTION# ====================================================================================================================
@@ -491,23 +408,12 @@ EndFunc   ;==>_StringReverse
 ; Return values .: Success - Returns an hex string.
 ;                  Failure - Returns -1 and sets @error to 1.
 ; Author ........: Jarvis Stubblefield
-; Modified.......: 2005/09/04 jpm error checking
+; Modified.......: SmOke_N - (Re-write using StringToBinary for speed)
 ; Remarks .......:
 ; Related .......: _HexToString
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _StringToHex($strChar)
-	Local $aryChar, $i, $iDec, $hChar, $strHex
-
-	$aryChar = StringSplit($strChar, "")
-
-	For $i = 1 To $aryChar[0]
-		$iDec = Asc($aryChar[$i])
-		$hChar = Hex($iDec, 2)
-		$strHex &= $hChar
-	Next
-
-	Return $strHex
-
+	Return Hex(StringToBinary($strChar))
 EndFunc   ;==>_StringToHex

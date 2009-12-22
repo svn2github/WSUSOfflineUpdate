@@ -1,23 +1,27 @@
 #include-once
 
-#include <EditConstants.au3>
-#include <GuiStatusBar.au3>
-#include <Memory.au3>
-#include <WinAPI.au3>
-#include <SendMessage.au3>
-#include <UDFGlobalID.au3>
+#include "EditConstants.au3"
+#include "GuiStatusBar.au3"
+#include "Memory.au3"
+#include "WinAPI.au3"
+#include "SendMessage.au3"
+#include "UDFGlobalID.au3"
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: Edit
-; AutoIt Version: 3.2.3++
-; Language:       English
-; Description:    An edit control is a rectangular control window typically used in a dialog box to permit the user to enter
-;                 and edit text by typing on the keyboard.
+; AutoIt Version : 3.2.3++
+; Language ......: English
+; Description ...: Functions that assist with Edit control management.
+;                  An edit control is a rectangular control window typically used in a dialog box to permit the user to enter
+;                  and edit text by typing on the keyboard.
 ; ===============================================================================================================================
 
 ; #VARIABLES# ===================================================================================================================
 Global $_ghEditLastWnd
 Global $Debug_Ed = False
+; ===============================================================================================================================
+
+; #CONSTANTS# ===================================================================================================================
 Global Const $__EDITCONSTANT_ClassName = "Edit"
 Global Const $__EDITCONSTANT_GUI_CHECKED = 1
 Global Const $__EDITCONSTANT_GUI_HIDE = 32
@@ -28,10 +32,8 @@ Global Const $__EDITCONSTANT_SS_CENTER = 1
 Global Const $__EDITCONSTANT_WM_SETREDRAW = 0x000B
 Global Const $__EDITCONSTANT_WS_CAPTION = 0x00C00000
 Global Const $__EDITCONSTANT_WS_POPUP = 0x80000000
-Global Const $__EDITCONSTANT_WS_VISIBLE = 0x10000000
 Global Const $__EDITCONSTANT_WS_TABSTOP = 0x00010000
 Global Const $__EDITCONSTANT_WS_SYSMENU = 0x00080000
-Global Const $__EDITCONSTANT_WS_CHILD = 0x40000000
 Global Const $__EDITCONSTANT_WS_MINIMIZEBOX = 0x00020000
 Global Const $__EDITCONSTANT_DEFAULT_GUI_FONT = 17
 Global Const $__EDITCONSTANT_WM_SETFONT = 0x0030
@@ -43,20 +45,16 @@ Global Const $__EDITCONSTANT_SB_LINEDOWN = 1
 Global Const $__EDITCONSTANT_SB_PAGEDOWN = 3
 Global Const $__EDITCONSTANT_SB_PAGEUP = 2
 Global Const $__EDITCONSTANT_SB_SCROLLCARET = 4
-
 ; ===============================================================================================================================
 
-;==============================================================================================================================
-; ===============================================================================================================================
-; depricated functions will no longer work
-; ===============================================================================================================================
 ; #OLD_FUNCTIONS#================================================================================================================
 ; Old Function/Name                      ; --> New Function/Name/Replacement(s)
-; ===============================================================================================================================
+;
+; deprecated functions will no longer work
 ;_GUICtrlEditCanUndo                      ; --> _GUICtrlEdit_CanUndo
 ;_GUICtrlEditEmptyUndoBuffer              ; --> _GUICtrlEdit_EmptyUndoBuffer
 ;_GuiCtrlEditFind                         ; --> _GUICtrlEdit_Find
-;_GuiCtrlEditFindText                     ; --> _GUICtrlEdit_FindText
+;_GuiCtrlEditFindText                     ; --> __GUICtrlEdit_FindText
 ;_GUICtrlEditGetFirstVisibleLine          ; --> _GUICtrlEdit_GetFirstVisibleLine
 ;_GUICtrlEditGetLine                      ; --> _GUICtrlEdit_GetLine
 ;_GUICtrlEditGetLineCount                 ; --> _GUICtrlEdit_GetLineCount
@@ -73,10 +71,11 @@ Global Const $__EDITCONSTANT_SB_SCROLLCARET = 4
 ;_GUICtrlEditSetRECT                      ; --> _GUICtrlEdit_SetRECT
 ;_GUICtrlEditSetSel                       ; --> _GUICtrlEdit_SetSel
 ;_GUICtrlEditUndo                         ; --> _GUICtrlEdit_Undo
+; ===============================================================================================================================
 
 ; #NO_DOC_FUNCTION# =============================================================================================================
-; Not working/documented/implimented at this time
-; ===============================================================================================================================
+; Not working/documented/implemented at this time
+;
 ;_GUICtrlEdit_GetHandle
 ;_GUICtrlEdit_GetIMEStatus
 ;_GUICtrlEdit_GetThumb
@@ -134,11 +133,26 @@ Global Const $__EDITCONSTANT_SB_SCROLLCARET = 4
 ;_GUICtrlEdit_Undo
 ; ===============================================================================================================================
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-;_GUICtrlEdit_DebugPrint
-;_GUICtrlEdit_FindText
-;_GUICtrlEdit_ValidateClassName
-;==============================================================================================================================
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+;$tagEDITBALLOONTIP
+;__GUICtrlEdit_FindText
+; ===============================================================================================================================
+
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: $tagEDITBALLOONTIP
+; Description ...: Contains information about a balloon tip
+; Fields ........: Size     - Size of this structure, in bytes
+;                  Title    - Pointer to the buffer that holds Title of the ToolTip
+;                  Text     - Pointer to the buffer that holds Text of the ToolTip
+;                  Icon     - Type of Icon.  This can be one of the following values:
+;                  |$TTI_ERROR   - Use the error icon
+;                  |$TTI_INFO    - Use the information icon
+;                  |$TTI_NONE    - Use no icon
+;                  |$TTI_WARNING - Use the warning icon
+; Author ........: Gary Frost (gafrost)
+; Remarks .......: For use with Edit control (minimum O.S. Win XP)
+; ===============================================================================================================================
+Global Const $tagEDITBALLOONTIP = "dword Size;ptr Title;ptr Text;int Icon"
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _GUICtrlEdit_AppendText
@@ -150,25 +164,17 @@ Global Const $__EDITCONSTANT_SB_SCROLLCARET = 4
 ; Author ........: Gary Frost (gafrost)
 ; Modified.......:
 ; Remarks .......:
-; Related .......: _GUICtrlEdit_SetText, _GUICtrlEdit_InsertText
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUICtrlEdit_SetText, _GUICtrlEdit_InsertText, _GUICtrlEdit_GetText
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_AppendText($hWnd, $sText)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $struct_MemMap, $struct_String, $sBuffer_pointer, $iLength
-
-	$struct_String = DllStructCreate("char Text[" & StringLen($sText) + 1 & "]")
-	$sBuffer_pointer = DllStructGetPtr($struct_String)
-	DllStructSetData($struct_String, "Text", $sText)
-	_MemInit($hWnd, StringLen($sText) + 1, $struct_MemMap)
-	_MemWrite($struct_MemMap, $sBuffer_pointer)
-	$iLength = _GUICtrlEdit_GetTextLen($hWnd)
+	Local $iLength = _GUICtrlEdit_GetTextLen($hWnd)
 	_GUICtrlEdit_SetSel($hWnd, $iLength, $iLength)
-	_SendMessage($hWnd, $EM_REPLACESEL, True, $sBuffer_pointer, 0, "wparam", "ptr")
-	_MemFree($struct_MemMap)
+	_SendMessage($hWnd, $EM_REPLACESEL, True, $sText, 0, "wparam", "wstr")
 EndFunc   ;==>_GUICtrlEdit_AppendText
 
 ; #FUNCTION# ====================================================================================================================
@@ -182,11 +188,11 @@ EndFunc   ;==>_GUICtrlEdit_AppendText
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlEdit_EndUpdate
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_BeginUpdate($hWnd)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $__EDITCONSTANT_WM_SETREDRAW) = 0
@@ -203,11 +209,11 @@ EndFunc   ;==>_GUICtrlEdit_BeginUpdate
 ; Modified.......:
 ; Remarks .......: If the undo queue is not empty, you can call the _GUICtrlEdit_Undo to undo the most recent operation.
 ; Related .......: _GUICtrlEdit_EmptyUndoBuffer, _GUICtrlEdit_GetModify, _GUICtrlEdit_SetModify, _GUICtrlEdit_Undo
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_CanUndo($hWnd)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $EM_CANUNDO) <> 0
@@ -218,6 +224,8 @@ EndFunc   ;==>_GUICtrlEdit_CanUndo
 ; Description ...: Retrieve information about the character closest to a specified point in the client area
 ; Syntax.........: _GUICtrlEdit_CharFromPos($hWnd, $iX, $iY)
 ; Parameters ....: $hWnd        - Handle to the control
+;                  $iX          - horizontal position
+;                  $iY          - vertical position
 ; Return values .: Success      - Array in the following format:
 ;                  |[0]         - Zero-based index of the character nearest the specified point
 ;                  |[1]         - Zero-based index of the line that contains the character
@@ -225,18 +233,18 @@ EndFunc   ;==>_GUICtrlEdit_CanUndo
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_CharFromPos($hWnd, $iX, $iY)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $iResult, $aReturn[2]
+	Local $aReturn[2]
 
-	$iResult = _SendMessage($hWnd, $EM_CHARFROMPOS, 0, _WinAPI_MakeLong($iX, $iY))
-	$aReturn[0] = _WinAPI_LoWord($iResult)
-	$aReturn[1] = _WinAPI_HiWord($iResult)
+	Local $iRet = _SendMessage($hWnd, $EM_CHARFROMPOS, 0, _WinAPI_MakeLong($iX, $iY))
+	$aReturn[0] = _WinAPI_LoWord($iRet)
+	$aReturn[1] = _WinAPI_HiWord($iRet)
 	Return $aReturn
 EndFunc   ;==>_GUICtrlEdit_CharFromPos
 
@@ -275,14 +283,12 @@ EndFunc   ;==>_GUICtrlEdit_CharFromPos
 ; Modified.......:
 ; Remarks .......: This function is for Advanced users and for learning how the control works.
 ; Related .......: _GUICtrlEdit_Destroy
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_Create($hWnd, $sText, $iX, $iY, $iWidth = 150, $iHeight = 150, $iStyle = 0x003010C4, $iExStyle = 0x00000200)
-	If Not IsHWnd($hWnd) Then _WinAPI_ShowError("Invalid Window handle for _GUICtrlEdit_Create 1st parameter")
-	If Not IsString($sText) Then _WinAPI_ShowError("2nd parameter not a string for _GUICtrlEdit_Create")
-
-	Local $hEdit, $nCtrlID
+	If Not IsHWnd($hWnd) Then Return SetError(1, 0, 0)		; Invalid Window handle for _GUICtrlEdit_Create 1st parameter
+	If Not IsString($sText) Then Return SetError(2, 0, 0)	; 2nd parameter not a string for _GUICtrlEdit_Create
 
 	If $iWidth = -1 Then $iWidth = 150
 	If $iHeight = -1 Then $iHeight = 150
@@ -290,43 +296,21 @@ Func _GUICtrlEdit_Create($hWnd, $sText, $iX, $iY, $iWidth = 150, $iHeight = 150,
 	If $iExStyle = -1 Then $iExStyle = 0x00000200
 
 	If BitAND($iStyle, $ES_READONLY) = $ES_READONLY Then
-		$iStyle = BitOR($__EDITCONSTANT_WS_CHILD, $__EDITCONSTANT_WS_VISIBLE, $iStyle)
+		$iStyle = BitOR($__UDFGUICONSTANT_WS_CHILD, $__UDFGUICONSTANT_WS_VISIBLE, $iStyle)
 	Else
-		$iStyle = BitOR($__EDITCONSTANT_WS_CHILD, $__EDITCONSTANT_WS_VISIBLE, $__EDITCONSTANT_WS_TABSTOP, $iStyle)
+		$iStyle = BitOR($__UDFGUICONSTANT_WS_CHILD, $__UDFGUICONSTANT_WS_VISIBLE, $__EDITCONSTANT_WS_TABSTOP, $iStyle)
 	EndIf
 	;=========================================================================================================
 
-	$nCtrlID = _UDF_GetNextGlobalID($hWnd)
+	Local $nCtrlID = __UDF_GetNextGlobalID($hWnd)
 	If @error Then Return SetError(@error, @extended, 0)
 
-	$hEdit = _WinAPI_CreateWindowEx($iExStyle, $__EDITCONSTANT_ClassName, "", $iStyle, $iX, $iY, $iWidth, $iHeight, $hWnd, $nCtrlID)
+	Local $hEdit = _WinAPI_CreateWindowEx($iExStyle, $__EDITCONSTANT_ClassName, "", $iStyle, $iX, $iY, $iWidth, $iHeight, $hWnd, $nCtrlID)
 	_SendMessage($hEdit, $__EDITCONSTANT_WM_SETFONT, _WinAPI_GetStockObject($__EDITCONSTANT_DEFAULT_GUI_FONT), True)
 	_GUICtrlEdit_SetText($hEdit, $sText)
 	_GUICtrlEdit_SetLimitText($hEdit, 0)
 	Return $hEdit
 EndFunc   ;==>_GUICtrlEdit_Create
-
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _GUICtrlEdit_DebugPrint
-; Description ...: Used for debugging when creating examples
-; Syntax.........: _GUICtrlEdit_DebugPrint($hWnd[, $iLine = @ScriptLineNumber])
-; Parameters ....: $sText       - String to printed to console
-;                  $iLine       - Line number function was called from
-; Return values .: None
-; Author ........: Gary Frost (gafrost)
-; Modified.......:
-; Remarks .......: For Internal Use Only
-; Related .......:
-; Link ..........;
-; Example .......;
-; ===============================================================================================================================
-Func _GUICtrlEdit_DebugPrint($sText, $iLine = @ScriptLineNumber)
-	ConsoleWrite( _
-			"!===========================================================" & @LF & _
-			"+======================================================" & @LF & _
-			"-->Line(" & StringFormat("%04d", $iLine) & "):" & @TAB & $sText & @LF & _
-			"+======================================================" & @LF)
-EndFunc   ;==>_GUICtrlEdit_DebugPrint
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _GUICtrlEdit_Destroy
@@ -339,35 +323,32 @@ EndFunc   ;==>_GUICtrlEdit_DebugPrint
 ; Modified.......:
 ; Remarks .......: Restricted to only be used on Edit created with _GUICtrlEdit_Create
 ; Related .......: _GUICtrlEdit_Create
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_Destroy(ByRef $hWnd)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
+	If Not _WinAPI_IsClassName($hWnd, $__EDITCONSTANT_ClassName) Then Return SetError(2, 2, False)
 
-	Local $Destroyed, $iResult
-
-	If _WinAPI_IsClassName($hWnd, $__EDITCONSTANT_ClassName) Then
-		If IsHWnd($hWnd) Then
-			If _WinAPI_InProcess($hWnd, $_ghEditLastWnd) Then
-				Local $nCtrlID = _WinAPI_GetDlgCtrlID($hWnd)
-				Local $hParent = _WinAPI_GetParent($hWnd)
-				$Destroyed = _WinAPI_DestroyWindow($hWnd)
-				$iResult = _UDF_FreeGlobalID($hParent, $nCtrlID)
-				If Not $iResult Then
-					; can check for errors here if needed, for debug
-				EndIf
-			Else
-				_WinAPI_ShowMsg("Not Allowed to Destroy Other Applications Control(s)")
-				Return SetError(1, 1, False)
+	Local $Destroyed = 0
+	If IsHWnd($hWnd) Then
+		If _WinAPI_InProcess($hWnd, $_ghEditLastWnd) Then
+			Local $nCtrlID = _WinAPI_GetDlgCtrlID($hWnd)
+			Local $hParent = _WinAPI_GetParent($hWnd)
+			$Destroyed = _WinAPI_DestroyWindow($hWnd)
+			Local $iRet = __UDF_FreeGlobalID($hParent, $nCtrlID)
+			If Not $iRet Then
+				; can check for errors here if needed, for debug
 			EndIf
 		Else
-			$Destroyed = GUICtrlDelete($hWnd)
+			; Not Allowed to Destroy Other Applications Control(s)
+			Return SetError(1, 1, False)
 		EndIf
-		If $Destroyed Then $hWnd = 0
-		Return $Destroyed <> 0
+	Else
+		$Destroyed = GUICtrlDelete($hWnd)
 	EndIf
-	Return SetError(2, 2, False)
+	If $Destroyed Then $hWnd = 0
+	Return $Destroyed <> 0
 EndFunc   ;==>_GUICtrlEdit_Destroy
 
 ; #FUNCTION# ====================================================================================================================
@@ -379,12 +360,12 @@ EndFunc   ;==>_GUICtrlEdit_Destroy
 ; Author ........: Gary Frost (gafrost)
 ; Modified.......:
 ; Remarks .......: The undo flag is automatically reset whenever the edit control receives a _GUICtrlEdit_SetText
-; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUICtrlEdit_CanUndo, _GUICtrlEdit_Undo
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_EmptyUndoBuffer($hWnd)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	_SendMessage($hWnd, $EM_EMPTYUNDOBUFFER)
@@ -401,11 +382,11 @@ EndFunc   ;==>_GUICtrlEdit_EmptyUndoBuffer
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlEdit_BeginUpdate
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_EndUpdate($hWnd)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $__EDITCONSTANT_WM_SETREDRAW, 1) = 0
@@ -432,11 +413,11 @@ EndFunc   ;==>_GUICtrlEdit_EndUpdate
 ;                  The _GUICtrlEdit_FmtLines function does not affect a line that ends with a hard line break.
 ;                  A hard line break consists of one carriage return and a line feed.
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_FmtLines($hWnd, $fSoftBreak = False)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $EM_FMTLINES, $fSoftBreak)
@@ -456,36 +437,41 @@ EndFunc   ;==>_GUICtrlEdit_FmtLines
 ; Remarks .......: If you use text from the edit control and that text gets replaced the function will no
 ;                  longer function correctly
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_Find($hWnd, $fReplace = False)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $guiSearch, $inputSearch, $inputReplace, $lblReplace, $msgFind
 	Local $iPos = 0, $iCase, $iOccurance = 0, $iReplacements = 0
-	Local $chkWholeOnly, $chkMatchCase, $btnFindNext, $btnReplace, $btnClose, $StatusBar1
-	Local $sText, $aSel
 	Local $aPartsRightEdge[3] = [125, 225, -1]
-	Local $iTPose, $oldMode = Opt("GUIOnEventMode", 0)
+	Local $oldMode = Opt("GUIOnEventMode", 0)
 
-	$aSel = _GUICtrlEdit_GetSel($hWnd)
-	$sText = _GUICtrlEdit_GetText($hWnd)
+	Local $aSel = _GUICtrlEdit_GetSel($hWnd)
+	Local $sText = _GUICtrlEdit_GetText($hWnd)
 
-	$guiSearch = GUICreate("Find", 349, 177, -1, -1, BitOR($__EDITCONSTANT_WS_CHILD, $__EDITCONSTANT_WS_MINIMIZEBOX, $__EDITCONSTANT_WS_CAPTION, $__EDITCONSTANT_WS_POPUP, $__EDITCONSTANT_WS_SYSMENU))
-	$StatusBar1 = _GUICtrlStatusBar_Create($guiSearch, $aPartsRightEdge)
+	Local $guiSearch = GUICreate("Find", 349, 177, -1, -1, BitOR($__UDFGUICONSTANT_WS_CHILD, $__EDITCONSTANT_WS_MINIMIZEBOX, $__EDITCONSTANT_WS_CAPTION, $__EDITCONSTANT_WS_POPUP, $__EDITCONSTANT_WS_SYSMENU))
+	Local $StatusBar1 = _GUICtrlStatusBar_Create($guiSearch, $aPartsRightEdge)
 	_GUICtrlStatusBar_SetText($StatusBar1, "Find: ")
 
 	GUISetIcon(@SystemDir & "\shell32.dll", 22, $guiSearch)
 	GUICtrlCreateLabel("Find what:", 9, 10, 53, 16, $__EDITCONSTANT_SS_CENTER)
-	$inputSearch = GUICtrlCreateInput("", 80, 8, 257, 21)
+	Local $inputSearch = GUICtrlCreateInput("", 80, 8, 257, 21)
+	Local $lblReplace = GUICtrlCreateLabel("Replace with:", 9, 42, 69, 17, $__EDITCONSTANT_SS_CENTER)
+	Local $inputReplace = GUICtrlCreateInput("", 80, 40, 257, 21)
+	Local $chkWholeOnly = GUICtrlCreateCheckbox("Match whole word only", 9, 72, 145, 17)
+	Local $chkMatchCase = GUICtrlCreateCheckbox("Match case", 9, 96, 145, 17)
+	Local $btnFindNext = GUICtrlCreateButton("Find Next", 168, 72, 161, 21, 0)
+	Local $btnReplace = GUICtrlCreateButton("Replace", 168, 96, 161, 21, 0)
+	Local $btnClose = GUICtrlCreateButton("Close", 104, 130, 161, 21, 0)
 	If (IsArray($aSel) And $aSel <> $EC_ERR) Then
 		GUICtrlSetData($inputSearch, StringMid($sText, $aSel[0] + 1, $aSel[1] - $aSel[0]))
 		If $aSel[0] <> $aSel[1] Then ; text was selected when function was invoked
 			$iPos = $aSel[0]
 			If BitAND(GUICtrlRead($chkMatchCase), $__EDITCONSTANT_GUI_CHECKED) = $__EDITCONSTANT_GUI_CHECKED Then $iCase = 1
 			$iOccurance = 1
+			Local $iTPose
 			While 1 ; set the current occurance so search starts from here
 				$iTPose = StringInStr($sText, GUICtrlRead($inputSearch), $iCase, $iOccurance)
 				If Not $iTPose Then ; this should never happen, but just in case
@@ -499,13 +485,6 @@ Func _GUICtrlEdit_Find($hWnd, $fReplace = False)
 		EndIf
 		_GUICtrlStatusBar_SetText($StatusBar1, "Find: " & GUICtrlRead($inputSearch))
 	EndIf
-	$lblReplace = GUICtrlCreateLabel("Replace with:", 9, 42, 69, 17, $__EDITCONSTANT_SS_CENTER)
-	$inputReplace = GUICtrlCreateInput("", 80, 40, 257, 21)
-	$chkWholeOnly = GUICtrlCreateCheckbox("Match whole word only", 9, 72, 145, 17)
-	$chkMatchCase = GUICtrlCreateCheckbox("Match case", 9, 96, 145, 17)
-	$btnFindNext = GUICtrlCreateButton("Find Next", 168, 72, 161, 21, 0)
-	$btnReplace = GUICtrlCreateButton("Replace", 168, 96, 161, 21, 0)
-	$btnClose = GUICtrlCreateButton("Close", 104, 130, 161, 21, 0)
 
 	If $fReplace = False Then
 		GUICtrlSetState($lblReplace, $__EDITCONSTANT_GUI_HIDE)
@@ -517,6 +496,7 @@ Func _GUICtrlEdit_Find($hWnd, $fReplace = False)
 	EndIf
 	GUISetState(@SW_SHOW)
 
+	Local $msgFind
 	While 1
 		$msgFind = GUIGetMsg()
 		Select
@@ -531,7 +511,7 @@ Func _GUICtrlEdit_Find($hWnd, $fReplace = False)
 					_GUICtrlStatusBar_SetText($StatusBar1, "Find: " & GUICtrlRead($inputSearch))
 					_GUICtrlStatusBar_SetText($StatusBar1, "With: " & GUICtrlRead($inputReplace), 2)
 				EndIf
-				_GUICtrlEdit_FindText($hWnd, $inputSearch, $chkMatchCase, $chkWholeOnly, $iPos, $iOccurance, $iReplacements)
+				__GUICtrlEdit_FindText($hWnd, $inputSearch, $chkMatchCase, $chkWholeOnly, $iPos, $iOccurance, $iReplacements)
 				Sleep(100)
 				GUICtrlSetState($btnFindNext, $__EDITCONSTANT_GUI_ENABLE)
 				GUICtrlSetCursor($btnFindNext, 2)
@@ -547,7 +527,7 @@ Func _GUICtrlEdit_Find($hWnd, $fReplace = False)
 					$iOccurance -= 1
 					_GUICtrlStatusBar_SetText($StatusBar1, "Replacements: " & $iReplacements, 1)
 				EndIf
-				_GUICtrlEdit_FindText($hWnd, $inputSearch, $chkMatchCase, $chkWholeOnly, $iPos, $iOccurance, $iReplacements)
+				__GUICtrlEdit_FindText($hWnd, $inputSearch, $chkMatchCase, $chkWholeOnly, $iPos, $iOccurance, $iReplacements)
 				Sleep(100)
 				GUICtrlSetState($btnReplace, $__EDITCONSTANT_GUI_ENABLE)
 				GUICtrlSetCursor($btnReplace, 2)
@@ -557,10 +537,10 @@ Func _GUICtrlEdit_Find($hWnd, $fReplace = False)
 	Opt("GUIOnEventMode", $oldMode)
 EndFunc   ;==>_GUICtrlEdit_Find
 
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _GUICtrlEdit_FindText
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name...........: __GUICtrlEdit_FindText
 ; Description ...:
-; Syntax.........: _GUICtrlEdit_FindText($hWnd, $inputSearch, $chkMatchCase, $chkWholeOnly, ByRef $iPos, ByRef $iOccurance, ByRef $iReplacements)
+; Syntax.........: __GUICtrlEdit_FindText($hWnd, $inputSearch, $chkMatchCase, $chkWholeOnly, ByRef $iPos, ByRef $iOccurance, ByRef $iReplacements)
 ; Parameters ....: $hWnd          - Handle to the control
 ;                  $inputSearch   - controlID
 ;                  $chkMatchCase  - controlID
@@ -573,18 +553,18 @@ EndFunc   ;==>_GUICtrlEdit_Find
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlEdit_Find
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
-Func _GUICtrlEdit_FindText($hWnd, $inputSearch, $chkMatchCase, $chkWholeOnly, ByRef $iPos, ByRef $iOccurance, ByRef $iReplacements)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+Func __GUICtrlEdit_FindText($hWnd, $inputSearch, $chkMatchCase, $chkWholeOnly, ByRef $iPos, ByRef $iOccurance, ByRef $iReplacements)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Local $iCase = 0, $iWhole = 0
-	Local $sText, $fExact = False
+	Local $fExact = False
 	Local $sFind = GUICtrlRead($inputSearch)
 
-	$sText = _GUICtrlEdit_GetText($hWnd)
+	Local $sText = _GUICtrlEdit_GetText($hWnd)
 
 	If BitAND(GUICtrlRead($chkMatchCase), $__EDITCONSTANT_GUI_CHECKED) = $__EDITCONSTANT_GUI_CHECKED Then $iCase = 1
 	If BitAND(GUICtrlRead($chkWholeOnly), $__EDITCONSTANT_GUI_CHECKED) = $__EDITCONSTANT_GUI_CHECKED Then $iWhole = 1
@@ -610,7 +590,7 @@ Func _GUICtrlEdit_FindText($hWnd, $inputSearch, $chkMatchCase, $chkWholeOnly, By
 				EndIf
 			EndIf
 			If $fExact = False Then ; found word, but as part of another word, so search again
-				_GUICtrlEdit_FindText($hWnd, $inputSearch, $chkMatchCase, $chkWholeOnly, $iPos, $iOccurance, $iReplacements)
+				__GUICtrlEdit_FindText($hWnd, $inputSearch, $chkMatchCase, $chkWholeOnly, $iPos, $iOccurance, $iReplacements)
 			Else ; found it
 				_GUICtrlEdit_SetSel($hWnd, $iPos - 1, ($iPos + StringLen($sFind)) - 1)
 				_GUICtrlEdit_Scroll($hWnd, $__EDITCONSTANT_SB_SCROLLCARET)
@@ -637,7 +617,7 @@ Func _GUICtrlEdit_FindText($hWnd, $inputSearch, $chkMatchCase, $chkWholeOnly, By
 			EndIf
 		EndIf
 	EndIf
-EndFunc   ;==>_GUICtrlEdit_FindText
+EndFunc   ;==>__GUICtrlEdit_FindText
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _GUICtrlEdit_GetFirstVisibleLine
@@ -650,11 +630,11 @@ EndFunc   ;==>_GUICtrlEdit_FindText
 ; Remarks .......: The number of lines and the length of the lines in an edit control depend on the width of the control
 ;                  and the current Wordwrap setting.
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_GetFirstVisibleLine($hWnd)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $EM_GETFIRSTVISIBLELINE)
@@ -679,11 +659,11 @@ EndFunc   ;==>_GUICtrlEdit_GetFirstVisibleLine
 ;                  If your application cannot abide by the restrictions imposed by EM_GETHANDLE, use the GetWindowTextLength and
 ;                  GetWindowText functions to copy the contents of the edit control into an application-provided buffer.
 ; Related .......: _GUICtrlEdit_SetHandle
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
 Func _GUICtrlEdit_GetHandle($hWnd)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $EM_GETHANDLE)
@@ -702,11 +682,11 @@ EndFunc   ;==>_GUICtrlEdit_GetHandle
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
 Func _GUICtrlEdit_GetIMEStatus($hWnd)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $EM_GETIMESTATUS, $EMSIS_COMPOSITIONSTRING)
@@ -725,11 +705,11 @@ EndFunc   ;==>_GUICtrlEdit_GetIMEStatus
 ;                  Two documents with the same character limit will yield the same text limit, even if one is ANSI
 ;                  and the other is Unicode.
 ; Related .......: _GUICtrlEdit_SetLimitText
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_GetLimitText($hWnd)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $EM_GETLIMITTEXT)
@@ -747,25 +727,24 @@ EndFunc   ;==>_GUICtrlEdit_GetLimitText
 ; Modified.......: Gary Frost (gafrost)
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_GetLine($hWnd, $iLine)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $iLength, $struct_Buffer, $iResult, $struct_String
+	Local $iLength = _GUICtrlEdit_LineLength($hWnd, $iLine)
+	If $iLength = 0 Then Return ""
+	Local $tBuffer = DllStructCreate("short Len;wchar Text[" & $iLength & "]")
+	Local $pBuffer = DllStructGetPtr($tBuffer)
+	DllStructSetData($tBuffer, "Len", $iLength + 1)
+	Local $iRet = _SendMessage($hWnd, $EM_GETLINE, $iLine, $pBuffer, 0, "wparam", "ptr")
 
-	$iLength = _GUICtrlEdit_LineLength($hWnd, $iLine)
-	$struct_Buffer = DllStructCreate("short Len;char Text[" & $iLength + 2 & "]")
-	DllStructSetData($struct_Buffer, "Len", $iLength + 2)
+	If $iRet = 0 Then Return SetError($EC_ERR, $EC_ERR, "")
 
-	$iResult = _SendMessageA($hWnd, $EM_GETLINE, $iLine, DllStructGetPtr($struct_Buffer), 0, "wparam", "ptr")
-
-	If $iResult = $EC_ERR Then Return SetError($EC_ERR, $EC_ERR, "")
-
-	$struct_String = DllStructCreate("char Text[" & $iLength + 1 & "]", DllStructGetPtr($struct_Buffer))
-	Return DllStructGetData($struct_String, "Text")
+	Local $tText = DllStructCreate("wchar Text[" & $iLength + 1 & "]", $pBuffer)
+	Return DllStructGetData($tText, "Text")
 EndFunc   ;==>_GUICtrlEdit_GetLine
 
 ; #FUNCTION# ====================================================================================================================
@@ -786,11 +765,11 @@ EndFunc   ;==>_GUICtrlEdit_GetLine
 ;                  If the Wordwrap feature is enabled, the number of lines can change when the dimensions of the editing
 ;                  window change
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_GetLineCount($hWnd)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $EM_GETLINECOUNT)
@@ -808,15 +787,15 @@ EndFunc   ;==>_GUICtrlEdit_GetLineCount
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlEdit_SetMargins
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_GetMargins($hWnd)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $iMargins, $aMargins[2]
-	$iMargins = _SendMessage($hWnd, $EM_GETMARGINS)
+	Local $aMargins[2]
+	Local $iMargins = _SendMessage($hWnd, $EM_GETMARGINS)
 	$aMargins[0] = _WinAPI_LoWord($iMargins) ; Left Margin
 	$aMargins[1] = _WinAPI_HiWord($iMargins) ; Right Margin
 	Return $aMargins
@@ -835,12 +814,12 @@ EndFunc   ;==>_GUICtrlEdit_GetMargins
 ; Remarks .......: The system automatically clears the modification flag to zero when the control is created
 ;                  If the user changes the control's text, the system sets the flag to True
 ;                  You can call _GUICtrlEdit_SetModify to set or clear the flag
-; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUICtrlEdit_CanUndo, _GUICtrlEdit_SetModify, _GUICtrlEdit_Undo
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_GetModify($hWnd)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $EM_GETMODIFY) <> 0
@@ -857,11 +836,11 @@ EndFunc   ;==>_GUICtrlEdit_GetModify
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlEdit_SetPasswordChar
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_GetPasswordChar($hWnd)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $EM_GETPASSWORDCHAR)
@@ -882,16 +861,16 @@ EndFunc   ;==>_GUICtrlEdit_GetPasswordChar
 ; Remarks .......: Under certain conditions, _GUICtrlEdit_GetRECT might not return the exact values that
 ;                  _GUICtrlEdit_SetRECT set—it will be approximately correct, but it can be off by a few pixels.
 ; Related .......: _GUICtrlEdit_GetRECTEx
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_GetRECT($hWnd)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $aRect[4], $tRect
+	Local $aRect[4]
 
-	$tRect = _GUICtrlEdit_GetRECTEx($hWnd)
+	Local $tRect = _GUICtrlEdit_GetRECTEx($hWnd)
 	$aRect[0] = DllStructGetData($tRect, "Left")
 	$aRect[1] = DllStructGetData($tRect, "Top")
 	$aRect[2] = DllStructGetData($tRect, "Right")
@@ -910,11 +889,11 @@ EndFunc   ;==>_GUICtrlEdit_GetRECT
 ; Remarks .......: Under certain conditions, _GUICtrlEdit_GetRECT might not return the exact values that
 ;                  _GUICtrlEdit_SetRECTEx set—it will be approximately correct, but it can be off by a few pixels.
 ; Related .......: _GUICtrlEdit_GetRECT, $tagRECT
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_GetRECTEx($hWnd)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Local $tRect = DllStructCreate($tagRECT)
@@ -933,17 +912,17 @@ EndFunc   ;==>_GUICtrlEdit_GetRECTEx
 ; Author ........: Gary Frost (gafrost)
 ; Modified.......:
 ; Remarks .......:
-; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUICtrlEdit_ReplaceSel, _GUICtrlEdit_SetSel
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_GetSel($hWnd)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $aSel[2], $wparam, $lparam
-	$wparam = DllStructCreate("int Start")
-	$lparam = DllStructCreate("int End")
+	Local $aSel[2]
+	Local $wparam = DllStructCreate("uint Start")
+	Local $lparam = DllStructCreate("uint End")
 	_SendMessage($hWnd, $EM_GETSEL, DllStructGetPtr($wparam), DllStructGetPtr($lparam), 0, "ptr", "ptr")
 	$aSel[0] = DllStructGetData($wparam, "Start")
 	$aSel[1] = DllStructGetData($lparam, "End")
@@ -960,16 +939,16 @@ EndFunc   ;==>_GUICtrlEdit_GetSel
 ; Author ........: Gary Frost (gafrost)
 ; Modified.......:
 ; Remarks .......:
-; Related .......: _GUICtrlEdit_SetText, _GUICtrlEdit_AppendText
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUICtrlEdit_SetText, _GUICtrlEdit_AppendText, _GUICtrlEdit_GetTextLen
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_GetText($hWnd)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Local $iTextLen = _GUICtrlEdit_GetTextLen($hWnd) + 1
-	Local $tText = DllStructCreate("char Text[" & $iTextLen & "]")
+	Local $tText = DllStructCreate("wchar Text[" & $iTextLen & "]")
 	_SendMessage($hWnd, $__EDITCONSTANT_WM_GETTEXT, $iTextLen, DllStructGetPtr($tText), 0, "wparam", "ptr")
 	Return DllStructGetData($tText, "Text")
 EndFunc   ;==>_GUICtrlEdit_GetText
@@ -984,11 +963,11 @@ EndFunc   ;==>_GUICtrlEdit_GetText
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlEdit_GetText
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_GetTextLen($hWnd)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $__EDITCONSTANT_WM_GETTEXTLENGTH)
@@ -1004,11 +983,11 @@ EndFunc   ;==>_GUICtrlEdit_GetTextLen
 ; Modified.......:
 ; Remarks .......: I think WM_VSCROLL events probably work better
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
 Func _GUICtrlEdit_GetThumb($hWnd)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $EM_GETTHUMB)
@@ -1025,11 +1004,11 @@ EndFunc   ;==>_GUICtrlEdit_GetThumb
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlEdit_SetWordBreakProc
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
 Func _GUICtrlEdit_GetWordBreakProc($hWnd)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $EM_GETWORDBREAKPROC)
@@ -1046,11 +1025,11 @@ EndFunc   ;==>_GUICtrlEdit_GetWordBreakProc
 ; Modified.......:
 ; Remarks .......: Minimun OS Windows XP
 ; Related .......: _GUICtrlEdit_ShowBalloonTip
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_HideBalloonTip($hWnd)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $EM_HIDEBALLOONTIP)
@@ -1068,26 +1047,18 @@ EndFunc   ;==>_GUICtrlEdit_HideBalloonTip
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlEdit_AppendText
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_InsertText($hWnd, $sText, $iIndex = -1)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
-
-	Local $struct_MemMap, $struct_String, $sBuffer_pointer
 
 	If $iIndex = -1 Then
 		_GUICtrlEdit_AppendText($hWnd, $sText)
 	Else
-		$struct_String = DllStructCreate("char Text[" & StringLen($sText) + 1 & "]")
-		$sBuffer_pointer = DllStructGetPtr($struct_String)
-		DllStructSetData($struct_String, "Text", $sText)
-		_MemInit($hWnd, StringLen($sText) + 1, $struct_MemMap)
-		_MemWrite($struct_MemMap, $sBuffer_pointer)
 		_GUICtrlEdit_SetSel($hWnd, $iIndex, $iIndex)
-		_SendMessage($hWnd, $EM_REPLACESEL, True, $sBuffer_pointer, 0, "wparam", "ptr")
-		_MemFree($struct_MemMap)
+		_SendMessage($hWnd, $EM_REPLACESEL, True, $sText, 0, "wparam", "wstr")
 	EndIf
 EndFunc   ;==>_GUICtrlEdit_InsertText
 
@@ -1104,11 +1075,11 @@ EndFunc   ;==>_GUICtrlEdit_InsertText
 ;                  (the line containing the caret) or, if there is a selection, the line number of the line containing
 ;                   the beginning of the selection.
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_LineFromChar($hWnd, $iIndex = -1)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $EM_LINEFROMCHAR, $iIndex)
@@ -1126,11 +1097,11 @@ EndFunc   ;==>_GUICtrlEdit_LineFromChar
 ; Modified.......:
 ; Remarks .......: $iIndex = –1 specifies the current line number (the line that contains the caret)
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_LineIndex($hWnd, $iIndex = -1)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $EM_LINEINDEX, $iIndex)
@@ -1148,11 +1119,11 @@ EndFunc   ;==>_GUICtrlEdit_LineIndex
 ; Modified.......:
 ; Remarks .......: $iIndex = –1 specifies the current line number (the line that contains the caret)
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_LineLength($hWnd, $iIndex = -1)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Local $CharIndex = _GUICtrlEdit_LineIndex($hWnd, $iIndex)
@@ -1179,11 +1150,11 @@ EndFunc   ;==>_GUICtrlEdit_LineLength
 ;                  _GUICtrlEdit_LineScroll scrolls the text vertically or horizontally.
 ;                  _GUICtrlEdit_LineScroll can be used to scroll horizontally past the last character of any line.
 ; Related .......: _GUICtrlEdit_Scroll
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_LineScroll($hWnd, $iHoriz, $iVert)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $EM_LINESCROLL, $iHoriz, $iVert) <> 0
@@ -1202,17 +1173,17 @@ EndFunc   ;==>_GUICtrlEdit_LineScroll
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_PosFromChar($hWnd, $iIndex)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $aCoord[2], $iResult
-	$iResult = _SendMessage($hWnd, $EM_POSFROMCHAR, $iIndex)
-	$aCoord[0] = _WinAPI_LoWord($iResult)
-	$aCoord[1] = _WinAPI_HiWord($iResult)
+	Local $aCoord[2]
+	Local $iRet = _SendMessage($hWnd, $EM_POSFROMCHAR, $iIndex)
+	$aCoord[0] = _WinAPI_LoWord($iRet)
+	$aCoord[1] = _WinAPI_HiWord($iRet)
 	Return $aCoord
 EndFunc   ;==>_GUICtrlEdit_PosFromChar
 
@@ -1231,21 +1202,14 @@ EndFunc   ;==>_GUICtrlEdit_PosFromChar
 ; Remarks .......: Use the _GUICtrlEdit_ReplaceSel to replace only a portion of the text in an edit control.
 ;                  If there is no current selection, the replacement text is inserted at the current location of the caret.
 ; Related .......: _GUICtrlEdit_GetSel, _GUICtrlEdit_SetSel
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_ReplaceSel($hWnd, $sText, $fUndo = True)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $struct_MemMap
-	Local $struct_String = DllStructCreate("char Text[" & StringLen($sText) + 1 & "]")
-	Local $sBuffer_pointer = DllStructGetPtr($struct_String)
-	DllStructSetData($struct_String, "Text", $sText)
-	_MemInit($hWnd, StringLen($sText) + 1, $struct_MemMap)
-	_MemWrite($struct_MemMap, $sBuffer_pointer)
-	_SendMessage($hWnd, $EM_REPLACESEL, $fUndo, $sBuffer_pointer, 0, "wparam", "ptr")
-	_MemFree($struct_MemMap)
+	_SendMessage($hWnd, $EM_REPLACESEL, $fUndo, $sText, 0, "wparam", "wstr")
 EndFunc   ;==>_GUICtrlEdit_ReplaceSel
 
 ; #FUNCTION# ====================================================================================================================
@@ -1266,11 +1230,11 @@ EndFunc   ;==>_GUICtrlEdit_ReplaceSel
 ; Modified.......:
 ; Remarks .......: $SB_xxxxx require include of ScrollBarConstants.au3
 ; Related .......: _GUICtrlEdit_LineScroll
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_Scroll($hWnd, $iDirection)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	If BitAND($iDirection, $__EDITCONSTANT_SB_LINEDOWN) <> $__EDITCONSTANT_SB_LINEDOWN And _
@@ -1298,11 +1262,11 @@ EndFunc   ;==>_GUICtrlEdit_Scroll
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlEdit_GetHandle
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
 Func _GUICtrlEdit_SetHandle($hWnd, $hMemory)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $EM_SETHANDLE, $hMemory, 0, 0, "hwnd")
@@ -1322,11 +1286,11 @@ EndFunc   ;==>_GUICtrlEdit_SetHandle
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
 Func _GUICtrlEdit_SetIMEStatus($hWnd, $iComposition)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $EM_SETIMESTATUS, $EMSIS_COMPOSITIONSTRING, $iComposition)
@@ -1348,14 +1312,14 @@ EndFunc   ;==>_GUICtrlEdit_SetIMEStatus
 ;                  is specified in the _GUICtrlEdit_SetLimitText function, the user can edit the entire contents of the
 ;                  edit control.
 ; Related .......: _GUICtrlEdit_GetLimitText
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_SetLimitText($hWnd, $iLimit)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	_SendMessageA($hWnd, $EM_SETLIMITTEXT, $iLimit)
+	_SendMessage($hWnd, $EM_SETLIMITTEXT, $iLimit)
 EndFunc   ;==>_GUICtrlEdit_SetLimitText
 
 ; #FUNCTION# ====================================================================================================================
@@ -1380,11 +1344,11 @@ EndFunc   ;==>_GUICtrlEdit_SetLimitText
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlEdit_GetMargins
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_SetMargins($hWnd, $iMargin = 0x1, $iLeft = 0xFFFF, $iRight = 0xFFFF)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	_SendMessage($hWnd, $EM_SETMARGINS, $iMargin, _WinAPI_MakeLong($iLeft, $iRight))
@@ -1404,12 +1368,12 @@ EndFunc   ;==>_GUICtrlEdit_SetMargins
 ; Remarks .......: The system automatically clears the modification flag to zero when the control is created.
 ;                  If the user changes the control's text, the system sets the flag to nonzero.
 ;                  You can use the _GUICtrlEdit_GetModify to retrieve the current state of the flag.
-; Related .......: _GUICtrlEdit_GetModify
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUICtrlEdit_GetModify, _GUICtrlEdit_CanUndo
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_SetModify($hWnd, $fModified)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	_SendMessage($hWnd, $EM_SETMODIFY, $fModified)
@@ -1427,11 +1391,11 @@ EndFunc   ;==>_GUICtrlEdit_SetModify
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlEdit_GetPasswordChar
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_SetPasswordChar($hWnd, $cDisplayChar = "0")
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 	$cDisplayChar = StringLeft($cDisplayChar, 1)
 	If Asc($cDisplayChar) = 48 Then
@@ -1455,11 +1419,11 @@ EndFunc   ;==>_GUICtrlEdit_SetPasswordChar
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_SetReadOnly($hWnd, $fReadOnly)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $EM_SETREADONLY, $fReadOnly) <> 0
@@ -1480,8 +1444,8 @@ EndFunc   ;==>_GUICtrlEdit_SetReadOnly
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlEdit_SetRectEx
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_SetRECT($hWnd, $aRect)
 	Local $tRect = DllStructCreate($tagRECT)
@@ -1503,11 +1467,11 @@ EndFunc   ;==>_GUICtrlEdit_SetRECT
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlEdit_SetRect, $tagRECT
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_SetRectEx($hWnd, $tRect)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	_SendMessage($hWnd, $EM_SETRECT, 0, DllStructGetPtr($tRect), 0, "wparam", "ptr")
@@ -1529,8 +1493,8 @@ EndFunc   ;==>_GUICtrlEdit_SetRectEx
 ; Remarks .......: The _GUICtrlEdit_SetRECTNP function is identical to the _GUICtrlEdit_SetRECT function,
 ;                  except that _GUICtrlEdit_SetRECTNP does not redraw the edit control window.
 ; Related .......: _GUICtrlEdit_SetRectNPEx
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_SetRECTNP($hWnd, $aRect)
 	Local $tRect = DllStructCreate($tagRECT)
@@ -1553,11 +1517,11 @@ EndFunc   ;==>_GUICtrlEdit_SetRECTNP
 ; Remarks .......: The _GUICtrlEdit_SetRECTNPEx function is identical to the _GUICtrlEdit_SetRECTEx function,
 ;                  except that _GUICtrlEdit_SetRECTNPEx does not redraw the edit control window.
 ; Related .......: _GUICtrlEdit_SetRectNP, $tagRECT
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_SetRectNPEx($hWnd, $tRect)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	_SendMessage($hWnd, $EM_SETRECTNP, 0, DllStructGetPtr($tRect), 0, "wparam", "ptr")
@@ -1586,11 +1550,11 @@ EndFunc   ;==>_GUICtrlEdit_SetRectNPEx
 ;+
 ;                  The control displays a flashing caret at the $iEnd position regardless of the relative values of $iStart and $iEnd.
 ; Related .......: _GUICtrlEdit_GetSel, _GUICtrlEdit_ReplaceSel
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_SetSel($hWnd, $iStart, $iEnd)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	_SendMessage($hWnd, $EM_SETSEL, $iStart, $iEnd)
@@ -1611,30 +1575,29 @@ EndFunc   ;==>_GUICtrlEdit_SetSel
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_SetTabStops($hWnd, $aTabStops)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	If Not IsArray($aTabStops) Then Return SetError(-1, -1, False)
 
-	Local $iNumTabStops, $tTabStops, $sTabStops, $iResult
-
-	$iNumTabStops = UBound($aTabStops)
+	Local $sTabStops = ""
+	Local $iNumTabStops = UBound($aTabStops)
 
 	For $x = 0 To $iNumTabStops - 1
 		$sTabStops &= "int;"
 	Next
 	$sTabStops = StringTrimRight($sTabStops, 1)
-	$tTabStops = DllStructCreate($sTabStops)
+	Local $tTabStops = DllStructCreate($sTabStops)
 	For $x = 0 To $iNumTabStops - 1
 		DllStructSetData($tTabStops, $x + 1, $aTabStops[$x])
 	Next
-	$iResult = _SendMessage($hWnd, $EM_SETTABSTOPS, $iNumTabStops, DllStructGetPtr($tTabStops), 0, "wparam", "ptr") <> 0
+	Local $iRet = _SendMessage($hWnd, $EM_SETTABSTOPS, $iNumTabStops, DllStructGetPtr($tTabStops), 0, "wparam", "ptr") <> 0
 	_WinAPI_InvalidateRect($hWnd)
-	Return $iResult
+	Return $iRet
 EndFunc   ;==>_GUICtrlEdit_SetTabStops
 
 ; #FUNCTION# ====================================================================================================================
@@ -1647,23 +1610,15 @@ EndFunc   ;==>_GUICtrlEdit_SetTabStops
 ; Author ........: Gary Frost (gafrost)
 ; Modified.......:
 ; Remarks .......:
-; Related .......: _GUICtrlEdit_GetText
-; Link ..........;
-; Example .......; Yes
+; Related .......: _GUICtrlEdit_GetText, _GUICtrlEdit_AppendText
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_SetText($hWnd, $sText)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $struct_MemMap, $struct_String, $sBuffer_pointer
-
-	$struct_String = DllStructCreate("char Text[" & StringLen($sText) + 1 & "]")
-	$sBuffer_pointer = DllStructGetPtr($struct_String)
-	DllStructSetData($struct_String, "Text", $sText)
-	_MemInit($hWnd, StringLen($sText) + 1, $struct_MemMap)
-	_MemWrite($struct_MemMap, $sBuffer_pointer)
-	_SendMessage($hWnd, $__EDITCONSTANT_WM_SETTEXT, 0, $sBuffer_pointer, 0, "wparam", "ptr")
-	_MemFree($struct_MemMap)
+	_SendMessage($hWnd, $__EDITCONSTANT_WM_SETTEXT, 0, $sText, 0, "wparam", "wstr")
 EndFunc   ;==>_GUICtrlEdit_SetText
 
 ; #NO_DOC_FUNCTION# =============================================================================================================
@@ -1677,11 +1632,11 @@ EndFunc   ;==>_GUICtrlEdit_SetText
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _GUICtrlEdit_GetWordBreakProc
-; Link ..........;
-; Example .......;
+; Link ..........:
+; Example .......:
 ; ===============================================================================================================================
 Func _GUICtrlEdit_SetWordBreakProc($hWnd, $iAddressFunc)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	_SendMessage($hWnd, $EM_SETWORDBREAKPROC, 0, $iAddressFunc)
@@ -1709,17 +1664,16 @@ EndFunc   ;==>_GUICtrlEdit_SetWordBreakProc
 ; Modified.......:
 ; Remarks .......: Minimun OS Windows XP
 ; Related .......: _GUICtrlEdit_HideBalloonTip
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_ShowBalloonTip($hWnd, $sTitle, $sText, $iIcon)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Local $tTT, $tTitle, $tText
-	$tTitle = _WinAPI_MultiByteToWideChar($sTitle)
-	$tText = _WinAPI_MultiByteToWideChar($sText)
-	$tTT = DllStructCreate($tagEDITBALLOONTIP)
+	Local $tTitle = _WinAPI_MultiByteToWideChar($sTitle)
+	Local $tText = _WinAPI_MultiByteToWideChar($sText)
+	Local $tTT = DllStructCreate($tagEDITBALLOONTIP)
 	DllStructSetData($tTT, "Size", DllStructGetSize($tTT))
 	DllStructSetData($tTT, "Title", DllStructGetPtr($tTitle))
 	DllStructSetData($tTT, "Text", DllStructGetPtr($tText))
@@ -1741,30 +1695,12 @@ EndFunc   ;==>_GUICtrlEdit_ShowBalloonTip
 ;                  and remove the text again with a second _GUICtrlEdit_Undo as long as there
 ;                  is no intervening edit operation.
 ; Related .......: _GUICtrlEdit_CanUndo, _GUICtrlEdit_EmptyUndoBuffer, _GUICtrlEdit_GetModify
-; Link ..........;
-; Example .......; Yes
+; Link ..........:
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_Undo($hWnd)
-	If $Debug_Ed Then _GUICtrlEdit_ValidateClassName($hWnd)
+	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Return _SendMessage($hWnd, $EM_UNDO) <> 0
 EndFunc   ;==>_GUICtrlEdit_Undo
-
-; #INTERNAL_USE_ONLY#============================================================================================================
-; Name...........: _GUICtrlEdit_ValidateClassName
-; Description ...: Used for debugging when creating examples
-; Syntax.........: _GUICtrlEdit_ValidateClassName($hWnd)
-; Parameters ....: $hWnd        - Handle to the control
-; Return values .: None
-; Author ........: Gary Frost (gafrost)
-; Modified.......:
-; Remarks .......: For Internal Use Only
-; Related .......:
-; Link ..........;
-; Example .......;
-; ===============================================================================================================================
-Func _GUICtrlEdit_ValidateClassName($hWnd)
-	_GUICtrlEdit_DebugPrint("This is for debugging only, set the debug variable to false before submitting")
-	_WinAPI_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
-EndFunc   ;==>_GUICtrlEdit_ValidateClassName
