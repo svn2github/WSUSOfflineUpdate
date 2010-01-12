@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.3+ (r51)
+set WSUSUPDATE_VERSION=6.3+ (r52)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -559,16 +559,6 @@ if "%OFFICE_COMPATIBILITY_PACK%" NEQ "1" (
   ) else (
     echo Warning: File ..\ofc\%OFFICE_LANGUAGE%\FileFormatConverters.exe not found. 
     echo %DATE% %TIME% - Warning: File ..\ofc\%OFFICE_LANGUAGE%\FileFormatConverters.exe not found >>%UPDATE_LOGFILE%
-  )
-  dir /B ..\ofc\%OFFICE_LANGUAGE%\compatibilitypacksp*.exe >nul 2>&1
-  if errorlevel 1 (
-    echo Warning: File ..\ofc\%OFFICE_LANGUAGE%\compatibilitypacksp*.exe not found. 
-    echo %DATE% %TIME% - Warning: File ..\ofc\%OFFICE_LANGUAGE%\compatibilitypacksp*.exe not found >>%UPDATE_LOGFILE%
-  ) else (
-    for /F %%i in ('dir /B ..\ofc\%OFFICE_LANGUAGE%\compatibilitypacksp*.exe') do (
-      echo Installing most recent Service Pack for Office 2007 Compatibility Pack...
-      call InstallOfficeUpdate.cmd ..\ofc\%OFFICE_LANGUAGE%\%%i
-    )
   )
 )
 :CNVo2k7

@@ -1,2 +1,1 @@
 http://download.microsoft.com/download/3/5/c/35ccbdde-ac45-499d-bd1b-793ab26e95d0/FileFormatConverters.exe
-http://download.microsoft.com/download/2/1/0/2102D45C-066A-4170-BDCF-40F1B5107437/compatibilitypacksp2-kb953331-fullfile-pt-pt.exe

@@ -10,10 +10,10 @@
       <xsl:text>&#10;</xsl:text>
     </xsl:when>
     <xsl:when test="name()='Category'">
-      <xsl:text>,</xsl:text>
-      <xsl:value-of select="@Type"/>
-      <xsl:text>:</xsl:text>
-      <xsl:value-of select="@Id"/>
+      <xsl:if test="@Type='ProductFamily'">
+        <xsl:text>;</xsl:text>
+        <xsl:value-of select="@Id"/>
+      </xsl:if>
     </xsl:when>
     <xsl:when test="name()='File'">
       <xsl:text>,</xsl:text>
