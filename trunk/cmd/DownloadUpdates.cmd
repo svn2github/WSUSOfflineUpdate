@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.3+ (r52)
+set WSUSUPDATE_VERSION=6.3+ (r53)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -297,7 +297,7 @@ for %%i in (w2k wxp w2k3) do (
     if errorlevel 1 goto Error
   )
 )
-for %%i in (oxp o2k3) do (
+for %%i in (oxp o2k3 o2k7 o2k7-x64) do (
   if /i "%1"=="%%i" (
     call :DownloadCore ofc glb
     if errorlevel 1 goto Error

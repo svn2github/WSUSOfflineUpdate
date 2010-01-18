@@ -314,9 +314,10 @@ Version 6.4 -- ??.??.10
 - Installed updates' determination implementation changed in order to enhance performance and become independent of WUA   
 - DoUpdate.cmd script will exit with errorlevel 3010 now if reboot/recall is required and automatic reboot is disabled (Thanks to "icnocop")
 - Update for Root Certificates (rootsupd.exe/kb931125) updated to November 2009 (Thanks to "Gerby")
-- Office Compatibility Pack Service Pack 2 removed since Microsoft integrated it into FileFormatConverters.exe (Thanks to "Gerby" and "Denniss") 
+- Office Compatibility Pack Service Pack 2 removed since Microsoft integrated it into FileFormatConverters.exe (Thanks to "Gerby" and "Denniss")
+- Office Converter and Compatibility Packs will now be downloaded also if Office 2007 ("o2k7") target is selected (Thanks to "Denniss") 
 - Info-Zip's UnZip integrated because of persistent FTP download problems - FTP proxy for wget removed because it's not used any longer
-- AutoIt script compiler updated to version 3.3.2.0 
+- AutoIt script compiler updated to version 3.3.4.0 
 - Fix: Windows Vista ISO images and USB copies did not contain .NET Framework 3.5 SP1 Family Update files KB958483 and KB958484 (Thanks to "wsususer")  
 - Fix: ISO volume ids and installation log file name adjusted to fit to project's new name (Thanks to "LigH")
 - Fix: Removed o2k remainders in xslt directory

@@ -571,7 +571,7 @@ if [ "$sys" == "w2k" ]; then
 	cat ../static/StaticDownloadLinks-ie6-${lang}.txt > ../temp/StaticUrls-ie6-${lang}.txt
 fi
 
-if [ "$sys" == "oxp" -o "$sys" == "o2k3" ]; then
+if [ "$sys" == "oxp" -o "$sys" == "o2k3" -o "$sys" == "o2k7" ]; then
 	echo "Determining static urls for ofc glb..."
 	cat ../static/StaticDownloadLinks-ofc-glb.txt > ../temp/StaticUrls-ofc-glb.txt
 	echo "Determining static urls for ofc ${lang}..."
@@ -694,7 +694,7 @@ END
 
 #create needed directories
 mkdir -p ../client/win/${lang} ../client/${sys}/ ../client/${sys}/glb ../client/${sys}/${lang} ../client/win/${lang}/ie6setup
-if [ "$sys" == "oxp" -o "$sys" == "o2k3" ]; then
+if [ "$sys" == "oxp" -o "$sys" == "o2k3" -o "$sys" == "o2k7" ]; then
 	mkdir -p ../client/ofc ../client/ofc/glb ../client/ofc/${lang}
 fi
 
@@ -707,7 +707,7 @@ if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$
 	wget -nv -c -N -i ../temp/StaticUrls-glb.txt -P ../client/win/glb
 fi
 wget -nv -c -N -i ../temp/StaticUrls-${sys}-glb.txt -P ../client/${sys}/glb
-if [ "$sys" == "oxp" -o "$sys" == "o2k3" ]; then
+if [ "$sys" == "oxp" -o "$sys" == "o2k3" -o "$sys" == "o2k7" ]; then
 	 wget -nv -c -N -i ../temp/StaticUrls-ofc-glb.txt -P ../client/ofc/glb
 	 wget -nv -c -N -i ../temp/StaticUrls-ofc-${lang}.txt -P ../client/ofc/${lang}
 fi
@@ -738,7 +738,7 @@ if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$
 	wget -nv -c -N -i ../temp/StaticUrls-glb.txt -P ../client/win/glb
 fi
 wget -nv -c -N -i ../temp/StaticUrls-${sys}-glb.txt -P ../client/${sys}/glb
-if [ "$sys" == "oxp" -o "$sys" == "o2k3" ]; then
+if [ "$sys" == "oxp" -o "$sys" == "o2k3" -o "$sys" == "o2k7" ]; then
 	 wget -nv -c -N -i ../temp/StaticUrls-ofc-glb.txt -P ../client/ofc/glb
 	 wget -nv -c -N -i ../temp/StaticUrls-ofc-${lang}.txt -P ../client/ofc/${lang}
 fi
@@ -766,7 +766,7 @@ if [ "$CLEANUP_DOWNLOADS" != "0" ]; then
 	echo "Cleaning up client directory for $sys glb"
 	cat ../temp/StaticUrls-${sys}-glb.txt >> ../temp/ValidUrls-${sys}-glb.txt
 	cleanup "../temp/ValidUrls-${sys}-glb.txt" "../client/${sys}/glb"
-	if [ "$sys" == "oxp" -o "$sys" == "o2k3" ]; then
+	if [ "$sys" == "oxp" -o "$sys" == "o2k3" -o "$sys" == "o2k7" ]; then
 		echo "Cleaning up client directory for ofc $lang"
 		cat ../temp/StaticUrls-ofc-${lang}.txt > ../temp/ValidUrls-ofc-${lang}.txt
 		cleanup "../temp/ValidUrls-ofc-${lang}.txt" "../client/ofc/${lang}"
