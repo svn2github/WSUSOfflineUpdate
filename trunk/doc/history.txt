@@ -316,6 +316,7 @@ Version 6.4 -- ??.??.10
 - Update for Root Certificates (rootsupd.exe/kb931125) updated to November 2009 (Thanks to "Gerby")
 - Office Compatibility Pack Service Pack 2 removed since Microsoft integrated it into FileFormatConverters.exe (Thanks to "Gerby" and "Denniss")
 - Office Converter and Compatibility Packs will now be downloaded also if Office 2007 ("o2k7") target is selected (Thanks to "Denniss") 
+- UpdateGenerator script will now trigger download of .NET Framework components only for the first platform/target selected (Thanks to "Denniss") 
 - Info-Zip's UnZip integrated because of persistent FTP download problems - FTP proxy for wget removed because it's not used any longer
 - AutoIt script compiler updated to version 3.3.4.0 
 - Fix: Windows Vista ISO images and USB copies did not contain .NET Framework 3.5 SP1 Family Update files KB958483 and KB958484 (Thanks to "wsususer")  

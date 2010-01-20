@@ -102,11 +102,12 @@ Dim $w2k_heb, $wxp_heb, $w2k3_heb, $oxp_heb, $o2k3_heb, $o2k7_heb ; Hebrew
 Dim $w2k_dan, $wxp_dan, $w2k3_dan, $oxp_dan, $o2k3_dan, $o2k7_dan ; Danish
 Dim $w2k_nor, $wxp_nor, $w2k3_nor, $oxp_nor, $o2k3_nor, $o2k7_nor ; Norwegian
 Dim $w2k_fin, $wxp_fin, $w2k3_fin, $oxp_fin, $o2k3_fin, $o2k7_fin ; Finnish
-Dim $w60_glb, $w60_x64_glb                                                  ; Windows Vista / Windows Server 2008 (global)  
-Dim $w61_glb, $w61_x64_glb                                                  ; Windows 7 / Windows Server 2008 R2 (global)  
+Dim $w60_glb, $w60_x64_glb                                        ; Windows Vista / Windows Server 2008 (global)  
+Dim $w61_glb, $w61_x64_glb                                        ; Windows 7 / Windows Server 2008 R2 (global)  
 
 Dim $dlgheight, $groupwidth, $groupheight, $txtwidth, $txtheight, $btnwidth, $btnheight
 Dim $txtgrpyoffset, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
+Dim $first_download_run
 
 Func ShowGUIInGerman()
   If ($CmdLine[0] > 0) Then
@@ -649,42 +650,42 @@ Dim $result = ""
   Return $result
 EndFunc
 
-Func DetermineDownloadSwitches($chkboxexcludesp, $chkboxdotnet, $chkboxcleanupdownloads, $chkboxverifydownloads, $chkboxcdiso, $chkboxdvdiso, $strproxy, $strwsus)
+Func DetermineDownloadSwitches($chkbox_excludesp, $chkbox_dotnet, $chkbox_cleanupdownloads, $chkbox_verifydownloads, $chkbox_cdiso, $chkbox_dvdiso, $str_proxy, $str_wsus)
 Dim $result = ""
 
-  If BitAND(GUICtrlRead($chkboxexcludesp), $GUI_CHECKED) = $GUI_CHECKED Then
+  If BitAND(GUICtrlRead($chkbox_excludesp), $GUI_CHECKED) = $GUI_CHECKED Then
     $result = $result & " /excludesp"
   EndIf
-  If BitAND(GUICtrlRead($chkboxdotnet), $GUI_CHECKED) = $GUI_CHECKED Then
+  If ( ($first_download_run) AND (BitAND(GUICtrlRead($chkbox_dotnet), $GUI_CHECKED) = $GUI_CHECKED) ) Then
     $result = $result & " /includedotnet"
   EndIf
-  If BitAND(GUICtrlRead($chkboxcleanupdownloads), $GUI_CHECKED) <> $GUI_CHECKED Then
+  If BitAND(GUICtrlRead($chkbox_cleanupdownloads), $GUI_CHECKED) <> $GUI_CHECKED Then
     $result = $result & " /nocleanup"
   EndIf
-  If BitAND(GUICtrlRead($chkboxverifydownloads), $GUI_CHECKED) = $GUI_CHECKED Then
+  If BitAND(GUICtrlRead($chkbox_verifydownloads), $GUI_CHECKED) = $GUI_CHECKED Then
     $result = $result & " /verify"
   EndIf
   $result = $result & " /exitonerror"
-  If ( (BitAND(GUICtrlRead($chkboxcdiso), $GUI_CHECKED) <> $GUI_CHECKED) _
-   AND (BitAND(GUICtrlRead($chkboxdvdiso), $GUI_CHECKED) <> $GUI_CHECKED) ) Then
+  If ( (BitAND(GUICtrlRead($chkbox_cdiso), $GUI_CHECKED) <> $GUI_CHECKED) _
+   AND (BitAND(GUICtrlRead($chkbox_dvdiso), $GUI_CHECKED) <> $GUI_CHECKED) ) Then
     $result = $result & " /skipmkisofs"
   EndIf
-  If $strproxy <> "" Then
-    $result = $result & " /proxy " & $strproxy
+  If $str_proxy <> "" Then
+    $result = $result & " /proxy " & $str_proxy
   EndIf
-  If $strwsus <> "" Then
-    $result = $result & " /wsus " & $strwsus
+  If $str_wsus <> "" Then
+    $result = $result & " /wsus " & $str_wsus
   EndIf
   Return $result
 EndFunc
 
-Func DetermineISOSwitches($chkboxexcludesp, $chkboxdotnet)
+Func DetermineISOSwitches($chkbox_excludesp, $chkbox_dotnet)
 Dim $result = ""
 
-  If BitAND(GUICtrlRead($chkboxexcludesp), $GUI_CHECKED) = $GUI_CHECKED Then
+  If BitAND(GUICtrlRead($chkbox_excludesp), $GUI_CHECKED) = $GUI_CHECKED Then
     $result = $result & " /excludesp"
   EndIf
-  If BitAND(GUICtrlRead($chkboxdotnet), $GUI_CHECKED) = $GUI_CHECKED Then
+  If BitAND(GUICtrlRead($chkbox_dotnet), $GUI_CHECKED) = $GUI_CHECKED Then
     $result = $result & " /includedotnet"
   EndIf
   Return $result
@@ -694,12 +695,12 @@ Func RunDonationSite()
   Run(@ComSpec & " /D /C start " & $donationURL)
 EndFunc
 
-Func RunVersionCheck($strproxy)
+Func RunVersionCheck($str_proxy)
 Dim $result
 
   DisableGUI()
-  If $strproxy <> "" Then
-    $result = RunWait(@ComSpec & " /D /C CheckOUVersion.cmd /proxy " & $strproxy, @ScriptDir & "\cmd", @SW_SHOWMINNOACTIVE)
+  If $str_proxy <> "" Then
+    $result = RunWait(@ComSpec & " /D /C CheckOUVersion.cmd /proxy " & $str_proxy, @ScriptDir & "\cmd", @SW_SHOWMINNOACTIVE)
   Else
     $result = RunWait(@ComSpec & " /D /C CheckOUVersion.cmd", @ScriptDir & "\cmd", @SW_SHOWMINNOACTIVE)
   EndIf
@@ -754,6 +755,7 @@ Dim $result
   EndIf
   WinSetTitle($maindlg, $maindlg, $title)
   EnableGUI()
+  $first_download_run = False
   Return $result
 EndFunc
 
@@ -817,7 +819,7 @@ Dim $result
   Return $result
 EndFunc
 
-Func RunScripts($stroptions, $strdownloadswitches, $chkboxcdiso, $strisoswitches, $chkboxusb, $strusbpath)
+Func RunScripts($stroptions, $strdownloadswitches, $chkbox_cdiso, $strisoswitches, $chkboxusb, $strusbpath)
 Dim $result
 
   If BitAND(GUICtrlRead($skipdownload), $GUI_CHECKED) = $GUI_CHECKED Then 
@@ -825,7 +827,7 @@ Dim $result
   Else
     $result = RunDownloadScript($stroptions, $strdownloadswitches)
   EndIf
-  If ( ($result = 0) AND (BitAND(GUICtrlRead($chkboxcdiso), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+  If ( ($result = 0) AND (BitAND(GUICtrlRead($chkbox_cdiso), $GUI_CHECKED) = $GUI_CHECKED) ) Then
     $result = RunISOCreationScript($stroptions, $strisoswitches)
   EndIf
   If ( ($result = 0) AND (BitAND(GUICtrlRead($chkboxusb), $GUI_CHECKED) = $GUI_CHECKED) ) Then
@@ -2754,6 +2756,7 @@ While 1
       If IniRead($inifilename, $ini_section_misc, $misc_token_minimize, $disabled) = $enabled Then
         WinSetState($maindlg, $maindlg, @SW_MINIMIZE)
       EndIf
+      $first_download_run = True
 
 ;  Global
       If BitAND(GUICtrlRead($w60_glb), $GUI_CHECKED) = $GUI_CHECKED Then
