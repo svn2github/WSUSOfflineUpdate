@@ -3813,9 +3813,9 @@ While 1
 ;  Restore window and show success dialog
       WinSetState($maindlg, $maindlg, @SW_RESTORE)
       If ShowGUIInGerman() Then
-        MsgBox(0x2040, "Info", "Herunterladen / Image-Erstellung erfolgreich.")
+        MsgBox(0x2040, "Info", "Herunterladen / Image-Erstellung / Kopieren erfolgreich.")
       Else
-        MsgBox(0x2040, "Info", "Download / image creation successful.")
+        MsgBox(0x2040, "Info", "Download / image creation / copying successful.")
       EndIf
 
   EndSwitch

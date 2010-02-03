@@ -99,7 +99,7 @@ test -s /etc/slackware-version && {
     }
 
 # Ende Slackware-Einschub
-	cat << END
+cat << END
 
 Please install dos2unix.
 
@@ -216,9 +216,17 @@ if [ "$sys" == "" -o "$lang" == "" ]; then
 fi
 }
 
+doWget()
+{
+mydate=`date +%Y%m%d`
+echo "wget --no-cache -nv -N --timeout=120 $*" | tee -a /tmp/wget.$mydate
+wget --no-cache -nv -N --timeout=120 $* 2>>/tmp/wget.$mydate
+return $?
+}
+
 checkconnection()
 {
-wget -q --connect-timeout=1 --tries=1 http://www.google.de/index.html
+wget -q --connect-timeout=1 --tries=1 http://www.wsusoffline.net/index.html
 if [ !  -e "index.html" ]; then
 	rm -f index.html
 	printtimeout
@@ -483,17 +491,14 @@ if [ "$sys" == "all-x86" ]; then
 fi
 
 
-echo "Downloading IfAdmin tool..."
-wget -nv -c -N -i ../static/StaticDownloadLink-ifadmin.txt -P ../client/bin
-
 echo "Downloading most recent files for WSUS functionality..."
 
 rm -f ../client/wsus/wsusscn2*
-wget -nv -c -N -i ../static/StaticDownloadLinks-wsus.txt -P ../client/wsus
+doWget -c -i ../static/StaticDownloadLinks-wsus.txt -P ../client/wsus
 
 if [ "$sys" == "oxp" -o "$sys" == "o2k3" -o "$sys" == "o2k7" ]; then
 	echo "Downloading most recent files for Office inventory functionality..."
-	wget -nv -c -N -i ../static/StaticDownloadLinks-inventory.txt -P ../client/wsus
+	doWget -c -i ../static/StaticDownloadLinks-inventory.txt -P ../client/wsus
 fi
 
 echo "Extracting Windows Update Agent catalogue file wuredist.xml..."
@@ -511,11 +516,8 @@ fi
 rm ../client/wsus/wuredist.xml
 
 echo "Downloading most recent Windows Update Agent..."
-wget -nv -c -N -i ../temp/DownloadLinks-wua.txt -P ../client/wsus
+doWget -c -i ../temp/DownloadLinks-wua.txt -P ../client/wsus
 rm ../temp/DownloadLinks-wua.txt
-
-#echo "Downloading most recent Microsoft Installer..."
-#wget -nv -c -N -i ../static/StaticDownloadLink-msi-x86.txt -P ../client/msi
 
 echo "Determining static URLs for ${sys} ${lang}..."
 
@@ -624,6 +626,9 @@ fi
 if [ -f "$download2" ]; then
 	$xml tr ../xslt/ExtractDownloadLinks-${sys}-x86-${lang}.xsl ../temp/package.xml > ../temp/Urls-${sys}-${lang}.txt
 fi
+if [ "$dotnet" == "1" ]; then
+	$xml tr ../xslt/ExtractDownloadLinks-dotnet-glb.xsl ../temp/package.xml > ../temp/Urls-dotnet.txt
+fi
 if [ -f "$valid1" -o -f "$valid2" ] && [ -f "$expired1" -o -f "$expired2" ]; then
 	grep -v -f ../temp/Expiredid-${sys}.txt ../temp/Urls-${sys}-${lang}.txt > ../temp/tmpUrls-${sys}-${lang}.txt
 	grep -f ../temp/Validid-${sys}.txt ../temp/Urls-${sys}-${lang}.txt >> ../temp/tmpUrls-${sys}-${lang}.txt
@@ -701,58 +706,59 @@ fi
 printheader
 echo "Downloading patches for ${sys}..."
 echo "Downloading static patches..."
-wget -nv -c -N -i ../temp/StaticUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
+doWget -c -i ../temp/StaticUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
 if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "oxp" ] && [ "$sys" != "o2k3" ] && [ "$sys" != "o2k7" ] && [ "$sys" != "w2k3-x64" ]; then
-	wget -nv -c -N -i ../temp/StaticUrls-${lang}.txt -P ../client/win/${lang}
-	wget -nv -c -N -i ../temp/StaticUrls-glb.txt -P ../client/win/glb
+	doWget -c -i ../temp/StaticUrls-${lang}.txt -P ../client/win/${lang}
+	doWget -c -i ../temp/StaticUrls-glb.txt -P ../client/win/glb
 fi
-wget -nv -c -N -i ../temp/StaticUrls-${sys}-glb.txt -P ../client/${sys}/glb
+doWget -c -i ../temp/StaticUrls-${sys}-glb.txt -P ../client/${sys}/glb
 if [ "$sys" == "oxp" -o "$sys" == "o2k3" -o "$sys" == "o2k7" ]; then
-	 wget -nv -c -N -i ../temp/StaticUrls-ofc-glb.txt -P ../client/ofc/glb
-	 wget -nv -c -N -i ../temp/StaticUrls-ofc-${lang}.txt -P ../client/ofc/${lang}
+  doWget -c -i ../temp/StaticUrls-ofc-glb.txt -P ../client/ofc/glb
+  doWget -c -i ../temp/StaticUrls-ofc-${lang}.txt -P ../client/ofc/${lang}
 fi
 
 if [ "$sys" == "w2k" ]; then
-	wget -nv -c -N -i ../temp/StaticUrls-ie6-${lang}.txt -P ../client/win/${lang}/ie6setup
+	doWget -c -i ../temp/StaticUrls-ie6-${lang}.txt -P ../client/win/${lang}/ie6setup
 	/bin/bash ./FIXIE6SetupDir.sh $lang
 fi
 if [ "$dotnet" == "1" ]; then
 	echo "Downloading .Net framework..."
-	wget -nv -c -N -i ../temp/StaticUrls-dotnet.txt -P ../client/dotnet
+	doWget -c -i ../temp/StaticUrls-dotnet.txt -P ../client/dotnet
+	doWget -c -i ../temp/Urls-dotnet.txt -P ../client/dotnet
 fi
 
 echo "Downloading patches for $sys $lang"
-wget -nv -c -N -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
-wget -nv -c -N -i ../temp/ValidUrls-${sys}-glb.txt -P ../client/${sys}/glb
+doWget -c -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
+doWget -c -i ../temp/ValidUrls-${sys}-glb.txt -P ../client/${sys}/glb
 if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "oxp" ] && [ "$sys" != "o2k3" ] && [ "$sys" != "o2k7" ] && [ "$sys" != "w2k3-x64" ]; then
-	wget -nv -c -N -i ../temp/ValidUrls-win-x86-${lang}.txt -P ../client/win/${lang}
-	wget -nv -c -N -i ../temp/ValidUrls-win-x86-glb.txt -P ../client/win/glb
+	doWget -c -i ../temp/ValidUrls-win-x86-${lang}.txt -P ../client/win/${lang}
+	doWget -c -i ../temp/ValidUrls-win-x86-glb.txt -P ../client/win/glb
 fi
 
 printheader
 echo "Validating patches for ${sys}..."
 echo "Validating static patches..."
-wget -nv -c -N -i ../temp/StaticUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
+doWget -c -i ../temp/StaticUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
 if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "oxp" ] && [ "$sys" != "o2k3" ] && [ "$sys" != "o2k7" ] && [ "$sys" != "w2k3-x64" ]; then
-	wget -nv -c -N -i ../temp/StaticUrls-${lang}.txt -P ../client/win/${lang}
-	wget -nv -c -N -i ../temp/StaticUrls-glb.txt -P ../client/win/glb
+	doWget -c -i ../temp/StaticUrls-${lang}.txt -P ../client/win/${lang}
+	doWget -c -i ../temp/StaticUrls-glb.txt -P ../client/win/glb
 fi
-wget -nv -c -N -i ../temp/StaticUrls-${sys}-glb.txt -P ../client/${sys}/glb
+doWget -c -i ../temp/StaticUrls-${sys}-glb.txt -P ../client/${sys}/glb
 if [ "$sys" == "oxp" -o "$sys" == "o2k3" -o "$sys" == "o2k7" ]; then
-	 wget -nv -c -N -i ../temp/StaticUrls-ofc-glb.txt -P ../client/ofc/glb
-	 wget -nv -c -N -i ../temp/StaticUrls-ofc-${lang}.txt -P ../client/ofc/${lang}
+	 doWget -c -i ../temp/StaticUrls-ofc-glb.txt -P ../client/ofc/glb
+	 doWget -c -i ../temp/StaticUrls-ofc-${lang}.txt -P ../client/ofc/${lang}
 fi
 if [ "$dotnet" == "1" ]; then
 	echo "Validating .Net framework..."
-	wget -nv -c -N -i ../temp/StaticUrls-dotnet.txt -P ../client/dotnet
+	doWget -c -i ../temp/StaticUrls-dotnet.txt -P ../client/dotnet
 fi
 
 echo "Validating patches for $sys ${lang}..."
-wget -nv -c -N -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
-wget -nv -c -N -i ../temp/ValidUrls-${sys}-glb.txt -P ../client/${sys}/glb
+doWget -c -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
+doWget -c -i ../temp/ValidUrls-${sys}-glb.txt -P ../client/${sys}/glb
 if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "oxp" ] && [ "$sys" != "o2k3" ] && [ "$sys" != "o2k7" ] && [ "$sys" != "w2k3-x64" ]; then
-	wget -nv -c -N -i ../temp/ValidUrls-win-x86-${lang}.txt -P ../client/win/${lang}
-	wget -nv -c -N -i ../temp/ValidUrls-win-x86-glb.txt -P ../client/win/glb
+	doWget -c -i ../temp/ValidUrls-win-x86-${lang}.txt -P ../client/win/${lang}
+	doWget -c -i ../temp/ValidUrls-win-x86-glb.txt -P ../client/win/glb
 fi
 echo "**************************************"
 echo "`grep -c http: ../temp/urls.txt` patches successfully downloaded."
@@ -793,4 +799,3 @@ fi
 exit 0
 
 # EOF
-
