@@ -319,6 +319,7 @@ Version 6.4 -- ??.??.10
 - UpdateGenerator script will now trigger download of .NET Framework components only for the first platform/target selected (Thanks to "Denniss") 
 - Info-Zip's UnZip integrated because of persistent FTP download problems - FTP proxy for wget removed because it's not used any longer
 - AutoIt script compiler updated to version 3.3.4.0 
+- DirectX End-User Runtimes updated to February 2010 (Thanks to Matthias Köhler)
 - DownloadUpdates.sh script encapsulates wget calls in doWget() function now for easier parameterization (Thanks to "Askan" and "maro")
 - Fix: Windows Vista ISO images and USB copies did not contain .NET Framework 3.5 SP1 Family Update files KB958483 and KB958484 (Thanks to "wsususer")  
 - Fix: ISO volume ids and installation log file name adjusted to fit to project's new name (Thanks to "LigH")
