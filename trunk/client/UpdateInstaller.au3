@@ -366,17 +366,6 @@ If StringRight(EnvGet("TEMP"), 1) = "\" Then
     Exit(1)
   EndIf
 EndIf
-If ( (@OSVersion = "WIN_XP") AND (@OSServicePack = "") ) Then
-  If ShowGUIInGerman() Then
-    MsgBox(0x2010, "Fehler", "Unter Windows XP müssen Sie das Service Pack 1a oder 2" _
-                     & @LF & "vor der automatischen Aktualisierung manuell installieren.")
-    Exit(1)
-  Else
-    MsgBox(0x2010, "Error", "Under Windows XP, you have to manually install" _
-                    & @LF & "Service Pack 1a or 2 before automatic updating.")
-    Exit(1)
-  EndIf
-EndIf
 If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (@OSServicePack <> "Service Pack 2") ) Then
   If ShowGUIInGerman() Then
     MsgBox(0x2040, "Information", "Unter Windows Vista / Server 2008 müssen Sie" _
@@ -473,7 +462,8 @@ While 1
       If BitAND(GUICtrlRead($converters), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instofccnvs"
       EndIf
-      If BitAND(GUICtrlRead($autoreboot), $GUI_CHECKED) = $GUI_CHECKED Then
+      If ( (BitAND(GUICtrlRead($autoreboot), $GUI_ENABLE) = $GUI_ENABLE) _
+       AND (BitAND(GUICtrlRead($autoreboot), $GUI_CHECKED) = $GUI_CHECKED) ) Then
         $options = $options & " /autoreboot"
       EndIf
       If BitAND(GUICtrlRead($shutdown), $GUI_CHECKED) = $GUI_CHECKED Then

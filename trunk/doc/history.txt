@@ -322,6 +322,7 @@ Version 6.4 -- ??.??.10
 - DirectX End-User Runtimes updated to February 2010 (Thanks to Matthias Köhler)
 - DownloadUpdates.sh script encapsulates wget calls in doWget() function now for easier parameterization (Thanks to "Askan" and "maro")
 - Fix: Windows Vista ISO images and USB copies did not contain .NET Framework 3.5 SP1 Family Update files KB958483 and KB958484 (Thanks to "wsususer")  
+- Fix: DoUpdate.cmd script attempted invalid automatic recalls under Windows Vista/7/2008(R2) and was unable to install SPs on Windows 2008 DCs (Thanks to "ksjon" and "DotNet")
 - Fix: ISO volume ids and installation log file name adjusted to fit to project's new name (Thanks to "LigH")
 - Fix: Removed o2k remainders in xslt directory
 - Fix: DownloadUpdates.sh script contained obsolete reference to ../static/StaticDownloadLink-ifadmin.txt (Thanks to "Medvedko")

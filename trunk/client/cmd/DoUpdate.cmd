@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.3+ (r56)
+set WSUSUPDATE_VERSION=6.3+ (r57)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -127,12 +127,6 @@ rem *** Check Operating System architecture ***
 for %%i in (x86 x64) do (if /i "%OS_ARCHITECTURE%"=="%%i" goto ValidArch)
 goto UnsupArch
 :ValidArch
-
-rem *** Check availability of /autoreboot switch ***
-if "%BOOT_MODE%"=="/autoreboot" (
-  if "%DOMAIN_ROLE%"=="4" goto NoAutoReboot
-  if "%DOMAIN_ROLE%"=="5" goto NoAutoReboot
-)
 
 rem *** Check user's privileges ***
 echo Checking user's privileges...
@@ -612,18 +606,31 @@ if errorlevel 1 goto InstError
 :Installed
 if "%RECALL_REQUIRED%"=="1" (
   if "%BOOT_MODE%"=="/autoreboot" (
+    if "%OS_NAME%"=="w60" (
+      echo Automatic recall is not supported for Windows Vista / Server 2008.
+      echo %DATE% %TIME% - Info: Automatic recall is not supported for Windows Vista / Server 2008 >>%UPDATE_LOGFILE%
+      goto ManualRecall
+    )
+    if "%OS_NAME%"=="w61" (
+      echo Automatic recall is not supported for Windows 7 / Server 2008 R2.
+      echo %DATE% %TIME% - Info: Automatic recall is not supported for Windows 7 / Server 2008 R2 >>%UPDATE_LOGFILE%
+      goto ManualRecall
+    )
+    if "%DOMAIN_ROLE%"=="4" (
+      echo Automatic recall is not supported on domain controllers.
+      echo %DATE% %TIME% - Info: Automatic recall is not supported on domain controllers >>%UPDATE_LOGFILE%
+    )
+    if "%DOMAIN_ROLE%"=="5" (
+      echo Automatic recall is not supported on domain controllers.
+      echo %DATE% %TIME% - Info: Automatic recall is not supported on domain controllers >>%UPDATE_LOGFILE%
+    )
     if not "%USERNAME%"=="WSUSUpdateAdmin" (
       echo Preparing automatic recall...
       call PrepareRecall.cmd %~f0 %BACKUP_MODE% %INSTALL_IE% %INSTALL_DOTNET% %INSTALL_PSH% %INSTALL_CONVERTERS% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES%
     )
     echo Rebooting...
     %CSCRIPT_PATH% //Nologo //E:vbs Shutdown.vbs /reboot
-  ) else (
-    echo.
-    echo Installation successful. Please reboot your system now and recall Update afterwards.
-    echo %DATE% %TIME% - Info: Installation successful >>%UPDATE_LOGFILE%
-    echo.
-  )
+  ) else goto ManualRecall
 ) else (
   if "%SHOW_LOG%"=="/showlog" call PrepareShowLogFile.cmd
   if "%BOOT_MODE%"=="/autoreboot" (
@@ -651,6 +658,13 @@ if "%RECALL_REQUIRED%"=="1" (
     )
   )
 )
+goto EoF
+
+:ManualRecall
+echo.
+echo Installation successful. Please reboot your system now and recall Update afterwards.
+echo %DATE% %TIME% - Info: Installation successful >>%UPDATE_LOGFILE%
+echo.
 goto EoF
 
 :NoExtensions
@@ -719,13 +733,6 @@ goto Cleanup
 echo.
 echo ERROR: Unsupported Operating System architecture (%OS_ARCHITECTURE%).
 echo %DATE% %TIME% - Error: Unsupported Operating System architecture (%OS_ARCHITECTURE%) >>%UPDATE_LOGFILE%
-echo.
-goto Cleanup
-
-:NoAutoReboot
-echo.
-echo ERROR: Switch /autoreboot is unsupported on domain controllers.
-echo %DATE% %TIME% - Error: Switch /autoreboot is unsupported on domain controllers >>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
