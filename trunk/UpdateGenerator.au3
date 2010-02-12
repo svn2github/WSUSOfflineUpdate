@@ -2743,7 +2743,8 @@ While 1
       RunDonationSite()
 
     Case $btn_start         ; Start button pressed
-      If IniRead($inifilename, $ini_section_misc, $misc_token_chkver, $enabled) = $enabled Then
+      If ( (IniRead($inifilename, $ini_section_misc, $misc_token_chkver, $enabled) = $enabled) _
+       AND (BitAND(GUICtrlRead($skipdownload), $GUI_CHECKED) <> $GUI_CHECKED) ) Then
         Switch RunVersionCheck($proxy)
           Case -1 ; Yes
             Run(@ComSpec & " /D /C start " & $downloadURL)

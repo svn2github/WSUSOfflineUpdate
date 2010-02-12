@@ -387,6 +387,8 @@ If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (@OSService
   GUICtrlSetState($converters, $GUI_DISABLE)
   GUICtrlSetState($autoreboot, $GUI_CHECKED)
   GUICtrlSetState($autoreboot, $GUI_DISABLE)
+  GUICtrlSetState($shutdown, $GUI_UNCHECKED)
+  GUICtrlSetState($shutdown, $GUI_DISABLE)
   GUICtrlSetState($showlog, $GUI_UNCHECKED)
   GUICtrlSetState($showlog, $GUI_DISABLE)
 EndIf
@@ -462,7 +464,7 @@ While 1
       If BitAND(GUICtrlRead($converters), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instofccnvs"
       EndIf
-      If ( (BitAND(GUICtrlRead($autoreboot), $GUI_ENABLE) = $GUI_ENABLE) _
+      If ( (BitAND(GUICtrlRead($autoreboot), $GUI_DISABLE) <> $GUI_DISABLE) _
        AND (BitAND(GUICtrlRead($autoreboot), $GUI_CHECKED) = $GUI_CHECKED) ) Then
         $options = $options & " /autoreboot"
       EndIf

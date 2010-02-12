@@ -26,27 +26,29 @@ title Checking WSUS Offline Update version...
 echo Checking WSUS Offline Update version...
 %WGET_PATH% -N -P ..\static http://download.wsusoffline.net/StaticDownloadLink-recent.txt
 if errorlevel 1 goto DownloadError
-echo n | comp ..\static\StaticDownloadLink-this.txt ..\static\StaticDownloadLink-recent.txt /a /l /n=1 /c >nul 2>&1
-if errorlevel 1 goto CompError
+if exist ..\static\StaticDownloadLink-recent.txt (
+  echo n | comp ..\static\StaticDownloadLink-this.txt ..\static\StaticDownloadLink-recent.txt /a /l /n=1 /c >nul 2>&1
+  if errorlevel 1 goto CompError
+)
 goto EoF
 
 :NoExtensions
 echo.
 echo ERROR: No command extensions available.
 echo.
-exit /b 1
+exit
 
 :NoWGet
 echo.
 echo ERROR: Utility %WGET_PATH% not found.
 echo.
-goto Error
+goto EoF
 
 :DownloadError
 echo.
 echo ERROR: Download failure for http://download.wsusoffline.net/StaticDownloadLink-recent.txt.
 echo.
-goto Error
+goto EoF
 
 :CompError
 echo.

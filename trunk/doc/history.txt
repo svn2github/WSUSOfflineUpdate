@@ -309,7 +309,7 @@ Version 6.3 -- 13.11.09
 - Fix: UpdateGenerator and UpdateInstaller dialog scaling could lead to zero size dialog dimensions (Thanks to "MG8371")
 - Fix: DownloadUpdates.cmd will set FTP proxy for wget now (Thanks to "LauxAimoEwa")
 --------------------------------------------------------------------------------
-Version 6.4 -- ??.??.10
+Version 6.4 -- 12.02.10
 - Office updates up to 02/2010 integrated by static definitions
 - Digital signatures of downloaded files will be verified if corresponding option is selected (Thanks to "friday123") 
 - Installed updates' determination implementation changed in order to enhance performance and become independent of WUA   
@@ -324,6 +324,8 @@ Version 6.4 -- ??.??.10
 - DownloadUpdates.sh script encapsulates wget calls in doWget() function now for easier parameterization (Thanks to "Askan" and "maro")
 - Fix: Windows Vista ISO images and USB copies did not contain .NET Framework 3.5 SP1 Family Update files KB958483 and KB958484 (Thanks to "wsususer")  
 - Fix: DoUpdate.cmd script attempted invalid automatic recalls under Windows Vista/7/2008(R2) and was unable to install SPs on Windows 2008 DCs (Thanks to "ksjon" and "DotNet")
+- Fix: CheckOUVersion.cmd script misleadingly reported outdated Offline Update version (Thanks to "software-ralf" and "boco")
 - Fix: ISO volume ids and installation log file name adjusted to fit to project's new name (Thanks to "LigH")
 - Fix: Removed o2k remainders in xslt directory
 - Fix: DownloadUpdates.sh script contained obsolete reference to ../static/StaticDownloadLink-ifadmin.txt (Thanks to "Medvedko")
+--------------------------------------------------------------------------------
