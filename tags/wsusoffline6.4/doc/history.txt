@@ -1,0 +1,331 @@
+................................................................................
+WSUS Offline Update 6.1
+Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
+................................................................................
+
+Publications Version 3.0
+~~~~~~~~~~~~~~~~~~~~~~~~
+English article: "DIY Service Pack - Installing Windows updates without an internet connection" (http://www.heise-security.co.uk/articles/80682)
+German article: "Selfmade Service Pack - Windows-Updates ohne Internet-Verbindung installieren" (c't 23/06, S. 202ff; http://www.heise.de/kiosk/archiv/ct/06/23/202)
+
+Publications Version 4.0
+~~~~~~~~~~~~~~~~~~~~~~~~
+German article: "Patch-Konserven - Selbstgeschnürte Service Packs für Windows und Office" (c't 22/07, S. 212ff; http://www.heise.de/kiosk/archiv/ct/2007/22/212; http://www.heise.de/software/download/special/ct_offline_update/8_1)
+
+Publications Version 6.0
+~~~~~~~~~~~~~~~~~~~~~~~~
+German article: "Linux patcht Windows" (c't 12/09, S. 162; http://www.heise.de/kiosk/archiv/ct/2009/12/162)
+................................................................................
+
+Versions' history:
+--------------------------------------------------------------------------------
+Version 3.0 -- 25.10.06
+- Dynamical integration of new updates using wsusscan.cab
+- Dynamical installation of new updates using Windows Update Agent
+--------------------------------------------------------------------------------
+Version 3.01 -- 31.10.06
+- Fix: "%~dps0 problem" on Windows 2000 systems
+- Fix: msxml* patches' parameters
+- Fix: msxsl error handling
+--------------------------------------------------------------------------------
+Version 3.02 -- 23.11.06
+- Fix: Error code 1641 (ERROR_SUCCESS_REBOOT_INITIATED) lead to false error messages
+- Fix: Missing log file variable caused script failures in standalone runs
+- Fix: ie6download.exe hung if IE7 was installed
+- Fix: msxml* patches' parameters (2)
+- Fix: Relative paths in AutoIt-Scripts were not found using the "run as" functionality
+- Fix: Error handling of prerequisites' installations
+- Fix: Installation errors lead to aborts
+- Fix: %TEMP% paths containing special characters caused errors
+- Implementation of Internet Explorer version determination changed to registry query
+- ExtractUpdatesFromWSUSAndCreateISOImages.cmd understands /proxy parameter now
+- XSLT filters and ExtractUpdatesFromWSUS.vbs get updates for .NET and "Step-by-Step-Interactive-Training" now
+- Structural avoidance of endless reboot/recall loops
+- Download window title informs about progress
+- Script version and computer name will be logged
+--------------------------------------------------------------------------------
+Version 3.03 -- 16.02.07
+- Support for new catalog file wsusscn2.cab
+- Fix: Download required administrative privileges
+- Fix: Download did not start when startup entries for %ComSpec% contained "cd" directives
+- Fix: Update did not start when UpdateStarterGUI.exe was launched from paths containing special characters
+- Fix: Timeout for ie6download.exe increased
+- Fix: CleanupRecall.cmd only worked if WSUSUpdateAdmin was logged on
+--------------------------------------------------------------------------------
+Version 3.04 -- 22.03.07
+- INSTALLATION HINT: Please delete existing 'exclude-list-*.txt' files of previous versions in the directory 'exclude' (not 'client\exclude') before unpacking!
+- Mandatory installation of service pack 2 on Windows Server 2003 systems
+- Patches may explicitly excluded from download (already used for w2k3 sp1 in exclude-list-w2k3.txt)
+- Fix: State of service 'automatic updates' is checked before trying to list missing updates
+- Fix: Windows update agent version 5.8.0.2469 caused error 0x80247002 in ListMissingUpdateIds.vbs
+- Fix: WSUSUpdateAdmin autologon password could differ from password in user management if CreateUpdateAdminAndEnableAutoLogon.vbs was called twice
+--------------------------------------------------------------------------------
+Version 3.11 -- 05.05.07
+- Dutch language support added (Thanks to Lars van Jeurissen)
+- Spanish language support added (Thanks to Javier Marín)
+- French language support added (Thanks to Tim Endres)
+- Portuguese language support added (Thanks to Berit Jensen)
+- Brazilian language support added (Thanks to Stefan Jöhnke)
+- DownloadStarterGUI.exe saves settings now
+- UpdateStarterGUI.exe checks availability of Windows Script Host now
+- DoUpdate.cmd and UpdateStarterGUI.exe support /nobackup parameter now (installs updates without saving uninstallation info)
+- Dynamical determination of Windows Update Agent URLs using wuredist.cab
+- Implementation of administrators' group determination changed to support multiple languages (Thanks to Bert Schinkel-Momsen)
+- DVD ISO image creation options diversified to support multiple languages and platforms
+- CreateISOImage.cmd understands /outputpath parameter now
+- Fix: Version checks reviewed and corrected for statically defined installations (WUA, MSI, WSH and IE)
+- Fix: Check for command extensions' availability reviewed and corrected (Thanks to Stefan Westermann)
+--------------------------------------------------------------------------------
+Version 3.12 -- 01.06.07
+- INSTALLATION HINT: You may delete cmd\ie6download.* since it's not used any longer
+- Static exclude of updates integrated into most recent service packs (Thanks to "Martin0815" and Klaus Rund)
+- Direct download of IE6 installation components (Thanks to Nils Winkler alias "derniwi")
+- XSLT filters get updates for IE7 now
+- ISO creation filters corrected
+- Fix: Enhanced support for %TEMP% paths containing special characters (Thanks to J. Witschel alias "blind-fish")
+--------------------------------------------------------------------------------
+Version 3.2 -- 11.06.07
+- Optional installation of IE7 on Windows XP and Windows Server 2003 systems
+- Language support added for Italian, Russian, Polish, Greek, Czech, Danish, Norwegian, Swedish and Finnish
+- Fix: /nobackup switch did not apply to Windows Installer (MSI) installation
+- Fix: IE6 installation configuration files contained invalid entries for non-german systems
+--------------------------------------------------------------------------------
+Version 3.21 -- 11.07.07
+- Fix: Determination of user's privileges did not work for all languages (Thanks to Bernd Beckmann)
+- Fix: Windows activation state will be checked before attempting IE7 installation (Thanks to "Jens_1")
+--------------------------------------------------------------------------------
+Version 3.22 -- 13.08.07
+- Fix: Microsoft removed WindowsXP-Windows2000-Script56-KB917344-x86-<language>.exe files
+- Fix: ISO volume ids violated ISO9660 standard (Thanks to "Raketen angetriebene Granate")
+--------------------------------------------------------------------------------
+Version 4.0 -- 12.10.07
+- INSTALLATION HINT: Unpack to new structure - move existing update directories under client\ from old to new structure - ready!
+- Support added for Microsoft Windows Vista (Thanks to Bert Schinkel-Momsen)
+- Support added for Microsoft Office 2000, XP, 2003 and 2007
+- Updates which are not listed in wsusscn2.cab any longer will be removed automatically
+- Service Packs (statically defined updates) may be excluded from download
+- CopyToTarget.cmd added to ease USB device preparation
+- Generator and Installer GUIs will be displayed in German on German systems
+- Compiler options "GUICloseOnESC", "TrayAutoPause" and "TrayIconHide" set in AutoIt scripts (Thanks to Manfred Kurth)
+- UPX packing of compiled AutoIt scripts disabled to avoid false anti-virus software alerts
+- ISO and USB filters for Windows XP and Server 2003 exclude ie6.0sp1*.* and oe6.0sp1*.* files (Thanks to "eiffel")
+- Language specific ISO and USB filters will be generated at runtime
+- MD5 checksum of ZIP package will be published
+- Fix: WSUSUpdateAdmin account wouldn't be granted administrative privileges if installation was started by a domain administrator (Thanks to "g-org")  
+- Fix: %SystemRoot%\system32\reg.exe will only be copied to client\bin if needed and compatible with Windows 2000 systems
+- Fix: Download under Windows Vista caused two UAC inquiries
+- Fix: Microsoft removed IE7 installation packages' URLs from wsusscn2.cab
+--------------------------------------------------------------------------------
+Version 4.1 -- 30.10.07
+- Service Pack exclusion option won't apply to other statically defined updates any longer (Thanks to Tobias Breitling)
+- UpdateGenerator.exe and DownloadUpdates.cmd support /nocleanup switch now
+- Vista update installation procedure supports .msu packages now
+- Language support added for Hungarian and Turkish
+- ISO and USB filters for Windows XP and Server 2003 refined (Thanks to "eiffel")
+- DoUpdate.cmd will check the computer's domain role before accepting /autoreboot switch
+- DoUpdate.cmd supports /excludestatics switch now
+- Fix (defect #1): Windows' utilities FIND and FINDSTR will be called using full paths to avoid conflicts with third party products (Thanks to "blind-fish")
+- Fix: On script break, the current download directory could be completely emptied during cleanup (Thanks to "tiptoptyp")
+- Fix: Office 2000 SR-1a full installation package (O2ksr1adl.exe) integrated instead of network installer (o2ksr1a.exe) (Thanks to "magmalive")
+- Fix (defect #8): Office only update media threw mistakable warnings (Thanks to "blind-fish")
+- Fix: DoUpdate.cmd /all switch did not apply to Office patches
+- Fix (defect #10): Version check of reg.exe for Windows 2000 target systems corrected (Thanks to "hbbh" and Arne Haeckel)
+- Fix (defect #12): Office XP Service Pack 3 was not properly detected (Thanks to Ralf Jung)
+- Fix: Download procedure missed KB942670 and KB942571 due to invalid URLs in catalog file invcif.exe
+--------------------------------------------------------------------------------
+Version 4.64 -- 06.12.07
+- Support added for x64 Operating Systems
+- UpdateInstaller.exe reads its defaults from UpdateInstaller.ini now
+- FAQs added
+- Download exclude list for Windows Server 2003 enhanced (Thanks to "eiffel")
+- WindowsXP-Windows2000-Script56-KB917344-x86-<language>.exe installation files reintegrated
+- Download and installation routines reviewed, simplified and improved
+- USAGE HINT: You must not call DownloadUpdates.cmd {o2k | oxp | o2k3} {glb} explicitly any longer - this will be implicitly done by DownloadUpdates.cmd now
+- Fix: Invalid startup sequence in DoUpdate.cmd (Relevant only for domain controllers)
+- Fix: IE6 setup file filelist.dat contained invalid entries if generated using 12h (AM/PM) time format (Thanks to "1369311007")
+- Fix (defect #13): Service 'automatic updates' (wuauserv) will be started automatically
+- Fix: Download procedure missed KB931906 for CAPICOM (Thanks to Werner Zuther)
+- Fix (defect #17): Office versions less than 8 (Office 97) lead to installation script aborts (Thanks to "jpe-km")
+- Fix: Download and installation procedures missed KB823718 (MS03-033) for MDAC under Windows 2000
+--------------------------------------------------------------------------------
+Version 4.7 -- 23.01.08
+- Office 2007 Service Pack 1 integrated
+- USAGE HINT: You must not call DownloadUpdates.cmd {o2k7 | o2k7-x64} {glb} any longer - use DownloadUpdates.cmd {o2k7 | o2k7-x64} {<language token>} instead
+- Language support added for Japanese, Korean, Chinese, Taiwanese, Arabic and Hebrew
+- Download process will be logged
+- Fix: Windows activation state won't be checked any longer before attempting IE7 installation (Thanks to Mark Willert)
+- Fix (defect #20): Generation windows may be displayed minimized (Thanks to "denk_mal")
+- Fix (defect #21): Download procedure missed KB943591 (Outlook 2003 Junk E-mail filter update) due to missing URLs in catalog file invcif.exe
+- Fix: Office installations with mixed versions were updated incompletely (Thanks to "funkygirl")
+- Fix: Office installation language was not determined correctly if differed from OS language (Thanks to "zurelli")
+- Fix: Under Windows Vista, the installation process did not start if UpdateInstaller.exe was launched from a network drive (Thanks to Mark Gerber)
+--------------------------------------------------------------------------------
+Version 4.71 -- 24.01.08
+- Fix: Variable reference typo in UpdateGenerator lead to runtime error on DVD creation (Thanks to "Supportler2008")
+--------------------------------------------------------------------------------
+Version 4.72 -- 14.02.08
+- UpdateGenerator and UpdateInstaller scripts will terminate if system's environment variable TEMP contains a trailing backslash
+- Static download definitions modified for Office 2003 (KB943591 removed, KB907417 added)
+- Fix: Download exclude entries were ignored for Office products (Thanks to "Holja")
+- Fix (defect #24): Invalid directory scan sequence caused installation failures under Windows Vista using DVD images (Thanks to "joehtg")
+--------------------------------------------------------------------------------
+Version 4.80 -- 09.05.08
+- Windows Vista Service Pack 1 integrated
+- Windows XP Service Pack 3 integrated
+- Office updates may optionally be omitted (enh. #26, thanks to "Wodar")
+- Static download definitions for IE7 installation packages removed for wxp since Microsoft added them to wsusscn2.cab
+- Enhanced download verbosity for statically defined updates
+- Fix: Installation failures using DVD images on mixed Office 2003/2007 systems
+- Fix: Obsolete patch file office2003-KB943985-FullFile-ENU.exe removed (Thanks to Hans-Dietmar Rudolph)
+--------------------------------------------------------------------------------
+Version 5.0 -- 15.09.08
+- Support added for Microsoft Windows Server 2008 
+- Optional download and installation of .NET Framework 3.5 SP1 on Windows XP, Vista and Server 2003/2008 systems (enh. #37, thanks to "ncoker" and Rene Schimmer)
+- Optional installation of most recent DirectX End-User Runtimes (enh. #37, thanks to "ncoker" and Rene Schimmer)
+- Download of Operating Systems' updates may preferentially be redirected to a local WSUS server
+- Number of updates to download and to install will be displayed and logged (Thanks to Stefan Jöhnke and "-TomW-")
+- Integrity of updates may be verified on subsequent download runs 
+- DVD ISO images will be split into x86- and x64-products since ISO file sizes exceeded 4.7 GB (max. capacity of DVD-5 media)
+- Windows Installer 4.5 integrated for Windows XP, Vista and Server 2003/2008 systems
+- CreateISOImage and CopyToTarget scripts understand /excludesp and /includedotnet parameters now 
+- UpdateInstaller script will check Internet Explorer version now
+- Static download definitions for IE7 installation packages removed for w2k3 since Microsoft added them to wsusscn2.cab
+- Enhanced download logging and target system information
+- Office 2000 Italian Grammar Tools Update (Igt0901.exe, KB813715) excluded from installation by default
+- XSLT filters get updates for Office 2003 Proofing Tools now (Thanks to Klaus Fendt)
+- XSLT filters get updates for Windows Rights Management Services Client now
+- Fix: DIRCMD environment presets could cause update installation failures (Thanks to Michael Kallenbach)
+- Fix: Service Pack exclusion option did not apply to Windows Vista platforms (Thanks to Karsten Violka)
+- Fix: UpdateInstaller and DoUpdate scripts will check prerequisite Windows XP Service Pack 1a or 2 now
+- Fix: Office Update Inventory Tool catalog file invcif.exe might not be updated properly (Thanks to "Next-Gen")
+- Fix (defect #42): Static download definition added for Office Compatibility Pack Service Pack 1 (kb940289) (Thanks to "Gerby")
+- Fix: Download exclude list for Windows XP contained invalid entry for 315074 (Thanks to Chris Shipley)
+- Fix: Download exclude list for Windows XP updated since Microsoft modified http://support.microsoft.com/kb/946480 on June 18, 2008
+- Fix (defect #30): XSLT filters for Windows XP/Server 2003 x64 editions get updates for msxml6 now (Thanks to "murist")
+- Fix: Static download definitions added for Office updates kb951338, kb954326 and kb956077 due to invalid or missing URLs in patchdata.xml (invcif.exe)
+- Fix: Static download definition removed for obsolete patch file officexp-KB942670-FullFile-ENU.exe
+- Fix: Incorrect error handling for Run() and RunWait() function calls in UpdateGenerator and UpdateInstaller scripts
+--------------------------------------------------------------------------------
+Version 5.1 -- 22.02.09
+- Optional installation of Office Converter and Office 2007 Compatibility Packs
+- DirectX End-User Runtimes (November 2008) integrated
+- DownloadUpdates.cmd and CreateISOImage.cmd scripts won't perform exit calls any longer when returning error conditions (Thanks to "oneSTone o2o")
+- DoUpdate.cmd script will exit with errorlevel 1 now if recall is required and automatic reboot is disabled (Thanks to "nathanel23")
+- Static download definition for update for Root Certificates (rootsupd.exe/kb931125) added for Windows XP (Thanks to "Ferney01")
+- Static download definitions for IE7 installation packages removed for wxp/w2k3 x64 since Microsoft added them to wsusscn2.cab
+- .NET Framework 3.5 SP1 Family Update (kb958481, kb958483 and kb958484) will be installed after .NET Framework 3.5 SP1 installation (Thanks to "rs5")
+- Wget updated to version 1.11.4 (MinGW)
+- AutoIt script compiler updated to version 3.3.0.0 
+- Redistribution of mkisofs.exe stopped due to licensing controversy 
+- Fix (defect #48): Automatic clock adjustment for daylight savings time caused re-downloading of updates when switching back to standard time (Thanks to "joehtg")
+- Fix: Office installation language was not determined correctly again if differed from OS language (Thanks to "zurelli")
+- Fix: Office updates were re-downloaded if WSUS was configured (Thanks to "rs5")
+- Fix (defect #49): Invalid parameters for kb947742 (patch for .NET Framework 1.1 SP1) caused installation failures (Thanks to "joehtg")
+- Fix: Installation of Office 2000 Service Release 1a (O2KSR1aDL.EXE) lead to erroneous failure (Thanks to Christof Giesers)
+- Fix: Microsoft removed WindowsXP-Windows2000-Script56-KB917344-x86-hun.exe (Thanks to "toroimre" and Tamás Winkler)
+- Fix: Temporary installation directories for Office updates were possibly not removed (Thanks to "blind-fish" and "Schraps")
+- Fix: XSLT filters for Windows 2000 missed kb951698-v2 (Thanks to "miramax")
+- Fix: Notepad.exe was not found in %SystemRoot% under Windows Server 2008 (Thanks to Christof Giesers)
+- Fix: Download exclude list for Windows XP updated to avoid windowsxp-sp2* files
+- Fix: Static download definition added for Office 2007 patch kb950378 due to invalid or missing URLs in patchdata.xml (invcif.exe)
+- Fix: Static download definition removed for obsolete Office 2003 patch kb956077
+- Fix: Existing Office Update Inventory Tool catalog file invcif.exe won't any longer be deleted before downloading
+- Fix (defect #62): Errors on downloading statically defined updates won't lead to aborts any longer
+--------------------------------------------------------------------------------
+Version 5.2 -- 20.03.09
+- INSTALLATION HINT: If you like IE8 for Windows Vista/Server 2008 installation packages to be downloaded for languages other than ENU and DEU, you have to modify/enhance StaticDownloadLinks-w60-<architecture>-glb.txt files
+- Optional installation of IE8 on Windows XP, Vista and Server 2003/2008 (x86/x64) systems
+- Statically defined updates will only be installed if not already present
+- Installation of .NET Framework 3.5 SP1 moved to prerequisites block (same as WUA, MSI, WSH & IE)
+- XSLT filters get updates for IE8 now
+- ISO creation filters for Windows XP and Server 2003 exclude DirectX End-User Runtimes now
+- Fix (defect #29): Office version determination was incomplete on mixed/hybrid Office installations (Thanks to "ianox")
+- Fix: Office installation language was not determined correctly for Office 2000 and on Windows x64 systems (Thanks to "pc-nico" and Mark Gerber)
+- Fix: ISO images for Windows 2000 and Office Suites contained .NET Framework 3.5 SP1 installation package (Thanks to "gichtl")
+- Fix: Download source for mkisofs.exe changed since v. 2.01.01a57 uses incompatible filter format (Thanks to Mark Gerber)
+--------------------------------------------------------------------------------
+Version 6.0 -- 20.05.09
+- INSTALLATION HINT: In spite of the different directory name inside the archive, you still may unpack v. 6.0 into an existing structure, overwriting existing files
+- Download scripts for Linux added (Thanks to Tobias Breitling and Stefan Jöhnke)
+- USB stick option added to UpdateGenerator script (Thanks to Christian Riedel)
+- Service Packs 2 for Office 2007 and Office Compatibility Pack integrated
+- Optional installation of Windows PowerShell 1.0 on Windows XP, Server 2003 and Vista (x86/x64) systems
+- Microsoft Service Pack Uninstall Tool for the 2007 Microsoft Office Suite will be downloaded
+- DirectX End-User Runtimes updated (March 2009)
+- Fix: Internet Explorer 8 wasn't installed on automatic recall runs (Thanks to "NetZwerg") 
+- Fix: Office 2000 Service Pack level was not properly detected (Thanks to Mark Gerber)
+- Fix: Office 2000 Service Release 1a (O2KSR1aDL.EXE) would not be installed (Thanks to Mark Gerber)
+- Fix: DownloadUpdates.cmd echoed and logged credentials for proxy access (Thanks to Jörg Watermann)
+- Fix: Displayed number of statically defined updates to be downloaded was incorrect (Thanks to "blind-fish")
+- Fix (defect #70): WSUS download errors caused re-downloading of existing updates (Thanks to "me")
+- Fix: Microsoft fixed broken URL for WindowsXP-Windows2000-Script56-KB917344-x86-hun.exe (Thanks to Rudolf Finszter)
+- Fix: Download exclude list for Windows 2000 updated to avoid windows2000-directx8* files
+- Fix: Sleep.vbs was not found on SafeRmDir.cmd calls in DownloadUpdates.cmd (Thanks to "siggibaer") 
+--------------------------------------------------------------------------------
+Version 6.1 -- 30.07.09
+- INSTALLATION HINT: In spite of the different directory name inside the archive, you still may unpack v. 6.1 into an existing structure, overwriting existing files
+- Windows Vista / Server 2008 Service Pack 2 All Language Standalone integrated
+- Mandatory installation of IE7 on Windows XP and Windows Server 2003 (x86/x64) systems
+- UpdateInstaller script will now check if .NET Framework 3.5 SP1 installation package exists
+- Fix: Download exclude list for Windows XP updated since Microsoft modified the "List of fixes included in Windows XP SP3" (http://support.microsoft.com/kb/946480/en-us) on March 27, 2009 (Thanks to "SPiKE0815") 
+- Fix: Download exclude lists for Operating Systems refined since windowsxp-kb956572-x86-enu* was missing (Thanks to "SMarki") 
+- Fix: CopyToTarget.cmd did not create missing target directories and did not report all copying errors (Thanks to Christian Riedel)
+- Fix: Invalid installation sequence for .NET Framework 3.5 SP1 Family Update (kb958481, kb958483 and kb958484) (Thanks to "siggibaer") 
+- Fix: Warning about 'automatic reboot' option removed for Windows Vista and Server 2008 target systems
+- Fix: Invalid conditional statements in DoUpdate.cmd corrected (Thanks to "b737x")
+- Fix (defect #75): Linux download script will now wait for <Enter> confirmation on any user input (Thanks to Stefan Jöhnke)
+- Fix (defect #76): Linux download script will now ask for all required user input before starting downloading (Thanks to Stefan Jöhnke)
+- Fix (defect #77): Linux download script will now call sub-script using /bin/bash <SubScript.sh> (Thanks to Stefan Jöhnke)
+- Fix (defect #78): Linux scripts contained invalid shebang (Thanks to "kl_eisbaer")
+- Fix: Further improvements for Linux scripts (Thanks to Walter Schiessberg and Stefan Jöhnke)
+--------------------------------------------------------------------------------
+Version 6.2 -- 23.10.09
+- Support added for Microsoft Windows 7 and Server 2008 R2
+- Office updates up to 10/2009 integrated by static definitions (Thanks to "Denniss") 
+- WSUS Offline Update will now check for new versions of itself when starting download
+- Installation of IE7 remade optional
+- Automatic shutdown after updating option added (Thanks to "gw_1966")
+- UpdateGenerator and UpdateInstaller dialogs will now be scaled dependent on system's font size (dpi) setting (Thanks to Thomas Baisch)
+- CopyToTarget.cmd script will now show filenames while copying
+- ISO creation filters for Windows 2000 exclude patches for .NET and Windows Rights Management Services now
+- ISO creation filters for Windows XP and Server 2003 exclude patches for .NET 1.x and .NET 2 SP 0/1 now
+- Static download definitions for IE8 installation packages removed for wxp and w2k3 (x86 and x64) since Microsoft added them to wsusscn2.cab
+- DirectX End-User Runtimes updated to August 2009 (Thanks to "Gerby")
+- Update for Root Certificates (rootsupd.exe/kb931125) updated to September 2009 (Thanks to "Denniss")
+- Fix: Linux scripts contained invalid Windows (<CR><LF>) instead of Unix (<LF>) line feeds (Thanks to Ronald Warsow, "Frank", "fatwou" and http://www.dos2unix.org/)
+- Fix: IE8 installation files were called with invalid /nobackup switch (Thanks to "dierk09bl")
+- Fix: Download exclude lists for Windows XP and Windows Server 2003 (x86/x64) updated to avoid *-js56-x86* files (Thanks to "takkoholiker")
+- Fix: DownloadUpdates.sh script didn't work under Slackware because of missing dos2unix tool (Thanks to Helmut Hullen) 
+- Fix: DetermineSystemProperties.vbs script set invalid environment variable %PSH_INSTALLED_MAJOR% instead of %PSH_INSTALLED%
+- Fix: CopyToTarget.cmd script contained invalid usage instructions (Thanks to "rsleegers")
+- Fix: Download exclude list for Windows XP modified since Offline Update missed patch IE7-WindowsXP-KB938127-v2-x86-DEU.exe
+--------------------------------------------------------------------------------
+Version 6.3 -- 13.11.09
+- Support removed for Office 2000 since Microsoft discontinued support for it on July 14th, 2009 (see http://support.microsoft.com/lifecycle/?p1=2484)
+- Office updates up to 11/2009 integrated by static definitions
+- WSUS Offline Update will now fake SP1 on Windows XP SP0 target systems (Thanks to "Ralph")
+- CopyToTarget.cmd script will now only copy newer files (Thanks to "Georg")
+- Installation part won't any longer evaluate the "Office Update Inventory Tool Catalog" (invcif.exe) since Microsoft discontinued support for it on August 1st, 2009 (see http://office.microsoft.com/OfficeUpdate/catalog/inventory/InventoryCatalog.html)
+- Fix: UpdateGenerator and UpdateInstaller dialog scaling could lead to zero size dialog dimensions (Thanks to "MG8371")
+- Fix: DownloadUpdates.cmd will set FTP proxy for wget now (Thanks to "LauxAimoEwa")
+--------------------------------------------------------------------------------
+Version 6.4 -- 12.02.10
+- Office updates up to 02/2010 integrated by static definitions
+- Digital signatures of downloaded files will be verified if corresponding option is selected (Thanks to "friday123") 
+- Installed updates' determination implementation changed in order to enhance performance and become independent of WUA   
+- DoUpdate.cmd script will exit with errorlevel 3010 now if reboot/recall is required and automatic reboot is disabled (Thanks to "icnocop")
+- Update for Root Certificates (rootsupd.exe/kb931125) updated to November 2009 (Thanks to "Gerby")
+- Office Compatibility Pack Service Pack 2 removed since Microsoft integrated it into FileFormatConverters.exe (Thanks to "Gerby" and "Denniss")
+- Office Converter and Compatibility Packs will now be downloaded also if Office 2007 ("o2k7") target is selected (Thanks to "Denniss") 
+- UpdateGenerator script will now trigger download of .NET Framework components only for the first platform/target selected (Thanks to "Denniss") 
+- Info-Zip's UnZip integrated because of persistent FTP download problems - FTP proxy for wget removed because it's not used any longer
+- AutoIt script compiler updated to version 3.3.4.0 
+- DirectX End-User Runtimes updated to February 2010 (Thanks to Matthias Köhler)
+- DownloadUpdates.sh script encapsulates wget calls in doWget() function now for easier parameterization (Thanks to "Askan" and "maro")
+- Fix: Windows Vista ISO images and USB copies did not contain .NET Framework 3.5 SP1 Family Update files KB958483 and KB958484 (Thanks to "wsususer")  
+- Fix: DoUpdate.cmd script attempted invalid automatic recalls under Windows Vista/7/2008(R2) and was unable to install SPs on Windows 2008 DCs (Thanks to "ksjon" and "DotNet")
+- Fix: CheckOUVersion.cmd script misleadingly reported outdated Offline Update version (Thanks to "software-ralf" and "boco")
+- Fix: ISO volume ids and installation log file name adjusted to fit to project's new name (Thanks to "LigH")
+- Fix: Removed o2k remainders in xslt directory
+- Fix: DownloadUpdates.sh script contained obsolete reference to ../static/StaticDownloadLink-ifadmin.txt (Thanks to "Medvedko")
+--------------------------------------------------------------------------------
