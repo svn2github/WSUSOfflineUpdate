@@ -1,2 +1,2 @@
 http://www.download.windowsupdate.com/msdownload/update/v3-19990518/cabpool/windowsserver2003-kb914961-sp2-x86-cht_65a62b8ef051bf93d0ccd78900fe8d6709d37a92.exe
-http://download.microsoft.com/download/4/0/4/40437ddb-cd41-4ea8-bba5-6795510822f1/WindowsServer2003-KB926140-v5-x86-CHT.exe
+http://download.microsoft.com/download/B/3/5/B35F8BE6-05E0-4A9B-9F93-6ACA3B85D9CE/WindowsServer2003-KB968930-x86-CHT.exe

@@ -1,2 +1,2 @@
 http://download.microsoft.com/download/d/c/c/dccd3e5b-aef9-4f61-bfc4-d973396282aa/WindowsXP-KB936929-SP3-x86-PTB.exe
-http://download.microsoft.com/download/a/f/3/af310d6a-a3bf-4d14-b691-28e5956d359c/WindowsXP-KB926140-v5-x86-PTB.exe
+http://download.microsoft.com/download/F/F/A/FFACBA08-260A-43E7-9596-8378C85469E2/WindowsXP-KB968930-x86-PTB.exe

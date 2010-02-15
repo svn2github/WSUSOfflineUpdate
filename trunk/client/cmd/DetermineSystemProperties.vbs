@@ -6,9 +6,9 @@ Private Const strRegKeyIE                     = "HKLM\Software\Microsoft\Interne
 Private Const strRegKeyMDAC                   = "HKLM\Software\Microsoft\DataAccess\"
 Private Const strRegKeyDirectX                = "HKLM\Software\Microsoft\DirectX\"
 Private Const strRegKeyDotNet35               = "HKLM\Software\Microsoft\NET Framework Setup\NDP\v3.5\"
-Private Const strRegKeyPowerShell1            = "HKLM\Software\Microsoft\PowerShell\1\"
+Private Const strRegKeyPowerShell             = "HKLM\Software\Microsoft\PowerShell\1\PowerShellEngine\"
 Private Const strRegValVersion                = "Version"
-Private Const strRegValInstall                = "Install"
+Private Const strRegValPShVersion             = "PowerShellVersion"
 Private Const strRegKeyOfficePrefix_Mx86      = "HKLM\Software\Microsoft\Office\"
 Private Const strRegKeyOfficePrefix_Mx64      = "HKLM\Software\Wow6432Node\Microsoft\Office\"
 Private Const strRegKeyOfficePrefix_User      = "HKCU\Software\Microsoft\Office\"
@@ -298,8 +298,8 @@ WriteDXName2File objCmdFile, RegRead(wshShell, strRegKeyDirectX & strRegValVersi
 ' Determine Microsoft .NET Framework 3.5 SP1 installation state
 WriteVersion2File objCmdFile, "DOTNET_VERSION", RegRead(wshShell, strRegKeyDotNet35 & strRegValVersion)
 
-' Determine Windows PowerShell 1.0 installation state
-objCmdFile.WriteLine("set PSH_INSTALLED=" & RegRead(wshShell, strRegKeyPowerShell1 & strRegValInstall))
+' Determine Windows PowerShell version
+WriteVersion2File objCmdFile, "PSH_VERSION", RegRead(wshShell, strRegKeyPowerShell & strRegValPShVersion)
 
 ' Determine Remote Desktop Connection (Terminal Services Client) version
 If objFileSystem.FileExists(strRDPFileName) Then

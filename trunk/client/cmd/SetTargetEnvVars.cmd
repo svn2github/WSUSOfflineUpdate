@@ -30,6 +30,10 @@ set DOTNET_VERSION_TARGET_MINOR=5
 set DOTNET_VERSION_TARGET_BUILD=30729
 set DOTNET_VERSION_TARGET_REVISION=1
 
+set PSH_VERSION_TARGET_MAJOR=2
+set PSH_VERSION_TARGET_MINOR=0
+set PSH_TARGET_ID=968930
+
 if %OS_VERSION_MAJOR% LSS 5 goto SetOfficeName
 if %OS_VERSION_MAJOR% GTR 6 goto SetOfficeName
 if %OS_VERSION_MAJOR% EQU 5 (
@@ -62,10 +66,6 @@ set MSI_TARGET_ID=942288
 if /i "%1"=="/instie8" (set IE_VERSION_TARGET_MAJOR=8) else (  
   if /i "%1"=="/instie7" (set IE_VERSION_TARGET_MAJOR=7) else (set IE_VERSION_TARGET_MAJOR=6)  
 )  
-for %%i in (chs cht deu esn fra ita jpn kor ptb rus) do (
-  if "%%i"=="%OS_LANGUAGE%" set PSH_TARGET_ID=926140
-)
-if "%PSH_TARGET_ID%"=="" set PSH_TARGET_ID=926139
 goto SetOfficeName
 
 :Windows5.2
@@ -79,12 +79,6 @@ set MSI_TARGET_ID=942288
 if /i "%1"=="/instie8" (set IE_VERSION_TARGET_MAJOR=8) else (  
   if /i "%1"=="/instie7" (set IE_VERSION_TARGET_MAJOR=7) else (set IE_VERSION_TARGET_MAJOR=6)  
 )  
-if /i "%OS_ARCHITECTURE%"=="x86" (
-  for %%i in (chs cht deu esn fra ita jpn kor ptb rus) do (
-    if "%%i"=="%OS_LANGUAGE%" set PSH_TARGET_ID=926140
-  )
-)
-if "%PSH_TARGET_ID%"=="" set PSH_TARGET_ID=926139
 goto SetOfficeName
 
 :Windows6.0
@@ -94,7 +88,6 @@ set MSI_VERSION_TARGET_MAJOR=4
 set MSI_VERSION_TARGET_MINOR=0
 set MSI_TARGET_ID=942288
 if /i "%1"=="/instie8" (set IE_VERSION_TARGET_MAJOR=8) else (set IE_VERSION_TARGET_MAJOR=7)
-set PSH_TARGET_ID=928439
 goto Windows%OS_VERSION_MAJOR%.%OS_VERSION_MINOR%.%OS_SP_VERSION_MAJOR%
 :Windows6.0.
 :Windows6.0.0
@@ -115,7 +108,6 @@ set MSI_VERSION_TARGET_MAJOR=5
 set MSI_VERSION_TARGET_MINOR=0
 set MSI_TARGET_ID=942288
 set IE_VERSION_TARGET_MAJOR=8
-set PSH_TARGET_ID=928439
 goto SetOfficeName
 
 :SetOfficeName

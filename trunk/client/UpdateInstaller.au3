@@ -5,44 +5,45 @@
 #include <GUIConstants.au3>
 #RequireAdmin
 
-Dim Const $caption                  = "WSUS Offline Update 6.4 - Installer"
+Dim Const $caption                    = "WSUS Offline Update 6.4 - Installer"
 
 ; Registry constants
-Dim Const $reg_key_wsh_hklm         = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings"
-Dim Const $reg_key_wsh_hkcu         = "HKEY_CURRENT_USER\Software\Microsoft\Windows Script Host\Settings"
-Dim Const $reg_key_ie               = "HKEY_LOCAL_MACHINE\Software\Microsoft\Internet Explorer"
-Dim Const $reg_key_dotnet35         = "HKEY_LOCAL_MACHINE\Software\Microsoft\NET Framework Setup\NDP\v3.5"
-Dim Const $reg_key_powershell1      = "HKEY_LOCAL_MACHINE\Software\Microsoft\PowerShell\1"
-Dim Const $reg_key_fontdpi          = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontDPI"
-Dim Const $reg_key_windowmetrics    = "HKEY_CURRENT_USER\Control Panel\Desktop\WindowMetrics"
-Dim Const $reg_val_enabled          = "Enabled"
-Dim Const $reg_val_version          = "Version"
-Dim Const $reg_val_install          = "Install"
-Dim Const $reg_val_logpixels        = "LogPixels"
-Dim Const $reg_val_applieddpi       = "AppliedDPI"
+Dim Const $reg_key_wsh_hklm           = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings"
+Dim Const $reg_key_wsh_hkcu           = "HKEY_CURRENT_USER\Software\Microsoft\Windows Script Host\Settings"
+Dim Const $reg_key_ie                 = "HKEY_LOCAL_MACHINE\Software\Microsoft\Internet Explorer"
+Dim Const $reg_key_dotnet35           = "HKEY_LOCAL_MACHINE\Software\Microsoft\NET Framework Setup\NDP\v3.5"
+Dim Const $reg_key_powershell         = "HKEY_LOCAL_MACHINE\Software\Microsoft\PowerShell\1\PowerShellEngine"
+Dim Const $reg_key_fontdpi            = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontDPI"
+Dim Const $reg_key_windowmetrics      = "HKEY_CURRENT_USER\Control Panel\Desktop\WindowMetrics"
+Dim Const $reg_val_enabled            = "Enabled"
+Dim Const $reg_val_version            = "Version"
+Dim Const $reg_val_pshversion         = "PowerShellVersion"
+Dim Const $reg_val_logpixels          = "LogPixels"
+Dim Const $reg_val_applieddpi         = "AppliedDPI"
 
 ; Defaults
-Dim Const $default_logpixels        = 96
-Dim Const $target_version_dotnet35  = "3.5.30729.01"
+Dim Const $default_logpixels          = 96
+Dim Const $target_version_dotnet      = "3.5.30729.01"
+Dim Const $target_version_powershell  = "2.0"
 
 ; INI file constants
-Dim Const $ini_section_installation = "Installation"
-Dim Const $ini_section_control      = "Control"
-Dim Const $ini_section_messaging    = "Messaging"
-Dim Const $ini_value_backup         = "backup"
-Dim Const $ini_value_ie7            = "instie7"
-Dim Const $ini_value_ie8            = "instie8"
-Dim Const $ini_value_dotnet         = "instdotnet"
-Dim Const $ini_value_powershell     = "instpsh"
-Dim Const $ini_value_converters     = "instofccnvs"
-Dim Const $ini_value_autoreboot     = "autoreboot"
-Dim Const $ini_value_shutdown       = "shutdown"
-Dim Const $ini_value_showlog        = "showlog"
-Dim Const $enabled                  = "Enabled"
-Dim Const $disabled                 = "Disabled"
+Dim Const $ini_section_installation   = "Installation"
+Dim Const $ini_section_control        = "Control"
+Dim Const $ini_section_messaging      = "Messaging"
+Dim Const $ini_value_backup           = "backup"
+Dim Const $ini_value_ie7              = "instie7"
+Dim Const $ini_value_ie8              = "instie8"
+Dim Const $ini_value_dotnet           = "instdotnet"
+Dim Const $ini_value_powershell       = "instpsh"
+Dim Const $ini_value_converters       = "instofccnvs"
+Dim Const $ini_value_autoreboot       = "autoreboot"
+Dim Const $ini_value_shutdown         = "shutdown"
+Dim Const $ini_value_showlog          = "showlog"
+Dim Const $enabled                    = "Enabled"
+Dim Const $disabled                   = "Disabled"
 
 ; Paths
-Dim Const $path_rel_instdotnet      = "\dotnet\dotnetfx35.exe"
+Dim Const $path_rel_instdotnet        = "\dotnet\dotnetfx35.exe"
 
 Dim $dlgheight, $txtwidth, $txtheight, $txtxoffset, $btnwidth, $btnheight
 
@@ -92,8 +93,8 @@ Func DotNet35InstPresent()
   Return FileExists(@ScriptDir & $path_rel_instdotnet)
 EndFunc
 
-Func PowerShellInstalled()
-  Return RegRead($reg_key_powershell1, $reg_val_install) = "1"
+Func PowerShellVersion()
+  Return RegRead($reg_key_powershell, $reg_val_pshversion)
 EndFunc
 
 Func CalcGUISize()
@@ -218,7 +219,7 @@ If ShowGUIInGerman() Then
 Else
   $dotnet = GUICtrlCreateCheckbox("Install .NET Framework 3.5 SP1", $txtxoffset, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (DotNet35Version() = $target_version_dotnet35) OR (NOT DotNet35InstPresent()) ) Then
+If ( (@OSVersion = "WIN_2000") OR (DotNet35Version() = $target_version_dotnet) OR (NOT DotNet35InstPresent()) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else  
@@ -229,16 +230,16 @@ Else
   EndIf
 EndIf
 
-; Install Windows PowerShell 1.0
+; Install Windows PowerShell 2.0
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
-  $powershell = GUICtrlCreateCheckbox("PowerShell 1.0 installieren", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+  $powershell = GUICtrlCreateCheckbox("PowerShell 2.0 installieren", $txtxoffset, $txtypos, $txtwidth, $txtheight)
 Else
-  $powershell = GUICtrlCreateCheckbox("Install PowerShell 1.0", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+  $powershell = GUICtrlCreateCheckbox("Install PowerShell 2.0", $txtxoffset, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_2008") _
-  OR ( (DotNet35Version() <> $target_version_dotnet35) AND (BitAND(GUICtrlRead($dotnet), $GUI_CHECKED) <> $GUI_CHECKED) ) _
-  OR (PowerShellInstalled()) ) Then
+If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
+  OR ( (DotNet35Version() <> $target_version_dotnet) AND (BitAND(GUICtrlRead($dotnet), $GUI_CHECKED) <> $GUI_CHECKED) ) _
+  OR (PowerShellVersion() = $target_version_powershell) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else  
@@ -422,7 +423,7 @@ While 1
 
     Case $dotnet             ; .NET check box toggled
       If ( (BitAND(GUICtrlRead($dotnet), $GUI_CHECKED) = $GUI_CHECKED) _
-       AND (@OSVersion <> "WIN_2008") AND (NOT PowerShellInstalled()) ) Then  
+       AND (@OSVersion <> "WIN_7") AND (@OSVersion <> "WIN_2008R2") AND (PowerShellVersion() <> $target_version_powershell) ) Then  
         GUICtrlSetState($powershell, $GUI_ENABLE)
       Else
         GUICtrlSetState($powershell, $GUI_UNCHECKED)

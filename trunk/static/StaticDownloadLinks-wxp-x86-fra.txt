@@ -1,2 +1,2 @@
 http://download.microsoft.com/download/c/3/e/c3ea9fa6-d8e6-4832-8795-06dd27be9bc9/WindowsXP-KB936929-SP3-x86-FRA.exe
-http://download.microsoft.com/download/4/3/a/43a71d13-71bf-4c81-9327-b0d7f6c328bc/WindowsXP-KB926140-v5-x86-FRA.exe
+http://download.microsoft.com/download/E/F/C/EFCF6616-2240-4464-865A-77C91E154614/WindowsXP-KB968930-x86-FRA.exe

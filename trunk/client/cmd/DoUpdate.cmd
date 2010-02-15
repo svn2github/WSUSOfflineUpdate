@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.4
+set WSUSUPDATE_VERSION=6.4+ (r61)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -480,22 +480,24 @@ if exist %DOTNET_FILENAME% (
 set REBOOT_REQUIRED=1
 :SkipDotNetInst
 
-rem *** Install Windows PowerShell 1.0 ***
+rem *** Install Windows PowerShell 2.0 ***
 if "%OS_NAME%"=="w2k" goto SkipPShInst
 if "%INSTALL_PSH%" NEQ "/instpsh" goto SkipPShInst
-echo Checking Windows PowerShell 1.0 installation state...
-if "%PSH_INSTALLED%"=="1" goto SkipPShInst
-if "%PSH_TARGET_ID%"=="" goto SkipPShInst
+echo Checking Windows PowerShell 2.0 installation state...
+if %PSH_VERSION_MAJOR% LSS %PSH_VERSION_TARGET_MAJOR% goto InstallPSh
+if %PSH_VERSION_MAJOR% GTR %PSH_VERSION_TARGET_MAJOR% goto SkipPShInst
+if %PSH_VERSION_MINOR% LSS %PSH_VERSION_TARGET_MINOR% goto InstallPSh
+if %PSH_VERSION_MINOR% GEQ %PSH_VERSION_TARGET_MINOR% goto SkipPShInst
 :InstallPSh
 echo %PSH_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
-  echo Installing Windows PowerShell 1.0...
+  echo Installing Windows PowerShell 2.0...
   call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% /errorsaswarnings
 ) else (
-  echo Warning: Windows PowerShell 1.0 installation file not found.
-  echo %DATE% %TIME% - Warning: Windows PowerShell 1.0 installation file not found >>%UPDATE_LOGFILE%
+  echo Warning: Windows PowerShell 2.0 installation file not found.
+  echo %DATE% %TIME% - Warning: Windows PowerShell 2.0 installation file not found >>%UPDATE_LOGFILE%
 )
 :SkipPShInst
 
@@ -550,6 +552,7 @@ if "%OFFICE_COMPATIBILITY_PACK%" NEQ "1" (
   if exist ..\ofc\%OFFICE_LANGUAGE%\FileFormatConverters.exe (
     echo Installing Office 2007 Compatibility Pack...
     call InstallOfficeUpdate.cmd ..\ofc\%OFFICE_LANGUAGE%\FileFormatConverters.exe
+    if exist ..\ofc\glb\office2003-KB974882-FullFile-ENU.exe call InstallOfficeUpdate.cmd ..\ofc\glb\office2003-KB974882-FullFile-ENU.exe
   ) else (
     echo Warning: File ..\ofc\%OFFICE_LANGUAGE%\FileFormatConverters.exe not found. 
     echo %DATE% %TIME% - Warning: File ..\ofc\%OFFICE_LANGUAGE%\FileFormatConverters.exe not found >>%UPDATE_LOGFILE%

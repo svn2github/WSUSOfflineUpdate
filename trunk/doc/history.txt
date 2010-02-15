@@ -329,3 +329,6 @@ Version 6.4 -- 12.02.10
 - Fix: Removed o2k remainders in xslt directory
 - Fix: DownloadUpdates.sh script contained obsolete reference to ../static/StaticDownloadLink-ifadmin.txt (Thanks to "Medvedko")
 --------------------------------------------------------------------------------
+Version 6.5 -- ??.??.10
+- Optional installation of Windows PowerShell 2.0 on Windows XP, Server 2003 and Vista (x86/x64) systems
+- Fix: Security Update for Microsoft Office 2003 File Converter Pack (KB974882) could have been missed (Thanks to "Denniss")
