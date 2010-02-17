@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.4+ (r62)
+set WSUSUPDATE_VERSION=6.4+ (r63)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -20,12 +20,13 @@ echo %DATE% %TIME% - Info: Starting WSUS offline update (v. %WSUSUPDATE_VERSION%
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/nobackup /instie7 /instie8 /instdotnet /instpsh /instofccnvs /autoreboot /shutdown /showlog /all /excludestatics) do (
+for %%i in (/nobackup /instie7 /instie8 /updatetsc /instdotnet /instpsh /instofccnvs /autoreboot /shutdown /showlog /all /excludestatics) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected >>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/nobackup" set BACKUP_MODE=/nobackup
 if /i "%1"=="/instie7" set INSTALL_IE=/instie7
 if /i "%1"=="/instie8" set INSTALL_IE=/instie8
+if /i "%1"=="/updatetsc" set UPDATE_TSC=/updatetsc
 if /i "%1"=="/instdotnet" set INSTALL_DOTNET=/instdotnet
 if /i "%1"=="/instpsh" set INSTALL_PSH=/instpsh
 if /i "%1"=="/instofccnvs" set INSTALL_CONVERTERS=/instofccnvs
@@ -198,8 +199,8 @@ call ListUpdatesToInstall.cmd /excludestatics
 if errorlevel 1 goto ListError
 if not exist "%TEMP%\UpdatesToInstall.txt" (
   if "%OFFICE_NAME%"=="" goto NoUpdates
-  echo Warning: Windows Service Pack installation file not found.
-  echo %DATE% %TIME% - Warning: Windows Service Pack installation file not found >>%UPDATE_LOGFILE%
+  echo Warning: Windows Service Pack installation file ^(kb%OS_SP_TARGET_ID%^) not found.
+  echo %DATE% %TIME% - Warning: Windows Service Pack installation file ^(kb%OS_SP_TARGET_ID%^) not found >>%UPDATE_LOGFILE%
   goto SkipSPInst
 )
 echo Installing most recent Windows Service Pack...
@@ -453,21 +454,22 @@ goto SkipIEInst
 rem *** Install most recent Windows Terminal Services Client ***
 if "%OS_NAME%"=="w2k" goto SkipTSCInst
 if "%OS_NAME%"=="w61" goto SkipTSCInst
+if "%UPDATE_TSC%" NEQ "/updatetsc" goto SkipTSCInst
 echo Checking Windows Terminal Services Client version...
-if %RDP_VERSION_MAJOR% LSS %RDP_VERSION_TARGET_MAJOR% goto InstallTSC
-if %RDP_VERSION_MAJOR% GTR %RDP_VERSION_TARGET_MAJOR% goto SkipTSCInst
-if %RDP_VERSION_MINOR% LSS %RDP_VERSION_TARGET_MINOR% goto InstallTSC
-if %RDP_VERSION_MINOR% GEQ %RDP_VERSION_TARGET_MINOR% goto SkipTSCInst
+if %TSC_VERSION_MAJOR% LSS %TSC_VERSION_TARGET_MAJOR% goto InstallTSC
+if %TSC_VERSION_MAJOR% GTR %TSC_VERSION_TARGET_MAJOR% goto SkipTSCInst
+if %TSC_VERSION_MINOR% LSS %TSC_VERSION_TARGET_MINOR% goto InstallTSC
+if %TSC_VERSION_MINOR% GEQ %TSC_VERSION_TARGET_MINOR% goto SkipTSCInst
 :InstallTSC
-echo %RDP_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
+echo %TSC_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing most recent Windows Terminal Services Client...
   call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% /errorsaswarnings
 ) else (
-  echo Warning: Windows Terminal Services Client installation file not found.
-  echo %DATE% %TIME% - Warning: Windows Terminal Services Client installation file not found >>%UPDATE_LOGFILE%
+  echo Warning: Windows Terminal Services Client installation file ^(kb%TSC_TARGET_ID%^) not found.
+  echo %DATE% %TIME% - Warning: Windows Terminal Services Client installation file ^(kb%TSC_TARGET_ID%^) not found >>%UPDATE_LOGFILE%
   goto SkipTSCInst
 )
 set REBOOT_REQUIRED=1
@@ -520,8 +522,8 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing Windows PowerShell 2.0...
   call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% /errorsaswarnings
 ) else (
-  echo Warning: Windows PowerShell 2.0 installation file not found.
-  echo %DATE% %TIME% - Warning: Windows PowerShell 2.0 installation file not found >>%UPDATE_LOGFILE%
+  echo Warning: Windows PowerShell 2.0 installation file ^(kb%PSH_TARGET_ID%^) not found.
+  echo %DATE% %TIME% - Warning: Windows PowerShell 2.0 installation file ^(kb%PSH_TARGET_ID%^) not found >>%UPDATE_LOGFILE%
   goto SkipPShInst
 )
 set REBOOT_REQUIRED=1

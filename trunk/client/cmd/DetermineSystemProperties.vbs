@@ -29,7 +29,7 @@ Private Const strBuildNumbers_O2k7            = "4518,4518,4518,4518,4518,4518;6
 Private Const idxBuild                        = 2
 
 Dim wshShell, objFileSystem, objCmdFile, objWMIService, objWMIQuery, arrayOfficeNames, arrayOfficeVersions, arrayOfficeAppNames, arrayOfficeExeNames
-Dim strSystemFolder, strTempFolder, strWUAFileName, strMSIFileName, strWSHFileName, strRDPFileName, strWMPFileName, strCmdFileName, strOSVersion, strOfficeInstallPath, strOfficeExeVersion, strProduct, languageCode, i, j
+Dim strSystemFolder, strTempFolder, strWUAFileName, strMSIFileName, strWSHFileName, strTSCFileName, strWMPFileName, strCmdFileName, strOSVersion, strOfficeInstallPath, strOfficeExeVersion, strProduct, languageCode, i, j
 
 Private Function RegRead(objShell, strValueName)
   On Error Resume Next  'Turn error reporting off
@@ -241,7 +241,7 @@ strWUAFileName = strSystemFolder & "\wuaueng.dll"
 strMSIFileName = strSystemFolder & "\msi.dll"
 strWSHFileName = strSystemFolder & "\vbscript.dll"
 strWMPFileName = strSystemFolder & "\wmp.dll"
-strRDPFileName = strSystemFolder & "\mstsc.exe"
+strTSCFileName = strSystemFolder & "\mstsc.exe"
 strCmdFileName = strTempFolder & "\SetSystemEnvVars.cmd"
 
 Set objFileSystem = CreateObject("Scripting.FileSystemObject")
@@ -302,10 +302,10 @@ WriteVersion2File objCmdFile, "DOTNET_VERSION", RegRead(wshShell, strRegKeyDotNe
 WriteVersion2File objCmdFile, "PSH_VERSION", RegRead(wshShell, strRegKeyPowerShell & strRegValPShVersion)
 
 ' Determine Remote Desktop Connection (Terminal Services Client) version
-If objFileSystem.FileExists(strRDPFileName) Then
-  WriteVersion2File objCmdFile, "RDP_VERSION", objFileSystem.GetFileVersion(strRDPFileName)
+If objFileSystem.FileExists(strTSCFileName) Then
+  WriteVersion2File objCmdFile, "TSC_VERSION", objFileSystem.GetFileVersion(strTSCFileName)
 Else
-  WriteVersion2File objCmdFile, "RDP_VERSION", ""
+  WriteVersion2File objCmdFile, "TSC_VERSION", ""
 End If
 
 ' Determine Windows Media Player version

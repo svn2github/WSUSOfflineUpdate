@@ -33,6 +33,7 @@ Dim Const $ini_section_messaging      = "Messaging"
 Dim Const $ini_value_backup           = "backup"
 Dim Const $ini_value_ie7              = "instie7"
 Dim Const $ini_value_ie8              = "instie8"
+Dim Const $ini_value_tsc              = "updatetsc"
 Dim Const $ini_value_dotnet           = "instdotnet"
 Dim Const $ini_value_powershell       = "instpsh"
 Dim Const $ini_value_converters       = "instofccnvs"
@@ -47,7 +48,7 @@ Dim Const $path_rel_instdotnet        = "\dotnet\dotnetfx35.exe"
 
 Dim $dlgheight, $txtwidth, $txtheight, $txtxoffset, $btnwidth, $btnheight
 
-Dim $maindlg, $scriptdir, $netdrives, $i, $strpos, $inifilename, $backup, $ie7, $ie8, $dotnet, $powershell, $converters, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $txtypos
+Dim $maindlg, $scriptdir, $netdrives, $i, $strpos, $inifilename, $backup, $ie7, $ie8, $tsc, $dotnet, $powershell, $converters, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $txtypos
 
 Func ShowGUIInGerman()
   If ($CmdLine[0] > 0) Then
@@ -107,7 +108,7 @@ Func CalcGUISize()
   If ($reg_val = "") Then
     $reg_val = $default_logpixels
   EndIf
-  $dlgheight = 275 * $reg_val / $default_logpixels
+  $dlgheight = 295 * $reg_val / $default_logpixels
   $txtwidth = 240 * $reg_val / $default_logpixels
   $txtheight = 20 * $reg_val / $default_logpixels
   $txtxoffset = 10 * $reg_val / $default_logpixels
@@ -183,7 +184,7 @@ If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "W
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else  
-  If IniRead($inifilename, $ini_section_installation, $ini_value_ie7, $enabled) = $enabled Then
+  If IniRead($inifilename, $ini_section_installation, $ini_value_ie7, $disabled) = $enabled Then
     GUICtrlSetState(-1, $GUI_CHECKED)
   Else
     GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -201,7 +202,7 @@ If ( (@OSVersion = "WIN_2000") OR (IEVersion() = "8") ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else
-  If ( (IniRead($inifilename, $ini_section_installation, $ini_value_ie8, $disabled) = $enabled) AND (BitAND(GUICtrlRead($ie7), $GUI_CHECKED) <> $GUI_CHECKED) ) Then  
+  If ( (IniRead($inifilename, $ini_section_installation, $ini_value_ie8, $enabled) = $enabled) AND (BitAND(GUICtrlRead($ie7), $GUI_CHECKED) <> $GUI_CHECKED) ) Then  
     GUICtrlSetState(-1, $GUI_CHECKED)  
     GUICtrlSetState($ie7, $GUI_DISABLE)  
   Else  
@@ -210,6 +211,24 @@ Else
       GUICtrlSetState(-1, $GUI_DISABLE)  
     EndIf  
   EndIf  
+EndIf
+
+; Update Windows Terminal Services Client
+$txtypos = $txtypos + $txtheight
+If ShowGUIInGerman() Then
+  $tsc = GUICtrlCreateCheckbox("Terminal Services Client aktualisieren", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+Else
+  $tsc = GUICtrlCreateCheckbox("Update Terminal Services Client", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+EndIf
+If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+  GUICtrlSetState(-1, $GUI_DISABLE)
+Else  
+  If IniRead($inifilename, $ini_section_installation, $ini_value_tsc, $enabled) = $enabled Then
+    GUICtrlSetState(-1, $GUI_CHECKED)
+  Else
+    GUICtrlSetState(-1, $GUI_UNCHECKED)
+  EndIf
 EndIf
 
 ; Install .NET Framework 3.5 SP1
@@ -455,6 +474,9 @@ While 1
       EndIf  
       If BitAND(GUICtrlRead($ie8), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instie8"
+      EndIf
+      If BitAND(GUICtrlRead($tsc), $GUI_CHECKED) = $GUI_CHECKED Then
+        $options = $options & " /updatetsc"
       EndIf
       If BitAND(GUICtrlRead($dotnet), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instdotnet"
