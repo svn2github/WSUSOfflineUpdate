@@ -1,2 +1,3 @@
 http://download.microsoft.com/download/e/4/a/e4a9e704-eea9-452e-bef2-79f29cbe116e/WindowsXP-KB936929-SP3-x86-JPN.exe
+http://download.microsoft.com/download/5/5/7/557E16D5-C18B-431C-BD1A-50597E1178BE/WindowsXP-KB969084-x86-jpn.exe
 http://download.microsoft.com/download/8/6/1/861B32F3-C1D0-424D-8DE5-3ECB4AEE15C0/WindowsXP-KB968930-x86-JPN.exe

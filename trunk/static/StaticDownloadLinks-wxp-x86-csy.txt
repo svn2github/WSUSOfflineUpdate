@@ -1,2 +1,3 @@
 http://download.microsoft.com/download/5/0/4/5046394b-32df-4628-a300-64209a719db6/WindowsXP-KB936929-SP3-x86-CSY.exe
+http://download.microsoft.com/download/A/7/0/A70AF463-2641-4FA9-999D-53F6E6D78824/WindowsXP-KB969084-x86-csy.exe
 http://download.microsoft.com/download/4/3/C/43CA5981-5004-4097-9655-F7DBBD47E0CF/WindowsXP-KB968930-x86-CSY.exe

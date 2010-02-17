@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.4+ (r61)
+set WSUSUPDATE_VERSION=6.4+ (r62)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -292,6 +292,7 @@ for /F %%i in ('dir /B %WUA_FILENAME%') do (
 :SkipWUAInst
 
 rem *** Install Windows Installer ***
+if "%OS_NAME%"=="w61" goto SkipMSIInst
 echo Checking Windows Installer version...
 if %MSI_VERSION_MAJOR% LSS %MSI_VERSION_TARGET_MAJOR% goto InstallMSI
 if %MSI_VERSION_MAJOR% GTR %MSI_VERSION_TARGET_MAJOR% goto SkipMSIInst
@@ -449,6 +450,29 @@ goto SkipIEInst
 :IEw61
 :SkipIEInst
 
+rem *** Install most recent Windows Terminal Services Client ***
+if "%OS_NAME%"=="w2k" goto SkipTSCInst
+if "%OS_NAME%"=="w61" goto SkipTSCInst
+echo Checking Windows Terminal Services Client version...
+if %RDP_VERSION_MAJOR% LSS %RDP_VERSION_TARGET_MAJOR% goto InstallTSC
+if %RDP_VERSION_MAJOR% GTR %RDP_VERSION_TARGET_MAJOR% goto SkipTSCInst
+if %RDP_VERSION_MINOR% LSS %RDP_VERSION_TARGET_MINOR% goto InstallTSC
+if %RDP_VERSION_MINOR% GEQ %RDP_VERSION_TARGET_MINOR% goto SkipTSCInst
+:InstallTSC
+echo %RDP_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
+call ListUpdatesToInstall.cmd /excludestatics
+if errorlevel 1 goto ListError
+if exist "%TEMP%\UpdatesToInstall.txt" (
+  echo Installing most recent Windows Terminal Services Client...
+  call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% /errorsaswarnings
+) else (
+  echo Warning: Windows Terminal Services Client installation file not found.
+  echo %DATE% %TIME% - Warning: Windows Terminal Services Client installation file not found >>%UPDATE_LOGFILE%
+  goto SkipTSCInst
+)
+set REBOOT_REQUIRED=1
+:SkipTSCInst
+
 rem *** Install .NET Framework 3.5 SP1 ***
 if "%OS_NAME%"=="w2k" goto SkipDotNetInst
 if "%INSTALL_DOTNET%" NEQ "/instdotnet" goto SkipDotNetInst
@@ -498,7 +522,9 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
 ) else (
   echo Warning: Windows PowerShell 2.0 installation file not found.
   echo %DATE% %TIME% - Warning: Windows PowerShell 2.0 installation file not found >>%UPDATE_LOGFILE%
+  goto SkipPShInst
 )
+set REBOOT_REQUIRED=1
 :SkipPShInst
 
 if "%RECALL_REQUIRED%"=="1" goto Installed

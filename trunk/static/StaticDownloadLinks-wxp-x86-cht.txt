@@ -1,2 +1,3 @@
 http://download.microsoft.com/download/2/2/a/22a44f8b-2f1b-46a9-940a-cf4099fd1de9/WindowsXP-KB936929-SP3-x86-CHT.exe
+http://download.microsoft.com/download/5/8/E/58E5DF55-EAB4-404E-B3F5-BE9586C4163D/WindowsXP-KB969084-x86-cht.exe
 http://download.microsoft.com/download/5/8/C/58CFCB02-FDF4-4C21-89B0-20F4E902976D/WindowsXP-KB968930-x86-CHT.exe
