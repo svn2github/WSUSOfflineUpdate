@@ -3,7 +3,7 @@
 <xsl:output method="text" encoding="UTF-8"/>
 
 <xsl:template match="DLBINARY">
-  <xsl:if test="contains(., '2007') and not(contains(., 'Client') or contains(., 'client')) and contains(., '-x86-') and (contains(., '-glb') or contains(., '-GLB')) and contains(., '.exe')">
+  <xsl:if test="contains(., 'http://') and contains(., '2007') and not(contains(., 'Client') or contains(., 'client')) and contains(., '-x86-') and (contains(., '-glb') or contains(., '-GLB')) and contains(., '.exe')">
     <xsl:value-of select="."/>
     <xsl:text>&#10;</xsl:text>
   </xsl:if>

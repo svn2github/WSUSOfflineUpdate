@@ -5,19 +5,19 @@
 <xsl:template match="*">
   <xsl:choose>
     <xsl:when test="name()='FileLocation'">
-      <xsl:if test="(contains(@Url, 'windowsserver2003-') or contains(@Url, 'windowsxp-')) and contains(@Url, '-x64-') and contains(@Url, '-kor') and contains(@Url, '.exe')">
+      <xsl:if test="contains(@Url, 'http://') and (contains(@Url, 'windowsserver2003-') or contains(@Url, 'windowsxp-')) and contains(@Url, '-x64-') and contains(@Url, '-kor') and contains(@Url, '.exe')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>
-      <xsl:if test="contains(@Url, '/windowsmedia') and contains(@Url, '-x64-') and contains(@Url, '-kor') and contains(@Url, '.exe')">
+      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/windowsmedia') and contains(@Url, '-x64-') and contains(@Url, '-kor') and contains(@Url, '.exe')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>
-      <xsl:if test="contains(@Url, '/msxml6') and contains(@Url, '-kor-') and contains(@Url, '-amd64') and contains(@Url, '.exe')">
+      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/msxml6') and contains(@Url, '-kor-') and contains(@Url, '-amd64') and contains(@Url, '.exe')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>
-      <xsl:if test="contains(@Url, '/windowsxp') and contains(@Url, '-kb923789-') and contains(@Url, '-x86-') and contains(@Url, '-kor') and contains(@Url, '.exe')">
+      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/windowsxp') and contains(@Url, '-kb923789-') and contains(@Url, '-x86-') and contains(@Url, '-kor') and contains(@Url, '.exe')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>

@@ -3,11 +3,11 @@
 <xsl:output method="text" encoding="UTF-8"/>
 
 <xsl:template match="DLBINARY">
-  <xsl:if test="(contains(., 'XP-') or contains(., 'Xp-') or contains(., 'xp-')) and not(contains(., 'SP') or contains(., 'Sp') or contains(., 'sp')) and not(contains(., 'MUI') or contains(., 'Mui') or contains(., 'mui')) and (contains(., '-enu') or contains(., '-ENU')) and contains(., '.exe')">
+  <xsl:if test="contains(., 'http://') and (contains(., 'XP-') or contains(., 'Xp-') or contains(., 'xp-')) and not(contains(., 'SP') or contains(., 'Sp') or contains(., 'sp')) and not(contains(., 'MUI') or contains(., 'Mui') or contains(., 'mui')) and (contains(., '-enu') or contains(., '-ENU')) and contains(., '.exe')">
     <xsl:value-of select="."/>
     <xsl:text>&#10;</xsl:text>
   </xsl:if>
-  <xsl:if test="contains(., '2002-') and not(contains(., 'MUI') or contains(., 'Mui') or contains(., 'mui')) and (contains(., '-enu') or contains(., '-ENU')) and contains(., '.exe')">
+  <xsl:if test="contains(., 'http://') and contains(., '2002-') and not(contains(., 'MUI') or contains(., 'Mui') or contains(., 'mui')) and (contains(., '-enu') or contains(., '-ENU')) and contains(., '.exe')">
     <xsl:value-of select="."/>
     <xsl:text>&#10;</xsl:text>
   </xsl:if>

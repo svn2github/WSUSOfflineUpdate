@@ -3,11 +3,11 @@
 <xsl:output method="text" encoding="UTF-8"/>
 
 <xsl:template match="DLBINARY">
-  <xsl:if test="(contains(., 'xp-') or contains(., 'XP-')) and not(contains(., 'MUI') or contains(., 'Mui') or contains(., 'mui')) and (contains(., '-heb') or contains(., '-HEB')) and contains(., '.exe')">
+  <xsl:if test="contains(., 'http://') and (contains(., 'xp-') or contains(., 'XP-')) and not(contains(., 'MUI') or contains(., 'Mui') or contains(., 'mui')) and (contains(., '-heb') or contains(., '-HEB')) and contains(., '.exe')">
     <xsl:value-of select="."/>
     <xsl:text>&#10;</xsl:text>
   </xsl:if>
-  <xsl:if test="contains(., '2002-') and not(contains(., 'MUI') or contains(., 'Mui') or contains(., 'mui')) and (contains(., '-heb') or contains(., '-HEB')) and contains(., '.exe')">
+  <xsl:if test="contains(., 'http://') and contains(., '2002-') and not(contains(., 'MUI') or contains(., 'Mui') or contains(., 'mui')) and (contains(., '-heb') or contains(., '-HEB')) and contains(., '.exe')">
     <xsl:value-of select="."/>
     <xsl:text>&#10;</xsl:text>
   </xsl:if>

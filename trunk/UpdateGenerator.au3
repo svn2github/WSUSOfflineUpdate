@@ -107,7 +107,6 @@ Dim $w61_glb, $w61_x64_glb                                        ; Windows 7 / 
 
 Dim $dlgheight, $groupwidth, $groupheight, $txtwidth, $txtheight, $btnwidth, $btnheight
 Dim $txtgrpyoffset, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
-Dim $first_download_run
 
 Func ShowGUIInGerman()
   If ($CmdLine[0] > 0) Then
@@ -656,7 +655,7 @@ Dim $result = ""
   If BitAND(GUICtrlRead($chkbox_excludesp), $GUI_CHECKED) = $GUI_CHECKED Then
     $result = $result & " /excludesp"
   EndIf
-  If ( ($first_download_run) AND (BitAND(GUICtrlRead($chkbox_dotnet), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+  If BitAND(GUICtrlRead($chkbox_dotnet), $GUI_CHECKED) = $GUI_CHECKED Then
     $result = $result & " /includedotnet"
   EndIf
   If BitAND(GUICtrlRead($chkbox_cleanupdownloads), $GUI_CHECKED) <> $GUI_CHECKED Then
@@ -755,7 +754,6 @@ Dim $result
   EndIf
   WinSetTitle($maindlg, $maindlg, $title)
   EnableGUI()
-  $first_download_run = False
   Return $result
 EndFunc
 
@@ -2757,7 +2755,6 @@ While 1
       If IniRead($inifilename, $ini_section_misc, $misc_token_minimize, $disabled) = $enabled Then
         WinSetState($maindlg, $maindlg, @SW_MINIMIZE)
       EndIf
-      $first_download_run = True
 
 ;  Global
       If BitAND(GUICtrlRead($w60_glb), $GUI_CHECKED) = $GUI_CHECKED Then

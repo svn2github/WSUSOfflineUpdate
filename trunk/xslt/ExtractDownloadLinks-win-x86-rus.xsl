@@ -5,47 +5,47 @@
 <xsl:template match="*">
   <xsl:choose>
     <xsl:when test="name()='FileLocation'">
-      <xsl:if test="contains(@Url, '/windows-') and contains(@Url, '-x86-') and contains(@Url, '-rus') and contains(@Url, '.exe')">
+      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/windows-') and contains(@Url, '-x86-') and contains(@Url, '-rus') and contains(@Url, '.exe')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>
-      <xsl:if test="contains(@Url, '/ie6') and contains(@Url, '-x86-') and contains(@Url, '-rus') and contains(@Url, '.exe')">
+      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/ie6') and contains(@Url, '-x86-') and contains(@Url, '-rus') and contains(@Url, '.exe')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>
-      <xsl:if test="contains(@Url, '/oe6') and contains(@Url, '-x86-') and contains(@Url, '-rus') and contains(@Url, '.exe')">
+      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/oe6') and contains(@Url, '-x86-') and contains(@Url, '-rus') and contains(@Url, '.exe')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>
-      <xsl:if test="contains(@Url, '/directx') and contains(@Url, '-x86-') and contains(@Url, '-rus') and contains(@Url, '.exe')">
+      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/directx') and contains(@Url, '-x86-') and contains(@Url, '-rus') and contains(@Url, '.exe')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>
-      <xsl:if test="contains(@Url, '/mdac') and contains(@Url, '-x86-') and contains(@Url, '-rus') and contains(@Url, '.exe')">
+      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/mdac') and contains(@Url, '-x86-') and contains(@Url, '-rus') and contains(@Url, '.exe')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>
-      <xsl:if test="contains(@Url, '/windowsmedia') and contains(@Url, '-x86-') and contains(@Url, '-rus') and contains(@Url, '.exe')">
+      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/windowsmedia') and contains(@Url, '-x86-') and contains(@Url, '-rus') and contains(@Url, '.exe')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>
-      <xsl:if test="contains(@Url, '/msxml4') and contains(@Url, '-rus') and contains(@Url, '.exe')">
+      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/msxml4') and contains(@Url, '-rus') and contains(@Url, '.exe')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>
-      <xsl:if test="contains(@Url, '/msxml6') and contains(@Url, '-rus-') and contains(@Url, '-x86') and contains(@Url, '.exe')">
+      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/msxml6') and contains(@Url, '-rus-') and contains(@Url, '-x86') and contains(@Url, '.exe')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>
-      <xsl:if test="contains(@Url, '/ndp') and contains(@Url, '-x86-') and contains(@Url, '-rus') and contains(@Url, '.exe')">
+      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/ndp') and contains(@Url, '-x86-') and contains(@Url, '-rus') and contains(@Url, '.exe')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>
-      <xsl:if test="contains(@Url, '/stepbystepinteractivetraining') and contains(@Url, '-x86-') and contains(@Url, '-rus') and contains(@Url, '.exe')">
+      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/stepbystepinteractivetraining') and contains(@Url, '-x86-') and contains(@Url, '-rus') and contains(@Url, '.exe')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>
-      <xsl:if test="contains(@Url, '/windowsrightsmanagementservices') and contains(@Url, '-rus-') and contains(@Url, '-x86') and contains(@Url, '.exe')">
+      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/windowsrightsmanagementservices') and contains(@Url, '-rus-') and contains(@Url, '-x86') and contains(@Url, '.exe')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>

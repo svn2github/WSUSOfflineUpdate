@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.4+ (r63)
+set WSUSUPDATE_VERSION=6.4+ (r64)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -85,15 +85,6 @@ if exist ..\client\msi\nul (
   )
   call ..\client\cmd\SafeRmDir.cmd ..\client\msi
 )
-for %%i in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (
-  dir /B ..\client\o2k7\%%i\compatibilitypacksp1-kb940289-*.exe >nul 2>&1
-  if not errorlevel 1 (
-    for /F %%j in ('dir /B ..\client\o2k7\%%i\compatibilitypacksp1-kb940289-*.exe') do (
-      if not exist ..\client\ofc\%%i\nul md ..\client\ofc\%%i
-      move /Y ..\client\o2k7\%%i\%%j ..\client\ofc\%%i >nul
-    )
-  )
-)
 if exist ..\client\static\StaticUpdateIds-o2k7.txt (
   if exist ..\client\static\StaticUpdateIds-o2k7-x86.txt del ..\client\static\StaticUpdateIds-o2k7-x86.txt
   ren ..\client\static\StaticUpdateIds-o2k7.txt StaticUpdateIds-o2k7-x86.txt
@@ -129,22 +120,29 @@ del /Q ..\xslt\*o2k-*.* >nul 2>&1
 if exist ..\xslt\ExtractExpiredIds-o2k.xsl del ..\xslt\ExtractExpiredIds-o2k.xsl
 if exist ..\xslt\ExtractValidIds-o2k.xsl del ..\xslt\ExtractValidIds-o2k.xsl
 if exist ..\static\StaticDownloadLink-unzip.txt del ..\static\StaticDownloadLink-unzip.txt
-if exist ..\client\win\glb\ndp*.* (
-  if not exist ..\client\dotnet\glb\nul md ..\client\dotnet\glb
-  move /Y ..\client\win\glb\ndp*.* ..\client\dotnet\glb >nul
-  if exist ..\fciv\sha1-win-glb.xml del ..\fciv\sha1-win-glb.xml 
-)
-if exist ..\client\w2k3-x64\glb\ndp*.* (
-  if not exist ..\client\dotnet\glb\nul md ..\client\dotnet\glb
-  move /Y ..\client\w2k3-x64\glb\ndp*.* ..\client\dotnet\glb >nul
-  if exist ..\fciv\sha1-w2k3-x64-glb.xml del ..\fciv\sha1-w2k3-x64-glb.xml 
-)
 if exist ..\client\o2k3\glb\office2003-KB974882-FullFile-ENU.exe (
   if not exist ..\client\ofc\glb\nul md ..\client\ofc\glb
   move /Y ..\client\o2k3\glb\office2003-KB974882-FullFile-ENU.exe ..\client\ofc\glb >nul
   if exist ..\fciv\sha1-o2k3-glb.xml del ..\fciv\sha1-o2k3-glb.xml 
   if exist ..\fciv\sha1-ofc-glb.xml del ..\fciv\sha1-ofc-glb.xml 
 )
+if exist ..\client\win\glb\ndp*.* (
+  if not exist ..\client\dotnet\glb\nul md ..\client\dotnet\glb
+  move /Y ..\client\win\glb\ndp*.* ..\client\dotnet\glb >nul
+  if exist ..\fciv\sha1-win-glb.xml del ..\fciv\sha1-win-glb.xml 
+)
+if exist ..\client\w2k3-x64\glb\ndp*.* (
+  if not exist ..\client\dotnet\glb-x64\nul md ..\client\dotnet\glb-x64
+  move /Y ..\client\w2k3-x64\glb\ndp*.* ..\client\dotnet\glb-x64 >nul
+  if exist ..\fciv\sha1-w2k3-x64-glb.xml del ..\fciv\sha1-w2k3-x64-glb.xml 
+)
+if exist ..\xslt\ExtractDownloadLinks-dotnet-glb.xsl del ..\xslt\ExtractDownloadLinks-dotnet-glb.xsl
+if exist ..\client\dotnet\glb\*-x64_*.* (
+  if not exist ..\client\dotnet\x64-glb\nul md ..\client\dotnet\x64-glb
+  move /Y ..\client\dotnet\glb\*-x64_*.* ..\client\dotnet\x64-glb >nul
+  if exist ..\fciv\sha1-dotnet-glb.xml del ..\fciv\sha1-dotnet-glb.xml 
+)
+if exist ..\client\dotnet\glb\nul move /Y ..\client\dotnet\glb ..\client\dotnet\x86-glb >nul
 
 rem *** Determine state of automatic daylight time setting ***
 echo Determining state of automatic daylight time setting...
@@ -258,7 +256,6 @@ rem *** Extract Windows Update Agent catalog file wuredist.xml ***
 if exist ..\client\wsus\wuredist.xml del ..\client\wsus\wuredist.xml
 if not exist ..\bin\extract.exe goto NoExtract
 ..\bin\extract.exe /L ..\client\wsus ..\client\wsus\wuredist.cab wuredist.xml >nul
-del ..\client\wsus\wuredist.cab
 
 rem *** Determine update urls for Windows Update Agent ***
 echo Determining update urls for Windows Update Agent...
@@ -291,7 +288,7 @@ echo Downloading/validating installation files for .NET Framework 3.5 SP1...
 %WGET_PATH% -N -i ..\static\StaticDownloadLink-dotnet.txt -P ..\client\dotnet
 if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded/validated installation files for .NET Framework 3.5 SP1 >>%DOWNLOAD_LOGFILE%
-call :DownloadCore dotnet glb
+call :DownloadCore dotnet %TARGET_ARCHITECTURE%-glb
 if errorlevel 1 goto Error
 :SkipDotNet
 

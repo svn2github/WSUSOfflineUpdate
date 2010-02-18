@@ -1,3 +1,4 @@
+x86-glb\
 ofc\
 o2k\
 oxp\
@@ -12,3 +13,4 @@ win\
 .au3
 invcif.exe
 invcm.exe
+wuredist.cab

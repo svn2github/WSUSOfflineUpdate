@@ -76,7 +76,7 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
         call ListUpdateFile.cmd %%i ..\%%k\%%l
       )
     )
-    call ListUpdateFile.cmd ndp*%%i*-%OS_ARCHITECTURE% ..\dotnet\glb /searchleftmost
+    call ListUpdateFile.cmd ndp*%%i*-%OS_ARCHITECTURE% ..\dotnet\%OS_ARCHITECTURE%-glb /searchleftmost
     for %%k in (%OFFICE_NAME%-%OS_ARCHITECTURE% %OFFICE_NAME% ofc oxp o2k3 o2k7 o2k7-x64) do (
       for %%l in (%OFFICE_LANGUAGE% glb) do (
         call ListUpdateFile.cmd %%i ..\%%k\%%l

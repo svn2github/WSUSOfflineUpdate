@@ -8,6 +8,7 @@ w2k3\
 w60\
 w61\
 win\
+x86-glb\
 w2k3-x64\
 w60-x64\
 w61-x64\
@@ -15,3 +16,4 @@ ndp*-x86
 .au3
 invcif.exe
 invcm.exe
+wuredist.cab

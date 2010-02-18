@@ -9,6 +9,7 @@ w2k3\
 w60\
 w61\
 win\
+x86-glb\
 o2k7-x64\
 w2k3-x64\
 w61-x64\
@@ -17,3 +18,4 @@ w61-x64\
 reg.exe
 invcif.exe
 invcm.exe
+wuredist.cab

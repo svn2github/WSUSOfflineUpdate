@@ -3,7 +3,7 @@
 <xsl:output method="text" encoding="UTF-8"/>
 
 <xsl:template match="DLBINARY">
-  <xsl:if test="contains(., '2003') and not(contains(., 'MUI') or contains(., 'Mui') or contains(., 'mui')) and (contains(., '-kor') or contains(., '-KOR')) and contains(., '.exe')">
+  <xsl:if test="contains(., 'http://') and contains(., '2003') and not(contains(., 'MUI') or contains(., 'Mui') or contains(., 'mui')) and (contains(., '-kor') or contains(., '-KOR')) and contains(., '.exe')">
     <xsl:value-of select="."/>
     <xsl:text>&#10;</xsl:text>
   </xsl:if>

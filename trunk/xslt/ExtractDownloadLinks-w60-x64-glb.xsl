@@ -5,11 +5,11 @@
 <xsl:template match="*">
   <xsl:choose>
     <xsl:when test="name()='FileLocation'">
-      <xsl:if test="contains(@Url, '/windows6.0') and contains(@Url, '-x64') and not(contains(@Url, 'beta')) and not(contains(@Url, '-rc')) and contains(@Url, '.cab')">
+      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/windows6.0') and contains(@Url, '-x64') and not(contains(@Url, 'beta')) and not(contains(@Url, '-rc')) and contains(@Url, '.cab')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>
-      <xsl:if test="contains(@Url, '/ie8') and contains(@Url, 'windows6.0') and contains(@Url, '-x64') and contains(@Url, '.cab')">
+      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/ie8') and contains(@Url, 'windows6.0') and contains(@Url, '-x64') and contains(@Url, '.cab')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>

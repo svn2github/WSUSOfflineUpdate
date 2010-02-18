@@ -4,6 +4,7 @@
 *w2k\/*
 *wxp*
 *w6*
+*x64-glb*
 *-x64*
 *ie6setup*  
 *ie6.0sp1*  
@@ -20,3 +21,4 @@
 *reg.exe
 *invcif.exe
 *invcm.exe
+*wuredist.cab

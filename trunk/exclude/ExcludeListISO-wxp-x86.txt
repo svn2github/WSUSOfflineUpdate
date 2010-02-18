@@ -3,6 +3,7 @@
 *oxp*
 *w2k*
 *w6*
+*x64-glb*
 *-x64*
 *ie6setup*  
 *ie6.0sp1*  
@@ -14,8 +15,8 @@
 *mdac27*
 *windows2000*
 *directx_*
-*ndp*-x64*
 *.au3
 *reg.exe
 *invcif.exe
 *invcm.exe
+*wuredist.cab
