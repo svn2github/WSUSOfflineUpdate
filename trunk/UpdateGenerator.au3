@@ -89,8 +89,8 @@ Dim $w2k_ptb, $wxp_ptb, $w2k3_ptb, $w2k3_x64_ptb, $oxp_ptb, $o2k3_ptb, $o2k7_ptb
 Dim $w2k_deu, $wxp_deu, $w2k3_deu, $w2k3_x64_deu, $oxp_deu, $o2k3_deu, $o2k7_deu  ; German
 Dim $w2k_nld, $wxp_nld, $w2k3_nld, $oxp_nld, $o2k3_nld, $o2k7_nld ; Dutch
 Dim $w2k_ita, $wxp_ita, $w2k3_ita, $oxp_ita, $o2k3_ita, $o2k7_ita ; Italian
-Dim $w2k_chs, $wxp_chs, $w2k3_chs, $oxp_chs, $o2k3_chs, $o2k7_chs ; Chinese
-Dim $w2k_cht, $wxp_cht, $w2k3_cht, $oxp_cht, $o2k3_cht, $o2k7_cht ; Taiwanese
+Dim $w2k_chs, $wxp_chs, $w2k3_chs, $oxp_chs, $o2k3_chs, $o2k7_chs ; Chinese simplified
+Dim $w2k_cht, $wxp_cht, $w2k3_cht, $oxp_cht, $o2k3_cht, $o2k7_cht ; Chinese traditional
 Dim $w2k_plk, $wxp_plk, $w2k3_plk, $oxp_plk, $o2k3_plk, $o2k7_plk ; Polish
 Dim $w2k_hun, $wxp_hun, $w2k3_hun, $oxp_hun, $o2k3_hun, $o2k7_hun ; Hungarian
 Dim $w2k_csy, $wxp_csy, $w2k3_csy, $oxp_csy, $o2k3_csy, $o2k7_csy ; Czech
@@ -193,15 +193,15 @@ Func LanguageCaption($token, $german)
       EndIf
     Case $lang_token_chs
       If $german Then
-        Return "Chinesisch"
+        Return "Chin. (smp.)"
       Else
-        Return "Chinese"
+        Return "Chinese (s.)"
       EndIf
     Case $lang_token_cht
       If $german Then
-        Return "Taiwanesisch"
+        Return "Chin. (trad.)"
       Else
-        Return "Taiwanese"
+        Return "Chinese (tr.)"
       EndIf
     Case $lang_token_plk
       If $german Then
@@ -1177,7 +1177,7 @@ If IniRead($inifilename, $ini_section_wxp, $lang_token_ita, $disabled) = $enable
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
-;  Windows XP Chinese
+;  Windows XP Chinese simplified
 $txtxpos = $txtxpos + $txtwidth - 5
 $wxp_chs = GUICtrlCreateCheckbox(LanguageCaption($lang_token_chs, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
 If IniRead($inifilename, $ini_section_wxp, $lang_token_chs, $disabled) = $enabled Then
@@ -1185,7 +1185,7 @@ If IniRead($inifilename, $ini_section_wxp, $lang_token_chs, $disabled) = $enable
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
-;  Windows XP Taiwanese
+;  Windows XP Chinese traditional
 $txtxpos = $txtxpos + $txtwidth
 $wxp_cht = GUICtrlCreateCheckbox(LanguageCaption($lang_token_cht, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
 If IniRead($inifilename, $ini_section_wxp, $lang_token_cht, $disabled) = $enabled Then
@@ -1377,7 +1377,7 @@ If IniRead($inifilename, $ini_section_w2k3, $lang_token_ita, $disabled) = $enabl
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
-;  Windows Server 2003 Chinese
+;  Windows Server 2003 Chinese simplified
 $txtxpos = $txtxpos + $txtwidth - 5
 $w2k3_chs = GUICtrlCreateCheckbox(LanguageCaption($lang_token_chs, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
 If IniRead($inifilename, $ini_section_w2k3, $lang_token_chs, $disabled) = $enabled Then
@@ -1385,7 +1385,7 @@ If IniRead($inifilename, $ini_section_w2k3, $lang_token_chs, $disabled) = $enabl
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
-;  Windows Server 2003 Taiwanese
+;  Windows Server 2003 Chinese traditional
 $txtxpos = $txtxpos + $txtwidth
 $w2k3_cht = GUICtrlCreateCheckbox(LanguageCaption($lang_token_cht, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
 If IniRead($inifilename, $ini_section_w2k3, $lang_token_cht, $disabled) = $enabled Then
@@ -1700,7 +1700,7 @@ If IniRead($inifilename, $ini_section_oxp, $lang_token_ita, $disabled) = $enable
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
-;  Office XP Chinese
+;  Office XP Chinese simplified
 $txtxpos = $txtxpos + $txtwidth - 5
 $oxp_chs = GUICtrlCreateCheckbox(LanguageCaption($lang_token_chs, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
 If IniRead($inifilename, $ini_section_oxp, $lang_token_chs, $disabled) = $enabled Then
@@ -1708,7 +1708,7 @@ If IniRead($inifilename, $ini_section_oxp, $lang_token_chs, $disabled) = $enable
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
-;  Office XP Taiwanese
+;  Office XP Chinese traditional
 $txtxpos = $txtxpos + $txtwidth
 $oxp_cht = GUICtrlCreateCheckbox(LanguageCaption($lang_token_cht, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
 If IniRead($inifilename, $ini_section_oxp, $lang_token_cht, $disabled) = $enabled Then
@@ -1900,7 +1900,7 @@ If IniRead($inifilename, $ini_section_o2k3, $lang_token_ita, $disabled) = $enabl
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
-;  Office 2003 Chinese
+;  Office 2003 Chinese simplified
 $txtxpos = $txtxpos + $txtwidth - 5
 $o2k3_chs = GUICtrlCreateCheckbox(LanguageCaption($lang_token_chs, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
 If IniRead($inifilename, $ini_section_o2k3, $lang_token_chs, $disabled) = $enabled Then
@@ -1908,7 +1908,7 @@ If IniRead($inifilename, $ini_section_o2k3, $lang_token_chs, $disabled) = $enabl
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
-;  Office 2003 Taiwanese
+;  Office 2003 Chinese traditional
 $txtxpos = $txtxpos + $txtwidth
 $o2k3_cht = GUICtrlCreateCheckbox(LanguageCaption($lang_token_cht, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
 If IniRead($inifilename, $ini_section_o2k3, $lang_token_cht, $disabled) = $enabled Then
@@ -2100,7 +2100,7 @@ If IniRead($inifilename, $ini_section_o2k7, $lang_token_ita, $disabled) = $enabl
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
-;  Office 2007 Chinese
+;  Office 2007 Chinese simplified
 $txtxpos = $txtxpos + $txtwidth - 5
 $o2k7_chs = GUICtrlCreateCheckbox(LanguageCaption($lang_token_chs, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
 If IniRead($inifilename, $ini_section_o2k7, $lang_token_chs, $disabled) = $enabled Then
@@ -2108,7 +2108,7 @@ If IniRead($inifilename, $ini_section_o2k7, $lang_token_chs, $disabled) = $enabl
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
-;  Office 2007 Taiwanese
+;  Office 2007 Chinese traditional
 $txtxpos = $txtxpos + $txtwidth
 $o2k7_cht = GUICtrlCreateCheckbox(LanguageCaption($lang_token_cht, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
 If IniRead($inifilename, $ini_section_o2k7, $lang_token_cht, $disabled) = $enabled Then
@@ -2307,7 +2307,7 @@ If IniRead($inifilename, $ini_section_w2k, $lang_token_ita, $disabled) = $enable
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
-;  Windows 2000 Chinese
+;  Windows 2000 Chinese simplified
 $txtxpos = $txtxpos + $txtwidth - 5
 $w2k_chs = GUICtrlCreateCheckbox(LanguageCaption($lang_token_chs, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
 If IniRead($inifilename, $ini_section_w2k, $lang_token_chs, $disabled) = $enabled Then
@@ -2315,7 +2315,7 @@ If IniRead($inifilename, $ini_section_w2k, $lang_token_chs, $disabled) = $enable
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
-;  Windows 2000 Taiwanese
+;  Windows 2000 Chinese traditional
 $txtxpos = $txtxpos + $txtwidth
 $w2k_cht = GUICtrlCreateCheckbox(LanguageCaption($lang_token_cht, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
 If IniRead($inifilename, $ini_section_w2k, $lang_token_cht, $disabled) = $enabled Then
@@ -3170,7 +3170,7 @@ While 1
         EndIf
       EndIf
 
-;  Chinese
+;  Chinese simplified
       If BitAND(GUICtrlRead($w2k_chs), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("w2k chs", DetermineDownloadSwitches($excludesp, $dotnet, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($excludesp, $dotnet), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -3202,7 +3202,7 @@ While 1
         EndIf
       EndIf
 
-;  Taiwanese
+;  Chinese traditional
       If BitAND(GUICtrlRead($w2k_cht), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("w2k cht", DetermineDownloadSwitches($excludesp, $dotnet, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($excludesp, $dotnet), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop

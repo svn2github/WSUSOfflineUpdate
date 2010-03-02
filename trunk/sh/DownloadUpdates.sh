@@ -527,7 +527,7 @@ if [ -f "$static1" ]; then
 		cat $static1 >> ../temp/StaticUrls-${sys}-${lang}.txt
 	fi
 if [ "$EXCLUDE_SP" == "1" ]; then
-	grep -v -f ../exclude/ExcludeList-SPs.txt $static1 > ../temp/StaticUrls-${sys}-${lang}.txt
+	grep -i -v -f ../exclude/ExcludeList-SPs.txt $static1 > ../temp/StaticUrls-${sys}-${lang}.txt
 fi
 fi
 
@@ -537,7 +537,7 @@ if [ -f "$static2" ]; then
 		cat $static2 >> ../temp/StaticUrls-${sys}-${lang}.txt
 	fi
 	if [ "$EXCLUDE_SP" == "1" ]; then
-		grep -v -f ../exclude/ExcludeList-SPs.txt $static2 > ../temp/StaticUrls-${sys}-${lang}.txt
+		grep -i -v -f ../exclude/ExcludeList-SPs.txt $static2 > ../temp/StaticUrls-${sys}-${lang}.txt
 	fi
 fi
 
@@ -630,47 +630,47 @@ if [ "$dotnet" == "1" ]; then
 	$xml tr ../xslt/ExtractDownloadLinks-dotnet-glb.xsl ../temp/package.xml > ../temp/Urls-dotnet.txt
 fi
 if [ -f "$valid1" -o -f "$valid2" ] && [ -f "$expired1" -o -f "$expired2" ]; then
-	grep -v -f ../temp/Expiredid-${sys}.txt ../temp/Urls-${sys}-${lang}.txt > ../temp/tmpUrls-${sys}-${lang}.txt
-	grep -f ../temp/Validid-${sys}.txt ../temp/Urls-${sys}-${lang}.txt >> ../temp/tmpUrls-${sys}-${lang}.txt
+	grep -i -v -f ../temp/Expiredid-${sys}.txt ../temp/Urls-${sys}-${lang}.txt > ../temp/tmpUrls-${sys}-${lang}.txt
+	grep -i -f ../temp/Validid-${sys}.txt ../temp/Urls-${sys}-${lang}.txt >> ../temp/tmpUrls-${sys}-${lang}.txt
 else
 	cp ../temp/Urls-${sys}-${lang}.txt ../temp/tmpUrls-${sys}-${lang}.txt
 fi
 if [ -f "$exclude1" ]; then
-	grep -v -f ../exclude/ExcludeList-${sys}.txt ../temp/tmpUrls-${sys}-${lang}.txt > ../temp/ValidUrls-${sys}-${lang}.txt
+	grep -i -v -f ../exclude/ExcludeList-${sys}.txt ../temp/tmpUrls-${sys}-${lang}.txt > ../temp/ValidUrls-${sys}-${lang}.txt
 fi
 if [ -f "$exclude2" ]; then
-	grep -v -f ../exclude/ExcludeList-${sys}-x86.txt ../temp/tmpUrls-${sys}-${lang}.txt > ../temp/ValidUrls-${sys}-${lang}.txt
+	grep -i -v -f ../exclude/ExcludeList-${sys}-x86.txt ../temp/tmpUrls-${sys}-${lang}.txt > ../temp/ValidUrls-${sys}-${lang}.txt
 fi
 if [ -f "$glb1" ] && [ "$lang" != "glb" ]; then
 	$xml tr ../xslt/ExtractDownloadLinks-${sys}-glb.xsl ../temp/package.xml > ../temp/Urls-${sys}-glb.txt
 	if [ -f "$valid1" -o -f "$valid2" ] && [ -f "$expired1" -o -f "$expired2" ]; then
-		grep -f ../temp/Validid-${sys}.txt ../temp/Urls-${sys}-glb.txt > ../temp/tmpValidUrls-${sys}-glb.txt
-		grep -v -f ../temp/Expiredid-${sys}.txt ../temp/Urls-${sys}-glb.txt >> ../temp/tmpValidUrls-${sys}-glb.txt
+		grep -i -f ../temp/Validid-${sys}.txt ../temp/Urls-${sys}-glb.txt > ../temp/tmpValidUrls-${sys}-glb.txt
+		grep -i -v -f ../temp/Expiredid-${sys}.txt ../temp/Urls-${sys}-glb.txt >> ../temp/tmpValidUrls-${sys}-glb.txt
 	else
 		cp ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
 	fi
-	grep -v -f ../exclude/ExcludeList-${sys}.txt ../temp/tmpValidUrls-${sys}-glb.txt > ../temp/ValidUrls-${sys}-glb.txt
+	grep -i -v -f ../exclude/ExcludeList-${sys}.txt ../temp/tmpValidUrls-${sys}-glb.txt > ../temp/ValidUrls-${sys}-glb.txt
 	rm ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
 fi
 
 if [ -f "$glb2" ] && [ "$lang" != "glb" ]; then
 	$xml tr ../xslt/ExtractDownloadLinks-${sys}-x86-glb.xsl ../temp/package.xml > ../temp/Urls-${sys}-glb.txt
 	if [ -f "$valid1" -o -f "$valid2" ] && [ -f "$expired1" -o -f "$expired2" ]; then
-		grep -f ../temp/Validid-${sys}.txt ../temp/Urls-${sys}-glb.txt > ../temp/tmpValidUrls-${sys}-glb.txt
-		grep -v -f ../temp/Expiredid-${sys}.txt ../temp/Urls-${sys}-glb.txt >> ../temp/tmpValidUrls-${sys}-glb.txt
+		grep -i -f ../temp/Validid-${sys}.txt ../temp/Urls-${sys}-glb.txt > ../temp/tmpValidUrls-${sys}-glb.txt
+		grep -i -v -f ../temp/Expiredid-${sys}.txt ../temp/Urls-${sys}-glb.txt >> ../temp/tmpValidUrls-${sys}-glb.txt
 	else
 		cp ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
 	fi
-	grep -v -f ../exclude/ExcludeList-${sys}-x86.txt ../temp/tmpValidUrls-${sys}-glb.txt > ../temp/ValidUrls-${sys}-glb.txt
+	grep -i -v -f ../exclude/ExcludeList-${sys}-x86.txt ../temp/tmpValidUrls-${sys}-glb.txt > ../temp/ValidUrls-${sys}-glb.txt
 	rm ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
 fi
 
 if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "oxp" ] && [ "$sys" != "o2k3" ] && [ "$sys" != "o2k7" ] && [ "$sys" != "w2k3-x64" ]; then
 	echo "Determining update URLs for win ${lang}..."
 	$xml tr ../xslt/ExtractDownloadLinks-win-x86-${lang}.xsl ../temp/package.xml > ../temp/Urls-win-x86-${lang}.txt
-	grep -v -f ../exclude/ExcludeList-win-x86.txt ../temp/Urls-win-x86-${lang}.txt > ../temp/ValidUrls-win-x86-${lang}.txt
+	grep -i -v -f ../exclude/ExcludeList-win-x86.txt ../temp/Urls-win-x86-${lang}.txt > ../temp/ValidUrls-win-x86-${lang}.txt
 	$xml tr ../xslt/ExtractDownloadLinks-win-x86-glb.xsl ../temp/package.xml > ../temp/Urls-win-x86-glb.txt
-	grep -v -f ../exclude/ExcludeList-win-x86.txt ../temp/Urls-win-x86-glb.txt > ../temp/ValidUrls-win-x86-glb.txt
+	grep -i -v -f ../exclude/ExcludeList-win-x86.txt ../temp/Urls-win-x86-glb.txt > ../temp/ValidUrls-win-x86-glb.txt
 	rm ../temp/Urls-win-x86-${lang}.txt
 fi
 rm ../temp/package.xml
