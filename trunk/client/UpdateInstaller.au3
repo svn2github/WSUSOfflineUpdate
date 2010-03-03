@@ -109,7 +109,7 @@ Func CalcGUISize()
     $reg_val = $default_logpixels
   EndIf
   $dlgheight = 295 * $reg_val / $default_logpixels
-  $txtwidth = 240 * $reg_val / $default_logpixels
+  $txtwidth = 260 * $reg_val / $default_logpixels
   $txtheight = 20 * $reg_val / $default_logpixels
   $txtxoffset = 10 * $reg_val / $default_logpixels
   $btnwidth = 80 * $reg_val / $default_logpixels

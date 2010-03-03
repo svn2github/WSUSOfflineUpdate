@@ -9,12 +9,24 @@ Dim Const $caption                = "WSUS Offline Update 6.4"
 Dim Const $title                  = $caption & " - Generator"
 Dim Const $downloadURL            = "http://download.wsusoffline.net/"
 Dim Const $donationURL            = "http://www.wsusoffline.net/donate.html"
+Dim Const $downloadLogFile        = "download.log"
 
 ; Registry constants
 Dim Const $reg_key_fontdpi        = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontDPI"
 Dim Const $reg_key_windowmetrics  = "HKEY_CURRENT_USER\Control Panel\Desktop\WindowMetrics"
 Dim Const $reg_val_applieddpi     = "AppliedDPI"
 Dim Const $reg_val_logpixels      = "LogPixels"
+
+; Message box return codes
+Dim Const $msgbox_btn_ok          = 1
+Dim Const $msgbox_btn_cancel      = 2
+Dim Const $msgbox_btn_abort       = 3
+Dim Const $msgbox_btn_retry       = 4
+Dim Const $msgbox_btn_ignore      = 5
+Dim Const $msgbox_btn_yes         = 6
+Dim Const $msgbox_btn_no          = 7
+Dim Const $msgbox_btn_tryagain    = 10
+Dim Const $msgbox_btn_continue    = 11
 
 ; Defaults
 Dim Const $default_logpixels      = 96
@@ -193,7 +205,7 @@ Func LanguageCaption($token, $german)
       EndIf
     Case $lang_token_chs
       If $german Then
-        Return "Chin. (smp.)"
+        Return "Chin. (simpl.)"
       Else
         Return "Chinese (s.)"
       EndIf
@@ -690,6 +702,10 @@ Dim $result = ""
   Return $result
 EndFunc
 
+Func ShowLogFile()
+  Run(@ComSpec & " /D /C start " & $downloadLogFile, @ScriptDir & "\log")
+EndFunc
+
 Func RunDonationSite()
   Run(@ComSpec & " /D /C start " & $donationURL)
 EndFunc
@@ -709,15 +725,15 @@ Dim $result
   If $result <> 0 Then
     If ShowGUIInGerman() Then
       $result = MsgBox(0x2023, "Versionsprüfung", "Sie setzen " & $caption & " ein. Eine neue Version ist verfügbar." _
-                                          & @LF & "Möchten Sie nun die Download-Seite (" & $downloadURL & ") besuchen?")
+                       & @LF & "Möchten Sie nun die Download-Seite (" & $downloadURL & ") besuchen?")
     Else
       $result = MsgBox(0x2023, "Version check", "You are using " & $caption & ". A new version is available." _
-                                        & @LF & "Do you want to visit the download site (" & $downloadURL & ") now?")
+                       & @LF & "Would you like to visit the download site (" & $downloadURL & ") now?")
     EndIf
     Switch $result
-      Case 6  ; Yes
+      Case $msgbox_btn_yes
         $result = -1
-      Case 7  ; No
+      Case $msgbox_btn_no
         $result = 0
       Case Else
         $result = 1
@@ -747,9 +763,15 @@ Dim $result
   If $result <> 0 Then
     WinSetState($maindlg, $maindlg, @SW_RESTORE)
     If ShowGUIInGerman() Then
-      MsgBox(0x2010, "Fehler", "Fehler beim Herunterladen / Verifizieren der Updates für " & $stroptions & ".")
+      If MsgBox(0x2014, "Fehler", "Fehler beim Herunterladen / Verifizieren der Updates für " & $stroptions & "." _
+                & @LF & "Möchten Sie nun die Protokolldatei ansehen?") = $msgbox_btn_yes Then
+        ShowLogFile()
+      EndIf
     Else
-      MsgBox(0x2010, "Error", "Error downloading / verifying updates for " & $stroptions & ".")
+      If MsgBox(0x2014, "Error", "Error downloading / verifying updates for " & $stroptions & "." _
+                & @LF & "Would you like to view the log file now?") = $msgbox_btn_yes Then
+        ShowLogFile()
+      EndIf
     EndIf
   EndIf
   WinSetTitle($maindlg, $maindlg, $title)
@@ -2613,12 +2635,10 @@ GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM)
 GUISetState()
 If StringRight(EnvGet("TEMP"), 1) = "\" Then
   If ShowGUIInGerman() Then
-    MsgBox(0x2010, "Fehler", "Die Umgebungsvariable TEMP" & @LF _
-         & "enthält einen abschließenden Backslash ('\').")
+    MsgBox(0x2010, "Fehler", "Die Umgebungsvariable TEMP" & @LF & "enthält einen abschließenden Backslash ('\').")
     Exit(1)
   Else
-    MsgBox(0x2010, "Error", "The environment variable TEMP" & @LF _
-         & "contains a trailing backslash ('\').")
+    MsgBox(0x2010, "Error", "The environment variable TEMP" & @LF & "contains a trailing backslash ('\').")
     Exit(1)
   EndIf
 EndIf
@@ -2637,14 +2657,14 @@ While 1
           If MsgBox(0x2134, "Warnung", "Durch die Kombination der Optionen 'Service-Packs ausschließen' und" _
                                & @LF & "'Download-Verzeichnisse bereinigen' werden bereits heruntergeladene" _
                                & @LF & "Service Packs für die selektierten Produkte gelöscht." _
-                               & @LF & "Möchten Sie fortsetzen?") = 7 Then
+                               & @LF & "Möchten Sie fortsetzen?") = $msgbox_btn_no Then
             GUICtrlSetState($excludesp, $GUI_UNCHECKED)
           EndIf
         Else
           If MsgBox(0x2134, "Warning", "The combination of 'Exclude Service Packs' and" _
                                & @LF & "'Clean up download directories' options will delete" _
                                & @LF & "previously downloaded Service Packs for the selected products." _
-                               & @LF & "Do you wish to proceed?") = 7 Then
+                               & @LF & "Do you wish to proceed?") = $msgbox_btn_no Then
             GUICtrlSetState($excludesp, $GUI_UNCHECKED)
           EndIf
         EndIf
@@ -2657,14 +2677,14 @@ While 1
           If MsgBox(0x2134, "Warnung", "Durch die Kombination der Optionen 'Service-Packs ausschließen' und" _
                                & @LF & "'Download-Verzeichnisse bereinigen' werden bereits heruntergeladene" _
                                & @LF & "Service Packs für die selektierten Produkte gelöscht." _
-                               & @LF & "Möchten Sie fortsetzen?") = 7 Then
+                               & @LF & "Möchten Sie fortsetzen?") = $msgbox_btn_no Then
             GUICtrlSetState($cleanupdownloads, $GUI_UNCHECKED)
           EndIf
         Else
           If MsgBox(0x2134, "Warning", "The combination of 'Exclude Service Packs' and" _
                                & @LF & "'Clean up download directories' options will delete" _
                                & @LF & "previously downloaded Service Packs for the selected products." _
-                               & @LF & "Do you wish to proceed?") = 7 Then
+                               & @LF & "Do you wish to proceed?") = $msgbox_btn_no Then
             GUICtrlSetState($cleanupdownloads, $GUI_UNCHECKED)
           EndIf
         EndIf
@@ -2696,7 +2716,7 @@ While 1
         If ShowGUIInGerman() Then
           If MsgBox(0x2134, "Warnung", "Durch diese Option verhindern Sie das Herunterladen aktueller Updates." _
                                & @LF & "Dies kann ein erhöhtes Sicherheitsrisiko für das Zielsystem bedeuten." _
-                               & @LF & "Möchten Sie fortsetzen?") = 7 Then
+                               & @LF & "Möchten Sie fortsetzen?") = $msgbox_btn_no Then
             GUICtrlSetState($skipdownload, $GUI_UNCHECKED)
           Else
             GUICtrlSetState($cleanupdownloads, $GUI_DISABLE)
@@ -2705,7 +2725,7 @@ While 1
         Else
           If MsgBox(0x2134, "Warning", "This option prevents downloading of recent updates." _
                                & @LF & "This may increase security risks for the target system." _
-                               & @LF & "Do you wish to proceed?") = 7 Then
+                               & @LF & "Do you wish to proceed?") = $msgbox_btn_no Then
             GUICtrlSetState($skipdownload, $GUI_UNCHECKED)
           Else
             GUICtrlSetState($cleanupdownloads, $GUI_DISABLE)
@@ -3811,9 +3831,15 @@ While 1
 ;  Restore window and show success dialog
       WinSetState($maindlg, $maindlg, @SW_RESTORE)
       If ShowGUIInGerman() Then
-        MsgBox(0x2040, "Info", "Herunterladen / Image-Erstellung / Kopieren erfolgreich.")
+        If MsgBox(0x2044, "Info", "Herunterladen / Image-Erstellung / Kopieren erfolgreich." _
+                  & @LF & "Möchten Sie nun die Protokolldatei ansehen?") = $msgbox_btn_yes Then
+          ShowLogFile()
+        EndIf
       Else
-        MsgBox(0x2040, "Info", "Download / image creation / copying successful.")
+        If MsgBox(0x2044, "Info", "Download / image creation / copying successful." _
+                  & @LF & "Would you like to view the log file now?") = $msgbox_btn_yes Then
+          ShowLogFile()
+        EndIf
       EndIf
 
   EndSwitch
