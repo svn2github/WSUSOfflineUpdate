@@ -343,3 +343,4 @@ Version 6.5 -- ??.??.10
 - Fix: Chinese traditional language option was erroneously labelled "Taiwanese" in UpdateGenerator script (Thanks to "wyattwong")
 - Fix: DownloadUpdates.sh script downloaded two copies of XP SP3 (Thanks to "nebyah")
 - Fix: DownloadUpdates.sh script contained obsolete removal of wsusscn2.cab (Thanks to "nebyah")
+- Fix: Missing variable initialization in DownloadUpdates.sh script could lead to syntax error (Thanks to Ulrich Windl)

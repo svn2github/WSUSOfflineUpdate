@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                    v. 6.4+ (r67)                   ###
+###                    v. 6.4+ (r68)                   ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -136,6 +136,7 @@ paramlist=("/excludesp" "/dotnet" "/makeiso" "/nocleanup" "/proxy")
 EXCLUDE_SP="0"
 EXCLUDE_STATICS="0"
 CLEANUP_DOWNLOADS="1"
+createiso="0"
 dotnet="0"
 param1=""
 param2=""
@@ -370,7 +371,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                    v. 6.4+ (r67)                   ***
+***                    v. 6.4+ (r68)                   ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
