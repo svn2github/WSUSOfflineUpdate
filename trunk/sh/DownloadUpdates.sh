@@ -3,6 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
+###                    v. 6.4+ (r67)                   ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -369,6 +370,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
+***                    v. 6.4+ (r67)                   ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
@@ -492,10 +494,7 @@ fi
 
 
 echo "Downloading most recent files for WSUS functionality..."
-
-rm -f ../client/wsus/wsusscn2*
 doWget -c -i ../static/StaticDownloadLinks-wsus.txt -P ../client/wsus
-
 if [ "$sys" == "oxp" -o "$sys" == "o2k3" -o "$sys" == "o2k7" ]; then
 	echo "Downloading most recent files for Office inventory functionality..."
 	doWget -c -i ../static/StaticDownloadLinks-inventory.txt -P ../client/wsus
@@ -627,7 +626,8 @@ if [ -f "$download2" ]; then
 	$xml tr ../xslt/ExtractDownloadLinks-${sys}-x86-${lang}.xsl ../temp/package.xml > ../temp/Urls-${sys}-${lang}.txt
 fi
 if [ "$dotnet" == "1" ]; then
-	$xml tr ../xslt/ExtractDownloadLinks-dotnet-glb.xsl ../temp/package.xml > ../temp/Urls-dotnet.txt
+	$xml tr ../xslt/ExtractDownloadLinks-dotnet-x86-glb.xsl ../temp/package.xml > ../temp/Urls-dotnet-x86.txt
+	$xml tr ../xslt/ExtractDownloadLinks-dotnet-x64-glb.xsl ../temp/package.xml > ../temp/Urls-dotnet-x64.txt
 fi
 if [ -f "$valid1" -o -f "$valid2" ] && [ -f "$expired1" -o -f "$expired2" ]; then
 	grep -i -v -f ../temp/Expiredid-${sys}.txt ../temp/Urls-${sys}-${lang}.txt > ../temp/tmpUrls-${sys}-${lang}.txt
@@ -724,7 +724,8 @@ fi
 if [ "$dotnet" == "1" ]; then
 	echo "Downloading .Net framework..."
 	doWget -c -i ../temp/StaticUrls-dotnet.txt -P ../client/dotnet
-	doWget -c -i ../temp/Urls-dotnet.txt -P ../client/dotnet
+	doWget -c -i ../temp/Urls-dotnet-x86.txt -P ../client/dotnet/x86-glb
+	doWget -c -i ../temp/Urls-dotnet-x64.txt -P ../client/dotnet/x64-glb
 fi
 
 echo "Downloading patches for $sys $lang"

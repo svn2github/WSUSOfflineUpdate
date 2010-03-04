@@ -32,6 +32,7 @@ for %%i in (ofc oxp o2k3 o2k7 o2k7-x64) do (
 )
 goto UnsupVersion
 
+:ofc
 :oxp
 :o2k3
 for /F "tokens=3 delims=\." %%i in ("%1") do (
@@ -73,7 +74,6 @@ for /F "tokens=3 delims=\." %%i in ("%1") do (
 )
 goto EoF
 
-:ofc
 :o2k7
 :o2k7-x64
 echo Installing %1...

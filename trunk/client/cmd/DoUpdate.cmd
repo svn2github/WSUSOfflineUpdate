@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.4+ (r66)
+set WSUSUPDATE_VERSION=6.4+ (r67)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -579,8 +579,9 @@ if "%OFFICE_CONVERTER_PACK%" NEQ "1" (
 if "%OFFICE_COMPATIBILITY_PACK%" NEQ "1" (
   if exist ..\ofc\%OFFICE_LANGUAGE%\FileFormatConverters.exe (
     echo Installing Office 2007 Compatibility Pack...
-    call InstallOfficeUpdate.cmd ..\ofc\%OFFICE_LANGUAGE%\FileFormatConverters.exe
-    if exist ..\ofc\glb\office2003-KB974882-FullFile-ENU.exe call InstallOfficeUpdate.cmd ..\ofc\glb\office2003-KB974882-FullFile-ENU.exe
+    echo Installing ..\ofc\%OFFICE_LANGUAGE%\FileFormatConverters.exe...
+    ..\ofc\%OFFICE_LANGUAGE%\FileFormatConverters.exe /quiet /norestart
+    echo %DATE% %TIME% - Info: Installed ..\ofc\%OFFICE_LANGUAGE%\FileFormatConverters.exe >>%UPDATE_LOGFILE%
   ) else (
     echo Warning: File ..\ofc\%OFFICE_LANGUAGE%\FileFormatConverters.exe not found. 
     echo %DATE% %TIME% - Warning: File ..\ofc\%OFFICE_LANGUAGE%\FileFormatConverters.exe not found >>%UPDATE_LOGFILE%

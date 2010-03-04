@@ -297,7 +297,8 @@ Else
     $autoreboot = GUICtrlCreateCheckbox("Automatic reboot and recall", $txtxoffset, $txtypos, $txtwidth, $txtheight)
   EndIf
 EndIf
-If DriveGetType(@ScriptDir) = "Network" Then
+If ( (DriveGetType(@ScriptDir) = "Network") _
+ AND (@OSVersion <> "WIN_VISTA") AND (@OSVersion <> "WIN_2008") AND (@OSVersion <> "WIN_7") AND (@OSVersion <> "WIN_2008R2") ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else  

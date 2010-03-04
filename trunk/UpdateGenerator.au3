@@ -88,8 +88,8 @@ Dim Const $misc_token_chkver      = "checkouversion"
 Dim Const $misc_token_minimize    = "minimizeondownload"
 Dim Const $misc_token_showdonate  = "showdonate"
 
-Dim $maindlg, $inifilename, $tabitemfocused, $excludesp, $dotnet, $cleanupdownloads, $verifydownloads, $skipdownload
-Dim $cdiso, $dvdiso, $usbcopy, $usblbl, $usbpath, $usbfsf, $btn_start, $btn_proxy, $btn_wsus, $btn_donate, $btn_exit, $proxy, $wsus, $dummy
+Dim $maindlg, $inifilename, $tabitemfocused, $excludesp, $dotnet, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso
+Dim $usbcopy, $usblbl, $usbpath, $usbfsf, $skipdownload, $btn_start, $btn_proxy, $btn_wsus, $btn_donate, $btn_exit, $proxy, $wsus, $dummy
 Dim $w2k_enu, $wxp_enu, $w2k3_enu, $w2k3_x64_enu, $oxp_enu, $o2k3_enu, $o2k7_enu  ; English
 Dim $w2k_fra, $wxp_fra, $w2k3_fra, $w2k3_x64_fra, $oxp_fra, $o2k3_fra, $o2k7_fra  ; French
 Dim $w2k_esn, $wxp_esn, $w2k3_esn, $w2k3_x64_esn, $oxp_esn, $o2k3_esn, $o2k7_esn  ; Spanish
@@ -3830,15 +3830,23 @@ While 1
 
 ;  Restore window and show success dialog
       WinSetState($maindlg, $maindlg, @SW_RESTORE)
-      If ShowGUIInGerman() Then
-        If MsgBox(0x2044, "Info", "Herunterladen / Image-Erstellung / Kopieren erfolgreich." _
-                  & @LF & "Möchten Sie nun die Protokolldatei ansehen?") = $msgbox_btn_yes Then
-          ShowLogFile()
+      If BitAND(GUICtrlRead($skipdownload), $GUI_CHECKED) = $GUI_CHECKED Then 
+        If ShowGUIInGerman() Then
+          MsgBox(0x2040, "Info", "Herunterladen / Image-Erstellung / Kopieren erfolgreich.")
+        Else
+          MsgBox(0x2040, "Info", "Download / image creation / copying successful.")
         EndIf
       Else
-        If MsgBox(0x2044, "Info", "Download / image creation / copying successful." _
-                  & @LF & "Would you like to view the log file now?") = $msgbox_btn_yes Then
-          ShowLogFile()
+        If ShowGUIInGerman() Then
+          If MsgBox(0x2044, "Info", "Herunterladen / Image-Erstellung / Kopieren erfolgreich." _
+                    & @LF & "Möchten Sie nun die Protokolldatei ansehen?") = $msgbox_btn_yes Then
+            ShowLogFile()
+          EndIf
+        Else
+          If MsgBox(0x2044, "Info", "Download / image creation / copying successful." _
+                    & @LF & "Would you like to view the log file now?") = $msgbox_btn_yes Then
+            ShowLogFile()
+          EndIf
         EndIf
       EndIf
 
