@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.4+ (r68)
+set WSUSUPDATE_VERSION=6.4+ (r69)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -75,7 +75,6 @@ title Downloading...
 
 rem *** Clean up existing directories ***
 echo Cleaning up existing directories...
-if exist ..\fciv\dummy.txt del ..\fciv\dummy.txt
 if exist ..\iso\dummy.txt del ..\iso\dummy.txt
 if exist ..\log\dummy.txt del ..\log\dummy.txt
 if exist ..\client\msi\nul (
@@ -123,26 +122,26 @@ if exist ..\static\StaticDownloadLink-unzip.txt del ..\static\StaticDownloadLink
 if exist ..\client\o2k3\glb\office2003-KB974882-FullFile-ENU.exe (
   if not exist ..\client\ofc\glb\nul md ..\client\ofc\glb
   move /Y ..\client\o2k3\glb\office2003-KB974882-FullFile-ENU.exe ..\client\ofc\glb >nul
-  if exist ..\fciv\sha1-o2k3-glb.xml del ..\fciv\sha1-o2k3-glb.xml 
-  if exist ..\fciv\sha1-ofc-glb.xml del ..\fciv\sha1-ofc-glb.xml 
 )
 if exist ..\client\win\glb\ndp*.* (
   if not exist ..\client\dotnet\glb\nul md ..\client\dotnet\glb
   move /Y ..\client\win\glb\ndp*.* ..\client\dotnet\glb >nul
-  if exist ..\fciv\sha1-win-glb.xml del ..\fciv\sha1-win-glb.xml 
 )
 if exist ..\client\w2k3-x64\glb\ndp*.* (
   if not exist ..\client\dotnet\glb-x64\nul md ..\client\dotnet\glb-x64
   move /Y ..\client\w2k3-x64\glb\ndp*.* ..\client\dotnet\glb-x64 >nul
-  if exist ..\fciv\sha1-w2k3-x64-glb.xml del ..\fciv\sha1-w2k3-x64-glb.xml 
 )
 if exist ..\xslt\ExtractDownloadLinks-dotnet-glb.xsl del ..\xslt\ExtractDownloadLinks-dotnet-glb.xsl
 if exist ..\client\dotnet\glb\*-x64_*.* (
   if not exist ..\client\dotnet\x64-glb\nul md ..\client\dotnet\x64-glb
   move /Y ..\client\dotnet\glb\*-x64_*.* ..\client\dotnet\x64-glb >nul
-  if exist ..\fciv\sha1-dotnet-glb.xml del ..\fciv\sha1-dotnet-glb.xml 
 )
 if exist ..\client\dotnet\glb\nul move /Y ..\client\dotnet\glb ..\client\dotnet\x86-glb >nul
+
+if exist ..\bin\fciv.exe del ..\bin\fciv.exe
+if exist ..\fciv\nul rd /S /Q ..\fciv
+if exist ..\static\StaticDownloadLink-fciv.txt del ..\static\StaticDownloadLink-fciv.txt
+
 
 rem *** Determine state of automatic daylight time setting ***
 echo Determining state of automatic daylight time setting...
@@ -220,18 +219,6 @@ for /F %%i in ('dir /B cdrtools*.zip') do unzip.exe %%i mkisofs.exe
 del /Q cdrtools*.zip
 popd
 :SkipMkIsoFs
-
-rem *** Download Microsoft file checksum integrity verification tool ***
-if "%VERIFY_DOWNLOADS%" NEQ "1" goto SkipFCIV
-if exist ..\bin\fciv.exe goto SkipFCIV
-echo Downloading Microsoft file checksum integrity verification tool...
-%WGET_PATH% -N -i ..\static\StaticDownloadLink-fciv.txt -P "%TEMP%\fciv"
-if errorlevel 1 goto DownloadError
-echo %DATE% %TIME% - Info: Downloaded Microsoft file checksum integrity verification tool >>%DOWNLOAD_LOGFILE%
-"%TEMP%\fciv\windows-kb841290-x86-enu.exe" /T:"%TEMP%\fciv" /C /Q
-move "%TEMP%\fciv\fciv.exe" ..\bin >nul
-call ..\client\cmd\SafeRmDir.cmd "%TEMP%\fciv"
-:SkipFCIV
 
 rem *** Download Sysinternals' digital file signature verification tool ***
 if "%VERIFY_DOWNLOADS%" NEQ "1" goto SkipSigCheck
@@ -439,20 +426,20 @@ del "%TEMP%\DownloadLinks-%1-%2.txt"
 :DoDownload
 rem *** Verify integrity of existing updates for %1 %2 ***
 if "%VERIFY_DOWNLOADS%" NEQ "1" goto SkipVerification
-if not exist ..\bin\fciv.exe goto NoFCIV
-if exist ..\fciv\sha1-%1-%2.xml (
+if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
+if exist ..\client\md\hashes-%1-%2.txt (
   echo Verifying integrity of existing updates for %1 %2...
-  ..\bin\fciv.exe -v -sha1 -xml ..\fciv\sha1-%1-%2.xml >>%DOWNLOAD_LOGFILE%
+  pushd ..\client\md
+  ..\bin\hashdeep.exe -a -l -vv -k hashes-%1-%2.txt -r ..\%1\%2
   if errorlevel 1 (
-    if exist fciv.err del fciv.err
+    popd
     goto IntegrityError
   )
-  if exist fciv.err del fciv.err
-  del ..\fciv\sha1-%1-%2.xml
+  popd
   echo %DATE% %TIME% - Info: Verified integrity of existing updates for %1 %2 >>%DOWNLOAD_LOGFILE%
 ) else (
-  echo Warning: Integrity database ..\fciv\sha1-%1-%2.xml not found.
-  echo %DATE% %TIME% - Warning: Integrity database ..\fciv\sha1-%1-%2.xml not found >>%DOWNLOAD_LOGFILE%
+  echo Warning: Integrity database ..\md\hashes-%1-%2.txt not found.
+  echo %DATE% %TIME% - Warning: Integrity database ..\md\hashes-%1-%2.txt not found >>%DOWNLOAD_LOGFILE%
 )
 :SkipVerification
 
@@ -546,11 +533,19 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   if exist "%TEMP%\sigcheck-%1-%2.txt" del "%TEMP%\sigcheck-%1-%2.txt"
   echo %DATE% %TIME% - Info: Verified digital file signatures for %1 %2 >>%DOWNLOAD_LOGFILE%
   rem *** Create integrity database for %1 %2 ***
-  if not exist ..\bin\fciv.exe goto NoFCIV
+  if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
   echo Creating integrity database for %1 %2...
-  ..\bin\fciv.exe ..\client\%1\%2 -r -type *.exe -type *.cab -sha1 -xml ..\fciv\sha1-%1-%2.xml >nul 2>&1
-  if exist fciv.err del fciv.err
-  echo %DATE% %TIME% - Info: Created integrity database for %1 %2 >>%DOWNLOAD_LOGFILE%
+  if not exist ..\client\md\nul md ..\client\md
+  pushd ..\client\md
+  ..\bin\hashdeep.exe -c md5,sha256 -l -r ..\%1\%2 >hashes-%1-%2.txt
+  if errorlevel 1 (
+    popd
+    echo Warning: Error creating integrity database ..\md\hashes-%1-%2.txt.
+    echo %DATE% %TIME% - Warning: Error creating integrity database ..\md\hashes-%1-%2.txt >>%DOWNLOAD_LOGFILE%
+  ) else (
+    popd
+    echo %DATE% %TIME% - Info: Created integrity database for %1 %2 >>%DOWNLOAD_LOGFILE%
+  )
 )
 if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" del "%TEMP%\ValidStaticLinks-%1-%2.txt"
 if exist "%TEMP%\ValidDownloadLinks-%1-%2.txt" del "%TEMP%\ValidDownloadLinks-%1-%2.txt"
@@ -613,7 +608,7 @@ goto Error
 
 :NoWGet
 echo.
-echo ERROR: Utility %WGET_PATH% not found.
+echo ERROR: Download utility %WGET_PATH% not found.
 echo %DATE% %TIME% - Error: Utility %WGET_PATH% not found >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
@@ -659,10 +654,10 @@ echo %DATE% %TIME% - Error: Microsoft XSL processor frontend ..\bin\msxsl.exe no
 echo.
 goto Error
 
-:NoFCIV
+:NoHashDeep
 echo.
-echo ERROR: Microsoft file checksum integrity verification tool ..\bin\fciv.exe not found.
-echo %DATE% %TIME% - Error: Microsoft file checksum integrity verification tool ..\bin\fciv.exe not found >>%DOWNLOAD_LOGFILE%
+echo ERROR: Hash computing/auditing utility ..\client\bin\hashdeep.exe not found.
+echo %DATE% %TIME% - Error: Hash computing/auditing utility ..\client\bin\hashdeep.exe not found >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 

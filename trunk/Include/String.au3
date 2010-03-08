@@ -72,7 +72,8 @@ Func _StringBetween($s_String, $s_Start, $s_End, $v_Case = -1)
 	; If you want data from a start to an end then replace blank with end of string
 	If $s_End = "" Then $s_End = "\z"
 
-	Local $a_ret = StringRegExp($s_String, "(?s)" & $s_case & $s_Start & "(.+?)" & $s_End, 3)
+	Local $a_ret = StringRegExp($s_String, "(?s)" & $s_case & $s_Start & "(.*?)" & $s_End, 3)
+
 	If @error Then Return SetError(1, 0, 0)
 	Return $a_ret
 EndFunc   ;==>_StringBetween

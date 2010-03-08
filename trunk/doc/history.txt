@@ -334,6 +334,7 @@ Version 6.5 -- ??.??.10
 - Optional installation of most recent Windows Terminal Services Client (Remote Desktop Connection) on Windows XP, Server 2003 and Vista (x86/x64) systems
 - UpdateGenerator script will now show log file on demand after downloading (Thanks to Andreas Bardelli)
 - UpdateInstaller script will now allow automatic reboot option even if started from a network share on Windows Vista, 7 and Server 2008 (R2) systems
+- AutoIt script compiler updated to version 3.3.6.0 
 - Fix: Security Update for Microsoft Office 2003 File Converter Pack (KB974882) could have been missed (Thanks to "Denniss")
 - Fix: Security Update for Microsoft Office 2003 File Converter Pack (KB974882) was installed using invalid parameters (Thanks to "-Iwan-")
 - Fix: PowerPoint Updates KB973143 (oxp) and KB976881 (o2k3) replaced KB957781 (oxp) and KB957784 (o2k3), which will now be excluded (Thanks to "Denniss")
@@ -344,3 +345,4 @@ Version 6.5 -- ??.??.10
 - Fix: DownloadUpdates.sh script downloaded two copies of XP SP3 (Thanks to "nebyah")
 - Fix: DownloadUpdates.sh script contained obsolete removal of wsusscn2.cab (Thanks to "nebyah")
 - Fix: Missing variable initialization in DownloadUpdates.sh script could lead to syntax error (Thanks to Ulrich Windl)
+- Fix: Replaced Microsoft's unstable file hash computation tool fciv.exe by open source utility hashdeep.exe (Thanks to "insertrealname" and "boco")
