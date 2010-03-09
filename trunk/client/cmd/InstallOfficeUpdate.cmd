@@ -19,12 +19,26 @@ if "%CSCRIPT_PATH%"=="" set CSCRIPT_PATH=%SystemRoot%\system32\cscript.exe
 if not exist %CSCRIPT_PATH% goto NoCScript
 
 :EvalParam
+if /i "%2"=="/verify" (
+  set VERIFY_FILES=1
+  shift /2
+  goto EvalParam
+)
 if /i "%2"=="/errorsaswarnings" (
   set ERRORS_AS_WARNINGS=1
   shift /2
   goto EvalParam
 )
 
+if "%VERIFY_FILES%" NEQ "1" goto SkipVerification
+if not exist ..\bin\hashdeep.exe goto SkipVerification
+for /F "tokens=2,3 delims=\" %%i in ("%1") do (
+  if exist ..\md\hashes-%%i-%%j.txt (
+    ..\bin\hashdeep.exe -a -l -s -k ..\md\hashes-%%i-%%j.txt %1
+    if errorlevel 1 goto IntegrityError
+  )
+)
+:SkipVerification
 rem *** Check proper Office version ***
 for %%i in (ofc oxp o2k3 o2k7 o2k7-x64) do (
   echo %1 | %SystemRoot%\system32\find.exe /I "\%%i\" >nul 2>&1
@@ -114,6 +128,11 @@ goto Error
 echo ERROR: Unsupported Office version.
 echo %DATE% %TIME% - Error: Unsupported Office version >>%UPDATE_LOGFILE%
 goto Error
+
+:IntegrityError
+echo ERROR: File hash does not match stored value (file: %1).
+echo %DATE% %TIME% - Error: File hash does not match stored value (file: %1) >>%UPDATE_LOGFILE%
+goto InstFailure
 
 :InstSuccess
 echo %DATE% %TIME% - Info: Installed %1 >>%UPDATE_LOGFILE%

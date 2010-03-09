@@ -30,12 +30,26 @@ if /i "%2"=="/nobackup" (
   shift /2
   goto EvalParam
 )
+if /i "%2"=="/verify" (
+  set VERIFY_FILES=1
+  shift /2
+  goto EvalParam
+)
 if /i "%2"=="/errorsaswarnings" (
   set ERRORS_AS_WARNINGS=1
   shift /2
   goto EvalParam
 )
 
+if "%VERIFY_FILES%" NEQ "1" goto SkipVerification
+if not exist ..\bin\hashdeep.exe goto SkipVerification
+for /F "tokens=2,3 delims=\" %%i in ("%1") do (
+  if exist ..\md\hashes-%%i-%%j.txt (
+    ..\bin\hashdeep.exe -a -l -s -k ..\md\hashes-%%i-%%j.txt %1
+    if errorlevel 1 goto IntegrityError
+  )
+)
+:SkipVerification
 echo %1 | %SystemRoot%\system32\find.exe /I ".exe" >nul 2>&1
 if not errorlevel 1 goto InstExe
 
@@ -141,6 +155,11 @@ goto Error
 echo ERROR: Unsupported file type (file: %1).
 echo %DATE% %TIME% - Error: Unsupported file type (file: %1) >>%UPDATE_LOGFILE%
 goto Error
+
+:IntegrityError
+echo ERROR: File hash does not match stored value (file: %1).
+echo %DATE% %TIME% - Error: File hash does not match stored value (file: %1) >>%UPDATE_LOGFILE%
+goto InstFailure
 
 :InstSuccess
 echo %DATE% %TIME% - Info: Installed %1 >>%UPDATE_LOGFILE%
