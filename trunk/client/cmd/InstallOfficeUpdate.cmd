@@ -34,8 +34,13 @@ if "%VERIFY_FILES%" NEQ "1" goto SkipVerification
 if not exist ..\bin\hashdeep.exe goto SkipVerification
 for /F "tokens=2,3 delims=\" %%i in ("%1") do (
   if exist ..\md\hashes-%%i-%%j.txt (
-    ..\bin\hashdeep.exe -a -l -s -k ..\md\hashes-%%i-%%j.txt %1
-    if errorlevel 1 goto IntegrityError
+    %SystemRoot%\system32\findstr.exe /C:%% /C:## /C:%1 ..\md\hashes-%%i-%%j.txt >"%TEMP%\hash-%%i-%%j.txt"
+    ..\bin\hashdeep.exe -a -l -k "%TEMP%\hash-%%i-%%j.txt" %1
+    if errorlevel 1 (
+      if exist "%TEMP%\hash-%%i-%%j.txt" del "%TEMP%\hash-%%i-%%j.txt"
+      goto IntegrityError
+    )
+    if exist "%TEMP%\hash-%%i-%%j.txt" del "%TEMP%\hash-%%i-%%j.txt"
   )
 )
 :SkipVerification

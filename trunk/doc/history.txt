@@ -330,6 +330,7 @@ Version 6.4 -- 12.02.10
 - Fix: DownloadUpdates.sh script contained obsolete reference to ../static/StaticDownloadLink-ifadmin.txt (Thanks to "Medvedko")
 --------------------------------------------------------------------------------
 Version 6.5 -- ??.??.10
+- Office updates up to 03/2010 integrated by static definitions
 - Optional installation of Windows PowerShell 2.0 on Windows XP, Server 2003 and Vista (x86/x64) systems
 - Optional installation of most recent Windows Terminal Services Client (Remote Desktop Connection) on Windows XP, Server 2003 and Vista (x86/x64) systems
 - Optional client side hash verification of update installation packages
