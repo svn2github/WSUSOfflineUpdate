@@ -336,6 +336,7 @@ Version 6.5 -- ??.??.10
 - Optional client side hash verification of update installation packages
 - UpdateGenerator script will now show log file on demand after downloading (Thanks to Andreas Bardelli)
 - UpdateInstaller script will now allow automatic reboot option even if started from a network share on Windows Vista, 7 and Server 2008 (R2) systems
+- DoUpdate.cmd script will now exit with errorlevel 3011 if recall after reboot is required and still exit with errorlevel 3010 if reboot only is required (Thanks to "othiman")
 - AutoIt script compiler updated to version 3.3.6.0 
 - Fix: Security Update for Microsoft Office 2003 File Converter Pack (KB974882) could have been missed (Thanks to "Denniss")
 - Fix: Security Update for Microsoft Office 2003 File Converter Pack (KB974882) was installed using invalid parameters (Thanks to "-Iwan-")

@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.4+ (r71)
+set WSUSUPDATE_VERSION=6.4+ (r72)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -874,7 +874,7 @@ echo %DATE% %TIME% - Info: Ending update >>%UPDATE_LOGFILE%
 title %ComSpec%
 if "%RECALL_REQUIRED%"=="1" (
   verify other 2>nul
-  exit /b 3010
+  exit /b 3011
 )
 if "%REBOOT_REQUIRED%"=="1" exit /b 3010
 endlocal

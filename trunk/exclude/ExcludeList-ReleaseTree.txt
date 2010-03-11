@@ -19,4 +19,5 @@ ExtractUpdateCategoriesAndFileIds.cmd
 ExtractUpdateFileIdsAndLocations.cmd
 PrepareProductionTree.cmd
 PrepareReleaseTree.cmd
+MakeRelease.cmd
 test.cmd
