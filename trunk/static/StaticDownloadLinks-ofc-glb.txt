@@ -1,2 +1,3 @@
 http://download.microsoft.com/download/3/1/f/31f1336a-4efa-489a-8286-7e8bba6f1105/OCONVPCK.EXE
 http://download.microsoft.com/download/5/2/6/52646E6D-36BE-49C2-93CB-EDDA0B636CBC/office2003-KB974882-FullFile-ENU.exe
+http://download.microsoft.com/download/D/0/4/D0478CD4-EF57-40B8-A15F-15022E9D4C20/office2007-kb978380-fullfile-x86-glb.exe

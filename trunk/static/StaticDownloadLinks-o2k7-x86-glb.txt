@@ -6,11 +6,7 @@ http://download.microsoft.com/download/9/7/F/97FFFF3A-24B2-4E3A-AF4B-FADA5862F37
 http://download.microsoft.com/download/B/3/9/B39F6A83-4977-4C26-9A78-3F3C6B97C0AA/office2007-972581-fullfile-x86-glb.exe
 http://download.microsoft.com/download/7/3/9/73927094-F5DF-42CF-B09B-E61E3614FC62/outlook2007-kb972363-fullfile-x86-glb.exe
 http://download.microsoft.com/download/B/9/A/B9ADE22B-719E-4570-A587-48A10B5811F3/office2007-kb973709-fullfile-x86-glb.exe
-http://download.microsoft.com/download/1/E/2/1E2325EB-7BEC-48AC-B992-B8E7FF32A939/excel2007-kb973593-fullfile-x86-glb.exe
-http://download.microsoft.com/download/F/0/7/F07F5006-9553-46DB-9854-A74E53CB5C51/office2007-kb973704-fullfile-x86-glb.exe
 http://download.microsoft.com/download/d/d/0/dd0871aa-7811-406f-bff8-9f25600042d4/word2007-kb974561-fullfile-x86-glb.exe
 http://download.microsoft.com/download/E/B/1/EB19E619-BD07-4768-9AF0-16E517CC55A6/infopath-kb976416-fullfile-x86-glb.exe
-http://download.microsoft.com/download/A/E/7/AE7A7C80-A2B9-4BD9-BCB9-0F7FCF202B70/office-kb977724-fullfile-x86-glb.exe
-http://download.microsoft.com/download/D/0/4/D0478CD4-EF57-40B8-A15F-15022E9D4C20/office2007-kb978380-fullfile-x86-glb.exe
 http://download.microsoft.com/download/F/6/F/F6F82460-18BE-43A3-92E7-AFCC6A6401CE/excel2007-kb978382-fullfile-x86-glb.exe
 http://download.microsoft.com/download/7/7/6/776310E0-6FDC-4D59-8CFA-D160D7D1B095/office2007-kb979895-fullfile-x86-glb.exe
