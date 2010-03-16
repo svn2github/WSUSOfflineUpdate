@@ -528,14 +528,14 @@ While 1
       If (@OSArch <> "X86") Then
         DllCall("kernel32.dll", "int", "Wow64DisableWow64FsRedirection", "int", 1)
       EndIf
-      If Run(@ComSpec & " /D /C Update.cmd" & $options, $scriptdir, @SW_HIDE) = 0 Then
+      If Run(@ComSpec & " /E:32768 /D /C Update.cmd" & $options, $scriptdir, @SW_HIDE) = 0 Then
         If ShowGUIInGerman() Then
           MsgBox(0x2010, "Fehler", "Fehler #" & @error & " beim Aufruf von" _
-                           & @LF & @ComSpec & " /D /C Update.cmd" & $options & " in" _
+                           & @LF & @ComSpec & " /E:32768 /D /C Update.cmd" & $options & " in" _
                            & @LF & $scriptdir & ".")
         Else
           MsgBox(0x2010, "Error", "Error #" & @error & " when calling" _
-                          & @LF & @ComSpec & " /D /C Update.cmd" & $options & " in" _
+                          & @LF & @ComSpec & " /E:32768 /D /C Update.cmd" & $options & " in" _
                           & @LF & $scriptdir & ".")
         EndIf
       Else

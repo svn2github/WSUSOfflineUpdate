@@ -15,13 +15,13 @@ if "%OS_NAME%"=="" goto NoOSName
 if "%OS_LANGUAGE%"=="" goto NoOSLang
 if "%OS_ARCHITECTURE%"=="" goto NoOSArch
 
-:EvalParam
-if "%1"=="" goto NoParam
+:EvalParams
+if "%1"=="" goto NoMoreParams
 if /i "%1"=="/excludestatics" set EXCLUDE_STATICS=/excludestatics
 shift /1
-goto EvalParam
-:NoParam
+goto EvalParams
 
+:NoMoreParams
 rem *** Add statically defined update ids ***
 if "%EXCLUDE_STATICS%"=="/excludestatics" goto ExcludeStatics
 if exist ..\static\StaticUpdateIds-%OS_NAME%-%OS_ARCHITECTURE%.txt (

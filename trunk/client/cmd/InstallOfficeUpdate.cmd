@@ -15,23 +15,22 @@ pushd "%TEMP%"
 if errorlevel 1 goto NoTempDir
 popd
 
-if "%CSCRIPT_PATH%"=="" set CSCRIPT_PATH=%SystemRoot%\system32\cscript.exe
-if not exist %CSCRIPT_PATH% goto NoCScript
+:EvalParams
+if "%2"=="" goto NoMoreParams
+if /i "%2"=="/selectoptions" set SELECT_OPTIONS=1
+if /i "%2"=="/verify" set VERIFY_FILES=1
+if /i "%2"=="/errorsaswarnings" set ERRORS_AS_WARNINGS=1
+shift /2
+goto EvalParams
 
-:EvalParam
-if /i "%2"=="/verify" (
-  set VERIFY_FILES=1
-  shift /2
-  goto EvalParam
-)
-if /i "%2"=="/errorsaswarnings" (
-  set ERRORS_AS_WARNINGS=1
-  shift /2
-  goto EvalParam
-)
-
+:NoMoreParams
 if "%VERIFY_FILES%" NEQ "1" goto SkipVerification
-if not exist ..\bin\hashdeep.exe goto SkipVerification
+if not exist ..\bin\hashdeep.exe (
+  echo Warning: Hash computing/auditing utility ..\bin\hashdeep.exe not found.
+  echo %DATE% %TIME% - Warning: Hash computing/auditing utility ..\bin\hashdeep.exe not found >>%UPDATE_LOGFILE%
+  goto SkipVerification
+)
+echo Verifying integrity of %1...
 for /F "tokens=2,3 delims=\" %%i in ("%1") do (
   if exist ..\md\hashes-%%i-%%j.txt (
     %SystemRoot%\system32\findstr.exe /C:%% /C:## /C:%1 ..\md\hashes-%%i-%%j.txt >"%TEMP%\hash-%%i-%%j.txt"
@@ -41,6 +40,9 @@ for /F "tokens=2,3 delims=\" %%i in ("%1") do (
       goto IntegrityError
     )
     if exist "%TEMP%\hash-%%i-%%j.txt" del "%TEMP%\hash-%%i-%%j.txt"
+  ) else (
+    echo Warning: Hash file ..\md\hashes-%%i-%%j.txt not found.
+    echo %DATE% %TIME% - Warning: Hash file ..\md\hashes-%%i-%%j.txt not found >>%UPDATE_LOGFILE%
   )
 )
 :SkipVerification
@@ -54,6 +56,12 @@ goto UnsupVersion
 :ofc
 :oxp
 :o2k3
+if "%SELECT_OPTIONS%"=="1" (
+  for /F %%i in (..\opt\OptionList-qn.txt) do (
+    echo %1 | %SystemRoot%\system32\find.exe /I "%%i" >nul 2>&1
+    if not errorlevel 1 goto o2k7
+  )
+)
 for /F "tokens=3 delims=\." %%i in ("%1") do (
   echo Installing %1...
   call SafeRmDir.cmd "%TEMP%\%%i"
@@ -122,11 +130,6 @@ goto Error
 :NoTempDir
 echo ERROR: Directory "%TEMP%" not found.
 echo %DATE% %TIME% - Error: Directory "%TEMP%" not found >>%UPDATE_LOGFILE%
-goto Error
-
-:NoCScript
-echo ERROR: VBScript interpreter %CSCRIPT_PATH% not found.
-echo %DATE% %TIME% - Error: VBScript interpreter %CSCRIPT_PATH% not found >>%UPDATE_LOGFILE%
 goto Error
 
 :UnsupVersion
