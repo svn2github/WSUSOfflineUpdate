@@ -34,6 +34,17 @@ if not exist ..\bin\hashdeep.exe (
 )
 echo Verifying integrity of %1...
 for /F "tokens=2,3 delims=\" %%i in ("%1") do (
+  if exist ..\md\hashes-%%i.txt (
+    %SystemRoot%\system32\findstr.exe /C:%% /C:## /C:%1 ..\md\hashes-%%i.txt >"%TEMP%\hash-%%i.txt"
+    ..\bin\hashdeep.exe -a -l -k "%TEMP%\hash-%%i.txt" %1
+    if errorlevel 1 (
+      if exist "%TEMP%\hash-%%i.txt" del "%TEMP%\hash-%%i.txt"
+      goto IntegrityError
+    ) else (
+      if exist "%TEMP%\hash-%%i.txt" del "%TEMP%\hash-%%i.txt"
+      goto SkipVerification
+    )
+  )
   if exist ..\md\hashes-%%i-%%j.txt (
     %SystemRoot%\system32\findstr.exe /C:%% /C:## /C:%1 ..\md\hashes-%%i-%%j.txt >"%TEMP%\hash-%%i-%%j.txt"
     ..\bin\hashdeep.exe -a -l -k "%TEMP%\hash-%%i-%%j.txt" %1
@@ -66,7 +77,7 @@ if not errorlevel 1 (
 goto UnsupType
 
 :InstExe
-if "%SELECT_OPTIONS%" NEQ "1" set INSTALL_SWITCHES=%2 %3 %4 %5 %6 %7 %8 %9
+if "%SELECT_OPTIONS%" NEQ "1" goto InstPlain
 if "%INSTALL_SWITCHES%"=="" (
   for /F %%i in (..\opt\OptionList-Q.txt) do (
     echo %1 | %SystemRoot%\system32\find.exe /I "%%i" >nul 2>&1
@@ -91,6 +102,11 @@ echo Installing %1...
 %1 %INSTALL_SWITCHES%
 for %%i in (0 1641 3010 3011) do if %errorlevel% EQU %%i goto InstSuccess
 goto InstFailure
+
+:InstPlain
+echo Installing %*...
+%*
+goto InstSuccess
 
 :InstCabMsu
 echo Installing %1...
