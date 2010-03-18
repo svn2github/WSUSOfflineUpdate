@@ -17,11 +17,31 @@ popd
 
 :EvalParams
 if "%2"=="" goto NoMoreParams
-if /i "%2"=="/selectoptions" set SELECT_OPTIONS=1
-if /i "%2"=="/verify" set VERIFY_FILES=1
-if /i "%2"=="/errorsaswarnings" set ERRORS_AS_WARNINGS=1
-shift /2
-goto EvalParams
+if /i "%2"=="/selectoptions" (
+  set SELECT_OPTIONS=1
+  shift /2
+  goto EvalParams
+)
+if /i "%2"=="/nobackup" (
+  set BACKUP_FILES=0
+  shift /2
+  goto EvalParams
+)
+if /i "%2"=="/verify" (
+  set VERIFY_FILES=1
+  shift /2
+  goto EvalParams
+)
+if /i "%2"=="/errorsaswarnings" (
+  set ERRORS_AS_WARNINGS=1
+  shift /2
+  goto EvalParams
+)
+if /i "%2"=="/ignoreerrors" (
+  set IGNORE_ERRORS=1
+  shift /2
+  goto EvalParams
+)
 
 :NoMoreParams
 if "%VERIFY_FILES%" NEQ "1" goto SkipVerification

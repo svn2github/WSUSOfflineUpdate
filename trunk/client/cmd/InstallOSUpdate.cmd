@@ -18,12 +18,31 @@ popd
 
 :EvalParams
 if "%2"=="" goto NoMoreParams
-if /i "%2"=="/selectoptions" set SELECT_OPTIONS=1
-if /i "%2"=="/nobackup" set BACKUP_FILES=0
-if /i "%2"=="/verify" set VERIFY_FILES=1
-if /i "%2"=="/errorsaswarnings" set ERRORS_AS_WARNINGS=1
-shift /2
-goto EvalParams
+if /i "%2"=="/selectoptions" (
+  set SELECT_OPTIONS=1
+  shift /2
+  goto EvalParams
+)
+if /i "%2"=="/nobackup" (
+  set BACKUP_FILES=0
+  shift /2
+  goto EvalParams
+)
+if /i "%2"=="/verify" (
+  set VERIFY_FILES=1
+  shift /2
+  goto EvalParams
+)
+if /i "%2"=="/errorsaswarnings" (
+  set ERRORS_AS_WARNINGS=1
+  shift /2
+  goto EvalParams
+)
+if /i "%2"=="/ignoreerrors" (
+  set IGNORE_ERRORS=1
+  shift /2
+  goto EvalParams
+)
 
 :NoMoreParams
 if "%VERIFY_FILES%" NEQ "1" goto SkipVerification
@@ -40,10 +59,9 @@ for /F "tokens=2,3 delims=\" %%i in ("%1") do (
     if errorlevel 1 (
       if exist "%TEMP%\hash-%%i.txt" del "%TEMP%\hash-%%i.txt"
       goto IntegrityError
-    ) else (
-      if exist "%TEMP%\hash-%%i.txt" del "%TEMP%\hash-%%i.txt"
-      goto SkipVerification
     )
+    if exist "%TEMP%\hash-%%i.txt" del "%TEMP%\hash-%%i.txt"
+    goto SkipVerification
   )
   if exist ..\md\hashes-%%i-%%j.txt (
     %SystemRoot%\system32\findstr.exe /C:%% /C:## /C:%1 ..\md\hashes-%%i-%%j.txt >"%TEMP%\hash-%%i-%%j.txt"
@@ -77,7 +95,7 @@ if not errorlevel 1 (
 goto UnsupType
 
 :InstExe
-if "%SELECT_OPTIONS%" NEQ "1" goto InstPlain
+if "%SELECT_OPTIONS%" NEQ "1" set INSTALL_SWITCHES=%2 %3 %4 %5 %6 %7 %8 %9
 if "%INSTALL_SWITCHES%"=="" (
   for /F %%i in (..\opt\OptionList-Q.txt) do (
     echo %1 | %SystemRoot%\system32\find.exe /I "%%i" >nul 2>&1
@@ -100,13 +118,9 @@ if "%INSTALL_SWITCHES%"=="" (
 )
 echo Installing %1...
 %1 %INSTALL_SWITCHES%
+if "%IGNORE_ERRORS%"=="1" goto InstSuccess
 for %%i in (0 1641 3010 3011) do if %errorlevel% EQU %%i goto InstSuccess
 goto InstFailure
-
-:InstPlain
-echo Installing %*...
-%*
-goto InstSuccess
 
 :InstCabMsu
 echo Installing %1...

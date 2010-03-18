@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.4+ (r76)
+set WSUSUPDATE_VERSION=6.4+ (r77)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -287,9 +287,9 @@ dir /B %WUA_FILENAME% >nul 2>&1
 if errorlevel 1 goto NoWUAInst
 echo Installing most recent Windows Update Agent...
 for /F %%i in ('dir /B %WUA_FILENAME%') do (
-  call InstallOSUpdate.cmd ..\wsus\%%i /wuforce /quiet /norestart
+  call InstallOSUpdate.cmd ..\wsus\%%i /ignoreerrors /wuforce /quiet /norestart
   if errorlevel 1 goto InstError
-  set RECALL_REQUIRED=1
+  set REBOOT_REQUIRED=1
 )
 :SkipWUAInst
 
@@ -372,7 +372,7 @@ if not exist %IE_FILENAME% (
   goto SkipIEInst 
 )
 echo Installing Internet Explorer 6...
-call InstallOSUpdate.cmd %IE_FILENAME% %VERIFY_MODE% /q:a /r:n
+call InstallOSUpdate.cmd %IE_FILENAME% %VERIFY_MODE% /ignoreerrors /q:a /r:n
 if not errorlevel 1 set RECALL_REQUIRED=1
 goto SkipIEInst 
 
@@ -410,15 +410,15 @@ if errorlevel 1 (
   for /F %%i in ('dir /B %IE_FILENAME%') do (
     if /i "%OS_ARCHITECTURE%"=="x64" (
       if "%INSTALL_IE%"=="/instie8" (
-        call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\%OS_LANGUAGE%\%%i %VERIFY_MODE% /quiet /update-no /no-default /norestart
+        call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\%OS_LANGUAGE%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
       ) else (
-        call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\%OS_LANGUAGE%\%%i %VERIFY_MODE% /quiet /update-no /no-default %BACKUP_MODE% /norestart
+        call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\%OS_LANGUAGE%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default %BACKUP_MODE% /norestart
       )
     ) else (
       if "%INSTALL_IE%"=="/instie8" (
-        call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANGUAGE%\%%i %VERIFY_MODE% /quiet /update-no /no-default /norestart
+        call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANGUAGE%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
       ) else (
-        call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANGUAGE%\%%i %VERIFY_MODE% /quiet /update-no /no-default %BACKUP_MODE% /norestart
+        call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANGUAGE%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default %BACKUP_MODE% /norestart
       )
     )
     if not errorlevel 1 set RECALL_REQUIRED=1
@@ -440,9 +440,9 @@ if errorlevel 1 (
   echo Installing Internet Explorer 8...
   for /F %%i in ('dir /B %IE_FILENAME%') do (
     if /i "%OS_ARCHITECTURE%"=="x64" (
-      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\glb\%%i %VERIFY_MODE% /quiet /update-no /no-default /norestart
+      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
     ) else (
-      call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /quiet /update-no /no-default /norestart
+      call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
     )
     if not errorlevel 1 set REBOOT_REQUIRED=1
   )
@@ -491,13 +491,13 @@ if %DOTNET_VERSION_REVISION% GEQ %DOTNET_VERSION_TARGET_REVISION% goto SkipDotNe
 set DOTNET_FILENAME=..\dotnet\dotnetfx35.exe
 if exist %DOTNET_FILENAME% (
   echo Installing .NET Framework 3.5 SP1...
-  call InstallOSUpdate.cmd %DOTNET_FILENAME% %VERIFY_MODE% /qb /norestart /lang:%OS_LANGUAGE%
+  call InstallOSUpdate.cmd %DOTNET_FILENAME% %VERIFY_MODE% /ignoreerrors /qb /norestart /lang:%OS_LANGUAGE%
   copy /Y ..\static\StaticUpdateIds-dotnet.txt "%TEMP%\MissingUpdateIds.txt" >nul
   call ListUpdatesToInstall.cmd /excludestatics
   if errorlevel 1 goto ListError
   if exist "%TEMP%\UpdatesToInstall.txt" (
     echo Installing .NET Framework 3.5 SP1 Family Update...
-    call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /errorsaswarnings
+    call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
   )
 ) else (
   echo Warning: File %DOTNET_FILENAME% not found. 
