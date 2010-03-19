@@ -1,11 +1,11 @@
-; *** WSUS Offline Update 6.4 - Generator ***
+; *** WSUS Offline Update 6.5 - Generator ***
 ; ***  Author: T. Wittrock, RZ Uni Kiel   ***
 ; ***   USB-Option added by Ch. Riedel    ***
 ; *** Dialog scaling added by Th. Baisch  ***
 
 #include <GUIConstants.au3>
 
-Dim Const $caption                = "WSUS Offline Update 6.4"
+Dim Const $caption                = "WSUS Offline Update 6.5"
 Dim Const $title                  = $caption & " - Generator"
 Dim Const $downloadURL            = "http://download.wsusoffline.net/"
 Dim Const $donationURL            = "http://www.wsusoffline.net/donate.html"
@@ -117,8 +117,7 @@ Dim $w2k_fin, $wxp_fin, $w2k3_fin, $oxp_fin, $o2k3_fin, $o2k7_fin ; Finnish
 Dim $w60_glb, $w60_x64_glb                                        ; Windows Vista / Windows Server 2008 (global)  
 Dim $w61_glb, $w61_x64_glb                                        ; Windows 7 / Windows Server 2008 R2 (global)  
 
-Dim $dlgheight, $groupwidth, $groupheight, $txtwidth, $txtheight, $btnwidth, $btnheight
-Dim $txtgrpyoffset, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
+Dim $dlgheight, $groupwidth, $groupheight, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
 
 Func ShowGUIInGerman()
   If ($CmdLine[0] > 0) Then
@@ -1068,7 +1067,6 @@ Func CalcGUISize()
   $txtheight = 20 * $reg_val / $default_logpixels
   $btnwidth = 80 * $reg_val / $default_logpixels
   $btnheight = 25 * $reg_val / $default_logpixels  
-  $txtgrpyoffset = 15 * $reg_val / $default_logpixels
   $txtxoffset = 10 * $reg_val / $default_logpixels
   $txtyoffset = 10 * $reg_val / $default_logpixels
   Return 0
@@ -1110,7 +1108,7 @@ $txtxpos = 2 * $txtxoffset
 $txtypos = 3.5 * $txtyoffset + $txtheight
 GUICtrlCreateGroup("Windows XP", $txtxpos, $txtypos, $groupwidth, $groupheight)
 ;  Windows XP English
-$txtypos = $txtypos + $txtgrpyoffset
+$txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
 $wxp_enu = GUICtrlCreateCheckbox(LanguageCaption($lang_token_enu, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
 If IniRead($inifilename, $ini_section_wxp, $lang_token_enu, $disabled) = $enabled Then
@@ -1310,7 +1308,7 @@ $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
 GUICtrlCreateGroup("Windows Server 2003", $txtxpos, $txtypos, $groupwidth, $groupheight)
 ;  Windows Server 2003 English
-$txtypos = $txtypos + $txtgrpyoffset
+$txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
 $w2k3_enu = GUICtrlCreateCheckbox(LanguageCaption($lang_token_enu, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
 If IniRead($inifilename, $ini_section_w2k3, $lang_token_enu, $disabled) = $enabled Then
@@ -1496,7 +1494,7 @@ Else
   GUICtrlCreateGroup("Windows XP / Server 2003 x64 editions", $txtxpos, $txtypos, $groupwidth, $groupheight - 2 * $txtheight)
 EndIf
 ;  Windows Server 2003 x64 English
-$txtypos = $txtypos + $txtgrpyoffset
+$txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
 $w2k3_x64_enu = GUICtrlCreateCheckbox(LanguageCaption($lang_token_enu, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
 If IniRead($inifilename, $ini_section_w2k3_x64, $lang_token_enu, $disabled) = $enabled Then
@@ -1566,7 +1564,7 @@ $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
 GUICtrlCreateGroup("Windows Vista / Server 2008", $txtxpos, $txtypos, $groupwidth, $groupheight - 2 * $txtheight)
 ;  Windows Vista / Server 2008 global
-$txtypos = $txtypos + $txtgrpyoffset
+$txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
 If ShowGUIInGerman() Then
   $w60_glb = GUICtrlCreateCheckbox("Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
@@ -1596,7 +1594,7 @@ $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
 GUICtrlCreateGroup("Windows 7 / Server 2008 R2", $txtxpos, $txtypos, $groupwidth, $groupheight - 2 * $txtheight)
 ;  Windows 7 global
-$txtypos = $txtypos + $txtgrpyoffset
+$txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
 If ShowGUIInGerman() Then
   $w61_glb = GUICtrlCreateCheckbox("Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
@@ -1633,7 +1631,7 @@ $txtxpos = 2 * $txtxoffset
 $txtypos = 3.5 * $txtyoffset + $txtheight
 GUICtrlCreateGroup("Office XP", $txtxpos, $txtypos, $groupwidth, $groupheight)
 ;  Office XP English
-$txtypos = $txtypos + $txtgrpyoffset
+$txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
 $oxp_enu = GUICtrlCreateCheckbox(LanguageCaption($lang_token_enu, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
 If IniRead($inifilename, $ini_section_oxp, $lang_token_enu, $disabled) = $enabled Then
@@ -1833,7 +1831,7 @@ $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
 GUICtrlCreateGroup("Office 2003", $txtxpos, $txtypos, $groupwidth, $groupheight)
 ;  Office 2003 English
-$txtypos = $txtypos + $txtgrpyoffset
+$txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
 $o2k3_enu = GUICtrlCreateCheckbox(LanguageCaption($lang_token_enu, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
 If IniRead($inifilename, $ini_section_o2k3, $lang_token_enu, $disabled) = $enabled Then
@@ -2033,7 +2031,7 @@ $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
 GUICtrlCreateGroup("Office 2007", $txtxpos, $txtypos, $groupwidth, $groupheight)
 ;  Office 2007 English
-$txtypos = $txtypos + $txtgrpyoffset
+$txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
 $o2k7_enu = GUICtrlCreateCheckbox(LanguageCaption($lang_token_enu, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
 If IniRead($inifilename, $ini_section_o2k7, $lang_token_enu, $disabled) = $enabled Then
@@ -2240,7 +2238,7 @@ $txtxpos = 2 * $txtxoffset
 $txtypos = 3.5 * $txtyoffset + $txtheight
 GUICtrlCreateGroup("Windows 2000", $txtxpos, $txtypos, $groupwidth, $groupheight)
 ;  Windows 2000 English
-$txtypos = $txtypos + $txtgrpyoffset
+$txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
 $w2k_enu = GUICtrlCreateCheckbox(LanguageCaption($lang_token_enu, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
 If IniRead($inifilename, $ini_section_w2k, $lang_token_enu, $disabled) = $enabled Then
@@ -2450,7 +2448,7 @@ Else
 EndIf
 
 ;  Exclude Service Packs
-$txtypos = $txtypos + $txtgrpyoffset
+$txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
 If ShowGUIInGerman() Then
   $excludesp = GUICtrlCreateCheckbox("Service-Packs ausschließen", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
@@ -2513,7 +2511,7 @@ Else
 EndIf
 
 ;  CD ISO image
-$txtypos = $txtypos + $txtgrpyoffset
+$txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
 If ShowGUIInGerman() Then
   $cdiso = GUICtrlCreateCheckbox("pro Produkt und Sprache (CD / DVD)", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
@@ -2549,7 +2547,7 @@ Else
 EndIf
 
 ;  USB image
-$txtypos = $txtypos + $txtgrpyoffset
+$txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
 If ShowGUIInGerman() Then
   $usbcopy = GUICtrlCreateCheckbox("Kopiere Updates für gewählte Produkte ins...", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
@@ -2586,7 +2584,7 @@ EndIf
 
 ;  Start button
 $txtxpos = $txtxoffset
-$txtypos = $txtypos + $txtgrpyoffset + $txtheight
+$txtypos = $txtypos + 1.5 * $txtyoffset + $txtheight
 $btn_start = GUICtrlCreateButton("Start", $txtxpos, $txtypos, $btnwidth, $btnheight)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM)
 

@@ -1,11 +1,11 @@
-; *** WSUS Offline Update 6.4 - Installer ***
+; *** WSUS Offline Update 6.5 - Installer ***
 ; ***  Author: T. Wittrock, RZ Uni Kiel   ***
 ; *** Dialog scaling added by Th. Baisch  ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 
-Dim Const $caption                    = "WSUS Offline Update 6.4 - Installer"
+Dim Const $caption                    = "WSUS Offline Update 6.5 - Installer"
 
 ; Registry constants
 Dim Const $reg_key_wsh_hklm           = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings"
@@ -49,9 +49,8 @@ Dim Const $disabled                   = "Disabled"
 Dim Const $path_rel_hashes            = "\md\"
 Dim Const $path_rel_instdotnet        = "\dotnet\dotnetfx35.exe"
 
-Dim $dlgheight, $txtwidth, $txtheight, $txtxoffset, $btnwidth, $btnheight
-
-Dim $maindlg, $scriptdir, $netdrives, $i, $strpos, $inifilename, $backup, $verify, $ie7, $ie8, $wmp, $tsc, $dotnet, $powershell, $converters, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $txtypos
+Dim $maindlg, $scriptdir, $netdrives, $i, $strpos, $inifilename, $backup, $verify, $ie7, $ie8, $wmp, $tsc, $dotnet, $powershell, $converters, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options
+Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
 
 Func ShowGUIInGerman()
   If ($CmdLine[0] > 0) Then
@@ -115,12 +114,17 @@ Func CalcGUISize()
   If ($reg_val = "") Then
     $reg_val = $default_logpixels
   EndIf
-  $dlgheight = 335 * $reg_val / $default_logpixels
-  $txtwidth = 260 * $reg_val / $default_logpixels
+  $dlgheight = 245 * $reg_val / $default_logpixels
+  If ShowGUIInGerman() Then
+    $txtwidth = 220 * $reg_val / $default_logpixels
+  Else
+    $txtwidth = 200 * $reg_val / $default_logpixels
+  EndIf
   $txtheight = 20 * $reg_val / $default_logpixels
-  $txtxoffset = 10 * $reg_val / $default_logpixels
   $btnwidth = 80 * $reg_val / $default_logpixels
   $btnheight = 25 * $reg_val / $default_logpixels
+  $txtxoffset = 10 * $reg_val / $default_logpixels
+  $txtyoffset = 10 * $reg_val / $default_logpixels
   Return 0
 EndFunc	
 
@@ -129,7 +133,8 @@ AutoItSetOption("GUICloseOnESC", 0)
 AutoItSetOption("TrayAutoPause", 0)
 AutoItSetOption("TrayIconHide", 1)
 CalcGUISize()
-$maindlg = GUICreate($caption, $txtwidth + 2 * $txtxoffset, $dlgheight)
+$groupwidth = 2 * $txtwidth + 2 * $txtxoffset
+$maindlg = GUICreate($caption, $groupwidth + 2 * $txtxoffset, $dlgheight)
 GUISetFont(8.5, 400, 0, "Sans Serif")
 
 $scriptdir = "" 
@@ -154,19 +159,25 @@ EndIf
 $inifilename = $scriptdir & "\" & StringLeft(@ScriptName, StringInStr(@ScriptName, ".", 0, -1)) & "ini"
 
 ;  Label
-$txtypos = 10
+$txtxpos = $txtxoffset
+$txtypos = $txtyoffset
 If ShowGUIInGerman() Then
-  GUICtrlCreateLabel("Klicken Sie auf 'Start', um die Microsoft-Updates" & @LF & "auf Ihrem System zu installieren.", $txtxoffset, $txtypos, $txtwidth, 2 * $txtheight)
+  GUICtrlCreateLabel("Wählen Sie die gewünschten Optionen und klicken Sie auf 'Start'," & @LF & "um die Microsoft-Updates auf Ihrem System zu installieren.", $txtxpos, $txtypos, $groupwidth, 2 * $txtheight)
 Else
-  GUICtrlCreateLabel("Select options and click 'Start' to install" & @LF & "Microsoft updates on your computer.", $txtxoffset, $txtypos, $txtwidth, 2 * $txtheight)
+  GUICtrlCreateLabel("Select desired options and click 'Start'" & @LF & "to install Microsoft updates on your computer.", $txtxpos, $txtypos, $groupwidth, 2 * $txtheight)
 EndIf
 
+;  Installation group
+$txtypos = $txtypos + 1.5 * $txtheight
+GUICtrlCreateGroup("Installation", $txtxpos, $txtypos, $groupwidth, 5 * $txtheight)
+
 ; Backup
-$txtypos = $txtypos + 2 * $txtheight
+$txtxpos = 2 * $txtxoffset
+$txtypos = $txtypos + 1.5 * $txtyoffset
 If ShowGUIInGerman() Then
-  $backup = GUICtrlCreateCheckbox("Existierende Systemdateien sichern", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+  $backup = GUICtrlCreateCheckbox("Existierende Systemdateien sichern", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $backup = GUICtrlCreateCheckbox("Back up existing system files", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+  $backup = GUICtrlCreateCheckbox("Back up existing system files", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
   GUICtrlSetState(-1, $GUI_CHECKED)
@@ -179,32 +190,29 @@ Else
   EndIf
 EndIf
 
-; Verify
-$txtypos = $txtypos + $txtheight
+; Install file format converters for Office
+$txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
-  $verify = GUICtrlCreateCheckbox("Installationspakete verifizieren", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+  $converters = GUICtrlCreateCheckbox("Office-Dateiformat-Konverter installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $verify = GUICtrlCreateCheckbox("Verify installation packages", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+  $converters = GUICtrlCreateCheckbox("Install Office file format converters", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If HashFilesPresent() Then
-  If IniRead($inifilename, $ini_section_installation, $ini_value_verify, $disabled) = $enabled Then
-    GUICtrlSetState(-1, $GUI_CHECKED)
-  Else
-    GUICtrlSetState(-1, $GUI_UNCHECKED)
-  EndIf
+If IniRead($inifilename, $ini_section_installation, $ini_value_converters, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
-  GUICtrlSetState(-1, $GUI_DISABLE)
 EndIf
 
 ; Install IE7
+$txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
-  $ie7 = GUICtrlCreateCheckbox("Internet Explorer 7 installieren", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+  $ie7 = GUICtrlCreateCheckbox("Internet Explorer 7 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $ie7 = GUICtrlCreateCheckbox("Install Internet Explorer 7", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+  $ie7 = GUICtrlCreateCheckbox("Install Internet Explorer 7", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
+If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") _
+  OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
   OR (IEVersion() = "7") OR (IEVersion() = "8") ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
@@ -217,17 +225,18 @@ Else
 EndIf
 
 ; Install IE8
-$txtypos = $txtypos + $txtheight
+$txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
-  $ie8 = GUICtrlCreateCheckbox("Internet Explorer 8 installieren", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+  $ie8 = GUICtrlCreateCheckbox("Internet Explorer 8 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $ie8 = GUICtrlCreateCheckbox("Install Internet Explorer 8", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+  $ie8 = GUICtrlCreateCheckbox("Install Internet Explorer 8", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (@OSVersion = "WIN_2000") OR (IEVersion() = "8") ) Then  
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else
-  If ( (IniRead($inifilename, $ini_section_installation, $ini_value_ie8, $enabled) = $enabled) AND (BitAND(GUICtrlRead($ie7), $GUI_CHECKED) <> $GUI_CHECKED) ) Then  
+  If ( (IniRead($inifilename, $ini_section_installation, $ini_value_ie8, $enabled) = $enabled) _
+   AND (BitAND(GUICtrlRead($ie7), $GUI_CHECKED) <> $GUI_CHECKED) ) Then  
     GUICtrlSetState(-1, $GUI_CHECKED)  
     GUICtrlSetState($ie7, $GUI_DISABLE)  
   Else  
@@ -239,11 +248,12 @@ Else
 EndIf
 
 ; Update Windows Media Player
+$txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
-  $wmp = GUICtrlCreateCheckbox("Windows Media Player aktualisieren", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+  $wmp = GUICtrlCreateCheckbox("Windows Media Player aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $wmp = GUICtrlCreateCheckbox("Update Windows Media Player", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+  $wmp = GUICtrlCreateCheckbox("Update Windows Media Player", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -257,11 +267,11 @@ Else
 EndIf
 
 ; Update Windows Terminal Services Client
-$txtypos = $txtypos + $txtheight
+$txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
-  $tsc = GUICtrlCreateCheckbox("Terminal Services Client aktualisieren", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+  $tsc = GUICtrlCreateCheckbox("Terminal Services Client aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $tsc = GUICtrlCreateCheckbox("Update Terminal Services Client", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+  $tsc = GUICtrlCreateCheckbox("Update Terminal Services Client", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -275,11 +285,12 @@ Else
 EndIf
 
 ; Install .NET Framework 3.5 SP1
+$txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
-  $dotnet = GUICtrlCreateCheckbox(".NET Framework 3.5 SP1 installieren", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+  $dotnet = GUICtrlCreateCheckbox(".NET Framework 3.5 SP1 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $dotnet = GUICtrlCreateCheckbox("Install .NET Framework 3.5 SP1", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+  $dotnet = GUICtrlCreateCheckbox("Install .NET Framework 3.5 SP1", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (@OSVersion = "WIN_2000") OR (DotNet35Version() = $target_version_dotnet) OR (NOT DotNet35InstPresent()) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -293,11 +304,11 @@ Else
 EndIf
 
 ; Install Windows PowerShell 2.0
-$txtypos = $txtypos + $txtheight
+$txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
-  $powershell = GUICtrlCreateCheckbox("PowerShell 2.0 installieren", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+  $powershell = GUICtrlCreateCheckbox("PowerShell 2.0 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $powershell = GUICtrlCreateCheckbox("Install PowerShell 2.0", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+  $powershell = GUICtrlCreateCheckbox("Install PowerShell 2.0", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
   OR ( (DotNet35Version() <> $target_version_dotnet) AND (BitAND(GUICtrlRead($dotnet), $GUI_CHECKED) <> $GUI_CHECKED) ) _
@@ -312,32 +323,47 @@ Else
   EndIf
 EndIf
 
-; Install file format converters for Office
-$txtypos = $txtypos + $txtheight
+;  Control group
+$txtxpos = $txtxoffset
+$txtypos = $txtypos + 2.5 * $txtyoffset
 If ShowGUIInGerman() Then
-  $converters = GUICtrlCreateCheckbox("Office-Dateiformat-Konverter installieren", $txtxoffset, $txtypos, $txtwidth - 2 * $txtxoffset, $txtheight)
+  GUICtrlCreateGroup("Steuerung", $txtxpos, $txtypos, $groupwidth, 3 * $txtheight)
 Else
-  $converters = GUICtrlCreateCheckbox("Install Office file format converters", $txtxoffset, $txtypos, $txtwidth - 2 * $txtxoffset, $txtheight)
+  GUICtrlCreateGroup("Control", $txtxpos, $txtypos, $groupwidth, 3 * $txtheight)
 EndIf
-If IniRead($inifilename, $ini_section_installation, $ini_value_converters, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
+
+; Verify
+$txtxpos = 2 * $txtxoffset
+$txtypos = $txtypos + 1.5 * $txtyoffset
+If ShowGUIInGerman() Then
+  $verify = GUICtrlCreateCheckbox("Installationspakete verifizieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+Else
+  $verify = GUICtrlCreateCheckbox("Verify installation packages", $txtxpos, $txtypos, $txtwidth, $txtheight)
+EndIf
+If HashFilesPresent() Then
+  If IniRead($inifilename, $ini_section_control, $ini_value_verify, $disabled) = $enabled Then
+    GUICtrlSetState(-1, $GUI_CHECKED)
+  Else
+    GUICtrlSetState(-1, $GUI_UNCHECKED)
+  EndIf
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
+  GUICtrlSetState(-1, $GUI_DISABLE)
 EndIf
 
 ;  Automatic reboot and recall
-$txtypos = $txtypos + $txtheight
+$txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
   If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
-    $autoreboot = GUICtrlCreateCheckbox("Automatisch neu starten", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+    $autoreboot = GUICtrlCreateCheckbox("Automatisch neu starten", $txtxpos, $txtypos, $txtwidth, $txtheight)
   Else
-    $autoreboot = GUICtrlCreateCheckbox("Automatisch neu starten und fortsetzen", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+    $autoreboot = GUICtrlCreateCheckbox("Automatisch neu starten und fortsetzen", $txtxpos, $txtypos, $txtwidth, $txtheight)
   EndIf
 Else
   If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
-    $autoreboot = GUICtrlCreateCheckbox("Automatic reboot", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+    $autoreboot = GUICtrlCreateCheckbox("Automatic reboot", $txtxpos, $txtypos, $txtwidth, $txtheight)
   Else
-    $autoreboot = GUICtrlCreateCheckbox("Automatic reboot and recall", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+    $autoreboot = GUICtrlCreateCheckbox("Automatic reboot and recall", $txtxpos, $txtypos, $txtwidth, $txtheight)
   EndIf
 EndIf
 If ( (DriveGetType(@ScriptDir) = "Network") _
@@ -353,11 +379,12 @@ Else
 EndIf
 
 ;  Automatic shutdown
+$txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
-  $shutdown = GUICtrlCreateCheckbox("Nach Aktualisierung herunterfahren", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+  $shutdown = GUICtrlCreateCheckbox("Nach Aktualisierung herunterfahren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $shutdown = GUICtrlCreateCheckbox("Shut down after updating", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+  $shutdown = GUICtrlCreateCheckbox("Shut down after updating", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If IniRead($inifilename, $ini_section_control, $ini_value_shutdown, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
@@ -366,28 +393,32 @@ Else
 EndIf
 
 ; Show log file
-$txtypos = $txtypos + $txtheight
+$txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
-  $showlog = GUICtrlCreateCheckbox("Protokolldatei anzeigen", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+  $showlog = GUICtrlCreateCheckbox("Protokolldatei anzeigen", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $showlog = GUICtrlCreateCheckbox("Show log file", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+  $showlog = GUICtrlCreateCheckbox("Show log file", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If IniRead($inifilename, $ini_section_messaging, $ini_value_showlog, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
+If ( (IniRead($inifilename, $ini_section_messaging, $ini_value_showlog, $disabled) = $enabled) _
+ AND (BitAND(GUICtrlRead($shutdown), $GUI_CHECKED) <> $GUI_CHECKED) ) Then  
+  GUICtrlSetState(-1, $GUI_CHECKED)  
 Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
+  GUICtrlSetState(-1, $GUI_UNCHECKED)  
+  If BitAND(GUICtrlRead($shutdown), $GUI_CHECKED) = $GUI_CHECKED Then  
+    GUICtrlSetState(-1, $GUI_DISABLE)  
+  EndIf  
+EndIf  
 
 ;  Start button
-$txtypos = $txtypos + 1.5 * $txtheight
+$txtypos = $txtypos + 3.5 * $txtyoffset
 $btn_start = GUICtrlCreateButton("Start", $txtxoffset, $txtypos, $btnwidth, $btnheight)
 GUICtrlSetResizing (-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM)
 
 ;  Exit button
 If ShowGUIInGerman() Then
-  $btn_exit = GUICtrlCreateButton("Ende", $txtwidth - $btnwidth + $txtxoffset, $txtypos, $btnwidth, $btnheight)
+  $btn_exit = GUICtrlCreateButton("Ende", $groupwidth - $btnwidth + $txtxoffset, $txtypos, $btnwidth, $btnheight)
 Else
-  $btn_exit = GUICtrlCreateButton("Exit", $txtwidth - $btnwidth + $txtxoffset, $txtypos, $btnwidth, $btnheight)
+  $btn_exit = GUICtrlCreateButton("Exit", $groupwidth - $btnwidth + $txtxoffset, $txtypos, $btnwidth, $btnheight)
 EndIf
 GUICtrlSetResizing (-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM)
 
@@ -443,6 +474,10 @@ If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (@OSService
   EndIf
   GUICtrlSetState($ie8, $GUI_UNCHECKED)
   GUICtrlSetState($ie8, $GUI_DISABLE)
+  GUICtrlSetState($wmp, $GUI_UNCHECKED)
+  GUICtrlSetState($wmp, $GUI_DISABLE)
+  GUICtrlSetState($tsc, $GUI_UNCHECKED)
+  GUICtrlSetState($tsc, $GUI_DISABLE)
   GUICtrlSetState($dotnet, $GUI_UNCHECKED)
   GUICtrlSetState($dotnet, $GUI_DISABLE)
   GUICtrlSetState($powershell, $GUI_UNCHECKED)
@@ -508,6 +543,14 @@ While 1
           EndIf
         EndIf
       EndIf
+
+    Case $shutdown           ; Automatic shutdown check box toggled  
+      If (BitAND(GUICtrlRead($shutdown), $GUI_CHECKED) = $GUI_CHECKED) Then    
+        GUICtrlSetState($showlog, $GUI_UNCHECKED)  
+        GUICtrlSetState($showlog, $GUI_DISABLE)  
+      Else  
+        GUICtrlSetState($showlog, $GUI_ENABLE)  
+      EndIf  
 
     Case $btn_start          ; Start Button pressed
       If BitAND(GUICtrlRead($backup), $GUI_CHECKED) <> $GUI_CHECKED Then
