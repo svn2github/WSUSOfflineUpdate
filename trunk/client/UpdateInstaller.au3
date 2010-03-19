@@ -34,6 +34,7 @@ Dim Const $ini_value_backup           = "backup"
 Dim Const $ini_value_verify           = "verify"
 Dim Const $ini_value_ie7              = "instie7"
 Dim Const $ini_value_ie8              = "instie8"
+Dim Const $ini_value_wmp              = "updatewmp"
 Dim Const $ini_value_tsc              = "updatetsc"
 Dim Const $ini_value_dotnet           = "instdotnet"
 Dim Const $ini_value_powershell       = "instpsh"
@@ -50,7 +51,7 @@ Dim Const $path_rel_instdotnet        = "\dotnet\dotnetfx35.exe"
 
 Dim $dlgheight, $txtwidth, $txtheight, $txtxoffset, $btnwidth, $btnheight
 
-Dim $maindlg, $scriptdir, $netdrives, $i, $strpos, $inifilename, $backup, $verify, $ie7, $ie8, $tsc, $dotnet, $powershell, $converters, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $txtypos
+Dim $maindlg, $scriptdir, $netdrives, $i, $strpos, $inifilename, $backup, $verify, $ie7, $ie8, $wmp, $tsc, $dotnet, $powershell, $converters, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $txtypos
 
 Func ShowGUIInGerman()
   If ($CmdLine[0] > 0) Then
@@ -114,7 +115,7 @@ Func CalcGUISize()
   If ($reg_val = "") Then
     $reg_val = $default_logpixels
   EndIf
-  $dlgheight = 315 * $reg_val / $default_logpixels
+  $dlgheight = 335 * $reg_val / $default_logpixels
   $txtwidth = 260 * $reg_val / $default_logpixels
   $txtheight = 20 * $reg_val / $default_logpixels
   $txtxoffset = 10 * $reg_val / $default_logpixels
@@ -235,6 +236,24 @@ Else
       GUICtrlSetState(-1, $GUI_DISABLE)  
     EndIf  
   EndIf  
+EndIf
+
+; Update Windows Media Player
+$txtypos = $txtypos + $txtheight
+If ShowGUIInGerman() Then
+  $wmp = GUICtrlCreateCheckbox("Windows Media Player aktualisieren", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+Else
+  $wmp = GUICtrlCreateCheckbox("Update Windows Media Player", $txtxoffset, $txtypos, $txtwidth, $txtheight)
+EndIf
+If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+  GUICtrlSetState(-1, $GUI_DISABLE)
+Else  
+  If IniRead($inifilename, $ini_section_installation, $ini_value_wmp, $enabled) = $enabled Then
+    GUICtrlSetState(-1, $GUI_CHECKED)
+  Else
+    GUICtrlSetState(-1, $GUI_UNCHECKED)
+  EndIf
 EndIf
 
 ; Update Windows Terminal Services Client
@@ -502,6 +521,9 @@ While 1
       EndIf  
       If BitAND(GUICtrlRead($ie8), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instie8"
+      EndIf
+      If BitAND(GUICtrlRead($wmp), $GUI_CHECKED) = $GUI_CHECKED Then
+        $options = $options & " /updatewmp"
       EndIf
       If BitAND(GUICtrlRead($tsc), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /updatetsc"

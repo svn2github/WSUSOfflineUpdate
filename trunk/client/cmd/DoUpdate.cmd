@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.4+ (r77)
+set WSUSUPDATE_VERSION=6.4+ (r78)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -20,13 +20,14 @@ echo %DATE% %TIME% - Info: Starting WSUS offline update (v. %WSUSUPDATE_VERSION%
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/nobackup /verify /instie7 /instie8 /updatetsc /instdotnet /instpsh /instofccnvs /autoreboot /shutdown /showlog /all /excludestatics) do (
+for %%i in (/nobackup /verify /instie7 /instie8 /updatewmp /updatetsc /instdotnet /instpsh /instofccnvs /autoreboot /shutdown /showlog /all /excludestatics) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected >>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/nobackup" set BACKUP_MODE=/nobackup
 if /i "%1"=="/verify" set VERIFY_MODE=/verify
 if /i "%1"=="/instie7" set INSTALL_IE=/instie7
 if /i "%1"=="/instie8" set INSTALL_IE=/instie8
+if /i "%1"=="/updatewmp" set UPDATE_WMP=/updatewmp
 if /i "%1"=="/updatetsc" set UPDATE_TSC=/updatetsc
 if /i "%1"=="/instdotnet" set INSTALL_DOTNET=/instdotnet
 if /i "%1"=="/instpsh" set INSTALL_PSH=/instpsh
@@ -258,17 +259,17 @@ dir /B %DIRECTX_FILENAME% >nul 2>&1
 if errorlevel 1 (
   echo Warning: File %DIRECTX_FILENAME% not found.
   echo %DATE% %TIME% - Warning: File %DIRECTX_FILENAME% not found >>%UPDATE_LOGFILE%
-) else (
-  echo Installing most recent DirectX End-User Runtime...
-  for /F %%i in ('dir /B %DIRECTX_FILENAME%') do (
-    echo Installing ..\win\glb\%%i...
-    ..\win\glb\%%i /Q /T:"%TEMP%\directx" /C
-    "%TEMP%\directx\dxsetup.exe" /silent
-    call SafeRmDir.cmd "%TEMP%\directx"
-    echo %DATE% %TIME% - Info: Installed ..\win\glb\%%i >>%UPDATE_LOGFILE%
-    set RECALL_REQUIRED=1
-    goto Installed
-  )
+  goto SkipDirectXInst
+)
+echo Installing most recent DirectX End-User Runtime...
+for /F %%i in ('dir /B %DIRECTX_FILENAME%') do (
+  echo Installing ..\win\glb\%%i...
+  ..\win\glb\%%i /Q /T:"%TEMP%\directx" /C
+  "%TEMP%\directx\dxsetup.exe" /silent
+  call SafeRmDir.cmd "%TEMP%\directx"
+  echo %DATE% %TIME% - Info: Installed ..\win\glb\%%i >>%UPDATE_LOGFILE%
+  set RECALL_REQUIRED=1
+  goto Installed
 )
 :SkipDirectXInst
 
@@ -304,6 +305,11 @@ if %MSI_VERSION_BUILD% LSS %MSI_VERSION_TARGET_BUILD% goto InstallMSI
 if %MSI_VERSION_BUILD% GTR %MSI_VERSION_TARGET_BUILD% goto SkipMSIInst
 if %MSI_VERSION_REVISION% GEQ %MSI_VERSION_TARGET_REVISION% goto SkipMSIInst
 :InstallMSI
+if "%MSI_TARGET_ID%"=="" (
+  echo Warning: Environment variable MSI_TARGET_ID not set.
+  echo %DATE% %TIME% - Warning: Environment variable MSI_TARGET_ID not set >>%UPDATE_LOGFILE%
+  goto SkipMSIInst
+) 
 if /i "%OS_ARCHITECTURE%"=="x64" (
   set MSI_FILENAME=..\%OS_NAME%-%OS_ARCHITECTURE%\glb\*%MSI_TARGET_ID%*-%OS_ARCHITECTURE%.*
 ) else (
@@ -313,16 +319,16 @@ dir /B %MSI_FILENAME% >nul 2>&1
 if errorlevel 1 (
   echo Warning: File %MSI_FILENAME% not found.
   echo %DATE% %TIME% - Warning: File %MSI_FILENAME% not found >>%UPDATE_LOGFILE%
-) else (
-  echo Installing most recent Windows Installer...
-  for /F %%i in ('dir /B %MSI_FILENAME%') do (
-    if /i "%OS_ARCHITECTURE%"=="x64" (
-      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\glb\%%i %VERIFY_MODE% /quiet %BACKUP_MODE% /norestart
-    ) else (
-      call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /quiet %BACKUP_MODE% /norestart
-    )
-    if not errorlevel 1 set RECALL_REQUIRED=1
+  goto SkipMSIInst
+)
+echo Installing most recent Windows Installer...
+for /F %%i in ('dir /B %MSI_FILENAME%') do (
+  if /i "%OS_ARCHITECTURE%"=="x64" (
+    call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\glb\%%i %VERIFY_MODE% /quiet %BACKUP_MODE% /norestart
+  ) else (
+    call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /quiet %BACKUP_MODE% /norestart
   )
+  if not errorlevel 1 set RECALL_REQUIRED=1
 )
 :SkipMSIInst
 
@@ -342,12 +348,12 @@ dir /B %WSH_FILENAME% >nul 2>&1
 if errorlevel 1 (
   echo Warning: File %WSH_FILENAME% not found.
   echo %DATE% %TIME% - Warning: File %WSH_FILENAME% not found >>%UPDATE_LOGFILE%
-) else (
-  echo Installing most recent Windows Script Host...
-  for /F %%i in ('dir /B %WSH_FILENAME%') do (
-    call InstallOSUpdate.cmd ..\win\%OS_LANGUAGE%\%%i %VERIFY_MODE% /q:a /r:n
-    if not errorlevel 1 set RECALL_REQUIRED=1
-  )
+  goto SkipWSHInst
+)
+echo Installing most recent Windows Script Host...
+for /F %%i in ('dir /B %WSH_FILENAME%') do (
+  call InstallOSUpdate.cmd ..\win\%OS_LANGUAGE%\%%i %VERIFY_MODE% /q:a /r:n
+  if not errorlevel 1 set RECALL_REQUIRED=1
 )
 :SkipWSHInst
 
@@ -405,24 +411,24 @@ dir /B %IE_FILENAME% >nul 2>&1
 if errorlevel 1 (
   echo Warning: File %IE_FILENAME% not found. 
   echo %DATE% %TIME% - Warning: File %IE_FILENAME% not found >>%UPDATE_LOGFILE%
-) else (
-  if "%INSTALL_IE%"=="/instie8" (echo Installing Internet Explorer 8...) else (echo Installing Internet Explorer 7...)
-  for /F %%i in ('dir /B %IE_FILENAME%') do (
-    if /i "%OS_ARCHITECTURE%"=="x64" (
-      if "%INSTALL_IE%"=="/instie8" (
-        call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\%OS_LANGUAGE%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
-      ) else (
-        call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\%OS_LANGUAGE%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default %BACKUP_MODE% /norestart
-      )
+  goto SkipIEInst 
+)
+if "%INSTALL_IE%"=="/instie8" (echo Installing Internet Explorer 8...) else (echo Installing Internet Explorer 7...)
+for /F %%i in ('dir /B %IE_FILENAME%') do (
+  if /i "%OS_ARCHITECTURE%"=="x64" (
+    if "%INSTALL_IE%"=="/instie8" (
+      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\%OS_LANGUAGE%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
     ) else (
-      if "%INSTALL_IE%"=="/instie8" (
-        call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANGUAGE%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
-      ) else (
-        call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANGUAGE%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default %BACKUP_MODE% /norestart
-      )
+      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\%OS_LANGUAGE%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default %BACKUP_MODE% /norestart
     )
-    if not errorlevel 1 set RECALL_REQUIRED=1
+  ) else (
+    if "%INSTALL_IE%"=="/instie8" (
+      call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANGUAGE%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
+    ) else (
+      call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANGUAGE%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default %BACKUP_MODE% /norestart
+    )
   )
+  if not errorlevel 1 set RECALL_REQUIRED=1
 )
 goto SkipIEInst
 
@@ -436,25 +442,51 @@ dir /B %IE_FILENAME% >nul 2>&1
 if errorlevel 1 (
   echo Warning: File %IE_FILENAME% not found. 
   echo %DATE% %TIME% - Warning: File %IE_FILENAME% not found >>%UPDATE_LOGFILE%
-) else (
-  echo Installing Internet Explorer 8...
-  for /F %%i in ('dir /B %IE_FILENAME%') do (
-    if /i "%OS_ARCHITECTURE%"=="x64" (
-      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
-    ) else (
-      call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
-    )
-    if not errorlevel 1 set REBOOT_REQUIRED=1
+  goto SkipIEInst
+)
+echo Installing Internet Explorer 8...
+for /F %%i in ('dir /B %IE_FILENAME%') do (
+  if /i "%OS_ARCHITECTURE%"=="x64" (
+    call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
+  ) else (
+    call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
   )
+  if not errorlevel 1 set REBOOT_REQUIRED=1
 )
 goto SkipIEInst
 
 :IEw61
 :SkipIEInst
 
+rem *** Install most recent Windows Media Player ***
+if "%UPDATE_WMP%" NEQ "/updatewmp" goto SkipWMPInst
+echo Checking Windows Media Player version...
+if %WMP_VERSION_MAJOR% LSS %WMP_VERSION_TARGET_MAJOR% goto InstallWMP
+if %WMP_VERSION_MAJOR% GTR %WMP_VERSION_TARGET_MAJOR% goto SkipWMPInst
+if %WMP_VERSION_MINOR% LSS %WMP_VERSION_TARGET_MINOR% goto InstallWMP
+if %WMP_VERSION_MINOR% GEQ %WMP_VERSION_TARGET_MINOR% goto SkipWMPInst
+:InstallWMP
+if "%WMP_TARGET_ID%"=="" (
+  echo Warning: Environment variable WMP_TARGET_ID not set.
+  echo %DATE% %TIME% - Warning: Environment variable WMP_TARGET_ID not set >>%UPDATE_LOGFILE%
+  goto SkipWMPInst
+) 
+echo %WMP_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
+call ListUpdatesToInstall.cmd /excludestatics
+if errorlevel 1 goto ListError
+if exist "%TEMP%\UpdatesToInstall.txt" (
+  echo Installing most recent Windows Media Player...
+  call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /errorsaswarnings
+) else (
+  echo Warning: Windows Media Player installation file ^(kb%WMP_TARGET_ID%^) not found.
+  echo %DATE% %TIME% - Warning: Windows Media Player installation file ^(kb%WMP_TARGET_ID%^) not found >>%UPDATE_LOGFILE%
+  goto SkipWMPInst
+)
+set REBOOT_REQUIRED=1
+:SkipWMPInst
+
 rem *** Install most recent Windows Terminal Services Client ***
 if "%OS_NAME%"=="w2k" goto SkipTSCInst
-if "%OS_NAME%"=="w61" goto SkipTSCInst
 if "%UPDATE_TSC%" NEQ "/updatetsc" goto SkipTSCInst
 echo Checking Windows Terminal Services Client version...
 if %TSC_VERSION_MAJOR% LSS %TSC_VERSION_TARGET_MAJOR% goto InstallTSC
@@ -462,6 +494,11 @@ if %TSC_VERSION_MAJOR% GTR %TSC_VERSION_TARGET_MAJOR% goto SkipTSCInst
 if %TSC_VERSION_MINOR% LSS %TSC_VERSION_TARGET_MINOR% goto InstallTSC
 if %TSC_VERSION_MINOR% GEQ %TSC_VERSION_TARGET_MINOR% goto SkipTSCInst
 :InstallTSC
+if "%TSC_TARGET_ID%"=="" (
+  echo Warning: Environment variable TSC_TARGET_ID not set.
+  echo %DATE% %TIME% - Warning: Environment variable TSC_TARGET_ID not set >>%UPDATE_LOGFILE%
+  goto SkipTSCInst
+) 
 echo %TSC_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics
 if errorlevel 1 goto ListError
@@ -489,20 +526,19 @@ if %DOTNET_VERSION_BUILD% GTR %DOTNET_VERSION_TARGET_BUILD% goto SkipDotNetInst
 if %DOTNET_VERSION_REVISION% GEQ %DOTNET_VERSION_TARGET_REVISION% goto SkipDotNetInst
 :InstallDotNet
 set DOTNET_FILENAME=..\dotnet\dotnetfx35.exe
-if exist %DOTNET_FILENAME% (
-  echo Installing .NET Framework 3.5 SP1...
-  call InstallOSUpdate.cmd %DOTNET_FILENAME% %VERIFY_MODE% /ignoreerrors /qb /norestart /lang:%OS_LANGUAGE%
-  copy /Y ..\static\StaticUpdateIds-dotnet.txt "%TEMP%\MissingUpdateIds.txt" >nul
-  call ListUpdatesToInstall.cmd /excludestatics
-  if errorlevel 1 goto ListError
-  if exist "%TEMP%\UpdatesToInstall.txt" (
-    echo Installing .NET Framework 3.5 SP1 Family Update...
-    call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
-  )
-) else (
+if not exist %DOTNET_FILENAME% (
   echo Warning: File %DOTNET_FILENAME% not found. 
   echo %DATE% %TIME% - Warning: File %DOTNET_FILENAME% not found >>%UPDATE_LOGFILE%
   goto SkipDotNetInst
+)
+echo Installing .NET Framework 3.5 SP1...
+call InstallOSUpdate.cmd %DOTNET_FILENAME% %VERIFY_MODE% /ignoreerrors /qb /norestart /lang:%OS_LANGUAGE%
+copy /Y ..\static\StaticUpdateIds-dotnet.txt "%TEMP%\MissingUpdateIds.txt" >nul
+call ListUpdatesToInstall.cmd /excludestatics
+if errorlevel 1 goto ListError
+if exist "%TEMP%\UpdatesToInstall.txt" (
+  echo Installing .NET Framework 3.5 SP1 Family Update...
+  call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
 )
 set REBOOT_REQUIRED=1
 :SkipDotNetInst
@@ -516,6 +552,11 @@ if %PSH_VERSION_MAJOR% GTR %PSH_VERSION_TARGET_MAJOR% goto SkipPShInst
 if %PSH_VERSION_MINOR% LSS %PSH_VERSION_TARGET_MINOR% goto InstallPSh
 if %PSH_VERSION_MINOR% GEQ %PSH_VERSION_TARGET_MINOR% goto SkipPShInst
 :InstallPSh
+if "%PSH_TARGET_ID%"=="" (
+  echo Warning: Environment variable PSH_TARGET_ID not set.
+  echo %DATE% %TIME% - Warning: Environment variable PSH_TARGET_ID not set >>%UPDATE_LOGFILE%
+  goto SkipPShInst
+) 
 echo %PSH_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics
 if errorlevel 1 goto ListError
@@ -659,7 +700,7 @@ if "%RECALL_REQUIRED%"=="1" (
     )
     if not "%USERNAME%"=="WSUSUpdateAdmin" (
       echo Preparing automatic recall...
-      call PrepareRecall.cmd %~f0 %BACKUP_MODE% %VERIFY_MODE% %INSTALL_IE% %INSTALL_DOTNET% %INSTALL_PSH% %INSTALL_CONVERTERS% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES%
+      call PrepareRecall.cmd %~f0 %BACKUP_MODE% %VERIFY_MODE% %INSTALL_IE% %UPDATE_WMP% %UPDATE_TSC% %INSTALL_DOTNET% %INSTALL_PSH% %INSTALL_CONVERTERS% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES%
     )
     echo Rebooting...
     %CSCRIPT_PATH% //Nologo //E:vbs Shutdown.vbs /reboot

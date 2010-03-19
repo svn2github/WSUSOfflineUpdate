@@ -1,3 +1,5 @@
 http://download.microsoft.com/download/4/6/5/465a583a-96a4-4000-80c5-4eef5eb0fac3/WindowsXP-KB936929-SP3-x86-PLK.exe
 http://download.microsoft.com/download/8/9/E/89E0B92E-C55C-4C5F-B1F7-32CD4CBFF047/WindowsXP-KB969084-x86-plk.exe
 http://download.microsoft.com/download/D/4/A/D4AF7B17-386D-477E-9D22-FB39476B7EFE/WindowsXP-KB968930-x86-PLK.exe
+http://download.microsoft.com/download/4/e/b/4ebabe75-099a-40ba-b4ad-c692a48a7d34/wmp11-windowsxp-x86-PL-PL.exe
+http://download.microsoft.com/download/F/C/6/FC69D96E-8A5A-4F9B-BB60-A26566D3ACFC/mssefullinstall-x86fre-pl-pl-xp.exe

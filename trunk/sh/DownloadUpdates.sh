@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                    v. 6.4+ (r77)                   ###
+###                    v. 6.4+ (r78)                   ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -371,7 +371,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                    v. 6.4+ (r77)                   ***
+***                    v. 6.4+ (r78)                   ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***

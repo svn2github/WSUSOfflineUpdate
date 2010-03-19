@@ -12,4 +12,7 @@
 817787
 819639
 923789
+MPSetup
+MP10Setup
+wmp11
 rootsupd
