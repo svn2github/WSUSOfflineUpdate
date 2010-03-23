@@ -162,9 +162,9 @@ $inifilename = $scriptdir & "\" & StringLeft(@ScriptName, StringInStr(@ScriptNam
 $txtxpos = $txtxoffset
 $txtypos = $txtyoffset
 If ShowGUIInGerman() Then
-  GUICtrlCreateLabel("Wählen Sie die gewünschten Optionen und klicken Sie auf 'Start'," & @LF & "um die Microsoft-Updates auf Ihrem System zu installieren.", $txtxpos, $txtypos, $groupwidth, 2 * $txtheight)
+  GUICtrlCreateLabel("Wählen Sie die gewünschten Optionen und klicken Sie auf 'Start'," & @LF & "um die fehlenden Microsoft-Updates auf Ihrem System zu installieren.", $txtxpos, $txtypos, $groupwidth, 2 * $txtheight)
 Else
-  GUICtrlCreateLabel("Select desired options and click 'Start'" & @LF & "to install Microsoft updates on your computer.", $txtxpos, $txtypos, $groupwidth, 2 * $txtheight)
+  GUICtrlCreateLabel("Select desired options and click 'Start'" & @LF & "to install missing Microsoft updates on your computer.", $txtxpos, $txtypos, $groupwidth, 2 * $txtheight)
 EndIf
 
 ;  Installation group

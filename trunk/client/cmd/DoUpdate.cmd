@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.4+ (r79)
+set WSUSUPDATE_VERSION=6.4+ (r80)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -45,6 +45,13 @@ if "%TEMP%"=="" goto NoTemp
 pushd "%TEMP%"
 if errorlevel 1 goto NoTempDir
 popd
+
+rem *** Execute custom initialization hook ***
+if exist .\custom\InitializationHook.cmd (
+  echo Executing custom initialization hook...
+  call .\custom\InitializationHook.cmd
+  echo %DATE% %TIME% - Info: Executed custom initialization hook >>%UPDATE_LOGFILE%
+)
 
 set CSCRIPT_PATH=%SystemRoot%\system32\cscript.exe
 if not exist %CSCRIPT_PATH% goto NoCScript
@@ -911,6 +918,12 @@ goto EoF
 
 :EoF
 cd ..
+rem *** Execute custom finalization hook ***
+if exist .\custom\FinalizationHook.cmd (
+  echo Executing custom finalization hook...
+  call .\custom\FinalizationHook.cmd
+  echo %DATE% %TIME% - Info: Executed custom finalization hook >>%UPDATE_LOGFILE%
+)
 echo %DATE% %TIME% - Info: Ending update >>%UPDATE_LOGFILE%
 title %ComSpec%
 if "%RECALL_REQUIRED%"=="1" (

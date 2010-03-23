@@ -21,46 +21,47 @@ if /i "%1"=="/excludestatics" set EXCLUDE_STATICS=/excludestatics
 shift /1
 goto EvalParams
 
+:EvalStatics
+if exist %1 (
+  if exist "%TEMP%\InstalledUpdateIds.txt" (
+    %SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\InstalledUpdateIds.txt" %1 >>"%TEMP%\MissingUpdateIds.txt"
+  ) else (
+    for /F %%i in (%1) do echo %%i>>"%TEMP%\MissingUpdateIds.txt" 
+  )
+)
+goto :eof
+
 :NoMoreParams
 rem *** Add statically defined update ids ***
 if "%EXCLUDE_STATICS%"=="/excludestatics" goto ExcludeStatics
-if exist ..\static\StaticUpdateIds-%OS_NAME%-%OS_ARCHITECTURE%.txt (
-  if exist "%TEMP%\InstalledUpdateIds.txt" (
-    %SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\InstalledUpdateIds.txt" ..\static\StaticUpdateIds-%OS_NAME%-%OS_ARCHITECTURE%.txt >>"%TEMP%\MissingUpdateIds.txt"
-    del "%TEMP%\InstalledUpdateIds.txt"
-  ) else (
-    for /F %%i in (..\static\StaticUpdateIds-%OS_NAME%-%OS_ARCHITECTURE%.txt) do (
-      echo %%i >>"%TEMP%\MissingUpdateIds.txt" 
-    )
-  )
+if exist ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_ARCHITECTURE%.txt (
+  call :EvalStatics ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_ARCHITECTURE%.txt
+) else (
+  call :EvalStatics ..\static\StaticUpdateIds-%OS_NAME%-%OS_ARCHITECTURE%.txt
 )
-if exist ..\static\StaticUpdateIds-%OFFICE_NAME%.txt (
-  if exist "%TEMP%\InstalledUpdateIds.txt" (
-    %SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\InstalledUpdateIds.txt" ..\static\StaticUpdateIds-%OFFICE_NAME%.txt >>"%TEMP%\MissingUpdateIds.txt"
-    del "%TEMP%\InstalledUpdateIds.txt"
-  ) else (
-    for /F %%i in (..\static\StaticUpdateIds-%OFFICE_NAME%.txt) do (
-      echo %%i >>"%TEMP%\MissingUpdateIds.txt" 
-    )
-  )
+if exist ..\static\custom\StaticUpdateIds-%OFFICE_NAME%.txt (
+  call :EvalStatics ..\static\custom\StaticUpdateIds-%OFFICE_NAME%.txt
+) else (
+  call :EvalStatics ..\static\StaticUpdateIds-%OFFICE_NAME%.txt
 )
-if exist ..\static\StaticUpdateIds-%OFFICE_NAME%-%OS_ARCHITECTURE%.txt (
-  if exist "%TEMP%\InstalledUpdateIds.txt" (
-    %SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\InstalledUpdateIds.txt" ..\static\StaticUpdateIds-%OFFICE_NAME%-%OS_ARCHITECTURE%.txt >>"%TEMP%\MissingUpdateIds.txt"
-    del "%TEMP%\InstalledUpdateIds.txt"
-  ) else (
-    for /F %%i in (..\static\StaticUpdateIds-%OFFICE_NAME%-%OS_ARCHITECTURE%.txt) do (
-      echo %%i >>"%TEMP%\MissingUpdateIds.txt" 
-    )
-  )
+if exist ..\static\custom\StaticUpdateIds-%OFFICE_NAME%-%OS_ARCHITECTURE%.txt (
+  call :EvalStatics ..\static\custom\StaticUpdateIds-%OFFICE_NAME%-%OS_ARCHITECTURE%.txt
+) else (
+  call :EvalStatics ..\static\StaticUpdateIds-%OFFICE_NAME%-%OS_ARCHITECTURE%.txt
 )
+
 :ExcludeStatics
+if exist "%TEMP%\InstalledUpdateIds.txt" del "%TEMP%\InstalledUpdateIds.txt"
 rem *** List update files ***
 if not exist "%TEMP%\MissingUpdateIds.txt" goto NoMissingUpdateIds
 if exist "%TEMP%\UpdatesToInstall.txt" del "%TEMP%\UpdatesToInstall.txt"
 for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do (
   if exist "%TEMP%\Update.txt" del "%TEMP%\Update.txt"
-  %SystemRoot%\system32\find.exe /I "%%i" ..\exclude\ExcludeList.txt >nul 2>&1
+  if exist ..\exclude\custom\ExcludeList.txt (
+    %SystemRoot%\system32\find.exe /I "%%i" ..\exclude\custom\ExcludeList.txt >nul 2>&1
+  ) else (
+    %SystemRoot%\system32\find.exe /I "%%i" ..\exclude\ExcludeList.txt >nul 2>&1
+  )
   if errorlevel 1 (
     for %%k in (%OS_NAME%-%OS_ARCHITECTURE% %OS_NAME% win) do (
       for %%l in (%OS_LANGUAGE% glb) do (
