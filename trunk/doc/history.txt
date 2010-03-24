@@ -329,13 +329,13 @@ Version 6.4 -- 12.02.10
 - Fix: Removed o2k remainders in xslt directory
 - Fix: DownloadUpdates.sh script contained obsolete reference to ../static/StaticDownloadLink-ifadmin.txt (Thanks to "Medvedko")
 --------------------------------------------------------------------------------
-Version 6.5 -- ??.??.10
+Version 6.5 -- 25.03.10
 - Office updates up to 03/2010 integrated by static definitions
 - Optional installation of Windows PowerShell 2.0 on Windows XP, Server 2003 and Vista (x86/x64) systems
 - Optional installation of most recent Windows Media Player on Windows 2000, XP and Server 2003 (x86/x64) systems
 - Optional installation of most recent Windows Terminal Services Client (Remote Desktop Connection) on Windows XP, Server 2003 and Vista (x86/x64) systems
 - Optional client side hash verification of update installation packages
-- Custom configuration capabilities added to download and installation parts' static and exclude directories
+- Custom configuration capabilities added to download and installation parts' static and exclude directories (Thanks to Eberhard Werle and "boco")
 - Custom initialization and finalization hook capabilities added to DownloadUpdates.cmd and DoUpdate.cmd scripts (Thanks to "petebob796")
 - UpdateGenerator script will now show log file on demand after downloading (Thanks to Andreas Bardelli)
 - UpdateInstaller script will now allow automatic reboot option even if started from a network share on Windows Vista, 7 and Server 2008 (R2) systems
@@ -355,3 +355,4 @@ Version 6.5 -- ??.??.10
 - Fix: Replaced Microsoft's unstable file hash computation tool fciv.exe by open source utility hashdeep.exe (Thanks to "insertrealname" and "boco")
 - Fix: SetTargetEnvVars.cmd script expects Windows Update Agent (WUA) version 7.4.7600.226 now (Thanks to Mark Gerber)
 - Fix: Decreased "cross-product" ISO image sizes by removing legacy Windows 2000 platform
+--------------------------------------------------------------------------------

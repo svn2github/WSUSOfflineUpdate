@@ -292,7 +292,8 @@ If ShowGUIInGerman() Then
 Else
   $dotnet = GUICtrlCreateCheckbox("Install .NET Framework 3.5 SP1", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (DotNet35Version() = $target_version_dotnet) OR (NOT DotNet35InstPresent()) ) Then
+If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
+  OR (DotNet35Version() = $target_version_dotnet) OR (NOT DotNet35InstPresent()) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else  
