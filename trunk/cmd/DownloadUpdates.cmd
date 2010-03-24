@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.4+ (r80)
+set WSUSUPDATE_VERSION=6.4+ (r81)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -418,7 +418,7 @@ set XL_TXT=..\exclude\ExcludeList-%1-%TARGET_ARCHITECTURE%.txt
 if exist %XL_TXT% goto ExcludeWindows
 
 :ExcludeWindows
-%SystemRoot%\system32\findstr.exe /I /V /G:%XL_TXT=% "%TEMP%\DownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDownloadLinks-%1-%2.txt"
+%SystemRoot%\system32\findstr.exe /I /V /G:%XL_TXT% "%TEMP%\DownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDownloadLinks-%1-%2.txt"
 set XL_TXT=
 if not exist "%TEMP%\ValidDownloadLinks-%1-%2.txt" ren "%TEMP%\DownloadLinks-%1-%2.txt" ValidDownloadLinks-%1-%2.txt
 if exist "%TEMP%\DownloadLinks-%1-%2.txt" del "%TEMP%\DownloadLinks-%1-%2.txt"

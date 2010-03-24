@@ -354,3 +354,4 @@ Version 6.5 -- ??.??.10
 - Fix: Missing variable initialization in DownloadUpdates.sh script could lead to syntax error (Thanks to Ulrich Windl)
 - Fix: Replaced Microsoft's unstable file hash computation tool fciv.exe by open source utility hashdeep.exe (Thanks to "insertrealname" and "boco")
 - Fix: SetTargetEnvVars.cmd script expects Windows Update Agent (WUA) version 7.4.7600.226 now (Thanks to Mark Gerber)
+- Fix: Decreased "cross-product" ISO image sizes by removing legacy Windows 2000 platform
