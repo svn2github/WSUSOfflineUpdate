@@ -358,31 +358,36 @@ goto RemindDate
 rem *** Determine update urls for %1 %2 ***
 echo.
 echo Determining update urls for %1 %2...
+if exist "%TEMP%\StaticDownloadLinks-%1-%2.txt" del "%TEMP%\StaticDownloadLinks-%1-%2.txt"
 if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" del "%TEMP%\ValidStaticLinks-%1-%2.txt"
 if exist "%TEMP%\ValidDownloadLinks-%1-%2.txt" del "%TEMP%\ValidDownloadLinks-%1-%2.txt"
 
 if "%EXCLUDE_STATICS%"=="1" goto SkipStatics
-if exist ..\exclude\custom\ExcludeList-SPs.txt (set XL_TXT=..\exclude\custom\ExcludeList-SPs.txt) else (set XL_TXT=..\exclude\ExcludeList-SPs.txt)
-set DL_TXT=..\static\custom\StaticDownloadLinks-%1-%2.txt
-if exist %DL_TXT% goto EvalStatics
-set DL_TXT=..\static\custom\StaticDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.txt
-if exist %DL_TXT% goto EvalStatics
-set DL_TXT=..\static\StaticDownloadLinks-%1-%2.txt
-if exist %DL_TXT% goto EvalStatics
-set DL_TXT=..\static\StaticDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.txt
-if exist %DL_TXT% goto EvalStatics
+if exist ..\static\StaticDownloadLinks-%1-%2.txt (
+  copy /Y ..\static\StaticDownloadLinks-%1-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
+  if exist ..\static\custom\StaticDownloadLinks-%1-%2.txt (
+    for /F %%i in (..\static\custom\StaticDownloadLinks-%1-%2.txt) do echo %%i>>"%TEMP%\StaticDownloadLinks-%1-%2.txt"
+  )
+  goto EvalStatics
+)
+if exist ..\static\StaticDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.txt (
+  copy /Y ..\static\StaticDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
+  if exist ..\static\custom\StaticDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.txt (
+    for /F %%i in (..\static\custom\StaticDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.txt) do echo %%i>>"%TEMP%\StaticDownloadLinks-%1-%2.txt"
+  )
+  goto EvalStatics
+)
 goto SkipStatics
 
 :EvalStatics
 if "%EXCLUDE_SP%"=="1" (
-  %SystemRoot%\system32\findstr.exe /I /V /G:%XL_TXT% %DL_TXT% >>"%TEMP%\ValidStaticLinks-%1-%2.txt"
+  %SystemRoot%\system32\findstr.exe /I /V /G:..\exclude\ExcludeList-SPs.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >>"%TEMP%\ValidStaticLinks-%1-%2.txt"
+  del "%TEMP%\StaticDownloadLinks-%1-%2.txt"
 ) else (
-  for /F %%i in (%DL_TXT%) do echo %%i>>"%TEMP%\ValidStaticLinks-%1-%2.txt"
+  ren "%TEMP%\StaticDownloadLinks-%1-%2.txt" ValidStaticLinks-%1-%2.txt
 )
 
 :SkipStatics
-set XL_TXT=
-set DL_TXT=
 if not exist ..\bin\msxsl.exe goto NoMSXSL
 for %%i in (dotnet win w2k wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64) do (if /i "%1"=="%%i" goto DetermineWindows)
 for %%i in (ofc oxp o2k3 o2k7 o2k7-x64) do (if /i "%1"=="%%i" goto DetermineOffice)
@@ -408,19 +413,26 @@ if exist ..\xslt\ExtractDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.xsl (
 del "%TEMP%\package.xml"
 
 if not exist "%TEMP%\DownloadLinks-%1-%2.txt" goto DoDownload
-set XL_TXT=..\exclude\custom\ExcludeList-%1.txt
-if exist %XL_TXT% goto ExcludeWindows
-set XL_TXT=..\exclude\custom\ExcludeList-%1-%TARGET_ARCHITECTURE%.txt
-if exist %XL_TXT% goto ExcludeWindows
-set XL_TXT=..\exclude\ExcludeList-%1.txt
-if exist %XL_TXT% goto ExcludeWindows
-set XL_TXT=..\exclude\ExcludeList-%1-%TARGET_ARCHITECTURE%.txt
-if exist %XL_TXT% goto ExcludeWindows
+
+if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
+if exist ..\exclude\ExcludeList-%1.txt (
+  copy /Y ..\exclude\ExcludeList-%1.txt "%TEMP%\ExcludeList-%1.txt" >nul
+  if exist ..\exclude\custom\ExcludeList-%1.txt (
+    for /F %%i in (..\exclude\custom\ExcludeList-%1.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
+  )
+  goto ExcludeWindows
+)
+if exist ..\exclude\ExcludeList-%1-%TARGET_ARCHITECTURE%.txt (
+  copy /Y ..\exclude\ExcludeList-%1-%TARGET_ARCHITECTURE%.txt "%TEMP%\ExcludeList-%1.txt" >nul
+  if exist ..\exclude\custom\ExcludeList-%1-%TARGET_ARCHITECTURE%.txt (
+    for /F %%i in (..\exclude\custom\ExcludeList-%1-%TARGET_ARCHITECTURE%.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
+  )
+)
 
 :ExcludeWindows
-%SystemRoot%\system32\findstr.exe /I /V /G:%XL_TXT% "%TEMP%\DownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDownloadLinks-%1-%2.txt"
-set XL_TXT=
+%SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDownloadLinks-%1-%2.txt"
 if not exist "%TEMP%\ValidDownloadLinks-%1-%2.txt" ren "%TEMP%\DownloadLinks-%1-%2.txt" ValidDownloadLinks-%1-%2.txt
+if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
 if exist "%TEMP%\DownloadLinks-%1-%2.txt" del "%TEMP%\DownloadLinks-%1-%2.txt"
 goto DoDownload
 
@@ -468,19 +480,25 @@ del "%TEMP%\patchdata.xml"
 del "%TEMP%\ValidIds-%1.txt"
 del "%TEMP%\ExpiredIds-%1.txt"
 
-set XL_TXT=..\exclude\custom\ExcludeList-%1.txt
-if exist %XL_TXT% goto ExcludeOffice
-set XL_TXT=..\exclude\custom\ExcludeList-%1-%TARGET_ARCHITECTURE%.txt
-if exist %XL_TXT% goto ExcludeOffice
-set XL_TXT=..\exclude\ExcludeList-%1.txt
-if exist %XL_TXT% goto ExcludeOffice
-set XL_TXT=..\exclude\ExcludeList-%1-%TARGET_ARCHITECTURE%.txt
-if exist %XL_TXT% goto ExcludeOffice
+if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
+if exist ..\exclude\ExcludeList-%1.txt (
+  copy /Y ..\exclude\ExcludeList-%1.txt "%TEMP%\ExcludeList-%1.txt" >nul
+  if exist ..\exclude\custom\ExcludeList-%1.txt (
+    for /F %%i in (..\exclude\custom\ExcludeList-%1.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
+  )
+  goto ExcludeOffice
+)
+if exist ..\exclude\ExcludeList-%1-%TARGET_ARCHITECTURE%.txt (
+  copy /Y ..\exclude\ExcludeList-%1-%TARGET_ARCHITECTURE%.txt "%TEMP%\ExcludeList-%1.txt" >nul
+  if exist ..\exclude\custom\ExcludeList-%1-%TARGET_ARCHITECTURE%.txt (
+    for /F %%i in (..\exclude\custom\ExcludeList-%1-%TARGET_ARCHITECTURE%.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
+  )
+)
 
 :ExcludeOffice
-for /F %%i in (%XL_TXT%) do echo %%i>>"%TEMP%\InvalidIds-%1.txt"
-set XL_TXT=
+for /F "usebackq" %%i in ("%TEMP%\ExcludeList-%1.txt") do echo %%i>>"%TEMP%\InvalidIds-%1.txt"
 %SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\InvalidIds-%1.txt" "%TEMP%\DownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDownloadLinks-%1-%2.txt" 
+if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
 del "%TEMP%\InvalidIds-%1.txt"
 del "%TEMP%\DownloadLinks-%1-%2.txt"
 

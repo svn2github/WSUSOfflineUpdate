@@ -335,7 +335,7 @@ Version 6.5 -- 25.03.10
 - Optional installation of most recent Windows Media Player on Windows 2000, XP and Server 2003 (x86/x64) systems
 - Optional installation of most recent Windows Terminal Services Client (Remote Desktop Connection) on Windows XP, Server 2003 and Vista (x86/x64) systems
 - Optional client side hash verification of update installation packages
-- Custom configuration capabilities added to download and installation parts' static and exclude directories (Thanks to Eberhard Werle and "boco")
+- Custom additional configuration capabilities added to download and installation parts' static and exclude directories (Thanks to Eberhard Werle and "boco")
 - Custom initialization and finalization hook capabilities added to DownloadUpdates.cmd and DoUpdate.cmd scripts (Thanks to "petebob796")
 - UpdateGenerator script will now show log file on demand after downloading (Thanks to Andreas Bardelli)
 - UpdateInstaller script will now allow automatic reboot option even if started from a network share on Windows Vista, 7 and Server 2008 (R2) systems

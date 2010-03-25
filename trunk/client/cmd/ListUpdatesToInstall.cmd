@@ -34,34 +34,25 @@ goto :eof
 :NoMoreParams
 rem *** Add statically defined update ids ***
 if "%EXCLUDE_STATICS%"=="/excludestatics" goto ExcludeStatics
-if exist ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_ARCHITECTURE%.txt (
-  call :EvalStatics ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_ARCHITECTURE%.txt
-) else (
-  call :EvalStatics ..\static\StaticUpdateIds-%OS_NAME%-%OS_ARCHITECTURE%.txt
-)
-if exist ..\static\custom\StaticUpdateIds-%OFFICE_NAME%.txt (
-  call :EvalStatics ..\static\custom\StaticUpdateIds-%OFFICE_NAME%.txt
-) else (
-  call :EvalStatics ..\static\StaticUpdateIds-%OFFICE_NAME%.txt
-)
-if exist ..\static\custom\StaticUpdateIds-%OFFICE_NAME%-%OS_ARCHITECTURE%.txt (
-  call :EvalStatics ..\static\custom\StaticUpdateIds-%OFFICE_NAME%-%OS_ARCHITECTURE%.txt
-) else (
-  call :EvalStatics ..\static\StaticUpdateIds-%OFFICE_NAME%-%OS_ARCHITECTURE%.txt
-)
+if exist ..\static\StaticUpdateIds-%OS_NAME%-%OS_ARCHITECTURE%.txt call :EvalStatics ..\static\StaticUpdateIds-%OS_NAME%-%OS_ARCHITECTURE%.txt
+if exist ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_ARCHITECTURE%.txt call :EvalStatics ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_ARCHITECTURE%.txt
+if exist ..\static\StaticUpdateIds-%OFFICE_NAME%.txt call :EvalStatics ..\static\StaticUpdateIds-%OFFICE_NAME%.txt
+if exist ..\static\custom\StaticUpdateIds-%OFFICE_NAME%.txt call :EvalStatics ..\static\custom\StaticUpdateIds-%OFFICE_NAME%.txt
+if exist ..\static\StaticUpdateIds-%OFFICE_NAME%-%OS_ARCHITECTURE%.txt call :EvalStatics ..\static\StaticUpdateIds-%OFFICE_NAME%-%OS_ARCHITECTURE%.txt
+if exist ..\static\custom\StaticUpdateIds-%OFFICE_NAME%-%OS_ARCHITECTURE%.txt call :EvalStatics ..\static\custom\StaticUpdateIds-%OFFICE_NAME%-%OS_ARCHITECTURE%.txt
 
 :ExcludeStatics
 if exist "%TEMP%\InstalledUpdateIds.txt" del "%TEMP%\InstalledUpdateIds.txt"
 rem *** List update files ***
 if not exist "%TEMP%\MissingUpdateIds.txt" goto NoMissingUpdateIds
 if exist "%TEMP%\UpdatesToInstall.txt" del "%TEMP%\UpdatesToInstall.txt"
+if exist ..\exclude\ExcludeList.txt copy /Y ..\exclude\ExcludeList.txt "%TEMP%\ExcludeList.txt" >nul
+if exist ..\exclude\custom\ExcludeList.txt (
+  for /F %%i in (..\exclude\custom\ExcludeList.txt) do echo %%i>>"%TEMP%\ExcludeList.txt"
+)
 for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do (
   if exist "%TEMP%\Update.txt" del "%TEMP%\Update.txt"
-  if exist ..\exclude\custom\ExcludeList.txt (
-    %SystemRoot%\system32\find.exe /I "%%i" ..\exclude\custom\ExcludeList.txt >nul 2>&1
-  ) else (
-    %SystemRoot%\system32\find.exe /I "%%i" ..\exclude\ExcludeList.txt >nul 2>&1
-  )
+  %SystemRoot%\system32\find.exe /I "%%i" "%TEMP%\ExcludeList.txt" >nul 2>&1
   if errorlevel 1 (
     for %%k in (%OS_NAME%-%OS_ARCHITECTURE% %OS_NAME% win) do (
       for %%l in (%OS_LANGUAGE% glb) do (
@@ -95,6 +86,7 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
   )
 )
 del "%TEMP%\MissingUpdateIds.txt"
+del "%TEMP%\ExcludeList.txt"
 goto EoF
 
 :NoExtensions
