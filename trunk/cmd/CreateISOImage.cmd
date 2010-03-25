@@ -52,6 +52,12 @@ if exist ..\exclude\ExcludeListISO-%1.txt (
 ) else (
   copy /Y ..\exclude\ExcludeListISO-%1-x86.txt %ISO_FILTER% >nul
 )
+if exist ..\exclude\custom\ExcludeListISO-%1.txt (
+  for /F %%i in (..\exclude\custom\ExcludeListISO-%1.txt) do echo %%i>>%ISO_FILTER%
+)
+if exist ..\exclude\custom\ExcludeListISO-%1-x86.txt (
+  for /F %%i in (..\exclude\custom\ExcludeListISO-%1-x86.txt) do echo %%i>>%ISO_FILTER%
+)
 goto :eof
 
 :LocaleFilter
@@ -64,21 +70,15 @@ goto :eof
 
 :ExtendFilter
 if "%EXCLUDE_SP%"=="1" (
-  for /F %%i in (..\exclude\ExcludeList-SPs.txt) do (
-    echo *%%i*>>%ISO_FILTER%
-  )
+  for /F %%i in (..\exclude\ExcludeList-SPs.txt) do echo *%%i*>>%ISO_FILTER%
 )
 for %%i in (w2k oxp o2k3 o2k7 o2k7-x64) do (
   if /i "%1"=="%%i" (
-    for /F %%j in (..\exclude\ExcludeList-dotnet.txt) do (
-      echo *%%j/*>>%ISO_FILTER%
-    )
+    for /F %%j in (..\exclude\ExcludeList-dotnet.txt) do echo *%%j/*>>%ISO_FILTER%
   )
 )
 if "%INCLUDE_DOTNET%" NEQ "1" (
-  for /F %%i in (..\exclude\ExcludeList-dotnet.txt) do (
-    echo *%%i/*>>%ISO_FILTER%
-  )
+  for /F %%i in (..\exclude\ExcludeList-dotnet.txt) do echo *%%i/*>>%ISO_FILTER%
 )
 goto :eof
 
@@ -90,6 +90,9 @@ for %%i in (all all-x86 all-x64 w2k wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 ox
 set ISO_IMAGE=wsusoffline-%1-x86.iso
 set ISO_VOLID=wou_%1-x86
 copy /Y ..\exclude\ExcludeListISO-all-x86.txt %ISO_FILTER% >nul
+if exist ..\exclude\custom\ExcludeListISO-all-x86.txt (
+  for /F %%i in (..\exclude\custom\ExcludeListISO-all-x86.txt) do echo %%i>>%ISO_FILTER%
+)
 call :LocaleFilter %1 
 call :ExtendFilter %1
 goto CreateImage
