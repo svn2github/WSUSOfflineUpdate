@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.5
+set WSUSUPDATE_VERSION=6.51
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -350,7 +350,7 @@ if %WSH_VERSION_BUILD% LSS %WSH_VERSION_TARGET_BUILD% goto InstallWSH
 if %WSH_VERSION_BUILD% GTR %WSH_VERSION_TARGET_BUILD% goto SkipWSHInst
 if %WSH_VERSION_REVISION% GEQ %WSH_VERSION_TARGET_REVISION% goto SkipWSHInst
 :InstallWSH
-set WSH_FILENAME=..\win\%OS_LANGUAGE%\Windows*-Script56-KB917344-%OS_ARCHITECTURE%-%OS_LANGUAGE%.exe
+set WSH_FILENAME=..\%OS_NAME%\glb\scripten.exe
 dir /B %WSH_FILENAME% >nul 2>&1
 if errorlevel 1 (
   echo Warning: File %WSH_FILENAME% not found.
@@ -359,7 +359,7 @@ if errorlevel 1 (
 )
 echo Installing most recent Windows Script Host...
 for /F %%i in ('dir /B %WSH_FILENAME%') do (
-  call InstallOSUpdate.cmd ..\win\%OS_LANGUAGE%\%%i %VERIFY_MODE% /q:a /r:n
+  call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /quiet %BACKUP_MODE% /norestart
   if not errorlevel 1 set RECALL_REQUIRED=1
 )
 :SkipWSHInst

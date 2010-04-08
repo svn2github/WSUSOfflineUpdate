@@ -356,3 +356,9 @@ Version 6.5 -- 25.03.10
 - Fix: SetTargetEnvVars.cmd script expects Windows Update Agent (WUA) version 7.4.7600.226 now (Thanks to Mark Gerber)
 - Fix: Decreased "cross-product" ISO image sizes by removing legacy Windows 2000 platform
 --------------------------------------------------------------------------------
+Version 6.51 -- 08.04.10
+- HashDeep utility updated to version 3.6
+- Fix: Windows Script Host (WSH) v. 5.7 will now be installed on Windows 2000 and Server 2003 (x86) systems since Microsoft removed WindowsXP-Windows2000-Script56-KB917344-x86-<language>.exe files (Thanks to "roba0665" and "Denniss")
+- Fix: office2007-kb947318-fullfile-x86-glb.exe was missed (Thanks to "wsususer")
+- Fix: OfficeXP-kb832668-v2-fullfile-enu.exe was missed due to an invalid URL in Microsoft's update catalog file (Thanks to "mjakobi" and "boco")
+--------------------------------------------------------------------------------
