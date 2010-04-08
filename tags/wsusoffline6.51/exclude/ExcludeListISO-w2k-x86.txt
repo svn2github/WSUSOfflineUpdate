@@ -1,0 +1,14 @@
+*dotnet\/*
+*ofc*
+*o2k*
+*oxp*
+*wxp*
+*w2k3*
+*w6*
+*-x64*
+*windowsxp*
+*windowsrightsmanagementservices*
+*.au3
+*invcif.exe
+*invcm.exe
+*wuredist.cab
