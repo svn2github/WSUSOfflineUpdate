@@ -363,6 +363,7 @@ Version 6.51 -- 08.04.10
 - Fix: OfficeXP-kb832668-v2-fullfile-enu.exe was missed due to an invalid URL in Microsoft's update catalog file (Thanks to "mjakobi" and "boco")
 --------------------------------------------------------------------------------
 Version 6.?? -- ??.??.10
+- Office updates up to 04/2010 integrated by static definitions
 - Date of last download / medium creation will be displayed/logged by UpdateGenerator/UpdateInstaller/DoUpdate scripts (Thanks to "automatix") 
 - Fix: CreateISOImage.sh script didn't correctly evaluate ISO filter files containing Windows (<CR><LF>) line feeds (Thanks to Bob Lindell)
 - Fix: DoUpdate.cmd script didn't return errorlevel 3010 (reboot required) after installation of dynamically determined updates (Thanks to "hel")
