@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+
+set WSUSUPDATE_VERSION=6.51+ (r89)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -689,6 +689,7 @@ if not exist "%TEMP%\UpdatesToInstall.txt" goto NoUpdates
 echo Installing updates...
 call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /errorsaswarnings
 if errorlevel 1 goto InstError
+set REBOOT_REQUIRED=1
 
 :Installed
 if "%RECALL_REQUIRED%"=="1" (
