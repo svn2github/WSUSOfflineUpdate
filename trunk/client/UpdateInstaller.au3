@@ -46,10 +46,11 @@ Dim Const $enabled                    = "Enabled"
 Dim Const $disabled                   = "Disabled"
 
 ; Paths
+Dim Const $path_rel_builddate         = "\builddate.txt"
 Dim Const $path_rel_hashes            = "\md\"
 Dim Const $path_rel_instdotnet        = "\dotnet\dotnetfx35.exe"
 
-Dim $maindlg, $scriptdir, $netdrives, $i, $strpos, $inifilename, $backup, $verify, $ie7, $ie8, $wmp, $tsc, $dotnet, $powershell, $converters, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options
+Dim $maindlg, $scriptdir, $netdrives, $i, $strpos, $inifilename, $backup, $verify, $ie7, $ie8, $wmp, $tsc, $dotnet, $powershell, $converters, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate 
 Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
 
 Func ShowGUIInGerman()
@@ -65,6 +66,16 @@ Func ShowGUIInGerman()
   Else
     Return ( (@OSLang = "0407") OR (@OSLang = "0807") OR (@OSLang = "0c07") OR (@OSLang = "1007") OR (@OSLang = "1407") )
   EndIf
+EndFunc
+
+Func MediumBuildDate()
+Dim $result
+
+  $result = FileReadLine(@ScriptDir & $path_rel_builddate)
+  If @error Then
+    $result = ""
+  EndIf
+  Return $result
 EndFunc
 
 Func WSHAvailable()
@@ -162,13 +173,25 @@ $inifilename = $scriptdir & "\" & StringLeft(@ScriptName, StringInStr(@ScriptNam
 $txtxpos = $txtxoffset
 $txtypos = $txtyoffset
 If ShowGUIInGerman() Then
-  GUICtrlCreateLabel("Wählen Sie die gewünschten Optionen und klicken Sie auf 'Start'," & @LF & "um die fehlenden Microsoft-Updates auf Ihrem System zu installieren.", $txtxpos, $txtypos, $groupwidth, 2 * $txtheight)
+  GUICtrlCreateLabel("Wählen Sie die gewünschten Optionen und klicken Sie auf 'Start'," & @LF & "um die fehlenden Microsoft-Updates auf Ihrem System zu installieren.", $txtxpos, $txtypos, 3 * $groupwidth / 4, 2 * $txtheight)
 Else
-  GUICtrlCreateLabel("Select desired options and click 'Start'" & @LF & "to install missing Microsoft updates on your computer.", $txtxpos, $txtypos, $groupwidth, 2 * $txtheight)
+  GUICtrlCreateLabel("Select desired options and click 'Start'" & @LF & "to install missing Microsoft updates on your computer.", $txtxpos, $txtypos, 3 * $groupwidth / 4, 2 * $txtheight)
+EndIf
+
+;  Medium info group
+$builddate = MediumBuildDate()
+If ($builddate <> "") Then
+  $txtxpos = $txtxoffset + 3 * $groupwidth / 4
+  $txtypos = 0
+  GUICtrlCreateGroup("Medium info", $txtxpos, $txtypos, $groupwidth / 4, 2 * $txtheight)
+  $txtxpos = $txtxpos + $txtxoffset
+  $txtypos = $txtypos + 1.5 * $txtyoffset + 2
+  GUICtrlCreateLabel("Build: " & $builddate, $txtxpos, $txtypos, $groupwidth / 4 - 2 * $txtxoffset, $txtheight)
 EndIf
 
 ;  Installation group
-$txtypos = $txtypos + 1.5 * $txtheight
+$txtxpos = $txtxoffset
+$txtypos = $txtyoffset + 1.5 * $txtheight
 GUICtrlCreateGroup("Installation", $txtxpos, $txtypos, $groupwidth, 5 * $txtheight)
 
 ; Backup

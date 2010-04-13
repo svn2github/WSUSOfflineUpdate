@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51
+set WSUSUPDATE_VERSION=6.51+
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -146,6 +146,12 @@ if not errorlevel 1 goto NoAdmin
 
 rem *** Check medium content ***
 echo Checking medium content...
+if exist ..\builddate.txt (
+  for /F %%i in ('type ..\builddate.txt') do (
+    echo Medium build date: %%i
+    echo %DATE% %TIME% - Info: Medium build date: %%i >>%UPDATE_LOGFILE%
+  )
+)
 if /i "%OS_ARCHITECTURE%"=="x64" (
   if exist ..\%OS_NAME%-%OS_ARCHITECTURE%\%OS_LANGUAGE%\nul (
     echo Medium supports Microsoft Windows ^(%OS_NAME%-%OS_ARCHITECTURE% %OS_LANGUAGE%^).

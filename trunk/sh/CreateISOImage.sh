@@ -118,7 +118,7 @@ n=1
 for i in ${paramlist[@]}; do
 	if echo $@ | grep $i > /dev/null 2>&1; then
 		export param${n}=${i}
-		n=`expr n + 1`
+		n=`expr $n + 1`
 	fi
 done
 
@@ -147,10 +147,10 @@ echo "Writing builddate.txt..."
 date > ../client/builddate.txt
 
 if [ -f "$excludeiso1" ]; then
-	cp ../exclude/ExcludeListISO-${sys}.txt ../temp/ExcludeListISO-${sys}.txt
+  tr -d '\r' < ../exclude/ExcludeListISO-${sys}.txt > ../temp/ExcludeListISO-${sys}.txt
 fi
 if [ -f "$excludeiso2" ]; then
-	cp ../exclude/ExcludeListISO-${sys}-x86.txt ../temp/ExcludeListISO-${sys}.txt
+  tr -d '\r' < ../exclude/ExcludeListISO-${sys}-x86.txt > ../temp/ExcludeListISO-${sys}.txt
 fi
 if [ "$EXCLUDE_SP" == "1" ]; then
 	cat ../exclude/ExcludeList-SPs.txt | while read line; do echo \*${line}\* >> ../temp/ExcludeListISO-${sys}.txt; done;

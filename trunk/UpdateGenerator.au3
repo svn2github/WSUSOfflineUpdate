@@ -88,7 +88,10 @@ Dim Const $misc_token_chkver      = "checkouversion"
 Dim Const $misc_token_minimize    = "minimizeondownload"
 Dim Const $misc_token_showdonate  = "showdonate"
 
-Dim $maindlg, $inifilename, $tabitemfocused, $excludesp, $dotnet, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso
+; Paths
+Dim Const $path_rel_builddate     = "\client\builddate.txt"
+
+Dim $maindlg, $inifilename, $tabitemfocused, $excludesp, $dotnet, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $buildlbl
 Dim $usbcopy, $usblbl, $usbpath, $usbfsf, $skipdownload, $btn_start, $btn_proxy, $btn_wsus, $btn_donate, $btn_exit, $proxy, $wsus, $dummy
 Dim $w2k_enu, $wxp_enu, $w2k3_enu, $w2k3_x64_enu, $oxp_enu, $o2k3_enu, $o2k7_enu  ; English
 Dim $w2k_fra, $wxp_fra, $w2k3_fra, $w2k3_x64_fra, $oxp_fra, $o2k3_fra, $o2k7_fra  ; French
@@ -132,6 +135,20 @@ Func ShowGUIInGerman()
   Else
     Return ( (@OSLang = "0407") OR (@OSLang = "0807") OR (@OSLang = "0c07") OR (@OSLang = "1007") OR (@OSLang = "1407") )
   EndIf
+EndFunc
+
+Func LastDownloadRun()
+Dim $result
+
+  $result = FileReadLine(@ScriptDir & $path_rel_builddate)
+  If @error Then
+    If ShowGUIInGerman() Then
+      $result = "[Kein]"
+    Else
+      $result = "[None]"
+    EndIf
+  EndIf
+  Return $result
 EndFunc
 
 Func LanguageCaption($token, $german)
@@ -759,7 +776,13 @@ Dim $result
   If $result = 0 Then
     $result = @error
   EndIf
-  If $result <> 0 Then
+  If $result = 0 Then
+    If ShowGUIInGerman() Then
+      GUICtrlSetData($buildlbl, "Letzter Download: " & LastDownloadRun())
+    Else
+      GUICtrlSetData($buildlbl, "Last download: " & LastDownloadRun())
+    EndIf
+  Else
     WinSetState($maindlg, $maindlg, @SW_RESTORE)
     If ShowGUIInGerman() Then
       If MsgBox(0x2014, "Fehler", "Fehler beim Herunterladen / Verifizieren der Updates für " & $stroptions & "." _
@@ -1083,17 +1106,34 @@ $maindlg = GUICreate($title, $groupwidth + 4 * $txtxoffset, $dlgheight)
 GUISetFont(8.5, 400, 0, "Sans Serif")
 $inifilename = StringLeft(@ScriptFullPath, StringInStr(@ScriptFullPath, ".", 0, -1)) & "ini"
 
-;  Label 1
+;  Label
 $txtxpos = $txtxoffset
 $txtypos = $txtyoffset
 If ShowGUIInGerman() Then
-  GUICtrlCreateLabel("Lade Microsoft-Updates für...", $txtxpos, $txtypos, $groupwidth, $txtheight)
+  GUICtrlCreateLabel("Lade Microsoft-Updates für...", $txtxpos, $txtypos, 3 * $groupwidth / 4, $txtheight)
 Else
-  GUICtrlCreateLabel("Download Microsoft updates for...", $txtxpos, $txtypos, $groupwidth, $txtheight)
+  GUICtrlCreateLabel("Download Microsoft updates for...", $txtxpos, $txtypos, 3 * $groupwidth / 4, $txtheight)
+EndIf
+
+;  Medium info group
+$txtxpos = $txtxoffset + 3 * $groupwidth / 4
+$txtypos = 0
+If ShowGUIInGerman() Then
+  GUICtrlCreateGroup("Repository-Info", $txtxpos, $txtypos, $groupwidth / 4 + 2 * $txtxoffset, 2 * $txtheight)
+Else
+  GUICtrlCreateGroup("Repository info", $txtxpos, $txtypos, $groupwidth / 4 + 2 * $txtxoffset, 2 * $txtheight)
+EndIf
+$txtxpos = $txtxpos + $txtxoffset
+$txtypos = $txtypos + 1.5 * $txtyoffset + 2
+If ShowGUIInGerman() Then
+  $buildlbl = GUICtrlCreateLabel("Letzter Download: " & LastDownloadRun(), $txtxpos, $txtypos, $groupwidth / 4, $txtheight)
+Else
+  $buildlbl = GUICtrlCreateLabel("Last download: " & LastDownloadRun(), $txtxpos, $txtypos, $groupwidth / 4, $txtheight)
 EndIf
 
 ;  Tab control
-$txtypos = $txtypos + $txtheight
+$txtxpos = $txtxoffset
+$txtypos = $txtyoffset + $txtheight
 GuiCtrlCreateTab($txtxpos, $txtypos, $groupwidth + 2 * $txtxoffset, 5 * $groupheight - 6 * $txtheight + 3.5 * $txtyoffset)
 
 ;  Operating Systems' Tab

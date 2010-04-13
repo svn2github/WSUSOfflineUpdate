@@ -337,7 +337,7 @@ Version 6.5 -- 25.03.10
 - Optional client side hash verification of update installation packages
 - Custom additional configuration capabilities added to download and installation parts' static and exclude directories (Thanks to Eberhard Werle and "boco")
 - Custom initialization and finalization hook capabilities added to DownloadUpdates.cmd and DoUpdate.cmd scripts (Thanks to "petebob796")
-- UpdateGenerator script will now show log file on demand after downloading (Thanks to Andreas Bardelli)
+- UpdateGenerator script will now show log file on demand after downloading (Thanks to "Automatix")
 - UpdateInstaller script will now allow automatic reboot option even if started from a network share on Windows Vista, 7 and Server 2008 (R2) systems
 - DoUpdate.cmd script will now exit with errorlevel 3011 if recall after reboot is required and still exit with errorlevel 3010 if reboot only is required (Thanks to "othiman")
 - AutoIt script compiler updated to version 3.3.6.0 
@@ -362,3 +362,6 @@ Version 6.51 -- 08.04.10
 - Fix: office2007-kb947318-fullfile-x86-glb.exe was missed (Thanks to "wsususer")
 - Fix: OfficeXP-kb832668-v2-fullfile-enu.exe was missed due to an invalid URL in Microsoft's update catalog file (Thanks to "mjakobi" and "boco")
 --------------------------------------------------------------------------------
+Version 6.?? -- ??.??.10
+- Date of last download / medium creation will be displayed/logged by UpdateGenerator/UpdateInstaller/DoUpdate scripts (Thanks to "automatix") 
+- Fix: CreateISOImage.sh script didn't correctly evaluate ISO filter files containing Windows (<CR><LF>) line feeds (Thanks to Bob Lindell)
