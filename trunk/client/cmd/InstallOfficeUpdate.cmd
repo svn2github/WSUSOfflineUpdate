@@ -60,10 +60,10 @@ for /F "tokens=2,3 delims=\" %%i in ("%1") do (
       goto IntegrityError
     )
     if exist "%TEMP%\hash-%%i-%%j.txt" del "%TEMP%\hash-%%i-%%j.txt"
-  ) else (
-    echo Warning: Hash file ..\md\hashes-%%i-%%j.txt not found.
-    echo %DATE% %TIME% - Warning: Hash file ..\md\hashes-%%i-%%j.txt not found >>%UPDATE_LOGFILE%
+    goto SkipVerification
   )
+  echo Warning: Hash file ..\md\hashes-%%i-%%j.txt not found.
+  echo %DATE% %TIME% - Warning: Hash file ..\md\hashes-%%i-%%j.txt not found >>%UPDATE_LOGFILE%
 )
 :SkipVerification
 rem *** Check proper Office version ***

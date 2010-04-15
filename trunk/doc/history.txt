@@ -333,7 +333,7 @@ Version 6.5 -- 25.03.10
 - Office updates up to 03/2010 integrated by static definitions
 - Optional installation of Windows PowerShell 2.0 on Windows XP, Server 2003 and Vista (x86/x64) systems
 - Optional installation of most recent Windows Media Player on Windows 2000, XP and Server 2003 (x86/x64) systems
-- Optional installation of most recent Windows Terminal Services Client (Remote Desktop Connection) on Windows XP, Server 2003 and Vista (x86/x64) systems
+- Optional installation of most recent Terminal Services Client (Remote Desktop Connection) on Windows XP, Server 2003 and Vista (x86/x64) systems
 - Optional client side hash verification of update installation packages
 - Custom additional configuration capabilities added to download and installation parts' static and exclude directories (Thanks to Eberhard Werle and "boco")
 - Custom initialization and finalization hook capabilities added to DownloadUpdates.cmd and DoUpdate.cmd scripts (Thanks to "petebob796")
@@ -364,6 +364,9 @@ Version 6.51 -- 08.04.10
 --------------------------------------------------------------------------------
 Version 6.?? -- ??.??.10
 - Office updates up to 04/2010 integrated by static definitions
-- Date of last download / medium creation will be displayed/logged by UpdateGenerator/UpdateInstaller/DoUpdate scripts (Thanks to "automatix") 
+- Date of last download / medium creation will be displayed/logged by UpdateGenerator/UpdateInstaller/DoUpdate scripts (Thanks to "automatix")
 - Fix: CreateISOImage.sh script didn't correctly evaluate ISO filter files containing Windows (<CR><LF>) line feeds (Thanks to Bob Lindell)
 - Fix: DoUpdate.cmd script didn't return errorlevel 3010 (reboot required) after installation of dynamically determined updates (Thanks to "hel")
+- Fix: Missing WSH_VERSION_TARGET_* variables lead to misleading error messages under Windows Vista/7 (Thanks to "lexx_qq")  
+- Fix: Windows Media Player 11 and Terminal Services Client 6 Installation attempts failed on Windows Server 2003 x64 systems 
+- Fix: Invalid hash file search sequence lead to false audit errors when installing .NET Framework 3.5 SP1 Family Update (kb958481, kb958483 and kb958484)

@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+ (r90)
+set WSUSUPDATE_VERSION=6.51+ (r91)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -103,7 +103,9 @@ rem echo Found Internet Explorer version: %IE_VERSION_MAJOR%.%IE_VERSION_MINOR%.
 rem echo Found Microsoft Data Access Components version: %MDAC_VERSION_MAJOR%.%MDAC_VERSION_MINOR%.%MDAC_VERSION_BUILD%.%MDAC_VERSION_REVISION%
 rem echo Found Microsoft DirectX version: %DIRECTX_VERSION_MAJOR%.%DIRECTX_VERSION_MINOR%.%DIRECTX_VERSION_BUILD%.%DIRECTX_VERSION_REVISION% (%DIRECTX_NAME%)
 rem echo Found Microsoft .NET Framework 3.5 version: %DOTNET_VERSION_MAJOR%.%DOTNET_VERSION_MINOR%.%DOTNET_VERSION_BUILD%.%DOTNET_VERSION_REVISION%
+rem echo Found Windows PowerShell version: %PSH_VERSION_MAJOR%.%PSH_VERSION_MINOR%
 rem echo Found Windows Media Player version: %WMP_VERSION_MAJOR%.%WMP_VERSION_MINOR%.%WMP_VERSION_BUILD%.%WMP_VERSION_REVISION%
+rem echo Found Terminal Services Client version: %TSC_VERSION_MAJOR%.%TSC_VERSION_MINOR%.%TSC_VERSION_BUILD%.%TSC_VERSION_REVISION%
 if "%OXP_VERSION_MAJOR%" NEQ "" (
   echo Found Microsoft Office XP %OXP_VERSION_APP% version: %OXP_VERSION_MAJOR%.%OXP_VERSION_MINOR%.%OXP_VERSION_BUILD%.%OXP_VERSION_REVISION% ^(oxp %OXP_LANGUAGE% sp%OXP_SP_VERSION%^)
 )
@@ -122,7 +124,9 @@ echo %DATE% %TIME% - Info: Found Internet Explorer version %IE_VERSION_MAJOR%.%I
 echo %DATE% %TIME% - Info: Found Microsoft Data Access Components version %MDAC_VERSION_MAJOR%.%MDAC_VERSION_MINOR%.%MDAC_VERSION_BUILD%.%MDAC_VERSION_REVISION% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft DirectX version %DIRECTX_VERSION_MAJOR%.%DIRECTX_VERSION_MINOR%.%DIRECTX_VERSION_BUILD%.%DIRECTX_VERSION_REVISION% (%DIRECTX_NAME%) >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 3.5 version %DOTNET_VERSION_MAJOR%.%DOTNET_VERSION_MINOR%.%DOTNET_VERSION_BUILD%.%DOTNET_VERSION_REVISION% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Windows PowerShell version %PSH_VERSION_MAJOR%.%PSH_VERSION_MINOR% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows Media Player version %WMP_VERSION_MAJOR%.%WMP_VERSION_MINOR%.%WMP_VERSION_BUILD%.%WMP_VERSION_REVISION% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Terminal Services Client version %TSC_VERSION_MAJOR%.%TSC_VERSION_MINOR%.%TSC_VERSION_BUILD%.%TSC_VERSION_REVISION% >>%UPDATE_LOGFILE%
 if "%OXP_VERSION_MAJOR%" NEQ "" (
   echo %DATE% %TIME% - Info: Found Microsoft Office XP %OXP_VERSION_APP% version %OXP_VERSION_MAJOR%.%OXP_VERSION_MINOR%.%OXP_VERSION_BUILD%.%OXP_VERSION_REVISION% ^(oxp %OXP_LANGUAGE% sp%OXP_SP_VERSION%^) >>%UPDATE_LOGFILE%
 )
@@ -308,7 +312,6 @@ for /F %%i in ('dir /B %WUA_FILENAME%') do (
 :SkipWUAInst
 
 rem *** Install Windows Installer ***
-if "%OS_NAME%"=="w61" goto SkipMSIInst
 echo Checking Windows Installer version...
 if %MSI_VERSION_MAJOR% LSS %MSI_VERSION_TARGET_MAJOR% goto InstallMSI
 if %MSI_VERSION_MAJOR% GTR %MSI_VERSION_TARGET_MAJOR% goto SkipMSIInst
@@ -346,7 +349,6 @@ for /F %%i in ('dir /B %MSI_FILENAME%') do (
 :SkipMSIInst
 
 rem *** Install Windows Script Host ***
-if /i "%OS_ARCHITECTURE%"=="x64" goto SkipWSHInst
 echo Checking Windows Script Host version...
 if %WSH_VERSION_MAJOR% LSS %WSH_VERSION_TARGET_MAJOR% goto InstallWSH
 if %WSH_VERSION_MAJOR% GTR %WSH_VERSION_TARGET_MAJOR% goto SkipWSHInst
@@ -371,7 +373,6 @@ for /F %%i in ('dir /B %WSH_FILENAME%') do (
 :SkipWSHInst
 
 rem *** Install Internet Explorer ***
-if "%OS_NAME%"=="w61" goto SkipIEInst
 echo Checking Internet Explorer version...
 if %IE_VERSION_MAJOR% LSS %IE_VERSION_TARGET_MAJOR% goto InstallIE
 if %IE_VERSION_MAJOR% GTR %IE_VERSION_TARGET_MAJOR% goto SkipIEInst

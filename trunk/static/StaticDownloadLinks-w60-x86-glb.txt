@@ -1,6 +1,5 @@
 http://download.microsoft.com/download/2/1/9/219163f5-fae5-4c2b-a607-872ff085f9e2/Windows6.0-KB936330-X86-wave1.exe
 http://download.microsoft.com/download/F/B/9/FB9F0DF8-4CE2-416D-9D08-BABC7EA48F85/Windows6.0-KB948465-X86.exe
-http://download.microsoft.com/download/2/6/1/261fca42-22c0-4f91-9451-0e0f2e08356d/Windows6.0-KB942288-v2-x86.msu
 http://download.microsoft.com/download/A/7/5/A75BC017-63CE-47D6-8FA4-AFB5C21BAC54/Windows6.0-KB968930-x86.msu
 http://download.microsoft.com/download/3/9/8/398298E8-2FBB-4AD0-9B81-A5DE0131BB66/Windows6.0-KB969084-x86.msu
 http://download.microsoft.com/download/F/8/8/F88F09A2-A315-44C0-848E-48476A9E1577/IE8-WindowsVista-x86-ENU.exe

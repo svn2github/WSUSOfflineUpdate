@@ -1,4 +1,2 @@
 http://www.download.windowsupdate.com/msdownload/update/v3-19990518/cabpool/windowsserver2003.windowsxp-kb914961-sp2-x64-enu_7f8e909c52d23ac8b5dbfd73f1f12d3ee0fe794c.exe
 http://download.microsoft.com/download/2/6/1/261fca42-22c0-4f91-9451-0e0f2e08356d/WindowsServer2003-KB942288-v4-x64.exe
-http://download.microsoft.com/download/5/c/0/5c04e12e-355f-461b-85e2-acadc21bb939/WindowsServer2003.WindowsXP-KB925876-v2-x64-ENU.exe
-http://download.microsoft.com/download/3/0/8/3080c52c-2517-43de-bdb4-b7eafd88f084/wmp11-windowsxp-x64-enu.exe
