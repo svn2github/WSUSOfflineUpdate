@@ -1,3 +1,2 @@
 http://download.microsoft.com/download/B/D/9/BD9BB1FF-6609-4B10-9334-6D0C58066AA7/WindowsServer2003-KB968930-x64-ENG.exe
 http://download.microsoft.com/download/5/c/0/5c04e12e-355f-461b-85e2-acadc21bb939/WindowsServer2003.WindowsXP-KB925876-v2-x64-ENU.exe
-http://download.microsoft.com/download/3/0/8/3080c52c-2517-43de-bdb4-b7eafd88f084/wmp11-windowsxp-x64-enu.exe

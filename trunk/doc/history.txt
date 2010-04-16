@@ -365,6 +365,7 @@ Version 6.51 -- 08.04.10
 Version 6.?? -- ??.??.10
 - Office updates up to 04/2010 integrated by static definitions
 - Date of last download / medium creation will be displayed/logged by UpdateGenerator/UpdateInstaller/DoUpdate scripts (Thanks to "automatix")
+- AutoIt script compiler updated to version 3.3.6.1 
 - Fix: CreateISOImage.sh script didn't correctly evaluate ISO filter files containing Windows (<CR><LF>) line feeds (Thanks to Bob Lindell)
 - Fix: DoUpdate.cmd script didn't return errorlevel 3010 (reboot required) after installation of dynamically determined updates (Thanks to "hel")
 - Fix: Missing WSH_VERSION_TARGET_* variables lead to misleading error messages under Windows Vista/7 (Thanks to "lexx_qq")  
