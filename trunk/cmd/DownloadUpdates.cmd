@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+ (r92)
+set WSUSUPDATE_VERSION=6.51+ (r93)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -145,6 +145,9 @@ if exist ..\client\dotnet\glb\nul move /Y ..\client\dotnet\glb ..\client\dotnet\
 if exist ..\bin\fciv.exe del ..\bin\fciv.exe
 if exist ..\fciv\nul rd /S /Q ..\fciv
 if exist ..\static\StaticDownloadLink-fciv.txt del ..\static\StaticDownloadLink-fciv.txt
+if exist ..\client\wsus\wuredist.cab del ..\client\wsus\wuredist.cab
+if exist ..\xslt\ExtractDownloadLinks-wua-x86.xsl del ..\xslt\ExtractDownloadLinks-wua-x86.xsl
+if exist ..\xslt\ExtractDownloadLinks-wua-x64.xsl del ..\xslt\ExtractDownloadLinks-wua-x64.xsl
 
 rem *** Execute custom initialization hook ***
 if exist .\custom\InitializationHook.cmd (
@@ -243,30 +246,11 @@ del Sigcheck.zip
 popd
 :SkipSigCheck
 
-rem *** Download most recent files for WSUS functionality ***
-echo Downloading/validating most recent files for WSUS functionality...
+rem *** Download most recent Windows Update Agent and catalog file ***
+echo Downloading/validating most recent Windows Update Agent and catalog file...
 %WGET_PATH% -N -i ..\static\StaticDownloadLinks-wsus.txt -P ..\client\wsus
 if errorlevel 1 goto DownloadError
-echo %DATE% %TIME% - Info: Downloaded/validated most recent files for WSUS functionality >>%DOWNLOAD_LOGFILE%
-
-rem *** Extract Windows Update Agent catalog file wuredist.xml ***
-if exist ..\client\wsus\wuredist.xml del ..\client\wsus\wuredist.xml
-if not exist ..\bin\extract.exe goto NoExtract
-..\bin\extract.exe /L ..\client\wsus ..\client\wsus\wuredist.cab wuredist.xml >nul
-
-rem *** Determine update urls for Windows Update Agent ***
-echo Determining update urls for Windows Update Agent...
-if not exist ..\bin\msxsl.exe goto NoMSXSL
-..\bin\msxsl.exe ..\client\wsus\wuredist.xml ..\xslt\ExtractDownloadLinks-wua-%TARGET_ARCHITECTURE%.xsl -o "%TEMP%\DownloadLinks-wua.txt"
-if errorlevel 1 goto DownloadError
-del ..\client\wsus\wuredist.xml
-
-rem *** Download most recent Windows Update Agent ***
-echo Downloading/validating most recent Windows Update Agent...
-%WGET_PATH% -N -i "%TEMP%\DownloadLinks-wua.txt" -P ..\client\wsus
-if errorlevel 1 goto DownloadError
-echo %DATE% %TIME% - Info: Downloaded/validated most recent Windows Update Agent >>%DOWNLOAD_LOGFILE%
-del "%TEMP%\DownloadLinks-wua.txt"
+echo %DATE% %TIME% - Info: Downloaded/validated most recent Windows Update Agent and catalog file >>%DOWNLOAD_LOGFILE%
 
 rem *** Download installation files for IE6 %2 - only required for w2k ***
 if /i "%1" NEQ "w2k" goto SkipIE6

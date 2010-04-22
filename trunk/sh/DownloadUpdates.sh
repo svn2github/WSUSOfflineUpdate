@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                    v. 6.51+ (r92)                  ###
+###                    v. 6.51+ (r93)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -371,7 +371,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                    v. 6.51+ (r92)                  ***
+***                    v. 6.51+ (r93)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
@@ -493,31 +493,12 @@ if [ "$sys" == "all-x86" ]; then
 	exit $rc
 fi
 
-
-echo "Downloading most recent files for WSUS functionality..."
+echo "Downloading most recent Windows Update Agent and catalog file..."
 doWget -c -i ../static/StaticDownloadLinks-wsus.txt -P ../client/wsus
 if [ "$sys" == "oxp" -o "$sys" == "o2k3" -o "$sys" == "o2k7" ]; then
 	echo "Downloading most recent files for Office inventory functionality..."
 	doWget -c -i ../static/StaticDownloadLinks-inventory.txt -P ../client/wsus
 fi
-
-echo "Extracting Windows Update Agent catalogue file wuredist.xml..."
-cd ../client/wsus
-cabextract -q -F wuredist.xml wuredist.cab
-cd ../../sh
-rm ../client/wsus/wuredist.cab
-
-echo "Determining update URLs for Windows Update Agent..."
-if [ "$sys" != "w2k3-x64" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61-x64" ]; then
-	$xml tr ../xslt/ExtractDownloadLinks-wua-x86.xsl ../client/wsus/wuredist.xml > ../temp/DownloadLinks-wua.txt
-else
-	$xml tr ../xslt/ExtractDownloadLinks-wua-x64.xsl ../client/wsus/wuredist.xml > ../temp/DownloadLinks-wua.txt
-fi
-rm ../client/wsus/wuredist.xml
-
-echo "Downloading most recent Windows Update Agent..."
-doWget -c -i ../temp/DownloadLinks-wua.txt -P ../client/wsus
-rm ../temp/DownloadLinks-wua.txt
 
 echo "Determining static URLs for ${sys} ${lang}..."
 

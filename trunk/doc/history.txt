@@ -371,3 +371,4 @@ Version 6.?? -- ??.??.10
 - Fix: Missing WSH_VERSION_TARGET_* variables lead to misleading error messages under Windows Vista/7 (Thanks to "lexx_qq")  
 - Fix: Windows Media Player 11 and Terminal Services Client 6 Installation attempts failed on Windows Server 2003 x64 systems 
 - Fix: Invalid hash file search sequence lead to false audit errors when installing .NET Framework 3.5 SP1 Family Update (kb958481, kb958483 and kb958484)
+- Fix: Dynamic determination of Windows Update Agent download URLs replaced by static definitions (Thanks to "automatix", "boco" and "Denniss")
