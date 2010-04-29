@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+ (r94)
+set WSUSUPDATE_VERSION=6.51+ (r95)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -266,13 +266,14 @@ echo %DATE% %TIME% - Info: Downloaded/validated installation files for IE6 %2 >>
 rem *** Download installation files for .NET Framework 3.5 SP1 and 4 - not required for w2k ***
 if /i "%1"=="w2k" goto SkipDotNet
 if "%INCLUDE_DOTNET%" NEQ "1" goto SkipDotNet
-set DOTNET_FILENAME=..\dotnet\dotnetfx35.exe
+set DOTNET35_FILENAME=..\dotnet\dotnetfx35.exe
+set DOTNET4_FILENAME=..\dotnet\dotNetFx40_Full_x86_x64.exe
 if "%VERIFY_DOWNLOADS%"=="1" (
   if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
   if exist ..\client\md\hashes-dotnet.txt (
     echo Verifying integrity of .NET Framework installation files...
     pushd ..\client\md
-    ..\bin\hashdeep.exe -a -l -vv -k hashes-dotnet.txt %DOTNET_FILENAME%
+    ..\bin\hashdeep.exe -a -l -vv -k hashes-dotnet.txt %DOTNET35_FILENAME% %DOTNET4_FILENAME%
     if errorlevel 1 (
       popd
       goto IntegrityError
@@ -293,7 +294,7 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   echo Creating integrity database for .NET Framework installation files...
   if not exist ..\client\md\nul md ..\client\md
   pushd ..\client\md
-  ..\bin\hashdeep.exe -c md5,sha256 -l %DOTNET_FILENAME% >hashes-dotnet.txt
+  ..\bin\hashdeep.exe -c md5,sha256 -l %DOTNET35_FILENAME% %DOTNET4_FILENAME% >hashes-dotnet.txt
   if errorlevel 1 (
     popd
     echo Warning: Error creating integrity database ..\md\hashes-dotnet.txt.

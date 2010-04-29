@@ -2514,13 +2514,13 @@ Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
 
-;  Include .NET Framework 3.5 SP1
+;  Include .NET Framework 3.5 SP1 and 4
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
-  $dotnet = GUICtrlCreateCheckbox(".NET Framework 3.5 SP1 einschlieﬂen", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
+  $dotnet = GUICtrlCreateCheckbox(".NET Framework 3.5 SP1 und 4 einschlieﬂen", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 Else
-  $dotnet = GUICtrlCreateCheckbox("Include .NET Framework 3.5 SP1", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
+  $dotnet = GUICtrlCreateCheckbox("Include .NET Framework 3.5 SP1 and 4", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 EndIf
 If IniRead($inifilename, $ini_section_misc, $misc_token_dotnet, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
