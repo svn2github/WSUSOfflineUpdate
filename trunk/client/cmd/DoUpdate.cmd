@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+ (r93)
+set WSUSUPDATE_VERSION=6.51+ (r94)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -20,7 +20,7 @@ echo %DATE% %TIME% - Info: Starting WSUS offline update (v. %WSUSUPDATE_VERSION%
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/nobackup /verify /instie7 /instie8 /updatewmp /updatetsc /instdotnet /instpsh /instofccnvs /autoreboot /shutdown /showlog /all /excludestatics) do (
+for %%i in (/nobackup /verify /instie7 /instie8 /updatewmp /updatetsc /instdotnet35 /instdotnet4 /instpsh /instofccnvs /autoreboot /shutdown /showlog /all /excludestatics) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected >>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/nobackup" set BACKUP_MODE=/nobackup
@@ -29,7 +29,8 @@ if /i "%1"=="/instie7" set INSTALL_IE=/instie7
 if /i "%1"=="/instie8" set INSTALL_IE=/instie8
 if /i "%1"=="/updatewmp" set UPDATE_WMP=/updatewmp
 if /i "%1"=="/updatetsc" set UPDATE_TSC=/updatetsc
-if /i "%1"=="/instdotnet" set INSTALL_DOTNET=/instdotnet
+if /i "%1"=="/instdotnet35" set INSTALL_DOTNET35=/instdotnet35
+if /i "%1"=="/instdotnet4" set INSTALL_DOTNET4=/instdotnet4
 if /i "%1"=="/instpsh" set INSTALL_PSH=/instpsh
 if /i "%1"=="/instofccnvs" set INSTALL_CONVERTERS=/instofccnvs
 if /i "%1"=="/autoreboot" set BOOT_MODE=/autoreboot
@@ -102,7 +103,7 @@ rem echo Found Windows Script Host version: %WSH_VERSION_MAJOR%.%WSH_VERSION_MIN
 rem echo Found Internet Explorer version: %IE_VERSION_MAJOR%.%IE_VERSION_MINOR%.%IE_VERSION_BUILD%.%IE_VERSION_REVISION%
 rem echo Found Microsoft Data Access Components version: %MDAC_VERSION_MAJOR%.%MDAC_VERSION_MINOR%.%MDAC_VERSION_BUILD%.%MDAC_VERSION_REVISION%
 rem echo Found Microsoft DirectX version: %DIRECTX_VERSION_MAJOR%.%DIRECTX_VERSION_MINOR%.%DIRECTX_VERSION_BUILD%.%DIRECTX_VERSION_REVISION% (%DIRECTX_NAME%)
-rem echo Found Microsoft .NET Framework 3.5 version: %DOTNET_VERSION_MAJOR%.%DOTNET_VERSION_MINOR%.%DOTNET_VERSION_BUILD%.%DOTNET_VERSION_REVISION%
+rem echo Found Microsoft .NET Framework 3.5 version: %DOTNET35_VERSION_MAJOR%.%DOTNET35_VERSION_MINOR%.%DOTNET35_VERSION_BUILD%.%DOTNET35_VERSION_REVISION%
 rem echo Found Windows PowerShell version: %PSH_VERSION_MAJOR%.%PSH_VERSION_MINOR%
 rem echo Found Windows Media Player version: %WMP_VERSION_MAJOR%.%WMP_VERSION_MINOR%.%WMP_VERSION_BUILD%.%WMP_VERSION_REVISION%
 rem echo Found Terminal Services Client version: %TSC_VERSION_MAJOR%.%TSC_VERSION_MINOR%.%TSC_VERSION_BUILD%.%TSC_VERSION_REVISION%
@@ -123,7 +124,7 @@ echo %DATE% %TIME% - Info: Found Windows Script Host version %WSH_VERSION_MAJOR%
 echo %DATE% %TIME% - Info: Found Internet Explorer version %IE_VERSION_MAJOR%.%IE_VERSION_MINOR%.%IE_VERSION_BUILD%.%IE_VERSION_REVISION% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft Data Access Components version %MDAC_VERSION_MAJOR%.%MDAC_VERSION_MINOR%.%MDAC_VERSION_BUILD%.%MDAC_VERSION_REVISION% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft DirectX version %DIRECTX_VERSION_MAJOR%.%DIRECTX_VERSION_MINOR%.%DIRECTX_VERSION_BUILD%.%DIRECTX_VERSION_REVISION% (%DIRECTX_NAME%) >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 3.5 version %DOTNET_VERSION_MAJOR%.%DOTNET_VERSION_MINOR%.%DOTNET_VERSION_BUILD%.%DOTNET_VERSION_REVISION% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 3.5 version %DOTNET35_VERSION_MAJOR%.%DOTNET35_VERSION_MINOR%.%DOTNET35_VERSION_BUILD%.%DOTNET35_VERSION_REVISION% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows PowerShell version %PSH_VERSION_MAJOR%.%PSH_VERSION_MINOR% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows Media Player version %WMP_VERSION_MAJOR%.%WMP_VERSION_MINOR%.%WMP_VERSION_BUILD%.%WMP_VERSION_REVISION% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Terminal Services Client version %TSC_VERSION_MAJOR%.%TSC_VERSION_MINOR%.%TSC_VERSION_BUILD%.%TSC_VERSION_REVISION% >>%UPDATE_LOGFILE%
@@ -528,25 +529,25 @@ set REBOOT_REQUIRED=1
 :SkipTSCInst
 
 rem *** Install .NET Framework 3.5 SP1 ***
-if "%OS_NAME%"=="w2k" goto SkipDotNetInst
-if "%INSTALL_DOTNET%" NEQ "/instdotnet" goto SkipDotNetInst
+if "%OS_NAME%"=="w2k" goto SkipDotNet35Inst
+if "%INSTALL_DOTNET35%" NEQ "/instdotnet35" goto SkipDotNet35Inst
 echo Checking .NET Framework 3.5 installation state...
-if %DOTNET_VERSION_MAJOR% LSS %DOTNET_VERSION_TARGET_MAJOR% goto InstallDotNet
-if %DOTNET_VERSION_MAJOR% GTR %DOTNET_VERSION_TARGET_MAJOR% goto SkipDotNetInst
-if %DOTNET_VERSION_MINOR% LSS %DOTNET_VERSION_TARGET_MINOR% goto InstallDotNet
-if %DOTNET_VERSION_MINOR% GTR %DOTNET_VERSION_TARGET_MINOR% goto SkipDotNetInst
-if %DOTNET_VERSION_BUILD% LSS %DOTNET_VERSION_TARGET_BUILD% goto InstallDotNet
-if %DOTNET_VERSION_BUILD% GTR %DOTNET_VERSION_TARGET_BUILD% goto SkipDotNetInst
-if %DOTNET_VERSION_REVISION% GEQ %DOTNET_VERSION_TARGET_REVISION% goto SkipDotNetInst
-:InstallDotNet
-set DOTNET_FILENAME=..\dotnet\dotnetfx35.exe
-if not exist %DOTNET_FILENAME% (
-  echo Warning: File %DOTNET_FILENAME% not found. 
-  echo %DATE% %TIME% - Warning: File %DOTNET_FILENAME% not found >>%UPDATE_LOGFILE%
-  goto SkipDotNetInst
+if %DOTNET35_VERSION_MAJOR% LSS %DOTNET35_VERSION_TARGET_MAJOR% goto InstallDotNet35
+if %DOTNET35_VERSION_MAJOR% GTR %DOTNET35_VERSION_TARGET_MAJOR% goto SkipDotNet35Inst
+if %DOTNET35_VERSION_MINOR% LSS %DOTNET35_VERSION_TARGET_MINOR% goto InstallDotNet35
+if %DOTNET35_VERSION_MINOR% GTR %DOTNET35_VERSION_TARGET_MINOR% goto SkipDotNet35Inst
+if %DOTNET35_VERSION_BUILD% LSS %DOTNET35_VERSION_TARGET_BUILD% goto InstallDotNet35
+if %DOTNET35_VERSION_BUILD% GTR %DOTNET35_VERSION_TARGET_BUILD% goto SkipDotNet35Inst
+if %DOTNET35_VERSION_REVISION% GEQ %DOTNET35_VERSION_TARGET_REVISION% goto SkipDotNet35Inst
+:InstallDotNet35
+set DOTNET35_FILENAME=..\dotnet\dotnetfx35.exe
+if not exist %DOTNET35_FILENAME% (
+  echo Warning: File %DOTNET35_FILENAME% not found. 
+  echo %DATE% %TIME% - Warning: File %DOTNET35_FILENAME% not found >>%UPDATE_LOGFILE%
+  goto SkipDotNet35Inst
 )
 echo Installing .NET Framework 3.5 SP1...
-call InstallOSUpdate.cmd %DOTNET_FILENAME% %VERIFY_MODE% /ignoreerrors /qb /norestart /lang:%OS_LANGUAGE%
+call InstallOSUpdate.cmd %DOTNET35_FILENAME% %VERIFY_MODE% /ignoreerrors /qb /norestart /lang:%OS_LANGUAGE%
 copy /Y ..\static\StaticUpdateIds-dotnet.txt "%TEMP%\MissingUpdateIds.txt" >nul
 call ListUpdatesToInstall.cmd /excludestatics
 if errorlevel 1 goto ListError
@@ -555,7 +556,30 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
   call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
 )
 set REBOOT_REQUIRED=1
-:SkipDotNetInst
+:SkipDotNet35Inst
+
+rem *** Install .NET Framework 4 ***
+if "%OS_NAME%"=="w2k" goto SkipDotNet4Inst
+if "%INSTALL_DOTNET4%" NEQ "/instdotnet4" goto SkipDotNet4Inst
+echo Checking .NET Framework 4 installation state...
+if %DOTNET4_VERSION_MAJOR% LSS %DOTNET4_VERSION_TARGET_MAJOR% goto InstallDotNet4
+if %DOTNET4_VERSION_MAJOR% GTR %DOTNET4_VERSION_TARGET_MAJOR% goto SkipDotNet4Inst
+if %DOTNET4_VERSION_MINOR% LSS %DOTNET4_VERSION_TARGET_MINOR% goto InstallDotNet4
+if %DOTNET4_VERSION_MINOR% GTR %DOTNET4_VERSION_TARGET_MINOR% goto SkipDotNet4Inst
+if %DOTNET4_VERSION_BUILD% LSS %DOTNET4_VERSION_TARGET_BUILD% goto InstallDotNet4
+if %DOTNET4_VERSION_BUILD% GTR %DOTNET4_VERSION_TARGET_BUILD% goto SkipDotNet4Inst
+if %DOTNET4_VERSION_REVISION% GEQ %DOTNET4_VERSION_TARGET_REVISION% goto SkipDotNet4Inst
+:InstallDotNet4
+set DOTNET4_FILENAME=..\dotnet\dotNetFx40_Full_x86_x64.exe
+if not exist %DOTNET4_FILENAME% (
+  echo Warning: File %DOTNET4_FILENAME% not found. 
+  echo %DATE% %TIME% - Warning: File %DOTNET4_FILENAME% not found >>%UPDATE_LOGFILE%
+  goto SkipDotNet4Inst
+)
+echo Installing .NET Framework 4...
+call InstallOSUpdate.cmd %DOTNET4_FILENAME% %VERIFY_MODE% /ignoreerrors /passive /norestart /lcid %OS_LANGUAGE_CODE%
+set REBOOT_REQUIRED=1
+:SkipDotNet4Inst
 
 rem *** Install Windows PowerShell 2.0 ***
 if "%OS_NAME%"=="w2k" goto SkipPShInst
@@ -715,7 +739,7 @@ if "%RECALL_REQUIRED%"=="1" (
     )
     if not "%USERNAME%"=="WSUSUpdateAdmin" (
       echo Preparing automatic recall...
-      call PrepareRecall.cmd %~f0 %BACKUP_MODE% %VERIFY_MODE% %INSTALL_IE% %UPDATE_WMP% %UPDATE_TSC% %INSTALL_DOTNET% %INSTALL_PSH% %INSTALL_CONVERTERS% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES%
+      call PrepareRecall.cmd %~f0 %BACKUP_MODE% %VERIFY_MODE% %INSTALL_IE% %UPDATE_WMP% %UPDATE_TSC% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_CONVERTERS% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES%
     )
     echo Rebooting...
     %CSCRIPT_PATH% //Nologo //E:vbs Shutdown.vbs /reboot
@@ -925,13 +949,13 @@ if "%USERNAME%"=="WSUSUpdateAdmin" (
 goto EoF
 
 :EoF
-cd ..
 rem *** Execute custom finalization hook ***
 if exist .\custom\FinalizationHook.cmd (
   echo Executing custom finalization hook...
   call .\custom\FinalizationHook.cmd
   echo %DATE% %TIME% - Info: Executed custom finalization hook >>%UPDATE_LOGFILE%
 )
+cd ..
 echo %DATE% %TIME% - Info: Ending update >>%UPDATE_LOGFILE%
 title %ComSpec%
 if "%RECALL_REQUIRED%"=="1" (

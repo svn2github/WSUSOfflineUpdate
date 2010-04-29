@@ -364,6 +364,7 @@ Version 6.51 -- 08.04.10
 --------------------------------------------------------------------------------
 Version 6.?? -- ??.??.10
 - Office updates up to 04/2010 integrated by static definitions
+- Optional installation of .NET Framework 4 on Windows XP, Vista, 7 and Server 2003/2008 (R2) systems (Thanks to "AnonymousHero")
 - Date of last download / medium creation will be displayed/logged by UpdateGenerator/UpdateInstaller/DoUpdate scripts (Thanks to "automatix")
 - AutoIt script compiler updated to version 3.3.6.1 
 - Fix: CreateISOImage.sh script didn't correctly evaluate ISO filter files containing Windows (<CR><LF>) line feeds (Thanks to Bob Lindell)
@@ -372,3 +373,4 @@ Version 6.?? -- ??.??.10
 - Fix: Windows Media Player 11 and Terminal Services Client 6 Installation attempts failed on Windows Server 2003 x64 systems 
 - Fix: Invalid hash file search sequence lead to false audit errors when installing .NET Framework 3.5 SP1 Family Update (kb958481, kb958483 and kb958484)
 - Fix: Dynamic determination of Windows Update Agent download URLs replaced by static definitions (Thanks to "automatix", "boco" and "Denniss")
+- Fix: FinalizationHook.cmd wasn't executed by DoUpdate.cmd (Thanks to "-Iwan-")

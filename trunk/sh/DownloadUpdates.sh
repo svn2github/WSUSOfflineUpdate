@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                    v. 6.51+ (r93)                  ###
+###                    v. 6.51+ (r94)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -371,7 +371,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                    v. 6.51+ (r93)                  ***
+***                    v. 6.51+ (r94)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
@@ -546,7 +546,7 @@ if [ -f "$static5" ]; then
 fi
 
 if [ "$dotnet" == "1" ]; then
-	cp ../static/StaticDownloadLink-dotnet.txt ../temp/StaticUrls-dotnet.txt
+	cp ../static/StaticDownloadLinks-dotnet.txt ../temp/StaticUrls-dotnet.txt
 fi
 
 if [ "$sys" == "w2k" ]; then

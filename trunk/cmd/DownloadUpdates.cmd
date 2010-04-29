@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+ (r93)
+set WSUSUPDATE_VERSION=6.51+ (r94)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -148,6 +148,7 @@ if exist ..\static\StaticDownloadLink-fciv.txt del ..\static\StaticDownloadLink-
 if exist ..\client\wsus\wuredist.cab del ..\client\wsus\wuredist.cab
 if exist ..\xslt\ExtractDownloadLinks-wua-x86.xsl del ..\xslt\ExtractDownloadLinks-wua-x86.xsl
 if exist ..\xslt\ExtractDownloadLinks-wua-x64.xsl del ..\xslt\ExtractDownloadLinks-wua-x64.xsl
+if exist ..\static\StaticDownloadLink-dotnet.txt del ..\static\StaticDownloadLink-dotnet.txt
 
 rem *** Execute custom initialization hook ***
 if exist .\custom\InitializationHook.cmd (
@@ -262,14 +263,14 @@ if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded/validated installation files for IE6 %2 >>%DOWNLOAD_LOGFILE%
 :SkipIE6
 
-rem *** Download .NET Framework 3.5 SP1 - not required for w2k ***
+rem *** Download installation files for .NET Framework 3.5 SP1 and 4 - not required for w2k ***
 if /i "%1"=="w2k" goto SkipDotNet
 if "%INCLUDE_DOTNET%" NEQ "1" goto SkipDotNet
 set DOTNET_FILENAME=..\dotnet\dotnetfx35.exe
 if "%VERIFY_DOWNLOADS%"=="1" (
   if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
   if exist ..\client\md\hashes-dotnet.txt (
-    echo Verifying integrity of .NET Framework 3.5 SP1 installation file...
+    echo Verifying integrity of .NET Framework installation files...
     pushd ..\client\md
     ..\bin\hashdeep.exe -a -l -vv -k hashes-dotnet.txt %DOTNET_FILENAME%
     if errorlevel 1 (
@@ -277,19 +278,19 @@ if "%VERIFY_DOWNLOADS%"=="1" (
       goto IntegrityError
     )
     popd
-    echo %DATE% %TIME% - Info: Verified integrity of .NET Framework 3.5 SP1 installation file >>%DOWNLOAD_LOGFILE%
+    echo %DATE% %TIME% - Info: Verified integrity of .NET Framework installation files >>%DOWNLOAD_LOGFILE%
   ) else (
     echo Warning: Integrity database ..\md\hashes-dotnet.txt not found.
     echo %DATE% %TIME% - Warning: Integrity database ..\md\hashes-dotnet.txt not found >>%DOWNLOAD_LOGFILE%
   )
 )
-echo Downloading/validating installation files for .NET Framework 3.5 SP1...
-%WGET_PATH% -N -i ..\static\StaticDownloadLink-dotnet.txt -P ..\client\dotnet
+echo Downloading/validating installation files for .NET Framework 3.5 SP1 and 4...
+%WGET_PATH% -N -i ..\static\StaticDownloadLinks-dotnet.txt -P ..\client\dotnet
 if errorlevel 1 goto DownloadError
-echo %DATE% %TIME% - Info: Downloaded/validated installation files for .NET Framework 3.5 SP1 >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Downloaded/validated installation files for .NET Framework 3.5 SP1 and 4 >>%DOWNLOAD_LOGFILE%
 if "%VERIFY_DOWNLOADS%"=="1" (
   if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
-  echo Creating integrity database for .NET Framework 3.5 SP1 installation file...
+  echo Creating integrity database for .NET Framework installation files...
   if not exist ..\client\md\nul md ..\client\md
   pushd ..\client\md
   ..\bin\hashdeep.exe -c md5,sha256 -l %DOTNET_FILENAME% >hashes-dotnet.txt
@@ -299,7 +300,7 @@ if "%VERIFY_DOWNLOADS%"=="1" (
     echo %DATE% %TIME% - Warning: Error creating integrity database ..\md\hashes-dotnet.txt >>%DOWNLOAD_LOGFILE%
   ) else (
     popd
-    echo %DATE% %TIME% - Info: Created integrity database for .NET Framework 3.5 SP1 installation file >>%DOWNLOAD_LOGFILE%
+    echo %DATE% %TIME% - Info: Created integrity database for .NET Framework installation files >>%DOWNLOAD_LOGFILE%
   )
 )
 call :DownloadCore dotnet %TARGET_ARCHITECTURE%-glb

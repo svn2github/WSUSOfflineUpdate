@@ -6,6 +6,7 @@ Private Const strRegKeyIE                     = "HKLM\Software\Microsoft\Interne
 Private Const strRegKeyMDAC                   = "HKLM\Software\Microsoft\DataAccess\"
 Private Const strRegKeyDirectX                = "HKLM\Software\Microsoft\DirectX\"
 Private Const strRegKeyDotNet35               = "HKLM\Software\Microsoft\NET Framework Setup\NDP\v3.5\"
+Private Const strRegKeyDotNet4                = "HKLM\Software\Microsoft\NET Framework Setup\NDP\v4\Full\"
 Private Const strRegKeyPowerShell             = "HKLM\Software\Microsoft\PowerShell\1\PowerShellEngine\"
 Private Const strRegValVersion                = "Version"
 Private Const strRegValPShVersion             = "PowerShellVersion"
@@ -296,7 +297,8 @@ WriteVersion2File objCmdFile, "DIRECTX_VERSION", RegRead(wshShell, strRegKeyDire
 WriteDXName2File objCmdFile, RegRead(wshShell, strRegKeyDirectX & strRegValVersion)
 
 ' Determine Microsoft .NET Framework 3.5 SP1 installation state
-WriteVersion2File objCmdFile, "DOTNET_VERSION", RegRead(wshShell, strRegKeyDotNet35 & strRegValVersion)
+WriteVersion2File objCmdFile, "DOTNET35_VERSION", RegRead(wshShell, strRegKeyDotNet35 & strRegValVersion)
+WriteVersion2File objCmdFile, "DOTNET4_VERSION", RegRead(wshShell, strRegKeyDotNet4 & strRegValVersion)
 
 ' Determine Windows PowerShell version
 WriteVersion2File objCmdFile, "PSH_VERSION", RegRead(wshShell, strRegKeyPowerShell & strRegValPShVersion)
