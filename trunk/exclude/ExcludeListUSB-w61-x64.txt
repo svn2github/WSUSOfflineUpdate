@@ -1,9 +1,12 @@
-dotnet\
-ofc\
+ndp1
+ndp2
+ndp3
+dotnetfx35.exe
 o2k\
 oxp\
 o2k3\
 o2k7\
+ofc\
 w2k\
 wxp\
 w2k3\

@@ -1,11 +1,14 @@
-*dotnet\/*
-*ofc*
+*ndp1*
+*ndp2*
+*ndp3*
+*dotnetfx35.exe
 *o2k*
 *oxp*
+*ofc*
 *w2k*
 *wxp*
-*win\/*
 *w60\/*
+*win\/*
 *-x64*
 *.au3
 *reg.exe
