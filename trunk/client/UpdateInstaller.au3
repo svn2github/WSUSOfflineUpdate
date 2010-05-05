@@ -14,8 +14,10 @@ Dim Const $reg_key_ie                 = "HKEY_LOCAL_MACHINE\Software\Microsoft\I
 Dim Const $reg_key_dotnet35           = "HKEY_LOCAL_MACHINE\Software\Microsoft\NET Framework Setup\NDP\v3.5"
 Dim Const $reg_key_dotnet4            = "HKEY_LOCAL_MACHINE\Software\Microsoft\NET Framework Setup\NDP\v4\Full"
 Dim Const $reg_key_powershell         = "HKEY_LOCAL_MACHINE\Software\Microsoft\PowerShell\1\PowerShellEngine"
+Dim Const $reg_key_msse               = "HKEY_LOCAL_MACHINE\Software\Microsoft\Microsoft Security Essentials"
 Dim Const $reg_key_fontdpi            = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontDPI"
 Dim Const $reg_key_windowmetrics      = "HKEY_CURRENT_USER\Control Panel\Desktop\WindowMetrics"
+Dim Const $reg_val_default            = ""
 Dim Const $reg_val_enabled            = "Enabled"
 Dim Const $reg_val_version            = "Version"
 Dim Const $reg_val_pshversion         = "PowerShellVersion"
@@ -30,10 +32,8 @@ Dim Const $target_version_powershell  = "2.0"
 
 ; INI file constants
 Dim Const $ini_section_installation   = "Installation"
-Dim Const $ini_section_control        = "Control"
-Dim Const $ini_section_messaging      = "Messaging"
 Dim Const $ini_value_backup           = "backup"
-Dim Const $ini_value_verify           = "verify"
+Dim Const $ini_value_converters       = "instofccnvs"
 Dim Const $ini_value_ie7              = "instie7"
 Dim Const $ini_value_ie8              = "instie8"
 Dim Const $ini_value_wmp              = "updatewmp"
@@ -41,10 +41,16 @@ Dim Const $ini_value_tsc              = "updatetsc"
 Dim Const $ini_value_dotnet35         = "instdotnet35"
 Dim Const $ini_value_dotnet4          = "instdotnet4"
 Dim Const $ini_value_powershell       = "instpsh"
-Dim Const $ini_value_converters       = "instofccnvs"
+Dim Const $ini_value_msse             = "instmsse"
+
+Dim Const $ini_section_control        = "Control"
+Dim Const $ini_value_verify           = "verify"
 Dim Const $ini_value_autoreboot       = "autoreboot"
 Dim Const $ini_value_shutdown         = "shutdown"
+
+Dim Const $ini_section_messaging      = "Messaging"
 Dim Const $ini_value_showlog          = "showlog"
+
 Dim Const $enabled                    = "Enabled"
 Dim Const $disabled                   = "Disabled"
 
@@ -55,7 +61,7 @@ Dim Const $path_rel_instdotnet35      = "\dotnet\dotnetfx35.exe"
 Dim Const $path_rel_instdotnet4       = "\dotnet\dotNetFx40_Full_x86_x64.exe"
 Dim Const $path_rel_converters        = "\ofc\glb\OCONVPCK.EXE"
 
-Dim $maindlg, $scriptdir, $netdrives, $i, $strpos, $inifilename, $backup, $verify, $ie7, $ie8, $wmp, $tsc, $dotnet35, $dotnet4, $powershell, $converters, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate 
+Dim $maindlg, $scriptdir, $netdrives, $i, $strpos, $inifilename, $backup, $converters, $ie7, $ie8, $wmp, $tsc, $dotnet35, $dotnet4, $powershell, $msse, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate 
 Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
 
 Func ShowGUIInGerman()
@@ -114,6 +120,13 @@ EndFunc
 
 Func PowerShellVersion()
   Return RegRead($reg_key_powershell, $reg_val_pshversion)
+EndFunc
+
+Func MSSEInstalled()
+Dim $dummy
+
+  $dummy = RegRead($reg_key_msse, $reg_val_default)
+  Return (NOT @error)
 EndFunc
 
 Func HashFilesPresent()
@@ -388,6 +401,24 @@ Else
   EndIf
 EndIf
 
+; Install Microsoft Security Essentials
+$txtxpos = $txtxoffset + $groupwidth / 2
+If ShowGUIInGerman() Then
+  $msse = GUICtrlCreateCheckbox("Microsoft Security Essentials installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+Else
+  $msse = GUICtrlCreateCheckbox("Install Microsoft Security Essentials", $txtxpos, $txtypos, $txtwidth, $txtheight)
+EndIf
+If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_2008R2") OR (MSSEInstalled()) ) Then
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+  GUICtrlSetState(-1, $GUI_DISABLE)
+Else  
+  If IniRead($inifilename, $ini_section_installation, $ini_value_msse, $disabled) = $enabled Then
+    GUICtrlSetState(-1, $GUI_CHECKED)
+  Else
+    GUICtrlSetState(-1, $GUI_UNCHECKED)
+  EndIf
+EndIf
+
 ;  Control group
 $txtxpos = $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
@@ -623,9 +654,9 @@ While 1
       If BitAND(GUICtrlRead($backup), $GUI_CHECKED) <> $GUI_CHECKED Then
         $options = $options & " /nobackup"
       EndIf
-      If BitAND(GUICtrlRead($verify), $GUI_CHECKED) = $GUI_CHECKED Then  
-        $options = $options & " /verify"  
-      EndIf  
+      If BitAND(GUICtrlRead($converters), $GUI_CHECKED) = $GUI_CHECKED Then
+        $options = $options & " /instofccnvs"
+      EndIf
       If BitAND(GUICtrlRead($ie7), $GUI_CHECKED) = $GUI_CHECKED Then  
         $options = $options & " /instie7"  
       EndIf  
@@ -647,9 +678,12 @@ While 1
       If BitAND(GUICtrlRead($powershell), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instpsh"
       EndIf
-      If BitAND(GUICtrlRead($converters), $GUI_CHECKED) = $GUI_CHECKED Then
-        $options = $options & " /instofccnvs"
+      If BitAND(GUICtrlRead($msse), $GUI_CHECKED) = $GUI_CHECKED Then
+        $options = $options & " /instmsse"
       EndIf
+      If BitAND(GUICtrlRead($verify), $GUI_CHECKED) = $GUI_CHECKED Then  
+        $options = $options & " /verify"  
+      EndIf  
       If ( (BitAND(GUICtrlRead($autoreboot), $GUI_DISABLE) <> $GUI_DISABLE) _
        AND (BitAND(GUICtrlRead($autoreboot), $GUI_CHECKED) = $GUI_CHECKED) ) Then
         $options = $options & " /autoreboot"

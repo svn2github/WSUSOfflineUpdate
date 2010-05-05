@@ -8,6 +8,7 @@ Private Const strRegKeyDirectX                = "HKLM\Software\Microsoft\DirectX
 Private Const strRegKeyDotNet35               = "HKLM\Software\Microsoft\NET Framework Setup\NDP\v3.5\"
 Private Const strRegKeyDotNet4                = "HKLM\Software\Microsoft\NET Framework Setup\NDP\v4\Full\"
 Private Const strRegKeyPowerShell             = "HKLM\Software\Microsoft\PowerShell\1\PowerShellEngine\"
+Private Const strRegKeyMSSE                   = "HKLM\Software\Microsoft\Microsoft Security Essentials\"
 Private Const strRegValVersion                = "Version"
 Private Const strRegValPShVersion             = "PowerShellVersion"
 Private Const strRegKeyOfficePrefix_Mx86      = "HKLM\Software\Microsoft\Office\"
@@ -32,9 +33,21 @@ Private Const idxBuild                        = 2
 Dim wshShell, objFileSystem, objCmdFile, objWMIService, objWMIQuery, arrayOfficeNames, arrayOfficeVersions, arrayOfficeAppNames, arrayOfficeExeNames
 Dim strSystemFolder, strTempFolder, strWUAFileName, strMSIFileName, strWSHFileName, strTSCFileName, strWMPFileName, strCmdFileName, strOSVersion, strOfficeInstallPath, strOfficeExeVersion, strProduct, languageCode, i, j
 
-Private Function RegRead(objShell, strValueName)
+Private Function RegExists(objShell, strName)
   On Error Resume Next  'Turn error reporting off
-  RegRead = objShell.RegRead(strValueName)
+  RegRead = objShell.RegRead(strName)
+  If Err = 0 Then
+    RegExists = True
+  Else
+    RegExists = False
+    Err.Clear
+  End If
+  On Error GoTo 0       'Turn error reporting on
+End Function
+
+Private Function RegRead(objShell, strName)
+  On Error Resume Next  'Turn error reporting off
+  RegRead = objShell.RegRead(strName)
   If Err <> 0 Then
     RegRead = ""
     Err.Clear
@@ -250,6 +263,7 @@ Set objCmdFile = objFileSystem.CreateTextFile(strCmdFileName, True)
 
 ' Determine Windows system properties
 Set objWMIService = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+' Documentation: http://msdn.microsoft.com/en-us/library/aa394239(VS.85).aspx
 For Each objWMIQuery in objWMIService.ExecQuery("Select * from Win32_OperatingSystem") 
   objCmdFile.WriteLine("set OS_CAPTION=" & objWMIQuery.Caption)
   WriteVersion2File objCmdFile, "OS_VERSION", objWMIQuery.Version
@@ -260,9 +274,10 @@ For Each objWMIQuery in objWMIService.ExecQuery("Select * from Win32_OperatingSy
   WriteLanguage2File objCmdFile, "OS_LANGUAGE", objWMIQuery.OSLanguage
   objCmdFile.WriteLine("set SystemDirectory=" & objWMIQuery.SystemDirectory)
 Next
+' Documentation: http://msdn.microsoft.com/en-us/library/aa394102(VS.85).aspx
 For Each objWMIQuery in objWMIService.ExecQuery("Select * from Win32_ComputerSystem")
   objCmdFile.WriteLine("set OS_ARCHITECTURE=" & LCase(Left(objWMIQuery.SystemType, 3)))
-  objCmdFile.WriteLine("set DOMAIN_ROLE=" & objWMIQuery.DomainRole)
+  objCmdFile.WriteLine("set OS_DOMAIN_ROLE=" & objWMIQuery.DomainRole)
 Next
 
 ' Determine Windows Update Agent version 
@@ -302,6 +317,13 @@ WriteVersion2File objCmdFile, "DOTNET4_VERSION", RegRead(wshShell, strRegKeyDotN
 
 ' Determine Windows PowerShell version
 WriteVersion2File objCmdFile, "PSH_VERSION", RegRead(wshShell, strRegKeyPowerShell & strRegValPShVersion)
+
+' Determine Microsoft Security Essentials installation state
+If RegExists(wshShell, strRegKeyMSSE) Then
+  objCmdFile.WriteLine("set MSSE_INSTALLED=1")
+Else
+  objCmdFile.WriteLine("set MSSE_INSTALLED=0")
+End If
 
 ' Determine Remote Desktop Connection (Terminal Services Client) version
 If objFileSystem.FileExists(strTSCFileName) Then

@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+ (r96)
+set WSUSUPDATE_VERSION=6.51+ (r97)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -20,7 +20,7 @@ echo %DATE% %TIME% - Info: Starting WSUS offline update (v. %WSUSUPDATE_VERSION%
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/nobackup /verify /instie7 /instie8 /updatewmp /updatetsc /instdotnet35 /instdotnet4 /instpsh /instofccnvs /autoreboot /shutdown /showlog /all /excludestatics) do (
+for %%i in (/nobackup /verify /instie7 /instie8 /updatewmp /updatetsc /instdotnet35 /instdotnet4 /instpsh /instmsse /instofccnvs /autoreboot /shutdown /showlog /all /excludestatics) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected >>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/nobackup" set BACKUP_MODE=/nobackup
@@ -32,6 +32,7 @@ if /i "%1"=="/updatetsc" set UPDATE_TSC=/updatetsc
 if /i "%1"=="/instdotnet35" set INSTALL_DOTNET35=/instdotnet35
 if /i "%1"=="/instdotnet4" set INSTALL_DOTNET4=/instdotnet4
 if /i "%1"=="/instpsh" set INSTALL_PSH=/instpsh
+if /i "%1"=="/instmsse" set INSTALL_MSSE=/instmsse
 if /i "%1"=="/instofccnvs" set INSTALL_CONVERTERS=/instofccnvs
 if /i "%1"=="/autoreboot" set BOOT_MODE=/autoreboot
 if /i "%1"=="/shutdown" set FINISH_MODE=/shutdown
@@ -345,7 +346,7 @@ for /F %%i in ('dir /B %MSI_FILENAME%') do (
   ) else (
     call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /quiet %BACKUP_MODE% /norestart
   )
-  if not errorlevel 1 set RECALL_REQUIRED=1
+  if not errorlevel 1 set REBOOT_REQUIRED=1
 )
 :SkipMSIInst
 
@@ -369,7 +370,7 @@ if errorlevel 1 (
 echo Installing most recent Windows Script Host...
 for /F %%i in ('dir /B %WSH_FILENAME%') do (
   call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /quiet %BACKUP_MODE% /norestart
-  if not errorlevel 1 set RECALL_REQUIRED=1
+  if not errorlevel 1 set REBOOT_REQUIRED=1
 )
 :SkipWSHInst
 
@@ -609,6 +610,32 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
 set REBOOT_REQUIRED=1
 :SkipPShInst
 
+rem *** Install Microsoft Security Essentials ***
+if "%OS_NAME%"=="w2k" goto SkipMSSEInst
+if "%INSTALL_MSSE%" NEQ "/instmsse" goto SkipMSSEInst
+if %OS_DOMAIN_ROLE% GEQ 2 goto SkipMSSEInst
+echo Checking Microsoft Security Essentials installation state...
+if "%MSSE_INSTALLED%"=="1" goto SkipMSSEInst
+:InstallMSSE
+if "%MSSE_TARGET_ID%"=="" (
+  echo Warning: Environment variable MSSE_TARGET_ID not set.
+  echo %DATE% %TIME% - Warning: Environment variable MSSE_TARGET_ID not set >>%UPDATE_LOGFILE%
+  goto SkipMSSEInst
+) 
+echo %MSSE_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
+call ListUpdatesToInstall.cmd /excludestatics
+if errorlevel 1 goto ListError
+if exist "%TEMP%\UpdatesToInstall.txt" (
+  echo Installing Microsoft Security Essentials...
+  call InstallListedUpdates.cmd %VERIFY_MODE% /ignoreerrors /s /runwgacheck /o
+) else (
+  echo Warning: Microsoft Security Essentials installation file ^(%MSSE_TARGET_ID%^) not found.
+  echo %DATE% %TIME% - Warning: Microsoft Security Essentials installation file ^(%MSSE_TARGET_ID%^) not found >>%UPDATE_LOGFILE%
+  goto SkipMSSEInst
+)
+set REBOOT_REQUIRED=1
+:SkipMSSEInst
+
 if "%RECALL_REQUIRED%"=="1" goto Installed
 if "%OFFICE_NAME%"=="" goto CheckAUService
 if not exist ..\%OFFICE_NAME%\%OFFICE_LANGUAGE%\nul (
@@ -729,17 +756,13 @@ if "%RECALL_REQUIRED%"=="1" (
       echo %DATE% %TIME% - Info: Automatic recall is not supported for Windows 7 / Server 2008 R2 >>%UPDATE_LOGFILE%
       goto ManualRecall
     )
-    if "%DOMAIN_ROLE%"=="4" (
-      echo Automatic recall is not supported on domain controllers.
-      echo %DATE% %TIME% - Info: Automatic recall is not supported on domain controllers >>%UPDATE_LOGFILE%
-    )
-    if "%DOMAIN_ROLE%"=="5" (
+    if %OS_DOMAIN_ROLE% GEQ 4 (
       echo Automatic recall is not supported on domain controllers.
       echo %DATE% %TIME% - Info: Automatic recall is not supported on domain controllers >>%UPDATE_LOGFILE%
     )
     if not "%USERNAME%"=="WSUSUpdateAdmin" (
       echo Preparing automatic recall...
-      call PrepareRecall.cmd %~f0 %BACKUP_MODE% %VERIFY_MODE% %INSTALL_IE% %UPDATE_WMP% %UPDATE_TSC% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_CONVERTERS% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES%
+      call PrepareRecall.cmd %~f0 %BACKUP_MODE% %VERIFY_MODE% %INSTALL_IE% %UPDATE_WMP% %UPDATE_TSC% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_MSSE% %INSTALL_CONVERTERS% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES%
     )
     echo Rebooting...
     %CSCRIPT_PATH% //Nologo //E:vbs Shutdown.vbs /reboot
