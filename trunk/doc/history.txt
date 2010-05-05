@@ -375,3 +375,4 @@ Version 6.?? -- ??.??.10
 - Fix: Invalid hash file search sequence lead to false audit errors when installing .NET Framework 3.5 SP1 Family Update (kb958481, kb958483 and kb958484)
 - Fix: Dynamic determination of Windows Update Agent download URLs replaced by static definitions (Thanks to "automatix", "boco" and "Denniss")
 - Fix: FinalizationHook.cmd wasn't executed by DoUpdate.cmd (Thanks to "-Iwan-")
+- Fix: Recall requests removed after installations of Windows Installer (MSI) and Windows Script Host (WSH) (Thanks to "BrentNewland")
