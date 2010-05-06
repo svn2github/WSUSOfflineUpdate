@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+ (r98)
+set WSUSUPDATE_VERSION=6.51+ (r99)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -273,7 +273,12 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   if exist ..\client\md\hashes-dotnet.txt (
     echo Verifying integrity of .NET Framework installation files...
     pushd ..\client\md
-    ..\bin\hashdeep.exe -a -l -vv -k hashes-dotnet.txt %DOTNET35_FILENAME% %DOTNET4_FILENAME%
+    if exist %DOTNET4_FILENAME% (
+      ..\bin\hashdeep.exe -a -l -vv -k hashes-dotnet.txt %DOTNET35_FILENAME% %DOTNET4_FILENAME%
+    ) else (
+      rem *** Compatibility line ***
+      ..\bin\hashdeep.exe -a -l -vv -k hashes-dotnet.txt %DOTNET35_FILENAME%
+    )
     if errorlevel 1 (
       popd
       goto IntegrityError
