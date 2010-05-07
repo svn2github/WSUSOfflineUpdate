@@ -15,4 +15,3 @@
 *reg.exe
 *invcif.exe
 *invcm.exe
-*wuredist.cab

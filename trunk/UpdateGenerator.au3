@@ -2555,9 +2555,9 @@ EndIf
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
-  $msse = GUICtrlCreateCheckbox("Microsoft Security Essentials einschlieﬂen", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
+  $msse = GUICtrlCreateCheckbox("MS Security Essentials-Definitionen einschlieﬂen", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 Else
-  $msse = GUICtrlCreateCheckbox("Include Microsoft Security Essentials", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
+  $msse = GUICtrlCreateCheckbox("Include MS Security Essentials definitions", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 EndIf
 If IniRead($inifilename, $ini_section_misc, $misc_token_msse, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)

@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                    v. 6.51+ (r100)                  ###
+###                   v. 6.51+ (r101)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -32,6 +32,7 @@ Parameters:
 /excludesp - do not download servicepacks
 /makeiso   - create ISO image
 /dotnet    - download .NET framework
+/mssedefs  - download Microsoft Security Essentials definition files
 /nocleanup - do not cleanup client directory
 /proxy     - define proxy server (/proxy http://[username:password@]<server>:<port>)
 
@@ -132,17 +133,19 @@ evaluateparams()
 {
 syslist=("w2k" "wxp" "wxp-x64" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "oxp" "o2k3" "o2k7" "all-x64" "all-x86")
 langlist=("enu" "deu" "nld" "esn" "fra" "ptg" "ptb" "ita" "rus" "plk" "ell" "csy" "dan" "nor" "sve" "fin" "jpn" "kor" "chs" "cht" "hun" "trk" "ara" "heb")
-paramlist=("/excludesp" "/dotnet" "/makeiso" "/nocleanup" "/proxy")
+paramlist=("/excludesp" "/dotnet" "/mssedefs" "/makeiso" "/nocleanup" "/proxy")
 EXCLUDE_SP="0"
 EXCLUDE_STATICS="0"
 CLEANUP_DOWNLOADS="1"
 createiso="0"
 dotnet="0"
+mssedefs="0"
 param1=""
 param2=""
 param3=""
 param4=""
 param5=""
+param6=""
 
 #determining system
 for i in ${syslist[@]}; do
@@ -152,7 +155,11 @@ for i in ${syslist[@]}; do
 done
 
 if [ "$sys" == "w2k" ]; then
-	dotnet=0
+	dotnet="0"
+fi
+
+if [ "$sys" == "w2k" -o "$sys" == "w2k3" -o "$sys" == "w2k3-x64" ]; then
+	mssedefs="0"
 fi
 
 #determining language
@@ -185,32 +192,36 @@ for i in ${paramlist[@]}; do
 		param4=/nocleanup
 		CLEANUP_DOWNLOADS="0"
 	fi
+	if echo $@ | grep /mssedefs > /dev/null 2>&1; then
+		param5=/mssedefs
+		mssedefs="1"
+	fi
 done
 
 #determining proxy
 if [ "$3" == "/proxy" ]; then
 	http_proxy="$4"
-	param5="$3 $4"
+	param6="$3 $4"
 fi
 
 if [ "$4" == "/proxy" ]; then
 	http_proxy="$5"
-	param5="$4 $5"
+	param6="$4 $5"
 fi
 
 if [ "$5" == "/proxy" ]; then
 	http_proxy="$6"
-	param5="$5 $6"
+	param6="$5 $6"
 fi
 
 if [ "$6" == "/proxy" ]; then
 	http_proxy="$7"
-	param5="$6 $7"
+	param6="$6 $7"
 fi
 
 if [ "$7" == "/proxy" ]; then
 	http_proxy="$8"
-	param5="$7 $8"
+	param6="$7 $8"
 fi
 
 if [ "$sys" == "" -o "$lang" == "" ]; then
@@ -328,6 +339,19 @@ if [ "$sys" != "oxp" -o "$sys" != "o2k3" -o "$sys" != "o2k7" -o "$sys" != "w2k" 
 fi
 }
 
+getmssedefs()
+{
+mssedefs="0"
+if [ "$sys" != "oxp" -o "$sys" != "o2k3" -o "$sys" != "o2k7" -o "$sys" != "w2k" -o "$sys" != "w2k3" -o "$sys" != "w2k3-x64" ]; then
+	echo "Download Microsoft Security Essentials definition files? [y/n]"
+	read addmssedefs
+	if [ "$addmssedefs" == "y" ]; then
+		mssedefs="1"
+		param5="/mssedefs"
+	fi
+fi
+}
+
 getproxy()
 {
 echo
@@ -371,7 +395,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                    v. 6.51+ (r100)                  ***
+***                   v. 6.51+ (r101)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
@@ -403,6 +427,7 @@ if [ "$1" == "" ]; then
 	getlanguage
 	getservicepack
 	getdotnet
+	getmssedefs
 	getproxy
 	makeiso
 fi
@@ -435,7 +460,7 @@ cat << END
 	Your choice
 	System: $sys
 	Language: $lang
-	Parameter: $param1 $param2 $param3 $param4
+	Parameter: $param1 $param2 $param3 $param4 $param5
 	Proxy: $http_proxy
 END
 
@@ -467,9 +492,9 @@ if [ "$response" != "y" ]; then
 fi
 
 if [ "$sys" == "all-x64" ]; then
-	/bin/bash $0 w2k3-x64 $lang $param2 $param3 $param4 $param5
-	/bin/bash $0 w60-x64 $lang $param2 $param3 $param4 $param5
-	/bin/bash $0 w61-x64 $lang $param2 $param3 $param4 $param5
+	/bin/bash $0 w2k3-x64 $lang $param2 $param3 $param4 $param5 $param6
+	/bin/bash $0 w60-x64 $lang $param2 $param3 $param4 $param5 $param6
+	/bin/bash $0 w61-x64 $lang $param2 $param3 $param4 $param5 $param6
 	if [ "$param1" == "/makeiso" ]; then
 		/bin/bash ./CreateISOImage.sh $sys $lang $param2 $param3
 		rc=$?
@@ -478,14 +503,14 @@ if [ "$sys" == "all-x64" ]; then
 fi
 
 if [ "$sys" == "all-x86" ]; then
-	/bin/bash $0 w2k3 $lang $param2 $param3 $param4 $param5
-	/bin/bash $0 wxp $lang $param2 $param3 $param4 $param5
-	/bin/bash $0 w2k $lang $param2 $param3 $param4 $param5
-	/bin/bash $0 w60 $lang $param2 $param3 $param4 $param5
-	/bin/bash $0 w61 $lang $param2 $param3 $param4 $param5
-	/bin/bash $0 oxp $lang $param2 $param3 $param4 $param5
-	/bin/bash $0 o2k3 $lang $param2 $param3 $param4 $param5
-	/bin/bash $0 o2k7 $lang $param2 $param3 $param4 $param5
+	/bin/bash $0 w2k3 $lang $param2 $param3 $param4 $param5 $param6
+	/bin/bash $0 wxp $lang $param2 $param3 $param4 $param5 $param6
+	/bin/bash $0 w2k $lang $param2 $param3 $param4 $param5 $param6
+	/bin/bash $0 w60 $lang $param2 $param3 $param4 $param5 $param6
+	/bin/bash $0 w61 $lang $param2 $param3 $param4 $param5 $param6
+	/bin/bash $0 oxp $lang $param2 $param3 $param4 $param5 $param6
+	/bin/bash $0 o2k3 $lang $param2 $param3 $param4 $param5 $param6
+	/bin/bash $0 o2k7 $lang $param2 $param3 $param4 $param5 $param6
 	if [ "$param1" == "/makeiso" ]; then
 		/bin/bash ./CreateISOImage.sh $sys $lang $param2 $param3
 		rc=$?
@@ -547,6 +572,11 @@ fi
 
 if [ "$dotnet" == "1" ]; then
 	cp ../static/StaticDownloadLinks-dotnet.txt ../temp/StaticUrls-dotnet.txt
+fi
+
+if [ "$mssedefs" == "1" ]; then
+	cp ../static/StaticDownloadLink-mssedefs-x86.txt ../temp/StaticUrls-mssedefs-x86.txt
+	cp ../static/StaticDownloadLink-mssedefs-x64.txt ../temp/StaticUrls-mssedefs-x64.txt
 fi
 
 if [ "$sys" == "w2k" ]; then
@@ -657,7 +687,7 @@ if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$
 fi
 rm ../temp/package.xml
 
-touch ../temp/StaticUrls-${sys}-${lang}.txt ../temp/StaticUrls-ie6-${lang}.txt ../temp/ValidUrls-${sys}-${lang}.txt ../temp/ValidUrls-win-x86-${lang}.txt ../temp/ValidUrls-win-x86-glb.txt ../temp/ValidUrls-${sys}-glb.txt ../temp/StaticUrls-ofc-glb.txt ../temp/StaticUrls-ofc-${lang}.txt ../temp/StaticUrls-${sys}-glb.txt ../temp/StaticUrls-${lang}.txt ../temp/StaticUrls-glb.txt ../temp/StaticUrls-dotnet.txt
+touch ../temp/StaticUrls-${sys}-${lang}.txt ../temp/StaticUrls-ie6-${lang}.txt ../temp/ValidUrls-${sys}-${lang}.txt ../temp/ValidUrls-win-x86-${lang}.txt ../temp/ValidUrls-win-x86-glb.txt ../temp/ValidUrls-${sys}-glb.txt ../temp/StaticUrls-ofc-glb.txt ../temp/StaticUrls-ofc-${lang}.txt ../temp/StaticUrls-${sys}-glb.txt ../temp/StaticUrls-${lang}.txt ../temp/StaticUrls-glb.txt ../temp/StaticUrls-dotnet.txt ../temp/StaticUrls-mssedefs-x86.txt ../temp/StaticUrls-mssedefs-x64.txt
 
 cat ../temp/StaticUrls-${sys}-${lang}.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-ie6-${lang}.txt >> ../temp/urls.txt
@@ -671,6 +701,8 @@ cat ../temp/StaticUrls-${sys}-glb.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-glb.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-${lang}.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-dotnet.txt >> ../temp/urls.txt
+cat ../temp/StaticUrls-mssedefs-x86.txt >> ../temp/urls.txt
+cat ../temp/StaticUrls-mssedefs-x64.txt >> ../temp/urls.txt
 
 cat << END
 
@@ -709,6 +741,11 @@ if [ "$dotnet" == "1" ]; then
 	doWget -c -i ../temp/Urls-dotnet-x86.txt -P ../client/dotnet/x86-glb
 	doWget -c -i ../temp/Urls-dotnet-x64.txt -P ../client/dotnet/x64-glb
 fi
+if [ "$mssedefs" == "1" ]; then
+	echo "Downloading MSSE defs..."
+	doWget -c -i ../temp/StaticUrls-mssedefs-x86.txt -P ../client/mssedefs/x86
+	doWget -c -i ../temp/StaticUrls-mssedefs-x64.txt -P ../client/mssedefs/x64
+fi
 
 echo "Downloading patches for $sys $lang"
 doWget -c -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
@@ -734,6 +771,13 @@ fi
 if [ "$dotnet" == "1" ]; then
 	echo "Validating .Net framework..."
 	doWget -c -i ../temp/StaticUrls-dotnet.txt -P ../client/dotnet
+	doWget -c -i ../temp/Urls-dotnet-x86.txt -P ../client/dotnet/x86-glb
+	doWget -c -i ../temp/Urls-dotnet-x64.txt -P ../client/dotnet/x64-glb
+fi
+if [ "$mssedefs" == "1" ]; then
+	echo "Validating MSSE defs..."
+	doWget -c -i ../temp/StaticUrls-mssedefs-x86.txt -P ../client/mssedefs/x86
+	doWget -c -i ../temp/StaticUrls-mssedefs-x64.txt -P ../client/mssedefs/x64
 fi
 
 echo "Validating patches for $sys ${lang}..."

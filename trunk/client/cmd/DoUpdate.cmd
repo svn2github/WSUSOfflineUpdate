@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+ (r100)
+set WSUSUPDATE_VERSION=6.51+ (r101)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -617,15 +617,11 @@ if %OS_DOMAIN_ROLE% GEQ 2 goto SkipMSSEInst
 echo Checking Microsoft Security Essentials installation state...
 if "%MSSE_INSTALLED%"=="1" goto SkipMSSEInst
 :InstallMSSE
-if "%MSSE_TARGET_ID%"=="" (
-  echo Warning: Environment variable MSSE_TARGET_ID not set.
-  echo %DATE% %TIME% - Warning: Environment variable MSSE_TARGET_ID not set >>%UPDATE_LOGFILE%
-  goto SkipMSSEInst
-) 
+set MSSE_TARGET_ID=mssefullinstall-*-%OS_LANGUAGE_EXT%-
 if /i "%OS_ARCHITECTURE%"=="x64" (
-  set MSSEDEFS_FILENAME=..\mssedefs\mpam-fex64.exe
+  set MSSEDEFS_FILENAME=..\mssedefs\%OS_ARCHITECTURE%\mpam-fex64.exe
 ) else (
-  set MSSEDEFS_FILENAME=..\mssedefs\mpam-fe.exe
+  set MSSEDEFS_FILENAME=..\mssedefs\%OS_ARCHITECTURE%\mpam-fe.exe
 )
 echo %MSSE_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics

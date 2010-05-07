@@ -26,4 +26,3 @@ directx_
 reg.exe
 invcif.exe
 invcm.exe
-wuredist.cab

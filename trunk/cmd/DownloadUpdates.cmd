@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+ (r100)
+set WSUSUPDATE_VERSION=6.51+ (r101)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -348,6 +348,7 @@ if errorlevel 1 goto Error
 rem *** Download definition files for Microsoft Security Essentials - not required for w2k and w2k3 ***
 if /i "%1"=="w2k" goto SkipMSSE
 if /i "%1"=="w2k3" goto SkipMSSE
+if /i "%1"=="w2k3-x64" goto SkipMSSE
 if "%INCLUDE_MSSE%" NEQ "1" goto SkipMSSE
 if "%VERIFY_DOWNLOADS%"=="1" (
   if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
@@ -367,7 +368,7 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   )
 )
 echo Downloading/validating definition files for Microsoft Security Essentials...
-%WGET_PATH% -N -i ..\static\StaticDownloadLink-mssedefs-%TARGET_ARCHITECTURE%.txt -P ..\client\mssedefs
+%WGET_PATH% -N -i ..\static\StaticDownloadLink-mssedefs-%TARGET_ARCHITECTURE%.txt -P ..\client\mssedefs\%TARGET_ARCHITECTURE%
 if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded/validated definition files for Microsoft Security Essentials >>%DOWNLOAD_LOGFILE%
 if "%VERIFY_DOWNLOADS%"=="1" (

@@ -18,4 +18,3 @@ w61-x64\
 reg.exe
 invcif.exe
 invcm.exe
-wuredist.cab

@@ -4,4 +4,3 @@
 *.au3
 *invcif.exe
 *invcm.exe
-*wuredist.cab
