@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+ (r99)
+set WSUSUPDATE_VERSION=6.51+ (r100)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -307,7 +307,7 @@ dir /B %WUA_FILENAME% >nul 2>&1
 if errorlevel 1 goto NoWUAInst
 echo Installing most recent Windows Update Agent...
 for /F %%i in ('dir /B %WUA_FILENAME%') do (
-  call InstallOSUpdate.cmd ..\wsus\%%i /ignoreerrors /wuforce /quiet /norestart
+  call InstallOSUpdate.cmd ..\wsus\%%i %VERIFY_MODE% /ignoreerrors /wuforce /quiet /norestart
   if errorlevel 1 goto InstError
   set REBOOT_REQUIRED=1
 )
@@ -467,7 +467,7 @@ for /F %%i in ('dir /B %IE_FILENAME%') do (
   ) else (
     call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
   )
-  if not errorlevel 1 set REBOOT_REQUIRED=1
+  if not errorlevel 1 set RECALL_REQUIRED=1
 )
 goto SkipIEInst
 
@@ -622,12 +622,24 @@ if "%MSSE_TARGET_ID%"=="" (
   echo %DATE% %TIME% - Warning: Environment variable MSSE_TARGET_ID not set >>%UPDATE_LOGFILE%
   goto SkipMSSEInst
 ) 
+if /i "%OS_ARCHITECTURE%"=="x64" (
+  set MSSEDEFS_FILENAME=..\mssedefs\mpam-fex64.exe
+) else (
+  set MSSEDEFS_FILENAME=..\mssedefs\mpam-fe.exe
+)
 echo %MSSE_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing Microsoft Security Essentials...
   call InstallListedUpdates.cmd %VERIFY_MODE% /ignoreerrors /s /runwgacheck /o
+  if exist %MSSEDEFS_FILENAME% (
+    echo Installing Microsoft Security Essentials definition file...
+    call InstallOSUpdate.cmd %MSSEDEFS_FILENAME% %VERIFY_MODE% /ignoreerrors -q
+  ) else (
+    echo Warning: Microsoft Security Essentials definition file ^(%MSSEDEFS_FILENAME%^) not found.
+    echo %DATE% %TIME% - Warning: Microsoft Security Essentials definition file ^(%MSSEDEFS_FILENAME%^) not found >>%UPDATE_LOGFILE%
+  )
 ) else (
   echo Warning: Microsoft Security Essentials installation file ^(%MSSE_TARGET_ID%^) not found.
   echo %DATE% %TIME% - Warning: Microsoft Security Essentials installation file ^(%MSSE_TARGET_ID%^) not found >>%UPDATE_LOGFILE%
@@ -712,11 +724,32 @@ echo %DATE% %TIME% - Info: Started service 'automatic updates' (wuauserv) >>%UPD
 
 :ListUpdateIds
 rem *** List ids of missing updates ***
-echo Listing ids of missing updates...
 if not exist ..\wsus\wsusscn2.cab goto NoWSUSScan
+if "%VERIFY_MODE%" NEQ "/verify" goto SkipVerifyWSUSScan
+if not exist ..\bin\hashdeep.exe (
+  echo Warning: Hash computing/auditing utility ..\bin\hashdeep.exe not found.
+  echo %DATE% %TIME% - Warning: Hash computing/auditing utility ..\bin\hashdeep.exe not found >>%UPDATE_LOGFILE%
+  goto SkipVerifyWSUSScan
+)
+if not exist ..\md\hashes-wsus.txt (
+  echo Warning: Hash file hashes-wsus.txt not found.
+  echo %DATE% %TIME% - Warning: Hash file hashes-wsus.txt not found >>%UPDATE_LOGFILE%
+  goto SkipVerifyWSUSScan
+)
+echo Verifying integrity of Windows Update catalog file...
+%SystemRoot%\system32\findstr.exe /C:%% /C:## /C:..\wsus\wsusscn2.cab ..\md\hashes-wsus.txt >"%TEMP%\hash-wsusscn2.txt"
+..\bin\hashdeep.exe -a -l -k "%TEMP%\hash-wsusscn2.txt" ..\wsus\wsusscn2.cab
+if errorlevel 1 (
+  if exist "%TEMP%\hash-wsusscn2.txt" del "%TEMP%\hash-wsusscn2.txt"
+  goto WSUSScanIntegrityError
+)
+if exist "%TEMP%\hash-wsusscn2.txt" del "%TEMP%\hash-wsusscn2.txt"
+:SkipVerifyWSUSScan
+echo Listing ids of missing updates...
 copy /Y ..\wsus\wsusscn2.cab "%TEMP%" >nul
 if exist "%TEMP%\MissingUpdateIds.txt" del "%TEMP%\MissingUpdateIds.txt"
 %CSCRIPT_PATH% //Nologo //E:vbs ListMissingUpdateIds.vbs %LIST_MODE_IDS%
+if exist "%TEMP%\wsusscn2.cab" del "%TEMP%\wsusscn2.cab"
 
 rem *** List ids of installed updates ***
 if "%LIST_MODE_IDS%"=="/all" goto ListInstFiles
@@ -726,7 +759,6 @@ if exist "%TEMP%\InstalledUpdateIds.txt" del "%TEMP%\InstalledUpdateIds.txt"
 %CSCRIPT_PATH% //Nologo //E:vbs ListInstalledUpdateIds.vbs
 
 :ListInstFiles
-if exist "%TEMP%\wsusscn2.cab" del "%TEMP%\wsusscn2.cab"
 rem *** List update files ***
 if not exist "%TEMP%\MissingUpdateIds.txt" (
   if "%REBOOT_REQUIRED%"=="1" (goto Installed) else (goto NoMissingIds)
@@ -918,6 +950,13 @@ goto Cleanup
 echo.
 echo ERROR: File ..\wsus\wsusscn2.cab not found. 
 echo %DATE% %TIME% - Error: File ..\wsus\wsusscn2.cab not found >>%UPDATE_LOGFILE%
+echo.
+goto Cleanup
+
+:WSUSScanIntegrityError
+echo.
+echo ERROR: File hash does not match stored value (file: ..\wsus\wsusscn2.cab).
+echo %DATE% %TIME% - Error: File hash does not match stored value (file: ..\wsus\wsusscn2.cab) >>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 

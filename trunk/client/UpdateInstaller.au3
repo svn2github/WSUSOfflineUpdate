@@ -57,9 +57,10 @@ Dim Const $disabled                   = "Disabled"
 ; Paths
 Dim Const $path_rel_builddate         = "\builddate.txt"
 Dim Const $path_rel_hashes            = "\md\"
+Dim Const $path_rel_converters        = "\ofc\glb\OCONVPCK.EXE"
 Dim Const $path_rel_instdotnet35      = "\dotnet\dotnetfx35.exe"
 Dim Const $path_rel_instdotnet4       = "\dotnet\dotNetFx40_Full_x86_x64.exe"
-Dim Const $path_rel_converters        = "\ofc\glb\OCONVPCK.EXE"
+Dim Const $path_rel_mssedefs          = "\mssedefs\"
 
 Dim $maindlg, $scriptdir, $netdrives, $i, $strpos, $inifilename, $backup, $converters, $ie7, $ie8, $wmp, $tsc, $dotnet35, $dotnet4, $powershell, $msse, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate 
 Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
@@ -133,6 +134,10 @@ Func HashFilesPresent()
   Return FileExists(@ScriptDir & $path_rel_hashes)
 EndFunc
 
+Func ConvertersInstPresent()
+  Return FileExists(@ScriptDir & $path_rel_converters)
+EndFunc
+
 Func DotNet35InstPresent()
   Return FileExists(@ScriptDir & $path_rel_instdotnet35)
 EndFunc
@@ -141,8 +146,8 @@ Func DotNet4InstPresent()
   Return FileExists(@ScriptDir & $path_rel_instdotnet4)
 EndFunc
 
-Func ConvertersInstPresent()
-  Return FileExists(@ScriptDir & $path_rel_converters)
+Func MSSEDefsPresent()
+  Return FileExists(@ScriptDir & $path_rel_mssedefs)
 EndFunc
 
 Func CalcGUISize()
@@ -408,7 +413,8 @@ If ShowGUIInGerman() Then
 Else
   $msse = GUICtrlCreateCheckbox("Install Microsoft Security Essentials", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_2008R2") OR (MSSEInstalled()) ) Then
+If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_2008R2") _
+  OR (MSSEInstalled()) OR (NOT MSSEDefsPresent()) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else  
@@ -568,6 +574,8 @@ If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (@OSService
                           & @LF & "the installation of updates after installation" _
                           & @LF & "of Service Packs 1 and 2 and mandatory reboot.")
   EndIf
+  GUICtrlSetState($converters, $GUI_UNCHECKED)
+  GUICtrlSetState($converters, $GUI_DISABLE)
   GUICtrlSetState($ie8, $GUI_UNCHECKED)
   GUICtrlSetState($ie8, $GUI_DISABLE)
   GUICtrlSetState($wmp, $GUI_UNCHECKED)
@@ -580,8 +588,8 @@ If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (@OSService
   GUICtrlSetState($dotnet4, $GUI_DISABLE)
   GUICtrlSetState($powershell, $GUI_UNCHECKED)
   GUICtrlSetState($powershell, $GUI_DISABLE)
-  GUICtrlSetState($converters, $GUI_UNCHECKED)
-  GUICtrlSetState($converters, $GUI_DISABLE)
+  GUICtrlSetState($msse, $GUI_UNCHECKED)
+  GUICtrlSetState($msse, $GUI_DISABLE)
   GUICtrlSetState($autoreboot, $GUI_CHECKED)
   GUICtrlSetState($autoreboot, $GUI_DISABLE)
   GUICtrlSetState($shutdown, $GUI_UNCHECKED)

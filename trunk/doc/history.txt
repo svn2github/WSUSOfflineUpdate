@@ -376,3 +376,6 @@ Version 6.?? -- ??.??.10
 - Fix: Dynamic determination of Windows Update Agent download URLs replaced by static definitions (Thanks to "automatix", "boco" and "Denniss")
 - Fix: FinalizationHook.cmd wasn't executed by DoUpdate.cmd (Thanks to "-Iwan-")
 - Fix: Recall requests removed after installations of Windows Installer (MSI) and Windows Script Host (WSH) (Thanks to "BrentNewland")
+- Fix: Hash computation and verification were missed for Windows Update Agent and catalog file (wsusscn2.cab) 
+- Fix: Browser choice update (kb976002) is black listed now (Thanks to "boco")
+- Fix: Installation of IE8 did not request recall on Windows Vista and Server 2008 systems (Thanks to "boco")

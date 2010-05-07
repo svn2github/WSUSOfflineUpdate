@@ -27,6 +27,7 @@ goto InvalidParams
 if "%2"=="" goto V1CreateFilter
 if /i "%2"=="/excludesp" set EXCLUDE_SP=1
 if /i "%2"=="/includedotnet" set INCLUDE_DOTNET=1
+if /i "%2"=="/includemsse" set INCLUDE_MSSE=1
 if /i "%2"=="/outputpath" (
   if %3~==~ (goto InvalidParams) else (set OUTPUT_PATH=%~fs3)
   shift /2
@@ -38,6 +39,7 @@ goto V1EvalParams
 if "%3"=="" goto V2CreateFilter
 if /i "%3"=="/excludesp" set EXCLUDE_SP=1
 if /i "%3"=="/includedotnet" set INCLUDE_DOTNET=1
+if /i "%3"=="/includemsse" set INCLUDE_MSSE=1
 if /i "%3"=="/outputpath" (
   if %4~==~ (goto InvalidParams) else (set OUTPUT_PATH=%~fs4)
   shift /3
@@ -75,10 +77,14 @@ if "%EXCLUDE_SP%"=="1" (
 for %%i in (w2k oxp o2k3 o2k7 o2k7-x64) do (
   if /i "%1"=="%%i" (
     for /F %%j in (..\exclude\ExcludeList-dotnet.txt) do echo *%%j/*>>%ISO_FILTER%
+    for /F %%j in (..\exclude\ExcludeList-mssedefs.txt) do echo *%%j/*>>%ISO_FILTER%
   )
 )
 if "%INCLUDE_DOTNET%" NEQ "1" (
   for /F %%i in (..\exclude\ExcludeList-dotnet.txt) do echo *%%i/*>>%ISO_FILTER%
+)
+if "%INCLUDE_MSSE%" NEQ "1" (
+  for /F %%i in (..\exclude\ExcludeList-mssedefs.txt) do echo *%%i/*>>%ISO_FILTER%
 )
 goto :eof
 

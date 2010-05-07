@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+ (r99)
+set WSUSUPDATE_VERSION=6.51+ (r100)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -41,6 +41,7 @@ for %%i in (/excludesp /excludestatics /includedotnet /nocleanup /verify /exiton
 if /i "%3"=="/excludesp" set EXCLUDE_SP=1
 if /i "%3"=="/excludestatics" set EXCLUDE_STATICS=1
 if /i "%3"=="/includedotnet" set INCLUDE_DOTNET=1
+if /i "%3"=="/includemsse" set INCLUDE_MSSE=1
 if /i "%3"=="/nocleanup" set CLEANUP_DOWNLOADS=0
 if /i "%3"=="/verify" set VERIFY_DOWNLOADS=1
 if /i "%3"=="/exitonerror" set EXIT_ON_ERROR=1
@@ -145,7 +146,6 @@ if exist ..\client\dotnet\glb\nul move /Y ..\client\dotnet\glb ..\client\dotnet\
 if exist ..\bin\fciv.exe del ..\bin\fciv.exe
 if exist ..\fciv\nul rd /S /Q ..\fciv
 if exist ..\static\StaticDownloadLink-fciv.txt del ..\static\StaticDownloadLink-fciv.txt
-if exist ..\client\wsus\wuredist.cab del ..\client\wsus\wuredist.cab
 if exist ..\xslt\ExtractDownloadLinks-wua-x86.xsl del ..\xslt\ExtractDownloadLinks-wua-x86.xsl
 if exist ..\xslt\ExtractDownloadLinks-wua-x64.xsl del ..\xslt\ExtractDownloadLinks-wua-x64.xsl
 if exist ..\static\StaticDownloadLink-dotnet.txt del ..\static\StaticDownloadLink-dotnet.txt
@@ -248,10 +248,42 @@ popd
 :SkipSigCheck
 
 rem *** Download most recent Windows Update Agent and catalog file ***
+if "%VERIFY_DOWNLOADS%"=="1" (
+  if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
+  if exist ..\client\md\hashes-wsus.txt (
+    echo Verifying integrity of Windows Update Agent and catalog file...
+    pushd ..\client\md
+    ..\bin\hashdeep.exe -a -l -vv -k hashes-wsus.txt -r ..\wsus
+    if errorlevel 1 (
+      popd
+      goto IntegrityError
+    )
+    popd
+    echo %DATE% %TIME% - Info: Verified integrity of Windows Update Agent and catalog file >>%DOWNLOAD_LOGFILE%
+  ) else (
+    echo Warning: Integrity database ..\md\hashes-wsus.txt not found.
+    echo %DATE% %TIME% - Warning: Integrity database ..\md\hashes-wsus.txt not found >>%DOWNLOAD_LOGFILE%
+  )
+)
 echo Downloading/validating most recent Windows Update Agent and catalog file...
 %WGET_PATH% -N -i ..\static\StaticDownloadLinks-wsus.txt -P ..\client\wsus
 if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded/validated most recent Windows Update Agent and catalog file >>%DOWNLOAD_LOGFILE%
+if "%VERIFY_DOWNLOADS%"=="1" (
+  if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
+  echo Creating integrity database for Windows Update Agent and catalog file...
+  if not exist ..\client\md\nul md ..\client\md
+  pushd ..\client\md
+  ..\bin\hashdeep.exe -c md5,sha256 -l -r ..\wsus >hashes-wsus.txt
+  if errorlevel 1 (
+    popd
+    echo Warning: Error creating integrity database ..\md\hashes-wsus.txt.
+    echo %DATE% %TIME% - Warning: Error creating integrity database ..\md\hashes-wsus.txt >>%DOWNLOAD_LOGFILE%
+  ) else (
+    popd
+    echo %DATE% %TIME% - Info: Created integrity database for Windows Update Agent and catalog file >>%DOWNLOAD_LOGFILE%
+  )
+)
 
 rem *** Download installation files for IE6 %2 - only required for w2k ***
 if /i "%1" NEQ "w2k" goto SkipIE6
@@ -313,6 +345,49 @@ call :DownloadCore dotnet %TARGET_ARCHITECTURE%-glb
 if errorlevel 1 goto Error
 :SkipDotNet
 
+rem *** Download definition files for Microsoft Security Essentials - not required for w2k and w2k3 ***
+if /i "%1"=="w2k" goto SkipMSSE
+if /i "%1"=="w2k3" goto SkipMSSE
+if "%INCLUDE_MSSE%" NEQ "1" goto SkipMSSE
+if "%VERIFY_DOWNLOADS%"=="1" (
+  if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
+  if exist ..\client\md\hashes-mssedefs.txt (
+    echo Verifying integrity of Microsoft Security Essentials definition files...
+    pushd ..\client\md
+    ..\bin\hashdeep.exe -a -l -vv -k hashes-mssedefs.txt -r ..\mssedefs
+    if errorlevel 1 (
+      popd
+      goto IntegrityError
+    )
+    popd
+    echo %DATE% %TIME% - Info: Verified integrity of Microsoft Security Essentials definition files >>%DOWNLOAD_LOGFILE%
+  ) else (
+    echo Warning: Integrity database ..\md\hashes-mssedefs.txt not found.
+    echo %DATE% %TIME% - Warning: Integrity database ..\md\hashes-mssedefs.txt not found >>%DOWNLOAD_LOGFILE%
+  )
+)
+echo Downloading/validating definition files for Microsoft Security Essentials...
+%WGET_PATH% -N -i ..\static\StaticDownloadLink-mssedefs-%TARGET_ARCHITECTURE%.txt -P ..\client\mssedefs
+if errorlevel 1 goto DownloadError
+echo %DATE% %TIME% - Info: Downloaded/validated definition files for Microsoft Security Essentials >>%DOWNLOAD_LOGFILE%
+if "%VERIFY_DOWNLOADS%"=="1" (
+  if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
+  echo Creating integrity database for Microsoft Security Essentials definition files...
+  if not exist ..\client\md\nul md ..\client\md
+  pushd ..\client\md
+  ..\bin\hashdeep.exe -c md5,sha256 -l -r ..\mssedefs >hashes-mssedefs.txt
+  if errorlevel 1 (
+    popd
+    echo Warning: Error creating integrity database ..\md\hashes-mssedefs.txt.
+    echo %DATE% %TIME% - Warning: Error creating integrity database ..\md\hashes-mssedefs.txt >>%DOWNLOAD_LOGFILE%
+  ) else (
+    popd
+    echo %DATE% %TIME% - Info: Created integrity database for Microsoft Security Essentials definition files >>%DOWNLOAD_LOGFILE%
+  )
+)
+:SkipMSSE
+
+rem *** Download the platform specific patches ***
 for %%i in (w2k wxp w2k3) do (
   if /i "%1"=="%%i" (
     call :DownloadCore win glb

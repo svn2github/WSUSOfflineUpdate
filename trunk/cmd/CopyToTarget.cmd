@@ -31,6 +31,7 @@ if %OUTPUT_PATH%~==~ (
 if "%2"=="" goto V1CreateFilter
 if /i "%2"=="/excludesp" set EXCLUDE_SP=1
 if /i "%2"=="/includedotnet" set INCLUDE_DOTNET=1
+if /i "%2"=="/includemsse" set INCLUDE_MSSE=1
 shift /2
 goto V1EvalParams
 
@@ -42,6 +43,7 @@ if %OUTPUT_PATH%~==~ (
 if "%3"=="" goto V2CreateFilter
 if /i "%3"=="/excludesp" set EXCLUDE_SP=1
 if /i "%3"=="/includedotnet" set INCLUDE_DOTNET=1
+if /i "%3"=="/includemsse" set INCLUDE_MSSE=1
 shift /3
 goto V2EvalParams
 
@@ -70,14 +72,13 @@ goto :eof
 
 :ExtendFilter
 if "%EXCLUDE_SP%"=="1" (
-  for /F %%i in (..\exclude\ExcludeList-SPs.txt) do (
-    echo %%i>>%USB_FILTER%
-  )
+  for /F %%i in (..\exclude\ExcludeList-SPs.txt) do echo %%i>>%USB_FILTER%
 )
 if "%INCLUDE_DOTNET%" NEQ "1" (
-  for /F %%i in (..\exclude\ExcludeList-dotnet.txt) do (
-    echo %%i>>%USB_FILTER%
-  )
+  for /F %%i in (..\exclude\ExcludeList-dotnet.txt) do echo %%i>>%USB_FILTER%
+)
+if "%INCLUDE_MSSE%" NEQ "1" (
+  for /F %%i in (..\exclude\ExcludeList-mssedefs.txt) do echo %%i>>%USB_FILTER%
 )
 goto :eof
 
