@@ -380,3 +380,4 @@ Version 6.?? -- ??.??.10
 - Fix: Hash computation and verification were missed for Windows Update Agent and catalog file (wsusscn2.cab) 
 - Fix: Browser choice update (kb976002) is black listed now (Thanks to "boco")
 - Fix: Installation of IE8 did not request recall on Windows Vista and Server 2008 systems (Thanks to "boco")
+- Fix: Installation of .NET Frameworks won't any longer try to install language packs (Thanks to "schose" and "AlBundy")

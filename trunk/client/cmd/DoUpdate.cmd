@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+ (r103)
+set WSUSUPDATE_VERSION=6.51+ (r104)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -548,7 +548,7 @@ if not exist %DOTNET35_FILENAME% (
   goto SkipDotNet35Inst
 )
 echo Installing .NET Framework 3.5 SP1...
-call InstallOSUpdate.cmd %DOTNET35_FILENAME% %VERIFY_MODE% /ignoreerrors /qb /norestart /lang:%OS_LANGUAGE%
+call InstallOSUpdate.cmd %DOTNET35_FILENAME% %VERIFY_MODE% /ignoreerrors /qb /norestart /lang:enu
 copy /Y ..\static\StaticUpdateIds-dotnet.txt "%TEMP%\MissingUpdateIds.txt" >nul
 call ListUpdatesToInstall.cmd /excludestatics
 if errorlevel 1 goto ListError
@@ -578,7 +578,7 @@ if not exist %DOTNET4_FILENAME% (
   goto SkipDotNet4Inst
 )
 echo Installing .NET Framework 4...
-call InstallOSUpdate.cmd %DOTNET4_FILENAME% %VERIFY_MODE% /ignoreerrors /passive /norestart /lcid %OS_LANGUAGE_CODE%
+call InstallOSUpdate.cmd %DOTNET4_FILENAME% %VERIFY_MODE% /ignoreerrors /passive /norestart /lcid 1033
 set REBOOT_REQUIRED=1
 :SkipDotNet4Inst
 
