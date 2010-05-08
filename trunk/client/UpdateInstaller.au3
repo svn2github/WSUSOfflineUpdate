@@ -634,6 +634,23 @@ While 1
         GUICtrlSetState($powershell, $GUI_DISABLE)
       EndIf
 
+    Case $msse                 ; Microsoft Security Essentials check box toggled
+      If (BitAND(GUICtrlRead($msse), $GUI_CHECKED) = $GUI_CHECKED) Then
+        If ShowGUIInGerman() Then
+          If MsgBox(0x2134, "Warnung", "Bei der Installation der Microsoft Security Essentials" _
+                               & @LF & "wird eine obligate 'Windows Genuine Advantage' (WGA)-Prüfung durchgeführt." _
+                               & @LF & "Möchten Sie fortsetzen?") = 7 Then
+            GUICtrlSetState($msse, $GUI_UNCHECKED)
+          EndIf
+        Else
+          If MsgBox(0x2134, "Warning", "The installation of Microsoft Security Essentials" _
+                               & @LF & "performs a mandatory 'Windows Genuine Advantage' (WGA) check." _
+                               & @LF & "Do you wish to proceed?") = 7 Then
+            GUICtrlSetState($msse, $GUI_UNCHECKED)
+          EndIf
+        EndIf
+      EndIf
+
     Case $autoreboot         ; Automatic reboot check box toggled
       If ( (BitAND(GUICtrlRead($autoreboot), $GUI_CHECKED) = $GUI_CHECKED) _
        AND (@OSVersion <> "WIN_VISTA") AND (@OSVersion <> "WIN_2008") AND (@OSVersion <> "WIN_7") AND (@OSVersion <> "WIN_2008R2") ) Then
