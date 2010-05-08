@@ -13,6 +13,7 @@ ExtractUpdateCategories.xsl
 ExtractUpdatePayloadFiles.xsl
 ExtractUpdateCategoriesAndFileIds.xsl
 ExtractUpdateFileIdsAndLocations.xsl
+CompileAutoItScripts.cmd
 ExtractDownloadLinks-oall.cmd
 ExtractDownloadLinks-wall.cmd
 ExtractUpdateCategoriesAndFileIds.cmd

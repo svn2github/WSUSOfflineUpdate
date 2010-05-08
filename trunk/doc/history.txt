@@ -367,7 +367,8 @@ Version 6.?? -- ??.??.10
 - Optional installation of .NET Framework 4 on Windows XP, Vista, 7 and Server 2003/2008 (R2) systems (Thanks to "AnonymousHero")
 - Optional installation of Microsoft Security Essentials on Windows XP, Vista and 7 (x86/x64) systems (Thanks to "AlBundy")
 - Date of last download / medium creation will be displayed/logged by UpdateGenerator/UpdateInstaller/DoUpdate scripts (Thanks to "automatix")
-- AutoIt script compiler updated to version 3.3.6.1 
+- AutoIt script compiler updated to version 3.3.6.1
+- CompileAutoItScripts.cmd script added (Thanks to "boco")
 - Fix: CreateISOImage.sh script didn't correctly evaluate ISO filter files containing Windows (<CR><LF>) line feeds (Thanks to Bob Lindell)
 - Fix: DoUpdate.cmd script didn't return errorlevel 3010 (reboot required) after installation of dynamically determined updates (Thanks to "hel")
 - Fix: Missing WSH_VERSION_TARGET_* variables lead to misleading error messages under Windows Vista/7 (Thanks to "lexx_qq")  
