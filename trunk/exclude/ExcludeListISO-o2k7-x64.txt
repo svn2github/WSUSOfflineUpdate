@@ -7,7 +7,7 @@
 *w2k3*
 *w6*
 *win\/*
-*x86-glb*
+*x86*
 *.au3
 *invcif.exe
 *invcm.exe

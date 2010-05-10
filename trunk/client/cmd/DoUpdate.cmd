@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+ (r104)
+set WSUSUPDATE_VERSION=6.51+ (r105)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -555,6 +555,10 @@ if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing .NET Framework 3.5 SP1 Family Update...
   call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
+)
+if "%INSTALL_DOTNET4%"=="/instdotnet4" (
+  set RECALL_REQUIRED=1
+  goto SkipDotNet4Inst
 )
 set REBOOT_REQUIRED=1
 :SkipDotNet35Inst

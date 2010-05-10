@@ -5,8 +5,7 @@
 *wxp*
 *w6*
 *win*
-*x64-glb*
-*-x64*
+*x64*
 *.au3
 *invcif.exe
 *invcm.exe
