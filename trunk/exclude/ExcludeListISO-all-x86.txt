@@ -1,5 +1,6 @@
-*x64*
 *w2k\/*
+*x64-glb\/*
+*-x64*
 *.au3
 *invcif.exe
 *invcm.exe

@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                   v. 6.51+ (r105)                  ###
+###                   v. 6.51+ (r106)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -395,7 +395,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                   v. 6.51+ (r105)                  ***
+***                   v. 6.51+ (r106)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
@@ -575,8 +575,8 @@ if [ "$dotnet" == "1" ]; then
 fi
 
 if [ "$mssedefs" == "1" ]; then
-	cp ../static/StaticDownloadLink-mssedefs-x86.txt ../temp/StaticUrls-mssedefs-x86.txt
-	cp ../static/StaticDownloadLink-mssedefs-x64.txt ../temp/StaticUrls-mssedefs-x64.txt
+	cp ../static/StaticDownloadLink-mssedefs-x86-glb.txt ../temp/StaticUrls-mssedefs-x86-glb.txt
+	cp ../static/StaticDownloadLink-mssedefs-x64-glb.txt ../temp/StaticUrls-mssedefs-x64-glb.txt
 fi
 
 if [ "$sys" == "w2k" ]; then
@@ -687,7 +687,7 @@ if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$
 fi
 rm ../temp/package.xml
 
-touch ../temp/StaticUrls-${sys}-${lang}.txt ../temp/StaticUrls-ie6-${lang}.txt ../temp/ValidUrls-${sys}-${lang}.txt ../temp/ValidUrls-win-x86-${lang}.txt ../temp/ValidUrls-win-x86-glb.txt ../temp/ValidUrls-${sys}-glb.txt ../temp/StaticUrls-ofc-glb.txt ../temp/StaticUrls-ofc-${lang}.txt ../temp/StaticUrls-${sys}-glb.txt ../temp/StaticUrls-${lang}.txt ../temp/StaticUrls-glb.txt ../temp/StaticUrls-dotnet.txt ../temp/StaticUrls-mssedefs-x86.txt ../temp/StaticUrls-mssedefs-x64.txt
+touch ../temp/StaticUrls-${sys}-${lang}.txt ../temp/StaticUrls-ie6-${lang}.txt ../temp/ValidUrls-${sys}-${lang}.txt ../temp/ValidUrls-win-x86-${lang}.txt ../temp/ValidUrls-win-x86-glb.txt ../temp/ValidUrls-${sys}-glb.txt ../temp/StaticUrls-ofc-glb.txt ../temp/StaticUrls-ofc-${lang}.txt ../temp/StaticUrls-${sys}-glb.txt ../temp/StaticUrls-${lang}.txt ../temp/StaticUrls-glb.txt ../temp/StaticUrls-dotnet.txt ../temp/StaticUrls-mssedefs-x86-glb.txt ../temp/StaticUrls-mssedefs-x64-glb.txt
 
 cat ../temp/StaticUrls-${sys}-${lang}.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-ie6-${lang}.txt >> ../temp/urls.txt
@@ -701,8 +701,8 @@ cat ../temp/StaticUrls-${sys}-glb.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-glb.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-${lang}.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-dotnet.txt >> ../temp/urls.txt
-cat ../temp/StaticUrls-mssedefs-x86.txt >> ../temp/urls.txt
-cat ../temp/StaticUrls-mssedefs-x64.txt >> ../temp/urls.txt
+cat ../temp/StaticUrls-mssedefs-x86-glb.txt >> ../temp/urls.txt
+cat ../temp/StaticUrls-mssedefs-x64-glb.txt >> ../temp/urls.txt
 
 cat << END
 
@@ -743,8 +743,8 @@ if [ "$dotnet" == "1" ]; then
 fi
 if [ "$mssedefs" == "1" ]; then
 	echo "Downloading MSSE defs..."
-	doWget -c -i ../temp/StaticUrls-mssedefs-x86.txt -P ../client/mssedefs/x86
-	doWget -c -i ../temp/StaticUrls-mssedefs-x64.txt -P ../client/mssedefs/x64
+	doWget -c -i ../temp/StaticUrls-mssedefs-x86-glb.txt -P ../client/mssedefs/x86-glb
+	doWget -c -i ../temp/StaticUrls-mssedefs-x64-glb.txt -P ../client/mssedefs/x64-glb
 fi
 
 echo "Downloading patches for $sys $lang"
@@ -776,8 +776,8 @@ if [ "$dotnet" == "1" ]; then
 fi
 if [ "$mssedefs" == "1" ]; then
 	echo "Validating MSSE defs..."
-	doWget -c -i ../temp/StaticUrls-mssedefs-x86.txt -P ../client/mssedefs/x86
-	doWget -c -i ../temp/StaticUrls-mssedefs-x64.txt -P ../client/mssedefs/x64
+	doWget -c -i ../temp/StaticUrls-mssedefs-x86-glb.txt -P ../client/mssedefs/x86-glb
+	doWget -c -i ../temp/StaticUrls-mssedefs-x64-glb.txt -P ../client/mssedefs/x64-glb
 fi
 
 echo "Validating patches for $sys ${lang}..."

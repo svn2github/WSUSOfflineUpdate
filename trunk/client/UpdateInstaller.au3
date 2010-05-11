@@ -637,14 +637,14 @@ While 1
     Case $msse                 ; Microsoft Security Essentials check box toggled
       If (BitAND(GUICtrlRead($msse), $GUI_CHECKED) = $GUI_CHECKED) Then
         If ShowGUIInGerman() Then
-          If MsgBox(0x2134, "Warnung", "Bei der Installation der Microsoft Security Essentials" _
-                               & @LF & "wird eine obligate 'Windows Genuine Advantage' (WGA)-Prüfung durchgeführt." _
+          If MsgBox(0x2134, "Warnung", "Bei der Installation der Microsoft Security Essentials wird eine" _
+                               & @LF & "obligate 'Windows Genuine Advantage' (WGA)-Prüfung durchgeführt." _
                                & @LF & "Möchten Sie fortsetzen?") = 7 Then
             GUICtrlSetState($msse, $GUI_UNCHECKED)
           EndIf
         Else
-          If MsgBox(0x2134, "Warning", "The installation of Microsoft Security Essentials" _
-                               & @LF & "performs a mandatory 'Windows Genuine Advantage' (WGA) check." _
+          If MsgBox(0x2134, "Warning", "The installation of Microsoft Security Essentials performs" _
+                               & @LF & "a mandatory 'Windows Genuine Advantage' (WGA) check." _
                                & @LF & "Do you wish to proceed?") = 7 Then
             GUICtrlSetState($msse, $GUI_UNCHECKED)
           EndIf

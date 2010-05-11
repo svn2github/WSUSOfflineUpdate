@@ -9,7 +9,8 @@
 *wxp*
 *w60\/*
 *win\/*
-*x64*
+*x64-glb\/*
+*-x64*
 *.au3
 *reg.exe
 *invcif.exe

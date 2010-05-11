@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+ (r105)
+set WSUSUPDATE_VERSION=6.51+ (r106)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -149,6 +149,16 @@ if exist ..\static\StaticDownloadLink-fciv.txt del ..\static\StaticDownloadLink-
 if exist ..\xslt\ExtractDownloadLinks-wua-x86.xsl del ..\xslt\ExtractDownloadLinks-wua-x86.xsl
 if exist ..\xslt\ExtractDownloadLinks-wua-x64.xsl del ..\xslt\ExtractDownloadLinks-wua-x64.xsl
 if exist ..\static\StaticDownloadLink-dotnet.txt del ..\static\StaticDownloadLink-dotnet.txt
+if exist ..\static\StaticDownloadLink-mssedefs-x64.txt del ..\static\StaticDownloadLink-mssedefs-x64.txt
+if exist ..\static\StaticDownloadLink-mssedefs-x86.txt del ..\static\StaticDownloadLink-mssedefs-x86.txt
+if exist ..\client\mssedefs\x64\nul (
+  move /Y ..\client\mssedefs\x64 ..\client\mssedefs\x64-glb >nul
+  if exist ..\client\md\hashes-mssedefs.txt del ..\client\md\hashes-mssedefs.txt
+)
+if exist ..\client\mssedefs\x86\nul (
+  move /Y ..\client\mssedefs\x86 ..\client\mssedefs\x86-glb >nul
+  if exist ..\client\md\hashes-mssedefs.txt del ..\client\md\hashes-mssedefs.txt
+)
 
 rem *** Execute custom initialization hook ***
 if exist .\custom\InitializationHook.cmd (
@@ -368,7 +378,7 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   )
 )
 echo Downloading/validating definition files for Microsoft Security Essentials...
-%WGET_PATH% -N -i ..\static\StaticDownloadLink-mssedefs-%TARGET_ARCHITECTURE%.txt -P ..\client\mssedefs\%TARGET_ARCHITECTURE%
+%WGET_PATH% -N -i ..\static\StaticDownloadLink-mssedefs-%TARGET_ARCHITECTURE%-glb.txt -P ..\client\mssedefs\%TARGET_ARCHITECTURE%-glb
 if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded/validated definition files for Microsoft Security Essentials >>%DOWNLOAD_LOGFILE%
 if "%VERIFY_DOWNLOADS%"=="1" (

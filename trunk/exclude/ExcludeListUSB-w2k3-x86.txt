@@ -7,7 +7,6 @@ w2k\
 wxp\
 w60\
 w61\
-x64\
 x64-glb\
 o2k7-x64\
 w2k3-x64\
@@ -24,6 +23,7 @@ mdac27
 windows2000
 windowsxp
 directx_
+-x64
 .au3
 reg.exe
 invcif.exe

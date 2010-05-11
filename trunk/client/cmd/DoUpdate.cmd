@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+ (r105)
+set WSUSUPDATE_VERSION=6.51+ (r106)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -396,7 +396,7 @@ if not exist %IE_FILENAME% (
 echo Installing Internet Explorer 6...
 call InstallOSUpdate.cmd %IE_FILENAME% %VERIFY_MODE% /ignoreerrors /q:a /r:n
 if not errorlevel 1 set RECALL_REQUIRED=1
-goto SkipIEInst 
+goto IEInstalled 
 
 :IEwxp
 if "%INSTALL_IE%"=="/instie8" (
@@ -446,7 +446,7 @@ for /F %%i in ('dir /B %IE_FILENAME%') do (
   )
   if not errorlevel 1 set RECALL_REQUIRED=1
 )
-goto SkipIEInst
+goto IEInstalled 
 
 :IEw60
 if /i "%OS_ARCHITECTURE%"=="x64" (
@@ -469,9 +469,11 @@ for /F %%i in ('dir /B %IE_FILENAME%') do (
   )
   if not errorlevel 1 set RECALL_REQUIRED=1
 )
-goto SkipIEInst
+goto IEInstalled 
 
 :IEw61
+:IEInstalled
+if "%RECALL_REQUIRED%"=="1" goto Installed
 :SkipIEInst
 
 rem *** Install most recent Windows Media Player ***
@@ -556,11 +558,7 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing .NET Framework 3.5 SP1 Family Update...
   call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
 )
-if "%INSTALL_DOTNET4%"=="/instdotnet4" (
-  set RECALL_REQUIRED=1
-  goto SkipDotNet4Inst
-)
-set REBOOT_REQUIRED=1
+set RECALL_REQUIRED=1
 :SkipDotNet35Inst
 
 rem *** Install .NET Framework 4 ***
@@ -623,9 +621,9 @@ if "%MSSE_INSTALLED%"=="1" goto SkipMSSEInst
 :InstallMSSE
 set MSSE_TARGET_ID=mssefullinstall-*-%OS_LANGUAGE_EXT%-
 if /i "%OS_ARCHITECTURE%"=="x64" (
-  set MSSEDEFS_FILENAME=..\mssedefs\%OS_ARCHITECTURE%\mpam-fex64.exe
+  set MSSEDEFS_FILENAME=..\mssedefs\%OS_ARCHITECTURE%-glb\mpam-fex64.exe
 ) else (
-  set MSSEDEFS_FILENAME=..\mssedefs\%OS_ARCHITECTURE%\mpam-fe.exe
+  set MSSEDEFS_FILENAME=..\mssedefs\%OS_ARCHITECTURE%-glb\mpam-fe.exe
 )
 echo %MSSE_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics
@@ -779,18 +777,22 @@ set REBOOT_REQUIRED=1
 if "%RECALL_REQUIRED%"=="1" (
   if "%BOOT_MODE%"=="/autoreboot" (
     if "%OS_NAME%"=="w60" (
+      echo.
       echo Automatic recall is not supported for Windows Vista / Server 2008.
       echo %DATE% %TIME% - Info: Automatic recall is not supported for Windows Vista / Server 2008 >>%UPDATE_LOGFILE%
       goto ManualRecall
     )
     if "%OS_NAME%"=="w61" (
+      echo.
       echo Automatic recall is not supported for Windows 7 / Server 2008 R2.
       echo %DATE% %TIME% - Info: Automatic recall is not supported for Windows 7 / Server 2008 R2 >>%UPDATE_LOGFILE%
       goto ManualRecall
     )
-    if %OS_DOMAIN_ROLE% GEQ 4 (
+    if %OS_DOMAIN_ROLE% GEQ 4 (                 
+      echo.
       echo Automatic recall is not supported on domain controllers.
       echo %DATE% %TIME% - Info: Automatic recall is not supported on domain controllers >>%UPDATE_LOGFILE%
+      goto ManualRecall
     )
     if not "%USERNAME%"=="WSUSUpdateAdmin" (
       echo Preparing automatic recall...

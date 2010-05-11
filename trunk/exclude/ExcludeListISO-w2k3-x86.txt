@@ -4,10 +4,10 @@
 *w2k\/*
 *wxp*
 *w6*
-*x64*
-*ie6setup*  
-*ie6.0sp1*  
-*oe6.0sp1* 
+*x64-glb\/*
+*ie6setup*
+*ie6.0sp1*
+*oe6.0sp1*
 *directx8*
 *windowsmedia7*
 *windowsmedia8*
@@ -16,6 +16,7 @@
 *windows2000*
 *windowsxp*
 *directx_*
+*-x64*
 *.au3
 *reg.exe
 *invcif.exe
