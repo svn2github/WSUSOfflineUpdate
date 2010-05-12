@@ -363,7 +363,7 @@ Version 6.51 -- 08.04.10
 - Fix: OfficeXP-kb832668-v2-fullfile-enu.exe was missed due to an invalid URL in Microsoft's update catalog file (Thanks to "mjakobi" and "boco")
 --------------------------------------------------------------------------------
 Version 6.?? -- ??.??.10
-- Office updates up to 04/2010 integrated by static definitions
+- Office updates up to 05/2010 integrated by static definitions
 - Optional installation of .NET Framework 4 on Windows XP, Vista, 7 and Server 2003/2008 (R2) systems (Thanks to "AnonymousHero")
 - Optional installation of Microsoft Security Essentials on Windows XP, Vista and 7 (x86/x64) systems (Thanks to "AlBundy")
 - Date of last download / medium creation will be displayed/logged by UpdateGenerator/UpdateInstaller/DoUpdate scripts (Thanks to "automatix")

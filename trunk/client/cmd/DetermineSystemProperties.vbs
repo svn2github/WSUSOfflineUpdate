@@ -36,12 +36,12 @@ Dim strSystemFolder, strTempFolder, strWUAFileName, strMSIFileName, strWSHFileNa
 Private Function RegExists(objShell, strName)
   On Error Resume Next  'Turn error reporting off
   RegRead = objShell.RegRead(strName)
-  If Err = 0 Then
-    RegExists = True
-  Else
+  If Err = -1 Then
     RegExists = False
-    Err.Clear
+  Else
+    RegExists = True
   End If
+  Err.Clear
   On Error GoTo 0       'Turn error reporting on
 End Function
 

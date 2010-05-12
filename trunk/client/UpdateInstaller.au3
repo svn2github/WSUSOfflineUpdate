@@ -127,7 +127,7 @@ Func MSSEInstalled()
 Dim $dummy
 
   $dummy = RegRead($reg_key_msse, $reg_val_default)
-  Return (NOT @error)
+  Return (@error <= 0)
 EndFunc
 
 Func HashFilesPresent()
