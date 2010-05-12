@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+ (r107)
+set WSUSUPDATE_VERSION=6.51+ (r108)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -477,6 +477,8 @@ if "%RECALL_REQUIRED%"=="1" goto Installed
 :SkipIEInst
 
 rem *** Install most recent Windows Media Player ***
+if "%OS_NAME%"=="w2k3" goto SkipWMPInst
+if %OS_DOMAIN_ROLE% GEQ 2 goto SkipWMPInst
 if "%UPDATE_WMP%" NEQ "/updatewmp" goto SkipWMPInst
 echo Checking Windows Media Player version...
 if %WMP_VERSION_MAJOR% LSS %WMP_VERSION_TARGET_MAJOR% goto InstallWMP
@@ -614,8 +616,8 @@ set REBOOT_REQUIRED=1
 
 rem *** Install Microsoft Security Essentials ***
 if "%OS_NAME%"=="w2k" goto SkipMSSEInst
-if "%INSTALL_MSSE%" NEQ "/instmsse" goto SkipMSSEInst
 if %OS_DOMAIN_ROLE% GEQ 2 goto SkipMSSEInst
+if "%INSTALL_MSSE%" NEQ "/instmsse" goto SkipMSSEInst
 echo Checking Microsoft Security Essentials installation state...
 if "%MSSE_INSTALLED%"=="1" goto SkipMSSEInst
 :InstallMSSE
