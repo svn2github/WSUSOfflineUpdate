@@ -3901,12 +3901,12 @@ While 1
       Else
         If ShowGUIInGerman() Then
           If MsgBox(0x2044, "Info", "Herunterladen / Image-Erstellung / Kopieren erfolgreich." _
-                    & @LF & "Möchten Sie nun die Protokolldatei ansehen?") = $msgbox_btn_yes Then
+                    & @LF & "Möchten Sie nun die Protokolldatei auf mögliche Warnungen prüfen?") = $msgbox_btn_yes Then
             ShowLogFile()
           EndIf
         Else
           If MsgBox(0x2044, "Info", "Download / image creation / copying successful." _
-                    & @LF & "Would you like to view the log file now?") = $msgbox_btn_yes Then
+                    & @LF & "Would you like to check the log file for possible warnings now?") = $msgbox_btn_yes Then
             ShowLogFile()
           EndIf
         EndIf

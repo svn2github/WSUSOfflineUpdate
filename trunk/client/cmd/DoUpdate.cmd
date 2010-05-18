@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+ (r108)
+set WSUSUPDATE_VERSION=6.51+ (r109)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -617,35 +617,36 @@ set REBOOT_REQUIRED=1
 rem *** Install Microsoft Security Essentials ***
 if "%OS_NAME%"=="w2k" goto SkipMSSEInst
 if %OS_DOMAIN_ROLE% GEQ 2 goto SkipMSSEInst
-if "%INSTALL_MSSE%" NEQ "/instmsse" goto SkipMSSEInst
 echo Checking Microsoft Security Essentials installation state...
-if "%MSSE_INSTALLED%"=="1" goto SkipMSSEInst
+if "%MSSE_INSTALLED%"=="1" goto InstallMSSEDefs
+if "%INSTALL_MSSE%" NEQ "/instmsse" goto SkipMSSEInst
 :InstallMSSE
 set MSSE_TARGET_ID=mssefullinstall-*-%OS_LANGUAGE_EXT%-
-if /i "%OS_ARCHITECTURE%"=="x64" (
-  set MSSEDEFS_FILENAME=..\mssedefs\%OS_ARCHITECTURE%-glb\mpam-fex64.exe
-) else (
-  set MSSEDEFS_FILENAME=..\mssedefs\%OS_ARCHITECTURE%-glb\mpam-fe.exe
-)
 echo %MSSE_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing Microsoft Security Essentials...
   call InstallListedUpdates.cmd %VERIFY_MODE% /ignoreerrors /s /runwgacheck /o
-  if exist %MSSEDEFS_FILENAME% (
-    echo Installing Microsoft Security Essentials definition file...
-    call InstallOSUpdate.cmd %MSSEDEFS_FILENAME% %VERIFY_MODE% /ignoreerrors -q
-  ) else (
-    echo Warning: Microsoft Security Essentials definition file ^(%MSSEDEFS_FILENAME%^) not found.
-    echo %DATE% %TIME% - Warning: Microsoft Security Essentials definition file ^(%MSSEDEFS_FILENAME%^) not found >>%UPDATE_LOGFILE%
-  )
 ) else (
   echo Warning: Microsoft Security Essentials installation file ^(%MSSE_TARGET_ID%^) not found.
   echo %DATE% %TIME% - Warning: Microsoft Security Essentials installation file ^(%MSSE_TARGET_ID%^) not found >>%UPDATE_LOGFILE%
   goto SkipMSSEInst
 )
 set REBOOT_REQUIRED=1
+:InstallMSSEDefs
+if /i "%OS_ARCHITECTURE%"=="x64" (
+  set MSSEDEFS_FILENAME=..\mssedefs\%OS_ARCHITECTURE%-glb\mpam-fex64.exe
+) else (
+  set MSSEDEFS_FILENAME=..\mssedefs\%OS_ARCHITECTURE%-glb\mpam-fe.exe
+)
+if exist %MSSEDEFS_FILENAME% (
+  echo Installing Microsoft Security Essentials definition file...
+  call InstallOSUpdate.cmd %MSSEDEFS_FILENAME% %VERIFY_MODE% /ignoreerrors -q
+) else (
+  echo Warning: Microsoft Security Essentials definition file ^(%MSSEDEFS_FILENAME%^) not found.
+  echo %DATE% %TIME% - Warning: Microsoft Security Essentials definition file ^(%MSSEDEFS_FILENAME%^) not found >>%UPDATE_LOGFILE%
+)
 :SkipMSSEInst
 
 if "%RECALL_REQUIRED%"=="1" goto Installed
