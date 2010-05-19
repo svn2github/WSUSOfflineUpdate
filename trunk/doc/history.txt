@@ -382,3 +382,4 @@ Version 6.?? -- ??.??.10
 - Fix: Installation of IE8 did not request recall on Windows Vista and Server 2008 systems (Thanks to "boco")
 - Fix: Installation of .NET Frameworks won't any longer try to install language packs (Thanks to "schose" and "AlBundy")
 - Fix: Windows Media Player update attempts lead to errors on Windows Server 2003 (x86/x64) systems
+- Fix: Reboot requests were ignored if all missing updates were either black listed or not found

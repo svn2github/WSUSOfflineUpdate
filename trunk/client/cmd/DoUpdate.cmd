@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+ (r109)
+set WSUSUPDATE_VERSION=6.51+ (r110)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -582,7 +582,7 @@ if not exist %DOTNET4_FILENAME% (
   goto SkipDotNet4Inst
 )
 echo Installing .NET Framework 4...
-call InstallOSUpdate.cmd %DOTNET4_FILENAME% %VERIFY_MODE% /ignoreerrors /passive /norestart /lcid 1033
+call InstallOSUpdate.cmd %DOTNET4_FILENAME% %VERIFY_MODE% /errorsaswarnings /passive /norestart /lcid 1033
 set REBOOT_REQUIRED=1
 :SkipDotNet4Inst
 
@@ -618,7 +618,7 @@ rem *** Install Microsoft Security Essentials ***
 if "%OS_NAME%"=="w2k" goto SkipMSSEInst
 if %OS_DOMAIN_ROLE% GEQ 2 goto SkipMSSEInst
 echo Checking Microsoft Security Essentials installation state...
-if "%MSSE_INSTALLED%"=="1" goto InstallMSSEDefs
+if "%MSSE_INSTALLED%"=="1" goto CheckMSSEDefs
 if "%INSTALL_MSSE%" NEQ "/instmsse" goto SkipMSSEInst
 :InstallMSSE
 set MSSE_TARGET_ID=mssefullinstall-*-%OS_LANGUAGE_EXT%-
@@ -634,19 +634,33 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
   goto SkipMSSEInst
 )
 set REBOOT_REQUIRED=1
-:InstallMSSEDefs
+:CheckMSSEDefs
 if /i "%OS_ARCHITECTURE%"=="x64" (
   set MSSEDEFS_FILENAME=..\mssedefs\%OS_ARCHITECTURE%-glb\mpam-fex64.exe
 ) else (
   set MSSEDEFS_FILENAME=..\mssedefs\%OS_ARCHITECTURE%-glb\mpam-fe.exe
 )
-if exist %MSSEDEFS_FILENAME% (
-  echo Installing Microsoft Security Essentials definition file...
-  call InstallOSUpdate.cmd %MSSEDEFS_FILENAME% %VERIFY_MODE% /ignoreerrors -q
-) else (
+if not exist %MSSEDEFS_FILENAME% (
   echo Warning: Microsoft Security Essentials definition file ^(%MSSEDEFS_FILENAME%^) not found.
   echo %DATE% %TIME% - Warning: Microsoft Security Essentials definition file ^(%MSSEDEFS_FILENAME%^) not found >>%UPDATE_LOGFILE%
+  goto SkipMSSEInst
 )
+rem *** Determine Microsoft Security Essentials definition file version ***
+echo Determining Microsoft Security Essentials definition file version...
+%CSCRIPT_PATH% //Nologo //E:vbs DetermineFileVersion.vbs %MSSEDEFS_FILENAME% MSSEDEFS_VERSION_TARGET
+if not exist "%TEMP%\SetFileVersion.cmd" goto SkipMSSEInst
+call "%TEMP%\SetFileVersion.cmd"
+del "%TEMP%\SetFileVersion.cmd"
+if %MSSEDEFS_VERSION_MAJOR% LSS %MSSEDEFS_VERSION_TARGET_MAJOR% goto InstallMSSEDefs
+if %MSSEDEFS_VERSION_MAJOR% GTR %MSSEDEFS_VERSION_TARGET_MAJOR% goto SkipMSSEInst
+if %MSSEDEFS_VERSION_MINOR% LSS %MSSEDEFS_VERSION_TARGET_MINOR% goto InstallMSSEDefs
+if %MSSEDEFS_VERSION_MINOR% GTR %MSSEDEFS_VERSION_TARGET_MINOR% goto SkipMSSEInst
+if %MSSEDEFS_VERSION_BUILD% LSS %MSSEDEFS_VERSION_TARGET_BUILD% goto InstallMSSEDefs
+if %MSSEDEFS_VERSION_BUILD% GTR %MSSEDEFS_VERSION_TARGET_BUILD% goto SkipMSSEInst
+if %MSSEDEFS_VERSION_REVISION% GEQ %MSSEDEFS_VERSION_TARGET_REVISION% goto SkipMSSEInst
+:InstallMSSEDefs
+echo Installing Microsoft Security Essentials definition file...
+call InstallOSUpdate.cmd %MSSEDEFS_FILENAME% %VERIFY_MODE% /ignoreerrors -q
 :SkipMSSEInst
 
 if "%RECALL_REQUIRED%"=="1" goto Installed
@@ -669,7 +683,9 @@ if %O2K7_SP_VERSION% LSS %O2K7_SP_VERSION_TARGET% echo %O2K7_SP_TARGET_ID% >>"%T
 if not exist "%TEMP%\MissingUpdateIds.txt" goto SkipSPOfc
 call ListUpdatesToInstall.cmd /excludestatics
 if errorlevel 1 goto ListError
-if not exist "%TEMP%\UpdatesToInstall.txt" goto NoUpdates
+if not exist "%TEMP%\UpdatesToInstall.txt" (
+  if "%REBOOT_REQUIRED%"=="1" (goto Installed) else (goto NoUpdates)
+)
 echo Installing most recent Office Service Pack(s)...
 call InstallListedUpdates.cmd %VERIFY_MODE% /errorsaswarnings
 if errorlevel 1 goto InstError
@@ -770,7 +786,9 @@ if errorlevel 1 goto ListError
 
 :InstallUpdates
 rem *** Install updates ***
-if not exist "%TEMP%\UpdatesToInstall.txt" goto NoUpdates
+if not exist "%TEMP%\UpdatesToInstall.txt" (
+  if "%REBOOT_REQUIRED%"=="1" (goto Installed) else (goto NoUpdates)
+)
 echo Installing updates...
 call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /errorsaswarnings
 if errorlevel 1 goto InstError

@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+ (r109)
+set WSUSUPDATE_VERSION=6.51+ (r110)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -149,6 +149,7 @@ if exist ..\static\StaticDownloadLink-fciv.txt del ..\static\StaticDownloadLink-
 if exist ..\xslt\ExtractDownloadLinks-wua-x86.xsl del ..\xslt\ExtractDownloadLinks-wua-x86.xsl
 if exist ..\xslt\ExtractDownloadLinks-wua-x64.xsl del ..\xslt\ExtractDownloadLinks-wua-x64.xsl
 if exist ..\static\StaticDownloadLink-dotnet.txt del ..\static\StaticDownloadLink-dotnet.txt
+if exist DetermineRegVersion.vbs del DetermineRegVersion.vbs
 if exist ..\static\StaticDownloadLink-mssedefs-x64.txt del ..\static\StaticDownloadLink-mssedefs-x64.txt
 if exist ..\static\StaticDownloadLink-mssedefs-x86.txt del ..\static\StaticDownloadLink-mssedefs-x86.txt
 if exist ..\client\mssedefs\x64\nul (
@@ -182,10 +183,10 @@ if exist ..\client\bin\reg.exe goto SkipRegExe
 rem *** Determine Microsoft registry console tool version ***
 echo Determining Microsoft registry console tool version...
 if not exist %REG_PATH% goto NoRegExe
-%CSCRIPT_PATH% //Nologo //E:vbs DetermineRegVersion.vbs
-if not exist "%TEMP%\SetRegVersion.cmd" goto NoRegVersion
-call "%TEMP%\SetRegVersion.cmd"
-del "%TEMP%\SetRegVersion.cmd"
+%CSCRIPT_PATH% //Nologo //E:vbs ..\client\cmd\DetermineFileVersion.vbs %REG_PATH% REG_VERSION
+if not exist "%TEMP%\SetFileVersion.cmd" goto NoRegVersion
+call "%TEMP%\SetFileVersion.cmd"
+del "%TEMP%\SetFileVersion.cmd"
 
 rem *** Copy Microsoft registry console tool ***
 echo Copying Microsoft registry console tool...

@@ -9,8 +9,10 @@ Private Const strRegKeyDotNet35               = "HKLM\Software\Microsoft\NET Fra
 Private Const strRegKeyDotNet4                = "HKLM\Software\Microsoft\NET Framework Setup\NDP\v4\Full\"
 Private Const strRegKeyPowerShell             = "HKLM\Software\Microsoft\PowerShell\1\PowerShellEngine\"
 Private Const strRegKeyMSSE                   = "HKLM\Software\Microsoft\Microsoft Security Essentials\"
+Private Const strRegKeyMSSEDefs               = "HKLM\Software\Microsoft\Microsoft Antimalware\Signature Updates\"
 Private Const strRegValVersion                = "Version"
 Private Const strRegValPShVersion             = "PowerShellVersion"
+Private Const strRegValAVSVersion             = "AVSignatureVersion"
 Private Const strRegKeyOfficePrefix_Mx86      = "HKLM\Software\Microsoft\Office\"
 Private Const strRegKeyOfficePrefix_Mx64      = "HKLM\Software\Wow6432Node\Microsoft\Office\"
 Private Const strRegKeyOfficePrefix_User      = "HKCU\Software\Microsoft\Office\"
@@ -51,7 +53,7 @@ Private Function RegRead(objShell, strName)
   On Error GoTo 0       'Turn error reporting on
 End Function
 
-Private Sub WriteLanguage2File(objTextFile, varName, langCode, writeExtVar)
+Private Sub WriteLanguageToFile(objTextFile, varName, langCode, writeExtVar)
 
   Select Case langCode
     Case 9, 1033, 2057, 3081, 4105, 5129, 6153, 7177, 8201, 10249, 11273
@@ -131,7 +133,7 @@ Private Sub WriteLanguage2File(objTextFile, varName, langCode, writeExtVar)
   End Select
 End Sub
 
-Private Sub WriteVersion2File(objTextFile, strPrefix, strVersion)
+Private Sub WriteVersionToFile(objTextFile, strPrefix, strVersion)
 Dim arrayVersion, i
 
   If Len(strVersion) > 0 Then
@@ -153,7 +155,7 @@ Dim arrayVersion, i
   End If
 End Sub
 
-Private Sub WriteDXName2File(objTextFile, strDXVersion)
+Private Sub WriteDXNameToFile(objTextFile, strDXVersion)
 
   Select Case strDXVersion
     Case "4.02.0095"
@@ -286,12 +288,12 @@ Set objWMIService = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\
 ' Documentation: http://msdn.microsoft.com/en-us/library/aa394239(VS.85).aspx
 For Each objWMIQuery in objWMIService.ExecQuery("Select * from Win32_OperatingSystem") 
   objCmdFile.WriteLine("set OS_CAPTION=" & objWMIQuery.Caption)
-  WriteVersion2File objCmdFile, "OS_VERSION", objWMIQuery.Version
+  WriteVersionToFile objCmdFile, "OS_VERSION", objWMIQuery.Version
   strOSVersion = Left(objWMIQuery.Version, 3) ' For determination of Windows activation state - see below
   objCmdFile.WriteLine("set OS_SP_VERSION_MAJOR=" & objWMIQuery.ServicePackMajorVersion)
   objCmdFile.WriteLine("set OS_SP_VERSION_MINOR=" & objWMIQuery.ServicePackMinorVersion)
   objCmdFile.WriteLine("set OS_LANGUAGE_CODE=" & objWMIQuery.OSLanguage)
-  WriteLanguage2File objCmdFile, "OS_LANGUAGE", objWMIQuery.OSLanguage, True
+  WriteLanguageToFile objCmdFile, "OS_LANGUAGE", objWMIQuery.OSLanguage, True
   objCmdFile.WriteLine("set SystemDirectory=" & objWMIQuery.SystemDirectory)
 Next
 ' Documentation: http://msdn.microsoft.com/en-us/library/aa394102(VS.85).aspx
@@ -302,41 +304,41 @@ Next
 
 ' Determine Windows Update Agent version 
 If objFileSystem.FileExists(strWUAFileName) Then
-  WriteVersion2File objCmdFile, "WUA_VERSION", objFileSystem.GetFileVersion(strWUAFileName)
+  WriteVersionToFile objCmdFile, "WUA_VERSION", objFileSystem.GetFileVersion(strWUAFileName)
 Else
-  WriteVersion2File objCmdFile, "WUA_VERSION", ""
+  WriteVersionToFile objCmdFile, "WUA_VERSION", ""
 End If
 
 ' Determine Microsoft Installer version
 If objFileSystem.FileExists(strMSIFileName) Then
-  WriteVersion2File objCmdFile, "MSI_VERSION", objFileSystem.GetFileVersion(strMSIFileName)
+  WriteVersionToFile objCmdFile, "MSI_VERSION", objFileSystem.GetFileVersion(strMSIFileName)
 Else
-  WriteVersion2File objCmdFile, "MSI_VERSION", ""
+  WriteVersionToFile objCmdFile, "MSI_VERSION", ""
 End If
 
 ' Determine Windows Script Host version
 If objFileSystem.FileExists(strWSHFileName) Then
-  WriteVersion2File objCmdFile, "WSH_VERSION", objFileSystem.GetFileVersion(strWSHFileName)
+  WriteVersionToFile objCmdFile, "WSH_VERSION", objFileSystem.GetFileVersion(strWSHFileName)
 Else
-  WriteVersion2File objCmdFile, "WSH_VERSION", ""
+  WriteVersionToFile objCmdFile, "WSH_VERSION", ""
 End If
 
 ' Determine Internet Explorer version
-WriteVersion2File objCmdFile, "IE_VERSION", RegRead(wshShell, strRegKeyIE & strRegValVersion)
+WriteVersionToFile objCmdFile, "IE_VERSION", RegRead(wshShell, strRegKeyIE & strRegValVersion)
 
 ' Determine Microsoft Data Access Components version
-WriteVersion2File objCmdFile, "MDAC_VERSION", RegRead(wshShell, strRegKeyMDAC & strRegValVersion)
+WriteVersionToFile objCmdFile, "MDAC_VERSION", RegRead(wshShell, strRegKeyMDAC & strRegValVersion)
 
 ' Determine Microsoft DirectX version
-WriteVersion2File objCmdFile, "DIRECTX_VERSION", RegRead(wshShell, strRegKeyDirectX & strRegValVersion)
-WriteDXName2File objCmdFile, RegRead(wshShell, strRegKeyDirectX & strRegValVersion)
+WriteVersionToFile objCmdFile, "DIRECTX_VERSION", RegRead(wshShell, strRegKeyDirectX & strRegValVersion)
+WriteDXNameToFile objCmdFile, RegRead(wshShell, strRegKeyDirectX & strRegValVersion)
 
 ' Determine Microsoft .NET Framework 3.5 SP1 installation state
-WriteVersion2File objCmdFile, "DOTNET35_VERSION", RegRead(wshShell, strRegKeyDotNet35 & strRegValVersion)
-WriteVersion2File objCmdFile, "DOTNET4_VERSION", RegRead(wshShell, strRegKeyDotNet4 & strRegValVersion)
+WriteVersionToFile objCmdFile, "DOTNET35_VERSION", RegRead(wshShell, strRegKeyDotNet35 & strRegValVersion)
+WriteVersionToFile objCmdFile, "DOTNET4_VERSION", RegRead(wshShell, strRegKeyDotNet4 & strRegValVersion)
 
 ' Determine Windows PowerShell version
-WriteVersion2File objCmdFile, "PSH_VERSION", RegRead(wshShell, strRegKeyPowerShell & strRegValPShVersion)
+WriteVersionToFile objCmdFile, "PSH_VERSION", RegRead(wshShell, strRegKeyPowerShell & strRegValPShVersion)
 
 ' Determine Microsoft Security Essentials installation state
 If RegExists(wshShell, strRegKeyMSSE) Then
@@ -345,18 +347,21 @@ Else
   objCmdFile.WriteLine("set MSSE_INSTALLED=0")
 End If
 
+' Determine Microsoft Antimalware signatures' version
+WriteVersionToFile objCmdFile, "MSSEDEFS_VERSION", RegRead(wshShell, strRegKeyMSSEDefs & strRegValAVSVersion)
+
 ' Determine Remote Desktop Connection (Terminal Services Client) version
 If objFileSystem.FileExists(strTSCFileName) Then
-  WriteVersion2File objCmdFile, "TSC_VERSION", objFileSystem.GetFileVersion(strTSCFileName)
+  WriteVersionToFile objCmdFile, "TSC_VERSION", objFileSystem.GetFileVersion(strTSCFileName)
 Else
-  WriteVersion2File objCmdFile, "TSC_VERSION", ""
+  WriteVersionToFile objCmdFile, "TSC_VERSION", ""
 End If
 
 ' Determine Windows Media Player version
 If objFileSystem.FileExists(strWMPFileName) Then
-  WriteVersion2File objCmdFile, "WMP_VERSION", objFileSystem.GetFileVersion(strWMPFileName)
+  WriteVersionToFile objCmdFile, "WMP_VERSION", objFileSystem.GetFileVersion(strWMPFileName)
 Else
-  WriteVersion2File objCmdFile, "WMP_VERSION", ""
+  WriteVersionToFile objCmdFile, "WMP_VERSION", ""
 End If
 
 ' Determine Office version
@@ -371,14 +376,14 @@ For i = 0 To UBound(arrayOfficeNames)
       If objFileSystem.FileExists(strOfficeInstallPath & arrayOfficeExeNames(j)) Then
         objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_VERSION_APP=" & arrayOfficeAppNames(j))
         strOfficeExeVersion = objFileSystem.GetFileVersion(strOfficeInstallPath & arrayOfficeExeNames(j)) 
-        WriteVersion2File objCmdFile, UCase(arrayOfficeNames(i)) & "_VERSION", strOfficeExeVersion  
+        WriteVersionToFile objCmdFile, UCase(arrayOfficeNames(i)) & "_VERSION", strOfficeExeVersion  
         objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_SP_VERSION=" & OfficeSPVersion(strOfficeExeVersion, j))
         languageCode = OfficeLanguageCode(wshShell, arrayOfficeVersions(i))
         objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_LANGUAGE_CODE=" & languageCode)
         If languageCode = 0 Then
           objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_LANGUAGE=%OS_LANGUAGE%")
         Else
-          WriteLanguage2File objCmdFile, UCase(arrayOfficeNames(i)) & "_LANGUAGE", languageCode, False
+          WriteLanguageToFile objCmdFile, UCase(arrayOfficeNames(i)) & "_LANGUAGE", languageCode, False
         End If
         Exit For
       End If

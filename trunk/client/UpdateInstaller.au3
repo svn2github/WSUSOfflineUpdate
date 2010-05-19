@@ -60,7 +60,8 @@ Dim Const $path_rel_hashes            = "\md\"
 Dim Const $path_rel_converters        = "\ofc\glb\OCONVPCK.EXE"
 Dim Const $path_rel_instdotnet35      = "\dotnet\dotnetfx35.exe"
 Dim Const $path_rel_instdotnet4       = "\dotnet\dotNetFx40_Full_x86_x64.exe"
-Dim Const $path_rel_mssedefs          = "\mssedefs\"
+Dim Const $path_rel_mssedefs_x86      = "\mssedefs\x86-glb\mpam-fe.exe"
+Dim Const $path_rel_mssedefs_x64      = "\mssedefs\x64-glb\mpam-fex64.exe"
 
 Dim $maindlg, $scriptdir, $netdrives, $i, $strpos, $inifilename, $backup, $converters, $ie7, $ie8, $wmp, $tsc, $dotnet35, $dotnet4, $powershell, $msse, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate 
 Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
@@ -147,7 +148,7 @@ Func DotNet4InstPresent()
 EndFunc
 
 Func MSSEDefsPresent()
-  Return FileExists(@ScriptDir & $path_rel_mssedefs)
+  Return FileExists(@ScriptDir & $path_rel_mssedefs_x86) OR FileExists(@ScriptDir & $path_rel_mssedefs_x64)
 EndFunc
 
 Func CalcGUISize()
