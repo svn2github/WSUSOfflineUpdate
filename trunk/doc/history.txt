@@ -367,6 +367,8 @@ Version 6.?? -- ??.??.10
 - Optional installation of .NET Framework 4 on Windows XP, Vista, 7 and Server 2003/2008 (R2) systems (Thanks to "AnonymousHero")
 - Optional installation of Microsoft Security Essentials on Windows XP, Vista and 7 (x86/x64) systems (Thanks to "AlBundy")
 - Date of last download / medium creation will be displayed/logged by UpdateGenerator/UpdateInstaller/DoUpdate scripts (Thanks to "automatix")
+- DoUpdate.cmd script will now adjust boot sequence for automatic reboots on Windows Vista, 7 and Server 2008 (R2) systems (Thanks to "NorFie")
+- Update for Root Certificates (rootsupd.exe/kb931125) updated to May 2010 (Thanks to "harry")
 - AutoIt script compiler updated to version 3.3.6.1
 - CompileAutoItScripts.cmd script added (Thanks to "boco")
 - Fix: CreateISOImage.sh script didn't correctly evaluate ISO filter files containing Windows (<CR><LF>) line feeds (Thanks to Bob Lindell)

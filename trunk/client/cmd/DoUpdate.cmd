@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+ (r110)
+set WSUSUPDATE_VERSION=6.51+ (r111)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -819,6 +819,11 @@ if "%RECALL_REQUIRED%"=="1" (
       echo Preparing automatic recall...
       call PrepareRecall.cmd %~f0 %BACKUP_MODE% %VERIFY_MODE% %INSTALL_IE% %UPDATE_WMP% %UPDATE_TSC% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_MSSE% %INSTALL_CONVERTERS% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES%
     )
+    if exist %SystemRoot%\system32\bcdedit.exe (
+      echo Adjusting boot sequence for next reboot...
+      %SystemRoot%\system32\bcdedit.exe /bootsequence {current}
+      echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot >>%UPDATE_LOGFILE%
+    )
     echo Rebooting...
     %CSCRIPT_PATH% //Nologo //E:vbs Shutdown.vbs /reboot
   ) else goto ManualRecall
@@ -834,6 +839,11 @@ if "%RECALL_REQUIRED%"=="1" (
       echo Shutting down...
       %CSCRIPT_PATH% //Nologo //E:vbs Shutdown.vbs
     ) else (
+      if exist %SystemRoot%\system32\bcdedit.exe (
+        echo Adjusting boot sequence for next reboot...
+        %SystemRoot%\system32\bcdedit.exe /bootsequence {current}
+        echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot >>%UPDATE_LOGFILE%
+      )
       echo Rebooting...
       %CSCRIPT_PATH% //Nologo //E:vbs Shutdown.vbs /reboot
     )
@@ -1017,6 +1027,11 @@ if "%USERNAME%"=="WSUSUpdateAdmin" (
   echo Cleaning up automatic recall...
   call CleanupRecall.cmd
   del /Q "%TEMP%\wsusadmin-recall.*"
+  if exist %SystemRoot%\system32\bcdedit.exe (
+    echo Adjusting boot sequence for next reboot...
+    %SystemRoot%\system32\bcdedit.exe /bootsequence {current}
+    echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot >>%UPDATE_LOGFILE%
+  )
   echo Rebooting...
   %CSCRIPT_PATH% //Nologo //E:vbs Shutdown.vbs /reboot
 ) else (
