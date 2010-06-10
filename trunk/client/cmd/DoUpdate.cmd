@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+ (r112)
+set WSUSUPDATE_VERSION=6.51+ (r113)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -117,6 +117,9 @@ if "%O2K3_VERSION_MAJOR%" NEQ "" (
 if "%O2K7_VERSION_MAJOR%" NEQ "" (
   echo Found Microsoft Office 2007 %O2K7_VERSION_APP% version: %O2K7_VERSION_MAJOR%.%O2K7_VERSION_MINOR%.%O2K7_VERSION_BUILD%.%O2K7_VERSION_REVISION% ^(o2k7 %O2K7_LANGUAGE% sp%O2K7_SP_VERSION%^)
 )
+if "%O2K10_VERSION_MAJOR%" NEQ "" (
+  echo Found Microsoft Office 2010 %O2K10_VERSION_APP% version: %O2K10_VERSION_MAJOR%.%O2K10_VERSION_MINOR%.%O2K10_VERSION_BUILD%.%O2K10_VERSION_REVISION% ^(o2k10 %O2K10_LANGUAGE% sp%O2K10_SP_VERSION%^)
+)
 echo %DATE% %TIME% - Info: Found OS caption '%OS_CAPTION%' >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft Windows version %OS_VERSION_MAJOR%.%OS_VERSION_MINOR%.%OS_VERSION_BUILD% (%OS_NAME% %OS_ARCHITECTURE% %OS_LANGUAGE% sp%OS_SP_VERSION_MAJOR%) >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows Update Agent version %WUA_VERSION_MAJOR%.%WUA_VERSION_MINOR%.%WUA_VERSION_BUILD%.%WUA_VERSION_REVISION% >>%UPDATE_LOGFILE%
@@ -137,6 +140,9 @@ if "%O2K3_VERSION_MAJOR%" NEQ "" (
 )
 if "%O2K7_VERSION_MAJOR%" NEQ "" (
   echo %DATE% %TIME% - Info: Found Microsoft Office 2007 %O2K7_VERSION_APP% version %O2K7_VERSION_MAJOR%.%O2K7_VERSION_MINOR%.%O2K7_VERSION_BUILD%.%O2K7_VERSION_REVISION% ^(o2k7 %O2K7_LANGUAGE% sp%O2K7_SP_VERSION%^) >>%UPDATE_LOGFILE%
+)
+if "%O2K10_VERSION_MAJOR%" NEQ "" (
+  echo %DATE% %TIME% - Info: Found Microsoft Office 2010 %O2K10_VERSION_APP% version %O2K10_VERSION_MAJOR%.%O2K10_VERSION_MINOR%.%O2K10_VERSION_BUILD%.%O2K10_VERSION_REVISION% ^(o2k10 %O2K10_LANGUAGE% sp%O2K10_SP_VERSION%^) >>%UPDATE_LOGFILE%
 )
 
 rem *** Check Operating System architecture ***
@@ -444,7 +450,7 @@ for /F %%i in ('dir /B %IE_FILENAME%') do (
       call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANGUAGE%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default %BACKUP_MODE% /norestart
     )
   )
-  if not errorlevel 1 set RECALL_REQUIRED=1
+  if not errorlevel 1 set REBOOT_REQUIRED=1
 )
 goto IEInstalled 
 
@@ -680,18 +686,23 @@ if %O2K3_SP_VERSION% LSS %O2K3_SP_VERSION_TARGET% echo %O2K3_SP_TARGET_ID% >>"%T
 if "%O2K7_VERSION_MAJOR%"=="" goto SkipSPo2k7
 if %O2K7_SP_VERSION% LSS %O2K7_SP_VERSION_TARGET% echo %O2K7_SP_TARGET_ID% >>"%TEMP%\MissingUpdateIds.txt"
 :SkipSPo2k7
+if "%O2K10_VERSION_MAJOR%"=="" goto SkipSPo2k10
+if %O2K10_SP_VERSION% LSS %O2K10_SP_VERSION_TARGET% echo %O2K10_SP_TARGET_ID% >>"%TEMP%\MissingUpdateIds.txt"
+:SkipSPo2k10
 if not exist "%TEMP%\MissingUpdateIds.txt" goto SkipSPOfc
 call ListUpdatesToInstall.cmd /excludestatics
 if errorlevel 1 goto ListError
-if not exist "%TEMP%\UpdatesToInstall.txt" (
-  if "%REBOOT_REQUIRED%"=="1" (goto Installed) else (goto NoUpdates)
+if exist "%TEMP%\UpdatesToInstall.txt" (
+  echo Installing most recent Office Service Pack(s)...
+  call InstallListedUpdates.cmd %VERIFY_MODE% /errorsaswarnings
+) else (
+  echo Warning: Office Service Pack installation file(s) not found.
+  echo %DATE% %TIME% - Warning: Office Service Pack installation file(s) not found >>%UPDATE_LOGFILE%
+  goto SkipSPOfc
 )
-echo Installing most recent Office Service Pack(s)...
-call InstallListedUpdates.cmd %VERIFY_MODE% /errorsaswarnings
-if errorlevel 1 goto InstError
 set REBOOT_REQUIRED=1
-
 :SkipSPOfc
+
 rem *** Check installation state of Office Converter/Compatibility Packs ***
 if "%INSTALL_CONVERTERS%" NEQ "/instofccnvs" goto CheckAUService
 goto CNV%OFFICE_NAME%
@@ -724,6 +735,7 @@ if "%OFFICE_COMPATIBILITY_PACK%" NEQ "1" (
   )
 )
 :CNVo2k7
+:CNVo2k10
 
 :CheckAUService
 rem *** Check state of service 'automatic updates' ***

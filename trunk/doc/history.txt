@@ -369,8 +369,10 @@ Version 6.?? -- ??.??.10
 - Date of last download / medium creation will be displayed/logged by UpdateGenerator/UpdateInstaller/DoUpdate scripts (Thanks to "automatix")
 - DoUpdate.cmd script will now adjust boot sequence for automatic reboots on Windows Vista, 7 and Server 2008 (R2) systems (Thanks to "NorFie")
 - Update for Root Certificates (rootsupd.exe/kb931125) updated to May 2010 (Thanks to "harry")
+- DirectX End-User Runtimes updated to June 2010 (Thanks to Matthias Köhler and "Denniss")
 - AutoIt script compiler updated to version 3.3.6.1
 - CompileAutoItScripts.cmd script added (Thanks to "boco")
+- DetermineSystemProperties.vbs script detects Office 2010 now
 - Fix: CreateISOImage.sh script didn't correctly evaluate ISO filter files containing Windows (<CR><LF>) line feeds (Thanks to Bob Lindell)
 - Fix: DoUpdate.cmd script didn't return errorlevel 3010 (reboot required) after installation of dynamically determined updates (Thanks to "hel")
 - Fix: Missing WSH_VERSION_TARGET_* variables lead to misleading error messages under Windows Vista/7 (Thanks to "lexx_qq")  
@@ -385,3 +387,4 @@ Version 6.?? -- ??.??.10
 - Fix: Installation of .NET Frameworks won't any longer try to install language packs (Thanks to "schose" and "AlBundy")
 - Fix: Windows Media Player update attempts lead to errors on Windows Server 2003 (x86/x64) systems
 - Fix: Reboot requests were ignored if all missing updates were either black listed or not found
+- Fix: Update process could have been unintentionally abandoned if update medium didn't contain latest Office Service Pack (Thanks to "Lurchie7")
