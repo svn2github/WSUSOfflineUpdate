@@ -1,1 +1,3 @@
 http://download.microsoft.com/download/9/8/6/9868b31a-1f7d-4378-a617-efaba12ca028/Office2003SP3-KB923618-FullFile-DAN.exe
+http://download.microsoft.com/download/2/3/C/23C89840-1789-4B54-999D-B3FC0C30CCA0/office2003-KB975051-FullFile-DAN.exe
+http://download.microsoft.com/download/7/0/E/70EF6E5C-D4C6-4B03-801E-ABFE2E2B6784/office2003-KB983503-FullFile-DAN.exe

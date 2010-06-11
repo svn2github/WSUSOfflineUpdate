@@ -1,1 +1,3 @@
 http://download.microsoft.com/download/0/0/8/008fc717-c06f-4046-9741-3289a4d54832/Office2003SP3-KB923618-FullFile-PTG.exe
+http://download.microsoft.com/download/3/F/4/3F46BE01-DFF0-477B-A351-F5B5A0B94FF8/office2003-KB975051-FullFile-PTG.exe
+http://download.microsoft.com/download/A/1/2/A120EC78-53DA-4226-A1B6-469076126238/office2003-KB983503-FullFile-PTG.exe

@@ -6,9 +6,8 @@ setlocal enableextensions
 if errorlevel 1 goto NoExtensions
 
 if %1~==~ goto NoParam
-set TARGET_DIR=%~fs1
-set TARGET_DIR_LONG="%~f1"
-if not exist %TARGET_DIR%\nul goto InvalidParam
+set TARGET_DIR="%~f1"
+if not exist %TARGET_DIR% goto InvalidParam
 
 rem *** Copy scripts and binaries ***
 echo Copying scripts and binaries...
@@ -17,7 +16,7 @@ xcopy *.* %TARGET_DIR% /E /Q /Y /EXCLUDE:exclude\ExcludeList-ReleaseTree.txt
 popd
 
 rem *** Compile AutoIt-Scripts ***
-pushd %TARGET_DIR_LONG%
+pushd %TARGET_DIR%
 call %~dps0CompileAutoItScripts.cmd
 popd
 goto EoF

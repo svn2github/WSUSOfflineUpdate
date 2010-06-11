@@ -1,1 +1,3 @@
 http://download.microsoft.com/download/8/7/1/871b3beb-826b-493c-984d-1a4f22dd9760/Office2003SP3-KB923618-FullFile-JPN.exe
+http://download.microsoft.com/download/2/6/8/268A0040-7CEE-4579-9BD8-C1AD3983B955/office2003-KB975051-FullFile-JPN.exe
+http://download.microsoft.com/download/4/B/8/4B86FC92-69B3-4368-BD8B-A2626C180BAE/office2003-KB983503-FullFile-JPN.exe

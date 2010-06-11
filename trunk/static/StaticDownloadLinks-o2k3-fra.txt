@@ -1,1 +1,3 @@
 http://download.microsoft.com/download/7/c/4/7c461cee-9688-4ea1-91c1-d11e6639d949/Office2003SP3-KB923618-FullFile-FRA.exe
+http://download.microsoft.com/download/4/8/3/48395DF8-268D-4F95-96BB-19EB84A78F6E/office2003-KB975051-FullFile-FRA.exe
+http://download.microsoft.com/download/E/0/7/E0707314-E1A9-414C-BE46-D898414DDD7C/office2003-KB983503-FullFile-FRA.exe
