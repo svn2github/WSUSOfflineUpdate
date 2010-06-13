@@ -105,7 +105,7 @@ if "%INSTALL_SWITCHES%"=="" (
 if "%INSTALL_SWITCHES%"=="" (
   for /F %%i in (..\opt\OptionList-qn.txt) do (
     echo %1 | %SystemRoot%\system32\find.exe /I "%%i" >nul 2>&1
-    if not errorlevel 1 set INSTALL_SWITCHES=/quiet /norestart
+    if not errorlevel 1 set INSTALL_SWITCHES=/q /norestart
   )
 )
 if "%INSTALL_SWITCHES%"=="" (

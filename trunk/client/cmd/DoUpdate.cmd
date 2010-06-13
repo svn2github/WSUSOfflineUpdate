@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+ (r114)
+set WSUSUPDATE_VERSION=6.51+ (r115)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -693,11 +693,11 @@ if not exist "%TEMP%\MissingUpdateIds.txt" goto SkipSPOfc
 call ListUpdatesToInstall.cmd /excludestatics
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
-  echo Installing most recent Office Service Pack(s)...
+  echo Installing most recent Office Service Pack^(s^)...
   call InstallListedUpdates.cmd %VERIFY_MODE% /errorsaswarnings
 ) else (
-  echo Warning: Office Service Pack installation file(s) not found.
-  echo %DATE% %TIME% - Warning: Office Service Pack installation file(s) not found >>%UPDATE_LOGFILE%
+  echo Warning: Office Service Pack installation file^(s^) not found.
+  echo %DATE% %TIME% - Warning: Office Service Pack installation file^(s^) not found >>%UPDATE_LOGFILE%
   goto SkipSPOfc
 )
 set REBOOT_REQUIRED=1

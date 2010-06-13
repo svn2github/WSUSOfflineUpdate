@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.51+ (r114)
+set WSUSUPDATE_VERSION=6.51+ (r115)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -150,6 +150,7 @@ if exist ..\xslt\ExtractDownloadLinks-wua-x86.xsl del ..\xslt\ExtractDownloadLin
 if exist ..\xslt\ExtractDownloadLinks-wua-x64.xsl del ..\xslt\ExtractDownloadLinks-wua-x64.xsl
 if exist ..\static\StaticDownloadLink-dotnet.txt del ..\static\StaticDownloadLink-dotnet.txt
 if exist DetermineRegVersion.vbs del DetermineRegVersion.vbs
+if exist DetermineAutoDaylightTimeSet.vbs del DetermineAutoDaylightTimeSet.vbs
 if exist ..\static\StaticDownloadLink-mssedefs-x64.txt del ..\static\StaticDownloadLink-mssedefs-x64.txt
 if exist ..\static\StaticDownloadLink-mssedefs-x86.txt del ..\static\StaticDownloadLink-mssedefs-x86.txt
 if exist ..\client\mssedefs\x64\nul (
@@ -160,20 +161,13 @@ if exist ..\client\mssedefs\x86\nul (
   move /Y ..\client\mssedefs\x86 ..\client\mssedefs\x86-glb >nul
   if exist ..\client\md\hashes-mssedefs.txt del ..\client\md\hashes-mssedefs.txt
 )
+if exist ..\doc\faq.txt del ..\doc\faq.txt 
 
 rem *** Execute custom initialization hook ***
 if exist .\custom\InitializationHook.cmd (
   echo Executing custom initialization hook...
   call .\custom\InitializationHook.cmd
   echo %DATE% %TIME% - Info: Executed custom initialization hook >>%DOWNLOAD_LOGFILE%
-)
-
-rem *** Determine state of automatic daylight time setting ***
-echo Determining state of automatic daylight time setting...
-%CSCRIPT_PATH% //Nologo //E:vbs DetermineAutoDaylightTimeSet.vbs
-if exist "%TEMP%\SetAutoDTS.cmd" (
-  call "%TEMP%\SetAutoDTS.cmd"
-  del "%TEMP%\SetAutoDTS.cmd"
 )
 
 rem *** Check whether Microsoft registry console tool is present - only required for w2k ***
@@ -198,18 +192,6 @@ if /i %REG_VERSION_MAJOR% EQU 5 (
 if not exist ..\client\bin\nul md ..\client\bin
 copy %REG_PATH% ..\client\bin >nul
 :SkipRegExe
-
-rem *** Disable automatic daylight time setting ***
-if "%OS_AUTODTS%"=="1" (
-  echo Disabling automatic daylight time setting...
-  %REG_PATH% ADD HKLM\System\CurrentControlSet\Control\TimeZoneInformation /v DisableAutoDaylightTimeSet /t REG_DWORD /d 1 /f >nul 2>&1
-  if errorlevel 1 (
-    echo Warning: Disabling of automatic daylight time setting failed.
-    echo %DATE% %TIME% - Warning: Disabling of automatic daylight time setting failed >>%DOWNLOAD_LOGFILE%
-  ) else (
-    echo %DATE% %TIME% - Info: Disabled automatic daylight time setting >>%DOWNLOAD_LOGFILE%
-  )
-)
 
 rem *** Download Microsoft extract tool ***
 if exist ..\bin\extract.exe goto SkipExtract
@@ -713,18 +695,6 @@ goto :eof
 rem *** Remind build date ***
 echo Reminding build date...
 date /T >..\client\builddate.txt
-
-rem *** Enable automatic daylight time setting ***
-if "%OS_AUTODTS%"=="1" (
-  echo Enabling automatic daylight time setting...
-  %REG_PATH% DELETE HKLM\System\CurrentControlSet\Control\TimeZoneInformation /v DisableAutoDaylightTimeSet /f >nul 2>&1
-  if errorlevel 1 (
-    echo Warning: Enabling of automatic daylight time setting failed.
-    echo %DATE% %TIME% - Warning: Enabling of automatic daylight time setting failed >>%DOWNLOAD_LOGFILE%
-  ) else (
-    echo %DATE% %TIME% - Info: Enabled automatic daylight time setting >>%DOWNLOAD_LOGFILE%
-  )
-)
 goto EoF
 
 :NoExtensions

@@ -1,0 +1,119 @@
+Q: Can I exclude patches from download and/or installation?
+A: Yes, that's possible through customizing the download- and updatescripts according to your requirements. You may add new patches or exclude existing ones. Please follow this guide:
+
+1. Exclude patches from download
+You have to differentiate between statically defined updates (like the latest service packs for Windows 2000 and XP, for example) and updates that are determined dynamically at runtime of the script.
+
+a) Statically defined updates
+Should you desire to exclude all static updates from download, simply check the "Exclude statically defined updates" checkbox inside the Update Generator before downloading. Please be aware that updates you downloaded earlier, which are now excluded, will be deleted on the run.
+
+b) Dynamically determined updates
+To exclude dynamically determined updates from download, insert their knowledge base ID (KBxxxxxx or simply xxxxxx) into the matching exclude file named "ExcludeList-<platform>[-<architecture>].txt".
+
+2. Excluding updates from installation
+Once again you have to make a difference between statically defined and dynamically determined updates.
+a) Statically defined updates
+The statically defined updates (latest version each) are:
+- Service Pack (SP)
+- Windows Update Agent (WUA)
+- Microsoft Installer (MSI)
+- Windows Script Host (WSH)
+- Internet Explorer (IE)
+These updates will be installed only if the version installed on the target system is lower than the versions defined in the file "SetTargetEnvVars.cmd" (directory .\client\cmd). If you generally want to prevent installation of one of those updates, you have to modify the expected values in the "SetTargetEnvVars.cmd" or insert jump marks into the "DoUpdate.cmd" (which controls the installation process). You should do this in very special cases only, as with SP, WUA, MSI and WSH, certain versions are required as preconditions.
+b) Dynamically determined updates
+To exclude dynamically determined updates from installation, insert their knowledge base ID (KBxxxxxx or simply xxxxxx) into the file "ExcludeList.txt" (directory .\client\exclude). These updates will now be ignored; and you'll receive a warning in the log.
+
+The following updates are already excluded:
+- KB816093 (Security update for Microsoft VM)
+- KB890830 (Windows Malicious Software Removal Tool (MSRT))
+- KB926874 (Internet Explorer 7 (will be installed if selected explicitely))
+- KB940767 (Internet Explorer 7 (will be installed if selected explicitely))
+- KB944036 (Internet Explorer 8 (will be installed if selected explicitely))
+- KB326585 (Office 2000 Service Pack 3 (will be implicitely installed if required))
+- KB832671 (Office XP Service Pack 3 (will be implicitely installed if required))
+- KB923618 (Office 2003 Service Pack 3 (will be implicitely installed if required))
+- KB953195 (Office 2007 Service Pack 2 (will be implicitely installed if required))
+- KB813715 (Office 2000 Italian Grammar Tools Update)
+- KB936929 (Windows XP Service Pack 3 (will be installed if selected explicitely))
+
+Please be aware that excluding updates may have an impact on the security of your PC.
+--------------------------------------------------------------------------------
+Q: Can I download/install additional patches?
+A: Yes, you can adjust how the download and update scripts behave by excluding or adding patches from download or installation. For adding updates proceed as follows:
+
+1. Adding updates to download routines
+
+For adding an update to be downloaded, insert its download URL into the matching "StaticDownloadLinks-<platform>[-architecture>]-<language>.txt file, found in the ".\static" directory.
+
+2. Adding updates to installation routines
+
+Add an update to installation by inserting its knowledge base ID (KBxxxxxx or simply xxxxxx) into the matching "StaticUpdateIds-<platform>[-<architecture>].txt file (directory ".\client\static"). This update will then be installed every time, even if it was already installed.
+--------------------------------------------------------------------------------
+Q: I already have the latest Service Pack for my selected OS and don't want to have it downloaded again. Can I integrate it into the WSUS Offline Updater
+somehow?
+A: Yes, if the following preconditions are met: First, you have to put the file into the correct directory; for an XP-SP3 English, this would be ".\client\wxp\enu", for example. Additionally, the filename and the size have to match the properties on Microsoft's servers, in this example "WindowsXP-KB936929-SP3-x86-ENU.exe" with a size of 331,805,736 bytes. As the download uses "wget" with the "-N" option (timestamping), the local copy also must not be older than the copy on the Microsoft server.
+--------------------------------------------------------------------------------
+Q: Can I integrate patches for products made by third parties?
+A: No, and there are no plans to add this. Patches from third parties commonly have completely different command line parameters which makes an integration problematic, if not impossible. Additionally, the Offline Update is meant for making a PC as secure as possible before going online. Updates from third parties can then be downloaded from their respective websites. Many third party products offer some kind of auto-update mechanism to keep themselves current, e. g. Acrobat Reader, Firefox, Thunderbird, SUN Java Runtime, and others.
+--------------------------------------------------------------------------------
+Q: Is it possible to automate the creation of the update media (CD/DVD images), with a scheduled task maybe? If yes, how do I do that?
+A: Create a new batch file in the ".\cmd" directory, e. g. "DownloadUpdatesAndCreateISOImage.cmd". Then enter the desired calls to "DownloadUpdates.cmd" and "CreateISOImage.cmd" with the required options into this file. An example of such a file would be:
+
+@echo off
+call DownloadUpdates wxp enu
+call CreateISOImage wxp enu
+
+Next, create a scheduled task for your new custom script "DownloadUpdatesAndCreateISOImage.cmd" and select the desired run time. For example, if you intend to create new update media following each Microsoft Patchday, select "second Wednesday of every month".
+--------------------------------------------------------------------------------
+Q: Can I start update installation from a shared network resource?
+A: Yes, if the resource in question has been assigned a drive letter ("Map network drive" feature or "net use" command). Direct calls using UNC paths won't work, as they are not supported by command line scripts. Also you can't use the "Automatic reboot and recall" feature, as the shared resources may not be available for the temporary user account "WSUSUpdateAdmin".
+Please note that installing patches over the network is against the philosophy of an Offline update, and the machine may be vulnerable to attacks while the update process is still in progress.
+--------------------------------------------------------------------------------
+Q: A patch is installed over and over again, in spite of being installed already on the target system. What is the reason and how can I resolve this?
+A: This problem regularly occurs when doing kernel updates on OEM systems; it's a Microsoft issue.
+To solve the issue, install such updates manually and specify the "/o" (or "/overwriteoem") switch (as shown on http://support.microsoft.com/kb/262841).
+--------------------------------------------------------------------------------
+Q: When installing patches I receive a warning, that KB890830 has been skipped. Why is it not integrated?
+A:Patch KB890830 is not really an update, but the Malicious Software Removal Tool (MSRT). This tool (MRT.exe) scans the PC once after a reboot for possible malware infections, but it is inferior to commercial virus software in terms of detection rate and updating frequency (it's only updated once a moth on most PCs). Additionally, multiple versions are contained in WSUSSCN2.CAB (Microsoft's update catalog), so it's already filtered out on download. Please note that the latest trunk versions also blacklist KB976002 (Browser Choice).
+--------------------------------------------------------------------------------
+Q: On patch installation I receive warnings about further missing updates. What's up?
+A: WSUS Offline update by default downloads only patches contained in Microsoft's catalog WSUSSCN2.CAB. This includes at least all critical and security-related patches, but not every important, recommended or optional one. If you feel the need to include them, you are free to do so manually (see above).
+--------------------------------------------------------------------------------
+Q: Can I force installation of patches despite them being installed already on the target system?
+A: Yes, but not with the GUI (UpdateInstaller.exe). Call the batch file "Update.cmd" directly using the "/all" option, e. g. "Update.cmd /autoreboot /showlog /all".
+--------------------------------------------------------------------------------
+Q: My antivirus package reports the downloaded archive to be infected by a virus/trojan? Is that true?
+A: This is with very high probability a false positive! The archive contains compiled AutoIt3 scripts, which some antivirus programs generally detect as malware. You can verify the clean status of the scripts (*.au3) by compiling them yourself using the AutoIt3 compiler (http://www.autoitscript.com/autoit3/). Alternatively, upload the downloaded archive to a site like VirusTotal (http://virustotal.com) or Jotti (http://virusscan.jotti.org) and let it be scanned by a multitude of antivirus engines. Additionally, many antivirus suites have the possibility to send the presumed false positives to the author, either manually over a web form/email or automatically within the program. This will improve detection abilities of these products.
+--------------------------------------------------------------------------------
+Q: While downloading Office patches I'm receiving messages like "ERROR 404: Not Found.". Does the Offline Updater use invalid URLS?
+A: No, but Microsoft does. The URLs will be determined at runtime from Microsoft's catalog patchdata.xml, contained in the file invcif.exe. For unknown reasons, Microsoft has these invalid URLs in the file. There's nothing to worry, however. The invalid URLs have been replaced by correct static definitions in the files named "StaticDownloadLinks-*.txt"; so these updates are downloaded anyway. The error messages can be ignored in this case.
+--------------------------------------------------------------------------------
+Q: I have selected creating an Office update medium in my specific language, e. g. Russian. But there are patches in English language downloaded, too. Why is this?
+A: Some patches in Microsoft's catalog invcif.exe (patchdata.xml) are language dependent, but others do only exist in English. The latter are patches for language-independent parts of Office and can be installed on non-English Office installation without any problems.
+For that reason, there has been created an additional subdirectory named "glb" (global), besides the existing ones like "deu", "enu", "rus" etc. In the glb directory the dynamically determined patches are stored which only exist in English, no matter what language has been selected. In the case of Office 2003, the Service Packs for Project, Visio etc. which are in English will be filtered out when creating an update medium. This will save space.
+--------------------------------------------------------------------------------
+Q: I'm about to burn a 500MB ISO image using Nero, but receiving a message telling me the ISO being too big in size. Is the ISO corrupt?
+A: No, certainly not. Nero, in some versions, seems to have problems in determining the CD/DVD size required. Please update Nero or use another CD/DVD/BluRay recording software like ImgBurn (http://imgburn.com).
+--------------------------------------------------------------------------------
+Q: My ISO image is too big to fit on a CD. How can I record it using a DVD?
+A: There's no difference how recording software treats the CD or DVD ISO and media. That means, as long as your recording software supports the ISO format and DVDs, you can burn every ISO image on DVD, too. Note that in some cases when the ISO is smaller than 1GiB, the recording software will add padding data to the end to write at least 1 GiB. This is for compatibility reasons and will have no influence on the CD/DVD contents. 
+--------------------------------------------------------------------------------
+Q: When creating an ISO, I receive the warning: "ISO-9660 filenames longer than 31 may cause buffer overflows in the OS." Should I be alarmed?
+A: No. This is a generic warning which is displayed on every run for creating WSUS Offline Update ISOs. It is only a note that breaking the restrictions of the original ISO9660 filesystem (only short filenames like FILENAME.EXT) may haved undesired effects on older operating systems like MS-DOS, especially with filenames of 32 chars or longer. All platforms relevant for the Offline Updater (Win2000 or higher) handle this without problems, so no need to worry.
+--------------------------------------------------------------------------------
+Q: Is it possible to integrate the downloaded patches from Offline Update into an OS installation disc via slipstreaming?
+A: Not all patches support slipstreaming. Besides, as new patches are released every month (and sometimes even more frequently), you would have to create a new disc every time. Therefore we recommend to slipstream only the latest Service Pack and install the rest of the patches after OS installation, using the Offline Updater.
+--------------------------------------------------------------------------------
+Q: I used the "automatic reboot and recall" option, but the WSUS Offline Updater doesn't resume its work like intended. What can I do?
+A: It seems you have stored the Offline Updater files in a restricted area of your filesystem, where the temporary account "WSUSUpdateAdmin" has no access to, despite having administrative rights. This could be a user specific directory like "(My )Documents" or "Desktop", or an NTFS encrypted one. Please use another base directory for installation of patches.
+--------------------------------------------------------------------------------
+Q: I have selected "Show log file", but after finishing the installation and rebooting, the log is not shown. What's the reason?
+A: Maybe the user account you're logging in with after the final reboot has no permission to access the registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce or the log file (%SystemRoot%\wsusofflineupdate.log). Please log in once with a sufficiently privileged account after finishing installation and reboot.
+--------------------------------------------------------------------------------
+Q: In Windows Vista/Server 2008 or Windows 7/Server 2008 R2, the User account control (UAC) prevents execution of %TEMP%\extract\extract_s.exe. What can I do?
+A: The extract_s.exe serves only one purpose: Extracting the file extract.exe into .\bin, unless it's already there. This is the case on the first run only. Please do the first run of UpdateGenerator.exe or Update.cmd as Administrator. Subsequent runs should not require elevation anymore.
+--------------------------------------------------------------------------------
+Q: After installation of patches using the WSUS Offline Update finished, an empty box without contents appears on every reboot. Only when I click "OK", the boot process continues.
+A: It's uncertain at this time what causes this behavior. Please login as "Administrator" and check if the Windows registry key "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" contains a value named "WSUSOfflineUpdate", or if the key "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" contains values named "DeleteWSUSUpdateAdminProfile" or "ShowOfflineUpdateLogFile". If they exist, delete them.
+Should these entries do not exist in the registry, this behavior was not caused by the Offline Updater. The WSUS Offline Updater team welcomes further hints concerning this problem.
+--------------------------------------------------------------------------------
