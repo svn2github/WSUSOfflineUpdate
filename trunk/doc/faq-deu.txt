@@ -77,6 +77,9 @@ A: Vom Offline Update werden standardmäßig nur Updates heruntergeladen, die in M
 F: Kann ich die Installation der Updates erzwingen, auch wenn sie bereits auf dem Zielsystem installiert sind?
 A: Ja, aber nicht über die GUI (UpdateInstaller.exe). Bitte rufen Sie dazu "Update.cmd" mit dem Parameter "/all" auf, also z.B. "Update.cmd /autoreboot /showlog /all".
 --------------------------------------------------------------------------------
+F: Auf meinem Zielsystem können keine fehlenden Updates ermittelt werden; auf einem anderen werden fehlende Updates immer wieder installiert. Warum?
+A: Für dieses Verhalten ist in aller Regel der Windows Update Agent (WUA) verantwortlich. Bitte folgen Sie den Hinweisen zum Zurücksetzen der Windows Update-Komponenten (http://support.microsoft.com/kb/971058), um den Defekt des WUA zu beheben.
+--------------------------------------------------------------------------------
 F: Bei der Installation der Updates erhalte ich merkwürdige Fehlermeldungen auf der Konsole, z.B. "D:\Downloads\Updates\Windows\ctupdate30\client\cmd\DetermineSystemProperties.vbs(92, 3) (null): 0x80041014", das Skript bricht daraufhin ab. Woran liegt das und was kann ich dagegen tun?
 A: Für einen fehlerfreien Ablauf benötigt das Installationsskript korrekte Installationen der Windows-Dienste bzw. -Komponenten "Automatische Updates (WUA)", "Windows Script Host (WSH)" und "Windows Management Instrumentation (WMI)".
 Bitte prüfen Sie zunächst, ob Sie diese Komponenten über System-Werkzeuge wie beispielsweise TweakUI, nLite, xp-AntiSpy o.ä. in ihrer Funktionalität eingeschränkt oder sogar deaktiviert haben.

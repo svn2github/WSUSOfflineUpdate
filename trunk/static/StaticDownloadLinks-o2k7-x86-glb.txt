@@ -14,4 +14,5 @@ http://download.microsoft.com/download/D/9/C/D9C9F29A-14A4-4968-9929-7EEE6AEA086
 http://download.microsoft.com/download/C/5/1/C517054A-F12A-4246-A4B4-15DC7ED8A2A1/office-kb979441-fullfile-x86-glb.exe
 http://download.microsoft.com/download/F/3/4/F346D3B3-D10A-477C-BB5D-99847376AB86/publisher2007-kb982124-fullfile-x86-glb.exe
 http://download.microsoft.com/download/4/2/0/42098F76-F766-4220-8E34-9F6B4DDC96E9/word-kb982135-fullfile-x86-glb.exe
+http://download.microsoft.com/download/8/B/1/8B14F084-69CA-4F9F-95CA-011E602AF60A/visio2007-kb982127-fullfile-x86-glb.exe
 http://download.microsoft.com/download/7/C/1/7C1358D6-2AEF-4FB0-B987-AC433D5BA8A3/office2007-kb983486-fullfile-x86-glb.exe

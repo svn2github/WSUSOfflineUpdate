@@ -362,7 +362,7 @@ Version 6.51 -- 08.04.10
 - Fix: office2007-kb947318-fullfile-x86-glb.exe was missed (Thanks to "wsususer")
 - Fix: OfficeXP-kb832668-v2-fullfile-enu.exe was missed due to an invalid URL in Microsoft's update catalog file (Thanks to "mjakobi" and "boco")
 --------------------------------------------------------------------------------
-Version 6.6 -- ??.??.10
+Version 6.6 -- 14.06.10
 - NOTE: This version is supposed to be the last one supporting Windows 2000 (see http://support.microsoft.com/lifecycle/?p1=3071)
 - NOTE: Inverted logic for 'Include/Exclude Service Packs' option in UpdateGenerator script; UpdateGenerator.ini file keyword changed; no parameter modification for DownloadUpdates script (Thanks to "AlBundy", "Gerby" and "-Iwan-") 
 - Office updates up to 06/2010 integrated by static definitions
@@ -397,3 +397,5 @@ Version 6.6 -- ??.??.10
 - Fix: Required localized versions of Office 2003 patches KB975051 and KB983503 will now be downloaded (Thanks to "vsu")
 - Fix: Outlook 2003 and 2007 Junk Email Filter updates won't any longer be installed by static definitions (Thanks to "Computerist" and "-Iwan-")
 - Fix: Installation of .NET 1.1 updates kb947742, kb953297, kb971108 and kb979906 could lead to unexpected reboots (Thanks to "lbriggs", "vsu" and "boco")
+- Fix: Replaced deprecated update kb955655 for Visio 2003 by kb982126 (Thanks to "vsu")
+--------------------------------------------------------------------------------

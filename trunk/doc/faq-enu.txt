@@ -82,6 +82,9 @@ A: WSUS Offline update by default downloads only patches contained in Microsoft'
 Q: Can I force installation of patches despite them being installed already on the target system?
 A: Yes, but not with the GUI (UpdateInstaller.exe). Call the batch file "Update.cmd" directly using the "/all" option, e. g. "Update.cmd /autoreboot /showlog /all".
 --------------------------------------------------------------------------------
+Q: On my target system, the missing updates can't be determined; on another computer, missing updates will be installed again and again. Why?
+A: In most cases, the Windows Update Agent (WUA) is responsible for this misbehaviour. To resolve this problem, please follow the instructions to reset the Windows Update components (http://support.microsoft.com/kb/971058).
+--------------------------------------------------------------------------------
 Q: My antivirus package reports the downloaded archive to be infected by a virus/trojan? Is that true?
 A: This is with very high probability a false positive! The archive contains compiled AutoIt3 scripts, which some antivirus programs generally detect as malware. You can verify the clean status of the scripts (*.au3) by compiling them yourself using the AutoIt3 compiler (http://www.autoitscript.com/autoit3/). Alternatively, upload the downloaded archive to a site like VirusTotal (http://virustotal.com) or Jotti (http://virusscan.jotti.org) and let it be scanned by a multitude of antivirus engines. Additionally, many antivirus suites have the possibility to send the presumed false positives to the author, either manually over a web form/email or automatically within the program. This will improve detection abilities of these products.
 --------------------------------------------------------------------------------
