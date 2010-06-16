@@ -1,5 +1,5 @@
 Q: Can I exclude patches from download and/or installation?
-A: Yes, that's possible through customizing the download- and updatescripts according to your requirements. You may add new patches or exclude existing ones. Please follow this guide:
+A: Yes, that's possible through customizing the download- and update scripts according to your requirements. You may add new patches or exclude existing ones. Please follow this guide:
 
 1. Exclude patches from download
 You have to differentiate between statically defined updates (like the latest service packs for Windows 2000 and XP, for example) and updates that are determined dynamically at runtime of the script.
@@ -26,15 +26,15 @@ To exclude dynamically determined updates from installation, insert their knowle
 The following updates are already excluded:
 - KB816093 (Security update for Microsoft VM)
 - KB890830 (Windows Malicious Software Removal Tool (MSRT))
-- KB926874 (Internet Explorer 7 (will be installed if selected explicitely))
-- KB940767 (Internet Explorer 7 (will be installed if selected explicitely))
-- KB944036 (Internet Explorer 8 (will be installed if selected explicitely))
-- KB326585 (Office 2000 Service Pack 3 (will be implicitely installed if required))
-- KB832671 (Office XP Service Pack 3 (will be implicitely installed if required))
-- KB923618 (Office 2003 Service Pack 3 (will be implicitely installed if required))
-- KB953195 (Office 2007 Service Pack 2 (will be implicitely installed if required))
+- KB926874 (Internet Explorer 7 (will be installed if selected explicitly))
+- KB940767 (Internet Explorer 7 (will be installed if selected explicitly))
+- KB944036 (Internet Explorer 8 (will be installed if selected explicitly))
+- KB326585 (Office 2000 Service Pack 3 (will be implicitly installed if required))
+- KB832671 (Office XP Service Pack 3 (will be implicitly installed if required))
+- KB923618 (Office 2003 Service Pack 3 (will be implicitly installed if required))
+- KB953195 (Office 2007 Service Pack 2 (will be implicitly installed if required))
 - KB813715 (Office 2000 Italian Grammar Tools Update)
-- KB936929 (Windows XP Service Pack 3 (will be installed if selected explicitely))
+- KB936929 (Windows XP Service Pack 3 (will be installed if selected explicitly))
 
 Please be aware that excluding updates may have an impact on the security of your PC.
 --------------------------------------------------------------------------------
@@ -83,7 +83,13 @@ Q: Can I force installation of patches despite them being installed already on t
 A: Yes, but not with the GUI (UpdateInstaller.exe). Call the batch file "Update.cmd" directly using the "/all" option, e. g. "Update.cmd /autoreboot /showlog /all".
 --------------------------------------------------------------------------------
 Q: On my target system, the missing updates can't be determined; on another computer, missing updates will be installed again and again. Why?
-A: In most cases, the Windows Update Agent (WUA) is responsible for this misbehaviour. To resolve this problem, please follow the instructions to reset the Windows Update components (http://support.microsoft.com/kb/971058).
+A: In most cases, the Windows Update Agent (WUA) is responsible for this misbehavior. To resolve this problem, please follow the instructions to reset the Windows Update components (http://support.microsoft.com/kb/971058).
+--------------------------------------------------------------------------------
+Q: On installation of patches I'm getting strange errors in the command line window, e. g. "C:\wsusupdate\client\cmd\DetermineSystemProperties.vbs(92, 3) (null): 0x80041014". Then the script terminates. What is the cause and how can I solve this problem?
+A: For trouble-free execution, the script requires the correct installation and configuration of the following Windows services/components: "Automatic Update/Windows Update (WUA)", "Windows Script Host (WSH)" and "Windows Management Instrumentation (WMI)". Please check first if you have restricted or even disabled these services with tools like TweakUI, nLite/vLite, XP-Antispy, XPy, Tuneup Utilities etc. If that's not the case, the cause is most probably an erroneous WMI registration. Download the WMI diagnostics tool from Microsoft (http://www.microsoft.com/technet/script ... idiag.mspx) and use it to scan you system for WMI-related errors. Further technical information and guides (up to the recreation of the WMI repositories) you'll find on http://www.microsoft.com/technet/script ... p/wmi.mspx.
+--------------------------------------------------------------------------------
+Q: When installing patches I'm receiving the error: "...\ListMissingUpdateIds.vbs(17, 1) (null): The file or directory is corrupted and unreadable." or "...\ListMissingUpdateIds.vbs(17, 1) (null): The signature of the certificate cannot be verified." How can I solve that problem?
+A: This error occurs, if the file ".\client\wsus\wsusscn2.cab" is truncated/corrupted, because it has not been downloaded completely. Of course this invalidates its digital signature. Please rerun the download and media creation again to replace the bad file.
 --------------------------------------------------------------------------------
 Q: My antivirus package reports the downloaded archive to be infected by a virus/trojan? Is that true?
 A: This is with very high probability a false positive! The archive contains compiled AutoIt3 scripts, which some antivirus programs generally detect as malware. You can verify the clean status of the scripts (*.au3) by compiling them yourself using the AutoIt3 compiler (http://www.autoitscript.com/autoit3/). Alternatively, upload the downloaded archive to a site like VirusTotal (http://virustotal.com) or Jotti (http://virusscan.jotti.org) and let it be scanned by a multitude of antivirus engines. Additionally, many antivirus suites have the possibility to send the presumed false positives to the author, either manually over a web form/email or automatically within the program. This will improve detection abilities of these products.
@@ -115,6 +121,26 @@ A: Maybe the user account you're logging in with after the final reboot has no p
 --------------------------------------------------------------------------------
 Q: In Windows Vista/Server 2008 or Windows 7/Server 2008 R2, the User account control (UAC) prevents execution of %TEMP%\extract\extract_s.exe. What can I do?
 A: The extract_s.exe serves only one purpose: Extracting the file extract.exe into .\bin, unless it's already there. This is the case on the first run only. Please do the first run of UpdateGenerator.exe or Update.cmd as Administrator. Subsequent runs should not require elevation anymore.
+--------------------------------------------------------------------------------
+Q: I enabled the "automatic reboot and recall" option, and now my PC automatically logs into the "WSUSUpdateAdmin" account. How can I prevent that and revert to my previous account settings?
+A: That issue rarely happens. Please help improve the software by submitting a detailed error report, including the preconditions and how to reproduce the error, to the development team.
+To "clean up" your OS do the following:
+- Cancel running update scripts using <Ctrl>+C;
+- Execute the "CleanupRecall.cmd" script in the "cmd" directory, then reboot.
+
+If it still won't work, follow this guide:
+- Log off the "WSUSAdmin" account. While doing this, hold the <Shift> key to prevent automatic login and show the Logon screen instead.
+- Log on the "Administrator" account (or an account with administrative rights).
+- Check for the existence of a file named "%SystemRoot%\wsusbak-winlogon.reg".
+- If the file exists, start the registry editor ([Start - Run...] regedit) and delete the key "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon". Then merge the backed up values back into the registry by double-clicking the "%SystemRoot%\wsusbak-winlogon.reg" file and confirming the prompt. Then you can delete that file.
+- If the file doesn't exist, start the registry editor ([Start - Run...] regedit) and modify some values of the key "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" as follows:
+- DefaultUserName: Administrator (or another user account of your choice)
+- DefaultPassword: Delete value
+- AutoAdminLogon: Delete value
+- ForceAutoLogon: Delete value
+- Delete the "WSUSUpdateAdmin" account using the "User accounts" Control Panel item.
+- Delete the user profile files if they still exist (2000/XP: C:\Documents and Settings, Vista/7: C:\Users).
+- Reboot.
 --------------------------------------------------------------------------------
 Q: After installation of patches using the WSUS Offline Update finished, an empty box without contents appears on every reboot. Only when I click "OK", the boot process continues.
 A: It's uncertain at this time what causes this behavior. Please login as "Administrator" and check if the Windows registry key "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" contains a value named "WSUSOfflineUpdate", or if the key "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" contains values named "DeleteWSUSUpdateAdminProfile" or "ShowOfflineUpdateLogFile". If they exist, delete them.
