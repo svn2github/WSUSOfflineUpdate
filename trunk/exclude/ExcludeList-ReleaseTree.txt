@@ -9,15 +9,9 @@ ExtractDownloadLinks-oall-deu.xsl
 ExtractDownloadLinks-oall-enu.xsl
 ExtractDownloadLinks-oall-fra.xsl
 ExtractDownloadLinks-wall.xsl
-ExtractUpdateCategories.xsl
-ExtractUpdatePayloadFiles.xsl
-ExtractUpdateCategoriesAndFileIds.xsl
-ExtractUpdateFileIdsAndLocations.xsl
 CompileAutoItScripts.cmd
 ExtractDownloadLinks-oall.cmd
 ExtractDownloadLinks-wall.cmd
-ExtractUpdateCategoriesAndFileIds.cmd
-ExtractUpdateFileIdsAndLocations.cmd
 PrepareProductionTree.cmd
 PrepareReleaseTree.cmd
 MakeRelease.cmd

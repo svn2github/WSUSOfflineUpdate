@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.6+ (r118)
+set WSUSUPDATE_VERSION=6.6.1
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -450,7 +450,7 @@ for /F %%i in ('dir /B %IE_FILENAME%') do (
       call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANGUAGE%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default %BACKUP_MODE% /norestart
     )
   )
-  if not errorlevel 1 set REBOOT_REQUIRED=1
+  if not errorlevel 1 set RECALL_REQUIRED=1
 )
 goto IEInstalled 
 
@@ -478,6 +478,8 @@ for /F %%i in ('dir /B %IE_FILENAME%') do (
 goto IEInstalled 
 
 :IEw61
+goto SkipIEInst
+
 :IEInstalled
 if "%RECALL_REQUIRED%"=="1" goto Installed
 :SkipIEInst
@@ -567,6 +569,7 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
   call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
 )
 set RECALL_REQUIRED=1
+if "%RECALL_REQUIRED%"=="1" goto Installed
 :SkipDotNet35Inst
 
 rem *** Install .NET Framework 4 ***

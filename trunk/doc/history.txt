@@ -399,6 +399,9 @@ Version 6.6 -- 14.06.10
 - Fix: Installation of .NET 1.1 updates kb947742, kb953297, kb971108 and kb979906 could lead to unexpected reboots (Thanks to "lbriggs", "vsu" and "boco")
 - Fix: Replaced deprecated update kb955655 for Visio 2003 by kb982126 (Thanks to "vsu")
 --------------------------------------------------------------------------------
-Version 6.? -- ??.??.10
+Version 6.6.1 -- 17.06.10
 - English FAQs completed (Thanks to "boco")
-- DirectX End-User Runtimes rolled back to v. 9.28.1886 (February 2010) because v. 9.29.1962 (June 2010) fails to install under Windows 2000 (Thanks to "Denniss")
+- Fix: DirectX End-User Runtimes rolled back to v. 9.28.1886 (February 2010) because v. 9.29.1962 (June 2010) fails to install under Windows 2000 (Thanks to "Denniss")
+- Fix: Installation of IE8 did not request recall on Windows XP and Server 2003 systems
+- Fix: Installation of .NET 3.5 SP1 did not request recall
+--------------------------------------------------------------------------------
