@@ -17,16 +17,6 @@ if errorlevel 1 (
   echo %DATE% %TIME% - Info: Saved Winlogon registry hive >>%UPDATE_LOGFILE%
 )
 
-if /i "%OS_NAME%"=="w2k" (
-  echo Saving Explorer policies registry hive...
-  %REG_PATH% EXPORT "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" %SystemRoot%\wsusbak-explorer-policies.reg >nul 2>&1
-  if errorlevel 1 (
-    echo %DATE% %TIME% - Info: Saving of Explorer policies registry hive failed >>%UPDATE_LOGFILE%
-  ) else (
-    echo %DATE% %TIME% - Info: Saved Explorer policies registry hive >>%UPDATE_LOGFILE%
-  )
-)  
-
 echo Saving Desktop policies registry hive...
 %REG_PATH% EXPORT "HKLM\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop" %SystemRoot%\wsusbak-desktop-policies.reg >nul 2>&1
 if errorlevel 1 (

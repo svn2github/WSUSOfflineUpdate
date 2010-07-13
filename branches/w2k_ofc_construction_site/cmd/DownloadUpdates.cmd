@@ -21,7 +21,7 @@ if exist %DOWNLOAD_LOGFILE% (
 )
 echo %DATE% %TIME% - Info: Starting download (v. %WSUSUPDATE_VERSION%) for %1 %2 >>%DOWNLOAD_LOGFILE%
 
-for %%i in (w2k wxp w2k3 w2k3-x64 oxp o2k3 o2k7 o2k7-x64) do (
+for %%i in (wxp w2k3 w2k3-x64 oxp o2k3 o2k7 o2k7-x64) do (
   if /i "%1"=="%%i" (
     for %%j in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%2"=="%%j" goto EvalParams)
   )
@@ -68,7 +68,6 @@ popd
 
 set CSCRIPT_PATH=%SystemRoot%\system32\cscript.exe
 if not exist %CSCRIPT_PATH% goto NoCScript
-set REG_PATH=%SystemRoot%\system32\reg.exe
 set WGET_PATH=..\bin\wget.exe
 if not exist %WGET_PATH% goto NoWGet
 
@@ -82,13 +81,7 @@ if exist ..\exclude\custom\dummy.txt del ..\exclude\custom\dummy.txt
 if exist ..\static\custom\dummy.txt del ..\static\custom\dummy.txt
 if exist ..\client\exclude\custom\dummy.txt del ..\client\exclude\custom\dummy.txt
 if exist ..\client\static\custom\dummy.txt del ..\client\static\custom\dummy.txt
-if exist ..\client\msi\nul (
-  if exist ..\client\msi\WindowsInstaller-KB893803-v2-x86.exe (
-    if not exist ..\client\w2k\glb\nul md ..\client\w2k\glb
-    move /Y ..\client\msi\WindowsInstaller-KB893803-v2-x86.exe ..\client\w2k\glb >nul
-  )
-  call ..\client\cmd\SafeRmDir.cmd ..\client\msi
-)
+if exist ..\client\msi\nul call ..\client\cmd\SafeRmDir.cmd ..\client\msi
 if exist ..\client\static\StaticUpdateIds-o2k7.txt (
   if exist ..\client\static\StaticUpdateIds-o2k7-x86.txt del ..\client\static\StaticUpdateIds-o2k7-x86.txt
   ren ..\client\static\StaticUpdateIds-o2k7.txt StaticUpdateIds-o2k7-x86.txt
@@ -169,29 +162,6 @@ if exist .\custom\InitializationHook.cmd (
   call .\custom\InitializationHook.cmd
   echo %DATE% %TIME% - Info: Executed custom initialization hook >>%DOWNLOAD_LOGFILE%
 )
-
-rem *** Check whether Microsoft registry console tool is present - only required for w2k ***
-if /i "%1" NEQ "w2k" goto SkipRegExe
-if exist ..\client\bin\reg.exe goto SkipRegExe
-
-rem *** Determine Microsoft registry console tool version ***
-echo Determining Microsoft registry console tool version...
-if not exist %REG_PATH% goto NoRegExe
-%CSCRIPT_PATH% //Nologo //E:vbs ..\client\cmd\DetermineFileVersion.vbs %REG_PATH% REG_VERSION
-if not exist "%TEMP%\SetFileVersion.cmd" goto NoRegVersion
-call "%TEMP%\SetFileVersion.cmd"
-del "%TEMP%\SetFileVersion.cmd"
-
-rem *** Copy Microsoft registry console tool ***
-echo Copying Microsoft registry console tool...
-if /i %REG_VERSION_MAJOR% GTR 5 goto InvalidRegExe
-if /i %REG_VERSION_MAJOR% LSS 2 goto InvalidRegExe
-if /i %REG_VERSION_MAJOR% EQU 5 (
-  if /i %REG_VERSION_MINOR% GTR 1 goto InvalidRegExe
-)
-if not exist ..\client\bin\nul md ..\client\bin
-copy %REG_PATH% ..\client\bin >nul
-:SkipRegExe
 
 rem *** Download Microsoft extract tool ***
 if exist ..\bin\extract.exe goto SkipExtract
@@ -278,18 +248,7 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   )
 )
 
-rem *** Download installation files for IE6 %2 - only required for w2k ***
-if /i "%1" NEQ "w2k" goto SkipIE6
-echo Downloading/validating installation files for IE6 %2...
-%WGET_PATH% -nv -N -i ..\static\StaticDownloadLinks-ie6-%2.txt -P ..\client\win\%2\ie6setup -a %DOWNLOAD_LOGFILE%
-if errorlevel 1 goto DownloadError
-call FixIE6SetupDir.cmd %2
-if errorlevel 1 goto DownloadError
-echo %DATE% %TIME% - Info: Downloaded/validated installation files for IE6 %2 >>%DOWNLOAD_LOGFILE%
-:SkipIE6
-
-rem *** Download installation files for .NET Framework 3.5 SP1 and 4 - not required for w2k ***
-if /i "%1"=="w2k" goto SkipDotNet
+rem *** Download installation files for .NET Framework 3.5 SP1 and 4 ***
 if "%INCLUDE_DOTNET%" NEQ "1" goto SkipDotNet
 set DOTNET35_FILENAME=..\dotnet\dotnetfx35.exe
 set DOTNET4_FILENAME=..\dotnet\dotNetFx40_Full_x86_x64.exe
@@ -338,8 +297,7 @@ call :DownloadCore dotnet %TARGET_ARCHITECTURE%-glb
 if errorlevel 1 goto Error
 :SkipDotNet
 
-rem *** Download definition files for Microsoft Security Essentials - not required for w2k and w2k3 ***
-if /i "%1"=="w2k" goto SkipMSSE
+rem *** Download definition files for Microsoft Security Essentials - not required for w2k3 ***
 if /i "%1"=="w2k3" goto SkipMSSE
 if /i "%1"=="w2k3-x64" goto SkipMSSE
 if "%INCLUDE_MSSE%" NEQ "1" goto SkipMSSE
@@ -382,7 +340,7 @@ if "%VERIFY_DOWNLOADS%"=="1" (
 :SkipMSSE
 
 rem *** Download the platform specific patches ***
-for %%i in (w2k wxp w2k3) do (
+for %%i in (wxp w2k3) do (
   if /i "%1"=="%%i" (
     call :DownloadCore win glb
     if errorlevel 1 goto Error
@@ -398,7 +356,7 @@ for %%i in (oxp o2k3 o2k7 o2k7-x64) do (
     if errorlevel 1 goto Error
   )
 )
-for %%i in (w2k wxp w2k3 w2k3-x64 oxp o2k3 o2k7 o2k7-x64) do (
+for %%i in (wxp w2k3 w2k3-x64 oxp o2k3 o2k7 o2k7-x64) do (
   if /i "%1"=="%%i" (
     call :DownloadCore %1 glb
     if errorlevel 1 goto Error
@@ -449,7 +407,7 @@ if "%EXCLUDE_SP%"=="1" (
 
 :SkipStatics
 if not exist ..\bin\msxsl.exe goto NoMSXSL
-for %%i in (dotnet win w2k wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64) do (if /i "%1"=="%%i" goto DetermineWindows)
+for %%i in (dotnet win wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64) do (if /i "%1"=="%%i" goto DetermineWindows)
 for %%i in (ofc oxp o2k3 o2k7 o2k7-x64) do (if /i "%1"=="%%i" goto DetermineOffice)
 goto DoDownload
 
@@ -706,7 +664,7 @@ exit /b 1
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %1 %2 %3 %4
-echo Usage1: %~n0 {w2k ^| wxp ^| w2k3 ^| w2k3-x64 ^| oxp ^| o2k3 ^| o2k7 ^| o2k7-x64} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>]
+echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| oxp ^| o2k3 ^| o2k7 ^| o2k7-x64} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>]
 echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>]
 echo %DATE% %TIME% - Error: Invalid parameter: %1 %2 %3 %4 >>%DOWNLOAD_LOGFILE%
 echo.
@@ -737,33 +695,6 @@ goto Error
 echo.
 echo ERROR: Download utility %WGET_PATH% not found.
 echo %DATE% %TIME% - Error: Utility %WGET_PATH% not found >>%DOWNLOAD_LOGFILE%
-echo.
-goto Error
-
-:NoRegExe
-echo.
-echo ERROR: File %REG_PATH% not found.
-echo If you run Windows 2000, please manually extract that file out of
-echo the \SUPPORT\TOOLS\SUPPORT.CAB file on your installation CD and
-echo copy it to the directory ..\client\bin.
-echo %DATE% %TIME% - Error: File %REG_PATH% not found >>%DOWNLOAD_LOGFILE%
-echo.
-goto Error
-
-:NoRegVersion
-echo.
-echo ERROR: Determination of Microsoft registry console tool version failed.
-echo %DATE% %TIME% - Error: Determination of Microsoft registry console tool version failed >>%DOWNLOAD_LOGFILE%
-echo.
-goto Error
-
-:InvalidRegExe
-echo.
-echo ERROR: File %REG_PATH% has version %REG_VERSION_MAJOR%.%REG_VERSION_MINOR%,
-echo which is incompatible with Windows 2000 target systems.
-echo Please manually copy that file from a Windows 2000 or XP system
-echo to the directory ..\client\bin.
-echo %DATE% %TIME% - Error: File %REG_PATH% has incompatible version %REG_VERSION_MAJOR%.%REG_VERSION_MINOR% >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 

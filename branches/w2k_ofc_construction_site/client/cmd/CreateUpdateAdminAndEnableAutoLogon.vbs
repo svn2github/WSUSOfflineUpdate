@@ -9,8 +9,6 @@ Private Const strKeyNamePassword          = "DefaultPassword"
 Private Const strKeyNameAutoAdminLogon    = "AutoAdminLogon"
 Private Const strKeyNameForceAutoLogon    = "ForceAutoLogon"
 Private Const strWSUSUpdateAdminName      = "WSUSUpdateAdmin"
-Private Const strKeyPathExplorerPolicies  = "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer\"
-Private Const strKeyNameNoWelcomeScreen   = "NoWelcomeScreen"
 Private Const strKeyPathDesktopPolicies   = "HKLM\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop\"
 Private Const strKeyNameScreenSaveActive  = "ScreenSaveActive"
 
@@ -56,9 +54,6 @@ Private Sub EnableAutoLogon(shell)
   shell.RegWrite strKeyPathLogon & strKeyNameAutoAdminLogon, "1", "REG_SZ"
   shell.RegWrite strKeyPathLogon & strKeyNameForceAutoLogon, "1", "REG_SZ"
   shell.RegWrite strKeyPathDesktopPolicies & strKeyNameScreenSaveActive, 0, "REG_DWORD"
-  If LCase(shell.ExpandEnvironmentStrings("%OS_NAME%")) = "w2k" Then
-    shell.RegWrite strKeyPathExplorerPolicies & strKeyNameNoWelcomeScreen, 1, "REG_DWORD"
-  End If    
   On Error GoTo 0 'Turn error reporting on
 End Sub
 

@@ -32,7 +32,6 @@ Dim Const $msgbox_btn_continue    = 11
 Dim Const $default_logpixels      = 96
 
 ; INI file constants
-Dim Const $ini_section_w2k        = "Windows 2000"
 Dim Const $ini_section_wxp        = "Windows XP"
 Dim Const $ini_section_w2k3       = "Windows Server 2003"
 Dim Const $ini_section_w2k3_x64   = "Windows Server 2003 x64"
@@ -94,32 +93,32 @@ Dim Const $path_rel_builddate     = "\client\builddate.txt"
 
 Dim $maindlg, $inifilename, $tabitemfocused, $includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $buildlbl
 Dim $usbcopy, $usblbl, $usbpath, $usbfsf, $skipdownload, $btn_start, $btn_proxy, $btn_wsus, $btn_donate, $btn_exit, $proxy, $wsus, $dummy
-Dim $w2k_enu, $wxp_enu, $w2k3_enu, $w2k3_x64_enu, $oxp_enu, $o2k3_enu, $o2k7_enu  ; English
-Dim $w2k_fra, $wxp_fra, $w2k3_fra, $w2k3_x64_fra, $oxp_fra, $o2k3_fra, $o2k7_fra  ; French
-Dim $w2k_esn, $wxp_esn, $w2k3_esn, $w2k3_x64_esn, $oxp_esn, $o2k3_esn, $o2k7_esn  ; Spanish
-Dim $w2k_jpn, $wxp_jpn, $w2k3_jpn, $w2k3_x64_jpn, $oxp_jpn, $o2k3_jpn, $o2k7_jpn  ; Japanese
-Dim $w2k_kor, $wxp_kor, $w2k3_kor, $w2k3_x64_kor, $oxp_kor, $o2k3_kor, $o2k7_kor  ; Korean
-Dim $w2k_rus, $wxp_rus, $w2k3_rus, $w2k3_x64_rus, $oxp_rus, $o2k3_rus, $o2k7_rus  ; Russian
-Dim $w2k_ptg, $wxp_ptg, $w2k3_ptg, $oxp_ptg, $o2k3_ptg, $o2k7_ptg ; Portuguese
-Dim $w2k_ptb, $wxp_ptb, $w2k3_ptb, $w2k3_x64_ptb, $oxp_ptb, $o2k3_ptb, $o2k7_ptb  ; Brazilian
-Dim $w2k_deu, $wxp_deu, $w2k3_deu, $w2k3_x64_deu, $oxp_deu, $o2k3_deu, $o2k7_deu  ; German
-Dim $w2k_nld, $wxp_nld, $w2k3_nld, $oxp_nld, $o2k3_nld, $o2k7_nld ; Dutch
-Dim $w2k_ita, $wxp_ita, $w2k3_ita, $oxp_ita, $o2k3_ita, $o2k7_ita ; Italian
-Dim $w2k_chs, $wxp_chs, $w2k3_chs, $oxp_chs, $o2k3_chs, $o2k7_chs ; Chinese simplified
-Dim $w2k_cht, $wxp_cht, $w2k3_cht, $oxp_cht, $o2k3_cht, $o2k7_cht ; Chinese traditional
-Dim $w2k_plk, $wxp_plk, $w2k3_plk, $oxp_plk, $o2k3_plk, $o2k7_plk ; Polish
-Dim $w2k_hun, $wxp_hun, $w2k3_hun, $oxp_hun, $o2k3_hun, $o2k7_hun ; Hungarian
-Dim $w2k_csy, $wxp_csy, $w2k3_csy, $oxp_csy, $o2k3_csy, $o2k7_csy ; Czech
-Dim $w2k_sve, $wxp_sve, $w2k3_sve, $oxp_sve, $o2k3_sve, $o2k7_sve ; Swedish
-Dim $w2k_trk, $wxp_trk, $w2k3_trk, $oxp_trk, $o2k3_trk, $o2k7_trk ; Turkish
-Dim $w2k_ell, $wxp_ell, $w2k3_ell, $oxp_ell, $o2k3_ell, $o2k7_ell ; Greek
-Dim $w2k_ara, $wxp_ara, $w2k3_ara, $oxp_ara, $o2k3_ara, $o2k7_ara ; Arabic
-Dim $w2k_heb, $wxp_heb, $w2k3_heb, $oxp_heb, $o2k3_heb, $o2k7_heb ; Hebrew
-Dim $w2k_dan, $wxp_dan, $w2k3_dan, $oxp_dan, $o2k3_dan, $o2k7_dan ; Danish
-Dim $w2k_nor, $wxp_nor, $w2k3_nor, $oxp_nor, $o2k3_nor, $o2k7_nor ; Norwegian
-Dim $w2k_fin, $wxp_fin, $w2k3_fin, $oxp_fin, $o2k3_fin, $o2k7_fin ; Finnish
-Dim $w60_glb, $w60_x64_glb                                        ; Windows Vista / Windows Server 2008 (global)  
-Dim $w61_glb, $w61_x64_glb                                        ; Windows 7 / Windows Server 2008 R2 (global)  
+Dim $wxp_enu, $w2k3_enu, $w2k3_x64_enu, $oxp_enu, $o2k3_enu, $o2k7_enu  ; English
+Dim $wxp_fra, $w2k3_fra, $w2k3_x64_fra, $oxp_fra, $o2k3_fra, $o2k7_fra  ; French
+Dim $wxp_esn, $w2k3_esn, $w2k3_x64_esn, $oxp_esn, $o2k3_esn, $o2k7_esn  ; Spanish
+Dim $wxp_jpn, $w2k3_jpn, $w2k3_x64_jpn, $oxp_jpn, $o2k3_jpn, $o2k7_jpn  ; Japanese
+Dim $wxp_kor, $w2k3_kor, $w2k3_x64_kor, $oxp_kor, $o2k3_kor, $o2k7_kor  ; Korean
+Dim $wxp_rus, $w2k3_rus, $w2k3_x64_rus, $oxp_rus, $o2k3_rus, $o2k7_rus  ; Russian
+Dim $wxp_ptg, $w2k3_ptg, $oxp_ptg, $o2k3_ptg, $o2k7_ptg ; Portuguese
+Dim $wxp_ptb, $w2k3_ptb, $w2k3_x64_ptb, $oxp_ptb, $o2k3_ptb, $o2k7_ptb  ; Brazilian
+Dim $wxp_deu, $w2k3_deu, $w2k3_x64_deu, $oxp_deu, $o2k3_deu, $o2k7_deu  ; German
+Dim $wxp_nld, $w2k3_nld, $oxp_nld, $o2k3_nld, $o2k7_nld ; Dutch
+Dim $wxp_ita, $w2k3_ita, $oxp_ita, $o2k3_ita, $o2k7_ita ; Italian
+Dim $wxp_chs, $w2k3_chs, $oxp_chs, $o2k3_chs, $o2k7_chs ; Chinese simplified
+Dim $wxp_cht, $w2k3_cht, $oxp_cht, $o2k3_cht, $o2k7_cht ; Chinese traditional
+Dim $wxp_plk, $w2k3_plk, $oxp_plk, $o2k3_plk, $o2k7_plk ; Polish
+Dim $wxp_hun, $w2k3_hun, $oxp_hun, $o2k3_hun, $o2k7_hun ; Hungarian
+Dim $wxp_csy, $w2k3_csy, $oxp_csy, $o2k3_csy, $o2k7_csy ; Czech
+Dim $wxp_sve, $w2k3_sve, $oxp_sve, $o2k3_sve, $o2k7_sve ; Swedish
+Dim $wxp_trk, $w2k3_trk, $oxp_trk, $o2k3_trk, $o2k7_trk ; Turkish
+Dim $wxp_ell, $w2k3_ell, $oxp_ell, $o2k3_ell, $o2k7_ell ; Greek
+Dim $wxp_ara, $w2k3_ara, $oxp_ara, $o2k3_ara, $o2k7_ara ; Arabic
+Dim $wxp_heb, $w2k3_heb, $oxp_heb, $o2k3_heb, $o2k7_heb ; Hebrew
+Dim $wxp_dan, $w2k3_dan, $oxp_dan, $o2k3_dan, $o2k7_dan ; Danish
+Dim $wxp_nor, $w2k3_nor, $oxp_nor, $o2k3_nor, $o2k7_nor ; Norwegian
+Dim $wxp_fin, $w2k3_fin, $oxp_fin, $o2k3_fin, $o2k7_fin ; Finnish
+Dim $w60_glb, $w60_x64_glb                              ; Windows Vista / Windows Server 2008 (global)  
+Dim $w61_glb, $w61_x64_glb                              ; Windows 7 / Windows Server 2008 R2 (global)  
 
 Dim $dlgheight, $groupwidth, $groupheight, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
 
@@ -304,84 +303,60 @@ Func LanguageCaption($token, $german)
 EndFunc
 
 Func DisableGUI()
-  GUICtrlSetState($w2k_enu, $GUI_DISABLE)
   GUICtrlSetState($wxp_enu, $GUI_DISABLE)
   GUICtrlSetState($w2k3_enu, $GUI_DISABLE)
   GUICtrlSetState($w2k3_x64_enu, $GUI_DISABLE)
-  GUICtrlSetState($w2k_fra, $GUI_DISABLE)
   GUICtrlSetState($wxp_fra, $GUI_DISABLE)
   GUICtrlSetState($w2k3_fra, $GUI_DISABLE)
   GUICtrlSetState($w2k3_x64_fra, $GUI_DISABLE)
-  GUICtrlSetState($w2k_esn, $GUI_DISABLE)
   GUICtrlSetState($wxp_esn, $GUI_DISABLE)
   GUICtrlSetState($w2k3_esn, $GUI_DISABLE)
   GUICtrlSetState($w2k3_x64_esn, $GUI_DISABLE)
-  GUICtrlSetState($w2k_jpn, $GUI_DISABLE)
   GUICtrlSetState($wxp_jpn, $GUI_DISABLE)
   GUICtrlSetState($w2k3_jpn, $GUI_DISABLE)
   GUICtrlSetState($w2k3_x64_jpn, $GUI_DISABLE)
-  GUICtrlSetState($w2k_kor, $GUI_DISABLE)
   GUICtrlSetState($wxp_kor, $GUI_DISABLE)
   GUICtrlSetState($w2k3_kor, $GUI_DISABLE)
   GUICtrlSetState($w2k3_x64_kor, $GUI_DISABLE)
-  GUICtrlSetState($w2k_rus, $GUI_DISABLE)
   GUICtrlSetState($wxp_rus, $GUI_DISABLE)
   GUICtrlSetState($w2k3_rus, $GUI_DISABLE)
   GUICtrlSetState($w2k3_x64_rus, $GUI_DISABLE)
-  GUICtrlSetState($w2k_ptg, $GUI_DISABLE)
   GUICtrlSetState($wxp_ptg, $GUI_DISABLE)
   GUICtrlSetState($w2k3_ptg, $GUI_DISABLE)
-  GUICtrlSetState($w2k_ptb, $GUI_DISABLE)
   GUICtrlSetState($wxp_ptb, $GUI_DISABLE)
   GUICtrlSetState($w2k3_ptb, $GUI_DISABLE)
   GUICtrlSetState($w2k3_x64_ptb, $GUI_DISABLE)
-  GUICtrlSetState($w2k_deu, $GUI_DISABLE)
   GUICtrlSetState($wxp_deu, $GUI_DISABLE)
   GUICtrlSetState($w2k3_deu, $GUI_DISABLE)
   GUICtrlSetState($w2k3_x64_deu, $GUI_DISABLE)
-  GUICtrlSetState($w2k_nld, $GUI_DISABLE)
   GUICtrlSetState($wxp_nld, $GUI_DISABLE)
   GUICtrlSetState($w2k3_nld, $GUI_DISABLE)
-  GUICtrlSetState($w2k_ita, $GUI_DISABLE)
   GUICtrlSetState($wxp_ita, $GUI_DISABLE)
   GUICtrlSetState($w2k3_ita, $GUI_DISABLE)
-  GUICtrlSetState($w2k_chs, $GUI_DISABLE)
   GUICtrlSetState($wxp_chs, $GUI_DISABLE)
   GUICtrlSetState($w2k3_chs, $GUI_DISABLE)
-  GUICtrlSetState($w2k_cht, $GUI_DISABLE)
   GUICtrlSetState($wxp_cht, $GUI_DISABLE)
   GUICtrlSetState($w2k3_cht, $GUI_DISABLE)
-  GUICtrlSetState($w2k_plk, $GUI_DISABLE)
   GUICtrlSetState($wxp_plk, $GUI_DISABLE)
   GUICtrlSetState($w2k3_plk, $GUI_DISABLE)
-  GUICtrlSetState($w2k_hun, $GUI_DISABLE)
   GUICtrlSetState($wxp_hun, $GUI_DISABLE)
   GUICtrlSetState($w2k3_hun, $GUI_DISABLE)
-  GUICtrlSetState($w2k_csy, $GUI_DISABLE)
   GUICtrlSetState($wxp_csy, $GUI_DISABLE)
   GUICtrlSetState($w2k3_csy, $GUI_DISABLE)
-  GUICtrlSetState($w2k_sve, $GUI_DISABLE)
   GUICtrlSetState($wxp_sve, $GUI_DISABLE)
   GUICtrlSetState($w2k3_sve, $GUI_DISABLE)
-  GUICtrlSetState($w2k_trk, $GUI_DISABLE)
   GUICtrlSetState($wxp_trk, $GUI_DISABLE)
   GUICtrlSetState($w2k3_trk, $GUI_DISABLE)
-  GUICtrlSetState($w2k_ell, $GUI_DISABLE)
   GUICtrlSetState($wxp_ell, $GUI_DISABLE)
 ;  GUICtrlSetState($w2k3_ell, $GUI_DISABLE)
-  GUICtrlSetState($w2k_ara, $GUI_DISABLE)
   GUICtrlSetState($wxp_ara, $GUI_DISABLE)
 ;  GUICtrlSetState($w2k3_ara, $GUI_DISABLE)
-  GUICtrlSetState($w2k_heb, $GUI_DISABLE)
   GUICtrlSetState($wxp_heb, $GUI_DISABLE)
 ;  GUICtrlSetState($w2k3_heb, $GUI_DISABLE)
-  GUICtrlSetState($w2k_dan, $GUI_DISABLE)
   GUICtrlSetState($wxp_dan, $GUI_DISABLE)
 ;  GUICtrlSetState($w2k3_dan, $GUI_DISABLE)
-  GUICtrlSetState($w2k_nor, $GUI_DISABLE)
   GUICtrlSetState($wxp_nor, $GUI_DISABLE)
 ;  GUICtrlSetState($w2k3_nor, $GUI_DISABLE)
-  GUICtrlSetState($w2k_fin, $GUI_DISABLE)
   GUICtrlSetState($wxp_fin, $GUI_DISABLE)
 ;  GUICtrlSetState($w2k3_fin, $GUI_DISABLE)
   GUICtrlSetState($w60_glb, $GUI_DISABLE)
@@ -486,84 +461,60 @@ Func DisableGUI()
 EndFunc
 
 Func EnableGUI()
-  GUICtrlSetState($w2k_enu, $GUI_ENABLE)
   GUICtrlSetState($wxp_enu, $GUI_ENABLE)
   GUICtrlSetState($w2k3_enu, $GUI_ENABLE)
   GUICtrlSetState($w2k3_x64_enu, $GUI_ENABLE)
-  GUICtrlSetState($w2k_fra, $GUI_ENABLE)
   GUICtrlSetState($wxp_fra, $GUI_ENABLE)
   GUICtrlSetState($w2k3_fra, $GUI_ENABLE)
   GUICtrlSetState($w2k3_x64_fra, $GUI_ENABLE)
-  GUICtrlSetState($w2k_esn, $GUI_ENABLE)
   GUICtrlSetState($wxp_esn, $GUI_ENABLE)
   GUICtrlSetState($w2k3_esn, $GUI_ENABLE)
   GUICtrlSetState($w2k3_x64_esn, $GUI_ENABLE)
-  GUICtrlSetState($w2k_jpn, $GUI_ENABLE)
   GUICtrlSetState($wxp_jpn, $GUI_ENABLE)
   GUICtrlSetState($w2k3_jpn, $GUI_ENABLE)
   GUICtrlSetState($w2k3_x64_jpn, $GUI_ENABLE)
-  GUICtrlSetState($w2k_kor, $GUI_ENABLE)
   GUICtrlSetState($wxp_kor, $GUI_ENABLE)
   GUICtrlSetState($w2k3_kor, $GUI_ENABLE)
   GUICtrlSetState($w2k3_x64_kor, $GUI_ENABLE)
-  GUICtrlSetState($w2k_rus, $GUI_ENABLE)
   GUICtrlSetState($wxp_rus, $GUI_ENABLE)
   GUICtrlSetState($w2k3_rus, $GUI_ENABLE)
   GUICtrlSetState($w2k3_x64_rus, $GUI_ENABLE)
-  GUICtrlSetState($w2k_ptg, $GUI_ENABLE)
   GUICtrlSetState($wxp_ptg, $GUI_ENABLE)
   GUICtrlSetState($w2k3_ptg, $GUI_ENABLE)
-  GUICtrlSetState($w2k_ptb, $GUI_ENABLE)
   GUICtrlSetState($wxp_ptb, $GUI_ENABLE)
   GUICtrlSetState($w2k3_ptb, $GUI_ENABLE)
   GUICtrlSetState($w2k3_x64_ptb, $GUI_ENABLE)
-  GUICtrlSetState($w2k_deu, $GUI_ENABLE)
   GUICtrlSetState($wxp_deu, $GUI_ENABLE)
   GUICtrlSetState($w2k3_deu, $GUI_ENABLE)
   GUICtrlSetState($w2k3_x64_deu, $GUI_ENABLE)
-  GUICtrlSetState($w2k_nld, $GUI_ENABLE)
   GUICtrlSetState($wxp_nld, $GUI_ENABLE)
   GUICtrlSetState($w2k3_nld, $GUI_ENABLE)
-  GUICtrlSetState($w2k_ita, $GUI_ENABLE)
   GUICtrlSetState($wxp_ita, $GUI_ENABLE)
   GUICtrlSetState($w2k3_ita, $GUI_ENABLE)
-  GUICtrlSetState($w2k_chs, $GUI_ENABLE)
   GUICtrlSetState($wxp_chs, $GUI_ENABLE)
   GUICtrlSetState($w2k3_chs, $GUI_ENABLE)
-  GUICtrlSetState($w2k_cht, $GUI_ENABLE)
   GUICtrlSetState($wxp_cht, $GUI_ENABLE)
   GUICtrlSetState($w2k3_cht, $GUI_ENABLE)
-  GUICtrlSetState($w2k_plk, $GUI_ENABLE)
   GUICtrlSetState($wxp_plk, $GUI_ENABLE)
   GUICtrlSetState($w2k3_plk, $GUI_ENABLE)
-  GUICtrlSetState($w2k_hun, $GUI_ENABLE)
   GUICtrlSetState($wxp_hun, $GUI_ENABLE)
   GUICtrlSetState($w2k3_hun, $GUI_ENABLE)
-  GUICtrlSetState($w2k_csy, $GUI_ENABLE)
   GUICtrlSetState($wxp_csy, $GUI_ENABLE)
   GUICtrlSetState($w2k3_csy, $GUI_ENABLE)
-  GUICtrlSetState($w2k_sve, $GUI_ENABLE)
   GUICtrlSetState($wxp_sve, $GUI_ENABLE)
   GUICtrlSetState($w2k3_sve, $GUI_ENABLE)
-  GUICtrlSetState($w2k_trk, $GUI_ENABLE)
   GUICtrlSetState($wxp_trk, $GUI_ENABLE)
   GUICtrlSetState($w2k3_trk, $GUI_ENABLE)
-  GUICtrlSetState($w2k_ell, $GUI_ENABLE)
   GUICtrlSetState($wxp_ell, $GUI_ENABLE)
 ;  GUICtrlSetState($w2k3_ell, $GUI_ENABLE)
-  GUICtrlSetState($w2k_ara, $GUI_ENABLE)
   GUICtrlSetState($wxp_ara, $GUI_ENABLE)
 ;  GUICtrlSetState($w2k3_ara, $GUI_ENABLE)
-  GUICtrlSetState($w2k_heb, $GUI_ENABLE)
   GUICtrlSetState($wxp_heb, $GUI_ENABLE)
 ;  GUICtrlSetState($w2k3_heb, $GUI_ENABLE)
-  GUICtrlSetState($w2k_dan, $GUI_ENABLE)
   GUICtrlSetState($wxp_dan, $GUI_ENABLE)
 ;  GUICtrlSetState($w2k3_dan, $GUI_ENABLE)
-  GUICtrlSetState($w2k_nor, $GUI_ENABLE)
   GUICtrlSetState($wxp_nor, $GUI_ENABLE)
 ;  GUICtrlSetState($w2k3_nor, $GUI_ENABLE)
-  GUICtrlSetState($w2k_fin, $GUI_ENABLE)
   GUICtrlSetState($wxp_fin, $GUI_ENABLE)
 ;  GUICtrlSetState($w2k3_fin, $GUI_ENABLE)
   GUICtrlSetState($w60_glb, $GUI_ENABLE)
@@ -888,32 +839,6 @@ Dim $result
 EndFunc
 
 Func SaveSettings()
-
-;  Windows 2000 group
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_enu, CheckBoxState2String($w2k_enu))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_fra, CheckBoxState2String($w2k_fra))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_esn, CheckBoxState2String($w2k_esn))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_jpn, CheckBoxState2String($w2k_jpn))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_kor, CheckBoxState2String($w2k_kor))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_rus, CheckBoxState2String($w2k_rus))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_ptg, CheckBoxState2String($w2k_ptg))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_ptb, CheckBoxState2String($w2k_ptb))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_deu, CheckBoxState2String($w2k_deu))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_nld, CheckBoxState2String($w2k_nld))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_ita, CheckBoxState2String($w2k_ita))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_chs, CheckBoxState2String($w2k_chs))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_cht, CheckBoxState2String($w2k_cht))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_plk, CheckBoxState2String($w2k_plk))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_hun, CheckBoxState2String($w2k_hun))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_csy, CheckBoxState2String($w2k_csy))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_sve, CheckBoxState2String($w2k_sve))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_trk, CheckBoxState2String($w2k_trk))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_ell, CheckBoxState2String($w2k_ell))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_ara, CheckBoxState2String($w2k_ara))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_heb, CheckBoxState2String($w2k_heb))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_dan, CheckBoxState2String($w2k_dan))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_nor, CheckBoxState2String($w2k_nor))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_fin, CheckBoxState2String($w2k_fin))
 
 ;  Windows XP group
   IniWrite($inifilename, $ini_section_wxp, $lang_token_enu, CheckBoxState2String($wxp_enu))
@@ -2276,213 +2201,6 @@ Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
 
-;  Legacy systems' Tab
-If ShowGUIInGerman() Then
-  GuiCtrlCreateTabItem("Altsysteme")
-Else
-  GuiCtrlCreateTabItem("Legacy systems")
-EndIf
-
-;  Windows 2000 group
-$txtxpos = 2 * $txtxoffset
-$txtypos = 3.5 * $txtyoffset + $txtheight
-GUICtrlCreateGroup("Windows 2000", $txtxpos, $txtypos, $groupwidth, $groupheight)
-;  Windows 2000 English
-$txtypos = $txtypos + 1.5 * $txtyoffset
-$txtxpos = $txtxpos + $txtxoffset
-$w2k_enu = GUICtrlCreateCheckbox(LanguageCaption($lang_token_enu, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_enu, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 French
-$txtxpos = $txtxpos + $txtwidth - 5
-$w2k_fra = GUICtrlCreateCheckbox(LanguageCaption($lang_token_fra, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 10, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_fra, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Spanish
-$txtxpos = $txtxpos + $txtwidth + 10
-$w2k_esn = GUICtrlCreateCheckbox(LanguageCaption($lang_token_esn, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_esn, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Japanese
-$txtxpos = $txtxpos + $txtwidth - 5
-$w2k_jpn = GUICtrlCreateCheckbox(LanguageCaption($lang_token_jpn, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_jpn, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Korean
-$txtxpos = $txtxpos + $txtwidth
-$w2k_kor = GUICtrlCreateCheckbox(LanguageCaption($lang_token_kor, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_kor, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Russian
-$txtxpos = $txtxpos + $txtwidth + 5
-$w2k_rus = GUICtrlCreateCheckbox(LanguageCaption($lang_token_rus, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 10, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_rus, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Portuguese
-$txtxpos = $txtxpos + $txtwidth - 10
-$w2k_ptg = GUICtrlCreateCheckbox(LanguageCaption($lang_token_ptg, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_ptg, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Brazilian
-$txtxpos = $txtxpos + $txtwidth + 5
-$w2k_ptb = GUICtrlCreateCheckbox(LanguageCaption($lang_token_ptb, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_ptb, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 German
-$txtxpos = 3 * $txtxoffset
-$txtypos = $txtypos + $txtheight
-$w2k_deu = GUICtrlCreateCheckbox(LanguageCaption($lang_token_deu, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_deu, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Dutch
-$txtxpos = $txtxpos + $txtwidth - 5
-$w2k_nld = GUICtrlCreateCheckbox(LanguageCaption($lang_token_nld, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 10, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_nld, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Italian
-$txtxpos = $txtxpos + $txtwidth + 10
-$w2k_ita = GUICtrlCreateCheckbox(LanguageCaption($lang_token_ita, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_ita, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Chinese simplified
-$txtxpos = $txtxpos + $txtwidth - 5
-$w2k_chs = GUICtrlCreateCheckbox(LanguageCaption($lang_token_chs, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_chs, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Chinese traditional
-$txtxpos = $txtxpos + $txtwidth
-$w2k_cht = GUICtrlCreateCheckbox(LanguageCaption($lang_token_cht, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_cht, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Polish
-$txtxpos = $txtxpos + $txtwidth + 5
-$w2k_plk = GUICtrlCreateCheckbox(LanguageCaption($lang_token_plk, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 10, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_plk, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Hungarian
-$txtxpos = $txtxpos + $txtwidth - 10
-$w2k_hun = GUICtrlCreateCheckbox(LanguageCaption($lang_token_hun, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_hun, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Czech
-$txtxpos = $txtxpos + $txtwidth + 5
-$w2k_csy = GUICtrlCreateCheckbox(LanguageCaption($lang_token_csy, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_csy, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Swedish
-$txtxpos = 3 * $txtxoffset
-$txtypos = $txtypos + $txtheight
-$w2k_sve = GUICtrlCreateCheckbox(LanguageCaption($lang_token_sve, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_sve, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Turkish
-$txtxpos = $txtxpos + $txtwidth - 5
-$w2k_trk = GUICtrlCreateCheckbox(LanguageCaption($lang_token_trk, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 10, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_trk, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Greek
-$txtxpos = $txtxpos + $txtwidth + 10
-$w2k_ell = GUICtrlCreateCheckbox(LanguageCaption($lang_token_ell, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_ell, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Arabic
-$txtxpos = $txtxpos + $txtwidth - 5
-$w2k_ara = GUICtrlCreateCheckbox(LanguageCaption($lang_token_ara, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_ara, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Hebrew
-$txtxpos = $txtxpos + $txtwidth
-$w2k_heb = GUICtrlCreateCheckbox(LanguageCaption($lang_token_heb, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_heb, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Danish
-$txtxpos = $txtxpos + $txtwidth + 5
-$w2k_dan = GUICtrlCreateCheckbox(LanguageCaption($lang_token_dan, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 10, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_dan, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Norwegian
-$txtxpos = $txtxpos + $txtwidth - 10
-$w2k_nor = GUICtrlCreateCheckbox(LanguageCaption($lang_token_nor, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_nor, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Finnish
-$txtxpos = $txtxpos + $txtwidth + 5
-$w2k_fin = GUICtrlCreateCheckbox(LanguageCaption($lang_token_fin, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_fin, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-
 ;  End Tab item definition
 GuiCtrlCreateTabItem("")
 GUICtrlSetState($tabitemfocused, $GUI_SHOW)
@@ -2861,11 +2579,6 @@ While 1
       EndIf
 
 ;  English
-      If BitAND(GUICtrlRead($w2k_enu), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k enu", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_enu), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp enu", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -2898,11 +2611,6 @@ While 1
       EndIf
 
 ;  French
-      If BitAND(GUICtrlRead($w2k_fra), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k fra", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_fra), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp fra", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -2935,11 +2643,6 @@ While 1
       EndIf
 
 ;  Spanish
-      If BitAND(GUICtrlRead($w2k_esn), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k esn", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_esn), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp esn", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -2972,11 +2675,6 @@ While 1
       EndIf
 
 ;  Japanese
-      If BitAND(GUICtrlRead($w2k_jpn), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k jpn", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_jpn), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp jpn", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -3009,11 +2707,6 @@ While 1
       EndIf
 
 ;  Korean
-      If BitAND(GUICtrlRead($w2k_kor), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k kor", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_kor), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp kor", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -3046,11 +2739,6 @@ While 1
       EndIf
 
 ;  Russian
-      If BitAND(GUICtrlRead($w2k_rus), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k rus", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_rus), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp rus", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -3083,11 +2771,6 @@ While 1
       EndIf
 
 ;  Portuguese
-      If BitAND(GUICtrlRead($w2k_ptg), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k ptg", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_ptg), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp ptg", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -3115,11 +2798,6 @@ While 1
       EndIf
 
 ;  Brazilian
-      If BitAND(GUICtrlRead($w2k_ptb), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k ptb", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_ptb), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp ptb", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -3152,11 +2830,6 @@ While 1
       EndIf
 
 ;  German
-      If BitAND(GUICtrlRead($w2k_deu), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k deu", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_deu), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp deu", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -3189,11 +2862,6 @@ While 1
       EndIf
 
 ;  Dutch
-      If BitAND(GUICtrlRead($w2k_nld), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k nld", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_nld), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp nld", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -3221,11 +2889,6 @@ While 1
       EndIf
 
 ;  Italian
-      If BitAND(GUICtrlRead($w2k_ita), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k ita", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_ita), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp ita", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -3253,11 +2916,6 @@ While 1
       EndIf
 
 ;  Chinese simplified
-      If BitAND(GUICtrlRead($w2k_chs), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k chs", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_chs), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp chs", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -3285,11 +2943,6 @@ While 1
       EndIf
 
 ;  Chinese traditional
-      If BitAND(GUICtrlRead($w2k_cht), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k cht", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_cht), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp cht", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -3317,11 +2970,6 @@ While 1
       EndIf
 
 ;  Polish
-      If BitAND(GUICtrlRead($w2k_plk), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k plk", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_plk), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp plk", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -3349,11 +2997,6 @@ While 1
       EndIf
 
 ;  Hungarian
-      If BitAND(GUICtrlRead($w2k_hun), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k hun", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_hun), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp hun", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -3381,11 +3024,6 @@ While 1
       EndIf
 
 ;  Czech
-      If BitAND(GUICtrlRead($w2k_csy), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k csy", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_csy), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp csy", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -3413,11 +3051,6 @@ While 1
       EndIf
 
 ;  Swedish
-      If BitAND(GUICtrlRead($w2k_sve), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k sve", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_sve), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp sve", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -3445,11 +3078,6 @@ While 1
       EndIf
 
 ;  Turkish
-      If BitAND(GUICtrlRead($w2k_trk), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k trk", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_trk), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp trk", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -3477,11 +3105,6 @@ While 1
       EndIf
 
 ;  Greek
-      If BitAND(GUICtrlRead($w2k_ell), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k ell", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_ell), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp ell", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -3504,11 +3127,6 @@ While 1
       EndIf
 
 ;  Arabic
-      If BitAND(GUICtrlRead($w2k_ara), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k ara", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_ara), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp ara", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -3531,11 +3149,6 @@ While 1
       EndIf
 
 ;  Hebrew
-      If BitAND(GUICtrlRead($w2k_heb), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k heb", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_heb), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp heb", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -3558,11 +3171,6 @@ While 1
       EndIf
 
 ;  Danish
-      If BitAND(GUICtrlRead($w2k_dan), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k dan", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_dan), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp dan", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -3585,11 +3193,6 @@ While 1
       EndIf
 
 ;  Norwegian
-      If BitAND(GUICtrlRead($w2k_nor), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k nor", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_nor), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp nor", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -3612,11 +3215,6 @@ While 1
       EndIf
 
 ;  Finnish
-      If BitAND(GUICtrlRead($w2k_fin), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k fin", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If BitAND(GUICtrlRead($wxp_fin), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("wxp fin", DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -3640,8 +3238,7 @@ While 1
 
 ;  Create cross-platform DVD ISO images
       If BitAND(GUICtrlRead($dvdiso), $GUI_CHECKED) = $GUI_CHECKED Then
-        If ( (BitAND(GUICtrlRead($w2k_enu), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_enu), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_enu), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($w2k3_enu), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_enu), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_enu), $GUI_CHECKED) = $GUI_CHECKED) _
@@ -3650,8 +3247,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_fra), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_fra), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_fra), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($w2k3_fra), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_fra), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_fra), $GUI_CHECKED) = $GUI_CHECKED) _
@@ -3660,8 +3256,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_esn), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_esn), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_esn), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($w2k3_esn), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_esn), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_esn), $GUI_CHECKED) = $GUI_CHECKED) _
@@ -3670,8 +3265,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_jpn), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_jpn), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_jpn), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($w2k3_jpn), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_jpn), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_jpn), $GUI_CHECKED) = $GUI_CHECKED) _
@@ -3680,8 +3274,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_kor), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_kor), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_kor), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($w2k3_kor), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_kor), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_kor), $GUI_CHECKED) = $GUI_CHECKED) _
@@ -3690,8 +3283,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_rus), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_rus), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_rus), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($w2k3_rus), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_rus), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_rus), $GUI_CHECKED) = $GUI_CHECKED) _
@@ -3700,8 +3292,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_ptg), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_ptg), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_ptg), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($w2k3_ptg), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_ptg), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_ptg), $GUI_CHECKED) = $GUI_CHECKED) _
@@ -3710,8 +3301,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_ptb), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_ptb), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_ptb), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($w2k3_ptb), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_ptb), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_ptb), $GUI_CHECKED) = $GUI_CHECKED) _
@@ -3720,8 +3310,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_deu), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_deu), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_deu), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($w2k3_deu), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_deu), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_deu), $GUI_CHECKED) = $GUI_CHECKED) _
@@ -3730,8 +3319,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_nld), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_nld), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_nld), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($w2k3_nld), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_nld), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_nld), $GUI_CHECKED) = $GUI_CHECKED) _
@@ -3740,8 +3328,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_ita), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_ita), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_ita), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($w2k3_ita), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_ita), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_ita), $GUI_CHECKED) = $GUI_CHECKED) _
@@ -3750,8 +3337,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_chs), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_chs), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_chs), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($w2k3_chs), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_chs), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_chs), $GUI_CHECKED) = $GUI_CHECKED) _
@@ -3760,8 +3346,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_cht), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_cht), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_cht), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($w2k3_cht), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_cht), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_cht), $GUI_CHECKED) = $GUI_CHECKED) _
@@ -3770,8 +3355,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_plk), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_plk), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_plk), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($w2k3_plk), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_plk), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_plk), $GUI_CHECKED) = $GUI_CHECKED) _
@@ -3780,8 +3364,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_hun), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_hun), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_hun), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($w2k3_hun), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_hun), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_hun), $GUI_CHECKED) = $GUI_CHECKED) _
@@ -3790,8 +3373,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_csy), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_csy), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_csy), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($w2k3_csy), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_csy), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_csy), $GUI_CHECKED) = $GUI_CHECKED) _
@@ -3800,8 +3382,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_sve), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_sve), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_sve), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($w2k3_sve), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_sve), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_sve), $GUI_CHECKED) = $GUI_CHECKED) _
@@ -3810,8 +3391,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_trk), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_trk), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_trk), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($w2k3_trk), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_trk), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_trk), $GUI_CHECKED) = $GUI_CHECKED) _
@@ -3820,8 +3400,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_ell), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_ell), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_ell), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_ell), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_ell), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k7_ell), $GUI_CHECKED) = $GUI_CHECKED) ) Then
@@ -3829,8 +3408,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_ara), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_ara), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_ara), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_ara), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_ara), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k7_ara), $GUI_CHECKED) = $GUI_CHECKED) ) Then
@@ -3838,8 +3416,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_heb), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_heb), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_heb), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_heb), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_heb), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k7_heb), $GUI_CHECKED) = $GUI_CHECKED) ) Then
@@ -3847,8 +3424,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_dan), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_dan), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_dan), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_dan), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_dan), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k7_dan), $GUI_CHECKED) = $GUI_CHECKED) ) Then
@@ -3856,8 +3432,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_nor), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_nor), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_nor), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_nor), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_nor), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k7_nor), $GUI_CHECKED) = $GUI_CHECKED) ) Then
@@ -3865,8 +3440,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_fin), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_fin), $GUI_CHECKED) = $GUI_CHECKED) _
+        If ( (BitAND(GUICtrlRead($wxp_fin), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($oxp_fin), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k3_fin), $GUI_CHECKED) = $GUI_CHECKED) _
           OR (BitAND(GUICtrlRead($o2k7_fin), $GUI_CHECKED) = $GUI_CHECKED) ) Then

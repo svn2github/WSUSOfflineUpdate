@@ -93,7 +93,13 @@ if "%OS_LANGUAGE%"=="" goto UnsupLang
 rem *** Set target environment variables ***
 call SetTargetEnvVars.cmd %INSTALL_IE%
 if errorlevel 1 goto Cleanup
-if "%OS_NAME%"=="" goto NoOSName
+
+rem *** Check Operating System ***
+if "%OS_NAME%"=="" goto UnsupOS
+if "%OS_NAME%"=="w2k" goto UnsupOS
+for %%i in (x86 x64) do (if /i "%OS_ARCHITECTURE%"=="%%i" goto ValidArch)
+goto UnsupArch
+:ValidArch
 
 rem *** Echo OS properties ***
 echo Found OS caption: %OS_CAPTION%
@@ -144,11 +150,6 @@ if "%O2K7_VERSION_MAJOR%" NEQ "" (
 if "%O2K10_VERSION_MAJOR%" NEQ "" (
   echo %DATE% %TIME% - Info: Found Microsoft Office 2010 %O2K10_VERSION_APP% version %O2K10_VERSION_MAJOR%.%O2K10_VERSION_MINOR%.%O2K10_VERSION_BUILD%.%O2K10_VERSION_REVISION% ^(o2k10 %O2K10_LANGUAGE% sp%O2K10_SP_VERSION%^) >>%UPDATE_LOGFILE%
 )
-
-rem *** Check Operating System architecture ***
-for %%i in (x86 x64) do (if /i "%OS_ARCHITECTURE%"=="%%i" goto ValidArch)
-goto UnsupArch
-:ValidArch
 
 rem *** Check user's privileges ***
 echo Checking user's privileges...
@@ -246,7 +247,6 @@ if 0 EQU %OS_SP_VERSION_MAJOR% (
     echo %DATE% %TIME% - Info: Faked Windows XP Service Pack 1 >>%UPDATE_LOGFILE%
   )
 )
-:SPw2k
 :SPw2k3
 if "%BACKUP_MODE%"=="/nobackup" (
   call InstallListedUpdates.cmd %VERIFY_MODE% /u /z /n
@@ -392,18 +392,6 @@ if %IE_VERSION_REVISION% GEQ %IE_VERSION_TARGET_REVISION% goto SkipIEInst
 :InstallIE
 goto IE%OS_NAME%
 
-:IEw2k
-set IE_FILENAME=..\win\%OS_LANGUAGE%\ie6setup\ie6setup.exe
-if not exist %IE_FILENAME% (
-  echo Warning: Unable to install Internet Explorer 6. File %IE_FILENAME% not found. 
-  echo %DATE% %TIME% - Warning: Unable to install Internet Explorer 6. File %IE_FILENAME% not found >>%UPDATE_LOGFILE%
-  goto SkipIEInst 
-)
-echo Installing Internet Explorer 6...
-call InstallOSUpdate.cmd %IE_FILENAME% %VERIFY_MODE% /ignoreerrors /q:a /r:n
-if not errorlevel 1 set RECALL_REQUIRED=1
-goto IEInstalled 
-
 :IEwxp
 if "%INSTALL_IE%"=="/instie8" (
   set IE_FILENAME=..\%OS_NAME%\%OS_LANGUAGE%\IE8-WindowsXP-%OS_ARCHITECTURE%-%OS_LANGUAGE%*.exe
@@ -514,7 +502,6 @@ set REBOOT_REQUIRED=1
 :SkipWMPInst
 
 rem *** Install most recent Windows Terminal Services Client ***
-if "%OS_NAME%"=="w2k" goto SkipTSCInst
 if "%UPDATE_TSC%" NEQ "/updatetsc" goto SkipTSCInst
 echo Checking Windows Terminal Services Client version...
 if %TSC_VERSION_MAJOR% LSS %TSC_VERSION_TARGET_MAJOR% goto InstallTSC
@@ -542,7 +529,6 @@ set REBOOT_REQUIRED=1
 :SkipTSCInst
 
 rem *** Install .NET Framework 3.5 SP1 ***
-if "%OS_NAME%"=="w2k" goto SkipDotNet35Inst
 if "%INSTALL_DOTNET35%" NEQ "/instdotnet35" goto SkipDotNet35Inst
 echo Checking .NET Framework 3.5 installation state...
 if %DOTNET35_VERSION_MAJOR% LSS %DOTNET35_VERSION_TARGET_MAJOR% goto InstallDotNet35
@@ -573,7 +559,6 @@ if "%RECALL_REQUIRED%"=="1" goto Installed
 :SkipDotNet35Inst
 
 rem *** Install .NET Framework 4 ***
-if "%OS_NAME%"=="w2k" goto SkipDotNet4Inst
 if "%INSTALL_DOTNET4%" NEQ "/instdotnet4" goto SkipDotNet4Inst
 echo Checking .NET Framework 4 installation state...
 if %DOTNET4_VERSION_MAJOR% LSS %DOTNET4_VERSION_TARGET_MAJOR% goto InstallDotNet4
@@ -596,7 +581,6 @@ set REBOOT_REQUIRED=1
 :SkipDotNet4Inst
 
 rem *** Install Windows PowerShell 2.0 ***
-if "%OS_NAME%"=="w2k" goto SkipPShInst
 if "%INSTALL_PSH%" NEQ "/instpsh" goto SkipPShInst
 echo Checking Windows PowerShell 2.0 installation state...
 if %PSH_VERSION_MAJOR% LSS %PSH_VERSION_TARGET_MAJOR% goto InstallPSh
@@ -624,7 +608,6 @@ set REBOOT_REQUIRED=1
 :SkipPShInst
 
 rem *** Install Microsoft Security Essentials ***
-if "%OS_NAME%"=="w2k" goto SkipMSSEInst
 if %OS_DOMAIN_ROLE% GEQ 2 goto SkipMSSEInst
 echo Checking Microsoft Security Essentials installation state...
 if "%MSSE_INSTALLED%"=="1" goto CheckMSSEDefs
@@ -938,10 +921,10 @@ echo %DATE% %TIME% - Error: Unsupported Operating System language >>%UPDATE_LOGF
 echo.
 goto Cleanup
 
-:NoOSName
+:UnsupOS
 echo.
-echo ERROR: Environment variable OS_NAME not set.
-echo %DATE% %TIME% - Error: Environment variable OS_NAME not set >>%UPDATE_LOGFILE%
+echo ERROR: Unsupported Operating System (%OS_NAME%).
+echo %DATE% %TIME% - Error: Unsupported Operating System (%OS_NAME%) >>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 

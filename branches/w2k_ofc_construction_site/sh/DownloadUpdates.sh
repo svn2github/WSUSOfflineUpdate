@@ -22,7 +22,7 @@ cat << END
 Usage: `basename $0` [system] [language] [parameter]
 
 Supported systems:
-w2k, wxp, wxp-x64, w2k3, w2k3-x64, w60, w60-x64, w61, w61-x64, oxp, o2k3, o2k7, all-x64, all-x86
+wxp, wxp-x64, w2k3, w2k3-x64, w60, w60-x64, w61, w61-x64, oxp, o2k3, o2k7, all-x64, all-x86
 
 Supported languages:
 enu, deu, nld, esn, fra, ptg, ptb, ita, rus, plk, ell, csy
@@ -131,7 +131,7 @@ exit 2
 
 evaluateparams()
 {
-syslist=("w2k" "wxp" "wxp-x64" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "oxp" "o2k3" "o2k7" "all-x64" "all-x86")
+syslist=("wxp" "wxp-x64" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "oxp" "o2k3" "o2k7" "all-x64" "all-x86")
 langlist=("enu" "deu" "nld" "esn" "fra" "ptg" "ptb" "ita" "rus" "plk" "ell" "csy" "dan" "nor" "sve" "fin" "jpn" "kor" "chs" "cht" "hun" "trk" "ara" "heb")
 paramlist=("/excludesp" "/dotnet" "/mssedefs" "/makeiso" "/nocleanup" "/proxy")
 EXCLUDE_SP="0"
@@ -154,11 +154,7 @@ for i in ${syslist[@]}; do
 	fi
 done
 
-if [ "$sys" == "w2k" ]; then
-	dotnet="0"
-fi
-
-if [ "$sys" == "w2k" -o "$sys" == "w2k3" -o "$sys" == "w2k3-x64" ]; then
+if [ "$sys" == "w2k3" -o "$sys" == "w2k3-x64" ]; then
 	mssedefs="0"
 fi
 
@@ -249,18 +245,17 @@ rm -f index.html
 
 getsystem()
 {
-syslist=("w2k" "wxp" "wxp-x64" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "oxp" "o2k3" "o2k7" "all-x86" "all-x64")
+syslist=("wxp" "wxp-x64" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "oxp" "o2k3" "o2k7" "all-x86" "all-x64")
 cat << END
 Please select your OS:
-[1] Windows 2000               [10] Office XP
-[2] Windows XP                 [11] Office 2003
-[3] Windowx XP 64 bit          [12] Office 2007
-[4] Windows Server 2003
-[5] Windows Server 2003 64 bit
-[6] Windows Vista
-[7] Windows Vista 64 bit
-[8] Windows 7                  [13] All 32 bit
-[9] Windows 7 64 bit           [14] All 64 bit
+[1] Windows XP                 [9] Office XP
+[2] Windowx XP 64 bit          [10] Office 2003
+[3] Windows Server 2003        [11] Office 2007
+[4] Windows Server 2003 64 bit
+[5] Windows Vista
+[6] Windows Vista 64 bit
+[7] Windows 7                  [12] All 32 bit
+[8] Windows 7 64 bit           [13] All 64 bit
 END
 read syschoice
 echo
@@ -329,7 +324,7 @@ fi
 getdotnet()
 {
 dotnet="0"
-if [ "$sys" != "oxp" -o "$sys" != "o2k3" -o "$sys" != "o2k7" -o "$sys" != "w2k" ]; then
+if [ "$sys" != "oxp" -o "$sys" != "o2k3" -o "$sys" != "o2k7" ]; then
 	echo "Download .Net framework? [y/n]"
 	read adddotnet
 	if [ "$adddotnet" == "y" ]; then
@@ -342,7 +337,7 @@ fi
 getmssedefs()
 {
 mssedefs="0"
-if [ "$sys" != "oxp" -o "$sys" != "o2k3" -o "$sys" != "o2k7" -o "$sys" != "w2k" -o "$sys" != "w2k3" -o "$sys" != "w2k3-x64" ]; then
+if [ "$sys" != "oxp" -o "$sys" != "o2k3" -o "$sys" != "o2k7" -o "$sys" != "w2k3" -o "$sys" != "w2k3-x64" ]; then
 	echo "Download Microsoft Security Essentials definition files? [y/n]"
 	read addmssedefs
 	if [ "$addmssedefs" == "y" ]; then
@@ -464,18 +459,6 @@ cat << END
 	Proxy: $http_proxy
 END
 
-if [ "$sys" == "w2k" ];	then
-	regexe="../client/bin/reg.exe"
-	if [ ! -f "$regexe" ]; then
-		cat << END
-ERROR: ../client/bin/reg.exe not found!
-Please manually copy that file from a Windows 2000 or XP system
-to the directory ../client/bin.
-END
-exit
-	fi
-fi 
-
 if [ "$externparam" != "1" ]; then
 	echo
 	echo "Do you want to download now? [y/n]"
@@ -503,9 +486,8 @@ if [ "$sys" == "all-x64" ]; then
 fi
 
 if [ "$sys" == "all-x86" ]; then
-	/bin/bash $0 w2k3 $lang $param2 $param3 $param4 $param5 $param6
 	/bin/bash $0 wxp $lang $param2 $param3 $param4 $param5 $param6
-	/bin/bash $0 w2k $lang $param2 $param3 $param4 $param5 $param6
+	/bin/bash $0 w2k3 $lang $param2 $param3 $param4 $param5 $param6
 	/bin/bash $0 w60 $lang $param2 $param3 $param4 $param5 $param6
 	/bin/bash $0 w61 $lang $param2 $param3 $param4 $param5 $param6
 	/bin/bash $0 oxp $lang $param2 $param3 $param4 $param5 $param6
@@ -577,11 +559,6 @@ fi
 if [ "$mssedefs" == "1" ]; then
 	cp ../static/StaticDownloadLink-mssedefs-x86-glb.txt ../temp/StaticUrls-mssedefs-x86-glb.txt
 	cp ../static/StaticDownloadLink-mssedefs-x64-glb.txt ../temp/StaticUrls-mssedefs-x64-glb.txt
-fi
-
-if [ "$sys" == "w2k" ]; then
-	echo "Determining URLs for IE6 ${lang}..."
-	cat ../static/StaticDownloadLinks-ie6-${lang}.txt > ../temp/StaticUrls-ie6-${lang}.txt
 fi
 
 if [ "$sys" == "oxp" -o "$sys" == "o2k3" -o "$sys" == "o2k7" ]; then
@@ -731,10 +708,6 @@ if [ "$sys" == "oxp" -o "$sys" == "o2k3" -o "$sys" == "o2k7" ]; then
   doWget -c -i ../temp/StaticUrls-ofc-${lang}.txt -P ../client/ofc/${lang}
 fi
 
-if [ "$sys" == "w2k" ]; then
-	doWget -c -i ../temp/StaticUrls-ie6-${lang}.txt -P ../client/win/${lang}/ie6setup
-	/bin/bash ./FIXIE6SetupDir.sh $lang
-fi
 if [ "$dotnet" == "1" ]; then
 	echo "Downloading .Net framework..."
 	doWget -c -i ../temp/StaticUrls-dotnet.txt -P ../client/dotnet

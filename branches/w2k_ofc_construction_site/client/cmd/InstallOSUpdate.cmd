@@ -109,12 +109,7 @@ if "%INSTALL_SWITCHES%"=="" (
   )
 )
 if "%INSTALL_SWITCHES%"=="" (
-  echo %1 | %SystemRoot%\system32\find.exe /I "823718" >nul 2>&1
-  if errorlevel 1 (
-    if "%BACKUP_FILES%"=="0" (set INSTALL_SWITCHES=/q /n /z) else (set INSTALL_SWITCHES=/q /z)
-  ) else (
-    set INSTALL_SWITCHES=/C:"dahotfix.exe /q /n" /Q
-  )
+  if "%BACKUP_FILES%"=="0" (set INSTALL_SWITCHES=/q /n /z) else (set INSTALL_SWITCHES=/q /z)
 )
 echo Installing %1...
 %1 %INSTALL_SWITCHES%
