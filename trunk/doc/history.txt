@@ -405,3 +405,5 @@ Version 6.6.1 -- 17.06.10
 - Fix: Installation of IE8 did not request recall on Windows XP and Server 2003 systems
 - Fix: Installation of .NET 3.5 SP1 did not request recall
 --------------------------------------------------------------------------------
+Version 6.? -- ??.??.10
+- Office updates up to 07/2010 integrated by static definitions
