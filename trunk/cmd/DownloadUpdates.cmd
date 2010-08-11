@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.6.1+ (r125)
+set WSUSUPDATE_VERSION=6.6.1+ (r126)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -239,6 +239,18 @@ unzip.exe Sigcheck.zip sigcheck.exe
 del Sigcheck.zip
 popd
 :SkipSigCheck
+
+rem *** Download Sysinternals' NTFS alternate data stream handling tool ***
+if exist ..\bin\streams.exe goto SkipStreams
+echo Downloading Sysinternals' NTFS alternate data stream handling tool...
+%WGET_PATH% -N -i ..\static\StaticDownloadLink-streams.txt -P ..\bin
+if errorlevel 1 goto DownloadError
+echo %DATE% %TIME% - Info: Downloaded Sysinternals' NTFS alternate data stream handling tool >>%DOWNLOAD_LOGFILE%
+pushd ..\bin
+unzip.exe Streams.zip streams.exe
+del Sigcheck.zip
+popd
+:SkipStreams
 
 rem *** Download most recent Windows Update Agent and catalog file ***
 if "%VERIFY_DOWNLOADS%"=="1" (
@@ -660,6 +672,20 @@ for /F %%i in ('dir /A:-D /B ..\client\%1\%2\*.*') do (
 echo %DATE% %TIME% - Info: Cleaned up client directory for %1 %2 >>%DOWNLOAD_LOGFILE%
 
 :EndDownload
+rem *** Delete alternate data streams for %1 %2 ***
+if exist ..\bin\streams.exe (
+  echo Deleting alternate data streams for %1 %2...
+  ..\bin\streams.exe -accepteula -s -d ..\client\%1\%2\*.*
+  if errorlevel 1 (
+    echo Warning: Unable to delete alternate data streams for %1 %2.
+    echo %DATE% %TIME% - Warning: Unable to delete alternate data streams for %1 %2 >>%DOWNLOAD_LOGFILE%
+  ) else (
+    echo %DATE% %TIME% - Info: Deleted alternate data streams for %1 %2 >>%DOWNLOAD_LOGFILE%
+  )
+) else (
+  echo Warning: Sysinternals' NTFS alternate data stream handling tool ..\bin\streams.exe not found.
+  echo %DATE% %TIME% - Warning: Sysinternals' NTFS alternate data stream handling tool ..\bin\streams.exe not found >>%DOWNLOAD_LOGFILE%
+)
 if "%VERIFY_DOWNLOADS%"=="1" (
   rem *** Verifying digital file signatures for %1 %2 ***
   if not exist ..\bin\sigcheck.exe goto NoSigCheck

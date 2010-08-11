@@ -1,3 +1,3 @@
 http://download.microsoft.com/download/0/2/2/022cb8a9-b8f5-472c-897b-a20605d40ce3/Office2003SP3-KB923618-FullFile-CSY.exe
 http://download.microsoft.com/download/9/3/A/93A05205-B3CF-4B0D-9103-78D1F60D6168/office2003-KB975051-FullFile-CSY.exe
-http://download.microsoft.com/download/4/7/E/47E79DD9-1BBF-45B7-978B-8C096DE99B20/office2003-kb2202122-FullFile-CSY.exe
+http://download.microsoft.com/download/6/8/9/689ACFE9-BCA7-4FE2-B292-5D03E6BF0901/office2003-KB2279246-FullFile-CSY.exe

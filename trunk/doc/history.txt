@@ -267,7 +267,7 @@ Version 6.1 -- 30.07.09
 - Windows Vista / Server 2008 Service Pack 2 All Language Standalone integrated
 - Mandatory installation of IE7 on Windows XP and Windows Server 2003 (x86/x64) systems
 - UpdateInstaller script will now check if .NET Framework 3.5 SP1 installation package exists
-- Fix: Download exclude list for Windows XP updated since Microsoft modified the "List of fixes included in Windows XP SP3" (http://support.microsoft.com/kb/946480/en-us) on March 27, 2009 (Thanks to "SPiKE0815") 
+- Fix: Download exclude list for Windows XP updated since Microsoft modified the "List of fixes that are included in Windows XP Service Pack 3" (http://support.microsoft.com/kb/946480/en-us) on March 27, 2009 (Thanks to "SPiKE0815") 
 - Fix: Download exclude lists for Operating Systems refined since windowsxp-kb956572-x86-enu* was missing (Thanks to "SMarki") 
 - Fix: CopyToTarget.cmd did not create missing target directories and did not report all copying errors (Thanks to Christian Riedel)
 - Fix: Invalid installation sequence for .NET Framework 3.5 SP1 Family Update (kb958481, kb958483 and kb958484) (Thanks to "siggibaer") 
@@ -406,4 +406,8 @@ Version 6.6.1 -- 17.06.10
 - Fix: Installation of .NET 3.5 SP1 did not request recall
 --------------------------------------------------------------------------------
 Version 6.? -- ??.??.10
-- Office updates up to 07/2010 integrated by static definitions
+- Office updates up to 08/2010 integrated by static definitions
+- DownloadUpdates.cmd script will now delete NTFS alternate data streams from downloaded files (Thanks to "MikeWill34")
+- Fix: Download exclude list for Windows XP (..\exclude\ExcludeList-wxp-x86.txt) enhanced to avoid updates for Windows XP Embedded (Thanks to "Gerby", "boco" and "Matjes")
+- Fix: Download exclude list for Windows XP updated since Microsoft modified the "List of fixes that are included in Windows XP Service Pack 3" (http://support.microsoft.com/kb/946480/en-us) on July 08, 2010
+- Fix: FAQs corrected

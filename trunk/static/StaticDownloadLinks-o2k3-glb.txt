@@ -7,11 +7,11 @@ http://download.microsoft.com/download/6/2/D/62DC7244-7B5D-48A3-9326-A0C0B7A4BB3
 http://download.microsoft.com/download/E/6/1/E61CCCCF-F6D8-4720-8FEB-D9FF0F85E220/office2003-KB980469-FullFile-ENU.exe
 http://download.microsoft.com/download/B/F/A/BFAD2181-AD17-40EC-8B83-45F9EA475C5A/office2003-KB976382-FullFile-ENU.exe
 http://download.microsoft.com/download/E/A/4/EA4D29A3-155F-4E1F-A009-1F9361135390/office2003-KB982157-FullFile-ENU.exe
-http://download.microsoft.com/download/9/7/3/97329D2E-78D5-4E69-81F7-3E5BCEBA098A/office2003-KB982133-FullFile-ENU.exe
 http://download.microsoft.com/download/A/A/F/AAFE4DD5-DBA8-4854-B6CA-122FAD076589/office2003-KB980923-FullFile-ENU.exe
 http://download.microsoft.com/download/C/2/2/C22A31EA-6DE4-433C-9F48-0678C7B3CD53/office2003-KB982122-FullFile-ENU.exe
-http://download.microsoft.com/download/6/E/8/6E8D7BF0-C5B9-48BB-A705-FECA89EAB395/office2003-KB982134-FullFile-ENU.exe
 http://download.microsoft.com/download/7/B/5/7B5992C5-E4D3-424F-8924-355854FB80C8/office2003-KB982311-FullFile-ENU.exe
 http://download.microsoft.com/download/A/8/9/A89B7426-E26F-497A-A1B0-BD8691964456/visio2003-KB982126-FullFile-ENU.exe
 http://download.microsoft.com/download/7/6/F/76F19EFF-22DC-45CE-B7A3-2CCE67C1C2EC/office2003-KB981716-FullFile-ENU.exe
 http://download.microsoft.com/download/C/A/6/CA6D40D6-547C-489A-83A0-AE0EA8DE457C/office2003-KB980373-FullFile-ENU.exe
+http://download.microsoft.com/download/D/0/B/D0BB9662-581E-46CD-8F8B-BCF35E495E6C/office2003-KB2251399-FullFile-ENU.exe
+http://download.microsoft.com/download/8/2/8/8285642B-9D89-4C58-8E87-49A53C09555A/office2003-KB2264403-FullFile-ENU.exe
