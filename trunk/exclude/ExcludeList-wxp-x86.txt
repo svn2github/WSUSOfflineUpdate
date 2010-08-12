@@ -2270,4 +2270,3 @@ kb938127-x86
 windowsxp-sp2
 -js56-x86
 kb976002
-x86-custom

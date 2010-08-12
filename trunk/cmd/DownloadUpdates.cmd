@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.6.1+ (r126)
+set WSUSUPDATE_VERSION=6.6.1+ (r127)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -161,7 +161,8 @@ if exist ..\client\mssedefs\x86\nul (
   move /Y ..\client\mssedefs\x86 ..\client\mssedefs\x86-glb >nul
   if exist ..\client\md\hashes-mssedefs.txt del ..\client\md\hashes-mssedefs.txt
 )
-if exist ..\doc\faq.txt del ..\doc\faq.txt 
+if exist ..\doc\faq.txt del ..\doc\faq.txt
+if exist ..\bin\Streams.zip del ..\bin\Streams.zip 
 
 rem *** Execute custom initialization hook ***
 if exist .\custom\InitializationHook.cmd (
@@ -248,7 +249,7 @@ if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded Sysinternals' NTFS alternate data stream handling tool >>%DOWNLOAD_LOGFILE%
 pushd ..\bin
 unzip.exe Streams.zip streams.exe
-del Sigcheck.zip
+del Streams.zip
 popd
 :SkipStreams
 
