@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.6.1+ (r127)
+set WSUSUPDATE_VERSION=6.6.1+ (r128)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -129,19 +129,21 @@ if exist ..\client\o2k3\glb\office2003-KB974882-FullFile-ENU.exe (
   move /Y ..\client\o2k3\glb\office2003-KB974882-FullFile-ENU.exe ..\client\ofc\glb >nul
 )
 if exist ..\client\win\glb\ndp*.* (
-  if not exist ..\client\dotnet\glb\nul md ..\client\dotnet\glb
-  move /Y ..\client\win\glb\ndp*.* ..\client\dotnet\glb >nul
+  if not exist ..\client\dotnet\x86-glb\nul md ..\client\dotnet\x86-glb
+  move /Y ..\client\win\glb\ndp*.* ..\client\dotnet\x86-glb >nul
 )
 if exist ..\client\w2k3-x64\glb\ndp*.* (
-  if not exist ..\client\dotnet\glb-x64\nul md ..\client\dotnet\glb-x64
-  move /Y ..\client\w2k3-x64\glb\ndp*.* ..\client\dotnet\glb-x64 >nul
+  if not exist ..\client\dotnet\x64-glb\nul md ..\client\dotnet\x64-glb
+  move /Y ..\client\w2k3-x64\glb\ndp*.* ..\client\dotnet\x64-glb >nul
 )
 if exist ..\xslt\ExtractDownloadLinks-dotnet-glb.xsl del ..\xslt\ExtractDownloadLinks-dotnet-glb.xsl
-if exist ..\client\dotnet\glb\*-x64_*.* (
+if exist ..\client\dotnet\glb\nul (
   if not exist ..\client\dotnet\x64-glb\nul md ..\client\dotnet\x64-glb
   move /Y ..\client\dotnet\glb\*-x64_*.* ..\client\dotnet\x64-glb >nul
+  if not exist ..\client\dotnet\x86-glb\nul md ..\client\dotnet\x86-glb
+  move /Y ..\client\dotnet\glb\*-x86_*.* ..\client\dotnet\x86-glb >nul
+  rd /S /Q ..\client\dotnet\glb
 )
-if exist ..\client\dotnet\glb\nul move /Y ..\client\dotnet\glb ..\client\dotnet\x86-glb >nul
 
 if exist ..\bin\fciv.exe del ..\bin\fciv.exe
 if exist ..\fciv\nul rd /S /Q ..\fciv
@@ -154,11 +156,15 @@ if exist DetermineAutoDaylightTimeSet.vbs del DetermineAutoDaylightTimeSet.vbs
 if exist ..\static\StaticDownloadLink-mssedefs-x64.txt del ..\static\StaticDownloadLink-mssedefs-x64.txt
 if exist ..\static\StaticDownloadLink-mssedefs-x86.txt del ..\static\StaticDownloadLink-mssedefs-x86.txt
 if exist ..\client\mssedefs\x64\nul (
-  move /Y ..\client\mssedefs\x64 ..\client\mssedefs\x64-glb >nul
+  if not exist ..\client\mssedefs\x64-glb\nul md ..\client\mssedefs\x64-glb
+  move /Y ..\client\mssedefs\x64\*.* ..\client\mssedefs\x64-glb >nul
+  rd /S /Q ..\client\mssedefs\x64
   if exist ..\client\md\hashes-mssedefs.txt del ..\client\md\hashes-mssedefs.txt
 )
 if exist ..\client\mssedefs\x86\nul (
-  move /Y ..\client\mssedefs\x86 ..\client\mssedefs\x86-glb >nul
+  if not exist ..\client\mssedefs\x86-glb\nul md ..\client\mssedefs\x86-glb
+  move /Y ..\client\mssedefs\x86\*.* ..\client\mssedefs\x86-glb >nul
+  rd /S /Q ..\client\mssedefs\x86
   if exist ..\client\md\hashes-mssedefs.txt del ..\client\md\hashes-mssedefs.txt
 )
 if exist ..\doc\faq.txt del ..\doc\faq.txt
