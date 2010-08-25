@@ -408,6 +408,7 @@ Version 6.6.1 -- 17.06.10
 Version 6.? -- ??.??.10
 - Office updates up to 08/2010 integrated by static definitions
 - DownloadUpdates.cmd script will now delete NTFS alternate data streams from downloaded files (Thanks to "MikeWill34")
+- UpdateInstaller script will now automatically map a network drive when started from an unmapped UNC path (Thanks to "BrentNewland")
 - Fix: XSLT filters for Windows XP enhanced to avoid updates for Windows XP Embedded (Thanks to "Gerby", "boco" and "Matjes")
 - Fix: Download exclude list for Windows XP updated since Microsoft modified the "List of fixes that are included in Windows XP Service Pack 3" (http://support.microsoft.com/kb/946480/en-us) on July 08, 2010
 - Fix: Check of .NET Framework 4 installation state failed when updating from command line (Thanks to "imrumpf")

@@ -63,7 +63,7 @@ Dim Const $path_rel_instdotnet4       = "\dotnet\dotNetFx40_Full_x86_x64.exe"
 Dim Const $path_rel_mssedefs_x86      = "\mssedefs\x86-glb\mpam-fe.exe"
 Dim Const $path_rel_mssedefs_x64      = "\mssedefs\x64-glb\mpam-fex64.exe"
 
-Dim $maindlg, $scriptdir, $netdrives, $i, $strpos, $inifilename, $backup, $converters, $ie7, $ie8, $wmp, $tsc, $dotnet35, $dotnet4, $powershell, $msse, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate 
+Dim $maindlg, $scriptdir, $mapped, $netdrives, $i, $strpos, $inifilename, $backup, $converters, $ie7, $ie8, $wmp, $tsc, $dotnet35, $dotnet4, $powershell, $msse, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate 
 Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
 
 Func ShowGUIInGerman()
@@ -184,7 +184,9 @@ $groupwidth = 2 * $txtwidth + 2 * $txtxoffset
 $maindlg = GUICreate($caption, $groupwidth + 2 * $txtxoffset, $dlgheight)
 GUISetFont(8.5, 400, 0, "Sans Serif")
 
-$scriptdir = "" 
+; Check if script directory is a network share, map if unmapped 
+$scriptdir = ""
+$mapped = False  
 If DriveGetType(@ScriptDir) = "Network" Then
   If StringInStr(@ScriptDir, "\\") = 0 Then
     $scriptdir = @ScriptDir
@@ -198,6 +200,14 @@ If DriveGetType(@ScriptDir) = "Network" Then
           ExitLoop
         EndIf
       Next
+    EndIf
+    If $scriptdir = "" Then
+      $scriptdir = DriveMapAdd("*", @ScriptDir)
+      If @error Then
+        $scriptdir = "" 
+      Else
+        $mapped = True  
+      EndIf
     EndIf
   EndIf
 Else
@@ -601,9 +611,15 @@ EndIf
 While 1
   Switch GUIGetMsg()
     Case $GUI_EVENT_CLOSE    ; Window closed
+      If $mapped Then
+        DriveMapDel($scriptdir)
+      EndIf
       ExitLoop
 
     Case $btn_exit           ; Exit Button pressed
+      If $mapped Then
+        DriveMapDel($scriptdir)
+      EndIf
       ExitLoop
 
     Case $ie7                ; IE7 check box toggled  
