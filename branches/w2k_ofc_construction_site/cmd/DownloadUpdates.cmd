@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.6.1+ (w2k_ofc_construction_site (r124))
+set WSUSUPDATE_VERSION=6.6.1+ (w2k_ofc_construction_site (r130))
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -122,19 +122,21 @@ if exist ..\client\o2k3\glb\office2003-KB974882-FullFile-ENU.exe (
   move /Y ..\client\o2k3\glb\office2003-KB974882-FullFile-ENU.exe ..\client\ofc\glb >nul
 )
 if exist ..\client\win\glb\ndp*.* (
-  if not exist ..\client\dotnet\glb\nul md ..\client\dotnet\glb
-  move /Y ..\client\win\glb\ndp*.* ..\client\dotnet\glb >nul
+  if not exist ..\client\dotnet\x86-glb\nul md ..\client\dotnet\x86-glb
+  move /Y ..\client\win\glb\ndp*.* ..\client\dotnet\x86-glb >nul
 )
 if exist ..\client\w2k3-x64\glb\ndp*.* (
-  if not exist ..\client\dotnet\glb-x64\nul md ..\client\dotnet\glb-x64
-  move /Y ..\client\w2k3-x64\glb\ndp*.* ..\client\dotnet\glb-x64 >nul
+  if not exist ..\client\dotnet\x64-glb\nul md ..\client\dotnet\x64-glb
+  move /Y ..\client\w2k3-x64\glb\ndp*.* ..\client\dotnet\x64-glb >nul
 )
 if exist ..\xslt\ExtractDownloadLinks-dotnet-glb.xsl del ..\xslt\ExtractDownloadLinks-dotnet-glb.xsl
-if exist ..\client\dotnet\glb\*-x64_*.* (
+if exist ..\client\dotnet\glb\nul (
   if not exist ..\client\dotnet\x64-glb\nul md ..\client\dotnet\x64-glb
   move /Y ..\client\dotnet\glb\*-x64_*.* ..\client\dotnet\x64-glb >nul
+  if not exist ..\client\dotnet\x86-glb\nul md ..\client\dotnet\x86-glb
+  move /Y ..\client\dotnet\glb\*-x86_*.* ..\client\dotnet\x86-glb >nul
+  rd /S /Q ..\client\dotnet\glb
 )
-if exist ..\client\dotnet\glb\nul move /Y ..\client\dotnet\glb ..\client\dotnet\x86-glb >nul
 
 if exist ..\bin\fciv.exe del ..\bin\fciv.exe
 if exist ..\fciv\nul rd /S /Q ..\fciv
@@ -147,14 +149,19 @@ if exist DetermineAutoDaylightTimeSet.vbs del DetermineAutoDaylightTimeSet.vbs
 if exist ..\static\StaticDownloadLink-mssedefs-x64.txt del ..\static\StaticDownloadLink-mssedefs-x64.txt
 if exist ..\static\StaticDownloadLink-mssedefs-x86.txt del ..\static\StaticDownloadLink-mssedefs-x86.txt
 if exist ..\client\mssedefs\x64\nul (
-  move /Y ..\client\mssedefs\x64 ..\client\mssedefs\x64-glb >nul
+  if not exist ..\client\mssedefs\x64-glb\nul md ..\client\mssedefs\x64-glb
+  move /Y ..\client\mssedefs\x64\*.* ..\client\mssedefs\x64-glb >nul
+  rd /S /Q ..\client\mssedefs\x64
   if exist ..\client\md\hashes-mssedefs.txt del ..\client\md\hashes-mssedefs.txt
 )
 if exist ..\client\mssedefs\x86\nul (
-  move /Y ..\client\mssedefs\x86 ..\client\mssedefs\x86-glb >nul
+  if not exist ..\client\mssedefs\x86-glb\nul md ..\client\mssedefs\x86-glb
+  move /Y ..\client\mssedefs\x86\*.* ..\client\mssedefs\x86-glb >nul
+  rd /S /Q ..\client\mssedefs\x86
   if exist ..\client\md\hashes-mssedefs.txt del ..\client\md\hashes-mssedefs.txt
 )
 if exist ..\doc\faq.txt del ..\doc\faq.txt 
+if exist ..\bin\Streams.zip del ..\bin\Streams.zip 
 
 rem *** Execute custom initialization hook ***
 if exist .\custom\InitializationHook.cmd (
@@ -209,6 +216,18 @@ unzip.exe Sigcheck.zip sigcheck.exe
 del Sigcheck.zip
 popd
 :SkipSigCheck
+
+rem *** Download Sysinternals' NTFS alternate data stream handling tool ***
+if exist ..\bin\streams.exe goto SkipStreams
+echo Downloading Sysinternals' NTFS alternate data stream handling tool...
+%WGET_PATH% -N -i ..\static\StaticDownloadLink-streams.txt -P ..\bin
+if errorlevel 1 goto DownloadError
+echo %DATE% %TIME% - Info: Downloaded Sysinternals' NTFS alternate data stream handling tool >>%DOWNLOAD_LOGFILE%
+pushd ..\bin
+unzip.exe Streams.zip streams.exe
+del Streams.zip
+popd
+:SkipStreams
 
 rem *** Download most recent Windows Update Agent and catalog file ***
 if "%VERIFY_DOWNLOADS%"=="1" (
@@ -618,6 +637,20 @@ for /F %%i in ('dir /A:-D /B ..\client\%1\%2\*.*') do (
 echo %DATE% %TIME% - Info: Cleaned up client directory for %1 %2 >>%DOWNLOAD_LOGFILE%
 
 :EndDownload
+rem *** Delete alternate data streams for %1 %2 ***
+if exist ..\bin\streams.exe (
+  echo Deleting alternate data streams for %1 %2...
+  ..\bin\streams.exe -accepteula -s -d ..\client\%1\%2\*.*
+  if errorlevel 1 (
+    echo Warning: Unable to delete alternate data streams for %1 %2.
+    echo %DATE% %TIME% - Warning: Unable to delete alternate data streams for %1 %2 >>%DOWNLOAD_LOGFILE%
+  ) else (
+    echo %DATE% %TIME% - Info: Deleted alternate data streams for %1 %2 >>%DOWNLOAD_LOGFILE%
+  )
+) else (
+  echo Warning: Sysinternals' NTFS alternate data stream handling tool ..\bin\streams.exe not found.
+  echo %DATE% %TIME% - Warning: Sysinternals' NTFS alternate data stream handling tool ..\bin\streams.exe not found >>%DOWNLOAD_LOGFILE%
+)
 if "%VERIFY_DOWNLOADS%"=="1" (
   rem *** Verifying digital file signatures for %1 %2 ***
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
