@@ -143,6 +143,18 @@ Hilft dies nicht, gehen Sie bitte wie folgt vor:
   - Löschen Sie das Benutzerprofil des "WSUSUpdateAdmin", also i.d.R. das Verzeichnis "WSUSUpdateAdmin" unter "C:\Dokumente und Einstellungen".
   - Starten Sie den Rechner neu.
 --------------------------------------------------------------------------------
+F: Während des Downloads erhalte ich einen "file integrity verification"-Fehler. Was kann ich dagegen tun?
+A: Wenn Sie sich sicher sind, dass die Dateien in Ihrem Repository nicht manipuliert wurden, können Sie die entsprechende Prüfsummen-Dateien unter ...\client\md löschen. Sie werden beim nächsten Download-Lauf neu erzeugt.
+--------------------------------------------------------------------------------
+F: Warum sind Auswahlfelder ausgegraut, wenn ich UpdateInstaller.exe starte?
+A: Dies geschieht in Abhängigkeit von Plattform, Update-Medium und Installationsstatus.
+--------------------------------------------------------------------------------
+F: Beim Herunterladen oder bei der Installation erhalte ich einen Fehler, der auf eine ungültige Datei package.xml hinweist. Was kann ich dagegen tun?
+A: Ihre Kopie von Microsoft's Update-Katalogdatei (...\client\wsus\wsusscn2.cab) scheint beschädigt zu sein. Bitte löschen Sie diese und starten Sie den Download erneut.
+--------------------------------------------------------------------------------
+F: Kann ich die Download-Fenster im Hintergrund lassen?
+A: Ja. Bitte editieren Sie die Datei UpdateGenerator.ini und fügen Sie dem Abschnitt "[Miscellaneous]" einen Eintrag bzw. eine Zeile "minimizeondownload=Enabled" hinzu.
+--------------------------------------------------------------------------------
 F: Nach der Installation von Patches mit dem Offline Update erscheint bei jedem Neustart des Rechners eine leere Box ohne jeglichen lesbaren Inhalt. Erst wenn ich auf "OK" klicke, fährt das System ordentlich hoch.
 A: Die Ursache dieses seltenen Verhaltens ist noch unklar. Bitte melden Sie sich als Administrator an, prüfen Sie, ob in der Windows-Registrierung unter "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" ein Wert namens "WSUSOfflineUpdate" oder unter "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" Werte namens "DeleteWSUSUpdateAdminProfile" oder "ShowOfflineUpdateLogFile" zu finden sind und löschen sie diese gegebenenfalls.
 Finden Sie die genannten Einträge nicht, ist dieser Effekt nicht direkt auf das Offline Update zurückzuführen. Für weitere Hinweise ist das Team dankbar.    

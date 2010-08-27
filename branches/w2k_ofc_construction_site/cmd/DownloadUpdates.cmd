@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.6.1+ (w2k_ofc_construction_site (r130))
+set WSUSUPDATE_VERSION=6.6.2+ (w2k_ofc_construction_site (r131))
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
@@ -640,7 +640,7 @@ echo %DATE% %TIME% - Info: Cleaned up client directory for %1 %2 >>%DOWNLOAD_LOG
 rem *** Delete alternate data streams for %1 %2 ***
 if exist ..\bin\streams.exe (
   echo Deleting alternate data streams for %1 %2...
-  ..\bin\streams.exe -accepteula -s -d ..\client\%1\%2\*.*
+  ..\bin\streams.exe -accepteula -s -d ..\client\%1\%2\*.* >nul 2>&1
   if errorlevel 1 (
     echo Warning: Unable to delete alternate data streams for %1 %2.
     echo %DATE% %TIME% - Warning: Unable to delete alternate data streams for %1 %2 >>%DOWNLOAD_LOGFILE%
