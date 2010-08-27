@@ -405,12 +405,13 @@ Version 6.6.1 -- 17.06.10
 - Fix: Installation of IE8 did not request recall on Windows XP and Server 2003 systems
 - Fix: Installation of .NET 3.5 SP1 did not request recall
 --------------------------------------------------------------------------------
-Version 6.? -- ??.??.10
+Version 6.6.2 -- 27.08.10
 - Office updates up to 08/2010 integrated by static definitions
 - DownloadUpdates.cmd script will now delete NTFS alternate data streams from downloaded files (Thanks to "MikeWill34")
 - UpdateInstaller script will now automatically map a network drive when started from an unmapped UNC path (Thanks to "BrentNewland")
+- FAQs corrected and enhanced (Thanks to "-Iwan-")
 - Fix: XSLT filters for Windows XP enhanced to avoid updates for Windows XP Embedded (Thanks to "Gerby", "boco" and "Matjes")
 - Fix: Download exclude list for Windows XP updated since Microsoft modified the "List of fixes that are included in Windows XP Service Pack 3" (http://support.microsoft.com/kb/946480/en-us) on July 08, 2010
 - Fix: Check of .NET Framework 4 installation state failed when updating from command line (Thanks to "imrumpf")
 - Fix: DownloadUpdates.cmd script contained invalid subdirectory rename instructions for backward compatibility (Thanks to "heinzel")
-- Fix: FAQs corrected
+--------------------------------------------------------------------------------

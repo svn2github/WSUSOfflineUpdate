@@ -142,6 +142,18 @@ If it still won't work, follow this guide:
 - Delete the user profile files if they still exist (2000/XP: C:\Documents and Settings, Vista/7: C:\Users).
 - Reboot.
 --------------------------------------------------------------------------------
+Q: During download, I receive a file integrity verification failure. What can I do to resolve this?
+A: If you're sure that the patch files in your repository weren't manipulated, you may delete the corresponding checksum files under ...\client\md. They'll then be recreated during the next download run.
+--------------------------------------------------------------------------------
+Q: Why are check boxes grayed out when I start UpdateInstaller.exe?
+A: The check boxes' availability is dependent on platform, update medium and package installation state.
+--------------------------------------------------------------------------------
+Q: During download or installation, I receive an error indicating an invalid package.xml file. What can I do?
+A: Your copy of Microsoft's update catalog file (...\client\wsus\wsusscn2.cab) seems to be corrupt. Please delete it and re-run the download process.
+--------------------------------------------------------------------------------
+Q: Can I let the download window(s) stay in the background?
+A: Yes. Please edit the UpdateGenerator.ini file and add an entry/line "minimizeondownload=Enabled" to the "[Miscellaneous]" section.
+--------------------------------------------------------------------------------
 Q: After installation of patches using the WSUS Offline Update finished, an empty box without contents appears on every reboot. Only when I click "OK", the boot process continues.
 A: It's uncertain at this time what causes this behavior. Please login as "Administrator" and check if the Windows registry key "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" contains a value named "WSUSOfflineUpdate", or if the key "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" contains values named "DeleteWSUSUpdateAdminProfile" or "ShowOfflineUpdateLogFile". If they exist, delete them.
 Should these entries do not exist in the registry, this behavior was not caused by the Offline Updater. The WSUS Offline Updater team welcomes further hints concerning this problem.
