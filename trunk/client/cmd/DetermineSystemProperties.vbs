@@ -23,6 +23,7 @@ Private Const strRegValOfficePath             = "Path"
 Private Const strRegValOfficeLanguage_Inst    = "SKULanguage"
 Private Const strRegValOfficeLanguage_User    = "InstallLanguage"
 Private Const strRegValOfficeVersion          = "LastProduct"
+Private Const strVersionSuffixes              = "MAJOR,MINOR,BUILD,REVISION"
 Private Const strOfficeNames                  = "oxp,o2k3,o2k7,o2k10"
 Private Const strOfficeAppNames               = "Word,Excel,Outlook,Powerpoint,Access,FrontPage"
 Private Const strOfficeExeNames               = "WINWORD.EXE,EXCEL.EXE,OUTLOOK.EXE,POWERPNT.EXE,MSACCESS.EXE,FRONTPG.EXE"
@@ -134,25 +135,21 @@ Private Sub WriteLanguageToFile(objTextFile, varName, langCode, writeExtVar)
 End Sub
 
 Private Sub WriteVersionToFile(objTextFile, strPrefix, strVersion)
-Dim arrayVersion, i
+Dim arraySuffixes, arrayVersion, i
 
+  arraySuffixes = Split(strVersionSuffixes, ",")
   If Len(strVersion) > 0 Then
     arrayVersion = Split(strVersion, ".")
-    For i = 0 To UBound(arrayVersion)
-      Select Case i
-        Case 0
-          objTextFile.WriteLine("set " & strPrefix & "_MAJOR=" & arrayVersion(i))         
-        Case 1
-          objTextFile.WriteLine("set " & strPrefix & "_MINOR=" & arrayVersion(i))         
-        Case 2
-          objTextFile.WriteLine("set " & strPrefix & "_BUILD=" & arrayVersion(i))         
-        Case 3
-          objTextFile.WriteLine("set " & strPrefix & "_REVISION=" & arrayVersion(i))         
-      End Select
-    Next
   Else
-    objTextFile.WriteLine("set " & strPrefix & "_MAJOR=0")         
+    arrayVersion = Split("0", ".")
   End If
+  For i = 0 To UBound(arraySuffixes)
+    If i > UBound(arrayVersion) Then
+      objTextFile.WriteLine("set " & strPrefix & "_" & arraySuffixes(i) & "=0")         
+    Else
+      objTextFile.WriteLine("set " & strPrefix & "_" & arraySuffixes(i) & "=" & arrayVersion(i))         
+    End If
+  Next
 End Sub
 
 Private Sub WriteDXNameToFile(objTextFile, strDXVersion)

@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                      v. 6.6.2                      ###
+###                   v. 6.6.2+ (r134)                 ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -47,6 +47,7 @@ C=`which cabextract 2> /dev/null`
 S=`which xmlstarlet 2> /dev/null`
 T=`which xml 2> /dev/null`
 D=`which dos2unix 2> /dev/null`
+D2=$(which fromdos 2> /dev/null)
 xml=""
 
 if [ ! -x "$C" ]; then
@@ -90,16 +91,12 @@ else
 	fi
 fi
 
-if [ ! -x "$D" ]; then
-
+if [ ! -x "$D" ] && [ ! -x "$D2" ]; then
 # neu, fuer Slackware
-alias $D >/dev/null 2>&1 && return 0
-
 test -s /etc/slackware-version && {
-    alias dos2unix='recode ibmpc..lat1'
-    return 0
-    }
-
+  alias dos2unix='recode ibmpc..lat1'
+  return 0
+}
 # Ende Slackware-Einschub
 cat << END
 
@@ -108,7 +105,7 @@ Please install dos2unix.
 Command in Fedora:
 yum install dos2unix
 
-Command in Debian:
+Command in Debian/Ubuntu:
 apt-get install tofrodos
 
 Command in SuSE:
@@ -117,6 +114,14 @@ zypper install dos2unix
 END
 	exit 1
 fi
+# fromdos vorhanden --> alias anlegen
+if [[ "$D{2}" && ! -x "${D}" ]]
+ then
+  alias dos2unix=$(which fromdos)
+  # alias-Ausfuehrung in shell erlauben
+  shopt -s expand_aliases
+fi
+# Ende alias
 }
 
 printtimeout()
@@ -395,7 +400,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                      v. 6.6.2                      ***
+***                   v. 6.6.2+ (r134)                 ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***

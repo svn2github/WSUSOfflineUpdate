@@ -415,3 +415,6 @@ Version 6.6.2 -- 27.08.10
 - Fix: Check of .NET Framework 4 installation state failed when updating from command line (Thanks to "imrumpf")
 - Fix: DownloadUpdates.cmd script contained invalid subdirectory rename instructions for backward compatibility (Thanks to "heinzel")
 --------------------------------------------------------------------------------
+Version 6.6.? -- ??.??.10
+- Fix: Version checks could fail if strings were of unexpected/abbreviated structure (Thanks to Lars Bassen)
+- Fix: DownloadUpdates.sh script did not evaluate exclude lists because of missing "dos2unix" command (Thanks to "NoKurth" and "nebyah")
