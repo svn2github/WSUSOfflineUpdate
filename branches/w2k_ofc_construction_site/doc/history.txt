@@ -417,3 +417,5 @@ Version 6.6.2 -- 27.08.10
 --------------------------------------------------------------------------------
 Version 6.? -- ??.??.10
 - Windows 2000 support removed 
+- Fix: Version checks could fail if strings were of unexpected/abbreviated structure (Thanks to Lars Bassen)
+- Fix: DownloadUpdates.sh script did not evaluate exclude lists because of missing "dos2unix" command (Thanks to "NoKurth" and "nebyah")
