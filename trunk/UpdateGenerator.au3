@@ -90,6 +90,7 @@ Dim Const $misc_token_minimize    = "minimizeondownload"
 Dim Const $misc_token_showdonate  = "showdonate"
 
 ; Paths
+Dim Const $paths_rel_structure    = "\bin\,\client\bin\,\client\cmd\,\client\exclude\,\client\opt\,\client\static\,\cmd\,\exclude\,\iso\,\log\,\static\,\xslt\"
 Dim Const $path_rel_builddate     = "\client\builddate.txt"
 
 Dim $maindlg, $inifilename, $tabitemfocused, $includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $buildlbl
@@ -136,6 +137,17 @@ Func ShowGUIInGerman()
   Else
     Return ( (@OSLang = "0407") OR (@OSLang = "0807") OR (@OSLang = "0c07") OR (@OSLang = "1007") OR (@OSLang = "1407") )
   EndIf
+EndFunc
+
+Func DirectoryStructureExists()
+Dim $result, $arr_dirs, $i
+
+  $result = True
+  $arr_dirs = StringSplit($paths_rel_structure, ",")
+  For $i = 1 to $arr_dirs[0]
+    $result = $result AND FileExists(@ScriptDir & $arr_dirs[$i])
+  Next
+  Return $result
 EndFunc
 
 Func LastDownloadRun()
@@ -2695,6 +2707,15 @@ GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM)
 
 ; GUI message loop
 GUISetState()
+If NOT DirectoryStructureExists() Then
+  If ShowGUIInGerman() Then
+    MsgBox(0x2010, "Fehler", "Die Verzeichnisstruktur ist unvollst‰ndig." & @LF & "Bitte behalten Sie diese beim Entpacken des Zip-Archivs bei.")
+    Exit(1)
+  Else
+    MsgBox(0x2010, "Error", "The directory structure is incomplete." & @LF & "Please keep this when you unpack the Zip archive.")
+    Exit(1)
+  EndIf
+EndIf
 If StringRight(EnvGet("TEMP"), 1) = "\" Then
   If ShowGUIInGerman() Then
     MsgBox(0x2010, "Fehler", "Die Umgebungsvariable TEMP" & @LF & "enth‰lt einen abschlieﬂenden Backslash ('\').")

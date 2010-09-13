@@ -55,6 +55,8 @@ Dim Const $enabled                    = "Enabled"
 Dim Const $disabled                   = "Disabled"
 
 ; Paths
+Dim Const $path_max_length            = 128
+Dim Const $path_invalid_chars         = "%&()^+,;=" 
 Dim Const $path_rel_builddate         = "\builddate.txt"
 Dim Const $path_rel_hashes            = "\md\"
 Dim Const $path_rel_converters        = "\ofc\glb\OCONVPCK.EXE"
@@ -63,7 +65,7 @@ Dim Const $path_rel_instdotnet4       = "\dotnet\dotNetFx40_Full_x86_x64.exe"
 Dim Const $path_rel_mssedefs_x86      = "\mssedefs\x86-glb\mpam-fe.exe"
 Dim Const $path_rel_mssedefs_x64      = "\mssedefs\x64-glb\mpam-fex64.exe"
 
-Dim $maindlg, $scriptdir, $mapped, $netdrives, $i, $strpos, $inifilename, $backup, $converters, $ie7, $ie8, $wmp, $tsc, $dotnet35, $dotnet4, $powershell, $msse, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate 
+Dim $maindlg, $scriptdir, $mapped, $inifilename, $backup, $converters, $ie7, $ie8, $wmp, $tsc, $dotnet35, $dotnet4, $powershell, $msse, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate 
 Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
 
 Func ShowGUIInGerman()
@@ -81,10 +83,62 @@ Func ShowGUIInGerman()
   EndIf
 EndFunc
 
-Func MediumBuildDate()
+Func AssignScriptDirectory($map)
+Dim $result, $netdrives, $i
+  
+  ; Check if script directory is a network share, map if unmapped 
+  $result = ""
+  $map = False  
+  If DriveGetType(@ScriptDir) = "Network" Then
+    If StringInStr(@ScriptDir, "\\") = 0 Then
+      $result = @ScriptDir
+    Else
+      $netdrives = DriveGetDrive("NETWORK")
+      If NOT @error Then
+        For $i = 1 to $netdrives[0]
+          If StringInStr(@ScriptDir, DriveMapGet($netdrives[$i])) > 0 Then
+            $result = $netdrives[$i] & StringRight(@ScriptDir, StringLen(@ScriptDir) - StringLen(DriveMapGet($netdrives[$i])))
+            ExitLoop
+          EndIf
+        Next
+      EndIf
+      If $result = "" Then
+        $result = DriveMapAdd("*", @ScriptDir)
+        If @error Then
+          $result = "" 
+        Else
+          $map = True  
+        EndIf
+      EndIf
+    EndIf
+  Else
+    $result = @ScriptDir
+  EndIf
+  Return $result
+EndFunc
+
+Func PathValid($basepath)
+Dim $result, $arr_invalid, $i
+
+  If StringLen($basepath) > $path_max_length Then
+    $result = False
+  Else
+    $result = True
+    $arr_invalid = StringSplit($path_invalid_chars, "")
+    For $i = 1 to $arr_invalid[0]
+      If StringInStr($basepath, $arr_invalid[$i]) > 0 Then
+        $result = False
+        ExitLoop
+      EndIf
+    Next
+  EndIf
+  Return $result
+EndFunc
+
+Func MediumBuildDate($basepath)
 Dim $result
 
-  $result = FileReadLine(@ScriptDir & $path_rel_builddate)
+  $result = FileReadLine($basepath & $path_rel_builddate)
   If @error Then
     $result = ""
   EndIf
@@ -131,24 +185,24 @@ Dim $dummy
   Return (@error <= 0)
 EndFunc
 
-Func HashFilesPresent()
-  Return FileExists(@ScriptDir & $path_rel_hashes)
+Func HashFilesPresent($basepath)
+  Return FileExists($basepath & $path_rel_hashes)
 EndFunc
 
-Func ConvertersInstPresent()
-  Return FileExists(@ScriptDir & $path_rel_converters)
+Func ConvertersInstPresent($basepath)
+  Return FileExists($basepath & $path_rel_converters)
 EndFunc
 
-Func DotNet35InstPresent()
-  Return FileExists(@ScriptDir & $path_rel_instdotnet35)
+Func DotNet35InstPresent($basepath)
+  Return FileExists($basepath & $path_rel_instdotnet35)
 EndFunc
 
-Func DotNet4InstPresent()
-  Return FileExists(@ScriptDir & $path_rel_instdotnet4)
+Func DotNet4InstPresent($basepath)
+  Return FileExists($basepath & $path_rel_instdotnet4)
 EndFunc
 
-Func MSSEDefsPresent()
-  Return FileExists(@ScriptDir & $path_rel_mssedefs_x86) OR FileExists(@ScriptDir & $path_rel_mssedefs_x64)
+Func MSSEDefsPresent($basepath)
+  Return FileExists($basepath & $path_rel_mssedefs_x86) OR FileExists($basepath & $path_rel_mssedefs_x64)
 EndFunc
 
 Func CalcGUISize()
@@ -184,35 +238,7 @@ $groupwidth = 2 * $txtwidth + 2 * $txtxoffset
 $maindlg = GUICreate($caption, $groupwidth + 2 * $txtxoffset, $dlgheight)
 GUISetFont(8.5, 400, 0, "Sans Serif")
 
-; Check if script directory is a network share, map if unmapped 
-$scriptdir = ""
-$mapped = False  
-If DriveGetType(@ScriptDir) = "Network" Then
-  If StringInStr(@ScriptDir, "\\") = 0 Then
-    $scriptdir = @ScriptDir
-  Else
-    $netdrives = DriveGetDrive("NETWORK")
-    If NOT @error Then
-      For $i = 1 to $netdrives[0]
-        $strpos = StringInStr(@ScriptDir, DriveMapGet($netdrives[$i])) 
-        If $strpos > 0 Then
-          $scriptdir = $netdrives[$i] & StringRight(@ScriptDir, StringLen(@ScriptDir) - StringLen(DriveMapGet($netdrives[$i])))
-          ExitLoop
-        EndIf
-      Next
-    EndIf
-    If $scriptdir = "" Then
-      $scriptdir = DriveMapAdd("*", @ScriptDir)
-      If @error Then
-        $scriptdir = "" 
-      Else
-        $mapped = True  
-      EndIf
-    EndIf
-  EndIf
-Else
-  $scriptdir = @ScriptDir
-EndIf
+$scriptdir = AssignScriptDirectory($mapped)
 $inifilename = $scriptdir & "\" & StringLeft(@ScriptName, StringInStr(@ScriptName, ".", 0, -1)) & "ini"
 
 ;  Label
@@ -225,7 +251,7 @@ Else
 EndIf
 
 ;  Medium info group
-$builddate = MediumBuildDate()
+$builddate = MediumBuildDate($scriptdir)
 If ($builddate <> "") Then
   $txtxpos = $txtxoffset + 3 * $groupwidth / 4
   $txtypos = 0
@@ -266,7 +292,7 @@ If ShowGUIInGerman() Then
 Else
   $converters = GUICtrlCreateCheckbox("Install Office file format converters", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If NOT ConvertersInstPresent() Then
+If NOT ConvertersInstPresent($scriptdir) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else  
@@ -367,7 +393,7 @@ Else
   $dotnet35 = GUICtrlCreateCheckbox("Install .NET Framework 3.5 SP1", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
-  OR (DotNet35Version() = $target_version_dotnet35) OR (NOT DotNet35InstPresent()) ) Then
+  OR (DotNet35Version() = $target_version_dotnet35) OR (NOT DotNet35InstPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else  
@@ -385,7 +411,7 @@ If ShowGUIInGerman() Then
 Else
   $dotnet4 = GUICtrlCreateCheckbox("Install .NET Framework 4", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (DotNet4Version() = $target_version_dotnet4) OR (NOT DotNet4InstPresent()) ) Then
+If ( (@OSVersion = "WIN_2000") OR (DotNet4Version() = $target_version_dotnet4) OR (NOT DotNet4InstPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else  
@@ -425,7 +451,7 @@ Else
   $msse = GUICtrlCreateCheckbox("Install Microsoft Security Essentials", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_2008R2") _
-  OR (MSSEInstalled()) OR (NOT MSSEDefsPresent()) ) Then
+  OR (MSSEInstalled()) OR (NOT MSSEDefsPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else  
@@ -453,7 +479,7 @@ If ShowGUIInGerman() Then
 Else
   $verify = GUICtrlCreateCheckbox("Verify installation packages", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If HashFilesPresent() Then
+If HashFilesPresent($scriptdir) Then
   If IniRead($inifilename, $ini_section_control, $ini_value_verify, $disabled) = $enabled Then
     GUICtrlSetState(-1, $GUI_CHECKED)
   Else
@@ -536,7 +562,6 @@ EndIf
 GUICtrlSetResizing (-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM)
 
 ; GUI message loop
-$options = ""
 GUISetState()
 If NOT WSHAvailable() Then
   If ShowGUIInGerman() Then
@@ -553,13 +578,23 @@ If NOT WSHAvailable() Then
 EndIf
 If $scriptdir = "" Then
   If ShowGUIInGerman() Then
-    MsgBox(0x2010, "Fehler", "Die Update-Installation kann nicht" _
-                     & @LF & "von einer Netzwerk-Freigabe gestartet werden," _
-                     & @LF & "der kein Laufwerksbuchstabe zugewiesen ist.")
+    MsgBox(0x2010, "Fehler", "Dem Skript-Pfad " & @ScriptDir _
+                     & @LF & "konnte kein Laufwerksbuchstabe zugewiesen werden.")
     Exit(1)
   Else
-    MsgBox(0x2010, "Error", "The installation process cannot be run" _
-                    & @LF & "from a network share without an assigned drive letter.")
+    MsgBox(0x2010, "Error", "Unable to assign a drive letter" _
+                    & @LF & "to the script path " & @ScriptDir)
+    Exit(1)
+  EndIf
+EndIf
+If NOT PathValid($scriptdir) Then
+  If ShowGUIInGerman() Then
+    MsgBox(0x2010, "Fehler", "Der Skript-Pfad darf nicht mehr als " & $path_max_length & " Zeichen lang sein" _
+                     & @LF & "und darf keines der folgenden Zeichen enthalten: " & $path_invalid_chars)
+    Exit(1)
+  Else
+    MsgBox(0x2010, "Fehler", "The script path must not be more than " & $path_max_length & " characters long" _
+                     & @LF & "and must not contain any of the following characters: " & $path_invalid_chars)
     Exit(1)
   EndIf
 EndIf
@@ -693,6 +728,7 @@ While 1
       EndIf  
 
     Case $btn_start          ; Start Button pressed
+      $options = ""
       If BitAND(GUICtrlRead($backup), $GUI_CHECKED) <> $GUI_CHECKED Then
         $options = $options & " /nobackup"
       EndIf

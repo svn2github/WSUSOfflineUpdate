@@ -416,5 +416,6 @@ Version 6.6.2 -- 27.08.10
 - Fix: DownloadUpdates.cmd script contained invalid subdirectory rename instructions for backward compatibility (Thanks to "heinzel")
 --------------------------------------------------------------------------------
 Version 6.6.? -- ??.??.10
+- Prerequisites' checks enhanced for UpdateGenerator (directory substructure) and UpdateInstaller (path properties, see http://msdn.microsoft.com/en-us/library/aa365247(VS.85).aspx) scripts (Thanks to Matthias Köhler)
 - Fix: Version checks could fail if strings were of unexpected/abbreviated structure (Thanks to Lars Bassen)
 - Fix: DownloadUpdates.sh script did not evaluate exclude lists because of missing "dos2unix" command (Thanks to "NoKurth" and "nebyah")
