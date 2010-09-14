@@ -124,7 +124,7 @@ goto InstFailure
 
 :InstCabMsu
 echo Installing %1...
-if "%OS_ARCHITECTURE%"=="x64" (set TOKEN_KB=3) else (set TOKEN_KB=2)
+if "%OS_ARCH%"=="x64" (set TOKEN_KB=3) else (set TOKEN_KB=2)
 for /F "tokens=%TOKEN_KB% delims=-" %%i in ("%1") do (
   call SafeRmDir.cmd "%TEMP%\%%i"
   md "%TEMP%\%%i"

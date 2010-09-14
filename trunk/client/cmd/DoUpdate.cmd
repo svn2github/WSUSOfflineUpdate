@@ -10,13 +10,13 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.6.2+ (r136)
+set WSUSOFFLINE_VERSION=6.6.3
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
-echo Starting WSUS Offline Update (v. %WSUSUPDATE_VERSION%)...
+echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%)...
 if exist %UPDATE_LOGFILE% echo. >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Starting WSUS offline update (v. %WSUSUPDATE_VERSION%) on %COMPUTERNAME% (user: %USERNAME%) >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Starting WSUS offline update (v. %WSUSOFFLINE_VERSION%) on %COMPUTERNAME% (user: %USERNAME%) >>%UPDATE_LOGFILE%
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
@@ -87,8 +87,8 @@ if not exist "%TEMP%\SetSystemEnvVars.cmd" goto NoSysEnvVars
 call "%TEMP%\SetSystemEnvVars.cmd"
 del "%TEMP%\SetSystemEnvVars.cmd"
 if "%SystemDirectory%"=="" set SystemDirectory=%SystemRoot%\system32
-if "%OS_ARCHITECTURE%"=="" set OS_ARCHITECTURE=%PROCESSOR_ARCHITECTURE%
-if "%OS_LANGUAGE%"=="" goto UnsupLang
+if "%OS_ARCH%"=="" set OS_ARCH=%PROCESSOR_ARCHITECTURE%
+if "%OS_LANG%"=="" goto UnsupLang
 
 rem *** Set target environment variables ***
 call SetTargetEnvVars.cmd %INSTALL_IE%
@@ -97,56 +97,56 @@ if "%OS_NAME%"=="" goto NoOSName
 
 rem *** Echo OS properties ***
 echo Found OS caption: %OS_CAPTION%
-echo Found Microsoft Windows version: %OS_VERSION_MAJOR%.%OS_VERSION_MINOR%.%OS_VERSION_BUILD% (%OS_NAME% %OS_ARCHITECTURE% %OS_LANGUAGE% sp%OS_SP_VERSION_MAJOR%)
-rem echo Found Windows Update Agent version: %WUA_VERSION_MAJOR%.%WUA_VERSION_MINOR%.%WUA_VERSION_BUILD%.%WUA_VERSION_REVISION%
-rem echo Found Windows Installer version: %MSI_VERSION_MAJOR%.%MSI_VERSION_MINOR%.%MSI_VERSION_BUILD%.%MSI_VERSION_REVISION%
-rem echo Found Windows Script Host version: %WSH_VERSION_MAJOR%.%WSH_VERSION_MINOR%.%WSH_VERSION_BUILD%.%WSH_VERSION_REVISION%
-rem echo Found Internet Explorer version: %IE_VERSION_MAJOR%.%IE_VERSION_MINOR%.%IE_VERSION_BUILD%.%IE_VERSION_REVISION%
-rem echo Found Microsoft Data Access Components version: %MDAC_VERSION_MAJOR%.%MDAC_VERSION_MINOR%.%MDAC_VERSION_BUILD%.%MDAC_VERSION_REVISION%
-rem echo Found Microsoft DirectX version: %DIRECTX_VERSION_MAJOR%.%DIRECTX_VERSION_MINOR%.%DIRECTX_VERSION_BUILD%.%DIRECTX_VERSION_REVISION% (%DIRECTX_NAME%)
-rem echo Found Microsoft .NET Framework 3.5 version: %DOTNET35_VERSION_MAJOR%.%DOTNET35_VERSION_MINOR%.%DOTNET35_VERSION_BUILD%.%DOTNET35_VERSION_REVISION%
-rem echo Found Windows PowerShell version: %PSH_VERSION_MAJOR%.%PSH_VERSION_MINOR%
-rem echo Found Windows Media Player version: %WMP_VERSION_MAJOR%.%WMP_VERSION_MINOR%.%WMP_VERSION_BUILD%.%WMP_VERSION_REVISION%
-rem echo Found Terminal Services Client version: %TSC_VERSION_MAJOR%.%TSC_VERSION_MINOR%.%TSC_VERSION_BUILD%.%TSC_VERSION_REVISION%
-if "%OXP_VERSION_MAJOR%" NEQ "" (
-  echo Found Microsoft Office XP %OXP_VERSION_APP% version: %OXP_VERSION_MAJOR%.%OXP_VERSION_MINOR%.%OXP_VERSION_BUILD%.%OXP_VERSION_REVISION% ^(oxp %OXP_LANGUAGE% sp%OXP_SP_VERSION%^)
+echo Found Microsoft Windows version: %OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_VER_BUILD% (%OS_NAME% %OS_ARCH% %OS_LANG% sp%OS_SP_VER_MAJOR%)
+rem echo Found Windows Update Agent version: %WUA_VER_MAJOR%.%WUA_VER_MINOR%.%WUA_VER_BUILD%.%WUA_VER_REVISION%
+rem echo Found Windows Installer version: %MSI_VER_MAJOR%.%MSI_VER_MINOR%.%MSI_VER_BUILD%.%MSI_VER_REVISION%
+rem echo Found Windows Script Host version: %WSH_VER_MAJOR%.%WSH_VER_MINOR%.%WSH_VER_BUILD%.%WSH_VER_REVISION%
+rem echo Found Internet Explorer version: %IE_VER_MAJOR%.%IE_VER_MINOR%.%IE_VER_BUILD%.%IE_VER_REVISION%
+rem echo Found Microsoft Data Access Components version: %MDAC_VER_MAJOR%.%MDAC_VER_MINOR%.%MDAC_VER_BUILD%.%MDAC_VER_REVISION%
+rem echo Found Microsoft DirectX version: %DIRECTX_VER_MAJOR%.%DIRECTX_VER_MINOR%.%DIRECTX_VER_BUILD%.%DIRECTX_VER_REVISION% (%DIRECTX_NAME%)
+rem echo Found Microsoft .NET Framework 3.5 version: %DOTNET35_VER_MAJOR%.%DOTNET35_VER_MINOR%.%DOTNET35_VER_BUILD%.%DOTNET35_VER_REVISION%
+rem echo Found Windows PowerShell version: %PSH_VER_MAJOR%.%PSH_VER_MINOR%
+rem echo Found Windows Media Player version: %WMP_VER_MAJOR%.%WMP_VER_MINOR%.%WMP_VER_BUILD%.%WMP_VER_REVISION%
+rem echo Found Terminal Services Client version: %TSC_VER_MAJOR%.%TSC_VER_MINOR%.%TSC_VER_BUILD%.%TSC_VER_REVISION%
+if "%OXP_VER_MAJOR%" NEQ "" (
+  echo Found Microsoft Office XP %OXP_VER_APP% version: %OXP_VER_MAJOR%.%OXP_VER_MINOR%.%OXP_VER_BUILD%.%OXP_VER_REVISION% ^(oxp %OXP_LANG% sp%OXP_SP_VER%^)
 )
-if "%O2K3_VERSION_MAJOR%" NEQ "" (
-  echo Found Microsoft Office 2003 %O2K3_VERSION_APP% version: %O2K3_VERSION_MAJOR%.%O2K3_VERSION_MINOR%.%O2K3_VERSION_BUILD%.%O2K3_VERSION_REVISION% ^(o2k3 %O2K3_LANGUAGE% sp%O2K3_SP_VERSION%^)
+if "%O2K3_VER_MAJOR%" NEQ "" (
+  echo Found Microsoft Office 2003 %O2K3_VER_APP% version: %O2K3_VER_MAJOR%.%O2K3_VER_MINOR%.%O2K3_VER_BUILD%.%O2K3_VER_REVISION% ^(o2k3 %O2K3_LANG% sp%O2K3_SP_VER%^)
 )
-if "%O2K7_VERSION_MAJOR%" NEQ "" (
-  echo Found Microsoft Office 2007 %O2K7_VERSION_APP% version: %O2K7_VERSION_MAJOR%.%O2K7_VERSION_MINOR%.%O2K7_VERSION_BUILD%.%O2K7_VERSION_REVISION% ^(o2k7 %O2K7_LANGUAGE% sp%O2K7_SP_VERSION%^)
+if "%O2K7_VER_MAJOR%" NEQ "" (
+  echo Found Microsoft Office 2007 %O2K7_VER_APP% version: %O2K7_VER_MAJOR%.%O2K7_VER_MINOR%.%O2K7_VER_BUILD%.%O2K7_VER_REVISION% ^(o2k7 %O2K7_LANG% sp%O2K7_SP_VER%^)
 )
-if "%O2K10_VERSION_MAJOR%" NEQ "" (
-  echo Found Microsoft Office 2010 %O2K10_VERSION_APP% version: %O2K10_VERSION_MAJOR%.%O2K10_VERSION_MINOR%.%O2K10_VERSION_BUILD%.%O2K10_VERSION_REVISION% ^(o2k10 %O2K10_LANGUAGE% sp%O2K10_SP_VERSION%^)
+if "%O2K10_VER_MAJOR%" NEQ "" (
+  echo Found Microsoft Office 2010 %O2K10_VER_APP% version: %O2K10_VER_MAJOR%.%O2K10_VER_MINOR%.%O2K10_VER_BUILD%.%O2K10_VER_REVISION% ^(o2k10 %O2K10_LANG% sp%O2K10_SP_VER%^)
 )
 echo %DATE% %TIME% - Info: Found OS caption '%OS_CAPTION%' >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft Windows version %OS_VERSION_MAJOR%.%OS_VERSION_MINOR%.%OS_VERSION_BUILD% (%OS_NAME% %OS_ARCHITECTURE% %OS_LANGUAGE% sp%OS_SP_VERSION_MAJOR%) >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Windows Update Agent version %WUA_VERSION_MAJOR%.%WUA_VERSION_MINOR%.%WUA_VERSION_BUILD%.%WUA_VERSION_REVISION% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Windows Installer version %MSI_VERSION_MAJOR%.%MSI_VERSION_MINOR%.%MSI_VERSION_BUILD%.%MSI_VERSION_REVISION% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Windows Script Host version %WSH_VERSION_MAJOR%.%WSH_VERSION_MINOR%.%WSH_VERSION_BUILD%.%WSH_VERSION_REVISION% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Internet Explorer version %IE_VERSION_MAJOR%.%IE_VERSION_MINOR%.%IE_VERSION_BUILD%.%IE_VERSION_REVISION% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft Data Access Components version %MDAC_VERSION_MAJOR%.%MDAC_VERSION_MINOR%.%MDAC_VERSION_BUILD%.%MDAC_VERSION_REVISION% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft DirectX version %DIRECTX_VERSION_MAJOR%.%DIRECTX_VERSION_MINOR%.%DIRECTX_VERSION_BUILD%.%DIRECTX_VERSION_REVISION% (%DIRECTX_NAME%) >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 3.5 version %DOTNET35_VERSION_MAJOR%.%DOTNET35_VERSION_MINOR%.%DOTNET35_VERSION_BUILD%.%DOTNET35_VERSION_REVISION% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Windows PowerShell version %PSH_VERSION_MAJOR%.%PSH_VERSION_MINOR% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Windows Media Player version %WMP_VERSION_MAJOR%.%WMP_VERSION_MINOR%.%WMP_VERSION_BUILD%.%WMP_VERSION_REVISION% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Terminal Services Client version %TSC_VERSION_MAJOR%.%TSC_VERSION_MINOR%.%TSC_VERSION_BUILD%.%TSC_VERSION_REVISION% >>%UPDATE_LOGFILE%
-if "%OXP_VERSION_MAJOR%" NEQ "" (
-  echo %DATE% %TIME% - Info: Found Microsoft Office XP %OXP_VERSION_APP% version %OXP_VERSION_MAJOR%.%OXP_VERSION_MINOR%.%OXP_VERSION_BUILD%.%OXP_VERSION_REVISION% ^(oxp %OXP_LANGUAGE% sp%OXP_SP_VERSION%^) >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft Windows version %OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_VER_BUILD% (%OS_NAME% %OS_ARCH% %OS_LANG% sp%OS_SP_VER_MAJOR%) >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Windows Update Agent version %WUA_VER_MAJOR%.%WUA_VER_MINOR%.%WUA_VER_BUILD%.%WUA_VER_REVISION% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Windows Installer version %MSI_VER_MAJOR%.%MSI_VER_MINOR%.%MSI_VER_BUILD%.%MSI_VER_REVISION% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Windows Script Host version %WSH_VER_MAJOR%.%WSH_VER_MINOR%.%WSH_VER_BUILD%.%WSH_VER_REVISION% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Internet Explorer version %IE_VER_MAJOR%.%IE_VER_MINOR%.%IE_VER_BUILD%.%IE_VER_REVISION% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft Data Access Components version %MDAC_VER_MAJOR%.%MDAC_VER_MINOR%.%MDAC_VER_BUILD%.%MDAC_VER_REVISION% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft DirectX version %DIRECTX_VER_MAJOR%.%DIRECTX_VER_MINOR%.%DIRECTX_VER_BUILD%.%DIRECTX_VER_REVISION% (%DIRECTX_NAME%) >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 3.5 version %DOTNET35_VER_MAJOR%.%DOTNET35_VER_MINOR%.%DOTNET35_VER_BUILD%.%DOTNET35_VER_REVISION% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Windows PowerShell version %PSH_VER_MAJOR%.%PSH_VER_MINOR% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Windows Media Player version %WMP_VER_MAJOR%.%WMP_VER_MINOR%.%WMP_VER_BUILD%.%WMP_VER_REVISION% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Terminal Services Client version %TSC_VER_MAJOR%.%TSC_VER_MINOR%.%TSC_VER_BUILD%.%TSC_VER_REVISION% >>%UPDATE_LOGFILE%
+if "%OXP_VER_MAJOR%" NEQ "" (
+  echo %DATE% %TIME% - Info: Found Microsoft Office XP %OXP_VER_APP% version %OXP_VER_MAJOR%.%OXP_VER_MINOR%.%OXP_VER_BUILD%.%OXP_VER_REVISION% ^(oxp %OXP_LANG% sp%OXP_SP_VER%^) >>%UPDATE_LOGFILE%
 )
-if "%O2K3_VERSION_MAJOR%" NEQ "" (
-  echo %DATE% %TIME% - Info: Found Microsoft Office 2003 %O2K3_VERSION_APP% version %O2K3_VERSION_MAJOR%.%O2K3_VERSION_MINOR%.%O2K3_VERSION_BUILD%.%O2K3_VERSION_REVISION% ^(o2k3 %O2K3_LANGUAGE% sp%O2K3_SP_VERSION%^) >>%UPDATE_LOGFILE%
+if "%O2K3_VER_MAJOR%" NEQ "" (
+  echo %DATE% %TIME% - Info: Found Microsoft Office 2003 %O2K3_VER_APP% version %O2K3_VER_MAJOR%.%O2K3_VER_MINOR%.%O2K3_VER_BUILD%.%O2K3_VER_REVISION% ^(o2k3 %O2K3_LANG% sp%O2K3_SP_VER%^) >>%UPDATE_LOGFILE%
 )
-if "%O2K7_VERSION_MAJOR%" NEQ "" (
-  echo %DATE% %TIME% - Info: Found Microsoft Office 2007 %O2K7_VERSION_APP% version %O2K7_VERSION_MAJOR%.%O2K7_VERSION_MINOR%.%O2K7_VERSION_BUILD%.%O2K7_VERSION_REVISION% ^(o2k7 %O2K7_LANGUAGE% sp%O2K7_SP_VERSION%^) >>%UPDATE_LOGFILE%
+if "%O2K7_VER_MAJOR%" NEQ "" (
+  echo %DATE% %TIME% - Info: Found Microsoft Office 2007 %O2K7_VER_APP% version %O2K7_VER_MAJOR%.%O2K7_VER_MINOR%.%O2K7_VER_BUILD%.%O2K7_VER_REVISION% ^(o2k7 %O2K7_LANG% sp%O2K7_SP_VER%^) >>%UPDATE_LOGFILE%
 )
-if "%O2K10_VERSION_MAJOR%" NEQ "" (
-  echo %DATE% %TIME% - Info: Found Microsoft Office 2010 %O2K10_VERSION_APP% version %O2K10_VERSION_MAJOR%.%O2K10_VERSION_MINOR%.%O2K10_VERSION_BUILD%.%O2K10_VERSION_REVISION% ^(o2k10 %O2K10_LANGUAGE% sp%O2K10_SP_VERSION%^) >>%UPDATE_LOGFILE%
+if "%O2K10_VER_MAJOR%" NEQ "" (
+  echo %DATE% %TIME% - Info: Found Microsoft Office 2010 %O2K10_VER_APP% version %O2K10_VER_MAJOR%.%O2K10_VER_MINOR%.%O2K10_VER_BUILD%.%O2K10_VER_REVISION% ^(o2k10 %O2K10_LANG% sp%O2K10_SP_VER%^) >>%UPDATE_LOGFILE%
 )
 
 rem *** Check Operating System architecture ***
-for %%i in (x86 x64) do (if /i "%OS_ARCHITECTURE%"=="%%i" goto ValidArch)
+for %%i in (x86 x64) do (if /i "%OS_ARCH%"=="%%i" goto ValidArch)
 goto UnsupArch
 :ValidArch
 
@@ -164,21 +164,21 @@ if exist ..\builddate.txt (
     echo %DATE% %TIME% - Info: Medium build date: %%i >>%UPDATE_LOGFILE%
   )
 )
-if /i "%OS_ARCHITECTURE%"=="x64" (
-  if exist ..\%OS_NAME%-%OS_ARCHITECTURE%\%OS_LANGUAGE%\nul (
-    echo Medium supports Microsoft Windows ^(%OS_NAME%-%OS_ARCHITECTURE% %OS_LANGUAGE%^).
-    echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME%-%OS_ARCHITECTURE% %OS_LANGUAGE%^) >>%UPDATE_LOGFILE%
+if /i "%OS_ARCH%"=="x64" (
+  if exist ..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\nul (
+    echo Medium supports Microsoft Windows ^(%OS_NAME%-%OS_ARCH% %OS_LANG%^).
+    echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME%-%OS_ARCH% %OS_LANG%^) >>%UPDATE_LOGFILE%
     goto CheckOfficeMedium
   )
-  if exist ..\%OS_NAME%-%OS_ARCHITECTURE%\glb\nul (
-    echo Medium supports Microsoft Windows ^(%OS_NAME%-%OS_ARCHITECTURE% glb^).
-    echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME%-%OS_ARCHITECTURE% glb^) >>%UPDATE_LOGFILE%
+  if exist ..\%OS_NAME%-%OS_ARCH%\glb\nul (
+    echo Medium supports Microsoft Windows ^(%OS_NAME%-%OS_ARCH% glb^).
+    echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME%-%OS_ARCH% glb^) >>%UPDATE_LOGFILE%
     goto CheckOfficeMedium
   )
 ) else (
-  if exist ..\%OS_NAME%\%OS_LANGUAGE%\nul (
-    echo Medium supports Microsoft Windows ^(%OS_NAME% %OS_LANGUAGE%^).
-    echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME% %OS_LANGUAGE%^) >>%UPDATE_LOGFILE%
+  if exist ..\%OS_NAME%\%OS_LANG%\nul (
+    echo Medium supports Microsoft Windows ^(%OS_NAME% %OS_LANG%^).
+    echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME% %OS_LANG%^) >>%UPDATE_LOGFILE%
     goto CheckOfficeMedium
   )
   if exist ..\%OS_NAME%\glb\nul (
@@ -187,45 +187,45 @@ if /i "%OS_ARCHITECTURE%"=="x64" (
     goto CheckOfficeMedium
   )
 )
-echo Medium does not support Microsoft Windows (%OS_NAME% %OS_LANGUAGE%).
-echo %DATE% %TIME% - Info: Medium does not support Microsoft Windows (%OS_NAME% %OS_LANGUAGE%) >>%UPDATE_LOGFILE%
-if "%OFFICE_NAME%"=="" goto InvalidMedium
+echo Medium does not support Microsoft Windows (%OS_NAME% %OS_LANG%).
+echo %DATE% %TIME% - Info: Medium does not support Microsoft Windows (%OS_NAME% %OS_LANG%) >>%UPDATE_LOGFILE%
+if "%OFC_NAME%"=="" goto InvalidMedium
 
 :CheckOfficeMedium
-if "%OFFICE_NAME%"=="" goto ProperMedium
-if exist ..\%OFFICE_NAME%\%OFFICE_LANGUAGE%\nul (
-  echo Medium supports Microsoft Office ^(%OFFICE_NAME% %OFFICE_LANGUAGE%^).
-  echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(%OFFICE_NAME% %OFFICE_LANGUAGE%^) >>%UPDATE_LOGFILE%
+if "%OFC_NAME%"=="" goto ProperMedium
+if exist ..\%OFC_NAME%\%OFC_LANG%\nul (
+  echo Medium supports Microsoft Office ^(%OFC_NAME% %OFC_LANG%^).
+  echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(%OFC_NAME% %OFC_LANG%^) >>%UPDATE_LOGFILE%
   goto ProperMedium
 )
-if exist ..\%OFFICE_NAME%\glb\nul (
-  echo Medium supports Microsoft Office ^(%OFFICE_NAME% glb^).
-  echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(%OFFICE_NAME% glb^) >>%UPDATE_LOGFILE%
+if exist ..\%OFC_NAME%\glb\nul (
+  echo Medium supports Microsoft Office ^(%OFC_NAME% glb^).
+  echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(%OFC_NAME% glb^) >>%UPDATE_LOGFILE%
   goto ProperMedium
 )
-if exist ..\%OFFICE_NAME%-%OS_ARCHITECTURE%\%OFFICE_LANGUAGE%\nul (
-  echo Medium supports Microsoft Office ^(%OFFICE_NAME%-%OS_ARCHITECTURE% %OFFICE_LANGUAGE%^).
-  echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(%OFFICE_NAME%-%OS_ARCHITECTURE% %OFFICE_LANGUAGE%^) >>%UPDATE_LOGFILE%
+if exist ..\%OFC_NAME%-%OS_ARCH%\%OFC_LANG%\nul (
+  echo Medium supports Microsoft Office ^(%OFC_NAME%-%OS_ARCH% %OFC_LANG%^).
+  echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(%OFC_NAME%-%OS_ARCH% %OFC_LANG%^) >>%UPDATE_LOGFILE%
   goto ProperMedium
 )
-if exist ..\%OFFICE_NAME%-%OS_ARCHITECTURE%\glb\nul (
-  echo Medium supports Microsoft Office ^(%OFFICE_NAME%-%OS_ARCHITECTURE% glb^).
-  echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(%OFFICE_NAME%-%OS_ARCHITECTURE% glb^) >>%UPDATE_LOGFILE%
+if exist ..\%OFC_NAME%-%OS_ARCH%\glb\nul (
+  echo Medium supports Microsoft Office ^(%OFC_NAME%-%OS_ARCH% glb^).
+  echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(%OFC_NAME%-%OS_ARCH% glb^) >>%UPDATE_LOGFILE%
   goto ProperMedium
 )
-echo Medium does not support Microsoft Office (%OFFICE_NAME% %OFFICE_LANGUAGE%).
-echo %DATE% %TIME% - Info: Medium does not support Microsoft Office (%OFFICE_NAME% %OFFICE_LANGUAGE%) >>%UPDATE_LOGFILE%
+echo Medium does not support Microsoft Office (%OFC_NAME% %OFC_LANG%).
+echo %DATE% %TIME% - Info: Medium does not support Microsoft Office (%OFC_NAME% %OFC_LANG%) >>%UPDATE_LOGFILE%
 :ProperMedium
 
 rem *** Install Windows Service Pack ***
 echo Checking Windows Service Pack version...
-if %OS_SP_VERSION_MAJOR% GEQ %OS_SP_VERSION_TARGET_MAJOR% goto SkipSPInst
+if %OS_SP_VER_MAJOR% GEQ %OS_SP_VER_TARGET_MAJOR% goto SkipSPInst
 if "%OS_SP_TARGET_ID%"=="" goto NoSPTargetId
 echo %OS_SP_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics
 if errorlevel 1 goto ListError
 if not exist "%TEMP%\UpdatesToInstall.txt" (
-  if "%OFFICE_NAME%"=="" goto NoUpdates
+  if "%OFC_NAME%"=="" goto NoUpdates
   echo Warning: Windows Service Pack installation file ^(kb%OS_SP_TARGET_ID%^) not found.
   echo %DATE% %TIME% - Warning: Windows Service Pack installation file ^(kb%OS_SP_TARGET_ID%^) not found >>%UPDATE_LOGFILE%
   goto SkipSPInst
@@ -234,7 +234,7 @@ echo Installing most recent Windows Service Pack...
 goto SP%OS_NAME%
 
 :SPwxp
-if 0 EQU %OS_SP_VERSION_MAJOR% (
+if 0 EQU %OS_SP_VER_MAJOR% (
   if not exist %REG_PATH% goto NoReg
   echo Faking Windows XP Service Pack 1...
   %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\Control\Windows /v CSDVersion /t REG_DWORD /d 0x100 /f >nul 2>&1
@@ -271,13 +271,13 @@ rem *** Install DirectX End-User Runtime ***
 if "%OS_NAME%"=="w60" goto SkipDirectXInst
 if "%OS_NAME%"=="w61" goto SkipDirectXInst
 echo Checking DirectX version...
-if %DIRECTX_VERSION_MAJOR% LSS %DIRECTX_VERSION_TARGET_MAJOR% goto InstallDirectX
-if %DIRECTX_VERSION_MAJOR% GTR %DIRECTX_VERSION_TARGET_MAJOR% goto SkipDirectXInst
-if %DIRECTX_VERSION_MINOR% LSS %DIRECTX_VERSION_TARGET_MINOR% goto InstallDirectX
-if %DIRECTX_VERSION_MINOR% GTR %DIRECTX_VERSION_TARGET_MINOR% goto SkipDirectXInst
-if %DIRECTX_VERSION_BUILD% LSS %DIRECTX_VERSION_TARGET_BUILD% goto InstallDirectX
-if %DIRECTX_VERSION_BUILD% GTR %DIRECTX_VERSION_TARGET_BUILD% goto SkipDirectXInst
-if %DIRECTX_VERSION_REVISION% GEQ %DIRECTX_VERSION_TARGET_REVISION% goto SkipDirectXInst
+if %DIRECTX_VER_MAJOR% LSS %DIRECTX_VER_TARGET_MAJOR% goto InstallDirectX
+if %DIRECTX_VER_MAJOR% GTR %DIRECTX_VER_TARGET_MAJOR% goto SkipDirectXInst
+if %DIRECTX_VER_MINOR% LSS %DIRECTX_VER_TARGET_MINOR% goto InstallDirectX
+if %DIRECTX_VER_MINOR% GTR %DIRECTX_VER_TARGET_MINOR% goto SkipDirectXInst
+if %DIRECTX_VER_BUILD% LSS %DIRECTX_VER_TARGET_BUILD% goto InstallDirectX
+if %DIRECTX_VER_BUILD% GTR %DIRECTX_VER_TARGET_BUILD% goto SkipDirectXInst
+if %DIRECTX_VER_REVISION% GEQ %DIRECTX_VER_TARGET_REVISION% goto SkipDirectXInst
 :InstallDirectX
 set DIRECTX_FILENAME=..\win\glb\directx_*_redist.exe
 dir /B %DIRECTX_FILENAME% >nul 2>&1
@@ -300,15 +300,15 @@ for /F %%i in ('dir /B %DIRECTX_FILENAME%') do (
 
 rem *** Install Windows Update Agent ***
 echo Checking Windows Update Agent version...
-if %WUA_VERSION_MAJOR% LSS %WUA_VERSION_TARGET_MAJOR% goto InstallWUA
-if %WUA_VERSION_MAJOR% GTR %WUA_VERSION_TARGET_MAJOR% goto SkipWUAInst
-if %WUA_VERSION_MINOR% LSS %WUA_VERSION_TARGET_MINOR% goto InstallWUA
-if %WUA_VERSION_MINOR% GTR %WUA_VERSION_TARGET_MINOR% goto SkipWUAInst
-if %WUA_VERSION_BUILD% LSS %WUA_VERSION_TARGET_BUILD% goto InstallWUA
-if %WUA_VERSION_BUILD% GTR %WUA_VERSION_TARGET_BUILD% goto SkipWUAInst
-if %WUA_VERSION_REVISION% GEQ %WUA_VERSION_TARGET_REVISION% goto SkipWUAInst
+if %WUA_VER_MAJOR% LSS %WUA_VER_TARGET_MAJOR% goto InstallWUA
+if %WUA_VER_MAJOR% GTR %WUA_VER_TARGET_MAJOR% goto SkipWUAInst
+if %WUA_VER_MINOR% LSS %WUA_VER_TARGET_MINOR% goto InstallWUA
+if %WUA_VER_MINOR% GTR %WUA_VER_TARGET_MINOR% goto SkipWUAInst
+if %WUA_VER_BUILD% LSS %WUA_VER_TARGET_BUILD% goto InstallWUA
+if %WUA_VER_BUILD% GTR %WUA_VER_TARGET_BUILD% goto SkipWUAInst
+if %WUA_VER_REVISION% GEQ %WUA_VER_TARGET_REVISION% goto SkipWUAInst
 :InstallWUA
-set WUA_FILENAME=..\wsus\WindowsUpdateAgent*-%OS_ARCHITECTURE%.exe
+set WUA_FILENAME=..\wsus\WindowsUpdateAgent*-%OS_ARCH%.exe
 dir /B %WUA_FILENAME% >nul 2>&1
 if errorlevel 1 goto NoWUAInst
 echo Installing most recent Windows Update Agent...
@@ -321,23 +321,23 @@ for /F %%i in ('dir /B %WUA_FILENAME%') do (
 
 rem *** Install Windows Installer ***
 echo Checking Windows Installer version...
-if %MSI_VERSION_MAJOR% LSS %MSI_VERSION_TARGET_MAJOR% goto InstallMSI
-if %MSI_VERSION_MAJOR% GTR %MSI_VERSION_TARGET_MAJOR% goto SkipMSIInst
-if %MSI_VERSION_MINOR% LSS %MSI_VERSION_TARGET_MINOR% goto InstallMSI
-if %MSI_VERSION_MINOR% GTR %MSI_VERSION_TARGET_MINOR% goto SkipMSIInst
-if %MSI_VERSION_BUILD% LSS %MSI_VERSION_TARGET_BUILD% goto InstallMSI
-if %MSI_VERSION_BUILD% GTR %MSI_VERSION_TARGET_BUILD% goto SkipMSIInst
-if %MSI_VERSION_REVISION% GEQ %MSI_VERSION_TARGET_REVISION% goto SkipMSIInst
+if %MSI_VER_MAJOR% LSS %MSI_VER_TARGET_MAJOR% goto InstallMSI
+if %MSI_VER_MAJOR% GTR %MSI_VER_TARGET_MAJOR% goto SkipMSIInst
+if %MSI_VER_MINOR% LSS %MSI_VER_TARGET_MINOR% goto InstallMSI
+if %MSI_VER_MINOR% GTR %MSI_VER_TARGET_MINOR% goto SkipMSIInst
+if %MSI_VER_BUILD% LSS %MSI_VER_TARGET_BUILD% goto InstallMSI
+if %MSI_VER_BUILD% GTR %MSI_VER_TARGET_BUILD% goto SkipMSIInst
+if %MSI_VER_REVISION% GEQ %MSI_VER_TARGET_REVISION% goto SkipMSIInst
 :InstallMSI
 if "%MSI_TARGET_ID%"=="" (
   echo Warning: Environment variable MSI_TARGET_ID not set.
   echo %DATE% %TIME% - Warning: Environment variable MSI_TARGET_ID not set >>%UPDATE_LOGFILE%
   goto SkipMSIInst
 ) 
-if /i "%OS_ARCHITECTURE%"=="x64" (
-  set MSI_FILENAME=..\%OS_NAME%-%OS_ARCHITECTURE%\glb\*%MSI_TARGET_ID%*-%OS_ARCHITECTURE%.*
+if /i "%OS_ARCH%"=="x64" (
+  set MSI_FILENAME=..\%OS_NAME%-%OS_ARCH%\glb\*%MSI_TARGET_ID%*-%OS_ARCH%.*
 ) else (
-  set MSI_FILENAME=..\%OS_NAME%\glb\*%MSI_TARGET_ID%*-%OS_ARCHITECTURE%.*
+  set MSI_FILENAME=..\%OS_NAME%\glb\*%MSI_TARGET_ID%*-%OS_ARCH%.*
 )
 dir /B %MSI_FILENAME% >nul 2>&1
 if errorlevel 1 (
@@ -347,8 +347,8 @@ if errorlevel 1 (
 )
 echo Installing most recent Windows Installer...
 for /F %%i in ('dir /B %MSI_FILENAME%') do (
-  if /i "%OS_ARCHITECTURE%"=="x64" (
-    call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\glb\%%i %VERIFY_MODE% /quiet %BACKUP_MODE% /norestart
+  if /i "%OS_ARCH%"=="x64" (
+    call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\glb\%%i %VERIFY_MODE% /quiet %BACKUP_MODE% /norestart
   ) else (
     call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /quiet %BACKUP_MODE% /norestart
   )
@@ -358,13 +358,13 @@ for /F %%i in ('dir /B %MSI_FILENAME%') do (
 
 rem *** Install Windows Script Host ***
 echo Checking Windows Script Host version...
-if %WSH_VERSION_MAJOR% LSS %WSH_VERSION_TARGET_MAJOR% goto InstallWSH
-if %WSH_VERSION_MAJOR% GTR %WSH_VERSION_TARGET_MAJOR% goto SkipWSHInst
-if %WSH_VERSION_MINOR% LSS %WSH_VERSION_TARGET_MINOR% goto InstallWSH
-if %WSH_VERSION_MINOR% GTR %WSH_VERSION_TARGET_MINOR% goto SkipWSHInst
-if %WSH_VERSION_BUILD% LSS %WSH_VERSION_TARGET_BUILD% goto InstallWSH
-if %WSH_VERSION_BUILD% GTR %WSH_VERSION_TARGET_BUILD% goto SkipWSHInst
-if %WSH_VERSION_REVISION% GEQ %WSH_VERSION_TARGET_REVISION% goto SkipWSHInst
+if %WSH_VER_MAJOR% LSS %WSH_VER_TARGET_MAJOR% goto InstallWSH
+if %WSH_VER_MAJOR% GTR %WSH_VER_TARGET_MAJOR% goto SkipWSHInst
+if %WSH_VER_MINOR% LSS %WSH_VER_TARGET_MINOR% goto InstallWSH
+if %WSH_VER_MINOR% GTR %WSH_VER_TARGET_MINOR% goto SkipWSHInst
+if %WSH_VER_BUILD% LSS %WSH_VER_TARGET_BUILD% goto InstallWSH
+if %WSH_VER_BUILD% GTR %WSH_VER_TARGET_BUILD% goto SkipWSHInst
+if %WSH_VER_REVISION% GEQ %WSH_VER_TARGET_REVISION% goto SkipWSHInst
 :InstallWSH
 set WSH_FILENAME=..\%OS_NAME%\glb\scripten.exe
 dir /B %WSH_FILENAME% >nul 2>&1
@@ -382,18 +382,18 @@ for /F %%i in ('dir /B %WSH_FILENAME%') do (
 
 rem *** Install Internet Explorer ***
 echo Checking Internet Explorer version...
-if %IE_VERSION_MAJOR% LSS %IE_VERSION_TARGET_MAJOR% goto InstallIE
-if %IE_VERSION_MAJOR% GTR %IE_VERSION_TARGET_MAJOR% goto SkipIEInst
-if %IE_VERSION_MINOR% LSS %IE_VERSION_TARGET_MINOR% goto InstallIE
-if %IE_VERSION_MINOR% GTR %IE_VERSION_TARGET_MINOR% goto SkipIEInst
-if %IE_VERSION_BUILD% LSS %IE_VERSION_TARGET_BUILD% goto InstallIE
-if %IE_VERSION_BUILD% GTR %IE_VERSION_TARGET_BUILD% goto SkipIEInst
-if %IE_VERSION_REVISION% GEQ %IE_VERSION_TARGET_REVISION% goto SkipIEInst
+if %IE_VER_MAJOR% LSS %IE_VER_TARGET_MAJOR% goto InstallIE
+if %IE_VER_MAJOR% GTR %IE_VER_TARGET_MAJOR% goto SkipIEInst
+if %IE_VER_MINOR% LSS %IE_VER_TARGET_MINOR% goto InstallIE
+if %IE_VER_MINOR% GTR %IE_VER_TARGET_MINOR% goto SkipIEInst
+if %IE_VER_BUILD% LSS %IE_VER_TARGET_BUILD% goto InstallIE
+if %IE_VER_BUILD% GTR %IE_VER_TARGET_BUILD% goto SkipIEInst
+if %IE_VER_REVISION% GEQ %IE_VER_TARGET_REVISION% goto SkipIEInst
 :InstallIE
 goto IE%OS_NAME%
 
 :IEw2k
-set IE_FILENAME=..\win\%OS_LANGUAGE%\ie6setup\ie6setup.exe
+set IE_FILENAME=..\win\%OS_LANG%\ie6setup\ie6setup.exe
 if not exist %IE_FILENAME% (
   echo Warning: Unable to install Internet Explorer 6. File %IE_FILENAME% not found. 
   echo %DATE% %TIME% - Warning: Unable to install Internet Explorer 6. File %IE_FILENAME% not found >>%UPDATE_LOGFILE%
@@ -406,24 +406,24 @@ goto IEInstalled
 
 :IEwxp
 if "%INSTALL_IE%"=="/instie8" (
-  set IE_FILENAME=..\%OS_NAME%\%OS_LANGUAGE%\IE8-WindowsXP-%OS_ARCHITECTURE%-%OS_LANGUAGE%*.exe
+  set IE_FILENAME=..\%OS_NAME%\%OS_LANG%\IE8-WindowsXP-%OS_ARCH%-%OS_LANG%*.exe
 ) else (
-  set IE_FILENAME=..\%OS_NAME%\%OS_LANGUAGE%\ie7-windowsxp-%OS_ARCHITECTURE%-%OS_LANGUAGE%*.exe
+  set IE_FILENAME=..\%OS_NAME%\%OS_LANG%\ie7-windowsxp-%OS_ARCH%-%OS_LANG%*.exe
 )
 goto IEwxp2k3
 
 :IEw2k3
-if /i "%OS_ARCHITECTURE%"=="x64" (
+if /i "%OS_ARCH%"=="x64" (
   if "%INSTALL_IE%"=="/instie8" (
-    set IE_FILENAME=..\%OS_NAME%-%OS_ARCHITECTURE%\%OS_LANGUAGE%\IE8-WindowsServer2003-%OS_ARCHITECTURE%-%OS_LANGUAGE%*.exe
+    set IE_FILENAME=..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\IE8-WindowsServer2003-%OS_ARCH%-%OS_LANG%*.exe
   ) else (
-    set IE_FILENAME=..\%OS_NAME%-%OS_ARCHITECTURE%\%OS_LANGUAGE%\ie7-windowsserver2003-%OS_ARCHITECTURE%-%OS_LANGUAGE%*.exe
+    set IE_FILENAME=..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\ie7-windowsserver2003-%OS_ARCH%-%OS_LANG%*.exe
   ) 
 ) else (
   if "%INSTALL_IE%"=="/instie8" (
-    set IE_FILENAME=..\%OS_NAME%\%OS_LANGUAGE%\IE8-WindowsServer2003-%OS_ARCHITECTURE%-%OS_LANGUAGE%*.exe
+    set IE_FILENAME=..\%OS_NAME%\%OS_LANG%\IE8-WindowsServer2003-%OS_ARCH%-%OS_LANG%*.exe
   ) else (
-    set IE_FILENAME=..\%OS_NAME%\%OS_LANGUAGE%\ie7-windowsserver2003-%OS_ARCHITECTURE%-%OS_LANGUAGE%*.exe
+    set IE_FILENAME=..\%OS_NAME%\%OS_LANG%\ie7-windowsserver2003-%OS_ARCH%-%OS_LANG%*.exe
   )
 )
 goto IEwxp2k3
@@ -437,17 +437,17 @@ if errorlevel 1 (
 )
 if "%INSTALL_IE%"=="/instie8" (echo Installing Internet Explorer 8...) else (echo Installing Internet Explorer 7...)
 for /F %%i in ('dir /B %IE_FILENAME%') do (
-  if /i "%OS_ARCHITECTURE%"=="x64" (
+  if /i "%OS_ARCH%"=="x64" (
     if "%INSTALL_IE%"=="/instie8" (
-      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\%OS_LANGUAGE%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
+      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
     ) else (
-      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\%OS_LANGUAGE%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default %BACKUP_MODE% /norestart
+      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default %BACKUP_MODE% /norestart
     )
   ) else (
     if "%INSTALL_IE%"=="/instie8" (
-      call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANGUAGE%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
+      call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
     ) else (
-      call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANGUAGE%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default %BACKUP_MODE% /norestart
+      call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default %BACKUP_MODE% /norestart
     )
   )
   if not errorlevel 1 set RECALL_REQUIRED=1
@@ -455,10 +455,10 @@ for /F %%i in ('dir /B %IE_FILENAME%') do (
 goto IEInstalled 
 
 :IEw60
-if /i "%OS_ARCHITECTURE%"=="x64" (
-  set IE_FILENAME=..\%OS_NAME%-%OS_ARCHITECTURE%\glb\IE8-WindowsVista-%OS_ARCHITECTURE%-%OS_LANGUAGE%*.exe
+if /i "%OS_ARCH%"=="x64" (
+  set IE_FILENAME=..\%OS_NAME%-%OS_ARCH%\glb\IE8-WindowsVista-%OS_ARCH%-%OS_LANG%*.exe
 ) else (
-  set IE_FILENAME=..\%OS_NAME%\glb\IE8-WindowsVista-%OS_ARCHITECTURE%-%OS_LANGUAGE%*.exe
+  set IE_FILENAME=..\%OS_NAME%\glb\IE8-WindowsVista-%OS_ARCH%-%OS_LANG%*.exe
 )
 dir /B %IE_FILENAME% >nul 2>&1
 if errorlevel 1 (
@@ -468,8 +468,8 @@ if errorlevel 1 (
 )
 echo Installing Internet Explorer 8...
 for /F %%i in ('dir /B %IE_FILENAME%') do (
-  if /i "%OS_ARCHITECTURE%"=="x64" (
-    call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCHITECTURE%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
+  if /i "%OS_ARCH%"=="x64" (
+    call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
   ) else (
     call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
   )
@@ -489,10 +489,10 @@ if "%OS_NAME%"=="w2k3" goto SkipWMPInst
 if %OS_DOMAIN_ROLE% GEQ 2 goto SkipWMPInst
 if "%UPDATE_WMP%" NEQ "/updatewmp" goto SkipWMPInst
 echo Checking Windows Media Player version...
-if %WMP_VERSION_MAJOR% LSS %WMP_VERSION_TARGET_MAJOR% goto InstallWMP
-if %WMP_VERSION_MAJOR% GTR %WMP_VERSION_TARGET_MAJOR% goto SkipWMPInst
-if %WMP_VERSION_MINOR% LSS %WMP_VERSION_TARGET_MINOR% goto InstallWMP
-if %WMP_VERSION_MINOR% GEQ %WMP_VERSION_TARGET_MINOR% goto SkipWMPInst
+if %WMP_VER_MAJOR% LSS %WMP_VER_TARGET_MAJOR% goto InstallWMP
+if %WMP_VER_MAJOR% GTR %WMP_VER_TARGET_MAJOR% goto SkipWMPInst
+if %WMP_VER_MINOR% LSS %WMP_VER_TARGET_MINOR% goto InstallWMP
+if %WMP_VER_MINOR% GEQ %WMP_VER_TARGET_MINOR% goto SkipWMPInst
 :InstallWMP
 if "%WMP_TARGET_ID%"=="" (
   echo Warning: Environment variable WMP_TARGET_ID not set.
@@ -517,10 +517,10 @@ rem *** Install most recent Windows Terminal Services Client ***
 if "%OS_NAME%"=="w2k" goto SkipTSCInst
 if "%UPDATE_TSC%" NEQ "/updatetsc" goto SkipTSCInst
 echo Checking Windows Terminal Services Client version...
-if %TSC_VERSION_MAJOR% LSS %TSC_VERSION_TARGET_MAJOR% goto InstallTSC
-if %TSC_VERSION_MAJOR% GTR %TSC_VERSION_TARGET_MAJOR% goto SkipTSCInst
-if %TSC_VERSION_MINOR% LSS %TSC_VERSION_TARGET_MINOR% goto InstallTSC
-if %TSC_VERSION_MINOR% GEQ %TSC_VERSION_TARGET_MINOR% goto SkipTSCInst
+if %TSC_VER_MAJOR% LSS %TSC_VER_TARGET_MAJOR% goto InstallTSC
+if %TSC_VER_MAJOR% GTR %TSC_VER_TARGET_MAJOR% goto SkipTSCInst
+if %TSC_VER_MINOR% LSS %TSC_VER_TARGET_MINOR% goto InstallTSC
+if %TSC_VER_MINOR% GEQ %TSC_VER_TARGET_MINOR% goto SkipTSCInst
 :InstallTSC
 if "%TSC_TARGET_ID%"=="" (
   echo Warning: Environment variable TSC_TARGET_ID not set.
@@ -545,13 +545,13 @@ rem *** Install .NET Framework 3.5 SP1 ***
 if "%OS_NAME%"=="w2k" goto SkipDotNet35Inst
 if "%INSTALL_DOTNET35%" NEQ "/instdotnet35" goto SkipDotNet35Inst
 echo Checking .NET Framework 3.5 installation state...
-if %DOTNET35_VERSION_MAJOR% LSS %DOTNET35_VERSION_TARGET_MAJOR% goto InstallDotNet35
-if %DOTNET35_VERSION_MAJOR% GTR %DOTNET35_VERSION_TARGET_MAJOR% goto SkipDotNet35Inst
-if %DOTNET35_VERSION_MINOR% LSS %DOTNET35_VERSION_TARGET_MINOR% goto InstallDotNet35
-if %DOTNET35_VERSION_MINOR% GTR %DOTNET35_VERSION_TARGET_MINOR% goto SkipDotNet35Inst
-if %DOTNET35_VERSION_BUILD% LSS %DOTNET35_VERSION_TARGET_BUILD% goto InstallDotNet35
-if %DOTNET35_VERSION_BUILD% GTR %DOTNET35_VERSION_TARGET_BUILD% goto SkipDotNet35Inst
-if %DOTNET35_VERSION_REVISION% GEQ %DOTNET35_VERSION_TARGET_REVISION% goto SkipDotNet35Inst
+if %DOTNET35_VER_MAJOR% LSS %DOTNET35_VER_TARGET_MAJOR% goto InstallDotNet35
+if %DOTNET35_VER_MAJOR% GTR %DOTNET35_VER_TARGET_MAJOR% goto SkipDotNet35Inst
+if %DOTNET35_VER_MINOR% LSS %DOTNET35_VER_TARGET_MINOR% goto InstallDotNet35
+if %DOTNET35_VER_MINOR% GTR %DOTNET35_VER_TARGET_MINOR% goto SkipDotNet35Inst
+if %DOTNET35_VER_BUILD% LSS %DOTNET35_VER_TARGET_BUILD% goto InstallDotNet35
+if %DOTNET35_VER_BUILD% GTR %DOTNET35_VER_TARGET_BUILD% goto SkipDotNet35Inst
+if %DOTNET35_VER_REVISION% GEQ %DOTNET35_VER_TARGET_REVISION% goto SkipDotNet35Inst
 :InstallDotNet35
 set DOTNET35_FILENAME=..\dotnet\dotnetfx35.exe
 if not exist %DOTNET35_FILENAME% (
@@ -576,11 +576,11 @@ rem *** Install .NET Framework 4 ***
 if "%OS_NAME%"=="w2k" goto SkipDotNet4Inst
 if "%INSTALL_DOTNET4%" NEQ "/instdotnet4" goto SkipDotNet4Inst
 echo Checking .NET Framework 4 installation state...
-if %DOTNET4_VERSION_MAJOR% LSS %DOTNET4_VERSION_TARGET_MAJOR% goto InstallDotNet4
-if %DOTNET4_VERSION_MAJOR% GTR %DOTNET4_VERSION_TARGET_MAJOR% goto SkipDotNet4Inst
-if %DOTNET4_VERSION_MINOR% LSS %DOTNET4_VERSION_TARGET_MINOR% goto InstallDotNet4
-if %DOTNET4_VERSION_MINOR% GTR %DOTNET4_VERSION_TARGET_MINOR% goto SkipDotNet4Inst
-if %DOTNET4_VERSION_BUILD% GEQ %DOTNET4_VERSION_TARGET_BUILD% goto SkipDotNet4Inst
+if %DOTNET4_VER_MAJOR% LSS %DOTNET4_VER_TARGET_MAJOR% goto InstallDotNet4
+if %DOTNET4_VER_MAJOR% GTR %DOTNET4_VER_TARGET_MAJOR% goto SkipDotNet4Inst
+if %DOTNET4_VER_MINOR% LSS %DOTNET4_VER_TARGET_MINOR% goto InstallDotNet4
+if %DOTNET4_VER_MINOR% GTR %DOTNET4_VER_TARGET_MINOR% goto SkipDotNet4Inst
+if %DOTNET4_VER_BUILD% GEQ %DOTNET4_VER_TARGET_BUILD% goto SkipDotNet4Inst
 :InstallDotNet4
 set DOTNET4_FILENAME=..\dotnet\dotNetFx40_Full_x86_x64.exe
 if not exist %DOTNET4_FILENAME% (
@@ -597,10 +597,10 @@ rem *** Install Windows PowerShell 2.0 ***
 if "%OS_NAME%"=="w2k" goto SkipPShInst
 if "%INSTALL_PSH%" NEQ "/instpsh" goto SkipPShInst
 echo Checking Windows PowerShell 2.0 installation state...
-if %PSH_VERSION_MAJOR% LSS %PSH_VERSION_TARGET_MAJOR% goto InstallPSh
-if %PSH_VERSION_MAJOR% GTR %PSH_VERSION_TARGET_MAJOR% goto SkipPShInst
-if %PSH_VERSION_MINOR% LSS %PSH_VERSION_TARGET_MINOR% goto InstallPSh
-if %PSH_VERSION_MINOR% GEQ %PSH_VERSION_TARGET_MINOR% goto SkipPShInst
+if %PSH_VER_MAJOR% LSS %PSH_VER_TARGET_MAJOR% goto InstallPSh
+if %PSH_VER_MAJOR% GTR %PSH_VER_TARGET_MAJOR% goto SkipPShInst
+if %PSH_VER_MINOR% LSS %PSH_VER_TARGET_MINOR% goto InstallPSh
+if %PSH_VER_MINOR% GEQ %PSH_VER_TARGET_MINOR% goto SkipPShInst
 :InstallPSh
 if "%PSH_TARGET_ID%"=="" (
   echo Warning: Environment variable PSH_TARGET_ID not set.
@@ -628,7 +628,7 @@ echo Checking Microsoft Security Essentials installation state...
 if "%MSSE_INSTALLED%"=="1" goto CheckMSSEDefs
 if "%INSTALL_MSSE%" NEQ "/instmsse" goto SkipMSSEInst
 :InstallMSSE
-set MSSE_TARGET_ID=mssefullinstall-*-%OS_LANGUAGE_EXT%-
+set MSSE_TARGET_ID=mssefullinstall-*-%OS_LANG_EXT%-
 echo %MSSE_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics
 if errorlevel 1 goto ListError
@@ -642,10 +642,10 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
 )
 set REBOOT_REQUIRED=1
 :CheckMSSEDefs
-if /i "%OS_ARCHITECTURE%"=="x64" (
-  set MSSEDEFS_FILENAME=..\mssedefs\%OS_ARCHITECTURE%-glb\mpam-fex64.exe
+if /i "%OS_ARCH%"=="x64" (
+  set MSSEDEFS_FILENAME=..\mssedefs\%OS_ARCH%-glb\mpam-fex64.exe
 ) else (
-  set MSSEDEFS_FILENAME=..\mssedefs\%OS_ARCHITECTURE%-glb\mpam-fe.exe
+  set MSSEDEFS_FILENAME=..\mssedefs\%OS_ARCH%-glb\mpam-fe.exe
 )
 if not exist %MSSEDEFS_FILENAME% (
   echo Warning: Microsoft Security Essentials definition file ^(%MSSEDEFS_FILENAME%^) not found.
@@ -654,41 +654,41 @@ if not exist %MSSEDEFS_FILENAME% (
 )
 rem *** Determine Microsoft Security Essentials definition file version ***
 echo Determining Microsoft Security Essentials definition file version...
-%CSCRIPT_PATH% //Nologo //E:vbs DetermineFileVersion.vbs %MSSEDEFS_FILENAME% MSSEDEFS_VERSION_TARGET
+%CSCRIPT_PATH% //Nologo //E:vbs DetermineFileVersion.vbs %MSSEDEFS_FILENAME% MSSEDEFS_VER_TARGET
 if not exist "%TEMP%\SetFileVersion.cmd" goto SkipMSSEInst
 call "%TEMP%\SetFileVersion.cmd"
 del "%TEMP%\SetFileVersion.cmd"
-if %MSSEDEFS_VERSION_MAJOR% LSS %MSSEDEFS_VERSION_TARGET_MAJOR% goto InstallMSSEDefs
-if %MSSEDEFS_VERSION_MAJOR% GTR %MSSEDEFS_VERSION_TARGET_MAJOR% goto SkipMSSEInst
-if %MSSEDEFS_VERSION_MINOR% LSS %MSSEDEFS_VERSION_TARGET_MINOR% goto InstallMSSEDefs
-if %MSSEDEFS_VERSION_MINOR% GTR %MSSEDEFS_VERSION_TARGET_MINOR% goto SkipMSSEInst
-if %MSSEDEFS_VERSION_BUILD% LSS %MSSEDEFS_VERSION_TARGET_BUILD% goto InstallMSSEDefs
-if %MSSEDEFS_VERSION_BUILD% GTR %MSSEDEFS_VERSION_TARGET_BUILD% goto SkipMSSEInst
-if %MSSEDEFS_VERSION_REVISION% GEQ %MSSEDEFS_VERSION_TARGET_REVISION% goto SkipMSSEInst
+if %MSSEDEFS_VER_MAJOR% LSS %MSSEDEFS_VER_TARGET_MAJOR% goto InstallMSSEDefs
+if %MSSEDEFS_VER_MAJOR% GTR %MSSEDEFS_VER_TARGET_MAJOR% goto SkipMSSEInst
+if %MSSEDEFS_VER_MINOR% LSS %MSSEDEFS_VER_TARGET_MINOR% goto InstallMSSEDefs
+if %MSSEDEFS_VER_MINOR% GTR %MSSEDEFS_VER_TARGET_MINOR% goto SkipMSSEInst
+if %MSSEDEFS_VER_BUILD% LSS %MSSEDEFS_VER_TARGET_BUILD% goto InstallMSSEDefs
+if %MSSEDEFS_VER_BUILD% GTR %MSSEDEFS_VER_TARGET_BUILD% goto SkipMSSEInst
+if %MSSEDEFS_VER_REVISION% GEQ %MSSEDEFS_VER_TARGET_REVISION% goto SkipMSSEInst
 :InstallMSSEDefs
 echo Installing Microsoft Security Essentials definition file...
 call InstallOSUpdate.cmd %MSSEDEFS_FILENAME% %VERIFY_MODE% /ignoreerrors -q
 :SkipMSSEInst
 
 if "%RECALL_REQUIRED%"=="1" goto Installed
-if "%OFFICE_NAME%"=="" goto CheckAUService
-if not exist ..\%OFFICE_NAME%\%OFFICE_LANGUAGE%\nul (
-  if not exist ..\%OFFICE_NAME%\glb\nul goto CheckAUService
+if "%OFC_NAME%"=="" goto CheckAUService
+if not exist ..\%OFC_NAME%\%OFC_LANG%\nul (
+  if not exist ..\%OFC_NAME%\glb\nul goto CheckAUService
 )
 rem *** Check Office Service Pack versions ***
 echo Checking Office Service Pack versions...
 if exist "%TEMP%\MissingUpdateIds.txt" del "%TEMP%\MissingUpdateIds.txt"
-if "%OXP_VERSION_MAJOR%"=="" goto SkipSPoxp
-if %OXP_SP_VERSION% LSS %OXP_SP_VERSION_TARGET% echo %OXP_SP_TARGET_ID% >>"%TEMP%\MissingUpdateIds.txt"
+if "%OXP_VER_MAJOR%"=="" goto SkipSPoxp
+if %OXP_SP_VER% LSS %OXP_SP_VER_TARGET% echo %OXP_SP_TARGET_ID% >>"%TEMP%\MissingUpdateIds.txt"
 :SkipSPoxp
-if "%O2K3_VERSION_MAJOR%"=="" goto SkipSPo2k3
-if %O2K3_SP_VERSION% LSS %O2K3_SP_VERSION_TARGET% echo %O2K3_SP_TARGET_ID% >>"%TEMP%\MissingUpdateIds.txt"
+if "%O2K3_VER_MAJOR%"=="" goto SkipSPo2k3
+if %O2K3_SP_VER% LSS %O2K3_SP_VER_TARGET% echo %O2K3_SP_TARGET_ID% >>"%TEMP%\MissingUpdateIds.txt"
 :SkipSPo2k3
-if "%O2K7_VERSION_MAJOR%"=="" goto SkipSPo2k7
-if %O2K7_SP_VERSION% LSS %O2K7_SP_VERSION_TARGET% echo %O2K7_SP_TARGET_ID% >>"%TEMP%\MissingUpdateIds.txt"
+if "%O2K7_VER_MAJOR%"=="" goto SkipSPo2k7
+if %O2K7_SP_VER% LSS %O2K7_SP_VER_TARGET% echo %O2K7_SP_TARGET_ID% >>"%TEMP%\MissingUpdateIds.txt"
 :SkipSPo2k7
-if "%O2K10_VERSION_MAJOR%"=="" goto SkipSPo2k10
-if %O2K10_SP_VERSION% LSS %O2K10_SP_VERSION_TARGET% echo %O2K10_SP_TARGET_ID% >>"%TEMP%\MissingUpdateIds.txt"
+if "%O2K10_VER_MAJOR%"=="" goto SkipSPo2k10
+if %O2K10_SP_VER% LSS %O2K10_SP_VER_TARGET% echo %O2K10_SP_TARGET_ID% >>"%TEMP%\MissingUpdateIds.txt"
 :SkipSPo2k10
 if not exist "%TEMP%\MissingUpdateIds.txt" goto SkipSPOfc
 call ListUpdatesToInstall.cmd /excludestatics
@@ -706,12 +706,12 @@ set REBOOT_REQUIRED=1
 
 rem *** Check installation state of Office Converter/Compatibility Packs ***
 if "%INSTALL_CONVERTERS%" NEQ "/instofccnvs" goto CheckAUService
-goto CNV%OFFICE_NAME%
+goto CNV%OFC_NAME%
 
 :CNVoxp
 :CNVo2k3
 echo Checking installation state of Office Converter/Compatibility Packs...
-if "%OFFICE_CONVERTER_PACK%" NEQ "1" (
+if "%OFC_CONV_PACK%" NEQ "1" (
   if exist ..\ofc\glb\OCONVPCK.EXE (
     echo Installing Office Converter Pack...
     echo Installing ..\ofc\glb\OCONVPCK.EXE...
@@ -724,15 +724,15 @@ if "%OFFICE_CONVERTER_PACK%" NEQ "1" (
     echo %DATE% %TIME% - Warning: File ..\ofc\glb\OCONVPCK.EXE not found >>%UPDATE_LOGFILE%
   )
 )
-if "%OFFICE_COMPATIBILITY_PACK%" NEQ "1" (
-  if exist ..\ofc\%OFFICE_LANGUAGE%\FileFormatConverters.exe (
+if "%OFC_COMP_PACK%" NEQ "1" (
+  if exist ..\ofc\%OFC_LANG%\FileFormatConverters.exe (
     echo Installing Office 2007 Compatibility Pack...
-    echo Installing ..\ofc\%OFFICE_LANGUAGE%\FileFormatConverters.exe...
-    ..\ofc\%OFFICE_LANGUAGE%\FileFormatConverters.exe /quiet /norestart
-    echo %DATE% %TIME% - Info: Installed ..\ofc\%OFFICE_LANGUAGE%\FileFormatConverters.exe >>%UPDATE_LOGFILE%
+    echo Installing ..\ofc\%OFC_LANG%\FileFormatConverters.exe...
+    ..\ofc\%OFC_LANG%\FileFormatConverters.exe /quiet /norestart
+    echo %DATE% %TIME% - Info: Installed ..\ofc\%OFC_LANG%\FileFormatConverters.exe >>%UPDATE_LOGFILE%
   ) else (
-    echo Warning: File ..\ofc\%OFFICE_LANGUAGE%\FileFormatConverters.exe not found. 
-    echo %DATE% %TIME% - Warning: File ..\ofc\%OFFICE_LANGUAGE%\FileFormatConverters.exe not found >>%UPDATE_LOGFILE%
+    echo Warning: File ..\ofc\%OFC_LANG%\FileFormatConverters.exe not found. 
+    echo %DATE% %TIME% - Warning: File ..\ofc\%OFC_LANG%\FileFormatConverters.exe not found >>%UPDATE_LOGFILE%
   )
 )
 :CNVo2k7
@@ -741,15 +741,15 @@ if "%OFFICE_COMPATIBILITY_PACK%" NEQ "1" (
 :CheckAUService
 rem *** Check state of service 'automatic updates' ***
 echo Checking state of service 'automatic updates'...
-echo %DATE% %TIME% - Info: Detected state of service 'automatic updates': %AU_SERVICE_STATE_INITIAL% (start mode: %AU_SERVICE_START_MODE%) >>%UPDATE_LOGFILE%
-if /i "%AU_SERVICE_STATE_INITIAL%"=="" goto ListUpdateIds
-if /i "%AU_SERVICE_STATE_INITIAL%"=="Unknown" goto ListUpdateIds
-if /i "%AU_SERVICE_STATE_INITIAL%"=="Running" goto ListUpdateIds
-if /i "%AU_SERVICE_START_MODE%"=="Disabled" goto AUSvcNotRunning
+echo %DATE% %TIME% - Info: Detected state of service 'automatic updates': %AU_SVC_STATE_INITIAL% (start mode: %AU_SVC_START_MODE%) >>%UPDATE_LOGFILE%
+if /i "%AU_SVC_STATE_INITIAL%"=="" goto ListUpdateIds
+if /i "%AU_SVC_STATE_INITIAL%"=="Unknown" goto ListUpdateIds
+if /i "%AU_SVC_STATE_INITIAL%"=="Running" goto ListUpdateIds
+if /i "%AU_SVC_START_MODE%"=="Disabled" goto AUSvcNotRunning
 echo Starting service 'automatic updates' (wuauserv)...
 %SystemRoot%\system32\net.exe start wuauserv >nul
 if not errorlevel 0 goto AUSvcNotRunning
-set AU_SERVICE_STARTED=1
+set AU_SVC_STARTED=1
 echo %DATE% %TIME% - Info: Started service 'automatic updates' (wuauserv) >>%UPDATE_LOGFILE%
 
 :ListUpdateIds
@@ -945,8 +945,8 @@ goto Cleanup
 
 :UnsupArch
 echo.
-echo ERROR: Unsupported Operating System architecture (%OS_ARCHITECTURE%).
-echo %DATE% %TIME% - Error: Unsupported Operating System architecture (%OS_ARCHITECTURE%) >>%UPDATE_LOGFILE%
+echo ERROR: Unsupported Operating System architecture (%OS_ARCH%).
+echo %DATE% %TIME% - Error: Unsupported Operating System architecture (%OS_ARCH%) >>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
@@ -1048,7 +1048,7 @@ if "%USERNAME%"=="WSUSUpdateAdmin" (
   echo Rebooting...
   %CSCRIPT_PATH% //Nologo //E:vbs Shutdown.vbs /reboot
 ) else (
-  if "%AU_SERVICE_STARTED%"=="1" (
+  if "%AU_SVC_STARTED%"=="1" (
     echo Stopping service 'automatic updates' ^(wuauserv^)...
     %SystemRoot%\system32\net.exe stop wuauserv >nul
     if errorlevel 1 (

@@ -287,57 +287,57 @@ Set objWMIService = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\
 ' Documentation: http://msdn.microsoft.com/en-us/library/aa394239(VS.85).aspx
 For Each objWMIQuery in objWMIService.ExecQuery("Select * from Win32_OperatingSystem") 
   objCmdFile.WriteLine("set OS_CAPTION=" & objWMIQuery.Caption)
-  WriteVersionToFile objCmdFile, "OS_VERSION", objWMIQuery.Version
+  WriteVersionToFile objCmdFile, "OS_VER", objWMIQuery.Version
   strOSVersion = Left(objWMIQuery.Version, 3) ' For determination of Windows activation state - see below
-  objCmdFile.WriteLine("set OS_SP_VERSION_MAJOR=" & objWMIQuery.ServicePackMajorVersion)
-  objCmdFile.WriteLine("set OS_SP_VERSION_MINOR=" & objWMIQuery.ServicePackMinorVersion)
-  objCmdFile.WriteLine("set OS_LANGUAGE_CODE=" & objWMIQuery.OSLanguage)
-  WriteLanguageToFile objCmdFile, "OS_LANGUAGE", objWMIQuery.OSLanguage, True
+  objCmdFile.WriteLine("set OS_SP_VER_MAJOR=" & objWMIQuery.ServicePackMajorVersion)
+  objCmdFile.WriteLine("set OS_SP_VER_MINOR=" & objWMIQuery.ServicePackMinorVersion)
+  objCmdFile.WriteLine("set OS_LANG_CODE=" & objWMIQuery.OSLanguage)
+  WriteLanguageToFile objCmdFile, "OS_LANG", objWMIQuery.OSLanguage, True
   objCmdFile.WriteLine("set SystemDirectory=" & objWMIQuery.SystemDirectory)
 Next
 ' Documentation: http://msdn.microsoft.com/en-us/library/aa394102(VS.85).aspx
 For Each objWMIQuery in objWMIService.ExecQuery("Select * from Win32_ComputerSystem")
-  objCmdFile.WriteLine("set OS_ARCHITECTURE=" & LCase(Left(objWMIQuery.SystemType, 3)))
+  objCmdFile.WriteLine("set OS_ARCH=" & LCase(Left(objWMIQuery.SystemType, 3)))
   objCmdFile.WriteLine("set OS_DOMAIN_ROLE=" & objWMIQuery.DomainRole)
 Next
 
 ' Determine Windows Update Agent version 
 If objFileSystem.FileExists(strWUAFileName) Then
-  WriteVersionToFile objCmdFile, "WUA_VERSION", objFileSystem.GetFileVersion(strWUAFileName)
+  WriteVersionToFile objCmdFile, "WUA_VER", objFileSystem.GetFileVersion(strWUAFileName)
 Else
-  WriteVersionToFile objCmdFile, "WUA_VERSION", ""
+  WriteVersionToFile objCmdFile, "WUA_VER", ""
 End If
 
 ' Determine Microsoft Installer version
 If objFileSystem.FileExists(strMSIFileName) Then
-  WriteVersionToFile objCmdFile, "MSI_VERSION", objFileSystem.GetFileVersion(strMSIFileName)
+  WriteVersionToFile objCmdFile, "MSI_VER", objFileSystem.GetFileVersion(strMSIFileName)
 Else
-  WriteVersionToFile objCmdFile, "MSI_VERSION", ""
+  WriteVersionToFile objCmdFile, "MSI_VER", ""
 End If
 
 ' Determine Windows Script Host version
 If objFileSystem.FileExists(strWSHFileName) Then
-  WriteVersionToFile objCmdFile, "WSH_VERSION", objFileSystem.GetFileVersion(strWSHFileName)
+  WriteVersionToFile objCmdFile, "WSH_VER", objFileSystem.GetFileVersion(strWSHFileName)
 Else
-  WriteVersionToFile objCmdFile, "WSH_VERSION", ""
+  WriteVersionToFile objCmdFile, "WSH_VER", ""
 End If
 
 ' Determine Internet Explorer version
-WriteVersionToFile objCmdFile, "IE_VERSION", RegRead(wshShell, strRegKeyIE & strRegValVersion)
+WriteVersionToFile objCmdFile, "IE_VER", RegRead(wshShell, strRegKeyIE & strRegValVersion)
 
 ' Determine Microsoft Data Access Components version
-WriteVersionToFile objCmdFile, "MDAC_VERSION", RegRead(wshShell, strRegKeyMDAC & strRegValVersion)
+WriteVersionToFile objCmdFile, "MDAC_VER", RegRead(wshShell, strRegKeyMDAC & strRegValVersion)
 
 ' Determine Microsoft DirectX version
-WriteVersionToFile objCmdFile, "DIRECTX_VERSION", RegRead(wshShell, strRegKeyDirectX & strRegValVersion)
+WriteVersionToFile objCmdFile, "DIRECTX_VER", RegRead(wshShell, strRegKeyDirectX & strRegValVersion)
 WriteDXNameToFile objCmdFile, RegRead(wshShell, strRegKeyDirectX & strRegValVersion)
 
 ' Determine Microsoft .NET Framework 3.5 SP1 installation state
-WriteVersionToFile objCmdFile, "DOTNET35_VERSION", RegRead(wshShell, strRegKeyDotNet35 & strRegValVersion)
-WriteVersionToFile objCmdFile, "DOTNET4_VERSION", RegRead(wshShell, strRegKeyDotNet4 & strRegValVersion)
+WriteVersionToFile objCmdFile, "DOTNET35_VER", RegRead(wshShell, strRegKeyDotNet35 & strRegValVersion)
+WriteVersionToFile objCmdFile, "DOTNET4_VER", RegRead(wshShell, strRegKeyDotNet4 & strRegValVersion)
 
 ' Determine Windows PowerShell version
-WriteVersionToFile objCmdFile, "PSH_VERSION", RegRead(wshShell, strRegKeyPowerShell & strRegValPShVersion)
+WriteVersionToFile objCmdFile, "PSH_VER", RegRead(wshShell, strRegKeyPowerShell & strRegValPShVersion)
 
 ' Determine Microsoft Security Essentials installation state
 If RegExists(wshShell, strRegKeyMSSE) Then
@@ -347,20 +347,20 @@ Else
 End If
 
 ' Determine Microsoft Antimalware signatures' version
-WriteVersionToFile objCmdFile, "MSSEDEFS_VERSION", RegRead(wshShell, strRegKeyMSSEDefs & strRegValAVSVersion)
+WriteVersionToFile objCmdFile, "MSSEDEFS_VER", RegRead(wshShell, strRegKeyMSSEDefs & strRegValAVSVersion)
 
 ' Determine Remote Desktop Connection (Terminal Services Client) version
 If objFileSystem.FileExists(strTSCFileName) Then
-  WriteVersionToFile objCmdFile, "TSC_VERSION", objFileSystem.GetFileVersion(strTSCFileName)
+  WriteVersionToFile objCmdFile, "TSC_VER", objFileSystem.GetFileVersion(strTSCFileName)
 Else
-  WriteVersionToFile objCmdFile, "TSC_VERSION", ""
+  WriteVersionToFile objCmdFile, "TSC_VER", ""
 End If
 
 ' Determine Windows Media Player version
 If objFileSystem.FileExists(strWMPFileName) Then
-  WriteVersionToFile objCmdFile, "WMP_VERSION", objFileSystem.GetFileVersion(strWMPFileName)
+  WriteVersionToFile objCmdFile, "WMP_VER", objFileSystem.GetFileVersion(strWMPFileName)
 Else
-  WriteVersionToFile objCmdFile, "WMP_VERSION", ""
+  WriteVersionToFile objCmdFile, "WMP_VER", ""
 End If
 
 ' Determine Office version
@@ -373,16 +373,16 @@ For i = 0 To UBound(arrayOfficeNames)
   If strOfficeInstallPath <> "" Then
     For j = 0 To UBound(arrayOfficeExeNames)
       If objFileSystem.FileExists(strOfficeInstallPath & arrayOfficeExeNames(j)) Then
-        objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_VERSION_APP=" & arrayOfficeAppNames(j))
+        objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_VER_APP=" & arrayOfficeAppNames(j))
         strOfficeExeVersion = objFileSystem.GetFileVersion(strOfficeInstallPath & arrayOfficeExeNames(j)) 
-        WriteVersionToFile objCmdFile, UCase(arrayOfficeNames(i)) & "_VERSION", strOfficeExeVersion  
-        objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_SP_VERSION=" & OfficeSPVersion(strOfficeExeVersion, j))
+        WriteVersionToFile objCmdFile, UCase(arrayOfficeNames(i)) & "_VER", strOfficeExeVersion  
+        objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_SP_VER=" & OfficeSPVersion(strOfficeExeVersion, j))
         languageCode = OfficeLanguageCode(wshShell, arrayOfficeVersions(i))
-        objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_LANGUAGE_CODE=" & languageCode)
+        objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_LANG_CODE=" & languageCode)
         If languageCode = 0 Then
-          objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_LANGUAGE=%OS_LANGUAGE%")
+          objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_LANG=%OS_LANG%")
         Else
-          WriteLanguageToFile objCmdFile, UCase(arrayOfficeNames(i)) & "_LANGUAGE", languageCode, False
+          WriteLanguageToFile objCmdFile, UCase(arrayOfficeNames(i)) & "_LANG", languageCode, False
         End If
         Exit For
       End If
@@ -391,10 +391,10 @@ For i = 0 To UBound(arrayOfficeNames)
 Next
 For Each strProduct In CreateObject("WindowsInstaller.Installer").Products
   If UCase(strProduct) = "{6EECB283-E65F-40EF-86D3-D51BF02A8D43}" Then
-    objCmdFile.WriteLine("set OFFICE_CONVERTER_PACK=1")
+    objCmdFile.WriteLine("set OFC_CONV_PACK=1")
   End If
   If UCase(strProduct) = "{90120000-0020-0407-0000-0000000FF1CE}" Then
-    objCmdFile.WriteLine("set OFFICE_COMPATIBILITY_PACK=1")
+    objCmdFile.WriteLine("set OFC_COMP_PACK=1")
   End If
 Next
 
@@ -404,8 +404,8 @@ Next
 
 ' Determine state of automatic updates service 
 For Each objWMIQuery in objWMIService.ExecQuery("Select * from Win32_Service Where Name = 'wuauserv'")
-  objCmdFile.WriteLine("set AU_SERVICE_STATE_INITIAL=" & objWMIQuery.State)
-  objCmdFile.WriteLine("set AU_SERVICE_START_MODE=" & objWMIQuery.StartMode)
+  objCmdFile.WriteLine("set AU_SVC_STATE_INITIAL=" & objWMIQuery.State)
+  objCmdFile.WriteLine("set AU_SVC_START_MODE=" & objWMIQuery.StartMode)
 Next
 
 ' Determine Windows activation state - not available on Windows 2000 and Vista systems 

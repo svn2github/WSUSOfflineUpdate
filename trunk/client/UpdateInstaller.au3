@@ -1,11 +1,11 @@
-; *** WSUS Offline Update 6.6 - Installer ***
-; ***  Author: T. Wittrock, RZ Uni Kiel   ***
-; *** Dialog scaling added by Th. Baisch  ***
+; *** WSUS Offline Update 6.6.3 - Installer ***
+; ***   Author: T. Wittrock, RZ Uni Kiel    ***
+; ***  Dialog scaling added by Th. Baisch   ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 
-Dim Const $caption                    = "WSUS Offline Update 6.6 - Installer"
+Dim Const $caption                    = "WSUS Offline Update 6.6.3 - Installer"
 
 ; Registry constants
 Dim Const $reg_key_wsh_hklm           = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings"
@@ -83,12 +83,13 @@ Func ShowGUIInGerman()
   EndIf
 EndFunc
 
-Func AssignScriptDirectory($map)
+; Returns script directory, also sets global variable $mapped
+Func AssignScriptDirectory()
 Dim $result, $netdrives, $i
   
   ; Check if script directory is a network share, map if unmapped 
   $result = ""
-  $map = False  
+  $mapped = False  
   If DriveGetType(@ScriptDir) = "Network" Then
     If StringInStr(@ScriptDir, "\\") = 0 Then
       $result = @ScriptDir
@@ -107,7 +108,7 @@ Dim $result, $netdrives, $i
         If @error Then
           $result = "" 
         Else
-          $map = True  
+          $mapped = True  
         EndIf
       EndIf
     EndIf
@@ -238,7 +239,7 @@ $groupwidth = 2 * $txtwidth + 2 * $txtxoffset
 $maindlg = GUICreate($caption, $groupwidth + 2 * $txtxoffset, $dlgheight)
 GUISetFont(8.5, 400, 0, "Sans Serif")
 
-$scriptdir = AssignScriptDirectory($mapped)
+$scriptdir = AssignScriptDirectory()
 $inifilename = $scriptdir & "\" & StringLeft(@ScriptName, StringInStr(@ScriptName, ".", 0, -1)) & "ini"
 
 ;  Label

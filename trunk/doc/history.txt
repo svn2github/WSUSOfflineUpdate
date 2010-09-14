@@ -415,7 +415,11 @@ Version 6.6.2 -- 27.08.10
 - Fix: Check of .NET Framework 4 installation state failed when updating from command line (Thanks to "imrumpf")
 - Fix: DownloadUpdates.cmd script contained invalid subdirectory rename instructions for backward compatibility (Thanks to "heinzel")
 --------------------------------------------------------------------------------
-Version 6.6.? -- ??.??.10
+Version 6.6.3 -- 15.09.10
+- Office updates up to 09/2010 integrated by static definitions
 - Prerequisites' checks enhanced for UpdateGenerator (directory substructure) and UpdateInstaller (path properties, see http://msdn.microsoft.com/en-us/library/aa365247(VS.85).aspx) scripts (Thanks to Matthias Köhler)
-- Fix: Version checks could fail if strings were of unexpected/abbreviated structure (Thanks to Lars Bassen)
+- Fix: Missing hash file deletion on download without verification could subsequently lead to false audit errors
+- Fix: Version checks could fail if version strings were of unexpected/abbreviated structure (Thanks to Lars Bassen)
 - Fix: DownloadUpdates.sh script did not evaluate exclude lists because of missing "dos2unix" command (Thanks to "NoKurth" and "nebyah")
+- Fix: Cmd.exe environment size reduced by abbreviating versions' variable names (see http://support.microsoft.com/kb/830473/en-us)
+--------------------------------------------------------------------------------

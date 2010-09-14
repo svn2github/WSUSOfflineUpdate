@@ -10,16 +10,16 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSUPDATE_VERSION=6.6.2+ (r136)
+set WSUSOFFLINE_VERSION=6.6.3
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
-echo Starting WSUS Offline Update download (v. %WSUSUPDATE_VERSION%) for %1 %2...
+echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 if exist %DOWNLOAD_LOGFILE% (
   echo. >>%DOWNLOAD_LOGFILE%
   echo -------------------------------------------------------------------------------- >>%DOWNLOAD_LOGFILE%
   echo. >>%DOWNLOAD_LOGFILE%
 )
-echo %DATE% %TIME% - Info: Starting download (v. %WSUSUPDATE_VERSION%) for %1 %2 >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Starting download (v. %WSUSOFFLINE_VERSION%) for %1 %2 >>%DOWNLOAD_LOGFILE%
 
 for %%i in (w2k wxp w2k3 w2k3-x64 oxp o2k3 o2k7 o2k7-x64) do (
   if /i "%1"=="%%i" (
@@ -59,7 +59,7 @@ goto EvalParams
 
 :NoMoreParams
 echo %1 | %SystemRoot%\system32\find.exe /I "x64" >nul 2>&1
-if errorlevel 1 (set TARGET_ARCHITECTURE=x86) else (set TARGET_ARCHITECTURE=x64)
+if errorlevel 1 (set TARGET_ARCH=x86) else (set TARGET_ARCH=x64)
 
 if "%TEMP%"=="" goto NoTemp
 pushd "%TEMP%"
@@ -184,17 +184,17 @@ if exist ..\client\bin\reg.exe goto SkipRegExe
 rem *** Determine Microsoft registry console tool version ***
 echo Determining Microsoft registry console tool version...
 if not exist %REG_PATH% goto NoRegExe
-%CSCRIPT_PATH% //Nologo //E:vbs ..\client\cmd\DetermineFileVersion.vbs %REG_PATH% REG_VERSION
+%CSCRIPT_PATH% //Nologo //E:vbs ..\client\cmd\DetermineFileVersion.vbs %REG_PATH% REG_VER
 if not exist "%TEMP%\SetFileVersion.cmd" goto NoRegVersion
 call "%TEMP%\SetFileVersion.cmd"
 del "%TEMP%\SetFileVersion.cmd"
 
 rem *** Copy Microsoft registry console tool ***
 echo Copying Microsoft registry console tool...
-if /i %REG_VERSION_MAJOR% GTR 5 goto InvalidRegExe
-if /i %REG_VERSION_MAJOR% LSS 2 goto InvalidRegExe
-if /i %REG_VERSION_MAJOR% EQU 5 (
-  if /i %REG_VERSION_MINOR% GTR 1 goto InvalidRegExe
+if /i %REG_VER_MAJOR% GTR 5 goto InvalidRegExe
+if /i %REG_VER_MAJOR% LSS 2 goto InvalidRegExe
+if /i %REG_VER_MAJOR% EQU 5 (
+  if /i %REG_VER_MINOR% GTR 1 goto InvalidRegExe
 )
 if not exist ..\client\bin\nul md ..\client\bin
 copy %REG_PATH% ..\client\bin >nul
@@ -273,8 +273,8 @@ if "%VERIFY_DOWNLOADS%"=="1" (
     popd
     echo %DATE% %TIME% - Info: Verified integrity of Windows Update Agent and catalog file >>%DOWNLOAD_LOGFILE%
   ) else (
-    echo Warning: Integrity database ..\md\hashes-wsus.txt not found.
-    echo %DATE% %TIME% - Warning: Integrity database ..\md\hashes-wsus.txt not found >>%DOWNLOAD_LOGFILE%
+    echo Warning: Integrity database ..\client\md\hashes-wsus.txt not found.
+    echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-wsus.txt not found >>%DOWNLOAD_LOGFILE%
   )
 )
 echo Downloading/validating most recent Windows Update Agent and catalog file...
@@ -289,11 +289,16 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   ..\bin\hashdeep.exe -c md5,sha256 -l -r ..\wsus >hashes-wsus.txt
   if errorlevel 1 (
     popd
-    echo Warning: Error creating integrity database ..\md\hashes-wsus.txt.
-    echo %DATE% %TIME% - Warning: Error creating integrity database ..\md\hashes-wsus.txt >>%DOWNLOAD_LOGFILE%
+    echo Warning: Error creating integrity database ..\client\md\hashes-wsus.txt.
+    echo %DATE% %TIME% - Warning: Error creating integrity database ..\client\md\hashes-wsus.txt >>%DOWNLOAD_LOGFILE%
   ) else (
     popd
     echo %DATE% %TIME% - Info: Created integrity database for Windows Update Agent and catalog file >>%DOWNLOAD_LOGFILE%
+  )
+) else (
+  if exist ..\client\md\hashes-wsus.txt (
+    del ..\client\md\hashes-wsus.txt 
+    echo %DATE% %TIME% - Info: Deleted integrity database for Windows Update Agent and catalog file >>%DOWNLOAD_LOGFILE%
   )
 )
 
@@ -330,8 +335,8 @@ if "%VERIFY_DOWNLOADS%"=="1" (
     popd
     echo %DATE% %TIME% - Info: Verified integrity of .NET Framework installation files >>%DOWNLOAD_LOGFILE%
   ) else (
-    echo Warning: Integrity database ..\md\hashes-dotnet.txt not found.
-    echo %DATE% %TIME% - Warning: Integrity database ..\md\hashes-dotnet.txt not found >>%DOWNLOAD_LOGFILE%
+    echo Warning: Integrity database ..\client\md\hashes-dotnet.txt not found.
+    echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-dotnet.txt not found >>%DOWNLOAD_LOGFILE%
   )
 )
 echo Downloading/validating installation files for .NET Framework 3.5 SP1 and 4...
@@ -346,14 +351,19 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   ..\bin\hashdeep.exe -c md5,sha256 -l %DOTNET35_FILENAME% %DOTNET4_FILENAME% >hashes-dotnet.txt
   if errorlevel 1 (
     popd
-    echo Warning: Error creating integrity database ..\md\hashes-dotnet.txt.
-    echo %DATE% %TIME% - Warning: Error creating integrity database ..\md\hashes-dotnet.txt >>%DOWNLOAD_LOGFILE%
+    echo Warning: Error creating integrity database ..\client\md\hashes-dotnet.txt.
+    echo %DATE% %TIME% - Warning: Error creating integrity database ..\client\md\hashes-dotnet.txt >>%DOWNLOAD_LOGFILE%
   ) else (
     popd
     echo %DATE% %TIME% - Info: Created integrity database for .NET Framework installation files >>%DOWNLOAD_LOGFILE%
   )
+) else (
+  if exist ..\client\md\hashes-dotnet.txt (
+    del ..\client\md\hashes-dotnet.txt 
+    echo %DATE% %TIME% - Info: Deleted integrity database for .NET Framework installation files >>%DOWNLOAD_LOGFILE%
+  )
 )
-call :DownloadCore dotnet %TARGET_ARCHITECTURE%-glb
+call :DownloadCore dotnet %TARGET_ARCH%-glb
 if errorlevel 1 goto Error
 :SkipDotNet
 
@@ -375,12 +385,12 @@ if "%VERIFY_DOWNLOADS%"=="1" (
     popd
     echo %DATE% %TIME% - Info: Verified integrity of Microsoft Security Essentials definition files >>%DOWNLOAD_LOGFILE%
   ) else (
-    echo Warning: Integrity database ..\md\hashes-mssedefs.txt not found.
-    echo %DATE% %TIME% - Warning: Integrity database ..\md\hashes-mssedefs.txt not found >>%DOWNLOAD_LOGFILE%
+    echo Warning: Integrity database ..\client\md\hashes-mssedefs.txt not found.
+    echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-mssedefs.txt not found >>%DOWNLOAD_LOGFILE%
   )
 )
 echo Downloading/validating definition files for Microsoft Security Essentials...
-%WGET_PATH% -N -i ..\static\StaticDownloadLink-mssedefs-%TARGET_ARCHITECTURE%-glb.txt -P ..\client\mssedefs\%TARGET_ARCHITECTURE%-glb
+%WGET_PATH% -N -i ..\static\StaticDownloadLink-mssedefs-%TARGET_ARCH%-glb.txt -P ..\client\mssedefs\%TARGET_ARCH%-glb
 if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded/validated definition files for Microsoft Security Essentials >>%DOWNLOAD_LOGFILE%
 if "%VERIFY_DOWNLOADS%"=="1" (
@@ -391,11 +401,16 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   ..\bin\hashdeep.exe -c md5,sha256 -l -r ..\mssedefs >hashes-mssedefs.txt
   if errorlevel 1 (
     popd
-    echo Warning: Error creating integrity database ..\md\hashes-mssedefs.txt.
-    echo %DATE% %TIME% - Warning: Error creating integrity database ..\md\hashes-mssedefs.txt >>%DOWNLOAD_LOGFILE%
+    echo Warning: Error creating integrity database ..\client\md\hashes-mssedefs.txt.
+    echo %DATE% %TIME% - Warning: Error creating integrity database ..\client\md\hashes-mssedefs.txt >>%DOWNLOAD_LOGFILE%
   ) else (
     popd
     echo %DATE% %TIME% - Info: Created integrity database for Microsoft Security Essentials definition files >>%DOWNLOAD_LOGFILE%
+  )
+) else (
+  if exist ..\client\md\hashes-mssedefs.txt (
+    del ..\client\md\hashes-mssedefs.txt 
+    echo %DATE% %TIME% - Info: Deleted integrity database for Microsoft Security Essentials definition files >>%DOWNLOAD_LOGFILE%
   )
 )
 :SkipMSSE
@@ -449,10 +464,10 @@ if exist ..\static\StaticDownloadLinks-%1-%2.txt (
   )
   goto EvalStatics
 )
-if exist ..\static\StaticDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.txt (
-  copy /Y ..\static\StaticDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
-  if exist ..\static\custom\StaticDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.txt (
-    for /F %%i in (..\static\custom\StaticDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.txt) do echo %%i>>"%TEMP%\StaticDownloadLinks-%1-%2.txt"
+if exist ..\static\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt (
+  copy /Y ..\static\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
+  if exist ..\static\custom\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt (
+    for /F %%i in (..\static\custom\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt) do echo %%i>>"%TEMP%\StaticDownloadLinks-%1-%2.txt"
   )
   goto EvalStatics
 )
@@ -485,8 +500,8 @@ if exist ..\xslt\ExtractDownloadLinks-%1-%2.xsl (
   ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractDownloadLinks-%1-%2.xsl -o "%TEMP%\DownloadLinks-%1-%2.txt"
   if errorlevel 1 goto DownloadError
 )
-if exist ..\xslt\ExtractDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.xsl (
-  ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.xsl -o "%TEMP%\DownloadLinks-%1-%2.txt"
+if exist ..\xslt\ExtractDownloadLinks-%1-%TARGET_ARCH%-%2.xsl (
+  ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractDownloadLinks-%1-%TARGET_ARCH%-%2.xsl -o "%TEMP%\DownloadLinks-%1-%2.txt"
   if errorlevel 1 goto DownloadError
 )
 del "%TEMP%\package.xml"
@@ -501,10 +516,10 @@ if exist ..\exclude\ExcludeList-%1.txt (
   )
   goto ExcludeWindows
 )
-if exist ..\exclude\ExcludeList-%1-%TARGET_ARCHITECTURE%.txt (
-  copy /Y ..\exclude\ExcludeList-%1-%TARGET_ARCHITECTURE%.txt "%TEMP%\ExcludeList-%1.txt" >nul
-  if exist ..\exclude\custom\ExcludeList-%1-%TARGET_ARCHITECTURE%.txt (
-    for /F %%i in (..\exclude\custom\ExcludeList-%1-%TARGET_ARCHITECTURE%.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
+if exist ..\exclude\ExcludeList-%1-%TARGET_ARCH%.txt (
+  copy /Y ..\exclude\ExcludeList-%1-%TARGET_ARCH%.txt "%TEMP%\ExcludeList-%1.txt" >nul
+  if exist ..\exclude\custom\ExcludeList-%1-%TARGET_ARCH%.txt (
+    for /F %%i in (..\exclude\custom\ExcludeList-%1-%TARGET_ARCH%.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
   )
 )
 
@@ -533,22 +548,22 @@ if exist ..\xslt\ExtractDownloadLinks-%1-%2.xsl (
   ..\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractDownloadLinks-%1-%2.xsl -o "%TEMP%\DownloadLinks-%1-%2.txt"
   if errorlevel 1 goto DownloadError
 )
-if exist ..\xslt\ExtractDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.xsl (
-  ..\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractDownloadLinks-%1-%TARGET_ARCHITECTURE%-%2.xsl -o "%TEMP%\DownloadLinks-%1-%2.txt"
+if exist ..\xslt\ExtractDownloadLinks-%1-%TARGET_ARCH%-%2.xsl (
+  ..\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractDownloadLinks-%1-%TARGET_ARCH%-%2.xsl -o "%TEMP%\DownloadLinks-%1-%2.txt"
   if errorlevel 1 goto DownloadError
 )
 if not exist "%TEMP%\DownloadLinks-%1-%2.txt" (
   del "%TEMP%\patchdata.xml"
   goto DoDownload
 )
-if exist ..\xslt\ExtractValidIds-%1-%TARGET_ARCHITECTURE%.xsl (
-  ..\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractValidIds-%1-%TARGET_ARCHITECTURE%.xsl -o "%TEMP%\ValidIds-%1.txt"
+if exist ..\xslt\ExtractValidIds-%1-%TARGET_ARCH%.xsl (
+  ..\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractValidIds-%1-%TARGET_ARCH%.xsl -o "%TEMP%\ValidIds-%1.txt"
 ) else (
   ..\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractValidIds-%1.xsl -o "%TEMP%\ValidIds-%1.txt"
 )
 if errorlevel 1 goto DownloadError
-if exist ..\xslt\ExtractExpiredIds-%1-%TARGET_ARCHITECTURE%.xsl (
-  ..\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractExpiredIds-%1-%TARGET_ARCHITECTURE%.xsl -o "%TEMP%\ExpiredIds-%1.txt"
+if exist ..\xslt\ExtractExpiredIds-%1-%TARGET_ARCH%.xsl (
+  ..\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractExpiredIds-%1-%TARGET_ARCH%.xsl -o "%TEMP%\ExpiredIds-%1.txt"
 ) else (
   ..\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractExpiredIds-%1.xsl -o "%TEMP%\ExpiredIds-%1.txt"
 )
@@ -567,10 +582,10 @@ if exist ..\exclude\ExcludeList-%1.txt (
   )
   goto ExcludeOffice
 )
-if exist ..\exclude\ExcludeList-%1-%TARGET_ARCHITECTURE%.txt (
-  copy /Y ..\exclude\ExcludeList-%1-%TARGET_ARCHITECTURE%.txt "%TEMP%\ExcludeList-%1.txt" >nul
-  if exist ..\exclude\custom\ExcludeList-%1-%TARGET_ARCHITECTURE%.txt (
-    for /F %%i in (..\exclude\custom\ExcludeList-%1-%TARGET_ARCHITECTURE%.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
+if exist ..\exclude\ExcludeList-%1-%TARGET_ARCH%.txt (
+  copy /Y ..\exclude\ExcludeList-%1-%TARGET_ARCH%.txt "%TEMP%\ExcludeList-%1.txt" >nul
+  if exist ..\exclude\custom\ExcludeList-%1-%TARGET_ARCH%.txt (
+    for /F %%i in (..\exclude\custom\ExcludeList-%1-%TARGET_ARCH%.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
   )
 )
 
@@ -596,8 +611,8 @@ if exist ..\client\md\hashes-%1-%2.txt (
   popd
   echo %DATE% %TIME% - Info: Verified integrity of existing updates for %1 %2 >>%DOWNLOAD_LOGFILE%
 ) else (
-  echo Warning: Integrity database ..\md\hashes-%1-%2.txt not found.
-  echo %DATE% %TIME% - Warning: Integrity database ..\md\hashes-%1-%2.txt not found >>%DOWNLOAD_LOGFILE%
+  echo Warning: Integrity database ..\client\md\hashes-%1-%2.txt not found.
+  echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-%1-%2.txt not found >>%DOWNLOAD_LOGFILE%
 )
 :SkipVerification
 
@@ -712,11 +727,16 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   ..\bin\hashdeep.exe -c md5,sha256 -l -r ..\%1\%2 >hashes-%1-%2.txt
   if errorlevel 1 (
     popd
-    echo Warning: Error creating integrity database ..\md\hashes-%1-%2.txt.
-    echo %DATE% %TIME% - Warning: Error creating integrity database ..\md\hashes-%1-%2.txt >>%DOWNLOAD_LOGFILE%
+    echo Warning: Error creating integrity database ..\client\md\hashes-%1-%2.txt.
+    echo %DATE% %TIME% - Warning: Error creating integrity database ..\client\md\hashes-%1-%2.txt >>%DOWNLOAD_LOGFILE%
   ) else (
     popd
     echo %DATE% %TIME% - Info: Created integrity database for %1 %2 >>%DOWNLOAD_LOGFILE%
+  )
+) else (
+  if exist ..\client\md\hashes-%1-%2.txt (
+    del ..\client\md\hashes-%1-%2.txt 
+    echo %DATE% %TIME% - Info: Deleted integrity database for %1 %2 >>%DOWNLOAD_LOGFILE%
   )
 )
 if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" del "%TEMP%\ValidStaticLinks-%1-%2.txt"
@@ -792,11 +812,11 @@ goto Error
 
 :InvalidRegExe
 echo.
-echo ERROR: File %REG_PATH% has version %REG_VERSION_MAJOR%.%REG_VERSION_MINOR%,
+echo ERROR: File %REG_PATH% has version %REG_VER_MAJOR%.%REG_VER_MINOR%,
 echo which is incompatible with Windows 2000 target systems.
 echo Please manually copy that file from a Windows 2000 or XP system
 echo to the directory ..\client\bin.
-echo %DATE% %TIME% - Error: File %REG_PATH% has incompatible version %REG_VERSION_MAJOR%.%REG_VERSION_MINOR% >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Error: File %REG_PATH% has incompatible version %REG_VER_MAJOR%.%REG_VER_MINOR% >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 
