@@ -1,3 +1,3 @@
 http://download.microsoft.com/download/0/8/c/08ca462c-3b03-4cf4-a3ad-bbeaedb7dea8/Office2003SP3-KB923618-FullFile-TRK.exe
 http://download.microsoft.com/download/7/5/7/7570E7D9-4D68-4446-82E2-9FA38A8BA444/office2003-KB975051-FullFile-TRK.exe
-http://download.microsoft.com/download/4/F/2/4F2897E9-5E30-4C9F-86A5-48941B1A8146/office2003-KB2279246-FullFile-TRK.exe
+http://download.microsoft.com/download/F/F/9/FF9BD9DE-8BB4-4908-B32A-45EE00AB7F96/office2003-KB2291595-FullFile-TRK.exe

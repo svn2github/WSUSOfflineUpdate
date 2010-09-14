@@ -12,8 +12,8 @@ pushd "%TEMP%"
 if errorlevel 1 goto NoTempDir
 popd
 if "%OS_NAME%"=="" goto NoOSName
-if "%OS_LANGUAGE%"=="" goto NoOSLang
-if "%OS_ARCHITECTURE%"=="" goto NoOSArch
+if "%OS_LANG%"=="" goto NoOSLang
+if "%OS_ARCH%"=="" goto NoOSArch
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
@@ -34,12 +34,12 @@ goto :eof
 :NoMoreParams
 rem *** Add statically defined update ids ***
 if "%EXCLUDE_STATICS%"=="/excludestatics" goto ExcludeStatics
-if exist ..\static\StaticUpdateIds-%OS_NAME%-%OS_ARCHITECTURE%.txt call :EvalStatics ..\static\StaticUpdateIds-%OS_NAME%-%OS_ARCHITECTURE%.txt
-if exist ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_ARCHITECTURE%.txt call :EvalStatics ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_ARCHITECTURE%.txt
-if exist ..\static\StaticUpdateIds-%OFFICE_NAME%.txt call :EvalStatics ..\static\StaticUpdateIds-%OFFICE_NAME%.txt
-if exist ..\static\custom\StaticUpdateIds-%OFFICE_NAME%.txt call :EvalStatics ..\static\custom\StaticUpdateIds-%OFFICE_NAME%.txt
-if exist ..\static\StaticUpdateIds-%OFFICE_NAME%-%OS_ARCHITECTURE%.txt call :EvalStatics ..\static\StaticUpdateIds-%OFFICE_NAME%-%OS_ARCHITECTURE%.txt
-if exist ..\static\custom\StaticUpdateIds-%OFFICE_NAME%-%OS_ARCHITECTURE%.txt call :EvalStatics ..\static\custom\StaticUpdateIds-%OFFICE_NAME%-%OS_ARCHITECTURE%.txt
+if exist ..\static\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt call :EvalStatics ..\static\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt
+if exist ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt call :EvalStatics ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt
+if exist ..\static\StaticUpdateIds-%OFC_NAME%.txt call :EvalStatics ..\static\StaticUpdateIds-%OFC_NAME%.txt
+if exist ..\static\custom\StaticUpdateIds-%OFC_NAME%.txt call :EvalStatics ..\static\custom\StaticUpdateIds-%OFC_NAME%.txt
+if exist ..\static\StaticUpdateIds-%OFC_NAME%-%OS_ARCH%.txt call :EvalStatics ..\static\StaticUpdateIds-%OFC_NAME%-%OS_ARCH%.txt
+if exist ..\static\custom\StaticUpdateIds-%OFC_NAME%-%OS_ARCH%.txt call :EvalStatics ..\static\custom\StaticUpdateIds-%OFC_NAME%-%OS_ARCH%.txt
 
 :ExcludeStatics
 if exist "%TEMP%\InstalledUpdateIds.txt" del "%TEMP%\InstalledUpdateIds.txt"
@@ -54,12 +54,12 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
   if exist "%TEMP%\Update.txt" del "%TEMP%\Update.txt"
   %SystemRoot%\system32\find.exe /I "%%i" "%TEMP%\ExcludeList.txt" >nul 2>&1
   if errorlevel 1 (
-    for %%k in (%OS_NAME%-%OS_ARCHITECTURE% %OS_NAME% win) do (
-      for %%l in (%OS_LANGUAGE% glb) do (
-        call ListUpdateFile.cmd ie%IE_VERSION_MAJOR%-*%%i ..\%%k\%%l
-        call ListUpdateFile.cmd windowsmedia%WMP_VERSION_MAJOR%-*%%i ..\%%k\%%l
+    for %%k in (%OS_NAME%-%OS_ARCH% %OS_NAME% win) do (
+      for %%l in (%OS_LANG% glb) do (
+        call ListUpdateFile.cmd ie%IE_VER_MAJOR%-*%%i ..\%%k\%%l
+        call ListUpdateFile.cmd windowsmedia%WMP_VER_MAJOR%-*%%i ..\%%k\%%l
         call ListUpdateFile.cmd windowsmedia-*%%i ..\%%k\%%l
-        call ListUpdateFile.cmd mdac%MDAC_VERSION_MAJOR%%MDAC_VERSION_MINOR%-*%%i ..\%%k\%%l
+        call ListUpdateFile.cmd mdac%MDAC_VER_MAJOR%%MDAC_VER_MINOR%-*%%i ..\%%k\%%l
         call ListUpdateFile.cmd windows2000*%%i ..\%%k\%%l /searchleftmost
         call ListUpdateFile.cmd windowsxp*%%i ..\%%k\%%l /searchleftmost
         call ListUpdateFile.cmd windowsserver2003*%%i ..\%%k\%%l /searchleftmost
@@ -68,9 +68,9 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
         call ListUpdateFile.cmd %%i ..\%%k\%%l
       )
     )
-    call ListUpdateFile.cmd ndp*%%i*-%OS_ARCHITECTURE% ..\dotnet\%OS_ARCHITECTURE%-glb /searchleftmost
-    for %%k in (%OFFICE_NAME%-%OS_ARCHITECTURE% %OFFICE_NAME% ofc oxp o2k3 o2k7 o2k7-x64) do (
-      for %%l in (%OFFICE_LANGUAGE% glb) do (
+    call ListUpdateFile.cmd ndp*%%i*-%OS_ARCH% ..\dotnet\%OS_ARCH%-glb /searchleftmost
+    for %%k in (%OFC_NAME%-%OS_ARCH% %OFC_NAME% ofc oxp o2k3 o2k7 o2k7-x64) do (
+      for %%l in (%OFC_LANG% glb) do (
         call ListUpdateFile.cmd %%i ..\%%k\%%l
       )
     )
@@ -109,13 +109,13 @@ echo %DATE% %TIME% - Error: Environment variable OS_NAME not set >>%UPDATE_LOGFI
 goto Error
 
 :NoOSLang
-echo ERROR: Environment variable OS_LANGUAGE not set.
-echo %DATE% %TIME% - Error: Environment variable OS_LANGUAGE not set >>%UPDATE_LOGFILE%
+echo ERROR: Environment variable OS_LANG not set.
+echo %DATE% %TIME% - Error: Environment variable OS_LANG not set >>%UPDATE_LOGFILE%
 goto Error
 
 :NoOSArch
-echo ERROR: Environment variable OS_ARCHITECTURE not set.
-echo %DATE% %TIME% - Error: Environment variable OS_ARCHITECTURE not set >>%UPDATE_LOGFILE%
+echo ERROR: Environment variable OS_ARCH not set.
+echo %DATE% %TIME% - Error: Environment variable OS_ARCH not set >>%UPDATE_LOGFILE%
 goto Error
 
 :NoMissingUpdateIds
