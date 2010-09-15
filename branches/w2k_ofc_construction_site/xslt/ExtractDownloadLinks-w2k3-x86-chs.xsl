@@ -5,7 +5,7 @@
 <xsl:template match="*">
   <xsl:choose>
     <xsl:when test="name()='FileLocation'">
-      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/windowsserver2003') and contains(@Url, '-x86-') and contains(@Url, '-chs') and contains(@Url, '.exe')">
+      <xsl:if test="contains(@Url, 'http://') and (contains(@Url, '/windowsserver2003') or contains(@Url, '/windows2003')) and contains(@Url, '-x86-') and contains(@Url, '-chs') and contains(@Url, '.exe')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>

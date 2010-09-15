@@ -425,3 +425,4 @@ Version 6.6.3 -- 15.09.10
 --------------------------------------------------------------------------------
 Version 6.7 -- ??.??.10
 - Windows 2000 support removed
+- Fix: XSLT filters for Windows Server 2003 missed kb975558 (Thanks to "nes" and "wolfbardo")
