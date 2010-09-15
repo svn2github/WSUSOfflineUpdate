@@ -423,3 +423,5 @@ Version 6.6.3 -- 15.09.10
 - Fix: DownloadUpdates.sh script did not evaluate exclude lists because of missing "dos2unix" command (Thanks to "NoKurth" and "nebyah")
 - Fix: Cmd.exe environment size reduced by abbreviating versions' variable names (see http://support.microsoft.com/kb/830473/en-us)
 --------------------------------------------------------------------------------
+Version 6.6.? -- ??.??.10
+- Fix: XSLT filters for Windows Server 2003 missed kb975558 (Thanks to "nes" and "wolfbardo")
