@@ -1,1 +1,3 @@
 http://download.microsoft.com/download/3/0/4/304ef26c-5bcf-4bb4-a491-0f19f4ecaa84/OfficeXpSp3-kb832671-fullfile-dan.exe
+http://download.microsoft.com/download/E/F/1/EF1389BB-4063-428F-A921-B7259AEED8E9/officexp-KB975008-FullFile-DAN.exe
+http://download.microsoft.com/download/B/D/4/BD42927F-AEF5-4DE1-AF9E-D9C053B4AA95/officexp-KB2293422-FullFile-DAN.exe

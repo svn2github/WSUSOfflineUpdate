@@ -1,1 +1,3 @@
 http://download.microsoft.com/download/3/d/b/3db9e4bc-bd49-45bf-93d2-dcffb0c6a3b4/OfficeXpSp3-kb832671-fullfile-deu.exe
+http://download.microsoft.com/download/0/8/5/08559736-123A-4A4F-91C8-C75C5C03C4E7/officexp-KB975008-FullFile-DEU.exe
+http://download.microsoft.com/download/C/F/3/CF35F7E3-2149-413C-A321-580BD3F5CD26/officexp-KB2293422-FullFile-DEU.exe

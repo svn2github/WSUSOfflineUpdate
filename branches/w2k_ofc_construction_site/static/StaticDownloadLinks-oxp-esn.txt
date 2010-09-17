@@ -1,1 +1,3 @@
 http://download.microsoft.com/download/f/b/e/fbe59942-ed69-4d58-ac98-d93fe44f191a/OfficeXpSp3-kb832671-fullfile-esn.exe
+http://download.microsoft.com/download/9/2/A/92AEC279-D4C9-480D-B041-CA7B32AEB483/officexp-KB975008-FullFile-ESN.exe
+http://download.microsoft.com/download/C/7/D/C7DA62B3-D7C9-4C92-9C76-23B3604E83A0/officexp-KB2293422-FullFile-ESN.exe
