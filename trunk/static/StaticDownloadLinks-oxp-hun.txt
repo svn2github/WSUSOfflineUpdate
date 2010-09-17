@@ -1,1 +1,3 @@
 http://download.microsoft.com/download/2/1/7/2172f67a-ff41-4343-af8d-9f97a2271d82/OfficeXpSp3-kb832671-fullfile-hun.exe
+http://download.microsoft.com/download/B/B/B/BBBBE19F-CF92-4233-97D4-58B8FD5C8527/officexp-KB975008-FullFile-HUN.exe
+http://download.microsoft.com/download/B/E/F/BEFA551A-674B-4B59-8862-2F4C811D760E/officexp-KB2293422-FullFile-HUN.exe

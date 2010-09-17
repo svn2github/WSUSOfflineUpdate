@@ -1,1 +1,3 @@
 http://download.microsoft.com/download/9/1/f/91ffc6b2-0745-470b-8dd3-1285b85db12b/OfficeXpSp3-kb832671-fullfile-enu.exe
+http://download.microsoft.com/download/6/0/E/60E85231-7077-4D25-B87F-D1FB4D143BE8/officexp-KB975008-FullFile-ENU.exe
+http://download.microsoft.com/download/8/1/9/81973E6D-7EDF-40AE-9220-E03E6E5581AE/officexp-KB2293422-FullFile-ENU.exe

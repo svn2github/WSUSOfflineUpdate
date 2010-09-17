@@ -425,3 +425,5 @@ Version 6.6.3 -- 15.09.10
 --------------------------------------------------------------------------------
 Version 6.6.? -- ??.??.10
 - Fix: XSLT filters for Windows Server 2003 missed kb975558 (Thanks to "nes" and "wolfbardo")
+- Fix: Download exclude list for Windows XP (ExcludeList-wxp-x86.txt) erroneously excluded kb923561
+- Fix: Office XP patches kb975008 and kb2293422 weren't downloaded as the required language specific versions (Thanks to "s.a.h.")

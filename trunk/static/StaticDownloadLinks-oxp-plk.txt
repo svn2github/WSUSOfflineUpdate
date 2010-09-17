@@ -1,1 +1,3 @@
 http://download.microsoft.com/download/c/c/d/ccd9f9e1-0383-46d4-8479-8abe6db49db6/OfficeXpSp3-kb832671-fullfile-plk.exe
+http://download.microsoft.com/download/0/A/3/0A374A4E-BD63-49AE-9840-369F4007C48F/officexp-KB975008-FullFile-PLK.exe
+http://download.microsoft.com/download/7/8/5/7850BBE2-B29D-4744-80D2-0C17A449E1CC/officexp-KB2293422-FullFile-PLK.exe

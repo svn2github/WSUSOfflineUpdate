@@ -1,1 +1,3 @@
 http://download.microsoft.com/download/8/a/2/8a257d8a-2da0-483b-a1fd-8ffe867bb2b1/OfficeXpSp3-kb832671-fullfile-kor.exe
+http://download.microsoft.com/download/2/1/6/216AB723-2AF5-49B0-A517-BEB135CEBDCA/officexp-KB975008-FullFile-KOR.exe
+http://download.microsoft.com/download/8/0/0/80022653-5700-4F58-B8C3-0883D209FE14/officexp-KB2293422-FullFile-KOR.exe

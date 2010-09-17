@@ -1,1 +1,3 @@
 http://download.microsoft.com/download/7/5/0/750640ad-59cd-4763-8480-5c8d95b85511/OfficeXpSp3-kb832671-fullfile-csy.exe
+http://download.microsoft.com/download/D/E/7/DE726D28-1E65-485D-969C-0821D4673E23/officexp-KB975008-FullFile-CSY.exe
+http://download.microsoft.com/download/5/8/9/58954193-3EF3-44D8-9E58-36255F2D9288/officexp-KB2293422-FullFile-CSY.exe
