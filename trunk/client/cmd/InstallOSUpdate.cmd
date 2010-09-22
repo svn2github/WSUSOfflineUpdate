@@ -118,8 +118,9 @@ if "%INSTALL_SWITCHES%"=="" (
 )
 echo Installing %1...
 %1 %INSTALL_SWITCHES%
+set ERR_LEVEL=%errorlevel%
 if "%IGNORE_ERRORS%"=="1" goto InstSuccess
-for %%i in (0 1641 3010 3011) do if %errorlevel% EQU %%i goto InstSuccess
+for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
 goto InstFailure
 
 :InstCabMsu
@@ -140,15 +141,12 @@ for /F "tokens=%TOKEN_KB% delims=-" %%i in ("%1") do (
     %SystemRoot%\system32\expand.exe %1 -F:* "%TEMP%\%%i" >nul
   )
   %SystemRoot%\system32\pkgmgr.exe /ip /m:"%TEMP%\%%i" /quiet /norestart
-  for %%j in (0 1641 3010 3011) do (
-    if %errorlevel% EQU %%j (
-      call SafeRmDir.cmd "%TEMP%\%%i"
-      goto InstSuccess
-    )
-  )
-  call SafeRmDir.cmd "%TEMP%\%%i"
-  goto InstFailure
 )
+set ERR_LEVEL=%errorlevel%
+call SafeRmDir.cmd "%TEMP%\%%i"
+if "%IGNORE_ERRORS%"=="1" goto InstSuccess
+for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
+goto InstFailure
 
 :NoExtensions
 echo ERROR: No command extensions available.
@@ -177,7 +175,7 @@ goto Error
 :UnsupType
 echo ERROR: Unsupported file type (file: %1).
 echo %DATE% %TIME% - Error: Unsupported file type (file: %1) >>%UPDATE_LOGFILE%
-goto Error
+goto InstFailure
 
 :IntegrityError
 echo ERROR: File hash does not match stored value (file: %1).
@@ -192,13 +190,13 @@ goto EoF
 if "%ERRORS_AS_WARNINGS%"=="1" (goto InstWarning) else (goto InstError)
 
 :InstWarning
-echo Warning: Installation of %1 failed (errorlevel: %errorlevel%).
-echo %DATE% %TIME% - Warning: Installation of %1 %INSTALL_SWITCHES% failed (errorlevel: %errorlevel%) >>%UPDATE_LOGFILE%
+echo Warning: Installation of %1 failed (errorlevel: %ERR_LEVEL%).
+echo %DATE% %TIME% - Warning: Installation of %1 %INSTALL_SWITCHES% failed (errorlevel: %ERR_LEVEL%) >>%UPDATE_LOGFILE%
 goto EoF
 
 :InstError
-echo ERROR: Installation of %1 failed (errorlevel: %errorlevel%).
-echo %DATE% %TIME% - Error: Installation of %1 %INSTALL_SWITCHES% failed (errorlevel: %errorlevel%) >>%UPDATE_LOGFILE%
+echo ERROR: Installation of %1 failed (errorlevel: %ERR_LEVEL%).
+echo %DATE% %TIME% - Error: Installation of %1 %INSTALL_SWITCHES% failed (errorlevel: %ERR_LEVEL%) >>%UPDATE_LOGFILE%
 goto Error
 
 :Error

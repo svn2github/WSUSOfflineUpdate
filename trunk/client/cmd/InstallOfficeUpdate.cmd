@@ -86,10 +86,6 @@ for /F "tokens=3 delims=\." %%i in ("%1") do (
   echo Installing %1...
   call SafeRmDir.cmd "%TEMP%\%%i"
   %1 /T:"%TEMP%\%%i" /C /Q
-  if errorlevel 1 (
-    call SafeRmDir.cmd "%TEMP%\%%i"
-    goto InstFailure
-  )
   if exist "%TEMP%\%%i\ohotfix.exe" (
     for /F "usebackq eol=; tokens=1,2 delims==" %%j in ("%TEMP%\%%i\ohotfix.ini") do (
       if /i "%%j"=="ShowSuccessDialog" echo %%j=0 >"%TEMP%\%%i\ohotfix.1"
@@ -113,20 +109,25 @@ for /F "tokens=3 delims=\." %%i in ("%1") do (
       "%TEMP%\%%i\setup.exe" /QB
     ) else (
       call SafeRmDir.cmd "%TEMP%\%%i"
-      goto InstFailure
+      goto UnsupType
     )
   )
-  call SafeRmDir.cmd "%TEMP%\%%i"
-  goto InstSuccess
 )
-goto EoF
+set ERR_LEVEL=%errorlevel%
+call SafeRmDir.cmd "%TEMP%\%%i"
+if "%IGNORE_ERRORS%"=="1" goto InstSuccess
+for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
+goto InstFailure
 
 :o2k7
 :o2k7-x64
 echo Installing %1...
 echo %1 | %SystemRoot%\system32\find.exe /I "sp" >nul 2>&1
 if errorlevel 1 (%1 /quiet /norestart) else (%1 /passive /norestart)
-goto InstSuccess
+set ERR_LEVEL=%errorlevel%
+if "%IGNORE_ERRORS%"=="1" goto InstSuccess
+for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
+goto InstFailure
 
 :NoExtensions
 echo ERROR: No command extensions available.
@@ -157,6 +158,11 @@ echo ERROR: Unsupported Office version.
 echo %DATE% %TIME% - Error: Unsupported Office version >>%UPDATE_LOGFILE%
 goto Error
 
+:UnsupType
+echo ERROR: Unsupported file type (file: %1).
+echo %DATE% %TIME% - Error: Unsupported file type (file: %1) >>%UPDATE_LOGFILE%
+goto InstFailure
+
 :IntegrityError
 echo ERROR: File hash does not match stored value (file: %1).
 echo %DATE% %TIME% - Error: File hash does not match stored value (file: %1) >>%UPDATE_LOGFILE%
@@ -170,13 +176,13 @@ goto EoF
 if "%ERRORS_AS_WARNINGS%"=="1" (goto InstWarning) else (goto InstError)
 
 :InstWarning
-echo Warning: Installation of %1 failed (errorlevel: %errorlevel%).
-echo %DATE% %TIME% - Warning: Installation of %1 failed (errorlevel: %errorlevel%) >>%UPDATE_LOGFILE%
+echo Warning: Installation of %1 failed (errorlevel: %ERR_LEVEL%).
+echo %DATE% %TIME% - Warning: Installation of %1 failed (errorlevel: %ERR_LEVEL%) >>%UPDATE_LOGFILE%
 goto EoF
 
 :InstError
-echo ERROR: Installation of %1 failed (errorlevel: %errorlevel%).
-echo %DATE% %TIME% - Error: Installation of %1 failed (errorlevel: %errorlevel%) >>%UPDATE_LOGFILE%
+echo ERROR: Installation of %1 failed (errorlevel: %ERR_LEVEL%).
+echo %DATE% %TIME% - Error: Installation of %1 failed (errorlevel: %ERR_LEVEL%) >>%UPDATE_LOGFILE%
 goto Error
 
 :Error

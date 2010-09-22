@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.6.3+ (r144)
+set WSUSOFFLINE_VERSION=6.6.3+ (r145)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -679,7 +679,7 @@ echo %DATE% %TIME% - Info: Downloaded/validated %LINES_COUNT% dynamically determ
 
 :CleanupDownload
 rem *** Clean up client directory for %1 %2 ***
-if "%CLEANUP_DOWNLOADS%"=="0" goto EndDownload
+if "%CLEANUP_DOWNLOADS%"=="0" goto VerifyDownload
 echo Cleaning up client directory for %1 %2...
 for /F %%i in ('dir /A:-D /B ..\client\%1\%2\*.*') do (
   %SystemRoot%\system32\find.exe /I "%%i" "%TEMP%\ValidDownloadLinks-%1-%2.txt" >nul 2>&1
@@ -693,7 +693,8 @@ for /F %%i in ('dir /A:-D /B ..\client\%1\%2\*.*') do (
 )
 echo %DATE% %TIME% - Info: Cleaned up client directory for %1 %2 >>%DOWNLOAD_LOGFILE%
 
-:EndDownload
+:VerifyDownload
+if not exist ..\client\%1\%2\nul goto EndDownload
 rem *** Delete alternate data streams for %1 %2 ***
 if exist ..\bin\streams.exe (
   echo Deleting alternate data streams for %1 %2...
@@ -739,6 +740,8 @@ if "%VERIFY_DOWNLOADS%"=="1" (
     echo %DATE% %TIME% - Info: Deleted integrity database for %1 %2 >>%DOWNLOAD_LOGFILE%
   )
 )
+
+:EndDownload
 if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" del "%TEMP%\ValidStaticLinks-%1-%2.txt"
 if exist "%TEMP%\ValidDownloadLinks-%1-%2.txt" del "%TEMP%\ValidDownloadLinks-%1-%2.txt"
 if exist "%TEMP%\ValidDownloadLinks-%1-%2.csv" del "%TEMP%\ValidDownloadLinks-%1-%2.csv"
