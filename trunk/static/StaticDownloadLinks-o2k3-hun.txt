@@ -1,3 +1,4 @@
 http://download.microsoft.com/download/1/e/0/1e0dda50-9ccc-4bbf-b141-5694d3f2dc02/Office2003SP3-KB923618-FullFile-HUN.exe
 http://download.microsoft.com/download/D/0/E/D0E4F542-DE97-44E7-828E-28698A09520A/office2003-KB975051-FullFile-HUN.exe
+http://download.microsoft.com/download/D/7/F/D7FA6705-7109-4D5D-933A-C40C0A128CAF/office2003-KB2293428-FullFile-HUN.exe
 http://download.microsoft.com/download/C/B/C/CBCD0D9A-5FBC-4A17-AC60-CA3E1009D669/office2003-KB2291595-FullFile-HUN.exe
