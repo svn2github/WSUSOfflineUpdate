@@ -82,6 +82,7 @@ if "%SELECT_OPTIONS%"=="1" (
     if not errorlevel 1 goto o2k7
   )
 )
+set ERR_LEVEL=0
 for /F "tokens=3 delims=\." %%i in ("%1") do (
   echo Installing %1...
   call SafeRmDir.cmd "%TEMP%\%%i"
@@ -112,9 +113,9 @@ for /F "tokens=3 delims=\." %%i in ("%1") do (
       goto UnsupType
     )
   )
+  set ERR_LEVEL=%errorlevel%
+  call SafeRmDir.cmd "%TEMP%\%%i"
 )
-set ERR_LEVEL=%errorlevel%
-call SafeRmDir.cmd "%TEMP%\%%i"
 if "%IGNORE_ERRORS%"=="1" goto InstSuccess
 for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
 goto InstFailure

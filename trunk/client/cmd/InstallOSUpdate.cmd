@@ -125,6 +125,7 @@ goto InstFailure
 
 :InstCabMsu
 echo Installing %1...
+set ERR_LEVEL=0
 if "%OS_ARCH%"=="x64" (set TOKEN_KB=3) else (set TOKEN_KB=2)
 for /F "tokens=%TOKEN_KB% delims=-" %%i in ("%1") do (
   call SafeRmDir.cmd "%TEMP%\%%i"
@@ -141,9 +142,9 @@ for /F "tokens=%TOKEN_KB% delims=-" %%i in ("%1") do (
     %SystemRoot%\system32\expand.exe %1 -F:* "%TEMP%\%%i" >nul
   )
   %SystemRoot%\system32\pkgmgr.exe /ip /m:"%TEMP%\%%i" /quiet /norestart
+  set ERR_LEVEL=%errorlevel%
+  call SafeRmDir.cmd "%TEMP%\%%i"
 )
-set ERR_LEVEL=%errorlevel%
-call SafeRmDir.cmd "%TEMP%\%%i"
 if "%IGNORE_ERRORS%"=="1" goto InstSuccess
 for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
 goto InstFailure
