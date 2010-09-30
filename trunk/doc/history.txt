@@ -427,6 +427,7 @@ Version 6.6.? -- ??.??.10
 - Fix: Hash computation attempts on empty / non existing directories subsequently lead to false audit errors (Thanks to "rednaxela" and "-Iwan-")
 - Fix: XSLT filters for Windows Server 2003 missed kb975558 (Thanks to "nes" and "wolfbardo")
 - Fix: Download exclude list for Windows XP (ExcludeList-wxp-x86.txt) erroneously excluded kb923561
+- Fix: Static download links corrected for Windows XP SP3 and Server 2003 SP2 (Thanks to "Denniss")
 - Fix: Office XP patches kb975008 and kb2293422 weren't downloaded as the required language specific versions (Thanks to "s.a.h.")
 - Fix: Office 2003 patch kb2293428 wasn't downloaded as the required language specific version
 - Fix: Improved error handling and reporting of scripts InstallOSUpdate.cmd and InstallOfficeUpdate.cmd
