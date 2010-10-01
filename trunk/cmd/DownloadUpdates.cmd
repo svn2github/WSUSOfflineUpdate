@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.6.3+ (r148)
+set WSUSOFFLINE_VERSION=6.6.3+ (r149)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -600,6 +600,7 @@ del "%TEMP%\DownloadLinks-%1-%2.txt"
 rem *** Verify integrity of existing updates for %1 %2 ***
 if "%VERIFY_DOWNLOADS%" NEQ "1" goto SkipVerification
 if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
+for %%i in (..\client\md\hashes-%1-%2.txt) do (if %%~zi==0 del %%i)
 if exist ..\client\md\hashes-%1-%2.txt (
   echo Verifying integrity of existing updates for %1 %2...
   pushd ..\client\md
@@ -695,6 +696,8 @@ echo %DATE% %TIME% - Info: Cleaned up client directory for %1 %2 >>%DOWNLOAD_LOG
 
 :VerifyDownload
 if not exist ..\client\%1\%2\nul goto EndDownload
+dir ..\client\%1\%2 /A:-D >nul 2>&1
+if errorlevel 1 goto EndDownload
 rem *** Delete alternate data streams for %1 %2 ***
 if exist ..\bin\streams.exe (
   echo Deleting alternate data streams for %1 %2...
@@ -731,8 +734,15 @@ if "%VERIFY_DOWNLOADS%"=="1" (
     echo Warning: Error creating integrity database ..\client\md\hashes-%1-%2.txt.
     echo %DATE% %TIME% - Warning: Error creating integrity database ..\client\md\hashes-%1-%2.txt >>%DOWNLOAD_LOGFILE%
   ) else (
+    for %%i in (hashes-%1-%2.txt) do (
+      if %%~zi==0 (
+        del %%i
+        echo %DATE% %TIME% - Info: Deleted zero size integrity database for %1 %2 >>%DOWNLOAD_LOGFILE%
+      ) else (
+        echo %DATE% %TIME% - Info: Created integrity database for %1 %2 >>%DOWNLOAD_LOGFILE%
+      )
+    )
     popd
-    echo %DATE% %TIME% - Info: Created integrity database for %1 %2 >>%DOWNLOAD_LOGFILE%
   )
 ) else (
   if exist ..\client\md\hashes-%1-%2.txt (
