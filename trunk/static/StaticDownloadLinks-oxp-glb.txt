@@ -7,6 +7,7 @@ http://download.microsoft.com/download/7/B/2/7B2E6465-E50B-46AC-B755-88636488CF5
 http://download.microsoft.com/download/E/1/5/E15F08BC-ACCE-4F41-8536-856F25CC8840/officexp-KB980466-FullFile-ENU.exe
 http://download.microsoft.com/download/0/F/2/0F2C5BCC-696E-4654-8C8F-7F01E5AAE300/officexp-KB976380-FullFile-ENU.exe
 http://download.microsoft.com/download/7/6/0/7608579C-B6D1-493A-B8AE-F9D4AE708EB9/officexp-KB980371-FullFile-ENU.exe
-http://download.microsoft.com/download/D/6/D/D6D85476-A150-43DA-BC41-1D01E394C1A4/officexp-KB2251389-FullFile-ENU.exe
 http://download.microsoft.com/download/C/5/A/C5AF8CF4-FEAD-4578-B9A0-04CEEBF2A587/officexp-KB2264397-FullFile-ENU.exe
 http://download.microsoft.com/download/8/1/C/81C66590-6D69-402C-9C13-5AEBDAD2DC29/officexp-KB2288608-FullFile-ENU.exe
+http://download.microsoft.com/download/4/C/5/4C5CB645-5490-4654-A115-0D459D1E7BB8/officexp-KB2328360-FullFile-ENU.exe
+http://download.microsoft.com/download/C/9/2/C9246014-AE2C-4D76-AFFF-4EA6473A8071/officexp-KB2345017-FullFile-ENU.exe

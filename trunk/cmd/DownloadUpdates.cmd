@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.6.3+ (r149)
+set WSUSOFFLINE_VERSION=6.6.4
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -260,23 +260,24 @@ popd
 :SkipStreams
 
 rem *** Download most recent Windows Update Agent and catalog file ***
-if "%VERIFY_DOWNLOADS%"=="1" (
-  if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
-  if exist ..\client\md\hashes-wsus.txt (
-    echo Verifying integrity of Windows Update Agent and catalog file...
-    pushd ..\client\md
-    ..\bin\hashdeep.exe -a -l -vv -k hashes-wsus.txt -r ..\wsus
-    if errorlevel 1 (
-      popd
-      goto IntegrityError
-    )
+if "%VERIFY_DOWNLOADS%" NEQ "1" goto DownloadWSUS
+if not exist ..\client\wsus\nul goto DownloadWSUS
+if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
+if exist ..\client\md\hashes-wsus.txt (
+  echo Verifying integrity of Windows Update Agent and catalog file...
+  pushd ..\client\md
+  ..\bin\hashdeep.exe -a -l -vv -k hashes-wsus.txt -r ..\wsus
+  if errorlevel 1 (
     popd
-    echo %DATE% %TIME% - Info: Verified integrity of Windows Update Agent and catalog file >>%DOWNLOAD_LOGFILE%
-  ) else (
-    echo Warning: Integrity database ..\client\md\hashes-wsus.txt not found.
-    echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-wsus.txt not found >>%DOWNLOAD_LOGFILE%
+    goto IntegrityError
   )
+  popd
+  echo %DATE% %TIME% - Info: Verified integrity of Windows Update Agent and catalog file >>%DOWNLOAD_LOGFILE%
+) else (
+  echo Warning: Integrity database ..\client\md\hashes-wsus.txt not found.
+  echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-wsus.txt not found >>%DOWNLOAD_LOGFILE%
 )
+:DownloadWSUS
 echo Downloading/validating most recent Windows Update Agent and catalog file...
 %WGET_PATH% -N -i ..\static\StaticDownloadLinks-wsus.txt -P ..\client\wsus
 if errorlevel 1 goto DownloadError
@@ -317,28 +318,29 @@ if /i "%1"=="w2k" goto SkipDotNet
 if "%INCLUDE_DOTNET%" NEQ "1" goto SkipDotNet
 set DOTNET35_FILENAME=..\dotnet\dotnetfx35.exe
 set DOTNET4_FILENAME=..\dotnet\dotNetFx40_Full_x86_x64.exe
-if "%VERIFY_DOWNLOADS%"=="1" (
-  if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
-  if exist ..\client\md\hashes-dotnet.txt (
-    echo Verifying integrity of .NET Framework installation files...
-    pushd ..\client\md
-    if exist %DOTNET4_FILENAME% (
-      ..\bin\hashdeep.exe -a -l -vv -k hashes-dotnet.txt %DOTNET35_FILENAME% %DOTNET4_FILENAME%
-    ) else (
-      rem *** Compatibility line ***
-      ..\bin\hashdeep.exe -a -l -vv -k hashes-dotnet.txt %DOTNET35_FILENAME%
-    )
-    if errorlevel 1 (
-      popd
-      goto IntegrityError
-    )
-    popd
-    echo %DATE% %TIME% - Info: Verified integrity of .NET Framework installation files >>%DOWNLOAD_LOGFILE%
+if "%VERIFY_DOWNLOADS%" NEQ "1" goto DownloadDotNet
+if not exist ..\client\dotnet\nul goto DownloadDotNet
+if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
+if exist ..\client\md\hashes-dotnet.txt (
+  echo Verifying integrity of .NET Framework installation files...
+  pushd ..\client\md
+  if exist %DOTNET4_FILENAME% (
+    ..\bin\hashdeep.exe -a -l -vv -k hashes-dotnet.txt %DOTNET35_FILENAME% %DOTNET4_FILENAME%
   ) else (
-    echo Warning: Integrity database ..\client\md\hashes-dotnet.txt not found.
-    echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-dotnet.txt not found >>%DOWNLOAD_LOGFILE%
+    rem *** Compatibility line ***
+    ..\bin\hashdeep.exe -a -l -vv -k hashes-dotnet.txt %DOTNET35_FILENAME%
   )
+  if errorlevel 1 (
+    popd
+    goto IntegrityError
+  )
+  popd
+  echo %DATE% %TIME% - Info: Verified integrity of .NET Framework installation files >>%DOWNLOAD_LOGFILE%
+) else (
+  echo Warning: Integrity database ..\client\md\hashes-dotnet.txt not found.
+  echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-dotnet.txt not found >>%DOWNLOAD_LOGFILE%
 )
+:DownloadDotNet
 echo Downloading/validating installation files for .NET Framework 3.5 SP1 and 4...
 %WGET_PATH% -N -i ..\static\StaticDownloadLinks-dotnet.txt -P ..\client\dotnet
 if errorlevel 1 goto DownloadError
@@ -372,23 +374,24 @@ if /i "%1"=="w2k" goto SkipMSSE
 if /i "%1"=="w2k3" goto SkipMSSE
 if /i "%1"=="w2k3-x64" goto SkipMSSE
 if "%INCLUDE_MSSE%" NEQ "1" goto SkipMSSE
-if "%VERIFY_DOWNLOADS%"=="1" (
-  if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
-  if exist ..\client\md\hashes-mssedefs.txt (
-    echo Verifying integrity of Microsoft Security Essentials definition files...
-    pushd ..\client\md
-    ..\bin\hashdeep.exe -a -l -vv -k hashes-mssedefs.txt -r ..\mssedefs
-    if errorlevel 1 (
-      popd
-      goto IntegrityError
-    )
+if "%VERIFY_DOWNLOADS%" NEQ "1" goto DownloadMSSE
+if not exist ..\client\mssedefs\nul goto DownloadMSSE
+if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
+if exist ..\client\md\hashes-mssedefs.txt (
+  echo Verifying integrity of Microsoft Security Essentials definition files...
+  pushd ..\client\md
+  ..\bin\hashdeep.exe -a -l -vv -k hashes-mssedefs.txt -r ..\mssedefs
+  if errorlevel 1 (
     popd
-    echo %DATE% %TIME% - Info: Verified integrity of Microsoft Security Essentials definition files >>%DOWNLOAD_LOGFILE%
-  ) else (
-    echo Warning: Integrity database ..\client\md\hashes-mssedefs.txt not found.
-    echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-mssedefs.txt not found >>%DOWNLOAD_LOGFILE%
+    goto IntegrityError
   )
+  popd
+  echo %DATE% %TIME% - Info: Verified integrity of Microsoft Security Essentials definition files >>%DOWNLOAD_LOGFILE%
+) else (
+  echo Warning: Integrity database ..\client\md\hashes-mssedefs.txt not found.
+  echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-mssedefs.txt not found >>%DOWNLOAD_LOGFILE%
 )
+:DownloadMSSE
 echo Downloading/validating definition files for Microsoft Security Essentials...
 %WGET_PATH% -N -i ..\static\StaticDownloadLink-mssedefs-%TARGET_ARCH%-glb.txt -P ..\client\mssedefs\%TARGET_ARCH%-glb
 if errorlevel 1 goto DownloadError
@@ -599,6 +602,7 @@ del "%TEMP%\DownloadLinks-%1-%2.txt"
 :DoDownload
 rem *** Verify integrity of existing updates for %1 %2 ***
 if "%VERIFY_DOWNLOADS%" NEQ "1" goto SkipVerification
+if not exist ..\client\%1\%2\nul goto SkipVerification
 if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
 for %%i in (..\client\md\hashes-%1-%2.txt) do (if %%~zi==0 del %%i)
 if exist ..\client\md\hashes-%1-%2.txt (

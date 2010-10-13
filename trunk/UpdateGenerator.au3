@@ -1,11 +1,11 @@
-; *** WSUS Offline Update 6.6.3 - Generator ***
+; *** WSUS Offline Update 6.6.4 - Generator ***
 ; ***   Author: T. Wittrock, RZ Uni Kiel    ***
 ; ***    USB-Option added by Ch. Riedel     ***
 ; ***  Dialog scaling added by Th. Baisch   ***
 
 #include <GUIConstants.au3>
 
-Dim Const $caption                = "WSUS Offline Update 6.6.3"
+Dim Const $caption                = "WSUS Offline Update 6.6.4"
 Dim Const $title                  = $caption & " - Generator"
 Dim Const $downloadURL            = "http://download.wsusoffline.net/"
 Dim Const $donationURL            = "http://www.wsusoffline.net/donate.html"
