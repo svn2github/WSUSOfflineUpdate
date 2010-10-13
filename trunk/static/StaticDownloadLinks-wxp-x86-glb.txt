@@ -1,3 +1,3 @@
 http://download.microsoft.com/download/2/6/1/261fca42-22c0-4f91-9451-0e0f2e08356d/WindowsXP-KB942288-v3-x86.exe
 http://download.microsoft.com/download/E/C/E/ECE99583-2003-455D-B681-68DB610B44A4/WindowsXP-KB968930-x86-ENG.exe
-http://download.microsoft.com/download/5/5/8/5585950F-AEF7-4B1F-BDD2-33233C68F8E1/rootsupd.exe
+http://download.microsoft.com/download/2/9/A/29ABCE61-CF08-46E7-B794-D359B01E72CC/rootsupd.exe
