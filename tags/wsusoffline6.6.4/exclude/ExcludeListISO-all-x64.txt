@@ -1,0 +1,14 @@
+*x86-glb\/*
+*ofc*
+*o2k\/*
+*oxp*
+*o2k3\/*
+*o2k7\/*
+*w2k\/*
+*wxp*
+*w2k3\/*
+*w6\/*
+*win\/*
+*.au3
+*invcif.exe
+*invcm.exe
