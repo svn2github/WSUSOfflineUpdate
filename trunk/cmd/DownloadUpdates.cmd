@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.6.4
+set WSUSOFFLINE_VERSION=6.6.4+ (r155)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -738,7 +738,8 @@ if "%VERIFY_DOWNLOADS%"=="1" (
     echo Warning: Error creating integrity database ..\client\md\hashes-%1-%2.txt.
     echo %DATE% %TIME% - Warning: Error creating integrity database ..\client\md\hashes-%1-%2.txt >>%DOWNLOAD_LOGFILE%
   ) else (
-    for %%i in (hashes-%1-%2.txt) do (
+    popd
+    for %%i in (..\client\md\hashes-%1-%2.txt) do (
       if %%~zi==0 (
         del %%i
         echo %DATE% %TIME% - Info: Deleted zero size integrity database for %1 %2 >>%DOWNLOAD_LOGFILE%
@@ -746,7 +747,6 @@ if "%VERIFY_DOWNLOADS%"=="1" (
         echo %DATE% %TIME% - Info: Created integrity database for %1 %2 >>%DOWNLOAD_LOGFILE%
       )
     )
-    popd
   )
 ) else (
   if exist ..\client\md\hashes-%1-%2.txt (
