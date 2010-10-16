@@ -1,8 +1,8 @@
 @echo off
-rem *** Author: T. Wittrock, RZ Uni Kiel ***
+rem *** Author: T. Wittrock, Kiel ***
 
 verify other 2>nul
-setlocal enableextensions
+setlocal enableextensions enabledelayedexpansion
 if errorlevel 1 goto NoExtensions
 
 if "%DIRCMD%" NEQ "" set DIRCMD=
@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.6.3+ (w2k_ofc_construction_site (r143))
+set WSUSOFFLINE_VERSION=6.6.4+ (w2k_ofc_construction_site (r156))
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -21,7 +21,7 @@ if exist %DOWNLOAD_LOGFILE% (
 )
 echo %DATE% %TIME% - Info: Starting download (v. %WSUSOFFLINE_VERSION%) for %1 %2 >>%DOWNLOAD_LOGFILE%
 
-for %%i in (wxp w2k3 w2k3-x64 oxp o2k3 o2k7 o2k7-x64) do (
+for %%i in (wxp w2k3 w2k3-x64 oxp o2k3 o2k7 o2k10) do (
   if /i "%1"=="%%i" (
     for %%j in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%2"=="%%j" goto EvalParams)
   )
@@ -161,7 +161,26 @@ if exist ..\client\mssedefs\x86\nul (
   if exist ..\client\md\hashes-mssedefs.txt del ..\client\md\hashes-mssedefs.txt
 )
 if exist ..\doc\faq.txt del ..\doc\faq.txt 
-if exist ..\bin\Streams.zip del ..\bin\Streams.zip 
+if exist ..\bin\Streams.zip del ..\bin\Streams.zip
+
+if exist ..\bin\extract.exe del ..\bin\extract.exe
+if exist ..\static\StaticDownloadLink-extract.txt del ..\static\StaticDownloadLink-extract.txt
+if exist ..\exclude\ExcludeList-o2k10.txt del ..\exclude\ExcludeList-o2k10.txt
+if exist ..\exclude\ExcludeList-o2k7-x86.txt del ..\exclude\ExcludeList-o2k7-x86.txt
+if exist ..\ExtractDownloadLinks-oall.cmd del ..\ExtractDownloadLinks-oall.cmd
+if exist ..\ExtractDownloadLinks-wall.cmd del ..\ExtractDownloadLinks-wall.cmd
+if exist ..\xslt\ExtractDownloadLinks-oall-deu.xsl del ..\xslt\ExtractDownloadLinks-oall-deu.xsl
+if exist ..\xslt\ExtractDownloadLinks-oall-enu.xsl del ..\xslt\ExtractDownloadLinks-oall-enu.xsl
+if exist ..\xslt\ExtractDownloadLinks-oall-fra.xsl del ..\xslt\ExtractDownloadLinks-oall-fra.xsl
+if exist ..\xslt\ExtractDownloadLinks-wall.xsl del ..\xslt\ExtractDownloadLinks-wall.xsl
+rem if exist ..\xslt\ExtractExpiredIds-o2k3.xsl del ..\xslt\ExtractExpiredIds-o2k3.xsl
+rem if exist ..\xslt\ExtractExpiredIds-o2k10.xsl del ..\xslt\ExtractExpiredIds-o2k10.xsl
+rem if exist ..\xslt\ExtractExpiredIds-o2k7-x86.xsl del ..\xslt\ExtractExpiredIds-o2k7-x86.xsl
+rem if exist ..\xslt\ExtractExpiredIds-oxp.xsl del ..\xslt\ExtractExpiredIds-oxp.xsl
+rem if exist ..\xslt\ExtractValidIds-o2k3.xsl del ..\xslt\ExtractValidIds-o2k3.xsl
+rem if exist ..\xslt\ExtractValidIds-o2k10.xsl del ..\xslt\ExtractValidIds-o2k10.xsl
+rem if exist ..\xslt\ExtractValidIds-o2k7-x86.xsl del ..\xslt\ExtractValidIds-o2k7-x86.xsl
+rem if exist ..\xslt\ExtractValidIds-oxp.xsl del ..\xslt\ExtractValidIds-oxp.xsl
 
 rem *** Execute custom initialization hook ***
 if exist .\custom\InitializationHook.cmd (
@@ -169,19 +188,6 @@ if exist .\custom\InitializationHook.cmd (
   call .\custom\InitializationHook.cmd
   echo %DATE% %TIME% - Info: Executed custom initialization hook >>%DOWNLOAD_LOGFILE%
 )
-
-rem *** Download Microsoft extract tool ***
-if exist ..\bin\extract.exe goto SkipExtract
-echo Downloading Microsoft extract tool...
-%WGET_PATH% -N -i ..\static\StaticDownloadLink-extract.txt -P "%TEMP%\extract"
-if errorlevel 1 goto DownloadError
-echo %DATE% %TIME% - Info: Downloaded Microsoft extract tool >>%DOWNLOAD_LOGFILE%
-ren "%TEMP%\extract\extract_setup.exe" extract_s.exe
-"%TEMP%\extract\extract_s.exe" /T:"%TEMP%\extract" /C
-%SystemRoot%\system32\msiexec.exe /a "%TEMP%\extract\extract.msi" /qn TARGETDIR="%TEMP%\extract\exe"
-move "%TEMP%\extract\exe\extract.exe" ..\bin >nul
-call ..\client\cmd\SafeRmDir.cmd "%TEMP%\extract"
-:SkipExtract
 
 rem *** Download Microsoft XSL processor frontend ***
 if exist ..\bin\msxsl.exe goto SkipMSXSL
@@ -230,23 +236,24 @@ popd
 :SkipStreams
 
 rem *** Download most recent Windows Update Agent and catalog file ***
-if "%VERIFY_DOWNLOADS%"=="1" (
-  if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
-  if exist ..\client\md\hashes-wsus.txt (
-    echo Verifying integrity of Windows Update Agent and catalog file...
-    pushd ..\client\md
-    ..\bin\hashdeep.exe -a -l -vv -k hashes-wsus.txt -r ..\wsus
-    if errorlevel 1 (
-      popd
-      goto IntegrityError
-    )
+if "%VERIFY_DOWNLOADS%" NEQ "1" goto DownloadWSUS
+if not exist ..\client\wsus\nul goto DownloadWSUS
+if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
+if exist ..\client\md\hashes-wsus.txt (
+  echo Verifying integrity of Windows Update Agent and catalog file...
+  pushd ..\client\md
+  ..\bin\hashdeep.exe -a -l -vv -k hashes-wsus.txt -r ..\wsus
+  if errorlevel 1 (
     popd
-    echo %DATE% %TIME% - Info: Verified integrity of Windows Update Agent and catalog file >>%DOWNLOAD_LOGFILE%
-  ) else (
-    echo Warning: Integrity database ..\client\md\hashes-wsus.txt not found.
-    echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-wsus.txt not found >>%DOWNLOAD_LOGFILE%
+    goto IntegrityError
   )
+  popd
+  echo %DATE% %TIME% - Info: Verified integrity of Windows Update Agent and catalog file >>%DOWNLOAD_LOGFILE%
+) else (
+  echo Warning: Integrity database ..\client\md\hashes-wsus.txt not found.
+  echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-wsus.txt not found >>%DOWNLOAD_LOGFILE%
 )
+:DownloadWSUS
 echo Downloading/validating most recent Windows Update Agent and catalog file...
 %WGET_PATH% -N -i ..\static\StaticDownloadLinks-wsus.txt -P ..\client\wsus
 if errorlevel 1 goto DownloadError
@@ -276,28 +283,29 @@ rem *** Download installation files for .NET Framework 3.5 SP1 and 4 ***
 if "%INCLUDE_DOTNET%" NEQ "1" goto SkipDotNet
 set DOTNET35_FILENAME=..\dotnet\dotnetfx35.exe
 set DOTNET4_FILENAME=..\dotnet\dotNetFx40_Full_x86_x64.exe
-if "%VERIFY_DOWNLOADS%"=="1" (
-  if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
-  if exist ..\client\md\hashes-dotnet.txt (
-    echo Verifying integrity of .NET Framework installation files...
-    pushd ..\client\md
-    if exist %DOTNET4_FILENAME% (
-      ..\bin\hashdeep.exe -a -l -vv -k hashes-dotnet.txt %DOTNET35_FILENAME% %DOTNET4_FILENAME%
-    ) else (
-      rem *** Compatibility line ***
-      ..\bin\hashdeep.exe -a -l -vv -k hashes-dotnet.txt %DOTNET35_FILENAME%
-    )
-    if errorlevel 1 (
-      popd
-      goto IntegrityError
-    )
-    popd
-    echo %DATE% %TIME% - Info: Verified integrity of .NET Framework installation files >>%DOWNLOAD_LOGFILE%
+if "%VERIFY_DOWNLOADS%" NEQ "1" goto DownloadDotNet
+if not exist ..\client\dotnet\nul goto DownloadDotNet
+if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
+if exist ..\client\md\hashes-dotnet.txt (
+  echo Verifying integrity of .NET Framework installation files...
+  pushd ..\client\md
+  if exist %DOTNET4_FILENAME% (
+    ..\bin\hashdeep.exe -a -l -vv -k hashes-dotnet.txt %DOTNET35_FILENAME% %DOTNET4_FILENAME%
   ) else (
-    echo Warning: Integrity database ..\client\md\hashes-dotnet.txt not found.
-    echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-dotnet.txt not found >>%DOWNLOAD_LOGFILE%
+    rem *** Compatibility line ***
+    ..\bin\hashdeep.exe -a -l -vv -k hashes-dotnet.txt %DOTNET35_FILENAME%
   )
+  if errorlevel 1 (
+    popd
+    goto IntegrityError
+  )
+  popd
+  echo %DATE% %TIME% - Info: Verified integrity of .NET Framework installation files >>%DOWNLOAD_LOGFILE%
+) else (
+  echo Warning: Integrity database ..\client\md\hashes-dotnet.txt not found.
+  echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-dotnet.txt not found >>%DOWNLOAD_LOGFILE%
 )
+:DownloadDotNet
 echo Downloading/validating installation files for .NET Framework 3.5 SP1 and 4...
 %WGET_PATH% -N -i ..\static\StaticDownloadLinks-dotnet.txt -P ..\client\dotnet
 if errorlevel 1 goto DownloadError
@@ -330,23 +338,24 @@ rem *** Download definition files for Microsoft Security Essentials - not requir
 if /i "%1"=="w2k3" goto SkipMSSE
 if /i "%1"=="w2k3-x64" goto SkipMSSE
 if "%INCLUDE_MSSE%" NEQ "1" goto SkipMSSE
-if "%VERIFY_DOWNLOADS%"=="1" (
-  if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
-  if exist ..\client\md\hashes-mssedefs.txt (
-    echo Verifying integrity of Microsoft Security Essentials definition files...
-    pushd ..\client\md
-    ..\bin\hashdeep.exe -a -l -vv -k hashes-mssedefs.txt -r ..\mssedefs
-    if errorlevel 1 (
-      popd
-      goto IntegrityError
-    )
+if "%VERIFY_DOWNLOADS%" NEQ "1" goto DownloadMSSE
+if not exist ..\client\mssedefs\nul goto DownloadMSSE
+if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
+if exist ..\client\md\hashes-mssedefs.txt (
+  echo Verifying integrity of Microsoft Security Essentials definition files...
+  pushd ..\client\md
+  ..\bin\hashdeep.exe -a -l -vv -k hashes-mssedefs.txt -r ..\mssedefs
+  if errorlevel 1 (
     popd
-    echo %DATE% %TIME% - Info: Verified integrity of Microsoft Security Essentials definition files >>%DOWNLOAD_LOGFILE%
-  ) else (
-    echo Warning: Integrity database ..\client\md\hashes-mssedefs.txt not found.
-    echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-mssedefs.txt not found >>%DOWNLOAD_LOGFILE%
+    goto IntegrityError
   )
+  popd
+  echo %DATE% %TIME% - Info: Verified integrity of Microsoft Security Essentials definition files >>%DOWNLOAD_LOGFILE%
+) else (
+  echo Warning: Integrity database ..\client\md\hashes-mssedefs.txt not found.
+  echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-mssedefs.txt not found >>%DOWNLOAD_LOGFILE%
 )
+:DownloadMSSE
 echo Downloading/validating definition files for Microsoft Security Essentials...
 %WGET_PATH% -N -i ..\static\StaticDownloadLink-mssedefs-%TARGET_ARCH%-glb.txt -P ..\client\mssedefs\%TARGET_ARCH%-glb
 if errorlevel 1 goto DownloadError
@@ -382,7 +391,7 @@ for %%i in (wxp w2k3) do (
     if errorlevel 1 goto Error
   )
 )
-for %%i in (oxp o2k3 o2k7 o2k7-x64) do (
+for %%i in (oxp o2k3 o2k7 o2k10) do (
   if /i "%1"=="%%i" (
     call :DownloadCore ofc glb
     if errorlevel 1 goto Error
@@ -390,7 +399,7 @@ for %%i in (oxp o2k3 o2k7 o2k7-x64) do (
     if errorlevel 1 goto Error
   )
 )
-for %%i in (wxp w2k3 w2k3-x64 oxp o2k3 o2k7 o2k7-x64) do (
+for %%i in (wxp w2k3 w2k3-x64 oxp o2k3 o2k7 o2k10) do (
   if /i "%1"=="%%i" (
     call :DownloadCore %1 glb
     if errorlevel 1 goto Error
@@ -442,16 +451,15 @@ if "%EXCLUDE_SP%"=="1" (
 :SkipStatics
 if not exist ..\bin\msxsl.exe goto NoMSXSL
 for %%i in (dotnet win wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64) do (if /i "%1"=="%%i" goto DetermineWindows)
-for %%i in (ofc oxp o2k3 o2k7 o2k7-x64) do (if /i "%1"=="%%i" goto DetermineOffice)
+for %%i in (ofc oxp o2k3 o2k7 o2k10) do (if /i "%1"=="%%i" goto DetermineOffice)
 goto DoDownload
 
 :DetermineWindows
-rem *** Extract Windows update catalog file package.xml ***
+rem *** Extract Microsoft update catalog file package.xml ***
 if exist "%TEMP%\package.cab" del "%TEMP%\package.cab"
 if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
-if not exist ..\bin\extract.exe goto NoExtract
-..\bin\extract.exe /L "%TEMP%" ..\client\wsus\wsusscn2.cab package.cab >nul
-..\bin\extract.exe /L "%TEMP%" "%TEMP%\package.cab" package.xml >nul
+%SystemRoot%\system32\expand.exe ..\client\wsus\wsusscn2.cab -F:package.cab "%TEMP%" >nul
+%SystemRoot%\system32\expand.exe "%TEMP%\package.cab" "%TEMP%\package.xml" >nul
 del "%TEMP%\package.cab"
 
 if exist ..\xslt\ExtractDownloadLinks-%1-%2.xsl (
@@ -489,6 +497,9 @@ if exist "%TEMP%\DownloadLinks-%1-%2.txt" del "%TEMP%\DownloadLinks-%1-%2.txt"
 goto DoDownload
 
 :DetermineOffice
+if /i "%1"=="ofc" (
+  if /i "%2"=="glb" goto DetermineOfcWSUS
+)
 rem *** Download most recent files for Office inventory functionality ***
 echo Downloading/validating most recent files for Office inventory functionality...
 %WGET_PATH% -N -i ..\static\StaticDownloadLinks-inventory.txt -P ..\client\wsus
@@ -532,22 +543,79 @@ del "%TEMP%\patchdata.xml"
 del "%TEMP%\ValidIds-%1.txt"
 del "%TEMP%\ExpiredIds-%1.txt"
 
+if /i "%1" NEQ "ofc" goto ExcludeOffice
+if /i "%2" NEQ "glb" goto ExcludeOffice
+
+:DetermineOfcWSUS
+rem *** Extract Microsoft update catalog file package.xml ***
+if exist "%TEMP%\package.cab" del "%TEMP%\package.cab"
+if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
+%SystemRoot%\system32\expand.exe ..\client\wsus\wsusscn2.cab -F:package.cab "%TEMP%" >nul
+%SystemRoot%\system32\expand.exe "%TEMP%\package.cab" "%TEMP%\package.xml" >nul
+del "%TEMP%\package.cab"
+
+..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractUpdateCategoriesAndFileIds.xsl -o "%TEMP%\UpdateCategoriesAndFileIds.txt"
+if errorlevel 1 goto DownloadError
+..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractUpdateCabExeIdsAndLocations.xsl -o "%TEMP%\UpdateCabExeIdsAndLocations.txt"
+if errorlevel 1 goto DownloadError
+del "%TEMP%\package.xml"
+
+if exist "%TEMP%\OfficeUpdateAndFileIds.txt" del "%TEMP%\OfficeUpdateAndFileIds.txt"
+if exist "%TEMP%\OfficeFileIds.txt" del "%TEMP%\OfficeFileIds.txt"
+set UPDATE_ID=
+set UPDATE_CATEGORY=
+set UPDATE_LANGUAGES=
+for /F "usebackq tokens=1,2 delims=;" %%i in ("%TEMP%\UpdateCategoriesAndFileIds.txt") do (
+  if "%%j"=="" (
+    if "!UPDATE_CATEGORY!"=="477b856e-65c4-4473-b621-a8b230bb70d9" (
+      for /F "tokens=1-3 delims=," %%k in ("%%i") do (
+        if "%%l" NEQ "" (
+          if "%%m"=="" (
+            echo !UPDATE_ID!,%%l>>"%TEMP%\OfficeUpdateAndFileIds.txt"
+            echo %%l>>"%TEMP%\OfficeFileIds.txt"
+          )
+        ) 
+      ) 
+    ) 
+  ) else (
+    for /F "tokens=1 delims=," %%k in ("%%i") do (
+      set UPDATE_ID=%%k
+    )
+    for /F "tokens=1* delims=," %%k in ("%%j") do (
+      set UPDATE_CATEGORY=%%k
+      set UPDATE_LANGUAGES=%%l
+    )
+  )
+)
+set UPDATE_ID=
+set UPDATE_CATEGORY=
+set UPDATE_LANGUAGES=
+
+%SystemRoot%\system32\findstr.exe /B /G:"%TEMP%\OfficeFileIds.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
+del "%TEMP%\OfficeFileIds.txt"
+del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
+
+if exist "%TEMP%\DownloadLinks-%1-%2.txt" del "%TEMP%\DownloadLinks-%1-%2.txt"
+if exist ..\client\ofc\UpdateTable-%1-%2.csv del ..\client\ofc\UpdateTable-%1-%2.csv
+for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt") do (
+  for /F "usebackq tokens=1,2 delims=," %%k in ("%TEMP%\OfficeUpdateAndFileIds.txt") do (
+    if /i "%%l"=="%%i" (
+      echo %%j>>"%TEMP%\DownloadLinks-%1-%2.txt"
+      echo %%k,%%~nj>>..\client\ofc\UpdateTable-%1-%2.csv
+    )
+  )
+)
+del "%TEMP%\OfficeUpdateAndFileIds.txt"
+del "%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
+
+:ExcludeOffice
 if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
 if exist ..\exclude\ExcludeList-%1.txt (
   copy /Y ..\exclude\ExcludeList-%1.txt "%TEMP%\ExcludeList-%1.txt" >nul
   if exist ..\exclude\custom\ExcludeList-%1.txt (
     for /F %%i in (..\exclude\custom\ExcludeList-%1.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
   )
-  goto ExcludeOffice
 )
-if exist ..\exclude\ExcludeList-%1-%TARGET_ARCH%.txt (
-  copy /Y ..\exclude\ExcludeList-%1-%TARGET_ARCH%.txt "%TEMP%\ExcludeList-%1.txt" >nul
-  if exist ..\exclude\custom\ExcludeList-%1-%TARGET_ARCH%.txt (
-    for /F %%i in (..\exclude\custom\ExcludeList-%1-%TARGET_ARCH%.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
-  )
-)
-
-:ExcludeOffice
 for /F "usebackq" %%i in ("%TEMP%\ExcludeList-%1.txt") do echo %%i>>"%TEMP%\InvalidIds-%1.txt"
 %SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\InvalidIds-%1.txt" "%TEMP%\DownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDownloadLinks-%1-%2.txt" 
 if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
@@ -557,7 +625,9 @@ del "%TEMP%\DownloadLinks-%1-%2.txt"
 :DoDownload
 rem *** Verify integrity of existing updates for %1 %2 ***
 if "%VERIFY_DOWNLOADS%" NEQ "1" goto SkipVerification
+if not exist ..\client\%1\%2\nul goto SkipVerification
 if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
+for %%i in (..\client\md\hashes-%1-%2.txt) do (if %%~zi==0 del %%i)
 if exist ..\client\md\hashes-%1-%2.txt (
   echo Verifying integrity of existing updates for %1 %2...
   pushd ..\client\md
@@ -637,7 +707,7 @@ echo %DATE% %TIME% - Info: Downloaded/validated %LINES_COUNT% dynamically determ
 
 :CleanupDownload
 rem *** Clean up client directory for %1 %2 ***
-if "%CLEANUP_DOWNLOADS%"=="0" goto EndDownload
+if "%CLEANUP_DOWNLOADS%"=="0" goto VerifyDownload
 echo Cleaning up client directory for %1 %2...
 for /F %%i in ('dir /A:-D /B ..\client\%1\%2\*.*') do (
   %SystemRoot%\system32\find.exe /I "%%i" "%TEMP%\ValidDownloadLinks-%1-%2.txt" >nul 2>&1
@@ -651,7 +721,10 @@ for /F %%i in ('dir /A:-D /B ..\client\%1\%2\*.*') do (
 )
 echo %DATE% %TIME% - Info: Cleaned up client directory for %1 %2 >>%DOWNLOAD_LOGFILE%
 
-:EndDownload
+:VerifyDownload
+if not exist ..\client\%1\%2\nul goto EndDownload
+dir ..\client\%1\%2 /A:-D >nul 2>&1
+if errorlevel 1 goto EndDownload
 rem *** Delete alternate data streams for %1 %2 ***
 if exist ..\bin\streams.exe (
   echo Deleting alternate data streams for %1 %2...
@@ -689,7 +762,14 @@ if "%VERIFY_DOWNLOADS%"=="1" (
     echo %DATE% %TIME% - Warning: Error creating integrity database ..\client\md\hashes-%1-%2.txt >>%DOWNLOAD_LOGFILE%
   ) else (
     popd
-    echo %DATE% %TIME% - Info: Created integrity database for %1 %2 >>%DOWNLOAD_LOGFILE%
+    for %%i in (..\client\md\hashes-%1-%2.txt) do (
+      if %%~zi==0 (
+        del %%i
+        echo %DATE% %TIME% - Info: Deleted zero size integrity database for %1 %2 >>%DOWNLOAD_LOGFILE%
+      ) else (
+        echo %DATE% %TIME% - Info: Created integrity database for %1 %2 >>%DOWNLOAD_LOGFILE%
+      )
+    )
   )
 ) else (
   if exist ..\client\md\hashes-%1-%2.txt (
@@ -697,6 +777,8 @@ if "%VERIFY_DOWNLOADS%"=="1" (
     echo %DATE% %TIME% - Info: Deleted integrity database for %1 %2 >>%DOWNLOAD_LOGFILE%
   )
 )
+
+:EndDownload
 if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" del "%TEMP%\ValidStaticLinks-%1-%2.txt"
 if exist "%TEMP%\ValidDownloadLinks-%1-%2.txt" del "%TEMP%\ValidDownloadLinks-%1-%2.txt"
 if exist "%TEMP%\ValidDownloadLinks-%1-%2.csv" del "%TEMP%\ValidDownloadLinks-%1-%2.csv"
@@ -710,14 +792,14 @@ goto EoF
 
 :NoExtensions
 echo.
-echo ERROR: No command extensions available.
+echo ERROR: No command extensions / delayed variable expansion available.
 echo.
 exit /b 1
 
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %1 %2 %3 %4
-echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| oxp ^| o2k3 ^| o2k7 ^| o2k7-x64} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>]
+echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| oxp ^| o2k3 ^| o2k7 ^| o2k10} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>]
 echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>]
 echo %DATE% %TIME% - Error: Invalid parameter: %1 %2 %3 %4 >>%DOWNLOAD_LOGFILE%
 echo.
@@ -748,13 +830,6 @@ goto Error
 echo.
 echo ERROR: Download utility %WGET_PATH% not found.
 echo %DATE% %TIME% - Error: Utility %WGET_PATH% not found >>%DOWNLOAD_LOGFILE%
-echo.
-goto Error
-
-:NoExtract
-echo.
-echo ERROR: Utility ..\bin\extract.exe not found.
-echo %DATE% %TIME% - Error: Utility ..\bin\extract.exe not found >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 

@@ -2,7 +2,7 @@
 *w2k*
 *wxp*
 *w6*
-*win*
+*win\/*
 *x64-glb\/*
 *-x64*
 *.au3

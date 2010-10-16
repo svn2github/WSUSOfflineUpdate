@@ -1,10 +1,11 @@
 @echo off
-rem *** Author: T. Wittrock, RZ Uni Kiel ***
+rem *** Author: T. Wittrock, Kiel ***
 
 verify other 2>nul
 setlocal enableextensions
 if errorlevel 1 goto NoExtensions
 
+if "%DIRCMD%" NEQ "" set DIRCMD=
 if "%UPDATE_LOGFILE%"=="" set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 
 if "%1"=="" goto NoParam
@@ -66,8 +67,15 @@ for /F "tokens=2,3 delims=\" %%i in ("%1") do (
   echo %DATE% %TIME% - Warning: Hash file ..\md\hashes-%%i-%%j.txt not found >>%UPDATE_LOGFILE%
 )
 :SkipVerification
+echo %1 | %SystemRoot%\system32\find.exe /I ".exe" >nul 2>&1
+if not errorlevel 1 goto InstExe
+echo %1 | %SystemRoot%\system32\find.exe /I ".cab" >nul 2>&1
+if not errorlevel 1 goto InstCab
+goto UnsupType
+
+:InstExe
 rem *** Check proper Office version ***
-for %%i in (ofc oxp o2k3 o2k7 o2k7-x64) do (
+for %%i in (ofc oxp o2k3 o2k7 o2k10) do (
   echo %1 | %SystemRoot%\system32\find.exe /I "\%%i\" >nul 2>&1
   if not errorlevel 1 goto %%i
 )
@@ -82,14 +90,11 @@ if "%SELECT_OPTIONS%"=="1" (
     if not errorlevel 1 goto o2k7
   )
 )
+set ERR_LEVEL=0
 for /F "tokens=3 delims=\." %%i in ("%1") do (
   echo Installing %1...
   call SafeRmDir.cmd "%TEMP%\%%i"
   %1 /T:"%TEMP%\%%i" /C /Q
-  if errorlevel 1 (
-    call SafeRmDir.cmd "%TEMP%\%%i"
-    goto InstFailure
-  )
   if exist "%TEMP%\%%i\ohotfix.exe" (
     for /F "usebackq eol=; tokens=1,2 delims==" %%j in ("%TEMP%\%%i\ohotfix.ini") do (
       if /i "%%j"=="ShowSuccessDialog" echo %%j=0 >"%TEMP%\%%i\ohotfix.1"
@@ -113,20 +118,40 @@ for /F "tokens=3 delims=\." %%i in ("%1") do (
       "%TEMP%\%%i\setup.exe" /QB
     ) else (
       call SafeRmDir.cmd "%TEMP%\%%i"
-      goto InstFailure
+      goto UnsupType
     )
   )
+  set ERR_LEVEL=%errorlevel%
   call SafeRmDir.cmd "%TEMP%\%%i"
-  goto InstSuccess
 )
-goto EoF
+if "%IGNORE_ERRORS%"=="1" goto InstSuccess
+for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
+goto InstFailure
 
 :o2k7
-:o2k7-x64
+:o2k10
 echo Installing %1...
 echo %1 | %SystemRoot%\system32\find.exe /I "sp" >nul 2>&1
 if errorlevel 1 (%1 /quiet /norestart) else (%1 /passive /norestart)
-goto InstSuccess
+set ERR_LEVEL=%errorlevel%
+if "%IGNORE_ERRORS%"=="1" goto InstSuccess
+for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
+goto InstFailure
+
+:InstCab
+echo Installing %1...
+set ERR_LEVEL=0
+for /F "tokens=3 delims=\." %%i in ("%1") do (
+  call SafeRmDir.cmd "%TEMP%\%%i"
+  md "%TEMP%\%%i"
+  %SystemRoot%\system32\expand.exe -R %1 "%TEMP%\%%i" >nul
+  for /F %%j in ('dir /A:-D /B "%TEMP%\%%i\*.msp"') do %SystemRoot%\system32\msiexec.exe /qn /norestart /update "%TEMP%\%%i\%%j"
+  set ERR_LEVEL=%errorlevel%
+  call SafeRmDir.cmd "%TEMP%\%%i"
+)
+if "%IGNORE_ERRORS%"=="1" goto InstSuccess
+for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
+goto InstFailure
 
 :NoExtensions
 echo ERROR: No command extensions available.
@@ -157,6 +182,11 @@ echo ERROR: Unsupported Office version.
 echo %DATE% %TIME% - Error: Unsupported Office version >>%UPDATE_LOGFILE%
 goto Error
 
+:UnsupType
+echo ERROR: Unsupported file type (file: %1).
+echo %DATE% %TIME% - Error: Unsupported file type (file: %1) >>%UPDATE_LOGFILE%
+goto InstFailure
+
 :IntegrityError
 echo ERROR: File hash does not match stored value (file: %1).
 echo %DATE% %TIME% - Error: File hash does not match stored value (file: %1) >>%UPDATE_LOGFILE%
@@ -170,13 +200,13 @@ goto EoF
 if "%ERRORS_AS_WARNINGS%"=="1" (goto InstWarning) else (goto InstError)
 
 :InstWarning
-echo Warning: Installation of %1 failed (errorlevel: %errorlevel%).
-echo %DATE% %TIME% - Warning: Installation of %1 failed (errorlevel: %errorlevel%) >>%UPDATE_LOGFILE%
+echo Warning: Installation of %1 failed (errorlevel: %ERR_LEVEL%).
+echo %DATE% %TIME% - Warning: Installation of %1 failed (errorlevel: %ERR_LEVEL%) >>%UPDATE_LOGFILE%
 goto EoF
 
 :InstError
-echo ERROR: Installation of %1 failed (errorlevel: %errorlevel%).
-echo %DATE% %TIME% - Error: Installation of %1 failed (errorlevel: %errorlevel%) >>%UPDATE_LOGFILE%
+echo ERROR: Installation of %1 failed (errorlevel: %ERR_LEVEL%).
+echo %DATE% %TIME% - Error: Installation of %1 failed (errorlevel: %ERR_LEVEL%) >>%UPDATE_LOGFILE%
 goto Error
 
 :Error

@@ -1,4 +1,4 @@
-<!-- Author: T. Wittrock, RZ Uni Kiel -->
+<!-- Author: T. Wittrock, Kiel -->
 <xsl:transform version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <xsl:output method="text" encoding="UTF-8"/>
                         
@@ -18,6 +18,10 @@
     <xsl:when test="name()='File'">
       <xsl:text>,</xsl:text>
       <xsl:value-of select="@Id"/>
+    </xsl:when>
+    <xsl:when test="name()='Language'">
+      <xsl:text>,</xsl:text>
+      <xsl:value-of select="@Name"/>
     </xsl:when>
     <xsl:when test="name()='FileLocations'">
     </xsl:when>

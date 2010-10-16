@@ -1,4 +1,4 @@
-' *** Author: T. Wittrock, RZ Uni Kiel ***
+' *** Author: T. Wittrock, Kiel ***
 
 Option Explicit
 
@@ -34,18 +34,17 @@ If WScript.Arguments.Count < 2 Then
   WScript.Echo("ERROR: Missing argument.")
   WScript.Echo("Usage: " & WScript.ScriptName & " <Text file> <WSUS URL>")
   WScript.Quit(1)
+End If
+strInputFileName = WScript.Arguments(0)
+If Not IsTextFile(objFileSystem, strInputFileName) Then
+  WScript.Echo("ERROR: Invalid argument '" & strInputFileName & "'")
+  WScript.Echo("Usage: " & WScript.ScriptName & " <Text file> <WSUS URL>")
+  WScript.Quit(1)
+End If
+If Right(WScript.Arguments(1), 1) = "/" Then
+  strWSUSURL = WScript.Arguments(1) & strWSUSRootFolder
 Else
-  strInputFileName = WScript.Arguments(0)
-  If Not IsTextFile(objFileSystem, strInputFileName) Then
-    WScript.Echo("ERROR: Invalid argument '" & strInputFileName & "'")
-    WScript.Echo("Usage: " & WScript.ScriptName & " <Text file> <WSUS URL>")
-    WScript.Quit(1)
-  End If
-  If Right(WScript.Arguments(1), 1) = "/" Then
-    strWSUSURL = WScript.Arguments(1) & strWSUSRootFolder
-  Else
-    strWSUSURL = WScript.Arguments(1) & "/" & strWSUSRootFolder
-  End If
+  strWSUSURL = WScript.Arguments(1) & "/" & strWSUSRootFolder
 End If
 
 Set inputFile = objFileSystem.OpenTextFile(strInputFileName, 1)

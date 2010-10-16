@@ -1,4 +1,4 @@
-http://download.microsoft.com/download/c/f/6/cf65d224-3ce2-4aaf-8e74-caa4987477c8/WindowsXP-KB936929-SP3-x86-RUS.exe
+http://xpsp.dlservice.microsoft.com/download/c/f/6/cf65d224-3ce2-4aaf-8e74-caa4987477c8/WindowsXP-KB936929-SP3-x86-RUS.exe
 http://download.microsoft.com/download/9/5/C/95CA8418-A657-4C34-A481-124B7993C299/WindowsXP-KB969084-x86-rus.exe
 http://download.microsoft.com/download/7/5/1/751964CF-7E8C-4E67-982B-D009E84207C0/WindowsXP-KB968930-x86-RUS.exe
 http://download.microsoft.com/download/c/a/b/cab13ef7-5652-4cc9-8ecb-64f857e5d065/wmp11-windowsxp-x86-ru-ru.exe

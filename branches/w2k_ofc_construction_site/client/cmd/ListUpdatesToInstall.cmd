@@ -1,5 +1,5 @@
 @echo off
-rem *** Author: T. Wittrock, RZ Uni Kiel ***
+rem *** Author: T. Wittrock, Kiel ***
 
 verify other 2>nul
 setlocal enableextensions
@@ -69,9 +69,16 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
       )
     )
     call ListUpdateFile.cmd ndp*%%i*-%OS_ARCH% ..\dotnet\%OS_ARCH%-glb /searchleftmost
-    for %%k in (%OFC_NAME%-%OS_ARCH% %OFC_NAME% ofc oxp o2k3 o2k7 o2k7-x64) do (
+    for %%k in (%OFC_NAME%-%OS_ARCH% %OFC_NAME% ofc oxp o2k3 o2k7 o2k10) do (
       for %%l in (%OFC_LANG% glb) do (
         call ListUpdateFile.cmd %%i ..\%%k\%%l
+      )
+    )
+    if not exist "%TEMP%\Update.txt" (
+      if exist ..\ofc\UpdateTable-ofc-glb.csv (
+        for /F "tokens=1,2 delims=," %%k in (..\ofc\UpdateTable-ofc-glb.csv) do (
+          if "%%k"=="%%j" call ListUpdateFile.cmd %%l ..\ofc\glb
+        )
       )
     )
     if exist "%TEMP%\Update.txt" (
@@ -79,7 +86,7 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
     ) else (
       echo Warning: Update KB%%i not found.
       echo %DATE% %TIME% - Warning: Update KB%%i not found >>%UPDATE_LOGFILE%
-    )
+    )        
   ) else (
     echo Info: Skipping update KB%%i due to matching black list entry.
     echo %DATE% %TIME% - Info: Skipped update KB%%i due to matching black list entry >>%UPDATE_LOGFILE%

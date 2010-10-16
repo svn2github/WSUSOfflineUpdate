@@ -423,8 +423,19 @@ Version 6.6.3 -- 15.09.10
 - Fix: DownloadUpdates.sh script did not evaluate exclude lists because of missing "dos2unix" command (Thanks to "NoKurth" and "nebyah")
 - Fix: Cmd.exe environment size reduced by abbreviating versions' variable names (see http://support.microsoft.com/kb/830473/en-us)
 --------------------------------------------------------------------------------
-Version 6.7 -- ??.??.10
-- Windows 2000 support removed
+Version 6.6.4 -- 13.10.10
+- Office updates up to 10/2010 integrated by static definitions
+- Update for Root Certificates (rootsupd.exe/kb931125) updated to August 2010 (Thanks to "Gerby")
+- Fix: Hash computation attempts on empty / non existing directories subsequently lead to false audit errors (Thanks to "rednaxela" and "-Iwan-")
 - Fix: XSLT filters for Windows Server 2003 missed kb975558 (Thanks to "nes" and "wolfbardo")
 - Fix: Download exclude list for Windows XP (ExcludeList-wxp-x86.txt) erroneously excluded kb923561
+- Fix: Static download links corrected for Windows XP SP3 and Server 2003 SP2 (Thanks to "Denniss")
 - Fix: Office XP patches kb975008 and kb2293422 weren't downloaded as the required language specific versions (Thanks to "s.a.h.")
+- Fix: Office 2003 patch kb2293428 wasn't downloaded as the required language specific version
+- Fix: Improved error handling and reporting of scripts InstallOSUpdate.cmd and InstallOfficeUpdate.cmd
+- Fix: Eliminated misleading warnings about missing integrity database files on first download runs with verification enabled (Thanks to "honkytonky")
+--------------------------------------------------------------------------------
+Version 6.7 -- ??.??.10
+- Windows 2000 support removed
+- Removed obsolete utility extract.exe
+- Fix: Late popd in DownloadUpdates.cmd script lead to logging error (Thanks to "boco")
