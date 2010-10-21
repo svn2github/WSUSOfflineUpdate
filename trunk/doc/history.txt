@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 6.1
+WSUS Offline Update 6.6.4
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -437,3 +437,5 @@ Version 6.6.4 -- 13.10.10
 --------------------------------------------------------------------------------
 Version 6.? -- ??.??.10
 - Fix: Late popd in DownloadUpdates.cmd script lead to logging error (Thanks to "boco")
+- Fix: KB951847 (.NET Framework 3.5 SP1) added to installation exclude list due to misleading warnings (Thanks to "rednaxela")
+- Fix: FAQs enhanced (Thanks to "Lenge")

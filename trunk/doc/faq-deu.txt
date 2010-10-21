@@ -1,3 +1,6 @@
+F: Wie kann ich "WSUS Offline Update" selbst aktualisieren?
+A: Sofern in den "release notes" oder Installationshinweisen nicht anders angegeben, können Sie das Archiv (.zip) einer neuen Version einfach in eine bestehende Installationsstruktur hinein entpacken, wenn Sie existierende Dateien überschreiben lassen.
+--------------------------------------------------------------------------------
 F: Kann ich Updates vom Download und/oder der Installation ausschließen?
 A: Ja, Sie haben die Möglichkeit, das Verhalten der Download- und Update-Skripte Ihren Bedürfnissen entsprechend anzupassen, indem Sie Updates vom Download oder der Installation ausschließen oder hinzufügen. Zum Ausschluss von Updates gehen Sie bitte wie folgt vor:
 

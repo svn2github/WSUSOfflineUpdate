@@ -1,3 +1,6 @@
+Q: How can I update "WSUS Offline Update" itself?
+A: As long as release notes or installation hints don't recommend other, you may unpack a new version's archive (.zip) over/into an existing structure, if you let existing files be overwritten.
+--------------------------------------------------------------------------------
 Q: Can I exclude patches from download and/or installation?
 A: Yes, that's possible through customizing the download- and update scripts according to your requirements. You may add new patches or exclude existing ones. Please follow this guide:
 

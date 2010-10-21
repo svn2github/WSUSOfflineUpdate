@@ -10,13 +10,13 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.6.4+ (r155)
+set WSUSOFFLINE_VERSION=6.6.4+ (r157)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
-echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%)...
+echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 if exist %UPDATE_LOGFILE% echo. >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Starting WSUS offline update (v. %WSUSOFFLINE_VERSION%) on %COMPUTERNAME% (user: %USERNAME%) >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) on %COMPUTERNAME% (user: %USERNAME%) >>%UPDATE_LOGFILE%
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
@@ -1069,7 +1069,8 @@ if exist .\custom\FinalizationHook.cmd (
   echo %DATE% %TIME% - Info: Executed custom finalization hook >>%UPDATE_LOGFILE%
 )
 cd ..
-echo %DATE% %TIME% - Info: Ending update >>%UPDATE_LOGFILE%
+echo Ending WSUS Offline Update at %TIME%...
+echo %DATE% %TIME% - Info: Ending WSUS Offline Update >>%UPDATE_LOGFILE%
 title %ComSpec%
 if "%RECALL_REQUIRED%"=="1" (
   verify other 2>nul
