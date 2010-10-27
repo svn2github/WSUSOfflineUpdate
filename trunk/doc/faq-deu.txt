@@ -147,7 +147,7 @@ Hilft dies nicht, gehen Sie bitte wie folgt vor:
   - Starten Sie den Rechner neu.
 --------------------------------------------------------------------------------
 F: Während des Downloads erhalte ich einen "file integrity verification"-Fehler. Was kann ich dagegen tun?
-A: Wenn Sie sich sicher sind, dass die Dateien in Ihrem Repository nicht manipuliert wurden, können Sie die entsprechende Prüfsummen-Dateien unter ...\client\md löschen. Sie werden beim nächsten Download-Lauf neu erzeugt.
+A: Wenn Sie sich sicher sind, dass die Dateien in Ihrem Repository nicht manipuliert wurden, können Sie die entsprechenden Prüfsummen-Dateien unter ...\client\md löschen. Sie werden beim nächsten Download-Lauf neu erzeugt.
 --------------------------------------------------------------------------------
 F: Warum sind Auswahlfelder ausgegraut, wenn ich UpdateInstaller.exe starte?
 A: Dies geschieht in Abhängigkeit von Plattform, Update-Medium und Installationsstatus.
