@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.6.4+ (r158)
+set WSUSOFFLINE_VERSION=6.6.4+ (r159)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -539,6 +539,26 @@ echo Downloading/validating most recent files for Office inventory functionality
 %WGET_PATH% -N -i ..\static\StaticDownloadLinks-inventory.txt -P ..\client\wsus
 if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded/validated most recent files for Office inventory functionality >>%DOWNLOAD_LOGFILE%
+if "%VERIFY_DOWNLOADS%"=="1" (
+  if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
+  echo Creating integrity database for Windows Update Agent and catalog file...
+  if not exist ..\client\md\nul md ..\client\md
+  pushd ..\client\md
+  ..\bin\hashdeep.exe -c md5,sha256 -l -r ..\wsus >hashes-wsus.txt
+  if errorlevel 1 (
+    popd
+    echo Warning: Error creating integrity database ..\client\md\hashes-wsus.txt.
+    echo %DATE% %TIME% - Warning: Error creating integrity database ..\client\md\hashes-wsus.txt >>%DOWNLOAD_LOGFILE%
+  ) else (
+    popd
+    echo %DATE% %TIME% - Info: Created integrity database for Windows Update Agent and catalog file >>%DOWNLOAD_LOGFILE%
+  )
+) else (
+  if exist ..\client\md\hashes-wsus.txt (
+    del ..\client\md\hashes-wsus.txt 
+    echo %DATE% %TIME% - Info: Deleted integrity database for Windows Update Agent and catalog file >>%DOWNLOAD_LOGFILE%
+  )
+)
 
 rem *** Extract Office update catalog file patchdata.xml ***
 ..\client\wsus\invcif.exe /T:"%TEMP%\inventory" /C /Q

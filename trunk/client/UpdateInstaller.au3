@@ -75,12 +75,9 @@ Func ShowGUIInGerman()
         Return False
       Case "deu"
         Return True
-      Case Else
-        Return ( (@OSLang = "0407") OR (@OSLang = "0807") OR (@OSLang = "0c07") OR (@OSLang = "1007") OR (@OSLang = "1407") )
     EndSwitch
-  Else
-    Return ( (@OSLang = "0407") OR (@OSLang = "0807") OR (@OSLang = "0c07") OR (@OSLang = "1007") OR (@OSLang = "1407") )
   EndIf
+  Return ( (@OSLang = "0007") OR (@OSLang = "0407") OR (@OSLang = "0807") OR (@OSLang = "0C07") OR (@OSLang = "1007") OR (@OSLang = "1407") )
 EndFunc
 
 ; Returns script directory, also sets global variable $mapped

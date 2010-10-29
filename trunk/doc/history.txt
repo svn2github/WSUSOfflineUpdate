@@ -437,6 +437,8 @@ Version 6.6.4 -- 13.10.10
 --------------------------------------------------------------------------------
 Version 6.? -- ??.??.10
 - Update for Root Certificates (rootsupd.exe/kb931125) updated to Oktober 2010 (Thanks to "Matjes" and "Denniss")
+- OS language detection corrected and enhanced according to http://msdn.microsoft.com/en-us/goglobal/bb896001.aspx
 - Fix: Late popd in DownloadUpdates.cmd script lead to logging error (Thanks to "boco")
+- Fix: Missing hash computation after download of Office Update Inventory Tool Catalog file subsequently lead to false audit errors (Thanks to "Frank1")
 - Fix: KB951847 (.NET Framework 3.5 SP1) added to installation exclude list due to misleading warnings (Thanks to "rednaxela")
 - Fix: FAQs enhanced (Thanks to "Lenge")
