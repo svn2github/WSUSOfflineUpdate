@@ -5,6 +5,8 @@ Aut2Exe.exe
 AutoItSC.bin
 ExcludeList-ProductionTree.txt
 ExcludeList-ReleaseTree.txt
+StaticDownloadLink-wddefs-x64-glb.txt
+StaticDownloadLink-wddefs-x86-glb.txt
 CompileAutoItScripts.cmd
 ExtractDownloadLinks-all.cmd
 PrepareProductionTree.cmd

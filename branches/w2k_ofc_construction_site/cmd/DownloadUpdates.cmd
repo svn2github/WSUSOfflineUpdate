@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.6.4+ (w2k_ofc_construction_site (r156))
+set WSUSOFFLINE_VERSION=6.6.4+ (w2k_ofc_construction_site (r161))
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -165,6 +165,8 @@ if exist ..\bin\Streams.zip del ..\bin\Streams.zip
 
 if exist ..\bin\extract.exe del ..\bin\extract.exe
 if exist ..\static\StaticDownloadLink-extract.txt del ..\static\StaticDownloadLink-extract.txt
+if exist ..\static\StaticDownloadLink-sigcheck.txt del ..\static\StaticDownloadLink-sigcheck.txt
+if exist ..\static\StaticDownloadLink-streams.txt del ..\static\StaticDownloadLink-streams.txt
 if exist ..\exclude\ExcludeList-o2k10.txt del ..\exclude\ExcludeList-o2k10.txt
 if exist ..\exclude\ExcludeList-o2k7-x86.txt del ..\exclude\ExcludeList-o2k7-x86.txt
 if exist ..\ExtractDownloadLinks-oall.cmd del ..\ExtractDownloadLinks-oall.cmd
@@ -210,30 +212,26 @@ del /Q cdrtools*.zip
 popd
 :SkipMkIsoFs
 
-rem *** Download Sysinternals' digital file signature verification tool ***
-if "%VERIFY_DOWNLOADS%" NEQ "1" goto SkipSigCheck
-if exist ..\bin\sigcheck.exe goto SkipSigCheck
-echo Downloading Sysinternals' digital file signature verification tool...
-%WGET_PATH% -N -i ..\static\StaticDownloadLink-sigcheck.txt -P ..\bin
+rem *** Download Sysinternals' tools Autologon, Sigcheck and Streams ***
+if not exist ..\client\bin\Autologon.exe goto DownloadSysinternals 
+if not exist ..\bin\sigcheck.exe goto DownloadSysinternals 
+if not exist ..\bin\streams.exe goto DownloadSysinternals 
+goto SkipSysinternals
+:DownloadSysinternals
+echo Downloading Sysinternals' tools Autologon, Sigcheck and Streams...
+%WGET_PATH% -N -i ..\static\StaticDownloadLink-sysinternals.txt -P ..\bin
 if errorlevel 1 goto DownloadError
-echo %DATE% %TIME% - Info: Downloaded Sysinternals' digital file signature verification tool >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Downloaded Sysinternals' tools Autologon, Sigcheck and Streams >>%DOWNLOAD_LOGFILE%
 pushd ..\bin
+unzip.exe Autologon.zip Autologon.exe
+del Autologon.zip
+move Autologon.exe ..\client\bin 
 unzip.exe Sigcheck.zip sigcheck.exe
 del Sigcheck.zip
-popd
-:SkipSigCheck
-
-rem *** Download Sysinternals' NTFS alternate data stream handling tool ***
-if exist ..\bin\streams.exe goto SkipStreams
-echo Downloading Sysinternals' NTFS alternate data stream handling tool...
-%WGET_PATH% -N -i ..\static\StaticDownloadLink-streams.txt -P ..\bin
-if errorlevel 1 goto DownloadError
-echo %DATE% %TIME% - Info: Downloaded Sysinternals' NTFS alternate data stream handling tool >>%DOWNLOAD_LOGFILE%
-pushd ..\bin
 unzip.exe Streams.zip streams.exe
 del Streams.zip
 popd
-:SkipStreams
+:SkipSysinternals
 
 rem *** Download most recent Windows Update Agent and catalog file ***
 if "%VERIFY_DOWNLOADS%" NEQ "1" goto DownloadWSUS
@@ -505,6 +503,26 @@ echo Downloading/validating most recent files for Office inventory functionality
 %WGET_PATH% -N -i ..\static\StaticDownloadLinks-inventory.txt -P ..\client\wsus
 if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded/validated most recent files for Office inventory functionality >>%DOWNLOAD_LOGFILE%
+if "%VERIFY_DOWNLOADS%"=="1" (
+  if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
+  echo Creating integrity database for Windows Update Agent and catalog file...
+  if not exist ..\client\md\nul md ..\client\md
+  pushd ..\client\md
+  ..\bin\hashdeep.exe -c md5,sha256 -l -r ..\wsus >hashes-wsus.txt
+  if errorlevel 1 (
+    popd
+    echo Warning: Error creating integrity database ..\client\md\hashes-wsus.txt.
+    echo %DATE% %TIME% - Warning: Error creating integrity database ..\client\md\hashes-wsus.txt >>%DOWNLOAD_LOGFILE%
+  ) else (
+    popd
+    echo %DATE% %TIME% - Info: Created integrity database for Windows Update Agent and catalog file >>%DOWNLOAD_LOGFILE%
+  )
+) else (
+  if exist ..\client\md\hashes-wsus.txt (
+    del ..\client\md\hashes-wsus.txt 
+    echo %DATE% %TIME% - Info: Deleted integrity database for Windows Update Agent and catalog file >>%DOWNLOAD_LOGFILE%
+  )
+)
 
 rem *** Extract Office update catalog file patchdata.xml ***
 ..\client\wsus\invcif.exe /T:"%TEMP%\inventory" /C /Q
