@@ -436,6 +436,8 @@ Version 6.6.4 -- 13.10.10
 - Fix: Eliminated misleading warnings about missing integrity database files on first download runs with verification enabled (Thanks to "honkytonky")
 --------------------------------------------------------------------------------
 Version 6.? -- ??.??.10
+- Self update capability added (Thanks to "Ernst.Eiswuerfel")
+- Optional automatic system shutdown on download completion added to UpdateGenerator script (Thanks to "rswrc")
 - Update for Root Certificates (rootsupd.exe/kb931125) updated to Oktober 2010 (Thanks to "Matjes" and "Denniss")
 - OS language detection corrected and enhanced according to http://msdn.microsoft.com/en-us/goglobal/bb896001.aspx
 - Fix: Late popd in DownloadUpdates.cmd script lead to logging error (Thanks to "boco")
