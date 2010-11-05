@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.6.4+ (r160)
+set WSUSOFFLINE_VERSION=6.6.4+ (r162)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -184,7 +184,7 @@ if exist ..\client\bin\reg.exe goto SkipRegExe
 rem *** Determine Microsoft registry console tool version ***
 echo Determining Microsoft registry console tool version...
 if not exist %REG_PATH% goto NoRegExe
-%CSCRIPT_PATH% //Nologo //E:vbs ..\client\cmd\DetermineFileVersion.vbs %REG_PATH% REG_VER
+%CSCRIPT_PATH% //Nologo //B //E:vbs ..\client\cmd\DetermineFileVersion.vbs %REG_PATH% REG_VER
 if not exist "%TEMP%\SetFileVersion.cmd" goto NoRegVersion
 call "%TEMP%\SetFileVersion.cmd"
 del "%TEMP%\SetFileVersion.cmd"
@@ -670,7 +670,7 @@ if "%HTTP_WSUS%"=="" (
   )
 ) else (
   echo Creating WSUS download table for %1 %2...
-  %CSCRIPT_PATH% //Nologo //E:vbs CreateDownloadTable.vbs "%TEMP%\ValidDownloadLinks-%1-%2.txt" %HTTP_WSUS%
+  %CSCRIPT_PATH% //Nologo //B //E:vbs CreateDownloadTable.vbs "%TEMP%\ValidDownloadLinks-%1-%2.txt" %HTTP_WSUS%
   if errorlevel 1 goto DownloadError
   echo %DATE% %TIME% - Info: Created WSUS download table for %1 %2 >>%DOWNLOAD_LOGFILE%
   for /F "delims=: tokens=1*" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidDownloadLinks-%1-%2.csv"') do (
@@ -725,7 +725,7 @@ if errorlevel 1 goto EndDownload
 rem *** Delete alternate data streams for %1 %2 ***
 if exist ..\bin\streams.exe (
   echo Deleting alternate data streams for %1 %2...
-  ..\bin\streams.exe -accepteula -s -d ..\client\%1\%2\*.* >nul 2>&1
+  ..\bin\streams.exe /accepteula -s -d ..\client\%1\%2\*.* >nul 2>&1
   if errorlevel 1 (
     echo Warning: Unable to delete alternate data streams for %1 %2.
     echo %DATE% %TIME% - Warning: Unable to delete alternate data streams for %1 %2 >>%DOWNLOAD_LOGFILE%
@@ -740,7 +740,7 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   rem *** Verifying digital file signatures for %1 %2 ***
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
   echo Verifying digital file signatures for %1 %2...
-  ..\bin\sigcheck.exe -accepteula -q -s -u -v ..\client\%1\%2 >"%TEMP%\sigcheck-%1-%2.txt"
+  ..\bin\sigcheck.exe /accepteula -q -s -u -v ..\client\%1\%2 >"%TEMP%\sigcheck-%1-%2.txt"
   for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-%1-%2.txt") do (
     echo Warning: File %%i is unsigned.
     echo %DATE% %TIME% - Warning: File %%i is unsigned >>%DOWNLOAD_LOGFILE%

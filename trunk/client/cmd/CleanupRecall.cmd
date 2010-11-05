@@ -77,7 +77,7 @@ if "%USERNAME%"=="WSUSUpdateAdmin" (
 ) else (
   echo %DATE% %TIME% - Warning: WSUSUpdateAdmin is not logged on - registration of erasing of WSUSUpdateAdmin profile skipped >>%UPDATE_LOGFILE%
 )
-%CSCRIPT_PATH% //Nologo //E:vbs DeleteUpdateAdmin.vbs
+%CSCRIPT_PATH% //Nologo //B //E:vbs DeleteUpdateAdmin.vbs
 if errorlevel 1 (
   echo Warning: Deletion of WSUSUpdateAdmin account failed.
   echo %DATE% %TIME% - Warning: Deletion of WSUSUpdateAdmin account failed >>%UPDATE_LOGFILE%

@@ -2733,12 +2733,12 @@ If NOT DirectoryStructureExists() Then
     Exit(1)
   EndIf
 EndIf
-If StringRight(EnvGet("TEMP"), 1) = "\" Then
+If ( (StringRight(EnvGet("TEMP"), 1) = "\") OR (StringRight(EnvGet("TEMP"), 1) = ":") ) Then
   If ShowGUIInGerman() Then
-    MsgBox(0x2010, "Fehler", "Die Umgebungsvariable TEMP" & @LF & "enth‰lt einen abschlieﬂenden Backslash ('\').")
+    MsgBox(0x2010, "Fehler", "Die Umgebungsvariable TEMP" & @LF & "enth‰lt einen abschlieﬂenden Backslash ('\')" & @LF & "oder einen abschlieﬂenden Doppelpunkt (':').")
     Exit(1)
   Else
-    MsgBox(0x2010, "Error", "The environment variable TEMP" & @LF & "contains a trailing backslash ('\').")
+    MsgBox(0x2010, "Error", "The environment variable TEMP" & @LF & "contains a trailing backslash ('\')" & @LF & "or a trailing colon (':').")
     Exit(1)
   EndIf
 EndIf

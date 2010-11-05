@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.6.4+ (r160)
+set WSUSOFFLINE_VERSION=6.6.4+ (r162)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -79,7 +79,7 @@ if "%USERNAME%"=="WSUSUpdateAdmin" (
 
 rem *** Determine system's properties ***
 echo Determining system's properties...
-%CSCRIPT_PATH% //Nologo //E:vbs DetermineSystemProperties.vbs
+%CSCRIPT_PATH% //Nologo //B //E:vbs DetermineSystemProperties.vbs
 if errorlevel 1 goto NoSysEnvVars
 
 rem *** Set environment variables for system's properties ***
@@ -654,7 +654,7 @@ if not exist %MSSEDEFS_FILENAME% (
 )
 rem *** Determine Microsoft Security Essentials definition file version ***
 echo Determining Microsoft Security Essentials definition file version...
-%CSCRIPT_PATH% //Nologo //E:vbs DetermineFileVersion.vbs %MSSEDEFS_FILENAME% MSSEDEFS_VER_TARGET
+%CSCRIPT_PATH% //Nologo //B //E:vbs DetermineFileVersion.vbs %MSSEDEFS_FILENAME% MSSEDEFS_VER_TARGET
 if not exist "%TEMP%\SetFileVersion.cmd" goto SkipMSSEInst
 call "%TEMP%\SetFileVersion.cmd"
 del "%TEMP%\SetFileVersion.cmd"
@@ -778,7 +778,7 @@ if exist "%TEMP%\hash-wsusscn2.txt" del "%TEMP%\hash-wsusscn2.txt"
 echo Listing ids of missing updates...
 copy /Y ..\wsus\wsusscn2.cab "%TEMP%" >nul
 if exist "%TEMP%\MissingUpdateIds.txt" del "%TEMP%\MissingUpdateIds.txt"
-%CSCRIPT_PATH% //Nologo //E:vbs ListMissingUpdateIds.vbs %LIST_MODE_IDS%
+%CSCRIPT_PATH% //Nologo //B //E:vbs ListMissingUpdateIds.vbs %LIST_MODE_IDS%
 if exist "%TEMP%\wsusscn2.cab" del "%TEMP%\wsusscn2.cab"
 
 rem *** List ids of installed updates ***
@@ -786,7 +786,7 @@ if "%LIST_MODE_IDS%"=="/all" goto ListInstFiles
 if "%LIST_MODE_UPDATES%"=="/excludestatics" goto ListInstFiles
 echo Listing ids of installed updates...
 if exist "%TEMP%\InstalledUpdateIds.txt" del "%TEMP%\InstalledUpdateIds.txt"
-%CSCRIPT_PATH% //Nologo //E:vbs ListInstalledUpdateIds.vbs
+%CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
 
 :ListInstFiles
 rem *** List update files ***
@@ -838,7 +838,7 @@ if "%RECALL_REQUIRED%"=="1" (
       echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot >>%UPDATE_LOGFILE%
     )
     echo Rebooting...
-    %CSCRIPT_PATH% //Nologo //E:vbs Shutdown.vbs /reboot
+    %CSCRIPT_PATH% //Nologo //B //E:vbs Shutdown.vbs /reboot
   ) else goto ManualRecall
 ) else (
   if "%SHOW_LOG%"=="/showlog" call PrepareShowLogFile.cmd
@@ -850,7 +850,7 @@ if "%RECALL_REQUIRED%"=="1" (
     )
     if "%FINISH_MODE%"=="/shutdown" (
       echo Shutting down...
-      %CSCRIPT_PATH% //Nologo //E:vbs Shutdown.vbs
+      %CSCRIPT_PATH% //Nologo //B //E:vbs Shutdown.vbs
     ) else (
       if exist %SystemRoot%\system32\bcdedit.exe (
         echo Adjusting boot sequence for next reboot...
@@ -858,12 +858,12 @@ if "%RECALL_REQUIRED%"=="1" (
         echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot >>%UPDATE_LOGFILE%
       )
       echo Rebooting...
-      %CSCRIPT_PATH% //Nologo //E:vbs Shutdown.vbs /reboot
+      %CSCRIPT_PATH% //Nologo //B //E:vbs Shutdown.vbs /reboot
     )
   ) else (
     if "%FINISH_MODE%"=="/shutdown" (
       echo Shutting down...
-      %CSCRIPT_PATH% //Nologo //E:vbs Shutdown.vbs
+      %CSCRIPT_PATH% //Nologo //B //E:vbs Shutdown.vbs
     ) else (
       echo.
       echo Installation successful. Please reboot your system now.
@@ -1046,7 +1046,7 @@ if "%USERNAME%"=="WSUSUpdateAdmin" (
     echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot >>%UPDATE_LOGFILE%
   )
   echo Rebooting...
-  %CSCRIPT_PATH% //Nologo //E:vbs Shutdown.vbs /reboot
+  %CSCRIPT_PATH% //Nologo //B //E:vbs Shutdown.vbs /reboot
 ) else (
   if "%AU_SVC_STARTED%"=="1" (
     echo Stopping service 'automatic updates' ^(wuauserv^)...

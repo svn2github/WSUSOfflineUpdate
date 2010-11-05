@@ -36,7 +36,7 @@ if errorlevel 1 (
 )
 
 echo Creating WSUSUpdateAdmin account...
-%CSCRIPT_PATH% //Nologo //E:vbs CreateUpdateAdminAndEnableAutoLogon.vbs
+%CSCRIPT_PATH% //Nologo //B //E:vbs CreateUpdateAdminAndEnableAutoLogon.vbs
 if errorlevel 1 (
   echo Warning: Creation of WSUSUpdateAdmin account failed.
   echo %DATE% %TIME% - Warning: Creation of WSUSUpdateAdmin account failed >>%UPDATE_LOGFILE%
