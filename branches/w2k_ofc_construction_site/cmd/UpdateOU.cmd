@@ -20,6 +20,7 @@ echo %DATE% %TIME% - Info: Starting WSUS Offline Update self update >>%DOWNLOAD_
 
 set WGET_PATH=..\bin\wget.exe
 if not exist %WGET_PATH% goto NoWGet
+if not exist ..\bin\unzip.exe goto NoUnZip
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
@@ -69,8 +70,15 @@ exit
 
 :NoWGet
 echo.
-echo ERROR: Utility %WGET_PATH% not found.
-echo %DATE% %TIME% - Error: Utility %WGET_PATH% not found >>%DOWNLOAD_LOGFILE%
+echo ERROR: Download utility %WGET_PATH% not found.
+echo %DATE% %TIME% - Error: Download utility %WGET_PATH% not found >>%DOWNLOAD_LOGFILE%
+echo.
+goto EoF
+
+:NoUnZip
+echo.
+echo ERROR: Utility ..\bin\unzip.exe not found.
+echo %DATE% %TIME% - Error: Utility ..\bin\unzip.exe not found >>%DOWNLOAD_LOGFILE%
 echo.
 goto EoF
 

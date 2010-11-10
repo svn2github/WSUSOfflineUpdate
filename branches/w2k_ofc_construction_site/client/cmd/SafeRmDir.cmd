@@ -12,7 +12,7 @@ if not exist %CSCRIPT_PATH% goto NoCScript
 pushd "%~dp0"
 for /L %%i in (1,1,10) do (
   if exist %1 rd /S /Q %1 >nul 2>&1
-  if exist %1 %CSCRIPT_PATH% //Nologo //E:vbs Sleep.vbs 100
+  if exist %1 %CSCRIPT_PATH% //Nologo //B //E:vbs Sleep.vbs 100
 )
 popd
 if exist %1 goto RmError

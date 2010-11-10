@@ -26,7 +26,7 @@ if errorlevel 1 (
 )
 
 echo Creating WSUSUpdateAdmin account...
-%CSCRIPT_PATH% //Nologo //E:vbs CreateUpdateAdminAndEnableAutoLogon.vbs
+%CSCRIPT_PATH% //Nologo //B //E:vbs CreateUpdateAdminAndEnableAutoLogon.vbs
 if errorlevel 1 (
   echo Warning: Creation of WSUSUpdateAdmin account failed.
   echo %DATE% %TIME% - Warning: Creation of WSUSUpdateAdmin account failed >>%UPDATE_LOGFILE%
@@ -35,7 +35,7 @@ if errorlevel 1 (
 )
 
 echo Registering recall...
-%REG_PATH% ADD HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v WSUSOfflineUpdate /t REG_SZ /d "%*" >nul 2>&1
+%REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v WSUSOfflineUpdate /t REG_SZ /d "%*" >nul 2>&1
 if errorlevel 1 (
   echo Warning: Registration of recall failed.
   echo %DATE% %TIME% - Warning: Registration of recall failed >>%UPDATE_LOGFILE%

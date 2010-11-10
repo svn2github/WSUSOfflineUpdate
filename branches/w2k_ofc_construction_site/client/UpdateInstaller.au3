@@ -59,6 +59,7 @@ Dim Const $path_max_length            = 128
 Dim Const $path_invalid_chars         = "%&()^+,;=" 
 Dim Const $path_rel_builddate         = "\builddate.txt"
 Dim Const $path_rel_hashes            = "\md\"
+Dim Const $path_rel_autologon         = "\bin\Autologon.exe"
 Dim Const $path_rel_converters        = "\ofc\glb\OCONVPCK.EXE"
 Dim Const $path_rel_instdotnet35      = "\dotnet\dotnetfx35.exe"
 Dim Const $path_rel_instdotnet4       = "\dotnet\dotNetFx40_Full_x86_x64.exe"
@@ -185,6 +186,10 @@ EndFunc
 
 Func HashFilesPresent($basepath)
   Return FileExists($basepath & $path_rel_hashes)
+EndFunc
+
+Func AutologonPresent($basepath)
+  Return FileExists($basepath & $path_rel_autologon)
 EndFunc
 
 Func ConvertersInstPresent($basepath)
@@ -491,20 +496,20 @@ EndIf
 ;  Automatic reboot and recall
 $txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
-  If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
+  If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
     $autoreboot = GUICtrlCreateCheckbox("Automatisch neu starten", $txtxpos, $txtypos, $txtwidth, $txtheight)
   Else
     $autoreboot = GUICtrlCreateCheckbox("Automatisch neu starten und fortsetzen", $txtxpos, $txtypos, $txtwidth, $txtheight)
   EndIf
 Else
-  If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
+  If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
     $autoreboot = GUICtrlCreateCheckbox("Automatic reboot", $txtxpos, $txtypos, $txtwidth, $txtheight)
   Else
     $autoreboot = GUICtrlCreateCheckbox("Automatic reboot and recall", $txtxpos, $txtypos, $txtwidth, $txtheight)
   EndIf
 EndIf
-If ( (DriveGetType(@ScriptDir) = "Network") _
- AND (@OSVersion <> "WIN_VISTA") AND (@OSVersion <> "WIN_2008") AND (@OSVersion <> "WIN_7") AND (@OSVersion <> "WIN_2008R2") ) Then
+If ( (NOT AutologonPresent($scriptdir)) _
+  OR ( (DriveGetType(@ScriptDir) = "Network") AND (@OSVersion <> "WIN_7") AND (@OSVersion <> "WIN_2008R2") ) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else  
@@ -596,14 +601,12 @@ If NOT PathValid($scriptdir) Then
     Exit(1)
   EndIf
 EndIf
-If StringRight(EnvGet("TEMP"), 1) = "\" Then
+If ( (StringRight(EnvGet("TEMP"), 1) = "\") OR (StringRight(EnvGet("TEMP"), 1) = ":") ) Then
   If ShowGUIInGerman() Then
-    MsgBox(0x2010, "Fehler", "Die Umgebungsvariable TEMP" _
-                     & @LF & "enth‰lt einen abschlieﬂenden Backslash ('\').")
+    MsgBox(0x2010, "Fehler", "Die Umgebungsvariable TEMP" & @LF & "enth‰lt einen abschlieﬂenden Backslash ('\')" & @LF & "oder einen abschlieﬂenden Doppelpunkt (':').")
     Exit(1)
   Else
-    MsgBox(0x2010, "Error", "The environment variable TEMP" _
-                    & @LF & "contains a trailing backslash ('\').")
+    MsgBox(0x2010, "Error", "The environment variable TEMP" & @LF & "contains a trailing backslash ('\')" & @LF & "or a trailing colon (':').")
     Exit(1)
   EndIf
 EndIf

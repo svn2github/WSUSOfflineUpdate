@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###    v. 6.6.4+ (w2k_ofc_construction_site (r161))    ###
+###    v. 6.6.5+ (w2k_ofc_construction_site (r163))    ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -395,7 +395,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***    v. 6.6.4+ (w2k_ofc_construction_site (r161))    ***
+***    v. 6.6.5+ (w2k_ofc_construction_site (r163))    ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***

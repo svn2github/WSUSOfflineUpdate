@@ -2,65 +2,50 @@
 
 Option Explicit
 
-Private Const strKeyPathLogon             = "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\"
-Private Const strKeyNameDomainName        = "DefaultDomainName"
-Private Const strKeyNameUserName          = "DefaultUserName"
-Private Const strKeyNamePassword          = "DefaultPassword"
-Private Const strKeyNameAutoAdminLogon    = "AutoAdminLogon"
-Private Const strKeyNameForceAutoLogon    = "ForceAutoLogon"
-Private Const strWSUSUpdateAdminName      = "WSUSUpdateAdmin"
-Private Const strKeyPathDesktopPolicies   = "HKLM\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop\"
-Private Const strKeyNameScreenSaveActive  = "ScreenSaveActive"
+Private Const strWSUSUpdateAdminName  = "WSUSUpdateAdmin"
+Private Const strKeyDesktopPolicies   = "HKLM\Software\Policies\Microsoft\Windows\Control Panel\Desktop\"
+Private Const strValScreenSaveActive  = "ScreenSaveActive"
+Private Const strKeyAutologon         = "HKCU\Software\Sysinternals\A\"
+Private Const strValAcceptEula        = "EulaAccepted"
 
-Dim wshShell, objWMIService, objNetwork, objComputer, objUser, strPassword, found
+Dim wshShell, strComputerName, objComputer, objUser, strPassword, found
 
-Private Function AdministratorsGroupName(computer, wmiService)
-Dim colItems, objItem, objGroup
+Private Function CreateUpdateAdmin(objComp)
+Dim objWMIService, objWSUSUpdateAdmin, objGroup, objItem, strResult
 
-  Set colItems = wmiService.ExecQuery("Select * from Win32_Group Where SID = 'S-1-5-32-544'")
-  For Each objItem in colItems
-    computer.Filter = Array("group")
-    For Each objGroup In computer
-      If objItem.Name = objGroup.Name Then
-        AdministratorsGroupName = objItem.Name
+  On Error Resume Next 'Turn error reporting off
+  Set objWMIService = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+  Set objWSUSUpdateAdmin = objComp.Create("user", strWSUSUpdateAdminName)
+  Randomize
+  strResult = "Wou" & Int(90000 * Rnd) + 10000
+  objWSUSUpdateAdmin.SetPassword strResult
+  objWSUSUpdateAdmin.SetInfo
+  For Each objItem in objWMIService.ExecQuery("Select * from Win32_Group Where SID = 'S-1-5-32-544'")
+    objComp.Filter = Array("group")
+    For Each objGroup In objComp
+      If objGroup.Name = objItem.Name Then
+        objGroup.Add(objWSUSUpdateAdmin.ADsPath)
       End If
     Next
   Next
+  ' Clear objects memory
+  Set objWSUSUpdateAdmin = Nothing
+  Set objWMIService = Nothing
+  CreateUpdateAdmin = strResult   
+  On Error GoTo 0 'Turn error reporting on
 End Function
 
-Private Sub CreateUpdateAdmin(computer, strAdminGroupName)
-Dim objWSUSUpdateAdmin, objGroup
-
+Private Sub EnableAutoLogon(shell, strUserName, strDomain, strPassword)
   On Error Resume Next 'Turn error reporting off
-  Set objWSUSUpdateAdmin = computer.Create("user", strWSUSUpdateAdminName)
-  Randomize
-  strPassword = "WSUSua" & Int(9000 * Rnd) + 1000
-  objWSUSUpdateAdmin.SetPassword strPassword
-  objWSUSUpdateAdmin.SetInfo
-  computer.Filter = Array("group")
-  For Each objGroup In computer
-    If objGroup.Name = strAdminGroupName Then
-      objGroup.Add(objWSUSUpdateAdmin.ADsPath)
-    End If
-  Next
-  On Error GoTo 0 'Turn error reporting on
-End Sub
-
-Private Sub EnableAutoLogon(shell)
-  On Error Resume Next 'Turn error reporting off
-  shell.RegWrite strKeyPathLogon & strKeyNameDomainName, objNetwork.ComputerName, "REG_SZ"
-  shell.RegWrite strKeyPathLogon & strKeyNameUserName, strWSUSUpdateAdminName, "REG_SZ"
-  shell.RegWrite strKeyPathLogon & strKeyNamePassword, strPassword, "REG_SZ"
-  shell.RegWrite strKeyPathLogon & strKeyNameAutoAdminLogon, "1", "REG_SZ"
-  shell.RegWrite strKeyPathLogon & strKeyNameForceAutoLogon, "1", "REG_SZ"
-  shell.RegWrite strKeyPathDesktopPolicies & strKeyNameScreenSaveActive, 0, "REG_DWORD"
+  shell.RegWrite strKeyAutologon & strValAcceptEula, 1, "REG_DWORD"
+  shell.Run "..\bin\Autologon.exe " & strUserName & " " & strDomain & " " & strPassword, 0, True
+  shell.RegWrite strKeyDesktopPolicies & strValScreenSaveActive, 0, "REG_DWORD"
   On Error GoTo 0 'Turn error reporting on
 End Sub
 
 Set wshShell = WScript.CreateObject("WScript.Shell")
-Set objNetwork = WScript.CreateObject("WScript.Network")
-Set objComputer = GetObject("WinNT://" & objNetwork.ComputerName)
-Set objWMIService = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+strComputerName = WScript.CreateObject("WScript.Network").ComputerName
+Set objComputer = GetObject("WinNT://" & strComputerName)
 
 objComputer.Filter = Array("user")
 found = false
@@ -73,8 +58,7 @@ Next
 If found Then
   WScript.Echo("ERROR: User account '" & strWSUSUpdateAdminName & "' already exists.")
   WScript.Quit(1)
-Else
-  CreateUpdateAdmin objComputer, AdministratorsGroupName(objComputer, objWMIService)
-  EnableAutoLogon wshShell
-  WScript.Quit(0)
 End If
+strPassword = CreateUpdateAdmin(objComputer)
+EnableAutoLogon wshShell, strWSUSUpdateAdminName, strComputerName, strPassword   
+WScript.Quit(0)

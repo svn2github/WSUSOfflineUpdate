@@ -33,19 +33,6 @@ if exist %SystemRoot%\wsusbak-winlogon.reg (
   )
 )
 
-if exist %SystemRoot%\wsusbak-explorer-policies.reg (
-  echo Restoring Explorer policies registry hive...
-  %REG_PATH% DELETE "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" /va /f >nul 2>&1
-  %REG_PATH% IMPORT %SystemRoot%\wsusbak-explorer-policies.reg >nul 2>&1
-  if errorlevel 1 (
-    echo Warning: Restore of Explorer policies registry hive failed.
-    echo %DATE% %TIME% - Warning: Restore of Explorer policies registry hive failed >>%UPDATE_LOGFILE%
-  ) else (
-    del %SystemRoot%\wsusbak-explorer-policies.reg
-    echo %DATE% %TIME% - Info: Restored Explorer policies registry hive >>%UPDATE_LOGFILE%
-  )
-)
-
 if exist %SystemRoot%\wsusbak-desktop-policies.reg (
   echo Restoring Desktop policies registry hive...
   %REG_PATH% DELETE "HKLM\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop" /va /f >nul 2>&1
@@ -62,7 +49,7 @@ if exist %SystemRoot%\wsusbak-desktop-policies.reg (
 )
 
 echo Unregistering recall...
-%REG_PATH% DELETE HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v WSUSOfflineUpdate /f >nul 2>&1 
+%REG_PATH% DELETE "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v WSUSOfflineUpdate /f >nul 2>&1 
 if errorlevel 1 (
   echo Warning: Deregistration of recall failed.
   echo %DATE% %TIME% - Warning: Deregistration of recall failed >>%UPDATE_LOGFILE%
@@ -70,14 +57,23 @@ if errorlevel 1 (
   echo %DATE% %TIME% - Info: Unregistered recall >>%UPDATE_LOGFILE%
 )
 
+echo Disabling autologon...
+%REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v AutoAdminLogon /t REG_SZ /d "0" /f >nul 2>&1 
+if errorlevel 1 (
+  echo Warning: Disabling of autologon failed.
+  echo %DATE% %TIME% - Warning: Disabling of autologon failed >>%UPDATE_LOGFILE%
+) else (
+  echo %DATE% %TIME% - Info: Disabled autologon >>%UPDATE_LOGFILE%
+)
+
 echo Deleting WSUSUpdateAdmin account...
 if "%USERNAME%"=="WSUSUpdateAdmin" (
-  %REG_PATH% ADD HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce /v DeleteWSUSUpdateAdminProfile /t REG_SZ /d "cmd /c rd /S /Q \"%USERPROFILE%\"" >nul 2>&1 
+  %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v DeleteWSUSUpdateAdminProfile /t REG_SZ /d "cmd /c rd /S /Q \"%USERPROFILE%\"" >nul 2>&1 
   echo %DATE% %TIME% - Info: Registered erasing of WSUSUpdateAdmin profile >>%UPDATE_LOGFILE%
 ) else (
   echo %DATE% %TIME% - Warning: WSUSUpdateAdmin is not logged on - registration of erasing of WSUSUpdateAdmin profile skipped >>%UPDATE_LOGFILE%
 )
-%CSCRIPT_PATH% //Nologo //E:vbs DeleteUpdateAdmin.vbs
+%CSCRIPT_PATH% //Nologo //B //E:vbs DeleteUpdateAdmin.vbs
 if errorlevel 1 (
   echo Warning: Deletion of WSUSUpdateAdmin account failed.
   echo %DATE% %TIME% - Warning: Deletion of WSUSUpdateAdmin account failed >>%UPDATE_LOGFILE%

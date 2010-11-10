@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.6.4+ (w2k_ofc_construction_site (r161))
+set WSUSOFFLINE_VERSION=6.6.5+ (w2k_ofc_construction_site (r163))
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -70,6 +70,7 @@ set CSCRIPT_PATH=%SystemRoot%\system32\cscript.exe
 if not exist %CSCRIPT_PATH% goto NoCScript
 set WGET_PATH=..\bin\wget.exe
 if not exist %WGET_PATH% goto NoWGet
+if not exist ..\bin\unzip.exe goto NoUnZip
 
 title Downloading...
 
@@ -219,16 +220,16 @@ if not exist ..\bin\streams.exe goto DownloadSysinternals
 goto SkipSysinternals
 :DownloadSysinternals
 echo Downloading Sysinternals' tools Autologon, Sigcheck and Streams...
-%WGET_PATH% -N -i ..\static\StaticDownloadLink-sysinternals.txt -P ..\bin
+%WGET_PATH% -N -i ..\static\StaticDownloadLinks-sysinternals.txt -P ..\bin
 if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded Sysinternals' tools Autologon, Sigcheck and Streams >>%DOWNLOAD_LOGFILE%
 pushd ..\bin
-unzip.exe Autologon.zip Autologon.exe
+unzip.exe -o Autologon.zip Autologon.exe
 del Autologon.zip
-move Autologon.exe ..\client\bin 
-unzip.exe Sigcheck.zip sigcheck.exe
+move /Y Autologon.exe ..\client\bin 
+unzip.exe -o Sigcheck.zip sigcheck.exe
 del Sigcheck.zip
-unzip.exe Streams.zip streams.exe
+unzip.exe -o Streams.zip streams.exe
 del Streams.zip
 popd
 :SkipSysinternals
@@ -691,7 +692,7 @@ if "%HTTP_WSUS%"=="" (
   )
 ) else (
   echo Creating WSUS download table for %1 %2...
-  %CSCRIPT_PATH% //Nologo //E:vbs CreateDownloadTable.vbs "%TEMP%\ValidDownloadLinks-%1-%2.txt" %HTTP_WSUS%
+  %CSCRIPT_PATH% //Nologo //B //E:vbs CreateDownloadTable.vbs "%TEMP%\ValidDownloadLinks-%1-%2.txt" %HTTP_WSUS%
   if errorlevel 1 goto DownloadError
   echo %DATE% %TIME% - Info: Created WSUS download table for %1 %2 >>%DOWNLOAD_LOGFILE%
   for /F "delims=: tokens=1*" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidDownloadLinks-%1-%2.csv"') do (
@@ -746,7 +747,7 @@ if errorlevel 1 goto EndDownload
 rem *** Delete alternate data streams for %1 %2 ***
 if exist ..\bin\streams.exe (
   echo Deleting alternate data streams for %1 %2...
-  ..\bin\streams.exe -accepteula -s -d ..\client\%1\%2\*.* >nul 2>&1
+  ..\bin\streams.exe /accepteula -s -d ..\client\%1\%2\*.* >nul 2>&1
   if errorlevel 1 (
     echo Warning: Unable to delete alternate data streams for %1 %2.
     echo %DATE% %TIME% - Warning: Unable to delete alternate data streams for %1 %2 >>%DOWNLOAD_LOGFILE%
@@ -761,7 +762,7 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   rem *** Verifying digital file signatures for %1 %2 ***
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
   echo Verifying digital file signatures for %1 %2...
-  ..\bin\sigcheck.exe -accepteula -q -s -u -v ..\client\%1\%2 >"%TEMP%\sigcheck-%1-%2.txt"
+  ..\bin\sigcheck.exe /accepteula -q -s -u -v ..\client\%1\%2 >"%TEMP%\sigcheck-%1-%2.txt"
   for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-%1-%2.txt") do (
     echo Warning: File %%i is unsigned.
     echo %DATE% %TIME% - Warning: File %%i is unsigned >>%DOWNLOAD_LOGFILE%
@@ -847,7 +848,14 @@ goto Error
 :NoWGet
 echo.
 echo ERROR: Download utility %WGET_PATH% not found.
-echo %DATE% %TIME% - Error: Utility %WGET_PATH% not found >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Error: Download utility %WGET_PATH% not found >>%DOWNLOAD_LOGFILE%
+echo.
+goto Error
+
+:NoUnZip
+echo.
+echo ERROR: Utility ..\bin\unzip.exe not found.
+echo %DATE% %TIME% - Error: Utility ..\bin\unzip.exe not found >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 

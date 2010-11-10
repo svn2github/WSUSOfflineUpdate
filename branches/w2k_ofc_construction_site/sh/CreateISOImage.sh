@@ -162,7 +162,7 @@ excludeiso1="../exclude/ExcludeListISO-${sys}.txt"
 excludeiso2="../exclude/ExcludeListISO-${sys}-x86.txt"
 
 echo "Writing builddate.txt..."
-date > ../client/builddate.txt
+date +%d.%m.%Y > ../client/builddate.txt
 
 if [ -f "$excludeiso1" ]; then
   tr -d '\r' < ../exclude/ExcludeListISO-${sys}.txt > ../temp/ExcludeListISO-${sys}.txt
