@@ -1,4 +1,4 @@
 http://download.microsoft.com/download/f/6/4/f64688cc-e40d-4070-a6d8-12b5ac44d501/Office2003SP3-KB923618-FullFile-CHT.exe
 http://download.microsoft.com/download/D/E/1/DE1B638E-8EBB-46E5-8DF9-F24E59103408/office2003-KB975051-FullFile-CHT.exe
 http://download.microsoft.com/download/1/F/E/1FECBE16-77E5-4A67-953B-9F1E9BC6F327/office2003-KB2293428-FullFile-CHT.exe
-http://download.microsoft.com/download/D/8/A/D8A82101-599F-4490-96F1-A0905AA32793/office2003-KB2410707-FullFile-CHT.exe
+http://download.microsoft.com/download/C/6/3/C63C4C72-96AE-49A6-AFE2-C22528E5A697/office2003-KB2435682-FullFile-CHT.exe

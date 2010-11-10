@@ -1,4 +1,4 @@
 http://download.microsoft.com/download/6/d/d/6ddd6b02-599f-45ae-9cab-6ef265ff6109/Office2003SP3-KB923618-FullFile-PLK.exe
 http://download.microsoft.com/download/8/5/8/85835AA6-04A3-4B3B-864E-69781CD611E4/office2003-KB975051-FullFile-PLK.exe
 http://download.microsoft.com/download/1/5/B/15BCFD52-F944-480F-A327-21B75B1A028E/office2003-KB2293428-FullFile-PLK.exe
-http://download.microsoft.com/download/F/2/1/F2192903-FE6E-4E26-B10A-BDBDF02FC771/office2003-KB2410707-FullFile-PLK.exe
+http://download.microsoft.com/download/E/A/4/EA467B5E-DE0C-4EBD-812F-E5BFE6AAA659/office2003-KB2435682-FullFile-PLK.exe

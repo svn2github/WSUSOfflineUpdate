@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 6.6.4
+WSUS Offline Update 6.6.5
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -435,7 +435,8 @@ Version 6.6.4 -- 13.10.10
 - Fix: Improved error handling and reporting of scripts InstallOSUpdate.cmd and InstallOfficeUpdate.cmd
 - Fix: Eliminated misleading warnings about missing integrity database files on first download runs with verification enabled (Thanks to "honkytonky")
 --------------------------------------------------------------------------------
-Version 6.? -- ??.??.10
+Version 6.6.5 -- 10.11.10
+- Office updates up to 11/2010 integrated by static definitions
 - Self update capability added (Thanks to "Ernst.Eiswuerfel")
 - Optional automatic system shutdown on download completion added to UpdateGenerator script (Thanks to "rswrc")
 - Update for Root Certificates (rootsupd.exe/kb931125) updated to Oktober 2010 (Thanks to "Matjes" and "Denniss")
@@ -446,3 +447,4 @@ Version 6.? -- ??.??.10
 - Fix: KB951847 (.NET Framework 3.5 SP1) added to installation exclude list due to misleading warnings (Thanks to "rednaxela")
 - Fix: ISO creation under Linux lead to invalid "builddate.txt" format (Thanks to Ulrich Windl)
 - Fix: FAQs enhanced (Thanks to "Lenge")
+--------------------------------------------------------------------------------

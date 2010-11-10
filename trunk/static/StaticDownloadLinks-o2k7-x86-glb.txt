@@ -16,4 +16,5 @@ http://download.microsoft.com/download/F/A/2/FA2415AB-36AF-41A8-A7BF-3501BE14A29
 http://download.microsoft.com/download/E/D/5/ED5CCEF3-40DD-4940-A1F1-C36061EE3019/outlook2007-kb2288953-fullfile-x86-glb.exe
 http://download.microsoft.com/download/5/D/C/5DC62AD1-FE77-4E89-80C6-2D90A003F174/Word2007-kb2344993-fullfile-x86-glb.exe
 http://download.microsoft.com/download/0/9/E/09E2905C-018C-45A5-98B2-9FAE8E1E3784/excel2007-kb2345035-fullfile-x86-glb.exe
-http://download.microsoft.com/download/4/0/F/40F66E6A-DAD7-4D59-BFC7-93DD1FE1F38E/Office2007-kb2410711-fullfile-x86-glb.exe
+http://download.microsoft.com/download/3/F/C/3FCF9E13-FF77-4A93-A161-E322C64C5277/office2007-kb2443839-fullfile-x86-glb.exe
+http://download.microsoft.com/download/F/F/C/FFCB735E-01B2-4B4B-A7F1-2EEB70FA9268/powerpoint2007-kb2413381-fullfile-x86-glb.exe

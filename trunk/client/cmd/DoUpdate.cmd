@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.6.4+ (r162)
+set WSUSOFFLINE_VERSION=6.6.5
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -748,7 +748,7 @@ if /i "%AU_SVC_STATE_INITIAL%"=="Running" goto ListUpdateIds
 if /i "%AU_SVC_START_MODE%"=="Disabled" goto AUSvcNotRunning
 echo Starting service 'automatic updates' (wuauserv)...
 %SystemRoot%\system32\net.exe start wuauserv >nul
-if not errorlevel 0 goto AUSvcNotRunning
+if errorlevel 1 goto AUSvcNotRunning
 set AU_SVC_STARTED=1
 echo %DATE% %TIME% - Info: Started service 'automatic updates' (wuauserv) >>%UPDATE_LOGFILE%
 
@@ -828,7 +828,7 @@ if "%RECALL_REQUIRED%"=="1" (
       echo %DATE% %TIME% - Info: Automatic recall is not supported on domain controllers >>%UPDATE_LOGFILE%
       goto ManualRecall
     )
-    if not "%USERNAME%"=="WSUSUpdateAdmin" (
+    if "%USERNAME%" NEQ "WSUSUpdateAdmin" (
       echo Preparing automatic recall...
       call PrepareRecall.cmd %~f0 %BACKUP_MODE% %VERIFY_MODE% %INSTALL_IE% %UPDATE_WMP% %UPDATE_TSC% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_MSSE% %INSTALL_CONVERTERS% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES%
     )
