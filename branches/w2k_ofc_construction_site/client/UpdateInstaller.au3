@@ -220,7 +220,7 @@ Func CalcGUISize()
   EndIf
   $dlgheight = 265 * $reg_val / $default_logpixels
   If ShowGUIInGerman() Then
-    $txtwidth = 220 * $reg_val / $default_logpixels
+    $txtwidth = 230 * $reg_val / $default_logpixels
   Else
     $txtwidth = 200 * $reg_val / $default_logpixels
   EndIf
@@ -706,14 +706,16 @@ While 1
 
     Case $autoreboot         ; Automatic reboot check box toggled
       If ( (BitAND(GUICtrlRead($autoreboot), $GUI_CHECKED) = $GUI_CHECKED) _
-       AND (@OSVersion <> "WIN_VISTA") AND (@OSVersion <> "WIN_2008") AND (@OSVersion <> "WIN_7") AND (@OSVersion <> "WIN_2008R2") ) Then
+       AND ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) ) Then
         If ShowGUIInGerman() Then
-          If MsgBox(0x2134, "Warnung", "Die Option 'Automatisch neu starten und fortsetzen' verursachte auf manchen Systemen Probleme." _
+          If MsgBox(0x2134, "Warnung", "Die Option 'Automatisch neu starten und fortsetzen'" _
+                               & @LF & "deaktiviert temporär die Benutzerkontensteuerung (UAC)." _
                                & @LF & "Möchten Sie fortsetzen?") = 7 Then
             GUICtrlSetState($autoreboot, $GUI_UNCHECKED)
           EndIf
         Else
-          If MsgBox(0x2134, "Warning", "The option 'automatic reboot and recall' caused problems on some systems." _
+          If MsgBox(0x2134, "Warning", "The option 'automatic reboot and recall'" _
+                               & @LF & "temporarily disables the User Account Control (UAC)." _
                                & @LF & "Do you wish to proceed?") = 7 Then
             GUICtrlSetState($autoreboot, $GUI_UNCHECKED)
           EndIf

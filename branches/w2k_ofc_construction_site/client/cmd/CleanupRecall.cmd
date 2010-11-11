@@ -8,15 +8,8 @@ if "%UPDATE_LOGFILE%"=="" set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 %~d0
 cd "%~p0"
 
-if "%REG_PATH%"=="" (
-  if exist %SystemRoot%\system32\reg.exe (
-    set REG_PATH=%SystemRoot%\system32\reg.exe
-  ) else (
-    set REG_PATH=..\bin\reg.exe
-  )
-)
+if "%REG_PATH%"=="" set REG_PATH=%SystemRoot%\system32\reg.exe
 if not exist %REG_PATH% goto NoReg
-
 if "%CSCRIPT_PATH%"=="" set CSCRIPT_PATH=%SystemRoot%\system32\cscript.exe
 if not exist %CSCRIPT_PATH% goto NoCScript
 
@@ -33,19 +26,20 @@ if exist %SystemRoot%\wsusbak-winlogon.reg (
   )
 )
 
-if exist %SystemRoot%\wsusbak-desktop-policies.reg (
-  echo Restoring Desktop policies registry hive...
-  %REG_PATH% DELETE "HKLM\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop" /va /f >nul 2>&1
-  %REG_PATH% IMPORT %SystemRoot%\wsusbak-desktop-policies.reg >nul 2>&1
+if exist %SystemRoot%\wsusbak-system-policies.reg (
+  echo Restoring System policies registry hive...
+  %REG_PATH% DELETE "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /va /f >nul 2>&1
+  %REG_PATH% IMPORT %SystemRoot%\wsusbak-system-policies.reg >nul 2>&1
   if errorlevel 1 (
-    echo Warning: Restore of Desktop policies registry hive failed.
-    echo %DATE% %TIME% - Warning: Restore of Desktop policies registry hive failed >>%UPDATE_LOGFILE%
+    echo Warning: Restore of System policies registry hive failed.
+    echo %DATE% %TIME% - Warning: Restore of System policies registry hive failed >>%UPDATE_LOGFILE%
   ) else (
-    del %SystemRoot%\wsusbak-desktop-policies.reg
-    echo %DATE% %TIME% - Info: Restored Desktop policies registry hive >>%UPDATE_LOGFILE%
+    del %SystemRoot%\wsusbak-system-policies.reg
+    echo %DATE% %TIME% - Info: Restored System policies registry hive >>%UPDATE_LOGFILE%
   )
 ) else (
-  %REG_PATH% DELETE "HKLM\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop" /v ScreenSaveActive /f >nul 2>&1
+  %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v ConsentPromptBehaviorAdmin /t REG_DWORD /d 2 /f >nul 2>&1 
+  %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v EnableLUA /t REG_DWORD /d 1 /f >nul 2>&1 
 )
 
 echo Unregistering recall...

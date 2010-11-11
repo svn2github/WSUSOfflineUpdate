@@ -3,8 +3,9 @@
 Option Explicit
 
 Private Const strWSUSUpdateAdminName  = "WSUSUpdateAdmin"
-Private Const strKeyDesktopPolicies   = "HKLM\Software\Policies\Microsoft\Windows\Control Panel\Desktop\"
-Private Const strValScreenSaveActive  = "ScreenSaveActive"
+Private Const strKeySystemPolicies    = "HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System\"
+Private Const strValAdminPrompt       = "ConsentPromptBehaviorAdmin"
+Private Const strValEnableLUA         = "EnableLUA"
 Private Const strKeyAutologon         = "HKCU\Software\Sysinternals\A\"
 Private Const strValAcceptEula        = "EulaAccepted"
 
@@ -35,11 +36,12 @@ Dim objWMIService, objWSUSUpdateAdmin, objGroup, objItem, strResult
   On Error GoTo 0 'Turn error reporting on
 End Function
 
-Private Sub EnableAutoLogon(shell, strUserName, strDomain, strPassword)
+Private Sub EnableAutoLogonAndDisableUAC(shell, strUserName, strDomain, strPassword)
   On Error Resume Next 'Turn error reporting off
   shell.RegWrite strKeyAutologon & strValAcceptEula, 1, "REG_DWORD"
   shell.Run "..\bin\Autologon.exe " & strUserName & " " & strDomain & " " & strPassword, 0, True
-  shell.RegWrite strKeyDesktopPolicies & strValScreenSaveActive, 0, "REG_DWORD"
+  shell.RegWrite strKeySystemPolicies & strValAdminPrompt, 0, "REG_DWORD"
+  shell.RegWrite strKeySystemPolicies & strValEnableLUA, 0, "REG_DWORD"
   On Error GoTo 0 'Turn error reporting on
 End Sub
 
@@ -60,5 +62,5 @@ If found Then
   WScript.Quit(1)
 End If
 strPassword = CreateUpdateAdmin(objComputer)
-EnableAutoLogon wshShell, strWSUSUpdateAdminName, strComputerName, strPassword   
+EnableAutoLogonAndDisableUAC wshShell, strWSUSUpdateAdminName, strComputerName, strPassword   
 WScript.Quit(0)

@@ -17,12 +17,12 @@ if errorlevel 1 (
   echo %DATE% %TIME% - Info: Saved Winlogon registry hive >>%UPDATE_LOGFILE%
 )
 
-echo Saving Desktop policies registry hive...
-%REG_PATH% EXPORT "HKLM\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop" %SystemRoot%\wsusbak-desktop-policies.reg >nul 2>&1
+echo Saving System policies registry hive...
+%REG_PATH% EXPORT "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" %SystemRoot%\wsusbak-system-policies.reg >nul 2>&1
 if errorlevel 1 (
-  echo %DATE% %TIME% - Info: Saving of Desktop policies registry hive failed >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Saving of System policies registry hive failed >>%UPDATE_LOGFILE%
 ) else (
-  echo %DATE% %TIME% - Info: Saved Desktop policies registry hive >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Saved System policies registry hive >>%UPDATE_LOGFILE%
 )
 
 echo Creating WSUSUpdateAdmin account...

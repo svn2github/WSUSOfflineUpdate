@@ -452,3 +452,4 @@ Version 6.7 -- ??.??.10
 - Windows 2000 support removed
 - Removed obsolete utility extract.exe
 - Proprietary autologon implementation replaced by Sysinternals' tool Autologon.exe  
+- Automatic recall feature enhanced to support Windows Vista and Server 2008 systems

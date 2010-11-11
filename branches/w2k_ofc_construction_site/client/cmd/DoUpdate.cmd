@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.6.5+ (w2k_ofc_construction_site (r164))
+set WSUSOFFLINE_VERSION=6.6.5+ (w2k_ofc_construction_site (r167))
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -723,6 +723,7 @@ if "%OFC_COMP_PACK%" NEQ "1" (
 
 :CheckAUService
 rem *** Check state of service 'automatic updates' ***
+if "%USERNAME%"=="WSUSUpdateAdmin" goto ListUpdateIds
 echo Checking state of service 'automatic updates'...
 echo %DATE% %TIME% - Info: Detected state of service 'automatic updates': %AU_SVC_STATE_INITIAL% (start mode: %AU_SVC_START_MODE%) >>%UPDATE_LOGFILE%
 if /i "%AU_SVC_STATE_INITIAL%"=="" goto ListUpdateIds
