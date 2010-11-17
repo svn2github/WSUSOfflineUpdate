@@ -1,11 +1,11 @@
-; *** WSUS Offline Update 6.7a - Generator ***
+; *** WSUS Offline Update 6.7b - Generator ***
 ; ***      Author: T. Wittrock, Kiel      ***
 ; ***    USB-Option added by Ch. Riedel   ***
 ; ***  Dialog scaling added by Th. Baisch ***
 
 #include <GUIConstants.au3>
 
-Dim Const $caption                = "WSUS Offline Update 6.7a"
+Dim Const $caption                = "WSUS Offline Update 6.7b"
 Dim Const $title                  = $caption & " - Generator"
 Dim Const $donationURL            = "http://www.wsusoffline.net/donate.html"
 Dim Const $downloadLogFile        = "download.log"
@@ -41,7 +41,7 @@ Dim Const $ini_section_w61_x64    = "Windows Server 2008 R2"
 Dim Const $ini_section_oxp        = "Office XP"
 Dim Const $ini_section_o2k3       = "Office 2003"
 Dim Const $ini_section_o2k7       = "Office 2007"
-Dim Const $ini_section_o2k7_x64   = "Office 2007 x64"
+Dim Const $ini_section_o2k10      = "Office 2010"
 Dim Const $ini_section_iso        = "ISO Images"
 Dim Const $ini_section_usb        = "USB Images"
 Dim Const $ini_section_misc       = "Miscellaneous"
@@ -119,6 +119,7 @@ Dim $wxp_nor, $w2k3_nor, $oxp_nor, $o2k3_nor, $o2k7_nor ; Norwegian
 Dim $wxp_fin, $w2k3_fin, $oxp_fin, $o2k3_fin, $o2k7_fin ; Finnish
 Dim $w60_glb, $w60_x64_glb                              ; Windows Vista / Windows Server 2008 (global)  
 Dim $w61_glb, $w61_x64_glb                              ; Windows 7 / Windows Server 2008 R2 (global)  
+Dim $o2k10_glb                                          ; Office 2010 (global)  
 
 Dim $dlgheight, $groupwidth, $groupheight, $txtwidth, $txtheight, $slimheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
 
@@ -444,6 +445,7 @@ Func DisableGUI()
   GUICtrlSetState($oxp_fin, $GUI_DISABLE)
   GUICtrlSetState($o2k3_fin, $GUI_DISABLE)
   GUICtrlSetState($o2k7_fin, $GUI_DISABLE)
+  GUICtrlSetState($o2k10_glb, $GUI_DISABLE)
 
   GUICtrlSetState($includesp, $GUI_DISABLE)
   GUICtrlSetState($dotnet, $GUI_DISABLE)
@@ -603,6 +605,7 @@ Func EnableGUI()
   GUICtrlSetState($oxp_fin, $GUI_ENABLE)
   GUICtrlSetState($o2k3_fin, $GUI_ENABLE)
   GUICtrlSetState($o2k7_fin, $GUI_ENABLE)
+  GUICtrlSetState($o2k10_glb, $GUI_ENABLE)
 
   GUICtrlSetState($includesp, $GUI_ENABLE)
   GUICtrlSetState($dotnet, $GUI_ENABLE)
@@ -1008,6 +1011,9 @@ Func SaveSettings()
   IniWrite($inifilename, $ini_section_o2k7, $lang_token_dan, CheckBoxState2String($o2k7_dan))
   IniWrite($inifilename, $ini_section_o2k7, $lang_token_nor, CheckBoxState2String($o2k7_nor))
   IniWrite($inifilename, $ini_section_o2k7, $lang_token_fin, CheckBoxState2String($o2k7_fin))
+
+;  Office 2010 group
+  IniWrite($inifilename, $ini_section_o2k10, $lang_token_glb, CheckBoxState2String($o2k10_glb))
 
 ;  Image creation
   IniWrite($inifilename, $ini_section_iso, $iso_token_cd, CheckBoxState2String($cdiso))
@@ -2223,6 +2229,31 @@ Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
 
+;  Office 2010 group
+$txtxpos = 2 * $txtxoffset
+$txtypos = $txtypos + 2.5 * $txtyoffset
+GUICtrlCreateGroup("Office 2010", $txtxpos, $txtypos, $groupwidth, $groupheight - 2 * $txtheight)
+;  Office 2010 global
+$txtypos = $txtypos + 1.5 * $txtyoffset
+$txtxpos = $txtxpos + $txtxoffset
+If ShowGUIInGerman() Then
+  $o2k10_glb = GUICtrlCreateCheckbox("Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 3 - $txtxoffset, $txtheight)
+Else
+  $o2k10_glb = GUICtrlCreateCheckbox("Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 3 - $txtxoffset, $txtheight)
+EndIf
+If IniRead($inifilename, $ini_section_o2k10, $lang_token_glb, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Office 2010 clarification label
+$txtxpos = $txtxpos + $groupwidth / 3 - $txtxoffset
+If ShowGUIInGerman() Then
+  GUICtrlCreateLabel("(BEACHTEN: Updates für Office 2010 sind bei anderen Office-Downloads implizit enthalten.)", $txtxpos, $txtypos, 2 * $groupwidth / 3 - $txtxoffset, $txtheight)
+Else
+  GUICtrlCreateLabel("(NOTE: Updates for Office 2010 are implicitly included in other Office downloads.)", $txtxpos, $txtypos, 2 * $groupwidth / 3 - $txtxoffset, $txtheight)
+EndIf
+
 ;  End Tab item definition
 GuiCtrlCreateTabItem("")
 GUICtrlSetState($tabitemfocused, $GUI_SHOW)
@@ -2615,6 +2646,11 @@ While 1
       EndIf
       If BitAND(GUICtrlRead($w61_x64_glb), $GUI_CHECKED) = $GUI_CHECKED Then
         If RunScripts("w61-x64 glb", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If BitAND(GUICtrlRead($o2k10_glb), $GUI_CHECKED) = $GUI_CHECKED Then
+        If RunScripts("o2k10 enu", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf

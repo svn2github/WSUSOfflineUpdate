@@ -1,11 +1,11 @@
-; *** WSUS Offline Update 6.7a - Installer ***
+; *** WSUS Offline Update 6.7b - Installer ***
 ; ***      Author: T. Wittrock, Kiel      ***
 ; ***  Dialog scaling added by Th. Baisch ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 
-Dim Const $caption                    = "WSUS Offline Update 6.7a - Installer"
+Dim Const $caption                    = "WSUS Offline Update 6.7b - Installer"
 
 ; Registry constants
 Dim Const $reg_key_wsh_hklm           = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings"
@@ -483,7 +483,7 @@ Else
   $verify = GUICtrlCreateCheckbox("Verify installation packages", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If HashFilesPresent($scriptdir) Then
-  If IniRead($inifilename, $ini_section_control, $ini_value_verify, $disabled) = $enabled Then
+  If IniRead($inifilename, $ini_section_control, $ini_value_verify, $enabled) = $enabled Then
     GUICtrlSetState(-1, $GUI_CHECKED)
   Else
     GUICtrlSetState(-1, $GUI_UNCHECKED)

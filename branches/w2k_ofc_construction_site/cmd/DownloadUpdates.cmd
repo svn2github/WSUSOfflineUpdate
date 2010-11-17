@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7a (r168)
+set WSUSOFFLINE_VERSION=6.7b (r169)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -254,6 +254,18 @@ if exist ..\bin\extract.exe del ..\bin\extract.exe
 if exist ..\static\StaticDownloadLink-extract.txt del ..\static\StaticDownloadLink-extract.txt
 if exist ..\static\StaticDownloadLink-sigcheck.txt del ..\static\StaticDownloadLink-sigcheck.txt
 if exist ..\static\StaticDownloadLink-streams.txt del ..\static\StaticDownloadLink-streams.txt
+
+rem *** Windows 2000 stuff ***
+if exist ..\client\static\StaticUpdateIds-w2k-x86.txt del ..\client\static\StaticUpdateIds-w2k-x86.txt
+if exist FixIE6SetupDir.cmd del FixIE6SetupDir.cmd
+if exist ..\exclude\ExcludeList-w2k-x86.txt del ..\exclude\ExcludeList-w2k-x86.txt
+if exist ..\exclude\ExcludeListISO-w2k-x86.txt del ..\exclude\ExcludeListISO-w2k-x86.txt
+if exist ..\exclude\ExcludeListUSB-w2k-x86.txt del ..\exclude\ExcludeListUSB-w2k-x86.txt
+if exist ..\sh\FIXIE6SetupDir.sh del ..\sh\FIXIE6SetupDir.sh
+if exist ..\xslt\ExtractDownloadLinks-win-x86-glb.xsl del ..\xslt\ExtractDownloadLinks-win-x86-glb.xsl
+del /Q ..\static\*ie6-*.* >nul 2>&1
+del /Q ..\static\*w2k-*.* >nul 2>&1
+del /Q ..\xslt\*w2k-*.* >nul 2>&1
 
 rem *** Office and invcif.exe stuff ***
 if exist ..\static\StaticDownloadLinks-inventory.txt del ..\static\StaticDownloadLinks-inventory.txt

@@ -449,6 +449,7 @@ Version 6.6.5 -- 10.11.10
 - Fix: FAQs enhanced (Thanks to "Lenge")
 --------------------------------------------------------------------------------
 Version 6.7 -- ??.??.10
+- Office 2010 support added
 - Windows 2000 support removed
 - Office updates will be dynamically determined again (Thanks to Martin Trenkner)
 - Automatic recall feature enhanced to support Windows Vista and Server 2008 systems
