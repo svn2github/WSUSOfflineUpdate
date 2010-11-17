@@ -2316,7 +2316,7 @@ If ShowGUIInGerman() Then
 Else
   $verifydownloads = GUICtrlCreateCheckbox("Verify downloaded updates", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 EndIf
-If IniRead($inifilename, $ini_section_misc, $misc_token_verify, $disabled) = $enabled Then
+If IniRead($inifilename, $ini_section_misc, $misc_token_verify, $enabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)

@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7b (r169)
+set WSUSOFFLINE_VERSION=6.7b (r170)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -648,6 +648,7 @@ for /F "usebackq tokens=1,2 delims=;" %%i in ("%TEMP%\UpdateCategoriesAndFileIds
 set UPDATE_ID=
 set UPDATE_CATEGORY=
 set UPDATE_LANGUAGES=
+del "%TEMP%\UpdateCategoriesAndFileIds.txt"                         
 
 %SystemRoot%\system32\findstr.exe /B /G:"%TEMP%\OfficeFileIds.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
 del "%TEMP%\OfficeFileIds.txt"
