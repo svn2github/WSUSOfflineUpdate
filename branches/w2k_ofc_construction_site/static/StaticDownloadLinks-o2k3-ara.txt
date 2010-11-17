@@ -1,4 +1,1 @@
 http://download.microsoft.com/download/a/b/d/abd76d1e-37a0-47fd-ae92-03883d8cfaf1/Office2003SP3-KB923618-FullFile-ARA.exe
-http://download.microsoft.com/download/3/1/A/31A4A002-BA31-4B8D-9725-5FA8E690E65D/office2003-KB975051-FullFile-ARA.exe
-http://download.microsoft.com/download/1/5/B/15B6CE83-3267-4F7C-81D5-D1B3F7EB8876/office2003-KB2293428-FullFile-ARA.exe
-http://download.microsoft.com/download/B/E/0/BE01E181-0533-46A0-8EE8-97A997372CBA/office2003-KB2435682-FullFile-ARA.exe

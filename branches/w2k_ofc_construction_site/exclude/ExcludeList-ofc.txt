@@ -1,2 +1,5 @@
-DummyExcludeList
-v3-19990518/cabpool
+server_
+srvapp_
+srv_
+sts_
+wacwfe_

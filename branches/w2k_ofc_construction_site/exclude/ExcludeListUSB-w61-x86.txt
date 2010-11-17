@@ -2,11 +2,12 @@ ndp1
 ndp2
 ndp3
 dotnetfx35.exe
+ofc\
 o2k\
 oxp\
 o2k3\
 o2k7\
-ofc\
+o2k10\
 w2k\
 wxp\
 w2k3\
@@ -19,6 +20,3 @@ w60-x64\
 w61-x64\
 -x64
 .au3
-reg.exe
-invcif.exe
-invcm.exe

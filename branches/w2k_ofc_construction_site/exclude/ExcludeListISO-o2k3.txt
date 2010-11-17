@@ -1,6 +1,7 @@
 *o2k\/*
 *oxp*
-*o2k7*
+*o2k7\/*
+*o2k10\/*
 *w2k*
 *wxp*
 *w6*
@@ -8,5 +9,3 @@
 *x64-glb\/*
 *-x64*
 *.au3
-*invcif.exe
-*invcm.exe

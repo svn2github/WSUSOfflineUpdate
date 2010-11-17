@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.6.5+ (w2k_ofc_construction_site (r167))
+set WSUSOFFLINE_VERSION=6.7a (r168)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -21,7 +21,7 @@ if exist %DOWNLOAD_LOGFILE% (
 )
 echo %DATE% %TIME% - Info: Starting download (v. %WSUSOFFLINE_VERSION%) for %1 %2 >>%DOWNLOAD_LOGFILE%
 
-for %%i in (wxp w2k3 w2k3-x64 oxp o2k3 o2k7 o2k10) do (
+for %%i in (wxp w2k3 w2k3-x64) do (
   if /i "%1"=="%%i" (
     for %%j in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%2"=="%%j" goto EvalParams)
   )
@@ -31,7 +31,108 @@ for %%i in (w60 w60-x64 w61 w61-x64) do (
     if /i "%2"=="glb" goto EvalParams
   )
 )
+for %%i in (oxp o2k3 o2k7 o2k10) do (
+  if /i "%1"=="%%i" (
+    for %%j in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%2"=="%%j" goto Lang_%%j)
+  )
+)
 goto InvalidParams
+
+:Lang_enu
+set LANG_SHORT=en
+goto EvalParams
+
+:Lang_fra
+set LANG_SHORT=fr
+goto EvalParams
+
+:Lang_esn
+set LANG_SHORT=es
+goto EvalParams
+
+:Lang_jpn
+set LANG_SHORT=ja
+goto EvalParams
+
+:Lang_kor
+set LANG_SHORT=ko
+goto EvalParams
+
+:Lang_rus
+set LANG_SHORT=ru
+goto EvalParams
+
+:Lang_ptg
+set LANG_SHORT=pt
+goto EvalParams
+
+:Lang_ptb
+set LANG_SHORT=pt-br
+goto EvalParams
+
+:Lang_deu
+set LANG_SHORT=de
+goto EvalParams
+
+:Lang_nld
+set LANG_SHORT=nl
+goto EvalParams
+
+:Lang_ita
+set LANG_SHORT=it
+goto EvalParams
+
+:Lang_chs
+set LANG_SHORT=zh-cn
+goto EvalParams
+
+:Lang_cht
+set LANG_SHORT=zh-tw
+goto EvalParams
+
+:Lang_plk
+set LANG_SHORT=pl
+goto EvalParams
+
+:Lang_hun
+set LANG_SHORT=hu
+goto EvalParams
+
+:Lang_csy
+set LANG_SHORT=cs
+goto EvalParams
+
+:Lang_sve
+set LANG_SHORT=sv
+goto EvalParams
+
+:Lang_trk
+set LANG_SHORT=tr
+goto EvalParams
+
+:Lang_ell
+set LANG_SHORT=el
+goto EvalParams
+
+:Lang_ara
+set LANG_SHORT=ar
+goto EvalParams
+
+:Lang_heb
+set LANG_SHORT=he
+goto EvalParams
+
+:Lang_dan
+set LANG_SHORT=da
+goto EvalParams
+
+:Lang_nor
+set LANG_SHORT=no
+goto EvalParams
+
+:Lang_fin
+set LANG_SHORT=fi
+goto EvalParams
 
 :EvalParams
 if "%3"=="" goto NoMoreParams
@@ -82,31 +183,17 @@ if exist ..\exclude\custom\dummy.txt del ..\exclude\custom\dummy.txt
 if exist ..\static\custom\dummy.txt del ..\static\custom\dummy.txt
 if exist ..\client\exclude\custom\dummy.txt del ..\client\exclude\custom\dummy.txt
 if exist ..\client\static\custom\dummy.txt del ..\client\static\custom\dummy.txt
-if exist ..\client\msi\nul call ..\client\cmd\SafeRmDir.cmd ..\client\msi
-if exist ..\client\static\StaticUpdateIds-o2k7.txt (
-  if exist ..\client\static\StaticUpdateIds-o2k7-x86.txt del ..\client\static\StaticUpdateIds-o2k7-x86.txt
-  ren ..\client\static\StaticUpdateIds-o2k7.txt StaticUpdateIds-o2k7-x86.txt
-)
-if exist ..\exclude\ExcludeList-o2k7.txt (
-  if exist ..\exclude\ExcludeList-o2k7-x86.txt del ..\exclude\ExcludeList-o2k7-x86.txt
-  ren ..\exclude\ExcludeList-o2k7.txt ExcludeList-o2k7-x86.txt
-)
-if exist ..\xslt\ExtractExpiredIds-o2k7.xsl del ..\xslt\ExtractExpiredIds-o2k7.xsl
-if exist ..\xslt\ExtractValidIds-o2k7.xsl del ..\xslt\ExtractValidIds-o2k7.xsl
-if exist ..\bin\cygiconv-2.dll (
-  if exist ..\bin\mkisofs.exe del ..\bin\mkisofs.exe
-  del ..\bin\cygiconv-2.dll 
-) 
-if exist ..\bin\cygintl-8.dll (
-  if exist ..\bin\mkisofs.exe del ..\bin\mkisofs.exe
-  del ..\bin\cygintl-8.dll 
-) 
-if exist ..\bin\cygwin1.dll (
-  if exist ..\bin\mkisofs.exe del ..\bin\mkisofs.exe
-  del ..\bin\cygwin1.dll 
-)
+
+rem *** Obsolete internal stuff ***
+if exist ..\doc\faq.txt del ..\doc\faq.txt 
 if exist ..\static\StaticDownloadLinks-mkisofs.txt del ..\static\StaticDownloadLinks-mkisofs.txt
+if exist ..\static\StaticDownloadLink-unzip.txt del ..\static\StaticDownloadLink-unzip.txt
+if exist DetermineRegVersion.vbs del DetermineRegVersion.vbs
+if exist DetermineAutoDaylightTimeSet.vbs del DetermineAutoDaylightTimeSet.vbs
 if exist ..\client\cmd\Reboot.vbs del ..\client\cmd\Reboot.vbs
+if exist ..\client\msi\nul call ..\client\cmd\SafeRmDir.cmd ..\client\msi
+
+rem *** Office 2000 stuff ***
 if exist ..\client\bin\msxsl.exe move /Y ..\client\bin\msxsl.exe ..\bin >nul
 if exist ..\client\xslt\nul rd /S /Q ..\client\xslt
 if exist ..\client\static\StaticUpdateIds-o2k.txt del ..\client\static\StaticUpdateIds-o2k.txt
@@ -117,11 +204,8 @@ del /Q ..\static\*o2k-*.* >nul 2>&1
 del /Q ..\xslt\*o2k-*.* >nul 2>&1
 if exist ..\xslt\ExtractExpiredIds-o2k.xsl del ..\xslt\ExtractExpiredIds-o2k.xsl
 if exist ..\xslt\ExtractValidIds-o2k.xsl del ..\xslt\ExtractValidIds-o2k.xsl
-if exist ..\static\StaticDownloadLink-unzip.txt del ..\static\StaticDownloadLink-unzip.txt
-if exist ..\client\o2k3\glb\office2003-KB974882-FullFile-ENU.exe (
-  if not exist ..\client\ofc\glb\nul md ..\client\ofc\glb
-  move /Y ..\client\o2k3\glb\office2003-KB974882-FullFile-ENU.exe ..\client\ofc\glb >nul
-)
+
+rem *** .NET restructuring stuff ***
 if exist ..\client\win\glb\ndp*.* (
   if not exist ..\client\dotnet\x86-glb\nul md ..\client\dotnet\x86-glb
   move /Y ..\client\win\glb\ndp*.* ..\client\dotnet\x86-glb >nul
@@ -130,6 +214,7 @@ if exist ..\client\w2k3-x64\glb\ndp*.* (
   if not exist ..\client\dotnet\x64-glb\nul md ..\client\dotnet\x64-glb
   move /Y ..\client\w2k3-x64\glb\ndp*.* ..\client\dotnet\x64-glb >nul
 )
+if exist ..\static\StaticDownloadLink-dotnet.txt del ..\static\StaticDownloadLink-dotnet.txt
 if exist ..\xslt\ExtractDownloadLinks-dotnet-glb.xsl del ..\xslt\ExtractDownloadLinks-dotnet-glb.xsl
 if exist ..\client\dotnet\glb\nul (
   if not exist ..\client\dotnet\x64-glb\nul md ..\client\dotnet\x64-glb
@@ -139,14 +224,16 @@ if exist ..\client\dotnet\glb\nul (
   rd /S /Q ..\client\dotnet\glb
 )
 
+rem *** FCIV stuff ***
 if exist ..\bin\fciv.exe del ..\bin\fciv.exe
 if exist ..\fciv\nul rd /S /Q ..\fciv
 if exist ..\static\StaticDownloadLink-fciv.txt del ..\static\StaticDownloadLink-fciv.txt
+
+rem *** WUA stuff - now statically defined ***
 if exist ..\xslt\ExtractDownloadLinks-wua-x86.xsl del ..\xslt\ExtractDownloadLinks-wua-x86.xsl
 if exist ..\xslt\ExtractDownloadLinks-wua-x64.xsl del ..\xslt\ExtractDownloadLinks-wua-x64.xsl
-if exist ..\static\StaticDownloadLink-dotnet.txt del ..\static\StaticDownloadLink-dotnet.txt
-if exist DetermineRegVersion.vbs del DetermineRegVersion.vbs
-if exist DetermineAutoDaylightTimeSet.vbs del DetermineAutoDaylightTimeSet.vbs
+
+rem *** MSSEDEFS stuff ***
 if exist ..\static\StaticDownloadLink-mssedefs-x64.txt del ..\static\StaticDownloadLink-mssedefs-x64.txt
 if exist ..\static\StaticDownloadLink-mssedefs-x86.txt del ..\static\StaticDownloadLink-mssedefs-x86.txt
 if exist ..\client\mssedefs\x64\nul (
@@ -161,29 +248,37 @@ if exist ..\client\mssedefs\x86\nul (
   rd /S /Q ..\client\mssedefs\x86
   if exist ..\client\md\hashes-mssedefs.txt del ..\client\md\hashes-mssedefs.txt
 )
-if exist ..\doc\faq.txt del ..\doc\faq.txt 
-if exist ..\bin\Streams.zip del ..\bin\Streams.zip
 
+rem *** Obsolete external stuff ***
 if exist ..\bin\extract.exe del ..\bin\extract.exe
 if exist ..\static\StaticDownloadLink-extract.txt del ..\static\StaticDownloadLink-extract.txt
 if exist ..\static\StaticDownloadLink-sigcheck.txt del ..\static\StaticDownloadLink-sigcheck.txt
 if exist ..\static\StaticDownloadLink-streams.txt del ..\static\StaticDownloadLink-streams.txt
-if exist ..\exclude\ExcludeList-o2k10.txt del ..\exclude\ExcludeList-o2k10.txt
-if exist ..\exclude\ExcludeList-o2k7-x86.txt del ..\exclude\ExcludeList-o2k7-x86.txt
+
+rem *** Office and invcif.exe stuff ***
+if exist ..\static\StaticDownloadLinks-inventory.txt del ..\static\StaticDownloadLinks-inventory.txt
+if exist ..\client\wsus\invcif.exe (
+  if exist ..\client\md\hashes-wsus.txt del ..\client\md\hashes-wsus.txt
+  del ..\client\wsus\invcif.exe
+)
+if exist ..\client\wsus\invcm.exe (
+  if exist ..\client\md\hashes-wsus.txt del ..\client\md\hashes-wsus.txt
+  del ..\client\wsus\invcm.exe
+)
+if exist ..\client\static\StaticUpdateIds-o2k7-x64.txt del ..\client\static\StaticUpdateIds-o2k7-x64.txt
+if exist ..\client\static\StaticUpdateIds-o2k7-x86.txt del ..\client\static\StaticUpdateIds-o2k7-x86.txt
 if exist ..\ExtractDownloadLinks-oall.cmd del ..\ExtractDownloadLinks-oall.cmd
 if exist ..\ExtractDownloadLinks-wall.cmd del ..\ExtractDownloadLinks-wall.cmd
+if exist ..\static\StaticDownloadLinks-o2k7-x64-glb.txt del ..\static\StaticDownloadLinks-o2k7-x64-glb.txt
 if exist ..\xslt\ExtractDownloadLinks-oall-deu.xsl del ..\xslt\ExtractDownloadLinks-oall-deu.xsl
 if exist ..\xslt\ExtractDownloadLinks-oall-enu.xsl del ..\xslt\ExtractDownloadLinks-oall-enu.xsl
 if exist ..\xslt\ExtractDownloadLinks-oall-fra.xsl del ..\xslt\ExtractDownloadLinks-oall-fra.xsl
 if exist ..\xslt\ExtractDownloadLinks-wall.xsl del ..\xslt\ExtractDownloadLinks-wall.xsl
-rem if exist ..\xslt\ExtractExpiredIds-o2k3.xsl del ..\xslt\ExtractExpiredIds-o2k3.xsl
-rem if exist ..\xslt\ExtractExpiredIds-o2k10.xsl del ..\xslt\ExtractExpiredIds-o2k10.xsl
-rem if exist ..\xslt\ExtractExpiredIds-o2k7-x86.xsl del ..\xslt\ExtractExpiredIds-o2k7-x86.xsl
-rem if exist ..\xslt\ExtractExpiredIds-oxp.xsl del ..\xslt\ExtractExpiredIds-oxp.xsl
-rem if exist ..\xslt\ExtractValidIds-o2k3.xsl del ..\xslt\ExtractValidIds-o2k3.xsl
-rem if exist ..\xslt\ExtractValidIds-o2k10.xsl del ..\xslt\ExtractValidIds-o2k10.xsl
-rem if exist ..\xslt\ExtractValidIds-o2k7-x86.xsl del ..\xslt\ExtractValidIds-o2k7-x86.xsl
-rem if exist ..\xslt\ExtractValidIds-oxp.xsl del ..\xslt\ExtractValidIds-oxp.xsl
+del /Q ..\xslt\ExtractDownloadLinks-o*.* >nul 2>&1
+del /Q ..\xslt\ExtractExpiredIds-o*.* >nul 2>&1
+del /Q ..\xslt\ExtractValidIds-o*.* >nul 2>&1
+del /Q ..\exclude\ExcludeList*-o2k7-x64.txt >nul 2>&1
+del /Q ..\exclude\ExcludeList*-o2k7-x86.txt >nul 2>&1
 
 rem *** Execute custom initialization hook ***
 if exist .\custom\InitializationHook.cmd (
@@ -288,12 +383,7 @@ if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
 if exist ..\client\md\hashes-dotnet.txt (
   echo Verifying integrity of .NET Framework installation files...
   pushd ..\client\md
-  if exist %DOTNET4_FILENAME% (
-    ..\bin\hashdeep.exe -a -l -vv -k hashes-dotnet.txt %DOTNET35_FILENAME% %DOTNET4_FILENAME%
-  ) else (
-    rem *** Compatibility line ***
-    ..\bin\hashdeep.exe -a -l -vv -k hashes-dotnet.txt %DOTNET35_FILENAME%
-  )
+  ..\bin\hashdeep.exe -a -l -vv -k hashes-dotnet.txt %DOTNET35_FILENAME% %DOTNET4_FILENAME%
   if errorlevel 1 (
     popd
     goto IntegrityError
@@ -450,7 +540,7 @@ if "%EXCLUDE_SP%"=="1" (
 :SkipStatics
 if not exist ..\bin\msxsl.exe goto NoMSXSL
 for %%i in (dotnet win wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64) do (if /i "%1"=="%%i" goto DetermineWindows)
-for %%i in (ofc oxp o2k3 o2k7 o2k10) do (if /i "%1"=="%%i" goto DetermineOffice)
+for %%i in (ofc) do (if /i "%1"=="%%i" goto DetermineOffice)
 goto DoDownload
 
 :DetermineWindows
@@ -496,76 +586,6 @@ if exist "%TEMP%\DownloadLinks-%1-%2.txt" del "%TEMP%\DownloadLinks-%1-%2.txt"
 goto DoDownload
 
 :DetermineOffice
-if /i "%1"=="ofc" (
-  if /i "%2"=="glb" goto DetermineOfcWSUS
-)
-rem *** Download most recent files for Office inventory functionality ***
-echo Downloading/validating most recent files for Office inventory functionality...
-%WGET_PATH% -N -i ..\static\StaticDownloadLinks-inventory.txt -P ..\client\wsus
-if errorlevel 1 goto DownloadError
-echo %DATE% %TIME% - Info: Downloaded/validated most recent files for Office inventory functionality >>%DOWNLOAD_LOGFILE%
-if "%VERIFY_DOWNLOADS%"=="1" (
-  if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
-  echo Creating integrity database for Windows Update Agent and catalog file...
-  if not exist ..\client\md\nul md ..\client\md
-  pushd ..\client\md
-  ..\bin\hashdeep.exe -c md5,sha256 -l -r ..\wsus >hashes-wsus.txt
-  if errorlevel 1 (
-    popd
-    echo Warning: Error creating integrity database ..\client\md\hashes-wsus.txt.
-    echo %DATE% %TIME% - Warning: Error creating integrity database ..\client\md\hashes-wsus.txt >>%DOWNLOAD_LOGFILE%
-  ) else (
-    popd
-    echo %DATE% %TIME% - Info: Created integrity database for Windows Update Agent and catalog file >>%DOWNLOAD_LOGFILE%
-  )
-) else (
-  if exist ..\client\md\hashes-wsus.txt (
-    del ..\client\md\hashes-wsus.txt 
-    echo %DATE% %TIME% - Info: Deleted integrity database for Windows Update Agent and catalog file >>%DOWNLOAD_LOGFILE%
-  )
-)
-
-rem *** Extract Office update catalog file patchdata.xml ***
-..\client\wsus\invcif.exe /T:"%TEMP%\inventory" /C /Q
-pushd "%TEMP%\inventory"
-move /Y patchdata.xml .. >nul
-popd
-call ..\client\cmd\SafeRmDir.cmd "%TEMP%\inventory"
-
-if exist ..\xslt\ExtractDownloadLinks-%1-%2.xsl (
-  ..\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractDownloadLinks-%1-%2.xsl -o "%TEMP%\DownloadLinks-%1-%2.txt"
-  if errorlevel 1 goto DownloadError
-)
-if exist ..\xslt\ExtractDownloadLinks-%1-%TARGET_ARCH%-%2.xsl (
-  ..\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractDownloadLinks-%1-%TARGET_ARCH%-%2.xsl -o "%TEMP%\DownloadLinks-%1-%2.txt"
-  if errorlevel 1 goto DownloadError
-)
-if not exist "%TEMP%\DownloadLinks-%1-%2.txt" (
-  del "%TEMP%\patchdata.xml"
-  goto DoDownload
-)
-if exist ..\xslt\ExtractValidIds-%1-%TARGET_ARCH%.xsl (
-  ..\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractValidIds-%1-%TARGET_ARCH%.xsl -o "%TEMP%\ValidIds-%1.txt"
-) else (
-  ..\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractValidIds-%1.xsl -o "%TEMP%\ValidIds-%1.txt"
-)
-if errorlevel 1 goto DownloadError
-if exist ..\xslt\ExtractExpiredIds-%1-%TARGET_ARCH%.xsl (
-  ..\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractExpiredIds-%1-%TARGET_ARCH%.xsl -o "%TEMP%\ExpiredIds-%1.txt"
-) else (
-  ..\bin\msxsl.exe "%TEMP%\patchdata.xml" ..\xslt\ExtractExpiredIds-%1.xsl -o "%TEMP%\ExpiredIds-%1.txt"
-)
-if errorlevel 1 goto DownloadError
-del "%TEMP%\patchdata.xml"
-
-%SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\ValidIds-%1.txt" "%TEMP%\ExpiredIds-%1.txt" >"%TEMP%\InvalidIds-%1.txt"
-del "%TEMP%\ValidIds-%1.txt"
-del "%TEMP%\ExpiredIds-%1.txt"
-
-if /i "%1" NEQ "ofc" goto ExcludeOffice
-if /i "%2" NEQ "glb" goto ExcludeOffice
-
-:DetermineOfcWSUS
 rem *** Extract Microsoft update catalog file package.xml ***
 if exist "%TEMP%\package.cab" del "%TEMP%\package.cab"
 if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
@@ -589,9 +609,16 @@ for /F "usebackq tokens=1,2 delims=;" %%i in ("%TEMP%\UpdateCategoriesAndFileIds
     if "!UPDATE_CATEGORY!"=="477b856e-65c4-4473-b621-a8b230bb70d9" (
       for /F "tokens=1-3 delims=," %%k in ("%%i") do (
         if "%%l" NEQ "" (
-          if "%%m"=="" (
-            echo !UPDATE_ID!,%%l>>"%TEMP%\OfficeUpdateAndFileIds.txt"
-            echo %%l>>"%TEMP%\OfficeFileIds.txt"
+          if /i "%2"=="glb" (
+            if "%%m"=="" (
+              echo !UPDATE_ID!,%%l>>"%TEMP%\OfficeUpdateAndFileIds.txt"
+              echo %%l>>"%TEMP%\OfficeFileIds.txt"
+            )
+          ) else (
+            if "%%m"=="%LANG_SHORT%" (
+              echo !UPDATE_ID!,%%l>>"%TEMP%\OfficeUpdateAndFileIds.txt"
+              echo %%l>>"%TEMP%\OfficeFileIds.txt"
+            )
           )
         ) 
       ) 

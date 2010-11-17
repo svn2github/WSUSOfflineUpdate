@@ -71,6 +71,8 @@ echo %1 | %SystemRoot%\system32\find.exe /I ".exe" >nul 2>&1
 if not errorlevel 1 goto InstExe
 echo %1 | %SystemRoot%\system32\find.exe /I ".cab" >nul 2>&1
 if not errorlevel 1 goto InstCab
+echo %1 | %SystemRoot%\system32\find.exe /I ".msp" >nul 2>&1
+if not errorlevel 1 goto InstMsp
 goto UnsupType
 
 :InstExe
@@ -144,11 +146,20 @@ set ERR_LEVEL=0
 for /F "tokens=3 delims=\." %%i in ("%1") do (
   call SafeRmDir.cmd "%TEMP%\%%i"
   md "%TEMP%\%%i"
-  %SystemRoot%\system32\expand.exe -R %1 "%TEMP%\%%i" >nul
+  %SystemRoot%\system32\expand.exe -R %1 -F:* "%TEMP%\%%i" >nul
   for /F %%j in ('dir /A:-D /B "%TEMP%\%%i\*.msp"') do %SystemRoot%\system32\msiexec.exe /qn /norestart /update "%TEMP%\%%i\%%j"
   set ERR_LEVEL=%errorlevel%
   call SafeRmDir.cmd "%TEMP%\%%i"
 )
+if "%IGNORE_ERRORS%"=="1" goto InstSuccess
+for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
+goto InstFailure
+
+:InstMsp
+echo Installing %1...
+set ERR_LEVEL=0
+%SystemRoot%\system32\msiexec.exe /qn /norestart /update %1
+set ERR_LEVEL=%errorlevel%
 if "%IGNORE_ERRORS%"=="1" goto InstSuccess
 for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
 goto InstFailure

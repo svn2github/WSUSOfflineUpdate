@@ -3,11 +3,12 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###    v. 6.6.5+ (w2k_ofc_construction_site (r167))    ###
+###                    v. 6.7a (r168)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
 ###            Walter Schiessberg                      ###
+###   modified by T. Wittrock                          ###
 ##########################################################
 # Exit codes:
 # 0 - success
@@ -22,7 +23,7 @@ cat << END
 Usage: `basename $0` [system] [language] [parameter]
 
 Supported systems:
-wxp, wxp-x64, w2k3, w2k3-x64, w60, w60-x64, w61, w61-x64, oxp, o2k3, o2k7, all-x64, all-x86
+wxp, wxp-x64, w2k3, w2k3-x64, w60, w60-x64, w61, w61-x64, all-x64, all-x86
 
 Supported languages:
 enu, deu, nld, esn, fra, ptg, ptb, ita, rus, plk, ell, csy
@@ -136,7 +137,7 @@ exit 2
 
 evaluateparams()
 {
-syslist=("wxp" "wxp-x64" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "oxp" "o2k3" "o2k7" "all-x64" "all-x86")
+syslist=("wxp" "wxp-x64" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "all-x64" "all-x86")
 langlist=("enu" "deu" "nld" "esn" "fra" "ptg" "ptb" "ita" "rus" "plk" "ell" "csy" "dan" "nor" "sve" "fin" "jpn" "kor" "chs" "cht" "hun" "trk" "ara" "heb")
 paramlist=("/excludesp" "/dotnet" "/mssedefs" "/makeiso" "/nocleanup" "/proxy")
 EXCLUDE_SP="0"
@@ -250,17 +251,15 @@ rm -f index.html
 
 getsystem()
 {
-syslist=("wxp" "wxp-x64" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "oxp" "o2k3" "o2k7" "all-x86" "all-x64")
+syslist=("wxp" "wxp-x64" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "all-x86" "all-x64")
 cat << END
 Please select your OS:
-[1] Windows XP                 [9] Office XP
-[2] Windowx XP 64 bit          [10] Office 2003
-[3] Windows Server 2003        [11] Office 2007
-[4] Windows Server 2003 64 bit
-[5] Windows Vista
-[6] Windows Vista 64 bit
-[7] Windows 7                  [12] All 32 bit
-[8] Windows 7 64 bit           [13] All 64 bit
+[1] Windows XP                   [5] Windows Vista
+[2] Windowx XP 64 bit            [6] Windows Vista 64 bit
+[3] Windows Server 2003          [7] Windows 7
+[4] Windows Server 2003 64 bit   [8] Windows 7 64 bit
+
+[8] All 32 bit                   [9] All 64 bit
 END
 read syschoice
 echo
@@ -329,20 +328,18 @@ fi
 getdotnet()
 {
 dotnet="0"
-if [ "$sys" != "oxp" -o "$sys" != "o2k3" -o "$sys" != "o2k7" ]; then
-	echo "Download .Net framework? [y/n]"
-	read adddotnet
-	if [ "$adddotnet" == "y" ]; then
-		dotnet="1"
-		param2="/dotnet"
-	fi
+echo "Download .Net framework? [y/n]"
+read adddotnet
+if [ "$adddotnet" == "y" ]; then
+	dotnet="1"
+	param2="/dotnet"
 fi
 }
 
 getmssedefs()
 {
 mssedefs="0"
-if [ "$sys" != "oxp" -o "$sys" != "o2k3" -o "$sys" != "o2k7" -o "$sys" != "w2k3" -o "$sys" != "w2k3-x64" ]; then
+if [ "$sys" != "w2k3" -o "$sys" != "w2k3-x64" ]; then
 	echo "Download Microsoft Security Essentials definition files? [y/n]"
 	read addmssedefs
 	if [ "$addmssedefs" == "y" ]; then
@@ -395,7 +392,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***    v. 6.6.5+ (w2k_ofc_construction_site (r167))    ***
+***                    v. 6.7a (r168)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
@@ -495,9 +492,6 @@ if [ "$sys" == "all-x86" ]; then
 	/bin/bash $0 w2k3 $lang $param2 $param3 $param4 $param5 $param6
 	/bin/bash $0 w60 $lang $param2 $param3 $param4 $param5 $param6
 	/bin/bash $0 w61 $lang $param2 $param3 $param4 $param5 $param6
-	/bin/bash $0 oxp $lang $param2 $param3 $param4 $param5 $param6
-	/bin/bash $0 o2k3 $lang $param2 $param3 $param4 $param5 $param6
-	/bin/bash $0 o2k7 $lang $param2 $param3 $param4 $param5 $param6
 	if [ "$param1" == "/makeiso" ]; then
 		/bin/bash ./CreateISOImage.sh $sys $lang $param2 $param3
 		rc=$?
@@ -507,10 +501,6 @@ fi
 
 echo "Downloading most recent Windows Update Agent and catalog file..."
 doWget -c -i ../static/StaticDownloadLinks-wsus.txt -P ../client/wsus
-if [ "$sys" == "oxp" -o "$sys" == "o2k3" -o "$sys" == "o2k7" ]; then
-	echo "Downloading most recent files for Office inventory functionality..."
-	doWget -c -i ../static/StaticDownloadLinks-inventory.txt -P ../client/wsus
-fi
 
 echo "Determining static URLs for ${sys} ${lang}..."
 
@@ -536,7 +526,7 @@ fi
 
 static3="../static/StaticDownloadLinks-win-x86-${lang}.txt"
 static4="../static/StaticDownloadLinks-win-x86-glb.txt"
-if [ "$sys" != "w60" ] && [ "$sys" != "$w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "$w61-x64" ] && [ "$sys" != "oxp" ] && [ "$sys" != "o2k3" ] && [ "$sys" != "o2k7" ] && [ "$sys" != "w2k3-x64" ]; then
+if [ "$sys" != "w60" ] && [ "$sys" != "$w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "$w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
 	if [ -f "$static3" ]; then
 		cat $static3 > ../temp/StaticUrls-${lang}.txt
 	fi
@@ -566,26 +556,13 @@ if [ "$mssedefs" == "1" ]; then
 	cp ../static/StaticDownloadLink-mssedefs-x64-glb.txt ../temp/StaticUrls-mssedefs-x64-glb.txt
 fi
 
-if [ "$sys" == "oxp" -o "$sys" == "o2k3" -o "$sys" == "o2k7" ]; then
-	echo "Determining static urls for ofc glb..."
-	cat ../static/StaticDownloadLinks-ofc-glb.txt > ../temp/StaticUrls-ofc-glb.txt
-	echo "Determining static urls for ofc ${lang}..."
-	cat ../static/StaticDownloadLinks-ofc-${lang}.txt > ../temp/StaticUrls-ofc-${lang}.txt
-fi
-
 cd ../temp
-if [ "$sys" == "oxp" -o "$sys" == "o2k3" -o "$sys" == "o2k7" ]; then
-	echo "Extracting Office update catalogue file package.xml..."
-	cabextract -q -F patchdata.xml ../client/wsus/invcif.exe
-	mv patchdata.xml package.xml
-else
-	echo "Extracting Windows update catalogue file package.xml..."
-	cp ../client/wsus/wsusscn2.cab ../client/wsus/wsusscn2_1.cab
-	cabextract -q -F package.cab ../client/wsus/wsusscn2_1.cab
-	cabextract -q -F package.xml package.cab
-	rm package.cab
-	rm ../client/wsus/wsusscn2_1.cab
-fi
+echo "Extracting Windows update catalogue file package.xml..."
+cp ../client/wsus/wsusscn2.cab ../client/wsus/wsusscn2_1.cab
+cabextract -q -F package.cab ../client/wsus/wsusscn2_1.cab
+cabextract -q -F package.xml package.cab
+rm package.cab
+rm ../client/wsus/wsusscn2_1.cab
 cd ../sh
 
 echo "Determining update URLs for ${sys} ${lang}..."
@@ -659,7 +636,7 @@ if [ -f "$glb2" ] && [ "$lang" != "glb" ]; then
 	rm ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
 fi
 
-if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "oxp" ] && [ "$sys" != "o2k3" ] && [ "$sys" != "o2k7" ] && [ "$sys" != "w2k3-x64" ]; then
+if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
 	echo "Determining update URLs for win ${lang}..."
 	$xml tr ../xslt/ExtractDownloadLinks-win-x86-${lang}.xsl ../temp/package.xml > ../temp/Urls-win-x86-${lang}.txt
 	grep -i -v -f ../exclude/ExcludeList-win-x86.txt ../temp/Urls-win-x86-${lang}.txt > ../temp/ValidUrls-win-x86-${lang}.txt
@@ -694,24 +671,17 @@ Found `grep -c http: ../temp/urls.txt` patches...
 END
 
 #create needed directories
-mkdir -p ../client/win/${lang} ../client/${sys}/ ../client/${sys}/glb ../client/${sys}/${lang} ../client/win/${lang}/ie6setup
-if [ "$sys" == "oxp" -o "$sys" == "o2k3" -o "$sys" == "o2k7" ]; then
-	mkdir -p ../client/ofc ../client/ofc/glb ../client/ofc/${lang}
-fi
+mkdir -p ../client/win/${lang} ../client/${sys}/ ../client/${sys}/glb ../client/${sys}/${lang}
 
 printheader
 echo "Downloading patches for ${sys}..."
 echo "Downloading static patches..."
 doWget -c -i ../temp/StaticUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
-if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "oxp" ] && [ "$sys" != "o2k3" ] && [ "$sys" != "o2k7" ] && [ "$sys" != "w2k3-x64" ]; then
+if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
 	doWget -c -i ../temp/StaticUrls-${lang}.txt -P ../client/win/${lang}
 	doWget -c -i ../temp/StaticUrls-glb.txt -P ../client/win/glb
 fi
 doWget -c -i ../temp/StaticUrls-${sys}-glb.txt -P ../client/${sys}/glb
-if [ "$sys" == "oxp" -o "$sys" == "o2k3" -o "$sys" == "o2k7" ]; then
-  doWget -c -i ../temp/StaticUrls-ofc-glb.txt -P ../client/ofc/glb
-  doWget -c -i ../temp/StaticUrls-ofc-${lang}.txt -P ../client/ofc/${lang}
-fi
 
 if [ "$dotnet" == "1" ]; then
 	echo "Downloading .Net framework..."
@@ -728,7 +698,7 @@ fi
 echo "Downloading patches for $sys $lang"
 doWget -c -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
 doWget -c -i ../temp/ValidUrls-${sys}-glb.txt -P ../client/${sys}/glb
-if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "oxp" ] && [ "$sys" != "o2k3" ] && [ "$sys" != "o2k7" ] && [ "$sys" != "w2k3-x64" ]; then
+if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
 	doWget -c -i ../temp/ValidUrls-win-x86-${lang}.txt -P ../client/win/${lang}
 	doWget -c -i ../temp/ValidUrls-win-x86-glb.txt -P ../client/win/glb
 fi
@@ -737,15 +707,11 @@ printheader
 echo "Validating patches for ${sys}..."
 echo "Validating static patches..."
 doWget -c -i ../temp/StaticUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
-if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "oxp" ] && [ "$sys" != "o2k3" ] && [ "$sys" != "o2k7" ] && [ "$sys" != "w2k3-x64" ]; then
+if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
 	doWget -c -i ../temp/StaticUrls-${lang}.txt -P ../client/win/${lang}
 	doWget -c -i ../temp/StaticUrls-glb.txt -P ../client/win/glb
 fi
 doWget -c -i ../temp/StaticUrls-${sys}-glb.txt -P ../client/${sys}/glb
-if [ "$sys" == "oxp" -o "$sys" == "o2k3" -o "$sys" == "o2k7" ]; then
-	 doWget -c -i ../temp/StaticUrls-ofc-glb.txt -P ../client/ofc/glb
-	 doWget -c -i ../temp/StaticUrls-ofc-${lang}.txt -P ../client/ofc/${lang}
-fi
 if [ "$dotnet" == "1" ]; then
 	echo "Validating .Net framework..."
 	doWget -c -i ../temp/StaticUrls-dotnet.txt -P ../client/dotnet
@@ -761,7 +727,7 @@ fi
 echo "Validating patches for $sys ${lang}..."
 doWget -c -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
 doWget -c -i ../temp/ValidUrls-${sys}-glb.txt -P ../client/${sys}/glb
-if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "oxp" ] && [ "$sys" != "o2k3" ] && [ "$sys" != "o2k7" ] && [ "$sys" != "w2k3-x64" ]; then
+if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
 	doWget -c -i ../temp/ValidUrls-win-x86-${lang}.txt -P ../client/win/${lang}
 	doWget -c -i ../temp/ValidUrls-win-x86-glb.txt -P ../client/win/glb
 fi
@@ -777,15 +743,7 @@ if [ "$CLEANUP_DOWNLOADS" != "0" ]; then
 	echo "Cleaning up client directory for $sys glb"
 	cat ../temp/StaticUrls-${sys}-glb.txt >> ../temp/ValidUrls-${sys}-glb.txt
 	cleanup "../temp/ValidUrls-${sys}-glb.txt" "../client/${sys}/glb"
-	if [ "$sys" == "oxp" -o "$sys" == "o2k3" -o "$sys" == "o2k7" ]; then
-		echo "Cleaning up client directory for ofc $lang"
-		cat ../temp/StaticUrls-ofc-${lang}.txt > ../temp/ValidUrls-ofc-${lang}.txt
-		cleanup "../temp/ValidUrls-ofc-${lang}.txt" "../client/ofc/${lang}"
-		echo "Cleaning up client directory for ofc glb"
-		cat ../temp/StaticUrls-ofc-glb.txt > ../temp/ValidUrls-ofc-glb.txt
-		cleanup "../temp/ValidUrls-ofc-glb.txt" "../client/ofc/glb"
-	fi
-	if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "oxp" ] && [ "$sys" != "o2k3" ] && [ "$sys" != "o2k7" ] && [ "$sys" != "w2k3-x64" ]; then
+	if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
 		echo "Cleaning up client directory for win $lang"
 		cat ../temp/StaticUrls-${lang}.txt > ../temp/ValidUrls-${lang}.txt
 		cat ../temp/ValidUrls-win-x86-${lang}.txt >> ../temp/ValidUrls-${lang}.txt

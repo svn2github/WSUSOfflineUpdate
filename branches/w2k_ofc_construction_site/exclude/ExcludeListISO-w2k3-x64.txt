@@ -9,6 +9,3 @@
 *x86-glb\/*
 *-x86\/*
 *.au3
-*reg.exe
-*invcif.exe
-*invcm.exe

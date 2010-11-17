@@ -1,4 +1,1 @@
 http://download.microsoft.com/download/7/3/a/73a8da2d-48d0-4c65-80fc-24009358a230/Office2003SP3-KB923618-FullFile-FIN.exe
-http://download.microsoft.com/download/4/5/8/458276B3-FB94-4E47-8AFC-6D9BC0087A62/office2003-KB975051-FullFile-FIN.exe
-http://download.microsoft.com/download/A/9/A/A9AB0753-37D7-436D-9408-C368298A7E81/office2003-KB2293428-FullFile-FIN.exe
-http://download.microsoft.com/download/8/4/1/841726D4-6BF0-42D2-91D7-0B95DB57672E/office2003-KB2435682-FullFile-FIN.exe

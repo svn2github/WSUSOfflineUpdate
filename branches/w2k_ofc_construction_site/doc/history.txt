@@ -450,6 +450,8 @@ Version 6.6.5 -- 10.11.10
 --------------------------------------------------------------------------------
 Version 6.7 -- ??.??.10
 - Windows 2000 support removed
-- Removed obsolete utility extract.exe
-- Proprietary autologon implementation replaced by Sysinternals' tool Autologon.exe  
+- Office updates will be dynamically determined again (Thanks to Martin Trenkner)
 - Automatic recall feature enhanced to support Windows Vista and Server 2008 systems
+- Proprietary autologon implementation replaced by Sysinternals' tool Autologon.exe  
+- Office support removed from Linux download and ISO creation scripts
+- Removed obsolete utility extract.exe

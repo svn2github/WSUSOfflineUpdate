@@ -3,6 +3,7 @@ o2k\
 oxp\
 o2k3\
 o2k7\
+o2k10\
 w2k\
 wxp\
 w60\
@@ -25,6 +26,3 @@ windowsxp
 directx_
 -x64
 .au3
-reg.exe
-invcif.exe
-invcm.exe
