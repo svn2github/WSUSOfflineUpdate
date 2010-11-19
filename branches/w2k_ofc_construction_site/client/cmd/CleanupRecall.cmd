@@ -60,19 +60,19 @@ if errorlevel 1 (
   echo %DATE% %TIME% - Info: Disabled autologon >>%UPDATE_LOGFILE%
 )
 
-echo Deleting WSUSUpdateAdmin account...
-if "%USERNAME%"=="WSUSUpdateAdmin" (
-  %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v DeleteWSUSUpdateAdminProfile /t REG_SZ /d "cmd /c rd /S /Q \"%USERPROFILE%\"" >nul 2>&1 
-  echo %DATE% %TIME% - Info: Registered erasing of WSUSUpdateAdmin profile >>%UPDATE_LOGFILE%
+echo Deleting WOUTempAdmin account...
+if "%USERNAME%"=="WOUTempAdmin" (
+  %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v DeleteWOUTempAdminProfile /t REG_SZ /d "cmd /c rd /S /Q \"%USERPROFILE%\"" >nul 2>&1 
+  echo %DATE% %TIME% - Info: Registered erasing of WOUTempAdmin profile >>%UPDATE_LOGFILE%
 ) else (
-  echo %DATE% %TIME% - Warning: WSUSUpdateAdmin is not logged on - registration of erasing of WSUSUpdateAdmin profile skipped >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: WOUTempAdmin is not logged on - registration of erasing of WOUTempAdmin profile skipped >>%UPDATE_LOGFILE%
 )
 %CSCRIPT_PATH% //Nologo //B //E:vbs DeleteUpdateAdmin.vbs
 if errorlevel 1 (
-  echo Warning: Deletion of WSUSUpdateAdmin account failed.
-  echo %DATE% %TIME% - Warning: Deletion of WSUSUpdateAdmin account failed >>%UPDATE_LOGFILE%
+  echo Warning: Deletion of WOUTempAdmin account failed.
+  echo %DATE% %TIME% - Warning: Deletion of WOUTempAdmin account failed >>%UPDATE_LOGFILE%
 ) else (
-  echo %DATE% %TIME% - Info: Deleted WSUSUpdateAdmin account >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Deleted WOUTempAdmin account >>%UPDATE_LOGFILE%
 )
 goto EoF
 

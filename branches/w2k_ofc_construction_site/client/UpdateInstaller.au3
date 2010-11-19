@@ -17,12 +17,15 @@ Dim Const $reg_key_powershell         = "HKEY_LOCAL_MACHINE\Software\Microsoft\P
 Dim Const $reg_key_msse               = "HKEY_LOCAL_MACHINE\Software\Microsoft\Microsoft Security Essentials"
 Dim Const $reg_key_fontdpi            = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontDPI"
 Dim Const $reg_key_windowmetrics      = "HKEY_CURRENT_USER\Control Panel\Desktop\WindowMetrics"
+Dim Const $reg_key_windowsupdate      = "HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsUpdate"
+
 Dim Const $reg_val_default            = ""
 Dim Const $reg_val_enabled            = "Enabled"
 Dim Const $reg_val_version            = "Version"
 Dim Const $reg_val_pshversion         = "PowerShellVersion"
 Dim Const $reg_val_logpixels          = "LogPixels"
 Dim Const $reg_val_applieddpi         = "AppliedDPI"
+Dim Const $reg_val_wustatusserver     = "WUStatusServer"
 
 ; Defaults
 Dim Const $default_logpixels          = 96
@@ -50,6 +53,9 @@ Dim Const $ini_value_shutdown         = "shutdown"
 
 Dim Const $ini_section_messaging      = "Messaging"
 Dim Const $ini_value_showlog          = "showlog"
+
+Dim Const $ini_section_misc           = "Miscellaneous"
+Dim Const $ini_value_wustatusserver   = "WUStatusServer"
 
 Dim Const $enabled                    = "Enabled"
 Dim Const $disabled                   = "Disabled"
@@ -731,6 +737,10 @@ While 1
       EndIf  
 
     Case $btn_start          ; Start Button pressed
+      $options = IniRead($inifilename, $ini_section_misc, $ini_value_wustatusserver, "")    ; Dummy use of $options
+      If $options <> "" Then
+        RegWrite($reg_key_windowsupdate, $reg_val_wustatusserver, "REG_SZ", $options)
+      EndIf
       $options = ""
       If BitAND(GUICtrlRead($backup), $GUI_CHECKED) <> $GUI_CHECKED Then
         $options = $options & " /nobackup"

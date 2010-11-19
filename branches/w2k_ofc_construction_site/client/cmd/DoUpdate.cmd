@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7b (r170)
+set WSUSOFFLINE_VERSION=6.7b (r171)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -67,7 +67,7 @@ if "%BOOT_MODE%"=="/autoreboot" (if not exist %REG_PATH% goto NoReg)
 if "%SHOW_LOG%"=="/showlog" (if not exist %REG_PATH% goto NoReg)
 
 rem *** Check number of automatic recalls ***
-if "%USERNAME%"=="WSUSUpdateAdmin" (
+if "%USERNAME%"=="WOUTempAdmin" (
   if exist "%TEMP%\wsusadmin-recall.3" goto EndlessLoop
   if exist "%TEMP%\wsusadmin-recall.2" ren "%TEMP%\wsusadmin-recall.2" wsusadmin-recall.3
   if exist "%TEMP%\wsusadmin-recall.1" (
@@ -723,7 +723,7 @@ if "%OFC_COMP_PACK%" NEQ "1" (
 
 :CheckAUService
 rem *** Check state of service 'automatic updates' ***
-if "%USERNAME%"=="WSUSUpdateAdmin" goto ListUpdateIds
+if "%USERNAME%"=="WOUTempAdmin" goto ListUpdateIds
 echo Checking state of service 'automatic updates'...
 echo %DATE% %TIME% - Info: Detected state of service 'automatic updates': %AU_SVC_STATE_INITIAL% (start mode: %AU_SVC_START_MODE%) >>%UPDATE_LOGFILE%
 if /i "%AU_SVC_STATE_INITIAL%"=="" goto ListUpdateIds
@@ -806,7 +806,7 @@ if "%RECALL_REQUIRED%"=="1" (
       echo %DATE% %TIME% - Warning: Utility ..\bin\Autologon.exe not found. Automatic recall is unavailable >>%UPDATE_LOGFILE%
       goto ManualRecall
     )
-    if "%USERNAME%" NEQ "WSUSUpdateAdmin" (
+    if "%USERNAME%" NEQ "WOUTempAdmin" (
       echo Preparing automatic recall...
       call PrepareRecall.cmd %~f0 %BACKUP_MODE% %VERIFY_MODE% %INSTALL_IE% %UPDATE_WMP% %UPDATE_TSC% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_MSSE% %INSTALL_CONVERTERS% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES%
     )
@@ -821,7 +821,7 @@ if "%RECALL_REQUIRED%"=="1" (
 ) else (
   if "%SHOW_LOG%"=="/showlog" call PrepareShowLogFile.cmd
   if "%BOOT_MODE%"=="/autoreboot" (
-    if "%USERNAME%"=="WSUSUpdateAdmin" (
+    if "%USERNAME%"=="WOUTempAdmin" (
       echo Cleaning up automatic recall...
       call CleanupRecall.cmd
       del /Q "%TEMP%\wsusadmin-recall.*"
@@ -1013,7 +1013,7 @@ echo.
 goto Cleanup
 
 :Cleanup
-if "%USERNAME%"=="WSUSUpdateAdmin" (
+if "%USERNAME%"=="WOUTempAdmin" (
   if "%SHOW_LOG%"=="/showlog" call PrepareShowLogFile.cmd
   echo Cleaning up automatic recall...
   call CleanupRecall.cmd

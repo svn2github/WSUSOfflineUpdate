@@ -2,35 +2,35 @@
 
 Option Explicit
 
-Private Const strWSUSUpdateAdminName  = "WSUSUpdateAdmin"
-Private Const strKeySystemPolicies    = "HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System\"
-Private Const strValAdminPrompt       = "ConsentPromptBehaviorAdmin"
-Private Const strValEnableLUA         = "EnableLUA"
-Private Const strKeyAutologon         = "HKCU\Software\Sysinternals\A\"
-Private Const strValAcceptEula        = "EulaAccepted"
+Private Const strWOUTempAdminName   = "WOUTempAdmin"
+Private Const strKeySystemPolicies  = "HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System\"
+Private Const strValAdminPrompt     = "ConsentPromptBehaviorAdmin"
+Private Const strValEnableLUA       = "EnableLUA"
+Private Const strKeyAutologon       = "HKCU\Software\Sysinternals\A\"
+Private Const strValAcceptEula      = "EulaAccepted"
 
 Dim wshShell, strComputerName, objComputer, objUser, strPassword, found
 
 Private Function CreateUpdateAdmin(objComp)
-Dim objWMIService, objWSUSUpdateAdmin, objGroup, objItem, strResult
+Dim objWMIService, objWOUTempAdmin, objGroup, objItem, strResult
 
   On Error Resume Next 'Turn error reporting off
   Set objWMIService = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
-  Set objWSUSUpdateAdmin = objComp.Create("user", strWSUSUpdateAdminName)
+  Set objWOUTempAdmin = objComp.Create("user", strWOUTempAdminName)
   Randomize
   strResult = "Wou" & Int(90000 * Rnd) + 10000
-  objWSUSUpdateAdmin.SetPassword strResult
-  objWSUSUpdateAdmin.SetInfo
+  objWOUTempAdmin.SetPassword strResult
+  objWOUTempAdmin.SetInfo
   For Each objItem in objWMIService.ExecQuery("Select * from Win32_Group Where SID = 'S-1-5-32-544'")
     objComp.Filter = Array("group")
     For Each objGroup In objComp
       If objGroup.Name = objItem.Name Then
-        objGroup.Add(objWSUSUpdateAdmin.ADsPath)
+        objGroup.Add(objWOUTempAdmin.ADsPath)
       End If
     Next
   Next
   ' Clear objects memory
-  Set objWSUSUpdateAdmin = Nothing
+  Set objWOUTempAdmin = Nothing
   Set objWMIService = Nothing
   CreateUpdateAdmin = strResult   
   On Error GoTo 0 'Turn error reporting on
@@ -52,15 +52,15 @@ Set objComputer = GetObject("WinNT://" & strComputerName)
 objComputer.Filter = Array("user")
 found = false
 For Each objUser In objComputer
-  If LCase(objUser.Name) = LCase(strWSUSUpdateAdminName) Then
+  If LCase(objUser.Name) = LCase(strWOUTempAdminName) Then
     found = true
     Exit For
   End If    
 Next
 If found Then
-  WScript.Echo("ERROR: User account '" & strWSUSUpdateAdminName & "' already exists.")
+  WScript.Echo("ERROR: User account '" & strWOUTempAdminName & "' already exists.")
   WScript.Quit(1)
 End If
 strPassword = CreateUpdateAdmin(objComputer)
-EnableAutoLogonAndDisableUAC wshShell, strWSUSUpdateAdminName, strComputerName, strPassword   
+EnableAutoLogonAndDisableUAC wshShell, strWOUTempAdminName, strComputerName, strPassword   
 WScript.Quit(0)

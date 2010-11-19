@@ -44,6 +44,7 @@ Dim Const $ini_section_o2k7       = "Office 2007"
 Dim Const $ini_section_o2k10      = "Office 2010"
 Dim Const $ini_section_iso        = "ISO Images"
 Dim Const $ini_section_usb        = "USB Images"
+Dim Const $ini_section_opts       = "Options"
 Dim Const $ini_section_misc       = "Miscellaneous"
 Dim Const $enabled                = "Enabled"
 Dim Const $disabled               = "Disabled"
@@ -76,20 +77,23 @@ Dim Const $iso_token_cd           = "single"
 Dim Const $iso_token_dvd          = "cross-platform"
 Dim Const $usb_token_copy         = "copy"
 Dim Const $usb_token_path         = "path"
-Dim Const $misc_token_includesp   = "includesp"
-Dim Const $misc_token_dotnet      = "includedotnet"
-Dim Const $misc_token_msse        = "includemsse"
-Dim Const $misc_token_cleanup     = "cleanupdownloads"
-Dim Const $misc_token_verify      = "verifydownloads"
+Dim Const $opts_token_includesp   = "includesp"
+Dim Const $opts_token_dotnet      = "includedotnet"
+Dim Const $opts_token_msse        = "includemsse"
+Dim Const $opts_token_cleanup     = "cleanupdownloads"
+Dim Const $opts_token_verify      = "verifydownloads"
 Dim Const $misc_token_proxy       = "proxy"
 Dim Const $misc_token_wsus        = "wsus"
+Dim Const $misc_token_wsus_trans  = "transferwsus"
 Dim Const $misc_token_chkver      = "checkouversion"
 Dim Const $misc_token_minimize    = "minimizeondownload"
 Dim Const $misc_token_showdonate  = "showdonate"
+Dim Const $misc_token_clt_wustat  = "WUStatusServer"
 
 ; Paths
 Dim Const $paths_rel_structure    = "\bin\,\client\bin\,\client\cmd\,\client\exclude\,\client\opt\,\client\static\,\cmd\,\exclude\,\iso\,\log\,\static\,\xslt\"
 Dim Const $path_rel_builddate     = "\client\builddate.txt"
+Dim Const $path_rel_clientini     = "\client\UpdateInstaller.ini"
 
 Dim $maindlg, $inifilename, $tabitemfocused, $includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $buildlbl
 Dim $usbcopy, $usblbl, $usbpath, $usbfsf, $skipdownload, $shutdown, $btn_start, $btn_proxy, $btn_wsus, $btn_donate, $btn_exit, $proxy, $wsus, $dummy
@@ -158,6 +162,10 @@ Dim $result
     EndIf
   EndIf
   Return $result
+EndFunc
+
+Func ClientIniFileName()
+  Return @ScriptDir & $path_rel_clientini
 EndFunc
 
 Func LanguageCaption($token, $german)
@@ -1022,11 +1030,11 @@ Func SaveSettings()
   IniWrite($inifilename, $ini_section_usb, $usb_token_path, GUICtrlRead($usbpath))
 
 ;  Miscellaneous
-  IniWrite($inifilename, $ini_section_misc, $misc_token_includesp, CheckBoxState2String($includesp))
-  IniWrite($inifilename, $ini_section_misc, $misc_token_dotnet, CheckBoxState2String($dotnet))
-  IniWrite($inifilename, $ini_section_misc, $misc_token_msse, CheckBoxState2String($msse))
-  IniWrite($inifilename, $ini_section_misc, $misc_token_cleanup, CheckBoxState2String($cleanupdownloads))
-  IniWrite($inifilename, $ini_section_misc, $misc_token_verify, CheckBoxState2String($verifydownloads))
+  IniWrite($inifilename, $ini_section_opts, $opts_token_includesp, CheckBoxState2String($includesp))
+  IniWrite($inifilename, $ini_section_opts, $opts_token_dotnet, CheckBoxState2String($dotnet))
+  IniWrite($inifilename, $ini_section_opts, $opts_token_msse, CheckBoxState2String($msse))
+  IniWrite($inifilename, $ini_section_opts, $opts_token_cleanup, CheckBoxState2String($cleanupdownloads))
+  IniWrite($inifilename, $ini_section_opts, $opts_token_verify, CheckBoxState2String($verifydownloads))
   IniWrite($inifilename, $ini_section_misc, $misc_token_proxy, $proxy)
   IniWrite($inifilename, $ini_section_misc, $misc_token_wsus, $wsus)
   
@@ -2249,7 +2257,7 @@ EndIf
 ;  Office 2010 clarification label
 $txtxpos = $txtxpos + $groupwidth / 3 - $txtxoffset
 If ShowGUIInGerman() Then
-  GUICtrlCreateLabel("(BEACHTEN: Updates für Office 2010 sind bei anderen Office-Downloads implizit enthalten.)", $txtxpos, $txtypos, 2 * $groupwidth / 3 - $txtxoffset, $txtheight)
+  GUICtrlCreateLabel("(BEACHTEN: Updates für Office 2010 sind in anderen Office-Downloads implizit enthalten.)", $txtxpos, $txtypos, 2 * $groupwidth / 3 - $txtxoffset, $txtheight)
 Else
   GUICtrlCreateLabel("(NOTE: Updates for Office 2010 are implicitly included in other Office downloads.)", $txtxpos, $txtypos, 2 * $groupwidth / 3 - $txtxoffset, $txtheight)
 EndIf
@@ -2276,7 +2284,7 @@ If ShowGUIInGerman() Then
 Else
   $includesp = GUICtrlCreateCheckbox("Include Service Packs", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 EndIf
-If IniRead($inifilename, $ini_section_misc, $misc_token_includesp, $enabled) = $enabled Then
+If IniRead($inifilename, $ini_section_opts, $opts_token_includesp, $enabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -2289,7 +2297,7 @@ If ShowGUIInGerman() Then
 Else
   $cleanupdownloads = GUICtrlCreateCheckbox("Clean up download directories", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 EndIf
-If IniRead($inifilename, $ini_section_misc, $misc_token_cleanup, $enabled) = $enabled Then
+If IniRead($inifilename, $ini_section_opts, $opts_token_cleanup, $enabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -2303,7 +2311,7 @@ If ShowGUIInGerman() Then
 Else
   $dotnet = GUICtrlCreateCheckbox("Include .NET Framework 3.5 SP1 and 4", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 EndIf
-If IniRead($inifilename, $ini_section_misc, $misc_token_dotnet, $disabled) = $enabled Then
+If IniRead($inifilename, $ini_section_opts, $opts_token_dotnet, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -2316,7 +2324,7 @@ If ShowGUIInGerman() Then
 Else
   $verifydownloads = GUICtrlCreateCheckbox("Verify downloaded updates", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 EndIf
-If IniRead($inifilename, $ini_section_misc, $misc_token_verify, $enabled) = $enabled Then
+If IniRead($inifilename, $ini_section_opts, $opts_token_verify, $enabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -2330,7 +2338,7 @@ If ShowGUIInGerman() Then
 Else
   $msse = GUICtrlCreateCheckbox("Include MS Security Essentials definitions", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 EndIf
-If IniRead($inifilename, $ini_section_misc, $misc_token_msse, $disabled) = $enabled Then
+If IniRead($inifilename, $ini_section_opts, $opts_token_msse, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -2623,6 +2631,11 @@ While 1
             ContinueLoop
           Case Else
         EndSwitch
+      EndIf
+      If ( (IniRead($inifilename, $ini_section_misc, $misc_token_wsus_trans, $disabled) = $enabled) AND ($wsus <> "") ) Then
+        IniWrite(ClientIniFileName(), $ini_section_misc, $misc_token_clt_wustat, $wsus)
+      Else
+        IniDelete(ClientIniFileName(), $ini_section_misc, $misc_token_clt_wustat)
       EndIf
       If IniRead($inifilename, $ini_section_misc, $misc_token_minimize, $disabled) = $enabled Then
         WinSetState($maindlg, $maindlg, @SW_MINIMIZE)

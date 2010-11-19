@@ -25,13 +25,13 @@ if errorlevel 1 (
   echo %DATE% %TIME% - Info: Saved System policies registry hive >>%UPDATE_LOGFILE%
 )
 
-echo Creating WSUSUpdateAdmin account...
+echo Creating WOUTempAdmin account...
 %CSCRIPT_PATH% //Nologo //B //E:vbs CreateUpdateAdminAndEnableAutoLogon.vbs
 if errorlevel 1 (
-  echo Warning: Creation of WSUSUpdateAdmin account failed.
-  echo %DATE% %TIME% - Warning: Creation of WSUSUpdateAdmin account failed >>%UPDATE_LOGFILE%
+  echo Warning: Creation of WOUTempAdmin account failed.
+  echo %DATE% %TIME% - Warning: Creation of WOUTempAdmin account failed >>%UPDATE_LOGFILE%
 ) else (
-  echo %DATE% %TIME% - Info: Created WSUSUpdateAdmin account >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Created WOUTempAdmin account >>%UPDATE_LOGFILE%
 )
 
 echo Registering recall...
