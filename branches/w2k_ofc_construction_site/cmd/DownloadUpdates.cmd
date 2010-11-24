@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7b (r172)
+set WSUSOFFLINE_VERSION=6.7b (r173)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -654,6 +654,7 @@ del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 
 if exist "%TEMP%\DownloadLinks-%1-%2.txt" del "%TEMP%\DownloadLinks-%1-%2.txt"
 if exist ..\client\ofc\UpdateTable-%1-%2.csv del ..\client\ofc\UpdateTable-%1-%2.csv
+if not exist ..\client\ofc\nul md ..\client\ofc
 for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt") do (
   for /F "usebackq tokens=1,2 delims=," %%k in ("%TEMP%\OfficeUpdateAndFileIds.txt") do (
     if /i "%%l"=="%%i" (

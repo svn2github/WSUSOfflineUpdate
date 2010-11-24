@@ -20,7 +20,9 @@ del "%TEMP%\package.cab"
 if errorlevel 1 goto DownloadError
 "%TEMP%\msxsl.exe" "%TEMP%\package.xml" .\xslt\ExtractUpdateCabExeIdsAndLocations.xsl -o "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 if errorlevel 1 goto DownloadError
+goto DoIt
 
+:Determine
 if exist "%TEMP%\OfficeUpdateAndFileIds.txt" del "%TEMP%\OfficeUpdateAndFileIds.txt"
 if exist "%TEMP%\OfficeFileIds.txt" del "%TEMP%\OfficeFileIds.txt"
 set UPDATE_ID=
@@ -31,9 +33,16 @@ for /F "usebackq tokens=1,2 delims=;" %%i in ("%TEMP%\UpdateCategoriesAndFileIds
     if "!UPDATE_CATEGORY!"=="477b856e-65c4-4473-b621-a8b230bb70d9" (
       for /F "tokens=1-3 delims=," %%k in ("%%i") do (
         if "%%l" NEQ "" (
-          if "%%m"=="" (
-            echo !UPDATE_ID!,%%l>>"%TEMP%\OfficeUpdateAndFileIds.txt"
-            echo %%l>>"%TEMP%\OfficeFileIds.txt"
+          if /i "%2"=="glb" (
+            if "%%m"=="" (
+              echo !UPDATE_ID!,%%l>>"%TEMP%\OfficeUpdateAndFileIds.txt"
+              echo %%l>>"%TEMP%\OfficeFileIds.txt"
+            )
+          ) else (
+            if "%%m"=="%3" (
+              echo !UPDATE_ID!,%%l>>"%TEMP%\OfficeUpdateAndFileIds.txt"
+              echo %%l>>"%TEMP%\OfficeFileIds.txt"
+            )
           )
         ) 
       ) 
@@ -57,18 +66,24 @@ rem del "%TEMP%\UpdateCategoriesAndFileIds.txt"
 rem del "%TEMP%\OfficeFileIds.txt"
 rem del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 
-if exist "%TEMP%\OfficeDownloadLinks.txt" del "%TEMP%\OfficeDownloadLinks.txt"
-if exist "%TEMP%\OfficeUpdateTable.csv" del "%TEMP%\OfficeUpdateTable.csv"
+if exist "%TEMP%\DownloadLinks-%1-%2.txt" del "%TEMP%\DownloadLinks-%1-%2.txt"
+if exist "%TEMP%\UpdateTable-%1-%2.csv" del "%TEMP%\UpdateTable-%1-%2.csv"
 for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt") do (
   for /F "usebackq tokens=1,2 delims=," %%k in ("%TEMP%\OfficeUpdateAndFileIds.txt") do (
     if /i "%%l"=="%%i" (
-      echo %%j>>"%TEMP%\OfficeDownloadLinks.txt"
-      echo %%k,%%~nj>>"%TEMP%\OfficeUpdateTable.csv"
+      echo %%j>>"%TEMP%\DownloadLinks-%1-%2.txt"
+      echo %%k,%%~nj>>"%TEMP%\UpdateTable-%1-%2.csv"
     )
   )
 )
 rem del "%TEMP%\OfficeUpdateAndFileIds.txt"
 rem del "%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
+goto :EoF
+
+:DoIt
+call :Determine ofc enu en
+call :Determine ofc deu de
+call :Determine ofc glb
 goto EoF
 
 del "%TEMP%\msxsl.exe"
