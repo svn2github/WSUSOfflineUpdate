@@ -10,6 +10,7 @@ StaticDownloadLink-wddefs-x86-glb.txt
 ExtractUpdateFileIdsAndLocations.xsl
 CompileAutoItScripts.cmd
 ExtractDownloadLinks-all.cmd
+ExtractUpdateIdsAndDownloadLinks-ofc.cmd
 PrepareProductionTree.cmd
 PrepareReleaseTree.cmd
 MakeRelease.cmd

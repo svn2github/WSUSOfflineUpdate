@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7b (r171)
+set WSUSOFFLINE_VERSION=6.7b (r172)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -26,12 +26,12 @@ for %%i in (wxp w2k3 w2k3-x64) do (
     for %%j in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%2"=="%%j" goto EvalParams)
   )
 )
-for %%i in (w60 w60-x64 w61 w61-x64) do (
+for %%i in (w60 w60-x64 w61 w61-x64 ofc) do (
   if /i "%1"=="%%i" (
     if /i "%2"=="glb" goto EvalParams
   )
 )
-for %%i in (oxp o2k3 o2k7 o2k10) do (
+for %%i in (oxp o2k3 o2k7) do (
   if /i "%1"=="%%i" (
     for %%j in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%2"=="%%j" goto Lang_%%j)
   )
@@ -197,9 +197,7 @@ rem *** Office 2000 stuff ***
 if exist ..\client\bin\msxsl.exe move /Y ..\client\bin\msxsl.exe ..\bin >nul
 if exist ..\client\xslt\nul rd /S /Q ..\client\xslt
 if exist ..\client\static\StaticUpdateIds-o2k.txt del ..\client\static\StaticUpdateIds-o2k.txt
-if exist ..\exclude\ExcludeList-o2k.txt del ..\exclude\ExcludeList-o2k.txt
-if exist ..\exclude\ExcludeListISO-o2k.txt del ..\exclude\ExcludeListISO-o2k.txt
-if exist ..\exclude\ExcludeListUSB-o2k.txt del ..\exclude\ExcludeListUSB-o2k.txt
+del /Q ..\exclude\ExcludeList*-o2k.txt >nul 2>&1
 del /Q ..\static\*o2k-*.* >nul 2>&1
 del /Q ..\xslt\*o2k-*.* >nul 2>&1
 if exist ..\xslt\ExtractExpiredIds-o2k.xsl del ..\xslt\ExtractExpiredIds-o2k.xsl
@@ -286,11 +284,13 @@ if exist ..\xslt\ExtractDownloadLinks-oall-deu.xsl del ..\xslt\ExtractDownloadLi
 if exist ..\xslt\ExtractDownloadLinks-oall-enu.xsl del ..\xslt\ExtractDownloadLinks-oall-enu.xsl
 if exist ..\xslt\ExtractDownloadLinks-oall-fra.xsl del ..\xslt\ExtractDownloadLinks-oall-fra.xsl
 if exist ..\xslt\ExtractDownloadLinks-wall.xsl del ..\xslt\ExtractDownloadLinks-wall.xsl
+del /Q ..\exclude\ExcludeList*-oxp.txt >nul 2>&1
+del /Q ..\exclude\ExcludeList*-o2k3.txt >nul 2>&1
+del /Q ..\exclude\ExcludeList*-o2k7*.txt >nul 2>&1
+del /Q ..\exclude\ExcludeList*-o2k10.txt >nul 2>&1
 del /Q ..\xslt\ExtractDownloadLinks-o*.* >nul 2>&1
 del /Q ..\xslt\ExtractExpiredIds-o*.* >nul 2>&1
 del /Q ..\xslt\ExtractValidIds-o*.* >nul 2>&1
-del /Q ..\exclude\ExcludeList*-o2k7-x64.txt >nul 2>&1
-del /Q ..\exclude\ExcludeList*-o2k7-x86.txt >nul 2>&1
 
 rem *** Execute custom initialization hook ***
 if exist .\custom\InitializationHook.cmd (
@@ -492,15 +492,13 @@ for %%i in (wxp w2k3) do (
     if errorlevel 1 goto Error
   )
 )
-for %%i in (oxp o2k3 o2k7 o2k10) do (
+for %%i in (oxp o2k3 o2k7) do (
   if /i "%1"=="%%i" (
-    call :DownloadCore ofc glb
-    if errorlevel 1 goto Error
     call :DownloadCore ofc %2
     if errorlevel 1 goto Error
   )
 )
-for %%i in (wxp w2k3 w2k3-x64 oxp o2k3 o2k7 o2k10) do (
+for %%i in (wxp w2k3 w2k3-x64 oxp o2k3 o2k7) do (
   if /i "%1"=="%%i" (
     call :DownloadCore %1 glb
     if errorlevel 1 goto Error
@@ -508,7 +506,7 @@ for %%i in (wxp w2k3 w2k3-x64 oxp o2k3 o2k7 o2k10) do (
     if errorlevel 1 goto Error
   )
 )
-for %%i in (w60 w60-x64 w61 w61-x64) do (
+for %%i in (w60 w60-x64 w61 w61-x64 ofc) do (
   if /i "%1"=="%%i" (
     call :DownloadCore %1 %2
     if errorlevel 1 goto Error
@@ -858,8 +856,8 @@ exit /b 1
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %1 %2 %3 %4
-echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| oxp ^| o2k3 ^| o2k7 ^| o2k10} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>]
-echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>]
+echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| oxp ^| o2k3 ^| o2k7} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>]
+echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| ofc} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>]
 echo %DATE% %TIME% - Error: Invalid parameter: %1 %2 %3 %4 >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
