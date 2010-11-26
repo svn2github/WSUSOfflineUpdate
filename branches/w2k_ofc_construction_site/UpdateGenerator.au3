@@ -2250,9 +2250,9 @@ EndIf
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
 If ShowGUIInGerman() Then
-  $cdiso = GUICtrlCreateCheckbox("pro Produkt und Sprache (CD / DVD)", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
+  $cdiso = GUICtrlCreateCheckbox("pro Produkt und Sprache", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 Else
-  $cdiso = GUICtrlCreateCheckbox("per selected product and language (CD / DVD)", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
+  $cdiso = GUICtrlCreateCheckbox("per selected product and language", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 EndIf
 If IniRead($inifilename, $ini_section_iso, $iso_token_cd, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
@@ -2263,9 +2263,9 @@ EndIf
 ;  cross-platform DVD ISO image
 $txtxpos = $txtxpos + $groupwidth / 2
 If ShowGUIInGerman() Then
-  $dvdiso = GUICtrlCreateCheckbox("pro Sprache, x86-Desktop-produktübergreifend (DVDs)", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
+  $dvdiso = GUICtrlCreateCheckbox("pro Sprache, produktübergreifend (nur x86-Desktop)", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 Else
-  $dvdiso = GUICtrlCreateCheckbox("per selected language, 'x86-Desktop-cross-product' (DVDs)", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
+  $dvdiso = GUICtrlCreateCheckbox("per selected language, 'cross-product' (x86 Desktop only)", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 EndIf
 If IniRead($inifilename, $ini_section_iso, $iso_token_dvd, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
