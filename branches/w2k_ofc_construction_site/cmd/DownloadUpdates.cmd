@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7b (r174)
+set WSUSOFFLINE_VERSION=6.7b (r175)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -620,7 +620,11 @@ for /F "usebackq tokens=1,2 delims=;" %%i in ("%TEMP%\UpdateCategoriesAndFileIds
       for /F "tokens=1-3 delims=," %%k in ("%%i") do (
         if "%%l" NEQ "" (
           if /i "%2"=="glb" (
-            if "%%m"=="" (
+            if "!UPDATE_LANGUAGES!_%%m"=="_" (
+              echo !UPDATE_ID!,%%l>>"%TEMP%\OfficeUpdateAndFileIds.txt"
+              echo %%l>>"%TEMP%\OfficeFileIds.txt"
+            )
+            if "!UPDATE_LANGUAGES!_%%m"=="en_en" (
               echo !UPDATE_ID!,%%l>>"%TEMP%\OfficeUpdateAndFileIds.txt"
               echo %%l>>"%TEMP%\OfficeFileIds.txt"
             )
@@ -682,8 +686,8 @@ del "%TEMP%\DownloadLinks-%1-%2.txt"
 
 :DoDownload
 rem *** Verify integrity of existing updates for %1 %2 ***
-if "%VERIFY_DOWNLOADS%" NEQ "1" goto SkipVerification
-if not exist ..\client\%1\%2\nul goto SkipVerification
+if "%VERIFY_DOWNLOADS%" NEQ "1" goto SkipAudit
+if not exist ..\client\%1\%2\nul goto SkipAudit
 if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
 for %%i in (..\client\md\hashes-%1-%2.txt) do (if %%~zi==0 del %%i)
 if exist ..\client\md\hashes-%1-%2.txt (
@@ -700,7 +704,7 @@ if exist ..\client\md\hashes-%1-%2.txt (
   echo Warning: Integrity database ..\client\md\hashes-%1-%2.txt not found.
   echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-%1-%2.txt not found >>%DOWNLOAD_LOGFILE%
 )
-:SkipVerification
+:SkipAudit
 
 rem *** Download updates for %1 %2 ***
 if not exist "%TEMP%\ValidStaticLinks-%1-%2.txt" goto DownloadDynamicUpdates
@@ -777,12 +781,12 @@ for /F %%i in ('dir /A:-D /B ..\client\%1\%2\*.*') do (
     )
   )
 )
+dir ..\client\%1\%2 /A:-D >nul 2>&1
+if errorlevel 1 rd ..\client\%1\%2
 echo %DATE% %TIME% - Info: Cleaned up client directory for %1 %2 >>%DOWNLOAD_LOGFILE%
 
 :VerifyDownload
-if not exist ..\client\%1\%2\nul goto EndDownload
-dir ..\client\%1\%2 /A:-D >nul 2>&1
-if errorlevel 1 goto EndDownload
+if not exist ..\client\%1\%2\nul goto RemoveHashes
 rem *** Delete alternate data streams for %1 %2 ***
 if exist ..\bin\streams.exe (
   echo Deleting alternate data streams for %1 %2...
@@ -797,45 +801,45 @@ if exist ..\bin\streams.exe (
   echo Warning: Sysinternals' NTFS alternate data stream handling tool ..\bin\streams.exe not found.
   echo %DATE% %TIME% - Warning: Sysinternals' NTFS alternate data stream handling tool ..\bin\streams.exe not found >>%DOWNLOAD_LOGFILE%
 )
-if "%VERIFY_DOWNLOADS%"=="1" (
-  rem *** Verifying digital file signatures for %1 %2 ***
-  if not exist ..\bin\sigcheck.exe goto NoSigCheck
-  echo Verifying digital file signatures for %1 %2...
-  ..\bin\sigcheck.exe /accepteula -q -s -u -v ..\client\%1\%2 >"%TEMP%\sigcheck-%1-%2.txt"
-  for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-%1-%2.txt") do (
-    echo Warning: File %%i is unsigned.
-    echo %DATE% %TIME% - Warning: File %%i is unsigned >>%DOWNLOAD_LOGFILE%
-  ) 
-  if exist "%TEMP%\sigcheck-%1-%2.txt" del "%TEMP%\sigcheck-%1-%2.txt"
-  echo %DATE% %TIME% - Info: Verified digital file signatures for %1 %2 >>%DOWNLOAD_LOGFILE%
-  rem *** Create integrity database for %1 %2 ***
-  if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
-  echo Creating integrity database for %1 %2...
-  if not exist ..\client\md\nul md ..\client\md
-  pushd ..\client\md
-  ..\bin\hashdeep.exe -c md5,sha256 -l -r ..\%1\%2 >hashes-%1-%2.txt
-  if errorlevel 1 (
-    popd
-    echo Warning: Error creating integrity database ..\client\md\hashes-%1-%2.txt.
-    echo %DATE% %TIME% - Warning: Error creating integrity database ..\client\md\hashes-%1-%2.txt >>%DOWNLOAD_LOGFILE%
-  ) else (
-    popd
-    for %%i in (..\client\md\hashes-%1-%2.txt) do (
-      if %%~zi==0 (
-        del %%i
-        echo %DATE% %TIME% - Info: Deleted zero size integrity database for %1 %2 >>%DOWNLOAD_LOGFILE%
-      ) else (
-        echo %DATE% %TIME% - Info: Created integrity database for %1 %2 >>%DOWNLOAD_LOGFILE%
-      )
+if "%VERIFY_DOWNLOADS%" NEQ "1" goto RemoveHashes
+rem *** Verifying digital file signatures for %1 %2 ***
+if not exist ..\bin\sigcheck.exe goto NoSigCheck
+echo Verifying digital file signatures for %1 %2...
+..\bin\sigcheck.exe /accepteula -q -s -u -v ..\client\%1\%2 >"%TEMP%\sigcheck-%1-%2.txt"
+for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-%1-%2.txt") do (
+  echo Warning: File %%i is unsigned.
+  echo %DATE% %TIME% - Warning: File %%i is unsigned >>%DOWNLOAD_LOGFILE%
+) 
+if exist "%TEMP%\sigcheck-%1-%2.txt" del "%TEMP%\sigcheck-%1-%2.txt"
+echo %DATE% %TIME% - Info: Verified digital file signatures for %1 %2 >>%DOWNLOAD_LOGFILE%
+rem *** Create integrity database for %1 %2 ***
+if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
+echo Creating integrity database for %1 %2...
+if not exist ..\client\md\nul md ..\client\md
+pushd ..\client\md
+..\bin\hashdeep.exe -c md5,sha256 -l -r ..\%1\%2 >hashes-%1-%2.txt
+if errorlevel 1 (
+  popd
+  echo Warning: Error creating integrity database ..\client\md\hashes-%1-%2.txt.
+  echo %DATE% %TIME% - Warning: Error creating integrity database ..\client\md\hashes-%1-%2.txt >>%DOWNLOAD_LOGFILE%
+) else (
+  popd
+  for %%i in (..\client\md\hashes-%1-%2.txt) do (
+    if %%~zi==0 (
+      del %%i
+      echo %DATE% %TIME% - Info: Deleted zero size integrity database for %1 %2 >>%DOWNLOAD_LOGFILE%
+    ) else (
+      echo %DATE% %TIME% - Info: Created integrity database for %1 %2 >>%DOWNLOAD_LOGFILE%
     )
   )
-) else (
-  if exist ..\client\md\hashes-%1-%2.txt (
-    del ..\client\md\hashes-%1-%2.txt 
-    echo %DATE% %TIME% - Info: Deleted integrity database for %1 %2 >>%DOWNLOAD_LOGFILE%
-  )
 )
+goto EndDownload
 
+:RemoveHashes
+if exist ..\client\md\hashes-%1-%2.txt (
+  del ..\client\md\hashes-%1-%2.txt 
+  echo %DATE% %TIME% - Info: Deleted integrity database for %1 %2 >>%DOWNLOAD_LOGFILE%
+)
 :EndDownload
 if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" del "%TEMP%\ValidStaticLinks-%1-%2.txt"
 if exist "%TEMP%\ValidDownloadLinks-%1-%2.txt" del "%TEMP%\ValidDownloadLinks-%1-%2.txt"

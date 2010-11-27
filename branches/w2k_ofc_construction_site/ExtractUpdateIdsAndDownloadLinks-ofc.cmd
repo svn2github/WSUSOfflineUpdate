@@ -34,7 +34,11 @@ for /F "usebackq tokens=1,2 delims=;" %%i in ("%TEMP%\UpdateCategoriesAndFileIds
       for /F "tokens=1-3 delims=," %%k in ("%%i") do (
         if "%%l" NEQ "" (
           if /i "%2"=="glb" (
-            if "%%m"=="" (
+            if "!UPDATE_LANGUAGES!_%%m"=="_" (
+              echo !UPDATE_ID!,%%l>>"%TEMP%\OfficeUpdateAndFileIds.txt"
+              echo %%l>>"%TEMP%\OfficeFileIds.txt"
+            )
+            if "!UPDATE_LANGUAGES!_%%m"=="en_en" (
               echo !UPDATE_ID!,%%l>>"%TEMP%\OfficeUpdateAndFileIds.txt"
               echo %%l>>"%TEMP%\OfficeFileIds.txt"
             )
