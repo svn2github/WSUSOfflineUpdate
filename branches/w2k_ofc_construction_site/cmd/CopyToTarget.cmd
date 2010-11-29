@@ -123,7 +123,7 @@ title Copying client tree for %*...
 echo Copying client tree for %*...
 pushd ..\client
 %SystemRoot%\system32\xcopy.exe *.* %OUTPUT_PATH% /D /E /I /Y /EXCLUDE:%USB_FILTER%
-if %errorlevel% 1 (
+if errorlevel 1 (
   popd
   if exist %USB_FILTER% del %USB_FILTER%
   goto XCopyError
