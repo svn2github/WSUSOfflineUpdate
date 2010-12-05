@@ -23,5 +23,5 @@ mdac25
 mdac27
 windows2000
 directx_
--x64
+*-x64
 .au3

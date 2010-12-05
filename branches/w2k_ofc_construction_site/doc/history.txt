@@ -448,14 +448,16 @@ Version 6.6.5 -- 10.11.10
 - Fix: ISO creation under Linux lead to invalid "builddate.txt" format (Thanks to Ulrich Windl)
 - Fix: FAQs enhanced (Thanks to "Lenge")
 --------------------------------------------------------------------------------
-Version 6.7 -- ??.??.10
+Version 6.7 -- 06.12.10
 - Windows 2000 support removed
 - Office 2010 support added
 - Office updates will be dynamically determined again (Thanks to Martin Trenkner)
 - Office support removed from Linux download and ISO creation scripts
 - Office updates will also preferentially be downloaded from an optional local WSUS server
+- Downloads from a local WSUS server will now also use proxy settings (Thanks to "OlegK")
 - WSUS download source configuration may optionally be transferred to client side WUStatusServer 
 - Automatic recall feature enhanced to support Windows Vista and Server 2008 systems
 - Proprietary autologon implementation replaced by Sysinternals' tool Autologon.exe  
 - Removed obsolete utility extract.exe
 - XSLT filters for Windows ("win") refined (Thanks to "Denniss")
+--------------------------------------------------------------------------------

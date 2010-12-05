@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7b (r176)
+set WSUSOFFLINE_VERSION=6.7
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -191,7 +191,7 @@ if exist ..\static\StaticDownloadLink-unzip.txt del ..\static\StaticDownloadLink
 if exist DetermineRegVersion.vbs del DetermineRegVersion.vbs
 if exist DetermineAutoDaylightTimeSet.vbs del DetermineAutoDaylightTimeSet.vbs
 if exist ..\client\cmd\Reboot.vbs del ..\client\cmd\Reboot.vbs
-if exist ..\client\msi\nul call ..\client\cmd\SafeRmDir.cmd ..\client\msi
+if exist ..\client\msi\nul rd /S /Q ..\client\msi
 
 rem *** Office 2000 stuff ***
 if exist ..\client\bin\msxsl.exe move /Y ..\client\bin\msxsl.exe ..\bin >nul
@@ -749,7 +749,7 @@ if "%HTTP_WSUS%"=="" (
         )
       ) else (
         if exist ..\client\%1\%2\%%k ren ..\client\%1\%2\%%k _%%k
-        %WGET_PATH% -nv --no-proxy -O ..\client\%1\%2\%%k -a %DOWNLOAD_LOGFILE% %%l
+        %WGET_PATH% -nv -O ..\client\%1\%2\%%k -a %DOWNLOAD_LOGFILE% %%l
         if errorlevel 1 (
           if exist ..\client\%1\%2\%%k del ..\client\%1\%2\%%k
           if exist ..\client\%1\%2\_%%k ren ..\client\%1\%2\_%%k %%k
