@@ -1,5 +1,5 @@
 @echo off
-rem *** Author: T. Wittrock, RZ Uni Kiel ***
+rem *** Author: T. Wittrock, Kiel ***
 
 verify other 2>nul
 setlocal enableextensions

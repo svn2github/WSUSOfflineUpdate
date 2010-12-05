@@ -1,10 +1,11 @@
 @echo off
-rem *** Author: T. Wittrock, RZ Uni Kiel ***
+rem *** Author: T. Wittrock, Kiel ***
 
 verify other 2>nul
 setlocal enableextensions
 if errorlevel 1 goto NoExtensions
 
+if "%DIRCMD%" NEQ "" set DIRCMD=
 if "%UPDATE_LOGFILE%"=="" set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 
 if "%1"=="" goto NoParam
@@ -66,8 +67,17 @@ for /F "tokens=2,3 delims=\" %%i in ("%1") do (
   echo %DATE% %TIME% - Warning: Hash file ..\md\hashes-%%i-%%j.txt not found >>%UPDATE_LOGFILE%
 )
 :SkipVerification
+echo %1 | %SystemRoot%\system32\find.exe /I ".exe" >nul 2>&1
+if not errorlevel 1 goto InstExe
+echo %1 | %SystemRoot%\system32\find.exe /I ".cab" >nul 2>&1
+if not errorlevel 1 goto InstCab
+echo %1 | %SystemRoot%\system32\find.exe /I ".msp" >nul 2>&1
+if not errorlevel 1 goto InstMsp
+goto UnsupType
+
+:InstExe
 rem *** Check proper Office version ***
-for %%i in (ofc oxp o2k3 o2k7 o2k7-x64) do (
+for %%i in (ofc oxp o2k3 o2k7 o2k10) do (
   echo %1 | %SystemRoot%\system32\find.exe /I "\%%i\" >nul 2>&1
   if not errorlevel 1 goto %%i
 )
@@ -121,10 +131,34 @@ for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
 goto InstFailure
 
 :o2k7
-:o2k7-x64
+:o2k10
 echo Installing %1...
 echo %1 | %SystemRoot%\system32\find.exe /I "sp" >nul 2>&1
 if errorlevel 1 (%1 /quiet /norestart) else (%1 /passive /norestart)
+set ERR_LEVEL=%errorlevel%
+if "%IGNORE_ERRORS%"=="1" goto InstSuccess
+for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
+goto InstFailure
+
+:InstCab
+echo Installing %1...
+set ERR_LEVEL=0
+for /F "tokens=3 delims=\." %%i in ("%1") do (
+  call SafeRmDir.cmd "%TEMP%\%%i"
+  md "%TEMP%\%%i"
+  %SystemRoot%\system32\expand.exe -R %1 -F:* "%TEMP%\%%i" >nul
+  for /F %%j in ('dir /A:-D /B "%TEMP%\%%i\*.msp"') do %SystemRoot%\system32\msiexec.exe /qn /norestart /update "%TEMP%\%%i\%%j"
+  set ERR_LEVEL=%errorlevel%
+  call SafeRmDir.cmd "%TEMP%\%%i"
+)
+if "%IGNORE_ERRORS%"=="1" goto InstSuccess
+for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
+goto InstFailure
+
+:InstMsp
+echo Installing %1...
+set ERR_LEVEL=0
+%SystemRoot%\system32\msiexec.exe /qn /norestart /update %1
 set ERR_LEVEL=%errorlevel%
 if "%IGNORE_ERRORS%"=="1" goto InstSuccess
 for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess

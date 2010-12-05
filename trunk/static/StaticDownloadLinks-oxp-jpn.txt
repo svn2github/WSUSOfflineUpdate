@@ -1,3 +1,2 @@
 http://download.microsoft.com/download/2/0/2/202b86d7-5b15-4420-8b5c-5f80ba92d453/OfficeXpSp3-kb832671-fullfile-jpn.exe
-http://download.microsoft.com/download/1/F/E/1FEC733D-DC26-4BA2-A296-CA72096D653A/officexp-KB975008-FullFile-JPN.exe
-http://download.microsoft.com/download/4/2/2/422F0B62-BA4B-445E-8A8B-CFC3695BA93B/officexp-KB2293422-FullFile-JPN.exe
+http://download.microsoft.com/download/9/1/8/91863fdf-2a70-40a1-a50a-390db69d204a/officexp-KB905758-FullFile-JPN.exe

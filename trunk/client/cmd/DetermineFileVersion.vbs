@@ -1,4 +1,4 @@
-' *** Author: T. Wittrock, RZ Uni Kiel ***
+' *** Author: T. Wittrock, Kiel ***
 
 Option Explicit
 

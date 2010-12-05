@@ -1,4 +1,1 @@
 http://download.microsoft.com/download/b/3/b/b3bd1060-0b3c-442e-a38c-fc81ba9fde9f/Office2003SP3-KB923618-FullFile-ESN.exe
-http://download.microsoft.com/download/6/9/2/692D8FF9-34B4-4BB4-A252-DFBD2B44CC1D/office2003-KB975051-FullFile-ESN.exe
-http://download.microsoft.com/download/2/C/0/2C08973E-E778-4C6D-8CD7-9435196C2D4B/office2003-KB2293428-FullFile-ESN.exe
-http://download.microsoft.com/download/1/0/5/1051C162-E186-4CA7-AAC5-B2084B082061/office2003-KB2435682-FullFile-ESN.exe

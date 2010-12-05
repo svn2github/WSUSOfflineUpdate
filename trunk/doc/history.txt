@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 6.6.5
+WSUS Offline Update 6.7
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -267,7 +267,7 @@ Version 6.1 -- 30.07.09
 - Windows Vista / Server 2008 Service Pack 2 All Language Standalone integrated
 - Mandatory installation of IE7 on Windows XP and Windows Server 2003 (x86/x64) systems
 - UpdateInstaller script will now check if .NET Framework 3.5 SP1 installation package exists
-- Fix: Download exclude list for Windows XP updated since Microsoft modified the "List of fixes that are included in Windows XP Service Pack 3" (http://support.microsoft.com/kb/946480/en-us) on March 27, 2009 (Thanks to "SPiKE0815") 
+- Fix: Download exclude list for Windows XP updated since Microsoft modified the "List of fixes included in Windows XP SP3" (http://support.microsoft.com/kb/946480/en-us) on March 27, 2009 (Thanks to "SPiKE0815") 
 - Fix: Download exclude lists for Operating Systems refined since windowsxp-kb956572-x86-enu* was missing (Thanks to "SMarki") 
 - Fix: CopyToTarget.cmd did not create missing target directories and did not report all copying errors (Thanks to Christian Riedel)
 - Fix: Invalid installation sequence for .NET Framework 3.5 SP1 Family Update (kb958481, kb958483 and kb958484) (Thanks to "siggibaer") 
@@ -447,4 +447,17 @@ Version 6.6.5 -- 10.11.10
 - Fix: KB951847 (.NET Framework 3.5 SP1) added to installation exclude list due to misleading warnings (Thanks to "rednaxela")
 - Fix: ISO creation under Linux lead to invalid "builddate.txt" format (Thanks to Ulrich Windl)
 - Fix: FAQs enhanced (Thanks to "Lenge")
+--------------------------------------------------------------------------------
+Version 6.7 -- 06.12.10
+- Windows 2000 support removed
+- Office 2010 support added
+- Office updates will be dynamically determined again (Thanks to Martin Trenkner)
+- Office support removed from Linux download and ISO creation scripts
+- Office updates will also preferentially be downloaded from an optional local WSUS server
+- Downloads from a local WSUS server will now also use proxy settings (Thanks to "OlegK")
+- WSUS download source configuration may optionally be transferred to client side WUStatusServer 
+- Automatic recall feature enhanced to support Windows Vista and Server 2008 systems
+- Proprietary autologon implementation replaced by Sysinternals' tool Autologon.exe  
+- Removed obsolete utility extract.exe
+- XSLT filters for Windows ("win") refined (Thanks to "Denniss")
 --------------------------------------------------------------------------------

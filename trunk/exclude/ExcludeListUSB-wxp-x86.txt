@@ -3,6 +3,7 @@ o2k\
 oxp\
 o2k3\
 o2k7\
+o2k10\
 w2k\
 w2k3\
 w60\
@@ -22,8 +23,5 @@ mdac25
 mdac27
 windows2000
 directx_
--x64
+*-x64
 .au3
-reg.exe
-invcif.exe
-invcm.exe

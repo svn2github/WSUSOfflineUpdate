@@ -1,5 +1,5 @@
 @echo off
-rem *** Author: T. Wittrock, RZ Uni Kiel ***
+rem *** Author: T. Wittrock, Kiel ***
 
 verify other 2>nul
 setlocal enableextensions
@@ -9,7 +9,7 @@ if errorlevel 1 goto NoExtensions
 cd "%~p0"
 
 for %%i in (all all-x86 all-x64 enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%1"=="%%i" goto V1EvalParams)
-for %%i in (w2k wxp w2k3 w2k3-x64 oxp o2k3 o2k7 o2k7-x64) do (
+for %%i in (wxp w2k3 w2k3-x64) do (
   if /i "%1"=="%%i" (
     for %%j in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%2"=="%%j" goto V2EvalParams)
     goto V1EvalParams
@@ -18,6 +18,12 @@ for %%i in (w2k wxp w2k3 w2k3-x64 oxp o2k3 o2k7 o2k7-x64) do (
 for %%i in (w60 w60-x64 w61 w61-x64) do (
   if /i "%1"=="%%i" (
     if /i "%2"=="glb" shift /2
+    goto V1EvalParams
+  )
+)
+for %%i in (ofc) do (
+  if /i "%1"=="%%i" (
+    for %%j in (glb enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%2"=="%%j" goto V2EvalParams)
     goto V1EvalParams
   )
 )
@@ -74,7 +80,7 @@ goto :eof
 if "%EXCLUDE_SP%"=="1" (
   for /F %%i in (..\exclude\ExcludeList-SPs.txt) do echo *%%i*>>%ISO_FILTER%
 )
-for %%i in (w2k oxp o2k3 o2k7 o2k7-x64) do (
+for %%i in (ofc) do (
   if /i "%1"=="%%i" (
     for /F %%j in (..\exclude\ExcludeList-dotnet.txt) do echo *%%j/*>>%ISO_FILTER%
     for /F %%j in (..\exclude\ExcludeList-msse.txt) do echo *%%j/*>>%ISO_FILTER%
@@ -92,7 +98,7 @@ goto :eof
 rem *** Create ISO filter ***
 echo Creating ISO filter for %1...
 set ISO_FILTER="%TEMP%\ExcludeListISO-%1.txt"
-for %%i in (all all-x86 all-x64 w2k wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 oxp o2k3 o2k7 o2k7-x64) do (if /i "%1"=="%%i" goto V1CopyFilter)
+for %%i in (all all-x86 all-x64 wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 ofc) do (if /i "%1"=="%%i" goto V1CopyFilter)
 set ISO_IMAGE=wsusoffline-%1-x86.iso
 set ISO_VOLID=wou_%1-x86
 copy /Y ..\exclude\ExcludeListISO-all-x86.txt %ISO_FILTER% >nul
@@ -107,6 +113,7 @@ goto CreateImage
 set ISO_IMAGE=wsusoffline-%1.iso
 set ISO_VOLID=wou_%1
 call :CopyFilter %1
+call :LocaleFilter glb 
 call :ExtendFilter %1
 goto CreateImage
 
@@ -143,8 +150,8 @@ exit /b 1
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %*
-echo Usage1: %~n0 {w2k ^| wxp ^| w2k3 ^| w2k3-x64 ^| oxp ^| o2k3 ^| o2k7 ^| o2k7-x64} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/includedotnet] [/outputpath ^<OutputPath^>]
-echo Usage2: %~n0 {all ^| all-x86 ^| all-x64 ^| w2k ^| wxp ^| w2k3 ^| w2k3-x64 ^| w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| oxp ^| o2k3 ^| o2k7 ^| o2k7-x64 ^| enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/includedotnet] [/outputpath ^<OutputPath^>]
+echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| ofc} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/includedotnet] [/outputpath ^<OutputPath^>]
+echo Usage2: %~n0 {all ^| all-x86 ^| all-x64 ^| wxp ^| w2k3 ^| w2k3-x64 ^| w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| ofc ^| enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/includedotnet] [/outputpath ^<OutputPath^>]
 echo.
 goto Error
 

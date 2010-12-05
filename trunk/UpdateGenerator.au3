@@ -1,11 +1,11 @@
-; *** WSUS Offline Update 6.6.5 - Generator ***
-; ***   Author: T. Wittrock, RZ Uni Kiel    ***
-; ***    USB-Option added by Ch. Riedel     ***
-; ***  Dialog scaling added by Th. Baisch   ***
+; *** WSUS Offline Update 6.7 - Generator ***
+; ***      Author: T. Wittrock, Kiel      ***
+; ***    USB-Option added by Ch. Riedel   ***
+; ***  Dialog scaling added by Th. Baisch ***
 
 #include <GUIConstants.au3>
 
-Dim Const $caption                = "WSUS Offline Update 6.6.5"
+Dim Const $caption                = "WSUS Offline Update 6.7"
 Dim Const $title                  = $caption & " - Generator"
 Dim Const $donationURL            = "http://www.wsusoffline.net/donate.html"
 Dim Const $downloadLogFile        = "download.log"
@@ -31,7 +31,6 @@ Dim Const $msgbox_btn_continue    = 11
 Dim Const $default_logpixels      = 96
 
 ; INI file constants
-Dim Const $ini_section_w2k        = "Windows 2000"
 Dim Const $ini_section_wxp        = "Windows XP"
 Dim Const $ini_section_w2k3       = "Windows Server 2003"
 Dim Const $ini_section_w2k3_x64   = "Windows Server 2003 x64"
@@ -42,9 +41,10 @@ Dim Const $ini_section_w61_x64    = "Windows Server 2008 R2"
 Dim Const $ini_section_oxp        = "Office XP"
 Dim Const $ini_section_o2k3       = "Office 2003"
 Dim Const $ini_section_o2k7       = "Office 2007"
-Dim Const $ini_section_o2k7_x64   = "Office 2007 x64"
+Dim Const $ini_section_ofc        = "Office"
 Dim Const $ini_section_iso        = "ISO Images"
 Dim Const $ini_section_usb        = "USB Images"
+Dim Const $ini_section_opts       = "Options"
 Dim Const $ini_section_misc       = "Miscellaneous"
 Dim Const $enabled                = "Enabled"
 Dim Const $disabled               = "Disabled"
@@ -77,49 +77,53 @@ Dim Const $iso_token_cd           = "single"
 Dim Const $iso_token_dvd          = "cross-platform"
 Dim Const $usb_token_copy         = "copy"
 Dim Const $usb_token_path         = "path"
-Dim Const $misc_token_includesp   = "includesp"
-Dim Const $misc_token_dotnet      = "includedotnet"
-Dim Const $misc_token_msse        = "includemsse"
-Dim Const $misc_token_cleanup     = "cleanupdownloads"
-Dim Const $misc_token_verify      = "verifydownloads"
+Dim Const $opts_token_includesp   = "includesp"
+Dim Const $opts_token_dotnet      = "includedotnet"
+Dim Const $opts_token_msse        = "includemsse"
+Dim Const $opts_token_cleanup     = "cleanupdownloads"
+Dim Const $opts_token_verify      = "verifydownloads"
 Dim Const $misc_token_proxy       = "proxy"
 Dim Const $misc_token_wsus        = "wsus"
+Dim Const $misc_token_wsus_trans  = "transferwsus"
 Dim Const $misc_token_chkver      = "checkouversion"
 Dim Const $misc_token_minimize    = "minimizeondownload"
 Dim Const $misc_token_showdonate  = "showdonate"
+Dim Const $misc_token_clt_wustat  = "WUStatusServer"
 
 ; Paths
 Dim Const $paths_rel_structure    = "\bin\,\client\bin\,\client\cmd\,\client\exclude\,\client\opt\,\client\static\,\cmd\,\exclude\,\iso\,\log\,\static\,\xslt\"
 Dim Const $path_rel_builddate     = "\client\builddate.txt"
+Dim Const $path_rel_clientini     = "\client\UpdateInstaller.ini"
 
 Dim $maindlg, $inifilename, $tabitemfocused, $includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $buildlbl
 Dim $usbcopy, $usblbl, $usbpath, $usbfsf, $skipdownload, $shutdown, $btn_start, $btn_proxy, $btn_wsus, $btn_donate, $btn_exit, $proxy, $wsus, $dummy
-Dim $w2k_enu, $wxp_enu, $w2k3_enu, $w2k3_x64_enu, $oxp_enu, $o2k3_enu, $o2k7_enu  ; English
-Dim $w2k_fra, $wxp_fra, $w2k3_fra, $w2k3_x64_fra, $oxp_fra, $o2k3_fra, $o2k7_fra  ; French
-Dim $w2k_esn, $wxp_esn, $w2k3_esn, $w2k3_x64_esn, $oxp_esn, $o2k3_esn, $o2k7_esn  ; Spanish
-Dim $w2k_jpn, $wxp_jpn, $w2k3_jpn, $w2k3_x64_jpn, $oxp_jpn, $o2k3_jpn, $o2k7_jpn  ; Japanese
-Dim $w2k_kor, $wxp_kor, $w2k3_kor, $w2k3_x64_kor, $oxp_kor, $o2k3_kor, $o2k7_kor  ; Korean
-Dim $w2k_rus, $wxp_rus, $w2k3_rus, $w2k3_x64_rus, $oxp_rus, $o2k3_rus, $o2k7_rus  ; Russian
-Dim $w2k_ptg, $wxp_ptg, $w2k3_ptg, $oxp_ptg, $o2k3_ptg, $o2k7_ptg ; Portuguese
-Dim $w2k_ptb, $wxp_ptb, $w2k3_ptb, $w2k3_x64_ptb, $oxp_ptb, $o2k3_ptb, $o2k7_ptb  ; Brazilian
-Dim $w2k_deu, $wxp_deu, $w2k3_deu, $w2k3_x64_deu, $oxp_deu, $o2k3_deu, $o2k7_deu  ; German
-Dim $w2k_nld, $wxp_nld, $w2k3_nld, $oxp_nld, $o2k3_nld, $o2k7_nld ; Dutch
-Dim $w2k_ita, $wxp_ita, $w2k3_ita, $oxp_ita, $o2k3_ita, $o2k7_ita ; Italian
-Dim $w2k_chs, $wxp_chs, $w2k3_chs, $oxp_chs, $o2k3_chs, $o2k7_chs ; Chinese simplified
-Dim $w2k_cht, $wxp_cht, $w2k3_cht, $oxp_cht, $o2k3_cht, $o2k7_cht ; Chinese traditional
-Dim $w2k_plk, $wxp_plk, $w2k3_plk, $oxp_plk, $o2k3_plk, $o2k7_plk ; Polish
-Dim $w2k_hun, $wxp_hun, $w2k3_hun, $oxp_hun, $o2k3_hun, $o2k7_hun ; Hungarian
-Dim $w2k_csy, $wxp_csy, $w2k3_csy, $oxp_csy, $o2k3_csy, $o2k7_csy ; Czech
-Dim $w2k_sve, $wxp_sve, $w2k3_sve, $oxp_sve, $o2k3_sve, $o2k7_sve ; Swedish
-Dim $w2k_trk, $wxp_trk, $w2k3_trk, $oxp_trk, $o2k3_trk, $o2k7_trk ; Turkish
-Dim $w2k_ell, $wxp_ell, $w2k3_ell, $oxp_ell, $o2k3_ell, $o2k7_ell ; Greek
-Dim $w2k_ara, $wxp_ara, $w2k3_ara, $oxp_ara, $o2k3_ara, $o2k7_ara ; Arabic
-Dim $w2k_heb, $wxp_heb, $w2k3_heb, $oxp_heb, $o2k3_heb, $o2k7_heb ; Hebrew
-Dim $w2k_dan, $wxp_dan, $w2k3_dan, $oxp_dan, $o2k3_dan, $o2k7_dan ; Danish
-Dim $w2k_nor, $wxp_nor, $w2k3_nor, $oxp_nor, $o2k3_nor, $o2k7_nor ; Norwegian
-Dim $w2k_fin, $wxp_fin, $w2k3_fin, $oxp_fin, $o2k3_fin, $o2k7_fin ; Finnish
-Dim $w60_glb, $w60_x64_glb                                        ; Windows Vista / Windows Server 2008 (global)  
-Dim $w61_glb, $w61_x64_glb                                        ; Windows 7 / Windows Server 2008 R2 (global)  
+Dim $wxp_enu, $w2k3_enu, $w2k3_x64_enu, $oxp_enu, $o2k3_enu, $o2k7_enu  ; English
+Dim $wxp_fra, $w2k3_fra, $w2k3_x64_fra, $oxp_fra, $o2k3_fra, $o2k7_fra  ; French
+Dim $wxp_esn, $w2k3_esn, $w2k3_x64_esn, $oxp_esn, $o2k3_esn, $o2k7_esn  ; Spanish
+Dim $wxp_jpn, $w2k3_jpn, $w2k3_x64_jpn, $oxp_jpn, $o2k3_jpn, $o2k7_jpn  ; Japanese
+Dim $wxp_kor, $w2k3_kor, $w2k3_x64_kor, $oxp_kor, $o2k3_kor, $o2k7_kor  ; Korean
+Dim $wxp_rus, $w2k3_rus, $w2k3_x64_rus, $oxp_rus, $o2k3_rus, $o2k7_rus  ; Russian
+Dim $wxp_ptg, $w2k3_ptg, $oxp_ptg, $o2k3_ptg, $o2k7_ptg ; Portuguese
+Dim $wxp_ptb, $w2k3_ptb, $w2k3_x64_ptb, $oxp_ptb, $o2k3_ptb, $o2k7_ptb  ; Brazilian
+Dim $wxp_deu, $w2k3_deu, $w2k3_x64_deu, $oxp_deu, $o2k3_deu, $o2k7_deu  ; German
+Dim $wxp_nld, $w2k3_nld, $oxp_nld, $o2k3_nld, $o2k7_nld ; Dutch
+Dim $wxp_ita, $w2k3_ita, $oxp_ita, $o2k3_ita, $o2k7_ita ; Italian
+Dim $wxp_chs, $w2k3_chs, $oxp_chs, $o2k3_chs, $o2k7_chs ; Chinese simplified
+Dim $wxp_cht, $w2k3_cht, $oxp_cht, $o2k3_cht, $o2k7_cht ; Chinese traditional
+Dim $wxp_plk, $w2k3_plk, $oxp_plk, $o2k3_plk, $o2k7_plk ; Polish
+Dim $wxp_hun, $w2k3_hun, $oxp_hun, $o2k3_hun, $o2k7_hun ; Hungarian
+Dim $wxp_csy, $w2k3_csy, $oxp_csy, $o2k3_csy, $o2k7_csy ; Czech
+Dim $wxp_sve, $w2k3_sve, $oxp_sve, $o2k3_sve, $o2k7_sve ; Swedish
+Dim $wxp_trk, $w2k3_trk, $oxp_trk, $o2k3_trk, $o2k7_trk ; Turkish
+Dim $wxp_ell, $w2k3_ell, $oxp_ell, $o2k3_ell, $o2k7_ell ; Greek
+Dim $wxp_ara, $w2k3_ara, $oxp_ara, $o2k3_ara, $o2k7_ara ; Arabic
+Dim $wxp_heb, $w2k3_heb, $oxp_heb, $o2k3_heb, $o2k7_heb ; Hebrew
+Dim $wxp_dan, $w2k3_dan, $oxp_dan, $o2k3_dan, $o2k7_dan ; Danish
+Dim $wxp_nor, $w2k3_nor, $oxp_nor, $o2k3_nor, $o2k7_nor ; Norwegian
+Dim $wxp_fin, $w2k3_fin, $oxp_fin, $o2k3_fin, $o2k7_fin ; Finnish
+Dim $w60_glb, $w60_x64_glb                              ; Windows Vista / Windows Server 2008 (global)  
+Dim $w61_glb, $w61_x64_glb                              ; Windows 7 / Windows Server 2008 R2 (global)  
+Dim $ofc_glb                                            ; Office (global)  
 
 Dim $dlgheight, $groupwidth, $groupheight, $txtwidth, $txtheight, $slimheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
 
@@ -158,6 +162,10 @@ Dim $result
     EndIf
   EndIf
   Return $result
+EndFunc
+
+Func ClientIniFileName()
+  Return @ScriptDir & $path_rel_clientini
 EndFunc
 
 Func LanguageCaption($token, $german)
@@ -311,164 +319,186 @@ Func LanguageCaption($token, $german)
   EndSwitch
 EndFunc
 
-Func DisableGUI()
-  GUICtrlSetState($w2k_enu, $GUI_DISABLE)
-  GUICtrlSetState($wxp_enu, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_enu, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_x64_enu, $GUI_DISABLE)
-  GUICtrlSetState($w2k_fra, $GUI_DISABLE)
-  GUICtrlSetState($wxp_fra, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_fra, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_x64_fra, $GUI_DISABLE)
-  GUICtrlSetState($w2k_esn, $GUI_DISABLE)
-  GUICtrlSetState($wxp_esn, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_esn, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_x64_esn, $GUI_DISABLE)
-  GUICtrlSetState($w2k_jpn, $GUI_DISABLE)
-  GUICtrlSetState($wxp_jpn, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_jpn, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_x64_jpn, $GUI_DISABLE)
-  GUICtrlSetState($w2k_kor, $GUI_DISABLE)
-  GUICtrlSetState($wxp_kor, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_kor, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_x64_kor, $GUI_DISABLE)
-  GUICtrlSetState($w2k_rus, $GUI_DISABLE)
-  GUICtrlSetState($wxp_rus, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_rus, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_x64_rus, $GUI_DISABLE)
-  GUICtrlSetState($w2k_ptg, $GUI_DISABLE)
-  GUICtrlSetState($wxp_ptg, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_ptg, $GUI_DISABLE)
-  GUICtrlSetState($w2k_ptb, $GUI_DISABLE)
-  GUICtrlSetState($wxp_ptb, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_ptb, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_x64_ptb, $GUI_DISABLE)
-  GUICtrlSetState($w2k_deu, $GUI_DISABLE)
-  GUICtrlSetState($wxp_deu, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_deu, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_x64_deu, $GUI_DISABLE)
-  GUICtrlSetState($w2k_nld, $GUI_DISABLE)
-  GUICtrlSetState($wxp_nld, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_nld, $GUI_DISABLE)
-  GUICtrlSetState($w2k_ita, $GUI_DISABLE)
-  GUICtrlSetState($wxp_ita, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_ita, $GUI_DISABLE)
-  GUICtrlSetState($w2k_chs, $GUI_DISABLE)
-  GUICtrlSetState($wxp_chs, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_chs, $GUI_DISABLE)
-  GUICtrlSetState($w2k_cht, $GUI_DISABLE)
-  GUICtrlSetState($wxp_cht, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_cht, $GUI_DISABLE)
-  GUICtrlSetState($w2k_plk, $GUI_DISABLE)
-  GUICtrlSetState($wxp_plk, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_plk, $GUI_DISABLE)
-  GUICtrlSetState($w2k_hun, $GUI_DISABLE)
-  GUICtrlSetState($wxp_hun, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_hun, $GUI_DISABLE)
-  GUICtrlSetState($w2k_csy, $GUI_DISABLE)
-  GUICtrlSetState($wxp_csy, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_csy, $GUI_DISABLE)
-  GUICtrlSetState($w2k_sve, $GUI_DISABLE)
-  GUICtrlSetState($wxp_sve, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_sve, $GUI_DISABLE)
-  GUICtrlSetState($w2k_trk, $GUI_DISABLE)
-  GUICtrlSetState($wxp_trk, $GUI_DISABLE)
-  GUICtrlSetState($w2k3_trk, $GUI_DISABLE)
-  GUICtrlSetState($w2k_ell, $GUI_DISABLE)
-  GUICtrlSetState($wxp_ell, $GUI_DISABLE)
-;  GUICtrlSetState($w2k3_ell, $GUI_DISABLE)
-  GUICtrlSetState($w2k_ara, $GUI_DISABLE)
-  GUICtrlSetState($wxp_ara, $GUI_DISABLE)
-;  GUICtrlSetState($w2k3_ara, $GUI_DISABLE)
-  GUICtrlSetState($w2k_heb, $GUI_DISABLE)
-  GUICtrlSetState($wxp_heb, $GUI_DISABLE)
-;  GUICtrlSetState($w2k3_heb, $GUI_DISABLE)
-  GUICtrlSetState($w2k_dan, $GUI_DISABLE)
-  GUICtrlSetState($wxp_dan, $GUI_DISABLE)
-;  GUICtrlSetState($w2k3_dan, $GUI_DISABLE)
-  GUICtrlSetState($w2k_nor, $GUI_DISABLE)
-  GUICtrlSetState($wxp_nor, $GUI_DISABLE)
-;  GUICtrlSetState($w2k3_nor, $GUI_DISABLE)
-  GUICtrlSetState($w2k_fin, $GUI_DISABLE)
-  GUICtrlSetState($wxp_fin, $GUI_DISABLE)
-;  GUICtrlSetState($w2k3_fin, $GUI_DISABLE)
-  GUICtrlSetState($w60_glb, $GUI_DISABLE)
-  GUICtrlSetState($w60_x64_glb, $GUI_DISABLE)
-  GUICtrlSetState($w61_glb, $GUI_DISABLE)
-  GUICtrlSetState($w61_x64_glb, $GUI_DISABLE)
+Func IsCheckBoxChecked($chkbox)
+  Return BitAND(GUICtrlRead($chkbox), $GUI_CHECKED) = $GUI_CHECKED
+EndFunc
 
-  GUICtrlSetState($oxp_enu, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_enu, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_enu, $GUI_DISABLE)
-  GUICtrlSetState($oxp_fra, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_fra, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_fra, $GUI_DISABLE)
-  GUICtrlSetState($oxp_esn, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_esn, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_esn, $GUI_DISABLE)
-  GUICtrlSetState($oxp_jpn, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_jpn, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_jpn, $GUI_DISABLE)
-  GUICtrlSetState($oxp_kor, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_kor, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_kor, $GUI_DISABLE)
-  GUICtrlSetState($oxp_rus, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_rus, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_rus, $GUI_DISABLE)
-  GUICtrlSetState($oxp_ptg, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_ptg, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_ptg, $GUI_DISABLE)
-  GUICtrlSetState($oxp_ptb, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_ptb, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_ptb, $GUI_DISABLE)
-  GUICtrlSetState($oxp_deu, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_deu, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_deu, $GUI_DISABLE)
-  GUICtrlSetState($oxp_nld, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_nld, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_nld, $GUI_DISABLE)
-  GUICtrlSetState($oxp_ita, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_ita, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_ita, $GUI_DISABLE)
-  GUICtrlSetState($oxp_chs, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_chs, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_chs, $GUI_DISABLE)
-  GUICtrlSetState($oxp_cht, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_cht, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_cht, $GUI_DISABLE)
-  GUICtrlSetState($oxp_plk, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_plk, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_plk, $GUI_DISABLE)
-  GUICtrlSetState($oxp_hun, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_hun, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_hun, $GUI_DISABLE)
-  GUICtrlSetState($oxp_csy, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_csy, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_csy, $GUI_DISABLE)
-  GUICtrlSetState($oxp_sve, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_sve, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_sve, $GUI_DISABLE)
-  GUICtrlSetState($oxp_trk, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_trk, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_trk, $GUI_DISABLE)
-  GUICtrlSetState($oxp_ell, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_ell, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_ell, $GUI_DISABLE)
-  GUICtrlSetState($oxp_ara, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_ara, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_ara, $GUI_DISABLE)
-  GUICtrlSetState($oxp_heb, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_heb, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_heb, $GUI_DISABLE)
-  GUICtrlSetState($oxp_dan, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_dan, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_dan, $GUI_DISABLE)
-  GUICtrlSetState($oxp_nor, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_nor, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_nor, $GUI_DISABLE)
-  GUICtrlSetState($oxp_fin, $GUI_DISABLE)
-  GUICtrlSetState($o2k3_fin, $GUI_DISABLE)
-  GUICtrlSetState($o2k7_fin, $GUI_DISABLE)
+Func CheckBoxStateToString($chkbox)
+  If IsCheckBoxChecked($chkbox) Then
+    Return $enabled
+  Else
+    Return $disabled
+  EndIf
+EndFunc
+
+Func IsOlderOfficeChecked()
+  Return (IsCheckBoxChecked($oxp_enu) OR IsCheckBoxChecked($o2k3_enu) OR IsCheckBoxChecked($o2k7_enu) _
+       OR IsCheckBoxChecked($oxp_fra) OR IsCheckBoxChecked($o2k3_fra) OR IsCheckBoxChecked($o2k7_fra) _
+       OR IsCheckBoxChecked($oxp_esn) OR IsCheckBoxChecked($o2k3_esn) OR IsCheckBoxChecked($o2k7_esn) _
+       OR IsCheckBoxChecked($oxp_jpn) OR IsCheckBoxChecked($o2k3_jpn) OR IsCheckBoxChecked($o2k7_jpn) _
+       OR IsCheckBoxChecked($oxp_kor) OR IsCheckBoxChecked($o2k3_kor) OR IsCheckBoxChecked($o2k7_kor) _
+       OR IsCheckBoxChecked($oxp_rus) OR IsCheckBoxChecked($o2k3_rus) OR IsCheckBoxChecked($o2k7_rus) _
+       OR IsCheckBoxChecked($oxp_ptg) OR IsCheckBoxChecked($o2k3_ptg) OR IsCheckBoxChecked($o2k7_ptg) _
+       OR IsCheckBoxChecked($oxp_ptb) OR IsCheckBoxChecked($o2k3_ptb) OR IsCheckBoxChecked($o2k7_ptb) _
+       OR IsCheckBoxChecked($oxp_deu) OR IsCheckBoxChecked($o2k3_deu) OR IsCheckBoxChecked($o2k7_deu) _
+       OR IsCheckBoxChecked($oxp_nld) OR IsCheckBoxChecked($o2k3_nld) OR IsCheckBoxChecked($o2k7_nld) _
+       OR IsCheckBoxChecked($oxp_ita) OR IsCheckBoxChecked($o2k3_ita) OR IsCheckBoxChecked($o2k7_ita) _
+       OR IsCheckBoxChecked($oxp_chs) OR IsCheckBoxChecked($o2k3_chs) OR IsCheckBoxChecked($o2k7_chs) _
+       OR IsCheckBoxChecked($oxp_cht) OR IsCheckBoxChecked($o2k3_cht) OR IsCheckBoxChecked($o2k7_cht) _
+       OR IsCheckBoxChecked($oxp_plk) OR IsCheckBoxChecked($o2k3_plk) OR IsCheckBoxChecked($o2k7_plk) _
+       OR IsCheckBoxChecked($oxp_hun) OR IsCheckBoxChecked($o2k3_hun) OR IsCheckBoxChecked($o2k7_hun) _
+       OR IsCheckBoxChecked($oxp_csy) OR IsCheckBoxChecked($o2k3_csy) OR IsCheckBoxChecked($o2k7_csy) _
+       OR IsCheckBoxChecked($oxp_sve) OR IsCheckBoxChecked($o2k3_sve) OR IsCheckBoxChecked($o2k7_sve) _
+       OR IsCheckBoxChecked($oxp_trk) OR IsCheckBoxChecked($o2k3_trk) OR IsCheckBoxChecked($o2k7_trk) _
+       OR IsCheckBoxChecked($oxp_ell) OR IsCheckBoxChecked($o2k3_ell) OR IsCheckBoxChecked($o2k7_ell) _
+       OR IsCheckBoxChecked($oxp_ara) OR IsCheckBoxChecked($o2k3_ara) OR IsCheckBoxChecked($o2k7_ara) _
+       OR IsCheckBoxChecked($oxp_heb) OR IsCheckBoxChecked($o2k3_heb) OR IsCheckBoxChecked($o2k7_heb) _
+       OR IsCheckBoxChecked($oxp_dan) OR IsCheckBoxChecked($o2k3_dan) OR IsCheckBoxChecked($o2k7_dan) _
+       OR IsCheckBoxChecked($oxp_nor) OR IsCheckBoxChecked($o2k3_nor) OR IsCheckBoxChecked($o2k7_nor) _
+       OR IsCheckBoxChecked($oxp_fin) OR IsCheckBoxChecked($o2k3_fin) OR IsCheckBoxChecked($o2k7_fin) )
+EndFunc
+
+Func SwitchDownloadGUI($state)
+  GUICtrlSetState($wxp_enu, $state)
+  GUICtrlSetState($w2k3_enu, $state)
+  GUICtrlSetState($w2k3_x64_enu, $state)
+  GUICtrlSetState($wxp_fra, $state)
+  GUICtrlSetState($w2k3_fra, $state)
+  GUICtrlSetState($w2k3_x64_fra, $state)
+  GUICtrlSetState($wxp_esn, $state)
+  GUICtrlSetState($w2k3_esn, $state)
+  GUICtrlSetState($w2k3_x64_esn, $state)
+  GUICtrlSetState($wxp_jpn, $state)
+  GUICtrlSetState($w2k3_jpn, $state)
+  GUICtrlSetState($w2k3_x64_jpn, $state)
+  GUICtrlSetState($wxp_kor, $state)
+  GUICtrlSetState($w2k3_kor, $state)
+  GUICtrlSetState($w2k3_x64_kor, $state)
+  GUICtrlSetState($wxp_rus, $state)
+  GUICtrlSetState($w2k3_rus, $state)
+  GUICtrlSetState($w2k3_x64_rus, $state)
+  GUICtrlSetState($wxp_ptg, $state)
+  GUICtrlSetState($w2k3_ptg, $state)
+  GUICtrlSetState($wxp_ptb, $state)
+  GUICtrlSetState($w2k3_ptb, $state)
+  GUICtrlSetState($w2k3_x64_ptb, $state)
+  GUICtrlSetState($wxp_deu, $state)
+  GUICtrlSetState($w2k3_deu, $state)
+  GUICtrlSetState($w2k3_x64_deu, $state)
+  GUICtrlSetState($wxp_nld, $state)
+  GUICtrlSetState($w2k3_nld, $state)
+  GUICtrlSetState($wxp_ita, $state)
+  GUICtrlSetState($w2k3_ita, $state)
+  GUICtrlSetState($wxp_chs, $state)
+  GUICtrlSetState($w2k3_chs, $state)
+  GUICtrlSetState($wxp_cht, $state)
+  GUICtrlSetState($w2k3_cht, $state)
+  GUICtrlSetState($wxp_plk, $state)
+  GUICtrlSetState($w2k3_plk, $state)
+  GUICtrlSetState($wxp_hun, $state)
+  GUICtrlSetState($w2k3_hun, $state)
+  GUICtrlSetState($wxp_csy, $state)
+  GUICtrlSetState($w2k3_csy, $state)
+  GUICtrlSetState($wxp_sve, $state)
+  GUICtrlSetState($w2k3_sve, $state)
+  GUICtrlSetState($wxp_trk, $state)
+  GUICtrlSetState($w2k3_trk, $state)
+  GUICtrlSetState($wxp_ell, $state)
+;  GUICtrlSetState($w2k3_ell, $state)
+  GUICtrlSetState($wxp_ara, $state)
+;  GUICtrlSetState($w2k3_ara, $state)
+  GUICtrlSetState($wxp_heb, $state)
+;  GUICtrlSetState($w2k3_heb, $state)
+  GUICtrlSetState($wxp_dan, $state)
+;  GUICtrlSetState($w2k3_dan, $state)
+  GUICtrlSetState($wxp_nor, $state)
+;  GUICtrlSetState($w2k3_nor, $state)
+  GUICtrlSetState($wxp_fin, $state)
+;  GUICtrlSetState($w2k3_fin, $state)
+  GUICtrlSetState($w60_glb, $state)
+  GUICtrlSetState($w60_x64_glb, $state)
+  GUICtrlSetState($w61_glb, $state)
+  GUICtrlSetState($w61_x64_glb, $state)
+
+  GUICtrlSetState($oxp_enu, $state)
+  GUICtrlSetState($o2k3_enu, $state)
+  GUICtrlSetState($o2k7_enu, $state)
+  GUICtrlSetState($oxp_fra, $state)
+  GUICtrlSetState($o2k3_fra, $state)
+  GUICtrlSetState($o2k7_fra, $state)
+  GUICtrlSetState($oxp_esn, $state)
+  GUICtrlSetState($o2k3_esn, $state)
+  GUICtrlSetState($o2k7_esn, $state)
+  GUICtrlSetState($oxp_jpn, $state)
+  GUICtrlSetState($o2k3_jpn, $state)
+  GUICtrlSetState($o2k7_jpn, $state)
+  GUICtrlSetState($oxp_kor, $state)
+  GUICtrlSetState($o2k3_kor, $state)
+  GUICtrlSetState($o2k7_kor, $state)
+  GUICtrlSetState($oxp_rus, $state)
+  GUICtrlSetState($o2k3_rus, $state)
+  GUICtrlSetState($o2k7_rus, $state)
+  GUICtrlSetState($oxp_ptg, $state)
+  GUICtrlSetState($o2k3_ptg, $state)
+  GUICtrlSetState($o2k7_ptg, $state)
+  GUICtrlSetState($oxp_ptb, $state)
+  GUICtrlSetState($o2k3_ptb, $state)
+  GUICtrlSetState($o2k7_ptb, $state)
+  GUICtrlSetState($oxp_deu, $state)
+  GUICtrlSetState($o2k3_deu, $state)
+  GUICtrlSetState($o2k7_deu, $state)
+  GUICtrlSetState($oxp_nld, $state)
+  GUICtrlSetState($o2k3_nld, $state)
+  GUICtrlSetState($o2k7_nld, $state)
+  GUICtrlSetState($oxp_ita, $state)
+  GUICtrlSetState($o2k3_ita, $state)
+  GUICtrlSetState($o2k7_ita, $state)
+  GUICtrlSetState($oxp_chs, $state)
+  GUICtrlSetState($o2k3_chs, $state)
+  GUICtrlSetState($o2k7_chs, $state)
+  GUICtrlSetState($oxp_cht, $state)
+  GUICtrlSetState($o2k3_cht, $state)
+  GUICtrlSetState($o2k7_cht, $state)
+  GUICtrlSetState($oxp_plk, $state)
+  GUICtrlSetState($o2k3_plk, $state)
+  GUICtrlSetState($o2k7_plk, $state)
+  GUICtrlSetState($oxp_hun, $state)
+  GUICtrlSetState($o2k3_hun, $state)
+  GUICtrlSetState($o2k7_hun, $state)
+  GUICtrlSetState($oxp_csy, $state)
+  GUICtrlSetState($o2k3_csy, $state)
+  GUICtrlSetState($o2k7_csy, $state)
+  GUICtrlSetState($oxp_sve, $state)
+  GUICtrlSetState($o2k3_sve, $state)
+  GUICtrlSetState($o2k7_sve, $state)
+  GUICtrlSetState($oxp_trk, $state)
+  GUICtrlSetState($o2k3_trk, $state)
+  GUICtrlSetState($o2k7_trk, $state)
+  GUICtrlSetState($oxp_ell, $state)
+  GUICtrlSetState($o2k3_ell, $state)
+  GUICtrlSetState($o2k7_ell, $state)
+  GUICtrlSetState($oxp_ara, $state)
+  GUICtrlSetState($o2k3_ara, $state)
+  GUICtrlSetState($o2k7_ara, $state)
+  GUICtrlSetState($oxp_heb, $state)
+  GUICtrlSetState($o2k3_heb, $state)
+  GUICtrlSetState($o2k7_heb, $state)
+  GUICtrlSetState($oxp_dan, $state)
+  GUICtrlSetState($o2k3_dan, $state)
+  GUICtrlSetState($o2k7_dan, $state)
+  GUICtrlSetState($oxp_nor, $state)
+  GUICtrlSetState($o2k3_nor, $state)
+  GUICtrlSetState($o2k7_nor, $state)
+  GUICtrlSetState($oxp_fin, $state)
+  GUICtrlSetState($o2k3_fin, $state)
+  GUICtrlSetState($o2k7_fin, $state)
+  Return 0
+EndFunc
+
+Func DisableGUI()
+
+  SwitchDownloadGUI($GUI_DISABLE)
+  GUICtrlSetState($ofc_glb, $GUI_DISABLE)
 
   GUICtrlSetState($includesp, $GUI_DISABLE)
   GUICtrlSetState($dotnet, $GUI_DISABLE)
@@ -495,182 +525,30 @@ Func DisableGUI()
 EndFunc
 
 Func EnableGUI()
-  GUICtrlSetState($w2k_enu, $GUI_ENABLE)
-  GUICtrlSetState($wxp_enu, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_enu, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_x64_enu, $GUI_ENABLE)
-  GUICtrlSetState($w2k_fra, $GUI_ENABLE)
-  GUICtrlSetState($wxp_fra, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_fra, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_x64_fra, $GUI_ENABLE)
-  GUICtrlSetState($w2k_esn, $GUI_ENABLE)
-  GUICtrlSetState($wxp_esn, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_esn, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_x64_esn, $GUI_ENABLE)
-  GUICtrlSetState($w2k_jpn, $GUI_ENABLE)
-  GUICtrlSetState($wxp_jpn, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_jpn, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_x64_jpn, $GUI_ENABLE)
-  GUICtrlSetState($w2k_kor, $GUI_ENABLE)
-  GUICtrlSetState($wxp_kor, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_kor, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_x64_kor, $GUI_ENABLE)
-  GUICtrlSetState($w2k_rus, $GUI_ENABLE)
-  GUICtrlSetState($wxp_rus, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_rus, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_x64_rus, $GUI_ENABLE)
-  GUICtrlSetState($w2k_ptg, $GUI_ENABLE)
-  GUICtrlSetState($wxp_ptg, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_ptg, $GUI_ENABLE)
-  GUICtrlSetState($w2k_ptb, $GUI_ENABLE)
-  GUICtrlSetState($wxp_ptb, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_ptb, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_x64_ptb, $GUI_ENABLE)
-  GUICtrlSetState($w2k_deu, $GUI_ENABLE)
-  GUICtrlSetState($wxp_deu, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_deu, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_x64_deu, $GUI_ENABLE)
-  GUICtrlSetState($w2k_nld, $GUI_ENABLE)
-  GUICtrlSetState($wxp_nld, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_nld, $GUI_ENABLE)
-  GUICtrlSetState($w2k_ita, $GUI_ENABLE)
-  GUICtrlSetState($wxp_ita, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_ita, $GUI_ENABLE)
-  GUICtrlSetState($w2k_chs, $GUI_ENABLE)
-  GUICtrlSetState($wxp_chs, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_chs, $GUI_ENABLE)
-  GUICtrlSetState($w2k_cht, $GUI_ENABLE)
-  GUICtrlSetState($wxp_cht, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_cht, $GUI_ENABLE)
-  GUICtrlSetState($w2k_plk, $GUI_ENABLE)
-  GUICtrlSetState($wxp_plk, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_plk, $GUI_ENABLE)
-  GUICtrlSetState($w2k_hun, $GUI_ENABLE)
-  GUICtrlSetState($wxp_hun, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_hun, $GUI_ENABLE)
-  GUICtrlSetState($w2k_csy, $GUI_ENABLE)
-  GUICtrlSetState($wxp_csy, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_csy, $GUI_ENABLE)
-  GUICtrlSetState($w2k_sve, $GUI_ENABLE)
-  GUICtrlSetState($wxp_sve, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_sve, $GUI_ENABLE)
-  GUICtrlSetState($w2k_trk, $GUI_ENABLE)
-  GUICtrlSetState($wxp_trk, $GUI_ENABLE)
-  GUICtrlSetState($w2k3_trk, $GUI_ENABLE)
-  GUICtrlSetState($w2k_ell, $GUI_ENABLE)
-  GUICtrlSetState($wxp_ell, $GUI_ENABLE)
-;  GUICtrlSetState($w2k3_ell, $GUI_ENABLE)
-  GUICtrlSetState($w2k_ara, $GUI_ENABLE)
-  GUICtrlSetState($wxp_ara, $GUI_ENABLE)
-;  GUICtrlSetState($w2k3_ara, $GUI_ENABLE)
-  GUICtrlSetState($w2k_heb, $GUI_ENABLE)
-  GUICtrlSetState($wxp_heb, $GUI_ENABLE)
-;  GUICtrlSetState($w2k3_heb, $GUI_ENABLE)
-  GUICtrlSetState($w2k_dan, $GUI_ENABLE)
-  GUICtrlSetState($wxp_dan, $GUI_ENABLE)
-;  GUICtrlSetState($w2k3_dan, $GUI_ENABLE)
-  GUICtrlSetState($w2k_nor, $GUI_ENABLE)
-  GUICtrlSetState($wxp_nor, $GUI_ENABLE)
-;  GUICtrlSetState($w2k3_nor, $GUI_ENABLE)
-  GUICtrlSetState($w2k_fin, $GUI_ENABLE)
-  GUICtrlSetState($wxp_fin, $GUI_ENABLE)
-;  GUICtrlSetState($w2k3_fin, $GUI_ENABLE)
-  GUICtrlSetState($w60_glb, $GUI_ENABLE)
-  GUICtrlSetState($w60_x64_glb, $GUI_ENABLE)
-  GUICtrlSetState($w61_glb, $GUI_ENABLE)
-  GUICtrlSetState($w61_x64_glb, $GUI_ENABLE)
 
-  GUICtrlSetState($oxp_enu, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_enu, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_enu, $GUI_ENABLE)
-  GUICtrlSetState($oxp_fra, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_fra, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_fra, $GUI_ENABLE)
-  GUICtrlSetState($oxp_esn, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_esn, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_esn, $GUI_ENABLE)
-  GUICtrlSetState($oxp_jpn, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_jpn, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_jpn, $GUI_ENABLE)
-  GUICtrlSetState($oxp_kor, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_kor, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_kor, $GUI_ENABLE)
-  GUICtrlSetState($oxp_rus, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_rus, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_rus, $GUI_ENABLE)
-  GUICtrlSetState($oxp_ptg, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_ptg, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_ptg, $GUI_ENABLE)
-  GUICtrlSetState($oxp_ptb, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_ptb, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_ptb, $GUI_ENABLE)
-  GUICtrlSetState($oxp_deu, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_deu, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_deu, $GUI_ENABLE)
-  GUICtrlSetState($oxp_nld, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_nld, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_nld, $GUI_ENABLE)
-  GUICtrlSetState($oxp_ita, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_ita, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_ita, $GUI_ENABLE)
-  GUICtrlSetState($oxp_chs, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_chs, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_chs, $GUI_ENABLE)
-  GUICtrlSetState($oxp_cht, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_cht, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_cht, $GUI_ENABLE)
-  GUICtrlSetState($oxp_plk, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_plk, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_plk, $GUI_ENABLE)
-  GUICtrlSetState($oxp_hun, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_hun, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_hun, $GUI_ENABLE)
-  GUICtrlSetState($oxp_csy, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_csy, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_csy, $GUI_ENABLE)
-  GUICtrlSetState($oxp_sve, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_sve, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_sve, $GUI_ENABLE)
-  GUICtrlSetState($oxp_trk, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_trk, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_trk, $GUI_ENABLE)
-  GUICtrlSetState($oxp_ell, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_ell, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_ell, $GUI_ENABLE)
-  GUICtrlSetState($oxp_ara, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_ara, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_ara, $GUI_ENABLE)
-  GUICtrlSetState($oxp_heb, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_heb, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_heb, $GUI_ENABLE)
-  GUICtrlSetState($oxp_dan, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_dan, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_dan, $GUI_ENABLE)
-  GUICtrlSetState($oxp_nor, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_nor, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_nor, $GUI_ENABLE)
-  GUICtrlSetState($oxp_fin, $GUI_ENABLE)
-  GUICtrlSetState($o2k3_fin, $GUI_ENABLE)
-  GUICtrlSetState($o2k7_fin, $GUI_ENABLE)
+  SwitchDownloadGUI($GUI_ENABLE)
+  If NOT IsOlderOfficeChecked() Then
+    GUICtrlSetState($ofc_glb, $GUI_ENABLE)
+  EndIf
 
   GUICtrlSetState($includesp, $GUI_ENABLE)
   GUICtrlSetState($dotnet, $GUI_ENABLE)
   GUICtrlSetState($msse, $GUI_ENABLE)
-  If BitAND(GUICtrlRead($skipdownload), $GUI_CHECKED) <> $GUI_CHECKED Then
+  If NOT IsCheckBoxChecked($skipdownload) Then
     GUICtrlSetState($cleanupdownloads, $GUI_ENABLE)
     GUICtrlSetState($verifydownloads, $GUI_ENABLE)
   EndIf
   GUICtrlSetState($cdiso, $GUI_ENABLE)
   GUICtrlSetState($dvdiso, $GUI_ENABLE)
   GUICtrlSetState($usbcopy, $GUI_ENABLE)
-  If BitAND(GUICtrlRead($usbcopy), $GUI_CHECKED) = $GUI_CHECKED Then
+  If IsCheckBoxChecked($usbcopy) Then
     GUICtrlSetState($usblbl, $GUI_ENABLE)
     GUICtrlSetState($usbpath, $GUI_ENABLE)
     GUICtrlSetState($usbfsf, $GUI_ENABLE)
   EndIf
   GUICtrlSetState($btn_start, $GUI_ENABLE)
   GUICtrlSetState($skipdownload, $GUI_ENABLE)
-  If BitAND(GUICtrlRead($skipdownload), $GUI_CHECKED) <> $GUI_CHECKED Then
+  If NOT IsCheckBoxChecked($skipdownload) Then
     GUICtrlSetState($shutdown, $GUI_ENABLE)
   EndIf
   GUICtrlSetState($btn_proxy, $GUI_ENABLE)
@@ -681,38 +559,26 @@ Func EnableGUI()
   Return 0
 EndFunc
 
-Func CheckBoxState2String($chkbox)
-Dim $result = ""
-
-  If BitAND(GUICtrlRead($chkbox), $GUI_CHECKED) = $GUI_CHECKED Then
-    $result = $enabled
-  Else
-    $result = $disabled
-  EndIf
-  Return $result
-EndFunc
-
 Func DetermineDownloadSwitches($chkbox_includesp, $chkbox_dotnet, $chkbox_msse, $chkbox_cleanupdownloads, $chkbox_verifydownloads, $chkbox_cdiso, $chkbox_dvdiso, $str_proxy, $str_wsus)
 Dim $result = ""
 
-  If BitAND(GUICtrlRead($chkbox_includesp), $GUI_CHECKED) <> $GUI_CHECKED Then
+  If NOT IsCheckBoxChecked($chkbox_includesp) Then
     $result = $result & " /excludesp"
   EndIf
-  If BitAND(GUICtrlRead($chkbox_dotnet), $GUI_CHECKED) = $GUI_CHECKED Then
+  If IsCheckBoxChecked($chkbox_dotnet) Then
     $result = $result & " /includedotnet"
   EndIf
-  If BitAND(GUICtrlRead($chkbox_msse), $GUI_CHECKED) = $GUI_CHECKED Then
+  If IsCheckBoxChecked($chkbox_msse) Then
     $result = $result & " /includemsse"
   EndIf
-  If BitAND(GUICtrlRead($chkbox_cleanupdownloads), $GUI_CHECKED) <> $GUI_CHECKED Then
+  If NOT IsCheckBoxChecked($chkbox_cleanupdownloads) Then
     $result = $result & " /nocleanup"
   EndIf
-  If BitAND(GUICtrlRead($chkbox_verifydownloads), $GUI_CHECKED) = $GUI_CHECKED Then
+  If IsCheckBoxChecked($chkbox_verifydownloads) Then
     $result = $result & " /verify"
   EndIf
   $result = $result & " /exitonerror"
-  If ( (BitAND(GUICtrlRead($chkbox_cdiso), $GUI_CHECKED) <> $GUI_CHECKED) _
-   AND (BitAND(GUICtrlRead($chkbox_dvdiso), $GUI_CHECKED) <> $GUI_CHECKED) ) Then
+  If NOT (IsCheckBoxChecked($chkbox_cdiso) OR IsCheckBoxChecked($chkbox_dvdiso)) Then
     $result = $result & " /skipmkisofs"
   EndIf
   If $str_proxy <> "" Then
@@ -727,13 +593,13 @@ EndFunc
 Func DetermineISOSwitches($chkbox_includesp, $chkbox_dotnet, $chkbox_msse)
 Dim $result = ""
 
-  If BitAND(GUICtrlRead($chkbox_includesp), $GUI_CHECKED) <> $GUI_CHECKED Then
+  If NOT IsCheckBoxChecked($chkbox_includesp) Then
     $result = $result & " /excludesp"
   EndIf
-  If BitAND(GUICtrlRead($chkbox_dotnet), $GUI_CHECKED) = $GUI_CHECKED Then
+  If IsCheckBoxChecked($chkbox_dotnet) Then
     $result = $result & " /includedotnet"
   EndIf
-  If BitAND(GUICtrlRead($chkbox_msse), $GUI_CHECKED) = $GUI_CHECKED Then
+  If IsCheckBoxChecked($chkbox_msse) Then
     $result = $result & " /includemsse"
   EndIf
   Return $result
@@ -891,18 +757,18 @@ Dim $result
   Return $result
 EndFunc
 
-Func RunScripts($stroptions, $chkbox_skipdl, $strdownloadswitches, $chkbox_cdiso, $strisoswitches, $chkbox_usb, $strusbpath)
+Func RunScripts($stroptions, $skipdl, $strdownloadswitches, $runiso, $strisoswitches, $runusb, $strusbpath)
 Dim $result
 
-  If BitAND(GUICtrlRead($chkbox_skipdl), $GUI_CHECKED) = $GUI_CHECKED Then 
+  If $skipdl Then 
     $result = 0
   Else
     $result = RunDownloadScript($stroptions, $strdownloadswitches)
   EndIf
-  If ( ($result = 0) AND (BitAND(GUICtrlRead($chkbox_cdiso), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+  If ( ($result = 0) AND $runiso ) Then
     $result = RunISOCreationScript($stroptions, $strisoswitches)
   EndIf
-  If ( ($result = 0) AND (BitAND(GUICtrlRead($chkbox_usb), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+  If ( ($result = 0) AND $runusb ) Then
     $result = RunUSBCreationScript($stroptions, $strisoswitches, $strusbpath)
   EndIf
   Return $result
@@ -910,192 +776,169 @@ EndFunc
 
 Func SaveSettings()
 
-;  Windows 2000 group
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_enu, CheckBoxState2String($w2k_enu))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_fra, CheckBoxState2String($w2k_fra))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_esn, CheckBoxState2String($w2k_esn))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_jpn, CheckBoxState2String($w2k_jpn))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_kor, CheckBoxState2String($w2k_kor))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_rus, CheckBoxState2String($w2k_rus))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_ptg, CheckBoxState2String($w2k_ptg))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_ptb, CheckBoxState2String($w2k_ptb))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_deu, CheckBoxState2String($w2k_deu))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_nld, CheckBoxState2String($w2k_nld))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_ita, CheckBoxState2String($w2k_ita))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_chs, CheckBoxState2String($w2k_chs))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_cht, CheckBoxState2String($w2k_cht))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_plk, CheckBoxState2String($w2k_plk))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_hun, CheckBoxState2String($w2k_hun))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_csy, CheckBoxState2String($w2k_csy))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_sve, CheckBoxState2String($w2k_sve))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_trk, CheckBoxState2String($w2k_trk))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_ell, CheckBoxState2String($w2k_ell))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_ara, CheckBoxState2String($w2k_ara))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_heb, CheckBoxState2String($w2k_heb))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_dan, CheckBoxState2String($w2k_dan))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_nor, CheckBoxState2String($w2k_nor))
-  IniWrite($inifilename, $ini_section_w2k, $lang_token_fin, CheckBoxState2String($w2k_fin))
-
 ;  Windows XP group
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_enu, CheckBoxState2String($wxp_enu))
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_fra, CheckBoxState2String($wxp_fra))
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_esn, CheckBoxState2String($wxp_esn))
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_jpn, CheckBoxState2String($wxp_jpn))
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_kor, CheckBoxState2String($wxp_kor))
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_rus, CheckBoxState2String($wxp_rus))
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_ptg, CheckBoxState2String($wxp_ptg))
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_ptb, CheckBoxState2String($wxp_ptb))
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_deu, CheckBoxState2String($wxp_deu))
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_nld, CheckBoxState2String($wxp_nld))
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_ita, CheckBoxState2String($wxp_ita))
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_chs, CheckBoxState2String($wxp_chs))
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_cht, CheckBoxState2String($wxp_cht))
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_plk, CheckBoxState2String($wxp_plk))
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_hun, CheckBoxState2String($wxp_hun))
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_csy, CheckBoxState2String($wxp_csy))
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_sve, CheckBoxState2String($wxp_sve))
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_trk, CheckBoxState2String($wxp_trk))
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_ell, CheckBoxState2String($wxp_ell))
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_ara, CheckBoxState2String($wxp_ara))
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_heb, CheckBoxState2String($wxp_heb))
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_dan, CheckBoxState2String($wxp_dan))
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_nor, CheckBoxState2String($wxp_nor))
-  IniWrite($inifilename, $ini_section_wxp, $lang_token_fin, CheckBoxState2String($wxp_fin))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_enu, CheckBoxStateToString($wxp_enu))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_fra, CheckBoxStateToString($wxp_fra))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_esn, CheckBoxStateToString($wxp_esn))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_jpn, CheckBoxStateToString($wxp_jpn))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_kor, CheckBoxStateToString($wxp_kor))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_rus, CheckBoxStateToString($wxp_rus))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_ptg, CheckBoxStateToString($wxp_ptg))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_ptb, CheckBoxStateToString($wxp_ptb))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_deu, CheckBoxStateToString($wxp_deu))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_nld, CheckBoxStateToString($wxp_nld))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_ita, CheckBoxStateToString($wxp_ita))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_chs, CheckBoxStateToString($wxp_chs))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_cht, CheckBoxStateToString($wxp_cht))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_plk, CheckBoxStateToString($wxp_plk))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_hun, CheckBoxStateToString($wxp_hun))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_csy, CheckBoxStateToString($wxp_csy))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_sve, CheckBoxStateToString($wxp_sve))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_trk, CheckBoxStateToString($wxp_trk))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_ell, CheckBoxStateToString($wxp_ell))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_ara, CheckBoxStateToString($wxp_ara))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_heb, CheckBoxStateToString($wxp_heb))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_dan, CheckBoxStateToString($wxp_dan))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_nor, CheckBoxStateToString($wxp_nor))
+  IniWrite($inifilename, $ini_section_wxp, $lang_token_fin, CheckBoxStateToString($wxp_fin))
 
 ;  Windows Server 2003 group
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_enu, CheckBoxState2String($w2k3_enu))
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_fra, CheckBoxState2String($w2k3_fra))
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_esn, CheckBoxState2String($w2k3_esn))
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_jpn, CheckBoxState2String($w2k3_jpn))
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_kor, CheckBoxState2String($w2k3_kor))
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_rus, CheckBoxState2String($w2k3_rus))
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_ptg, CheckBoxState2String($w2k3_ptg))
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_ptb, CheckBoxState2String($w2k3_ptb))
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_deu, CheckBoxState2String($w2k3_deu))
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_nld, CheckBoxState2String($w2k3_nld))
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_ita, CheckBoxState2String($w2k3_ita))
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_chs, CheckBoxState2String($w2k3_chs))
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_cht, CheckBoxState2String($w2k3_cht))
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_plk, CheckBoxState2String($w2k3_plk))
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_hun, CheckBoxState2String($w2k3_hun))
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_csy, CheckBoxState2String($w2k3_csy))
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_sve, CheckBoxState2String($w2k3_sve))
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_trk, CheckBoxState2String($w2k3_trk))
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_ell, CheckBoxState2String($w2k3_ell))
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_ara, CheckBoxState2String($w2k3_ara))
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_heb, CheckBoxState2String($w2k3_heb))
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_dan, CheckBoxState2String($w2k3_dan))
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_nor, CheckBoxState2String($w2k3_nor))
-  IniWrite($inifilename, $ini_section_w2k3, $lang_token_fin, CheckBoxState2String($w2k3_fin))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_enu, CheckBoxStateToString($w2k3_enu))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_fra, CheckBoxStateToString($w2k3_fra))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_esn, CheckBoxStateToString($w2k3_esn))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_jpn, CheckBoxStateToString($w2k3_jpn))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_kor, CheckBoxStateToString($w2k3_kor))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_rus, CheckBoxStateToString($w2k3_rus))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_ptg, CheckBoxStateToString($w2k3_ptg))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_ptb, CheckBoxStateToString($w2k3_ptb))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_deu, CheckBoxStateToString($w2k3_deu))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_nld, CheckBoxStateToString($w2k3_nld))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_ita, CheckBoxStateToString($w2k3_ita))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_chs, CheckBoxStateToString($w2k3_chs))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_cht, CheckBoxStateToString($w2k3_cht))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_plk, CheckBoxStateToString($w2k3_plk))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_hun, CheckBoxStateToString($w2k3_hun))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_csy, CheckBoxStateToString($w2k3_csy))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_sve, CheckBoxStateToString($w2k3_sve))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_trk, CheckBoxStateToString($w2k3_trk))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_ell, CheckBoxStateToString($w2k3_ell))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_ara, CheckBoxStateToString($w2k3_ara))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_heb, CheckBoxStateToString($w2k3_heb))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_dan, CheckBoxStateToString($w2k3_dan))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_nor, CheckBoxStateToString($w2k3_nor))
+  IniWrite($inifilename, $ini_section_w2k3, $lang_token_fin, CheckBoxStateToString($w2k3_fin))
 
 ;  Windows Server 2003 x64 group
-  IniWrite($inifilename, $ini_section_w2k3_x64, $lang_token_enu, CheckBoxState2String($w2k3_x64_enu))
-  IniWrite($inifilename, $ini_section_w2k3_x64, $lang_token_fra, CheckBoxState2String($w2k3_x64_fra))
-  IniWrite($inifilename, $ini_section_w2k3_x64, $lang_token_esn, CheckBoxState2String($w2k3_x64_esn))
-  IniWrite($inifilename, $ini_section_w2k3_x64, $lang_token_jpn, CheckBoxState2String($w2k3_x64_jpn))
-  IniWrite($inifilename, $ini_section_w2k3_x64, $lang_token_kor, CheckBoxState2String($w2k3_x64_kor))
-  IniWrite($inifilename, $ini_section_w2k3_x64, $lang_token_rus, CheckBoxState2String($w2k3_x64_rus))
-  IniWrite($inifilename, $ini_section_w2k3_x64, $lang_token_ptb, CheckBoxState2String($w2k3_x64_ptb))
-  IniWrite($inifilename, $ini_section_w2k3_x64, $lang_token_deu, CheckBoxState2String($w2k3_x64_deu))
+  IniWrite($inifilename, $ini_section_w2k3_x64, $lang_token_enu, CheckBoxStateToString($w2k3_x64_enu))
+  IniWrite($inifilename, $ini_section_w2k3_x64, $lang_token_fra, CheckBoxStateToString($w2k3_x64_fra))
+  IniWrite($inifilename, $ini_section_w2k3_x64, $lang_token_esn, CheckBoxStateToString($w2k3_x64_esn))
+  IniWrite($inifilename, $ini_section_w2k3_x64, $lang_token_jpn, CheckBoxStateToString($w2k3_x64_jpn))
+  IniWrite($inifilename, $ini_section_w2k3_x64, $lang_token_kor, CheckBoxStateToString($w2k3_x64_kor))
+  IniWrite($inifilename, $ini_section_w2k3_x64, $lang_token_rus, CheckBoxStateToString($w2k3_x64_rus))
+  IniWrite($inifilename, $ini_section_w2k3_x64, $lang_token_ptb, CheckBoxStateToString($w2k3_x64_ptb))
+  IniWrite($inifilename, $ini_section_w2k3_x64, $lang_token_deu, CheckBoxStateToString($w2k3_x64_deu))
 
 ;  Windows Vista / Server 2008 group
-  IniWrite($inifilename, $ini_section_w60, $lang_token_glb, CheckBoxState2String($w60_glb))
-  IniWrite($inifilename, $ini_section_w60_x64, $lang_token_glb, CheckBoxState2String($w60_x64_glb))
+  IniWrite($inifilename, $ini_section_w60, $lang_token_glb, CheckBoxStateToString($w60_glb))
+  IniWrite($inifilename, $ini_section_w60_x64, $lang_token_glb, CheckBoxStateToString($w60_x64_glb))
 
 ;  Windows 7 / Server 2008 R2 group
-  IniWrite($inifilename, $ini_section_w61, $lang_token_glb, CheckBoxState2String($w61_glb))
-  IniWrite($inifilename, $ini_section_w61_x64, $lang_token_glb, CheckBoxState2String($w61_x64_glb))
+  IniWrite($inifilename, $ini_section_w61, $lang_token_glb, CheckBoxStateToString($w61_glb))
+  IniWrite($inifilename, $ini_section_w61_x64, $lang_token_glb, CheckBoxStateToString($w61_x64_glb))
 
 ;  Office XP group
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_enu, CheckBoxState2String($oxp_enu))
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_fra, CheckBoxState2String($oxp_fra))
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_esn, CheckBoxState2String($oxp_esn))
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_jpn, CheckBoxState2String($oxp_jpn))
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_kor, CheckBoxState2String($oxp_kor))
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_rus, CheckBoxState2String($oxp_rus))
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_ptg, CheckBoxState2String($oxp_ptg))
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_ptb, CheckBoxState2String($oxp_ptb))
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_deu, CheckBoxState2String($oxp_deu))
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_nld, CheckBoxState2String($oxp_nld))
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_ita, CheckBoxState2String($oxp_ita))
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_chs, CheckBoxState2String($oxp_chs))
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_cht, CheckBoxState2String($oxp_cht))
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_plk, CheckBoxState2String($oxp_plk))
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_hun, CheckBoxState2String($oxp_hun))
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_csy, CheckBoxState2String($oxp_csy))
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_sve, CheckBoxState2String($oxp_sve))
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_trk, CheckBoxState2String($oxp_trk))
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_ell, CheckBoxState2String($oxp_ell))
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_ara, CheckBoxState2String($oxp_ara))
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_heb, CheckBoxState2String($oxp_heb))
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_dan, CheckBoxState2String($oxp_dan))
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_nor, CheckBoxState2String($oxp_nor))
-  IniWrite($inifilename, $ini_section_oxp, $lang_token_fin, CheckBoxState2String($oxp_fin))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_enu, CheckBoxStateToString($oxp_enu))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_fra, CheckBoxStateToString($oxp_fra))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_esn, CheckBoxStateToString($oxp_esn))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_jpn, CheckBoxStateToString($oxp_jpn))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_kor, CheckBoxStateToString($oxp_kor))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_rus, CheckBoxStateToString($oxp_rus))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_ptg, CheckBoxStateToString($oxp_ptg))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_ptb, CheckBoxStateToString($oxp_ptb))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_deu, CheckBoxStateToString($oxp_deu))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_nld, CheckBoxStateToString($oxp_nld))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_ita, CheckBoxStateToString($oxp_ita))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_chs, CheckBoxStateToString($oxp_chs))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_cht, CheckBoxStateToString($oxp_cht))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_plk, CheckBoxStateToString($oxp_plk))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_hun, CheckBoxStateToString($oxp_hun))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_csy, CheckBoxStateToString($oxp_csy))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_sve, CheckBoxStateToString($oxp_sve))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_trk, CheckBoxStateToString($oxp_trk))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_ell, CheckBoxStateToString($oxp_ell))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_ara, CheckBoxStateToString($oxp_ara))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_heb, CheckBoxStateToString($oxp_heb))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_dan, CheckBoxStateToString($oxp_dan))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_nor, CheckBoxStateToString($oxp_nor))
+  IniWrite($inifilename, $ini_section_oxp, $lang_token_fin, CheckBoxStateToString($oxp_fin))
 
 ;  Office 2003 group
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_enu, CheckBoxState2String($o2k3_enu))
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_fra, CheckBoxState2String($o2k3_fra))
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_esn, CheckBoxState2String($o2k3_esn))
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_jpn, CheckBoxState2String($o2k3_jpn))
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_kor, CheckBoxState2String($o2k3_kor))
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_rus, CheckBoxState2String($o2k3_rus))
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_ptg, CheckBoxState2String($o2k3_ptg))
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_ptb, CheckBoxState2String($o2k3_ptb))
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_deu, CheckBoxState2String($o2k3_deu))
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_nld, CheckBoxState2String($o2k3_nld))
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_ita, CheckBoxState2String($o2k3_ita))
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_chs, CheckBoxState2String($o2k3_chs))
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_cht, CheckBoxState2String($o2k3_cht))
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_plk, CheckBoxState2String($o2k3_plk))
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_hun, CheckBoxState2String($o2k3_hun))
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_csy, CheckBoxState2String($o2k3_csy))
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_sve, CheckBoxState2String($o2k3_sve))
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_trk, CheckBoxState2String($o2k3_trk))
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_ell, CheckBoxState2String($o2k3_ell))
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_ara, CheckBoxState2String($o2k3_ara))
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_heb, CheckBoxState2String($o2k3_heb))
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_dan, CheckBoxState2String($o2k3_dan))
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_nor, CheckBoxState2String($o2k3_nor))
-  IniWrite($inifilename, $ini_section_o2k3, $lang_token_fin, CheckBoxState2String($o2k3_fin))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_enu, CheckBoxStateToString($o2k3_enu))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_fra, CheckBoxStateToString($o2k3_fra))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_esn, CheckBoxStateToString($o2k3_esn))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_jpn, CheckBoxStateToString($o2k3_jpn))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_kor, CheckBoxStateToString($o2k3_kor))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_rus, CheckBoxStateToString($o2k3_rus))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_ptg, CheckBoxStateToString($o2k3_ptg))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_ptb, CheckBoxStateToString($o2k3_ptb))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_deu, CheckBoxStateToString($o2k3_deu))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_nld, CheckBoxStateToString($o2k3_nld))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_ita, CheckBoxStateToString($o2k3_ita))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_chs, CheckBoxStateToString($o2k3_chs))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_cht, CheckBoxStateToString($o2k3_cht))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_plk, CheckBoxStateToString($o2k3_plk))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_hun, CheckBoxStateToString($o2k3_hun))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_csy, CheckBoxStateToString($o2k3_csy))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_sve, CheckBoxStateToString($o2k3_sve))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_trk, CheckBoxStateToString($o2k3_trk))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_ell, CheckBoxStateToString($o2k3_ell))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_ara, CheckBoxStateToString($o2k3_ara))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_heb, CheckBoxStateToString($o2k3_heb))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_dan, CheckBoxStateToString($o2k3_dan))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_nor, CheckBoxStateToString($o2k3_nor))
+  IniWrite($inifilename, $ini_section_o2k3, $lang_token_fin, CheckBoxStateToString($o2k3_fin))
 
 ;  Office 2007 group
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_enu, CheckBoxState2String($o2k7_enu))
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_fra, CheckBoxState2String($o2k7_fra))
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_esn, CheckBoxState2String($o2k7_esn))
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_jpn, CheckBoxState2String($o2k7_jpn))
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_kor, CheckBoxState2String($o2k7_kor))
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_rus, CheckBoxState2String($o2k7_rus))
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_ptg, CheckBoxState2String($o2k7_ptg))
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_ptb, CheckBoxState2String($o2k7_ptb))
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_deu, CheckBoxState2String($o2k7_deu))
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_nld, CheckBoxState2String($o2k7_nld))
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_ita, CheckBoxState2String($o2k7_ita))
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_chs, CheckBoxState2String($o2k7_chs))
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_cht, CheckBoxState2String($o2k7_cht))
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_plk, CheckBoxState2String($o2k7_plk))
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_hun, CheckBoxState2String($o2k7_hun))
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_csy, CheckBoxState2String($o2k7_csy))
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_sve, CheckBoxState2String($o2k7_sve))
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_trk, CheckBoxState2String($o2k7_trk))
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_ell, CheckBoxState2String($o2k7_ell))
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_ara, CheckBoxState2String($o2k7_ara))
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_heb, CheckBoxState2String($o2k7_heb))
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_dan, CheckBoxState2String($o2k7_dan))
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_nor, CheckBoxState2String($o2k7_nor))
-  IniWrite($inifilename, $ini_section_o2k7, $lang_token_fin, CheckBoxState2String($o2k7_fin))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_enu, CheckBoxStateToString($o2k7_enu))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_fra, CheckBoxStateToString($o2k7_fra))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_esn, CheckBoxStateToString($o2k7_esn))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_jpn, CheckBoxStateToString($o2k7_jpn))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_kor, CheckBoxStateToString($o2k7_kor))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_rus, CheckBoxStateToString($o2k7_rus))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_ptg, CheckBoxStateToString($o2k7_ptg))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_ptb, CheckBoxStateToString($o2k7_ptb))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_deu, CheckBoxStateToString($o2k7_deu))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_nld, CheckBoxStateToString($o2k7_nld))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_ita, CheckBoxStateToString($o2k7_ita))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_chs, CheckBoxStateToString($o2k7_chs))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_cht, CheckBoxStateToString($o2k7_cht))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_plk, CheckBoxStateToString($o2k7_plk))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_hun, CheckBoxStateToString($o2k7_hun))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_csy, CheckBoxStateToString($o2k7_csy))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_sve, CheckBoxStateToString($o2k7_sve))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_trk, CheckBoxStateToString($o2k7_trk))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_ell, CheckBoxStateToString($o2k7_ell))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_ara, CheckBoxStateToString($o2k7_ara))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_heb, CheckBoxStateToString($o2k7_heb))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_dan, CheckBoxStateToString($o2k7_dan))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_nor, CheckBoxStateToString($o2k7_nor))
+  IniWrite($inifilename, $ini_section_o2k7, $lang_token_fin, CheckBoxStateToString($o2k7_fin))
+
+;  Office group
+  IniWrite($inifilename, $ini_section_ofc, $lang_token_glb, CheckBoxStateToString($ofc_glb))
 
 ;  Image creation
-  IniWrite($inifilename, $ini_section_iso, $iso_token_cd, CheckBoxState2String($cdiso))
-  IniWrite($inifilename, $ini_section_iso, $iso_token_dvd, CheckBoxState2String($dvdiso))
-  IniWrite($inifilename, $ini_section_usb, $usb_token_copy, CheckBoxState2String($usbcopy))
+  IniWrite($inifilename, $ini_section_iso, $iso_token_cd, CheckBoxStateToString($cdiso))
+  IniWrite($inifilename, $ini_section_iso, $iso_token_dvd, CheckBoxStateToString($dvdiso))
+  IniWrite($inifilename, $ini_section_usb, $usb_token_copy, CheckBoxStateToString($usbcopy))
   IniWrite($inifilename, $ini_section_usb, $usb_token_path, GUICtrlRead($usbpath))
 
 ;  Miscellaneous
-  IniWrite($inifilename, $ini_section_misc, $misc_token_includesp, CheckBoxState2String($includesp))
-  IniWrite($inifilename, $ini_section_misc, $misc_token_dotnet, CheckBoxState2String($dotnet))
-  IniWrite($inifilename, $ini_section_misc, $misc_token_msse, CheckBoxState2String($msse))
-  IniWrite($inifilename, $ini_section_misc, $misc_token_cleanup, CheckBoxState2String($cleanupdownloads))
-  IniWrite($inifilename, $ini_section_misc, $misc_token_verify, CheckBoxState2String($verifydownloads))
+  IniWrite($inifilename, $ini_section_opts, $opts_token_includesp, CheckBoxStateToString($includesp))
+  IniWrite($inifilename, $ini_section_opts, $opts_token_dotnet, CheckBoxStateToString($dotnet))
+  IniWrite($inifilename, $ini_section_opts, $opts_token_msse, CheckBoxStateToString($msse))
+  IniWrite($inifilename, $ini_section_opts, $opts_token_cleanup, CheckBoxStateToString($cleanupdownloads))
+  IniWrite($inifilename, $ini_section_opts, $opts_token_verify, CheckBoxStateToString($verifydownloads))
   IniWrite($inifilename, $ini_section_misc, $misc_token_proxy, $proxy)
   IniWrite($inifilename, $ini_section_misc, $misc_token_wsus, $wsus)
   
@@ -1169,11 +1012,7 @@ $txtypos = $txtyoffset + $txtheight
 GuiCtrlCreateTab($txtxpos, $txtypos, $groupwidth + 2 * $txtxoffset, 5 * $groupheight - 6 * $txtheight + 3.5 * $txtyoffset)
 
 ;  Operating Systems' Tab
-If ShowGUIInGerman() Then
-  $tabitemfocused = GuiCtrlCreateTabItem("Betriebssysteme")
-Else
-  $tabitemfocused = GuiCtrlCreateTabItem("Operating Systems")
-EndIf
+$tabitemfocused = GuiCtrlCreateTabItem("Windows")
 
 ;  Windows XP group
 $txtxpos = 2 * $txtxoffset
@@ -1692,16 +1531,12 @@ Else
 EndIf
 
 ;  Office Suites' Tab
-If ShowGUIInGerman() Then
-  GuiCtrlCreateTabItem("Office-Pakete")
-Else
-  GuiCtrlCreateTabItem("Office Suites")
-EndIf
+GuiCtrlCreateTabItem("Office")
 
 ;  Office XP group
 $txtxpos = 2 * $txtxoffset
 $txtypos = 3.5 * $txtyoffset + $txtheight
-GUICtrlCreateGroup("Office XP", $txtxpos, $txtypos, $groupwidth, $groupheight)
+GUICtrlCreateGroup("Office XP SP3 + Statics", $txtxpos, $txtypos, $groupwidth, $groupheight)
 ;  Office XP English
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
@@ -1901,7 +1736,7 @@ EndIf
 ;  Office 2003 group
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
-GUICtrlCreateGroup("Office 2003", $txtxpos, $txtypos, $groupwidth, $groupheight)
+GUICtrlCreateGroup("Office 2003 SP3 + Statics", $txtxpos, $txtypos, $groupwidth, $groupheight)
 ;  Office 2003 English
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
@@ -2101,7 +1936,7 @@ EndIf
 ;  Office 2007 group
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
-GUICtrlCreateGroup("Office 2007", $txtxpos, $txtypos, $groupwidth, $groupheight)
+GUICtrlCreateGroup("Office 2007 SP2 + Statics", $txtxpos, $txtypos, $groupwidth, $groupheight)
 ;  Office 2007 English
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
@@ -2298,211 +2133,26 @@ Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
 
-;  Legacy systems' Tab
-If ShowGUIInGerman() Then
-  GuiCtrlCreateTabItem("Altsysteme")
-Else
-  GuiCtrlCreateTabItem("Legacy systems")
-EndIf
-
-;  Windows 2000 group
+;  Office group
 $txtxpos = 2 * $txtxoffset
-$txtypos = 3.5 * $txtyoffset + $txtheight
-GUICtrlCreateGroup("Windows 2000", $txtxpos, $txtypos, $groupwidth, $groupheight)
-;  Windows 2000 English
+$txtypos = $txtypos + 2.5 * $txtyoffset
+GUICtrlCreateGroup("Office Updates XP - 2010", $txtxpos, $txtypos, $groupwidth, $groupheight - 2 * $txtheight)
+;  Office global
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
-$w2k_enu = GUICtrlCreateCheckbox(LanguageCaption($lang_token_enu, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_enu, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
+If ShowGUIInGerman() Then
+  $ofc_glb = GUICtrlCreateCheckbox("Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
 Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
+  $ofc_glb = GUICtrlCreateCheckbox("Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
 EndIf
-;  Windows 2000 French
-$txtxpos = $txtxpos + $txtwidth - 5
-$w2k_fra = GUICtrlCreateCheckbox(LanguageCaption($lang_token_fra, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 10, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_fra, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Spanish
-$txtxpos = $txtxpos + $txtwidth + 10
-$w2k_esn = GUICtrlCreateCheckbox(LanguageCaption($lang_token_esn, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_esn, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Japanese
-$txtxpos = $txtxpos + $txtwidth - 5
-$w2k_jpn = GUICtrlCreateCheckbox(LanguageCaption($lang_token_jpn, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_jpn, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Korean
-$txtxpos = $txtxpos + $txtwidth
-$w2k_kor = GUICtrlCreateCheckbox(LanguageCaption($lang_token_kor, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_kor, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Russian
-$txtxpos = $txtxpos + $txtwidth + 5
-$w2k_rus = GUICtrlCreateCheckbox(LanguageCaption($lang_token_rus, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 10, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_rus, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Portuguese
-$txtxpos = $txtxpos + $txtwidth - 10
-$w2k_ptg = GUICtrlCreateCheckbox(LanguageCaption($lang_token_ptg, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_ptg, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Brazilian
-$txtxpos = $txtxpos + $txtwidth + 5
-$w2k_ptb = GUICtrlCreateCheckbox(LanguageCaption($lang_token_ptb, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_ptb, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 German
-$txtxpos = 3 * $txtxoffset
-$txtypos = $txtypos + $txtheight
-$w2k_deu = GUICtrlCreateCheckbox(LanguageCaption($lang_token_deu, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_deu, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Dutch
-$txtxpos = $txtxpos + $txtwidth - 5
-$w2k_nld = GUICtrlCreateCheckbox(LanguageCaption($lang_token_nld, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 10, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_nld, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Italian
-$txtxpos = $txtxpos + $txtwidth + 10
-$w2k_ita = GUICtrlCreateCheckbox(LanguageCaption($lang_token_ita, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_ita, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Chinese simplified
-$txtxpos = $txtxpos + $txtwidth - 5
-$w2k_chs = GUICtrlCreateCheckbox(LanguageCaption($lang_token_chs, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_chs, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Chinese traditional
-$txtxpos = $txtxpos + $txtwidth
-$w2k_cht = GUICtrlCreateCheckbox(LanguageCaption($lang_token_cht, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_cht, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Polish
-$txtxpos = $txtxpos + $txtwidth + 5
-$w2k_plk = GUICtrlCreateCheckbox(LanguageCaption($lang_token_plk, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 10, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_plk, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Hungarian
-$txtxpos = $txtxpos + $txtwidth - 10
-$w2k_hun = GUICtrlCreateCheckbox(LanguageCaption($lang_token_hun, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_hun, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Czech
-$txtxpos = $txtxpos + $txtwidth + 5
-$w2k_csy = GUICtrlCreateCheckbox(LanguageCaption($lang_token_csy, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_csy, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Swedish
-$txtxpos = 3 * $txtxoffset
-$txtypos = $txtypos + $txtheight
-$w2k_sve = GUICtrlCreateCheckbox(LanguageCaption($lang_token_sve, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_sve, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Turkish
-$txtxpos = $txtxpos + $txtwidth - 5
-$w2k_trk = GUICtrlCreateCheckbox(LanguageCaption($lang_token_trk, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 10, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_trk, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Greek
-$txtxpos = $txtxpos + $txtwidth + 10
-$w2k_ell = GUICtrlCreateCheckbox(LanguageCaption($lang_token_ell, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_ell, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Arabic
-$txtxpos = $txtxpos + $txtwidth - 5
-$w2k_ara = GUICtrlCreateCheckbox(LanguageCaption($lang_token_ara, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_ara, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Hebrew
-$txtxpos = $txtxpos + $txtwidth
-$w2k_heb = GUICtrlCreateCheckbox(LanguageCaption($lang_token_heb, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_heb, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Danish
-$txtxpos = $txtxpos + $txtwidth + 5
-$w2k_dan = GUICtrlCreateCheckbox(LanguageCaption($lang_token_dan, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 10, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_dan, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Norwegian
-$txtxpos = $txtxpos + $txtwidth - 10
-$w2k_nor = GUICtrlCreateCheckbox(LanguageCaption($lang_token_nor, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_nor, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 2000 Finnish
-$txtxpos = $txtxpos + $txtwidth + 5
-$w2k_fin = GUICtrlCreateCheckbox(LanguageCaption($lang_token_fin, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
-If IniRead($inifilename, $ini_section_w2k, $lang_token_fin, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
+If IsOlderOfficeChecked() Then
+  GUICtrlSetState($ofc_glb, $GUI_CHECKED + $GUI_DISABLE)
+Else      
+  If IniRead($inifilename, $ini_section_ofc, $lang_token_glb, $disabled) = $enabled Then
+    GUICtrlSetState(-1, $GUI_CHECKED)
+  Else      
+    GUICtrlSetState(-1, $GUI_UNCHECKED)
+  EndIf
 EndIf
 
 ;  End Tab item definition
@@ -2527,7 +2177,7 @@ If ShowGUIInGerman() Then
 Else
   $includesp = GUICtrlCreateCheckbox("Include Service Packs", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 EndIf
-If IniRead($inifilename, $ini_section_misc, $misc_token_includesp, $enabled) = $enabled Then
+If IniRead($inifilename, $ini_section_opts, $opts_token_includesp, $enabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -2540,7 +2190,7 @@ If ShowGUIInGerman() Then
 Else
   $cleanupdownloads = GUICtrlCreateCheckbox("Clean up download directories", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 EndIf
-If IniRead($inifilename, $ini_section_misc, $misc_token_cleanup, $enabled) = $enabled Then
+If IniRead($inifilename, $ini_section_opts, $opts_token_cleanup, $enabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -2554,7 +2204,7 @@ If ShowGUIInGerman() Then
 Else
   $dotnet = GUICtrlCreateCheckbox("Include .NET Framework 3.5 SP1 and 4", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 EndIf
-If IniRead($inifilename, $ini_section_misc, $misc_token_dotnet, $disabled) = $enabled Then
+If IniRead($inifilename, $ini_section_opts, $opts_token_dotnet, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -2567,7 +2217,7 @@ If ShowGUIInGerman() Then
 Else
   $verifydownloads = GUICtrlCreateCheckbox("Verify downloaded updates", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 EndIf
-If IniRead($inifilename, $ini_section_misc, $misc_token_verify, $disabled) = $enabled Then
+If IniRead($inifilename, $ini_section_opts, $opts_token_verify, $enabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -2581,7 +2231,7 @@ If ShowGUIInGerman() Then
 Else
   $msse = GUICtrlCreateCheckbox("Include MS Security Essentials definitions", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 EndIf
-If IniRead($inifilename, $ini_section_misc, $misc_token_msse, $disabled) = $enabled Then
+If IniRead($inifilename, $ini_section_opts, $opts_token_msse, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -2600,9 +2250,9 @@ EndIf
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
 If ShowGUIInGerman() Then
-  $cdiso = GUICtrlCreateCheckbox("pro Produkt und Sprache (CD / DVD)", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
+  $cdiso = GUICtrlCreateCheckbox("pro Produkt und Sprache", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 Else
-  $cdiso = GUICtrlCreateCheckbox("per selected product and language (CD / DVD)", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
+  $cdiso = GUICtrlCreateCheckbox("per selected product and language", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 EndIf
 If IniRead($inifilename, $ini_section_iso, $iso_token_cd, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
@@ -2613,9 +2263,9 @@ EndIf
 ;  cross-platform DVD ISO image
 $txtxpos = $txtxpos + $groupwidth / 2
 If ShowGUIInGerman() Then
-  $dvdiso = GUICtrlCreateCheckbox("pro Sprache, x86-/x64-produktübergreifend (DVDs)", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
+  $dvdiso = GUICtrlCreateCheckbox("pro Sprache, produktübergreifend (nur x86-Desktop)", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 Else
-  $dvdiso = GUICtrlCreateCheckbox("per selected language, 'x86-/x64-cross-product' (DVDs)", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
+  $dvdiso = GUICtrlCreateCheckbox("per selected language, 'cross-product' (x86 Desktop only)", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 EndIf
 If IniRead($inifilename, $ini_section_iso, $iso_token_dvd, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
@@ -2658,7 +2308,7 @@ $usbpath = GUICtrlCreateInput(IniRead($inifilename, $ini_section_usb, $usb_token
 ;  USB FSF button - FileSelectFolder
 $txtxpos = $txtxpos + $groupwidth / 2 - ($txtwidth - 20) - $txtheight
 $usbfsf = GUICtrlCreateButton("...", $txtxpos, $txtypos - 2, $txtheight, $txtheight)
-If BitAND(GUICtrlRead($usbcopy), $GUI_CHECKED) = $GUI_CHECKED Then
+If IsCheckBoxChecked($usbcopy) Then
   GUICtrlSetState($usblbl, $GUI_ENABLE)
   GUICtrlSetState($usbpath, $GUI_ENABLE)
   GUICtrlSetState($usbfsf, $GUI_ENABLE)
@@ -2750,9 +2400,20 @@ While 1
     Case $btn_exit          ; Exit button pressed
       ExitLoop
 
+    Case $oxp_enu, $o2k3_enu, $o2k7_enu, $oxp_fra, $o2k3_fra, $o2k7_fra, $oxp_esn, $o2k3_esn, $o2k7_esn, $oxp_jpn, $o2k3_jpn, $o2k7_jpn, _
+         $oxp_kor, $o2k3_kor, $o2k7_kor, $oxp_rus, $o2k3_rus, $o2k7_rus, $oxp_ptg, $o2k3_ptg, $o2k7_ptg, $oxp_ptb, $o2k3_ptb, $o2k7_ptb, _
+         $oxp_deu, $o2k3_deu, $o2k7_deu, $oxp_nld, $o2k3_nld, $o2k7_nld, $oxp_ita, $o2k3_ita, $o2k7_ita, $oxp_chs, $o2k3_chs, $o2k7_chs, _
+         $oxp_cht, $o2k3_cht, $o2k7_cht, $oxp_plk, $o2k3_plk, $o2k7_plk, $oxp_hun, $o2k3_hun, $o2k7_hun, $oxp_csy, $o2k3_csy, $o2k7_csy, _
+         $oxp_sve, $o2k3_sve, $o2k7_sve, $oxp_trk, $o2k3_trk, $o2k7_trk, $oxp_ell, $o2k3_ell, $o2k7_ell, $oxp_ara, $o2k3_ara, $o2k7_ara, _
+         $oxp_heb, $o2k3_heb, $o2k7_heb, $oxp_dan, $o2k3_dan, $o2k7_dan, $oxp_nor, $o2k3_nor, $o2k7_nor, $oxp_fin, $o2k3_fin, $o2k7_fin
+      If IsOlderOfficeChecked() Then
+        GUICtrlSetState($ofc_glb, $GUI_CHECKED + $GUI_DISABLE)
+      Else      
+        GUICtrlSetState($ofc_glb, $GUI_ENABLE)
+      EndIf
+
     Case $includesp         ; 'Include Service Packs' check box toggled
-      If ( (BitAND(GUICtrlRead($includesp), $GUI_CHECKED) <> $GUI_CHECKED) _
-       AND (BitAND(GUICtrlRead($cleanupdownloads), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+      If ( (NOT IsCheckBoxChecked($includesp)) AND IsCheckBoxChecked($cleanupdownloads) ) Then
         If ShowGUIInGerman() Then
           If MsgBox(0x2134, "Warnung", "Durch die Kombination der Optionen 'Service-Packs ausschließen' und" _
                                & @LF & "'Download-Verzeichnisse bereinigen' werden bereits heruntergeladene" _
@@ -2771,8 +2432,7 @@ While 1
       EndIf
 
     Case $cleanupdownloads  ; 'Cleanup download directories' check box toggled
-      If ( (BitAND(GUICtrlRead($includesp), $GUI_CHECKED) <> $GUI_CHECKED) _
-       AND (BitAND(GUICtrlRead($cleanupdownloads), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+      If ( (NOT IsCheckBoxChecked($includesp)) AND IsCheckBoxChecked($cleanupdownloads) ) Then
         If ShowGUIInGerman() Then
           If MsgBox(0x2134, "Warnung", "Durch die Kombination der Optionen 'Service-Packs ausschließen' und" _
                                & @LF & "'Download-Verzeichnisse bereinigen' werden bereits heruntergeladene" _
@@ -2791,7 +2451,7 @@ While 1
       EndIf
 
     Case $usbcopy           ; USB copy button pressed
-      If BitAND(GUICtrlRead($usbcopy), $GUI_CHECKED) = $GUI_CHECKED Then
+      If IsCheckBoxChecked($usbcopy) Then
         GUICtrlSetState($usblbl, $GUI_ENABLE)
         GUICtrlSetState($usbpath, $GUI_ENABLE)
         GUICtrlSetState($usbfsf, $GUI_ENABLE)
@@ -2812,7 +2472,7 @@ While 1
       EndIf
 
     Case $skipdownload      ; Skip download checkbox toggled
-      If BitAND(GUICtrlRead($skipdownload), $GUI_CHECKED) = $GUI_CHECKED Then
+      If IsCheckBoxChecked($skipdownload) Then
         If ShowGUIInGerman() Then
           If MsgBox(0x2134, "Warnung", "Durch diese Option verhindern Sie das Herunterladen aktueller Updates." _
                                & @LF & "Dies kann ein erhöhtes Sicherheitsrisiko für das Zielsystem bedeuten." _
@@ -2865,7 +2525,7 @@ While 1
 
     Case $btn_start         ; Start button pressed
       If ( (IniRead($inifilename, $ini_section_misc, $misc_token_chkver, $enabled) = $enabled) _
-       AND (BitAND(GUICtrlRead($skipdownload), $GUI_CHECKED) <> $GUI_CHECKED) ) Then
+       AND (NOT IsCheckBoxChecked($skipdownload)) ) Then
         Switch RunVersionCheck($proxy)
           Case -1 ; Yes
             RunSelfUpdate($proxy)
@@ -2875,1057 +2535,947 @@ While 1
           Case Else
         EndSwitch
       EndIf
+      If ( (IniRead($inifilename, $ini_section_misc, $misc_token_wsus_trans, $disabled) = $enabled) AND ($wsus <> "") ) Then
+        IniWrite(ClientIniFileName(), $ini_section_misc, $misc_token_clt_wustat, $wsus)
+      Else
+        IniDelete(ClientIniFileName(), $ini_section_misc, $misc_token_clt_wustat)
+      EndIf
       If IniRead($inifilename, $ini_section_misc, $misc_token_minimize, $disabled) = $enabled Then
         WinSetState($maindlg, $maindlg, @SW_MINIMIZE)
       EndIf
 
 ;  Global
-      If BitAND(GUICtrlRead($w60_glb), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w60 glb", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w60_glb) Then
+        If RunScripts("w60 glb", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w60_x64_glb), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w60-x64 glb", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w60_x64_glb) Then
+        If RunScripts("w60-x64 glb", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w61_glb), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w61 glb", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w61_glb) Then
+        If RunScripts("w61 glb", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w61_x64_glb), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w61-x64 glb", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w61_x64_glb) Then
+        If RunScripts("w61-x64 glb", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
+        EndIf
+      EndIf
+      If IsCheckBoxChecked($ofc_glb) Then
+        If IsOlderOfficeChecked() Then
+          If RunScripts("ofc glb", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
+            ContinueLoop
+          EndIf
+        Else
+          If RunScripts("ofc glb", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+            ContinueLoop
+          EndIf
         EndIf
       EndIf
 
 ;  English
-      If BitAND(GUICtrlRead($w2k_enu), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k enu", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_enu) Then
+        If RunScripts("wxp enu", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_enu), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp enu", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_enu) Then
+        If RunScripts("w2k3 enu", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_enu), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3 enu", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_x64_enu) Then
+        If RunScripts("w2k3-x64 enu", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_x64_enu), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3-x64 enu", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_enu) Then
+        If RunScripts("oxp enu", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_enu), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp enu", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_enu) Then
+        If RunScripts("o2k3 enu", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_enu), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 enu", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If BitAND(GUICtrlRead($o2k7_enu), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 enu", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_enu) Then
+        If RunScripts("o2k7 enu", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  French
-      If BitAND(GUICtrlRead($w2k_fra), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k fra", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_fra) Then
+        If RunScripts("wxp fra", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_fra), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp fra", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_fra) Then
+        If RunScripts("w2k3 fra", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_fra), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3 fra", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_x64_fra) Then
+        If RunScripts("w2k3-x64 fra", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_x64_fra), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3-x64 fra", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_fra) Then
+        If RunScripts("oxp fra", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_fra), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp fra", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_fra) Then
+        If RunScripts("o2k3 fra", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_fra), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 fra", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If BitAND(GUICtrlRead($o2k7_fra), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 fra", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_fra) Then
+        If RunScripts("o2k7 fra", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  Spanish
-      If BitAND(GUICtrlRead($w2k_esn), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k esn", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_esn) Then
+        If RunScripts("wxp esn", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_esn), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp esn", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_esn) Then
+        If RunScripts("w2k3 esn", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_esn), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3 esn", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_x64_esn) Then
+        If RunScripts("w2k3-x64 esn", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_x64_esn), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3-x64 esn", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_esn) Then
+        If RunScripts("oxp esn", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_esn), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp esn", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_esn) Then
+        If RunScripts("o2k3 esn", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_esn), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 esn", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If BitAND(GUICtrlRead($o2k7_esn), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 esn", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_esn) Then
+        If RunScripts("o2k7 esn", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  Japanese
-      If BitAND(GUICtrlRead($w2k_jpn), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k jpn", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_jpn) Then
+        If RunScripts("wxp jpn", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_jpn), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp jpn", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_jpn) Then
+        If RunScripts("w2k3 jpn", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_jpn), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3 jpn", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_x64_jpn) Then
+        If RunScripts("w2k3-x64 jpn", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_x64_jpn), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3-x64 jpn", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_jpn) Then
+        If RunScripts("oxp jpn", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_jpn), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp jpn", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_jpn) Then
+        If RunScripts("o2k3 jpn", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_jpn), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 jpn", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If BitAND(GUICtrlRead($o2k7_jpn), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 jpn", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_jpn) Then
+        If RunScripts("o2k7 jpn", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  Korean
-      If BitAND(GUICtrlRead($w2k_kor), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k kor", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_kor) Then
+        If RunScripts("wxp kor", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_kor), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp kor", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_kor) Then
+        If RunScripts("w2k3 kor", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_kor), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3 kor", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_x64_kor) Then
+        If RunScripts("w2k3-x64 kor", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_x64_kor), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3-x64 kor", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_kor) Then
+        If RunScripts("oxp kor", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_kor), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp kor", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_kor) Then
+        If RunScripts("o2k3 kor", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_kor), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 kor", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If BitAND(GUICtrlRead($o2k7_kor), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 kor", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_kor) Then
+        If RunScripts("o2k7 kor", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  Russian
-      If BitAND(GUICtrlRead($w2k_rus), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k rus", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_rus) Then
+        If RunScripts("wxp rus", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_rus), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp rus", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_rus) Then
+        If RunScripts("w2k3 rus", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_rus), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3 rus", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_x64_rus) Then
+        If RunScripts("w2k3-x64 rus", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_x64_rus), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3-x64 rus", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_rus) Then
+        If RunScripts("oxp rus", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_rus), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp rus", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_rus) Then
+        If RunScripts("o2k3 rus", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_rus), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 rus", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If BitAND(GUICtrlRead($o2k7_rus), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 rus", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_rus) Then
+        If RunScripts("o2k7 rus", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  Portuguese
-      If BitAND(GUICtrlRead($w2k_ptg), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k ptg", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_ptg) Then
+        If RunScripts("wxp ptg", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_ptg), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp ptg", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_ptg) Then
+        If RunScripts("w2k3 ptg", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_ptg), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3 ptg", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_ptg) Then
+        If RunScripts("oxp ptg", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_ptg), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp ptg", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_ptg) Then
+        If RunScripts("o2k3 ptg", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_ptg), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 ptg", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If BitAND(GUICtrlRead($o2k7_ptg), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 ptg", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_ptg) Then
+        If RunScripts("o2k7 ptg", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  Brazilian
-      If BitAND(GUICtrlRead($w2k_ptb), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k ptb", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_ptb) Then
+        If RunScripts("wxp ptb", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_ptb), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp ptb", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_ptb) Then
+        If RunScripts("w2k3 ptb", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_ptb), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3 ptb", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_x64_ptb) Then
+        If RunScripts("w2k3-x64 ptb", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_x64_ptb), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3-x64 ptb", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_ptb) Then
+        If RunScripts("oxp ptb", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_ptb), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp ptb", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_ptb) Then
+        If RunScripts("o2k3 ptb", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_ptb), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 ptb", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If BitAND(GUICtrlRead($o2k7_ptb), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 ptb", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_ptb) Then
+        If RunScripts("o2k7 ptb", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  German
-      If BitAND(GUICtrlRead($w2k_deu), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k deu", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_deu) Then
+        If RunScripts("wxp deu", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_deu), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp deu", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_deu) Then
+        If RunScripts("w2k3 deu", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_deu), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3 deu", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_x64_deu) Then
+        If RunScripts("w2k3-x64 deu", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_x64_deu), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3-x64 deu", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_deu) Then
+        If RunScripts("oxp deu", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_deu), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp deu", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_deu) Then
+        If RunScripts("o2k3 deu", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_deu), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 deu", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If BitAND(GUICtrlRead($o2k7_deu), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 deu", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_deu) Then
+        If RunScripts("o2k7 deu", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  Dutch
-      If BitAND(GUICtrlRead($w2k_nld), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k nld", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_nld) Then
+        If RunScripts("wxp nld", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_nld), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp nld", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_nld) Then
+        If RunScripts("w2k3 nld", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_nld), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3 nld", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_nld) Then
+        If RunScripts("oxp nld", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_nld), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp nld", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_nld) Then
+        If RunScripts("o2k3 nld", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_nld), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 nld", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If BitAND(GUICtrlRead($o2k7_nld), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 nld", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_nld) Then
+        If RunScripts("o2k7 nld", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  Italian
-      If BitAND(GUICtrlRead($w2k_ita), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k ita", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_ita) Then
+        If RunScripts("wxp ita", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_ita), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp ita", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_ita) Then
+        If RunScripts("w2k3 ita", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_ita), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3 ita", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_ita) Then
+        If RunScripts("oxp ita", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_ita), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp ita", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_ita) Then
+        If RunScripts("o2k3 ita", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_ita), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 ita", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If BitAND(GUICtrlRead($o2k7_ita), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 ita", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_ita) Then
+        If RunScripts("o2k7 ita", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  Chinese simplified
-      If BitAND(GUICtrlRead($w2k_chs), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k chs", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_chs) Then
+        If RunScripts("wxp chs", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_chs), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp chs", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_chs) Then
+        If RunScripts("w2k3 chs", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_chs), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3 chs", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_chs) Then
+        If RunScripts("oxp chs", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_chs), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp chs", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_chs) Then
+        If RunScripts("o2k3 chs", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_chs), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 chs", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If BitAND(GUICtrlRead($o2k7_chs), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 chs", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_chs) Then
+        If RunScripts("o2k7 chs", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  Chinese traditional
-      If BitAND(GUICtrlRead($w2k_cht), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k cht", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_cht) Then
+        If RunScripts("wxp cht", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_cht), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp cht", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_cht) Then
+        If RunScripts("w2k3 cht", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_cht), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3 cht", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_cht) Then
+        If RunScripts("oxp cht", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_cht), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp cht", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_cht) Then
+        If RunScripts("o2k3 cht", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_cht), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 cht", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If BitAND(GUICtrlRead($o2k7_cht), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 cht", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_cht) Then
+        If RunScripts("o2k7 cht", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  Polish
-      If BitAND(GUICtrlRead($w2k_plk), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k plk", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_plk) Then
+        If RunScripts("wxp plk", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_plk), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp plk", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_plk) Then
+        If RunScripts("w2k3 plk", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_plk), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3 plk", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_plk) Then
+        If RunScripts("oxp plk", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_plk), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp plk", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_plk) Then
+        If RunScripts("o2k3 plk", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_plk), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 plk", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If BitAND(GUICtrlRead($o2k7_plk), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 plk", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_plk) Then
+        If RunScripts("o2k7 plk", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  Hungarian
-      If BitAND(GUICtrlRead($w2k_hun), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k hun", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_hun) Then
+        If RunScripts("wxp hun", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_hun), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp hun", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_hun) Then
+        If RunScripts("w2k3 hun", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_hun), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3 hun", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_hun) Then
+        If RunScripts("oxp hun", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_hun), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp hun", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_hun) Then
+        If RunScripts("o2k3 hun", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_hun), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 hun", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If BitAND(GUICtrlRead($o2k7_hun), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 hun", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_hun) Then
+        If RunScripts("o2k7 hun", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  Czech
-      If BitAND(GUICtrlRead($w2k_csy), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k csy", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_csy) Then
+        If RunScripts("wxp csy", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_csy), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp csy", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_csy) Then
+        If RunScripts("w2k3 csy", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_csy), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3 csy", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_csy) Then
+        If RunScripts("oxp csy", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_csy), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp csy", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_csy) Then
+        If RunScripts("o2k3 csy", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_csy), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 csy", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If BitAND(GUICtrlRead($o2k7_csy), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 csy", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_csy) Then
+        If RunScripts("o2k7 csy", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  Swedish
-      If BitAND(GUICtrlRead($w2k_sve), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k sve", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_sve) Then
+        If RunScripts("wxp sve", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_sve), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp sve", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_sve) Then
+        If RunScripts("w2k3 sve", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_sve), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3 sve", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_sve) Then
+        If RunScripts("oxp sve", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_sve), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp sve", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_sve) Then
+        If RunScripts("o2k3 sve", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_sve), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 sve", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If BitAND(GUICtrlRead($o2k7_sve), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 sve", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_sve) Then
+        If RunScripts("o2k7 sve", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  Turkish
-      If BitAND(GUICtrlRead($w2k_trk), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k trk", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_trk) Then
+        If RunScripts("wxp trk", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_trk), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp trk", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($w2k3_trk) Then
+        If RunScripts("w2k3 trk", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($w2k3_trk), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k3 trk", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_trk) Then
+        If RunScripts("oxp trk", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_trk), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp trk", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_trk) Then
+        If RunScripts("o2k3 trk", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_trk), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 trk", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If BitAND(GUICtrlRead($o2k7_trk), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 trk", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_trk) Then
+        If RunScripts("o2k7 trk", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  Greek
-      If BitAND(GUICtrlRead($w2k_ell), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k ell", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_ell) Then
+        If RunScripts("wxp ell", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_ell), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp ell", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_ell) Then
+        If RunScripts("oxp ell", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_ell), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp ell", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_ell) Then
+        If RunScripts("o2k3 ell", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_ell), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 ell", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If BitAND(GUICtrlRead($o2k7_ell), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 ell", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_ell) Then
+        If RunScripts("o2k7 ell", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  Arabic
-      If BitAND(GUICtrlRead($w2k_ara), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k ara", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_ara) Then
+        If RunScripts("wxp ara", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_ara), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp ara", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_ara) Then
+        If RunScripts("oxp ara", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_ara), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp ara", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_ara) Then
+        If RunScripts("o2k3 ara", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_ara), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 ara", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If BitAND(GUICtrlRead($o2k7_ara), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 ara", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_ara) Then
+        If RunScripts("o2k7 ara", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  Hebrew
-      If BitAND(GUICtrlRead($w2k_heb), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k heb", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_heb) Then
+        If RunScripts("wxp heb", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_heb), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp heb", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_heb) Then
+        If RunScripts("oxp heb", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_heb), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp heb", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_heb) Then
+        If RunScripts("o2k3 heb", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_heb), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 heb", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If BitAND(GUICtrlRead($o2k7_heb), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 heb", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_heb) Then
+        If RunScripts("o2k7 heb", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  Danish
-      If BitAND(GUICtrlRead($w2k_dan), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k dan", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_dan) Then
+        If RunScripts("wxp dan", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_dan), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp dan", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_dan) Then
+        If RunScripts("oxp dan", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_dan), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp dan", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_dan) Then
+        If RunScripts("o2k3 dan", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_dan), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 dan", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If BitAND(GUICtrlRead($o2k7_dan), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 dan", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_dan) Then
+        If RunScripts("o2k7 dan", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  Norwegian
-      If BitAND(GUICtrlRead($w2k_nor), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k nor", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_nor) Then
+        If RunScripts("wxp nor", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_nor), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp nor", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_nor) Then
+        If RunScripts("oxp nor", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_nor), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp nor", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_nor) Then
+        If RunScripts("o2k3 nor", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_nor), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 nor", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If BitAND(GUICtrlRead($o2k7_nor), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 nor", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_nor) Then
+        If RunScripts("o2k7 nor", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  Finnish
-      If BitAND(GUICtrlRead($w2k_fin), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("w2k fin", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($wxp_fin) Then
+        If RunScripts("wxp fin", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($wxp_fin), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("wxp fin", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($oxp_fin) Then
+        If RunScripts("oxp fin", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($oxp_fin), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("oxp fin", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k3_fin) Then
+        If RunScripts("o2k3 fin", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k3_fin), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k3 fin", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k7_fin) Then
+        If RunScripts("o2k7 fin", IsCheckBoxChecked($skipdownload), DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
-      If BitAND(GUICtrlRead($o2k7_fin), $GUI_CHECKED) = $GUI_CHECKED Then
-        If RunScripts("o2k7 fin", $skipdownload, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), $cdiso, DetermineISOSwitches($includesp, $dotnet, $msse), $usbcopy, GUICtrlRead($usbpath)) <> 0 Then
+
+;  Create Office DVD ISO images
+      If (IsCheckBoxChecked($oxp_enu) OR IsCheckBoxChecked($o2k3_enu) OR IsCheckBoxChecked($o2k7_enu)) Then
+        If RunScripts("ofc enu", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If (IsCheckBoxChecked($oxp_fra) OR IsCheckBoxChecked($o2k3_fra) OR IsCheckBoxChecked($o2k7_fra)) Then
+        If RunScripts("ofc fra", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If (IsCheckBoxChecked($oxp_esn) OR IsCheckBoxChecked($o2k3_esn) OR IsCheckBoxChecked($o2k7_esn)) Then
+        If RunScripts("ofc esn", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If (IsCheckBoxChecked($oxp_jpn) OR IsCheckBoxChecked($o2k3_jpn) OR IsCheckBoxChecked($o2k7_jpn)) Then
+        If RunScripts("ofc jpn", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If (IsCheckBoxChecked($oxp_kor) OR IsCheckBoxChecked($o2k3_kor) OR IsCheckBoxChecked($o2k7_kor)) Then
+        If RunScripts("ofc kor", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If (IsCheckBoxChecked($oxp_rus) OR IsCheckBoxChecked($o2k3_rus) OR IsCheckBoxChecked($o2k7_rus)) Then
+        If RunScripts("ofc rus", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If (IsCheckBoxChecked($oxp_ptg) OR IsCheckBoxChecked($o2k3_ptg) OR IsCheckBoxChecked($o2k7_ptg)) Then
+        If RunScripts("ofc ptg", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If (IsCheckBoxChecked($oxp_ptb) OR IsCheckBoxChecked($o2k3_ptb) OR IsCheckBoxChecked($o2k7_ptb)) Then
+        If RunScripts("ofc ptb", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If (IsCheckBoxChecked($oxp_deu) OR IsCheckBoxChecked($o2k3_deu) OR IsCheckBoxChecked($o2k7_deu)) Then
+        If RunScripts("ofc deu", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If (IsCheckBoxChecked($oxp_nld) OR IsCheckBoxChecked($o2k3_nld) OR IsCheckBoxChecked($o2k7_nld)) Then
+        If RunScripts("ofc nld", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If (IsCheckBoxChecked($oxp_ita) OR IsCheckBoxChecked($o2k3_ita) OR IsCheckBoxChecked($o2k7_ita)) Then
+        If RunScripts("ofc ita", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If (IsCheckBoxChecked($oxp_chs) OR IsCheckBoxChecked($o2k3_chs) OR IsCheckBoxChecked($o2k7_chs)) Then
+        If RunScripts("ofc chs", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If (IsCheckBoxChecked($oxp_cht) OR IsCheckBoxChecked($o2k3_cht) OR IsCheckBoxChecked($o2k7_cht)) Then
+        If RunScripts("ofc cht", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If (IsCheckBoxChecked($oxp_plk) OR IsCheckBoxChecked($o2k3_plk) OR IsCheckBoxChecked($o2k7_plk)) Then
+        If RunScripts("ofc plk", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If (IsCheckBoxChecked($oxp_hun) OR IsCheckBoxChecked($o2k3_hun) OR IsCheckBoxChecked($o2k7_hun)) Then
+        If RunScripts("ofc hun", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If (IsCheckBoxChecked($oxp_csy) OR IsCheckBoxChecked($o2k3_csy) OR IsCheckBoxChecked($o2k7_csy)) Then
+        If RunScripts("ofc csy", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If (IsCheckBoxChecked($oxp_sve) OR IsCheckBoxChecked($o2k3_sve) OR IsCheckBoxChecked($o2k7_sve)) Then
+        If RunScripts("ofc sve", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If (IsCheckBoxChecked($oxp_trk) OR IsCheckBoxChecked($o2k3_trk) OR IsCheckBoxChecked($o2k7_trk)) Then
+        If RunScripts("ofc trk", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If (IsCheckBoxChecked($oxp_ell) OR IsCheckBoxChecked($o2k3_ell) OR IsCheckBoxChecked($o2k7_ell)) Then
+        If RunScripts("ofc ell", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If (IsCheckBoxChecked($oxp_ara) OR IsCheckBoxChecked($o2k3_ara) OR IsCheckBoxChecked($o2k7_ara)) Then
+        If RunScripts("ofc ara", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If (IsCheckBoxChecked($oxp_heb) OR IsCheckBoxChecked($o2k3_heb) OR IsCheckBoxChecked($o2k7_heb)) Then
+        If RunScripts("ofc heb", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If (IsCheckBoxChecked($oxp_dan) OR IsCheckBoxChecked($o2k3_dan) OR IsCheckBoxChecked($o2k7_dan)) Then
+        If RunScripts("ofc dan", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If (IsCheckBoxChecked($oxp_nor) OR IsCheckBoxChecked($o2k3_nor) OR IsCheckBoxChecked($o2k7_nor)) Then
+        If RunScripts("ofc nor", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If (IsCheckBoxChecked($oxp_fin) OR IsCheckBoxChecked($o2k3_fin) OR IsCheckBoxChecked($o2k7_fin)) Then
+        If RunScripts("ofc fin", True, DetermineDownloadSwitches($includesp, $dotnet, $msse, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $proxy, $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
 
 ;  Create cross-platform DVD ISO images
-      If BitAND(GUICtrlRead($dvdiso), $GUI_CHECKED) = $GUI_CHECKED Then
-        If ( (BitAND(GUICtrlRead($w2k_enu), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_enu), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_enu), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_enu), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_enu), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_enu), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+      If IsCheckBoxChecked($dvdiso) Then
+        If (IsCheckBoxChecked($wxp_enu) OR IsCheckBoxChecked($w2k3_enu) OR IsCheckBoxChecked($oxp_enu) OR IsCheckBoxChecked($o2k3_enu) OR IsCheckBoxChecked($o2k7_enu)) Then
           If RunISOCreationScript($lang_token_enu, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_fra), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_fra), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_fra), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_fra), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_fra), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_fra), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+        If (IsCheckBoxChecked($wxp_fra) OR IsCheckBoxChecked($w2k3_fra) OR IsCheckBoxChecked($oxp_fra) OR IsCheckBoxChecked($o2k3_fra) OR IsCheckBoxChecked($o2k7_fra)) Then
           If RunISOCreationScript($lang_token_fra, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_esn), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_esn), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_esn), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_esn), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_esn), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_esn), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+        If (IsCheckBoxChecked($wxp_esn) OR IsCheckBoxChecked($w2k3_esn) OR IsCheckBoxChecked($oxp_esn) OR IsCheckBoxChecked($o2k3_esn) OR IsCheckBoxChecked($o2k7_esn)) Then
           If RunISOCreationScript($lang_token_esn, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_jpn), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_jpn), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_jpn), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_jpn), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_jpn), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_jpn), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+        If (IsCheckBoxChecked($wxp_jpn) OR IsCheckBoxChecked($w2k3_jpn) OR IsCheckBoxChecked($oxp_jpn) OR IsCheckBoxChecked($o2k3_jpn) OR IsCheckBoxChecked($o2k7_jpn)) Then
           If RunISOCreationScript($lang_token_jpn, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_kor), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_kor), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_kor), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_kor), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_kor), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_kor), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+        If (IsCheckBoxChecked($wxp_kor) OR IsCheckBoxChecked($w2k3_kor) OR IsCheckBoxChecked($oxp_kor) OR IsCheckBoxChecked($o2k3_kor) OR IsCheckBoxChecked($o2k7_kor)) Then
           If RunISOCreationScript($lang_token_kor, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_rus), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_rus), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_rus), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_rus), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_rus), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_rus), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+        If (IsCheckBoxChecked($wxp_rus) OR IsCheckBoxChecked($w2k3_rus) OR IsCheckBoxChecked($oxp_rus) OR IsCheckBoxChecked($o2k3_rus) OR IsCheckBoxChecked($o2k7_rus)) Then
           If RunISOCreationScript($lang_token_rus, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_ptg), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_ptg), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_ptg), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_ptg), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_ptg), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_ptg), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+        If (IsCheckBoxChecked($wxp_ptg) OR IsCheckBoxChecked($w2k3_ptg) OR IsCheckBoxChecked($oxp_ptg) OR IsCheckBoxChecked($o2k3_ptg) OR IsCheckBoxChecked($o2k7_ptg)) Then
           If RunISOCreationScript($lang_token_ptg, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_ptb), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_ptb), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_ptb), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_ptb), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_ptb), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_ptb), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+        If (IsCheckBoxChecked($wxp_ptb) OR IsCheckBoxChecked($w2k3_ptb) OR IsCheckBoxChecked($oxp_ptb) OR IsCheckBoxChecked($o2k3_ptb) OR IsCheckBoxChecked($o2k7_ptb)) Then
           If RunISOCreationScript($lang_token_ptb, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_deu), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_deu), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_deu), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_deu), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_deu), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_deu), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+        If (IsCheckBoxChecked($wxp_deu) OR IsCheckBoxChecked($w2k3_deu) OR IsCheckBoxChecked($oxp_deu) OR IsCheckBoxChecked($o2k3_deu) OR IsCheckBoxChecked($o2k7_deu)) Then
           If RunISOCreationScript($lang_token_deu, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_nld), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_nld), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_nld), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_nld), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_nld), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_nld), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+        If (IsCheckBoxChecked($wxp_nld) OR IsCheckBoxChecked($w2k3_nld) OR IsCheckBoxChecked($oxp_nld) OR IsCheckBoxChecked($o2k3_nld) OR IsCheckBoxChecked($o2k7_nld)) Then
           If RunISOCreationScript($lang_token_nld, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_ita), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_ita), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_ita), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_ita), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_ita), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_ita), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+        If (IsCheckBoxChecked($wxp_ita) OR IsCheckBoxChecked($w2k3_ita) OR IsCheckBoxChecked($oxp_ita) OR IsCheckBoxChecked($o2k3_ita) OR IsCheckBoxChecked($o2k7_ita)) Then
           If RunISOCreationScript($lang_token_ita, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_chs), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_chs), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_chs), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_chs), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_chs), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_chs), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+        If (IsCheckBoxChecked($wxp_chs) OR IsCheckBoxChecked($w2k3_chs) OR IsCheckBoxChecked($oxp_chs) OR IsCheckBoxChecked($o2k3_chs) OR IsCheckBoxChecked($o2k7_chs)) Then
           If RunISOCreationScript($lang_token_chs, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_cht), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_cht), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_cht), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_cht), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_cht), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_cht), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+        If (IsCheckBoxChecked($wxp_cht) OR IsCheckBoxChecked($w2k3_cht) OR IsCheckBoxChecked($oxp_cht) OR IsCheckBoxChecked($o2k3_cht) OR IsCheckBoxChecked($o2k7_cht)) Then
           If RunISOCreationScript($lang_token_cht, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_plk), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_plk), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_plk), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_plk), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_plk), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_plk), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+        If (IsCheckBoxChecked($wxp_plk) OR IsCheckBoxChecked($w2k3_plk) OR IsCheckBoxChecked($oxp_plk) OR IsCheckBoxChecked($o2k3_plk) OR IsCheckBoxChecked($o2k7_plk)) Then
           If RunISOCreationScript($lang_token_plk, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_hun), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_hun), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_hun), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_hun), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_hun), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_hun), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+        If (IsCheckBoxChecked($wxp_hun) OR IsCheckBoxChecked($w2k3_hun) OR IsCheckBoxChecked($oxp_hun) OR IsCheckBoxChecked($o2k3_hun) OR IsCheckBoxChecked($o2k7_hun)) Then
           If RunISOCreationScript($lang_token_hun, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_csy), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_csy), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_csy), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_csy), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_csy), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_csy), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+        If (IsCheckBoxChecked($wxp_csy) OR IsCheckBoxChecked($w2k3_csy) OR IsCheckBoxChecked($oxp_csy) OR IsCheckBoxChecked($o2k3_csy) OR IsCheckBoxChecked($o2k7_csy)) Then
           If RunISOCreationScript($lang_token_csy, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_sve), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_sve), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_sve), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_sve), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_sve), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_sve), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+        If (IsCheckBoxChecked($wxp_sve) OR IsCheckBoxChecked($w2k3_sve) OR IsCheckBoxChecked($oxp_sve) OR IsCheckBoxChecked($o2k3_sve) OR IsCheckBoxChecked($o2k7_sve)) Then
           If RunISOCreationScript($lang_token_sve, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_trk), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_trk), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_trk), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_trk), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_trk), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_trk), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+        If (IsCheckBoxChecked($wxp_trk) OR IsCheckBoxChecked($w2k3_trk) OR IsCheckBoxChecked($oxp_trk) OR IsCheckBoxChecked($o2k3_trk) OR IsCheckBoxChecked($o2k7_trk)) Then
           If RunISOCreationScript($lang_token_trk, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_ell), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_ell), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_ell), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_ell), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_ell), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+        If (IsCheckBoxChecked($wxp_ell) OR IsCheckBoxChecked($oxp_ell) OR IsCheckBoxChecked($o2k3_ell) OR IsCheckBoxChecked($o2k7_ell)) Then
           If RunISOCreationScript($lang_token_ell, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_ara), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_ara), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_ara), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_ara), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_ara), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+        If (IsCheckBoxChecked($wxp_ara) OR IsCheckBoxChecked($oxp_ara) OR IsCheckBoxChecked($o2k3_ara) OR IsCheckBoxChecked($o2k7_ara)) Then
           If RunISOCreationScript($lang_token_ara, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_heb), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_heb), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_heb), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_heb), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_heb), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+        If (IsCheckBoxChecked($wxp_heb) OR IsCheckBoxChecked($oxp_heb) OR IsCheckBoxChecked($o2k3_heb) OR IsCheckBoxChecked($o2k7_heb)) Then
           If RunISOCreationScript($lang_token_heb, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_dan), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_dan), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_dan), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_dan), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_dan), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+        If (IsCheckBoxChecked($wxp_dan) OR IsCheckBoxChecked($oxp_dan) OR IsCheckBoxChecked($o2k3_dan) OR IsCheckBoxChecked($o2k7_dan)) Then
           If RunISOCreationScript($lang_token_dan, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_nor), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_nor), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_nor), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_nor), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_nor), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+        If (IsCheckBoxChecked($wxp_nor) OR IsCheckBoxChecked($oxp_nor) OR IsCheckBoxChecked($o2k3_nor) OR IsCheckBoxChecked($o2k7_nor)) Then
           If RunISOCreationScript($lang_token_nor, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
-        If ( (BitAND(GUICtrlRead($w2k_fin), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($wxp_fin), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($oxp_fin), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k3_fin), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($o2k7_fin), $GUI_CHECKED) = $GUI_CHECKED) ) Then
+        If (IsCheckBoxChecked($wxp_fin) OR IsCheckBoxChecked($oxp_fin) OR IsCheckBoxChecked($o2k3_fin) OR IsCheckBoxChecked($o2k7_fin)) Then
           If RunISOCreationScript($lang_token_fin, DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
-            ContinueLoop
-          EndIf
-        EndIf
-        If ( (BitAND(GUICtrlRead($w2k3_x64_enu), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_x64_fra), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_x64_esn), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_x64_jpn), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_x64_kor), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_x64_rus), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_x64_ptb), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w2k3_x64_deu), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w60_x64_glb), $GUI_CHECKED) = $GUI_CHECKED) _
-          OR (BitAND(GUICtrlRead($w61_x64_glb), $GUI_CHECKED) = $GUI_CHECKED) ) Then
-          If RunISOCreationScript("all-x64", DetermineISOSwitches($includesp, $dotnet, $msse)) <> 0 Then
             ContinueLoop
           EndIf
         EndIf
@@ -3933,14 +3483,14 @@ While 1
 
 ;  Restore window and show success dialog
       WinSetState($maindlg, $maindlg, @SW_RESTORE)
-      If BitAND(GUICtrlRead($skipdownload), $GUI_CHECKED) = $GUI_CHECKED Then 
+      If IsCheckBoxChecked($skipdownload) Then 
         If ShowGUIInGerman() Then
           MsgBox(0x2040, "Info", "Herunterladen / Image-Erstellung / Kopieren erfolgreich.")
         Else
           MsgBox(0x2040, "Info", "Download / image creation / copying successful.")
         EndIf
       Else
-        If BitAND(GUICtrlRead($shutdown), $GUI_CHECKED) = $GUI_CHECKED Then 
+        If IsCheckBoxChecked($shutdown) Then 
           Run(@SystemDir & "\shutdown.exe /s /f /t 5", @SystemDir, @SW_HIDE)
           ExitLoop
         EndIf

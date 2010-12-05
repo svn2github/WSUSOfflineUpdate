@@ -1,3 +1,2 @@
 http://download.microsoft.com/download/5/a/e/5aea6aba-2436-425a-ba76-6a7388539242/OfficeXpSp3-kb832671-fullfile-cht.exe
-http://download.microsoft.com/download/A/C/0/AC098AEE-CC9A-4C03-901C-526A0A2EA8A1/officexp-KB975008-FullFile-CHT.exe
-http://download.microsoft.com/download/D/5/7/D5731B52-E0B0-4169-A207-9CBD85C580BD/officexp-KB2293422-FullFile-CHT.exe
+http://download.microsoft.com/download/5/e/c/5eccd71f-592f-4c32-a7d0-77201d719376/officexp-KB905758-FullFile-CHT.exe

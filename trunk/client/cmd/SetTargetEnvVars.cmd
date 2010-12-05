@@ -1,5 +1,5 @@
 @echo off
-rem *** Author: T. Wittrock, RZ Uni Kiel ***
+rem *** Author: T. Wittrock, Kiel ***
 
 if "%OS_VER_MAJOR%"=="" goto NoOSVersion
 
@@ -57,16 +57,6 @@ goto Windows%OS_VER_MAJOR%.%OS_VER_MINOR%
 :Windows5.0
 rem *** Windows 2000 ***
 set OS_NAME=w2k
-set OS_SP_VER_TARGET_MAJOR=4
-set OS_SP_TARGET_ID=W2KSP4
-set MSI_VER_TARGET_MAJOR=3
-set MSI_VER_TARGET_MINOR=1
-set MSI_TARGET_ID=893803
-set WSH_VER_TARGET_MAJOR=5
-set WSH_VER_TARGET_MINOR=7
-set IE_VER_TARGET_MAJOR=6
-set WMP_VER_TARGET_MAJOR=9
-set WMP_TARGET_ID=MPSetup
 goto SetOfficeName
 
 :Windows5.1

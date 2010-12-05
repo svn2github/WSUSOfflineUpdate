@@ -1,5 +1,5 @@
 @echo off
-rem *** Author: T. Wittrock, RZ Uni Kiel ***
+rem *** Author: T. Wittrock, Kiel ***
 
 verify other 2>nul
 setlocal enableextensions
@@ -58,16 +58,10 @@ echo.
 goto Error
 
 :Error
-if "%EXIT_ON_ERROR%"=="1" (
-  endlocal
-  verify other 2>nul
-  exit
-) else (
-  title %ComSpec%
-  endlocal
-  verify other 2>nul
-  goto :eof
-)
+title %ComSpec%
+endlocal
+verify other 2>nul
+if "%EXIT_ON_ERROR%"=="1" exit
 
 :EoF
 title %ComSpec%

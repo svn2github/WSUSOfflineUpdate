@@ -1,5 +1,5 @@
 @echo off
-rem *** Author: T. Wittrock, RZ Uni Kiel ***
+rem *** Author: T. Wittrock, Kiel ***
 
 verify other 2>nul
 setlocal enableextensions
@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.6.5
+set WSUSOFFLINE_VERSION=6.7
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -67,7 +67,7 @@ if "%BOOT_MODE%"=="/autoreboot" (if not exist %REG_PATH% goto NoReg)
 if "%SHOW_LOG%"=="/showlog" (if not exist %REG_PATH% goto NoReg)
 
 rem *** Check number of automatic recalls ***
-if "%USERNAME%"=="WSUSUpdateAdmin" (
+if "%USERNAME%"=="WOUTempAdmin" (
   if exist "%TEMP%\wsusadmin-recall.3" goto EndlessLoop
   if exist "%TEMP%\wsusadmin-recall.2" ren "%TEMP%\wsusadmin-recall.2" wsusadmin-recall.3
   if exist "%TEMP%\wsusadmin-recall.1" (
@@ -93,7 +93,13 @@ if "%OS_LANG%"=="" goto UnsupLang
 rem *** Set target environment variables ***
 call SetTargetEnvVars.cmd %INSTALL_IE%
 if errorlevel 1 goto Cleanup
-if "%OS_NAME%"=="" goto NoOSName
+
+rem *** Check Operating System ***
+if "%OS_NAME%"=="" goto UnsupOS
+if "%OS_NAME%"=="w2k" goto UnsupOS
+for %%i in (x86 x64) do (if /i "%OS_ARCH%"=="%%i" goto ValidArch)
+goto UnsupArch
+:ValidArch
 
 rem *** Echo OS properties ***
 echo Found OS caption: %OS_CAPTION%
@@ -144,11 +150,6 @@ if "%O2K7_VER_MAJOR%" NEQ "" (
 if "%O2K10_VER_MAJOR%" NEQ "" (
   echo %DATE% %TIME% - Info: Found Microsoft Office 2010 %O2K10_VER_APP% version %O2K10_VER_MAJOR%.%O2K10_VER_MINOR%.%O2K10_VER_BUILD%.%O2K10_VER_REVISION% ^(o2k10 %O2K10_LANG% sp%O2K10_SP_VER%^) >>%UPDATE_LOGFILE%
 )
-
-rem *** Check Operating System architecture ***
-for %%i in (x86 x64) do (if /i "%OS_ARCH%"=="%%i" goto ValidArch)
-goto UnsupArch
-:ValidArch
 
 rem *** Check user's privileges ***
 echo Checking user's privileges...
@@ -203,14 +204,14 @@ if exist ..\%OFC_NAME%\glb\nul (
   echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(%OFC_NAME% glb^) >>%UPDATE_LOGFILE%
   goto ProperMedium
 )
-if exist ..\%OFC_NAME%-%OS_ARCH%\%OFC_LANG%\nul (
-  echo Medium supports Microsoft Office ^(%OFC_NAME%-%OS_ARCH% %OFC_LANG%^).
-  echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(%OFC_NAME%-%OS_ARCH% %OFC_LANG%^) >>%UPDATE_LOGFILE%
+if exist ..\ofc\%OFC_LANG%\nul (
+  echo Medium supports Microsoft Office ^(ofc %OFC_LANG%^).
+  echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(ofc %OFC_LANG%^) >>%UPDATE_LOGFILE%
   goto ProperMedium
 )
-if exist ..\%OFC_NAME%-%OS_ARCH%\glb\nul (
-  echo Medium supports Microsoft Office ^(%OFC_NAME%-%OS_ARCH% glb^).
-  echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(%OFC_NAME%-%OS_ARCH% glb^) >>%UPDATE_LOGFILE%
+if exist ..\ofc\glb\nul (
+  echo Medium supports Microsoft Office ^(ofc glb^).
+  echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(ofc glb^) >>%UPDATE_LOGFILE%
   goto ProperMedium
 )
 echo Medium does not support Microsoft Office (%OFC_NAME% %OFC_LANG%).
@@ -246,7 +247,6 @@ if 0 EQU %OS_SP_VER_MAJOR% (
     echo %DATE% %TIME% - Info: Faked Windows XP Service Pack 1 >>%UPDATE_LOGFILE%
   )
 )
-:SPw2k
 :SPw2k3
 if "%BACKUP_MODE%"=="/nobackup" (
   call InstallListedUpdates.cmd %VERIFY_MODE% /u /z /n
@@ -392,18 +392,6 @@ if %IE_VER_REVISION% GEQ %IE_VER_TARGET_REVISION% goto SkipIEInst
 :InstallIE
 goto IE%OS_NAME%
 
-:IEw2k
-set IE_FILENAME=..\win\%OS_LANG%\ie6setup\ie6setup.exe
-if not exist %IE_FILENAME% (
-  echo Warning: Unable to install Internet Explorer 6. File %IE_FILENAME% not found. 
-  echo %DATE% %TIME% - Warning: Unable to install Internet Explorer 6. File %IE_FILENAME% not found >>%UPDATE_LOGFILE%
-  goto SkipIEInst 
-)
-echo Installing Internet Explorer 6...
-call InstallOSUpdate.cmd %IE_FILENAME% %VERIFY_MODE% /ignoreerrors /q:a /r:n
-if not errorlevel 1 set RECALL_REQUIRED=1
-goto IEInstalled 
-
 :IEwxp
 if "%INSTALL_IE%"=="/instie8" (
   set IE_FILENAME=..\%OS_NAME%\%OS_LANG%\IE8-WindowsXP-%OS_ARCH%-%OS_LANG%*.exe
@@ -514,7 +502,6 @@ set REBOOT_REQUIRED=1
 :SkipWMPInst
 
 rem *** Install most recent Windows Terminal Services Client ***
-if "%OS_NAME%"=="w2k" goto SkipTSCInst
 if "%UPDATE_TSC%" NEQ "/updatetsc" goto SkipTSCInst
 echo Checking Windows Terminal Services Client version...
 if %TSC_VER_MAJOR% LSS %TSC_VER_TARGET_MAJOR% goto InstallTSC
@@ -542,7 +529,6 @@ set REBOOT_REQUIRED=1
 :SkipTSCInst
 
 rem *** Install .NET Framework 3.5 SP1 ***
-if "%OS_NAME%"=="w2k" goto SkipDotNet35Inst
 if "%INSTALL_DOTNET35%" NEQ "/instdotnet35" goto SkipDotNet35Inst
 echo Checking .NET Framework 3.5 installation state...
 if %DOTNET35_VER_MAJOR% LSS %DOTNET35_VER_TARGET_MAJOR% goto InstallDotNet35
@@ -573,7 +559,6 @@ if "%RECALL_REQUIRED%"=="1" goto Installed
 :SkipDotNet35Inst
 
 rem *** Install .NET Framework 4 ***
-if "%OS_NAME%"=="w2k" goto SkipDotNet4Inst
 if "%INSTALL_DOTNET4%" NEQ "/instdotnet4" goto SkipDotNet4Inst
 echo Checking .NET Framework 4 installation state...
 if %DOTNET4_VER_MAJOR% LSS %DOTNET4_VER_TARGET_MAJOR% goto InstallDotNet4
@@ -594,7 +579,6 @@ set REBOOT_REQUIRED=1
 :SkipDotNet4Inst
 
 rem *** Install Windows PowerShell 2.0 ***
-if "%OS_NAME%"=="w2k" goto SkipPShInst
 if "%INSTALL_PSH%" NEQ "/instpsh" goto SkipPShInst
 echo Checking Windows PowerShell 2.0 installation state...
 if %PSH_VER_MAJOR% LSS %PSH_VER_TARGET_MAJOR% goto InstallPSh
@@ -622,7 +606,6 @@ set REBOOT_REQUIRED=1
 :SkipPShInst
 
 rem *** Install Microsoft Security Essentials ***
-if "%OS_NAME%"=="w2k" goto SkipMSSEInst
 if %OS_DOMAIN_ROLE% GEQ 2 goto SkipMSSEInst
 echo Checking Microsoft Security Essentials installation state...
 if "%MSSE_INSTALLED%"=="1" goto CheckMSSEDefs
@@ -740,6 +723,7 @@ if "%OFC_COMP_PACK%" NEQ "1" (
 
 :CheckAUService
 rem *** Check state of service 'automatic updates' ***
+if "%USERNAME%"=="WOUTempAdmin" goto ListUpdateIds
 echo Checking state of service 'automatic updates'...
 echo %DATE% %TIME% - Info: Detected state of service 'automatic updates': %AU_SVC_STATE_INITIAL% (start mode: %AU_SVC_START_MODE%) >>%UPDATE_LOGFILE%
 if /i "%AU_SVC_STATE_INITIAL%"=="" goto ListUpdateIds
@@ -810,25 +794,19 @@ set REBOOT_REQUIRED=1
 :Installed
 if "%RECALL_REQUIRED%"=="1" (
   if "%BOOT_MODE%"=="/autoreboot" (
-    if "%OS_NAME%"=="w60" (
-      echo.
-      echo Automatic recall is not supported for Windows Vista / Server 2008.
-      echo %DATE% %TIME% - Info: Automatic recall is not supported for Windows Vista / Server 2008 >>%UPDATE_LOGFILE%
-      goto ManualRecall
-    )
-    if "%OS_NAME%"=="w61" (
-      echo.
-      echo Automatic recall is not supported for Windows 7 / Server 2008 R2.
-      echo %DATE% %TIME% - Info: Automatic recall is not supported for Windows 7 / Server 2008 R2 >>%UPDATE_LOGFILE%
-      goto ManualRecall
-    )
     if %OS_DOMAIN_ROLE% GEQ 4 (                 
       echo.
       echo Automatic recall is not supported on domain controllers.
       echo %DATE% %TIME% - Info: Automatic recall is not supported on domain controllers >>%UPDATE_LOGFILE%
       goto ManualRecall
     )
-    if "%USERNAME%" NEQ "WSUSUpdateAdmin" (
+    if not exist ..\bin\Autologon.exe (                 
+      echo.
+      echo Warning: Utility ..\bin\Autologon.exe not found. Automatic recall is unavailable.
+      echo %DATE% %TIME% - Warning: Utility ..\bin\Autologon.exe not found. Automatic recall is unavailable >>%UPDATE_LOGFILE%
+      goto ManualRecall
+    )
+    if "%USERNAME%" NEQ "WOUTempAdmin" (
       echo Preparing automatic recall...
       call PrepareRecall.cmd %~f0 %BACKUP_MODE% %VERIFY_MODE% %INSTALL_IE% %UPDATE_WMP% %UPDATE_TSC% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_MSSE% %INSTALL_CONVERTERS% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES%
     )
@@ -843,7 +821,7 @@ if "%RECALL_REQUIRED%"=="1" (
 ) else (
   if "%SHOW_LOG%"=="/showlog" call PrepareShowLogFile.cmd
   if "%BOOT_MODE%"=="/autoreboot" (
-    if "%USERNAME%"=="WSUSUpdateAdmin" (
+    if "%USERNAME%"=="WOUTempAdmin" (
       echo Cleaning up automatic recall...
       call CleanupRecall.cmd
       del /Q "%TEMP%\wsusadmin-recall.*"
@@ -936,10 +914,10 @@ echo %DATE% %TIME% - Error: Unsupported Operating System language >>%UPDATE_LOGF
 echo.
 goto Cleanup
 
-:NoOSName
+:UnsupOS
 echo.
-echo ERROR: Environment variable OS_NAME not set.
-echo %DATE% %TIME% - Error: Environment variable OS_NAME not set >>%UPDATE_LOGFILE%
+echo ERROR: Unsupported Operating System (%OS_NAME%).
+echo %DATE% %TIME% - Error: Unsupported Operating System (%OS_NAME%) >>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
@@ -1035,7 +1013,7 @@ echo.
 goto Cleanup
 
 :Cleanup
-if "%USERNAME%"=="WSUSUpdateAdmin" (
+if "%USERNAME%"=="WOUTempAdmin" (
   if "%SHOW_LOG%"=="/showlog" call PrepareShowLogFile.cmd
   echo Cleaning up automatic recall...
   call CleanupRecall.cmd

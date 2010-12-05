@@ -1,11 +1,11 @@
-; *** WSUS Offline Update 6.6.5 - Installer ***
-; ***   Author: T. Wittrock, RZ Uni Kiel    ***
-; ***  Dialog scaling added by Th. Baisch   ***
+; *** WSUS Offline Update 6.7 - Installer ***
+; ***      Author: T. Wittrock, Kiel      ***
+; ***  Dialog scaling added by Th. Baisch ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 
-Dim Const $caption                    = "WSUS Offline Update 6.6.5 - Installer"
+Dim Const $caption                    = "WSUS Offline Update 6.7 - Installer"
 
 ; Registry constants
 Dim Const $reg_key_wsh_hklm           = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings"
@@ -17,12 +17,15 @@ Dim Const $reg_key_powershell         = "HKEY_LOCAL_MACHINE\Software\Microsoft\P
 Dim Const $reg_key_msse               = "HKEY_LOCAL_MACHINE\Software\Microsoft\Microsoft Security Essentials"
 Dim Const $reg_key_fontdpi            = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontDPI"
 Dim Const $reg_key_windowmetrics      = "HKEY_CURRENT_USER\Control Panel\Desktop\WindowMetrics"
+Dim Const $reg_key_windowsupdate      = "HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsUpdate"
+
 Dim Const $reg_val_default            = ""
 Dim Const $reg_val_enabled            = "Enabled"
 Dim Const $reg_val_version            = "Version"
 Dim Const $reg_val_pshversion         = "PowerShellVersion"
 Dim Const $reg_val_logpixels          = "LogPixels"
 Dim Const $reg_val_applieddpi         = "AppliedDPI"
+Dim Const $reg_val_wustatusserver     = "WUStatusServer"
 
 ; Defaults
 Dim Const $default_logpixels          = 96
@@ -51,6 +54,9 @@ Dim Const $ini_value_shutdown         = "shutdown"
 Dim Const $ini_section_messaging      = "Messaging"
 Dim Const $ini_value_showlog          = "showlog"
 
+Dim Const $ini_section_misc           = "Miscellaneous"
+Dim Const $ini_value_wustatusserver   = "WUStatusServer"
+
 Dim Const $enabled                    = "Enabled"
 Dim Const $disabled                   = "Disabled"
 
@@ -59,6 +65,7 @@ Dim Const $path_max_length            = 128
 Dim Const $path_invalid_chars         = "%&()^+,;=" 
 Dim Const $path_rel_builddate         = "\builddate.txt"
 Dim Const $path_rel_hashes            = "\md\"
+Dim Const $path_rel_autologon         = "\bin\Autologon.exe"
 Dim Const $path_rel_converters        = "\ofc\glb\OCONVPCK.EXE"
 Dim Const $path_rel_instdotnet35      = "\dotnet\dotnetfx35.exe"
 Dim Const $path_rel_instdotnet4       = "\dotnet\dotNetFx40_Full_x86_x64.exe"
@@ -187,6 +194,10 @@ Func HashFilesPresent($basepath)
   Return FileExists($basepath & $path_rel_hashes)
 EndFunc
 
+Func AutologonPresent($basepath)
+  Return FileExists($basepath & $path_rel_autologon)
+EndFunc
+
 Func ConvertersInstPresent($basepath)
   Return FileExists($basepath & $path_rel_converters)
 EndFunc
@@ -215,7 +226,7 @@ Func CalcGUISize()
   EndIf
   $dlgheight = 265 * $reg_val / $default_logpixels
   If ShowGUIInGerman() Then
-    $txtwidth = 220 * $reg_val / $default_logpixels
+    $txtwidth = 230 * $reg_val / $default_logpixels
   Else
     $txtwidth = 200 * $reg_val / $default_logpixels
   EndIf
@@ -478,7 +489,7 @@ Else
   $verify = GUICtrlCreateCheckbox("Verify installation packages", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If HashFilesPresent($scriptdir) Then
-  If IniRead($inifilename, $ini_section_control, $ini_value_verify, $disabled) = $enabled Then
+  If IniRead($inifilename, $ini_section_control, $ini_value_verify, $enabled) = $enabled Then
     GUICtrlSetState(-1, $GUI_CHECKED)
   Else
     GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -491,20 +502,20 @@ EndIf
 ;  Automatic reboot and recall
 $txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
-  If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
+  If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
     $autoreboot = GUICtrlCreateCheckbox("Automatisch neu starten", $txtxpos, $txtypos, $txtwidth, $txtheight)
   Else
     $autoreboot = GUICtrlCreateCheckbox("Automatisch neu starten und fortsetzen", $txtxpos, $txtypos, $txtwidth, $txtheight)
   EndIf
 Else
-  If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
+  If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
     $autoreboot = GUICtrlCreateCheckbox("Automatic reboot", $txtxpos, $txtypos, $txtwidth, $txtheight)
   Else
     $autoreboot = GUICtrlCreateCheckbox("Automatic reboot and recall", $txtxpos, $txtypos, $txtwidth, $txtheight)
   EndIf
 EndIf
-If ( (DriveGetType(@ScriptDir) = "Network") _
- AND (@OSVersion <> "WIN_VISTA") AND (@OSVersion <> "WIN_2008") AND (@OSVersion <> "WIN_7") AND (@OSVersion <> "WIN_2008R2") ) Then
+If ( (NOT AutologonPresent($scriptdir)) _
+  OR ( (DriveGetType(@ScriptDir) = "Network") AND (@OSVersion <> "WIN_7") AND (@OSVersion <> "WIN_2008R2") ) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else  
@@ -701,14 +712,16 @@ While 1
 
     Case $autoreboot         ; Automatic reboot check box toggled
       If ( (BitAND(GUICtrlRead($autoreboot), $GUI_CHECKED) = $GUI_CHECKED) _
-       AND (@OSVersion <> "WIN_VISTA") AND (@OSVersion <> "WIN_2008") AND (@OSVersion <> "WIN_7") AND (@OSVersion <> "WIN_2008R2") ) Then
+       AND ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) ) Then
         If ShowGUIInGerman() Then
-          If MsgBox(0x2134, "Warnung", "Die Option 'Automatisch neu starten und fortsetzen' verursachte auf manchen Systemen Probleme." _
+          If MsgBox(0x2134, "Warnung", "Die Option 'Automatisch neu starten und fortsetzen'" _
+                               & @LF & "deaktiviert temporär die Benutzerkontensteuerung (UAC)." _
                                & @LF & "Möchten Sie fortsetzen?") = 7 Then
             GUICtrlSetState($autoreboot, $GUI_UNCHECKED)
           EndIf
         Else
-          If MsgBox(0x2134, "Warning", "The option 'automatic reboot and recall' caused problems on some systems." _
+          If MsgBox(0x2134, "Warning", "The option 'automatic reboot and recall'" _
+                               & @LF & "temporarily disables the User Account Control (UAC)." _
                                & @LF & "Do you wish to proceed?") = 7 Then
             GUICtrlSetState($autoreboot, $GUI_UNCHECKED)
           EndIf
@@ -724,6 +737,10 @@ While 1
       EndIf  
 
     Case $btn_start          ; Start Button pressed
+      $options = IniRead($inifilename, $ini_section_misc, $ini_value_wustatusserver, "")    ; Dummy use of $options
+      If $options <> "" Then
+        RegWrite($reg_key_windowsupdate, $reg_val_wustatusserver, "REG_SZ", $options)
+      EndIf
       $options = ""
       If BitAND(GUICtrlRead($backup), $GUI_CHECKED) <> $GUI_CHECKED Then
         $options = $options & " /nobackup"

@@ -4,6 +4,7 @@ o2k\
 oxp\
 o2k3\
 o2k7\
+o2k10\
 w2k\
 wxp\
 w2k3\
@@ -11,5 +12,3 @@ w60\
 w61\
 win\
 .au3
-invcif.exe
-invcm.exe

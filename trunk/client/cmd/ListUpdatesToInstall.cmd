@@ -1,5 +1,5 @@
 @echo off
-rem *** Author: T. Wittrock, RZ Uni Kiel ***
+rem *** Author: T. Wittrock, Kiel ***
 
 verify other 2>nul
 setlocal enableextensions
@@ -38,8 +38,6 @@ if exist ..\static\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt call :EvalStatics ..\
 if exist ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt call :EvalStatics ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt
 if exist ..\static\StaticUpdateIds-%OFC_NAME%.txt call :EvalStatics ..\static\StaticUpdateIds-%OFC_NAME%.txt
 if exist ..\static\custom\StaticUpdateIds-%OFC_NAME%.txt call :EvalStatics ..\static\custom\StaticUpdateIds-%OFC_NAME%.txt
-if exist ..\static\StaticUpdateIds-%OFC_NAME%-%OS_ARCH%.txt call :EvalStatics ..\static\StaticUpdateIds-%OFC_NAME%-%OS_ARCH%.txt
-if exist ..\static\custom\StaticUpdateIds-%OFC_NAME%-%OS_ARCH%.txt call :EvalStatics ..\static\custom\StaticUpdateIds-%OFC_NAME%-%OS_ARCH%.txt
 
 :ExcludeStatics
 if exist "%TEMP%\InstalledUpdateIds.txt" del "%TEMP%\InstalledUpdateIds.txt"
@@ -69,9 +67,23 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
       )
     )
     call ListUpdateFile.cmd ndp*%%i*-%OS_ARCH% ..\dotnet\%OS_ARCH%-glb /searchleftmost
-    for %%k in (%OFC_NAME%-%OS_ARCH% %OFC_NAME% ofc oxp o2k3 o2k7 o2k7-x64) do (
-      for %%l in (%OFC_LANG% glb) do (
-        call ListUpdateFile.cmd %%i ..\%%k\%%l
+    for %%k in (%OFC_LANG% glb) do (
+      if exist ..\ofc\UpdateTable-ofc-%%k.csv (
+        if not exist "%TEMP%\Update.txt" (
+          for /F "tokens=1,2 delims=," %%l in (..\ofc\UpdateTable-ofc-%%k.csv) do (
+            if "%%l"=="%%j" (
+              if exist "%TEMP%\Update.txt" del "%TEMP%\Update.txt"
+              call ListUpdateFile.cmd %%m ..\ofc\%%k /searchleftmost
+            )
+          )
+        )
+      )
+    )
+    if not exist "%TEMP%\Update.txt" (
+      for %%k in (%OFC_NAME%-%OS_ARCH% %OFC_NAME% ofc oxp o2k3 o2k7 o2k10) do (
+        for %%l in (%OFC_LANG% glb) do (
+          call ListUpdateFile.cmd %%i ..\%%k\%%l
+        )
       )
     )
     if exist "%TEMP%\Update.txt" (
@@ -79,7 +91,7 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
     ) else (
       echo Warning: Update KB%%i not found.
       echo %DATE% %TIME% - Warning: Update KB%%i not found >>%UPDATE_LOGFILE%
-    )
+    )        
   ) else (
     echo Info: Skipping update KB%%i due to matching black list entry.
     echo %DATE% %TIME% - Info: Skipped update KB%%i due to matching black list entry >>%UPDATE_LOGFILE%

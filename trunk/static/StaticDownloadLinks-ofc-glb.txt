@@ -1,10 +1,1 @@
 http://download.microsoft.com/download/3/1/f/31f1336a-4efa-489a-8286-7e8bba6f1105/OCONVPCK.EXE
-http://download.microsoft.com/download/5/2/6/52646E6D-36BE-49C2-93CB-EDDA0B636CBC/office2003-KB974882-FullFile-ENU.exe
-http://download.microsoft.com/download/6/A/8/6A873ED3-8FB2-4B2E-A0EF-AC875F5D50B7/office-kb981715-fullfile-x86-glb.exe
-http://download.microsoft.com/download/1/D/4/1D498174-A921-455B-B4B5-BEF83D081A2C/office-KB2251437-FullFile-ENU.exe
-http://download.microsoft.com/download/B/4/2/B42AB157-4ABC-4E10-8751-357B7BDFFC09/office-kb2277947-fullfile-x86-glb.exe
-http://download.microsoft.com/download/1/A/3/1A3A0C87-871E-4649-AABA-B167086988A1/office-KB2345009-FullFile-ENU.exe
-http://download.microsoft.com/download/1/F/0/1F043EFB-FB81-4B41-9557-8DEAABF5F4D1/Office-kb2345088-fullfile-x86-glb.exe
-http://download.microsoft.com/download/D/2/9/D29B5D62-6A5E-430D-81AE-3D30191B5106/office2007-kb2345043-v2-fullfile-x86-glb.exe
-http://download.microsoft.com/download/6/7/3/6734779B-8E69-4C37-940B-D2C4D1C41353/Office2007-kb2344875-fullfile-x86-glb.exe
-http://download.microsoft.com/download/5/D/8/5D85A638-3B5F-4CD3-9346-63A5C69020CB/Office2007-kb2289158-fullfile-x86-glb.exe
