@@ -25,6 +25,10 @@ goto EvalParams
 rem *** Check WSUS Offline Update version ***
 title Checking WSUS Offline Update version...
 echo Checking WSUS Offline Update version...
+if exist UpdateOU.new (
+  if exist UpdateOU.cmd del UpdateOU.cmd
+  ren UpdateOU.new UpdateOU.cmd
+)
 %WGET_PATH% -N -P ..\static http://download.wsusoffline.net/StaticDownloadLink-recent.txt
 if errorlevel 1 goto DownloadError
 if exist ..\static\StaticDownloadLink-recent.txt (

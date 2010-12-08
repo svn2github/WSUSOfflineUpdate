@@ -84,6 +84,7 @@ Dim Const $opts_token_cleanup     = "cleanupdownloads"
 Dim Const $opts_token_verify      = "verifydownloads"
 Dim Const $misc_token_proxy       = "proxy"
 Dim Const $misc_token_wsus        = "wsus"
+Dim Const $misc_token_wsus_proxy  = "wsusbyproxy"
 Dim Const $misc_token_wsus_trans  = "transferwsus"
 Dim Const $misc_token_chkver      = "checkouversion"
 Dim Const $misc_token_minimize    = "minimizeondownload"
@@ -586,6 +587,9 @@ Dim $result = ""
   EndIf
   If $str_wsus <> "" Then
     $result = $result & " /wsus " & $str_wsus
+  EndIf
+  If IniRead($inifilename, $ini_section_misc, $misc_token_wsus_proxy, $disabled) = $enabled Then
+    $result = $result & " /wsusbyproxy"
   EndIf
   Return $result
 EndFunc

@@ -21,6 +21,7 @@ if exist wsusoffline%1.zip del wsusoffline%1.zip
 if exist wsusoffline%1.mds del wsusoffline%1.mds
 if exist wsusoffline%1_hashes.txt del wsusoffline%1_hashes.txt
 echo Creating release archive "%TEMP%\wsusoffline%1.zip"...
+ren "%TEMP%\wsusoffline\cmd\UpdateOU.cmd" UpdateOU.new
 "%ProgramFiles%\7-Zip\7z.exe" a -tzip -mx9 -r wsusoffline%1.zip wsusoffline
 echo Creating message digest file "%TEMP%\wsusoffline%1_hashes.txt"...
 %~dps0client\bin\hashdeep.exe -c md5,sha256 -b wsusoffline%1.zip >wsusoffline%1.mds

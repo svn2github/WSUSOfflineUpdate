@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7
+set WSUSOFFLINE_VERSION=6.7+ (r181)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -136,7 +136,7 @@ goto EvalParams
 
 :EvalParams
 if "%3"=="" goto NoMoreParams
-for %%i in (/excludesp /excludestatics /includedotnet /nocleanup /verify /exitonerror /skipmkisofs /proxy /wsus) do (
+for %%i in (/excludesp /excludestatics /includedotnet /includemsse /nocleanup /verify /exitonerror /skipmkisofs /proxy /wsus /wsusbyproxy) do (
   if /i "%3"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected >>%DOWNLOAD_LOGFILE%
 )
 if /i "%3"=="/excludesp" set EXCLUDE_SP=1
@@ -152,9 +152,10 @@ if /i "%3"=="/proxy" (
   shift /3
 )
 if /i "%3"=="/wsus" (
-  set HTTP_WSUS=%4
+  set WSUS_URL=%4
   shift /3
 )
+if /i "%3"=="/wsusbyproxy" set WSUS_BY_PROXY=1
 shift /3
 goto EvalParams
 
@@ -183,6 +184,10 @@ if exist ..\exclude\custom\dummy.txt del ..\exclude\custom\dummy.txt
 if exist ..\static\custom\dummy.txt del ..\static\custom\dummy.txt
 if exist ..\client\exclude\custom\dummy.txt del ..\client\exclude\custom\dummy.txt
 if exist ..\client\static\custom\dummy.txt del ..\client\static\custom\dummy.txt
+if exist UpdateOU.new (
+  if exist UpdateOU.cmd del UpdateOU.cmd
+  ren UpdateOU.new UpdateOU.cmd
+)
 
 rem *** Obsolete internal stuff ***
 if exist ..\doc\faq.txt del ..\doc\faq.txt 
@@ -724,7 +729,7 @@ echo %DATE% %TIME% - Info: Downloaded/validated %LINES_COUNT% statically defined
 if not exist "%TEMP%\ValidDownloadLinks-%1-%2.txt" goto CleanupDownload
 echo Downloading/validating dynamically determined updates for %1 %2...
 for /F "delims=: tokens=1*" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidDownloadLinks-%1-%2.txt"') do set LINES_COUNT=%%i
-if "%HTTP_WSUS%"=="" (
+if "%WSUS_URL%"=="" (
   for /F "delims=: tokens=1*" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidDownloadLinks-%1-%2.txt"') do (
     echo Downloading/validating update %%i of %LINES_COUNT%...
     %WGET_PATH% -nv -N -P ..\client\%1\%2 -a %DOWNLOAD_LOGFILE% %%j
@@ -735,7 +740,7 @@ if "%HTTP_WSUS%"=="" (
   )
 ) else (
   echo Creating WSUS download table for %1 %2...
-  %CSCRIPT_PATH% //Nologo //B //E:vbs CreateDownloadTable.vbs "%TEMP%\ValidDownloadLinks-%1-%2.txt" %HTTP_WSUS%
+  %CSCRIPT_PATH% //Nologo //B //E:vbs CreateDownloadTable.vbs "%TEMP%\ValidDownloadLinks-%1-%2.txt" %WSUS_URL%
   if errorlevel 1 goto DownloadError
   echo %DATE% %TIME% - Info: Created WSUS download table for %1 %2 >>%DOWNLOAD_LOGFILE%
   for /F "delims=: tokens=1*" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidDownloadLinks-%1-%2.csv"') do (
@@ -749,7 +754,11 @@ if "%HTTP_WSUS%"=="" (
         )
       ) else (
         if exist ..\client\%1\%2\%%k ren ..\client\%1\%2\%%k _%%k
-        %WGET_PATH% -nv -O ..\client\%1\%2\%%k -a %DOWNLOAD_LOGFILE% %%l
+        if "%WSUS_BY_PROXY%"=="1" (
+          %WGET_PATH% -nv -O ..\client\%1\%2\%%k -a %DOWNLOAD_LOGFILE% %%l
+        ) else (
+          %WGET_PATH% -nv --no-proxy -O ..\client\%1\%2\%%k -a %DOWNLOAD_LOGFILE% %%l
+        )
         if errorlevel 1 (
           if exist ..\client\%1\%2\%%k del ..\client\%1\%2\%%k
           if exist ..\client\%1\%2\_%%k ren ..\client\%1\%2\_%%k %%k
@@ -861,8 +870,8 @@ exit /b 1
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %1 %2 %3 %4
-echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| oxp ^| o2k3 ^| o2k7} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>]
-echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| ofc} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>]
+echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| oxp ^| o2k3 ^| o2k7} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusbyproxy]
+echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| ofc} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusbyproxy]
 echo %DATE% %TIME% - Error: Invalid parameter: %1 %2 %3 %4 >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
