@@ -99,8 +99,8 @@ rem *** Create ISO filter ***
 echo Creating ISO filter for %1...
 set ISO_FILTER="%TEMP%\ExcludeListISO-%1.txt"
 for %%i in (all all-x86 all-x64 wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 ofc) do (if /i "%1"=="%%i" goto V1CopyFilter)
-set ISO_IMAGE=wsusoffline-%1-x86.iso
-set ISO_VOLID=wou_%1-x86
+set ISO_NAME=wsusoffline-%1-x86
+set ISO_VOLID=wou_%1_x86
 copy /Y ..\exclude\ExcludeListISO-all-x86.txt %ISO_FILTER% >nul
 if exist ..\exclude\custom\ExcludeListISO-all-x86.txt (
   for /F %%i in (..\exclude\custom\ExcludeListISO-all-x86.txt) do echo %%i>>%ISO_FILTER%
@@ -110,7 +110,7 @@ call :ExtendFilter %1
 goto CreateImage
 
 :V1CopyFilter
-set ISO_IMAGE=wsusoffline-%1.iso
+set ISO_NAME=wsusoffline-%1
 set ISO_VOLID=wou_%1
 call :CopyFilter %1
 call :LocaleFilter glb 
@@ -121,7 +121,7 @@ goto CreateImage
 rem *** Create ISO filter ***
 echo Creating ISO filter for %1 %2...
 set ISO_FILTER="%TEMP%\ExcludeListISO-%1-%2.txt"
-set ISO_IMAGE=wsusoffline-%1-%2.iso
+set ISO_NAME=wsusoffline-%1-%2
 set ISO_VOLID=wou_%1_%2
 call :CopyFilter %1
 call :LocaleFilter %2 
@@ -133,12 +133,18 @@ rem *** Create ISO image ***
 if %OUTPUT_PATH%~==~ set OUTPUT_PATH=..\iso
 if not exist %OUTPUT_PATH%\nul goto NoOutputPath
 if not exist ..\bin\mkisofs.exe goto NoMkIsoFs
-title Creating ISO image %OUTPUT_PATH%\%ISO_IMAGE%...
-echo Creating ISO image %OUTPUT_PATH%\%ISO_IMAGE%...
-if exist %OUTPUT_PATH%\%ISO_IMAGE% del %OUTPUT_PATH%\%ISO_IMAGE%
-..\bin\mkisofs.exe -iso-level 4 -joliet -joliet-long -rational-rock -exclude-list %ISO_FILTER% -output %OUTPUT_PATH%\%ISO_IMAGE% -volid %ISO_VOLID% ..\client
+title Creating ISO image %OUTPUT_PATH%\%ISO_NAME%.iso...
+echo Creating ISO image %OUTPUT_PATH%\%ISO_NAME%.iso...
+if exist %OUTPUT_PATH%\%ISO_NAME%.iso del %OUTPUT_PATH%\%ISO_NAME%.iso
+if exist %OUTPUT_PATH%\%ISO_NAME%-hashes.txt del %OUTPUT_PATH%\%ISO_NAME%-hashes.txt
+..\bin\mkisofs.exe -iso-level 4 -joliet -joliet-long -rational-rock -exclude-list %ISO_FILTER% -output %OUTPUT_PATH%\%ISO_NAME%.iso -volid %ISO_VOLID% ..\client
 if errorlevel 1 goto MkIsoError
 if exist %ISO_FILTER% del %ISO_FILTER%
+echo Creating message digest file %OUTPUT_PATH%\%ISO_NAME%-hashes.txt...
+..\client\bin\hashdeep.exe -c md5,sha256 -b %OUTPUT_PATH%\%ISO_NAME%.iso >%OUTPUT_PATH%\%ISO_NAME%.mds
+%SystemRoot%\system32\findstr.exe /C:## /V %OUTPUT_PATH%\%ISO_NAME%.mds >%OUTPUT_PATH%\%ISO_NAME%-hashes.txt
+del %OUTPUT_PATH%\%ISO_NAME%.mds
+echo Done.
 goto EoF
 
 :NoExtensions

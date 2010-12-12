@@ -462,5 +462,6 @@ Version 6.7 -- 06.12.10
 - XSLT filters for Windows ("win") refined (Thanks to "Denniss")
 --------------------------------------------------------------------------------
 Version 6.? -- ??.??.??
-- Fix: Downloads from a local WSUS server will now only optionally use proxy settings (Thanks to "omo683")
+- CreateISOImage.cmd script will now compute hashes for generated ISO files
+- Downloads from a local WSUS server will now only optionally use proxy settings (Thanks to "omo683")
 - Fix: Self update script UpdateOU.cmd overwrote itself while running

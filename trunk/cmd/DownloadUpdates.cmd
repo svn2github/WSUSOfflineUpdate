@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7+ (r181)
+set WSUSOFFLINE_VERSION=6.7+ (r182)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -522,12 +522,12 @@ goto RemindDate
 :DownloadCore
 rem *** Determine update urls for %1 %2 ***
 echo.
-echo Determining update urls for %1 %2...
 if exist "%TEMP%\StaticDownloadLinks-%1-%2.txt" del "%TEMP%\StaticDownloadLinks-%1-%2.txt"
 if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" del "%TEMP%\ValidStaticLinks-%1-%2.txt"
 if exist "%TEMP%\ValidDownloadLinks-%1-%2.txt" del "%TEMP%\ValidDownloadLinks-%1-%2.txt"
 
 if "%EXCLUDE_STATICS%"=="1" goto SkipStatics
+echo Determining statical update urls for %1 %2...
 if exist ..\static\StaticDownloadLinks-%1-%2.txt (
   copy /Y ..\static\StaticDownloadLinks-%1-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
   if exist ..\static\custom\StaticDownloadLinks-%1-%2.txt (
@@ -551,6 +551,7 @@ if "%EXCLUDE_SP%"=="1" (
 ) else (
   ren "%TEMP%\StaticDownloadLinks-%1-%2.txt" ValidStaticLinks-%1-%2.txt
 )
+echo %DATE% %TIME% - Info: Determined statical update urls for %1 %2 >>%DOWNLOAD_LOGFILE%
 
 :SkipStatics
 if not exist ..\bin\msxsl.exe goto NoMSXSL
@@ -560,6 +561,7 @@ goto DoDownload
 
 :DetermineWindows
 rem *** Extract Microsoft update catalog file package.xml ***
+echo %TIME% - Determining dynamical update urls for %1 %2...
 if exist "%TEMP%\package.cab" del "%TEMP%\package.cab"
 if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
 %SystemRoot%\system32\expand.exe ..\client\wsus\wsusscn2.cab -F:package.cab "%TEMP%" >nul
@@ -602,6 +604,7 @@ goto DoDownload
 
 :DetermineOffice
 rem *** Extract Microsoft update catalog file package.xml ***
+echo %TIME% - Determining dynamical update urls for %1 %2 (please be patient, this will take a while)...
 if exist "%TEMP%\package.cab" del "%TEMP%\package.cab"
 if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
 %SystemRoot%\system32\expand.exe ..\client\wsus\wsusscn2.cab -F:package.cab "%TEMP%" >nul
@@ -691,6 +694,8 @@ del "%TEMP%\DownloadLinks-%1-%2.txt"
 
 :DoDownload
 rem *** Verify integrity of existing updates for %1 %2 ***
+echo %TIME% - Done.
+echo %DATE% %TIME% - Info: Determined dynamical update urls for %1 %2 >>%DOWNLOAD_LOGFILE%
 if "%VERIFY_DOWNLOADS%" NEQ "1" goto SkipAudit
 if not exist ..\client\%1\%2\nul goto SkipAudit
 if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
