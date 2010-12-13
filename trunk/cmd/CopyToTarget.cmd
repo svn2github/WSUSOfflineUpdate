@@ -103,7 +103,6 @@ goto CreateImage
 
 :V1CopyFilter
 call :CopyFilter %1
-call :LocaleFilter glb 
 call :ExtendFilter
 goto CreateImage
 
@@ -141,8 +140,8 @@ exit /b 1
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %*
-echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| ofc} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} ^<OutputPath^> [/excludesp] [/includedotnet]
-echo Usage2: %~n0 {all ^| all-x86 ^| all-x64 ^| wxp ^| w2k3 ^| w2k3-x64 ^| w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| ofc ^| enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} ^<OutputPath^> [/excludesp] [/includedotnet]
+echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| ofc} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} ^<OutputPath^> [/excludesp] [/includedotnet] [/includemsse]
+echo Usage2: %~n0 {all ^| all-x86 ^| all-x64 ^| wxp ^| w2k3 ^| w2k3-x64 ^| w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| ofc ^| enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} ^<OutputPath^> [/excludesp] [/includedotnet] [/includemsse]
 echo.
 goto Error
 

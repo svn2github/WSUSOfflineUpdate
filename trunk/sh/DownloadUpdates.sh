@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                    v. 6.7+ (r182)                  ###
+###                    v. 6.7+ (r183)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -259,7 +259,7 @@ Please select your OS:
 [3] Windows Server 2003          [7] Windows 7
 [4] Windows Server 2003 64 bit   [8] Windows 7 64 bit
 
-[8] All 32 bit                   [9] All 64 bit
+[9] All 32 bit                   [10] All 64 bit
 END
 read syschoice
 echo
@@ -392,7 +392,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                    v. 6.7+ (r182)                  ***
+***                    v. 6.7+ (r183)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
@@ -640,20 +640,17 @@ if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$
 	echo "Determining update URLs for win ${lang}..."
 	$xml tr ../xslt/ExtractDownloadLinks-win-x86-${lang}.xsl ../temp/package.xml > ../temp/Urls-win-x86-${lang}.txt
 	grep -i -v -f ../exclude/ExcludeList-win-x86.txt ../temp/Urls-win-x86-${lang}.txt > ../temp/ValidUrls-win-x86-${lang}.txt
-	$xml tr ../xslt/ExtractDownloadLinks-win-x86-glb.xsl ../temp/package.xml > ../temp/Urls-win-x86-glb.txt
-	grep -i -v -f ../exclude/ExcludeList-win-x86.txt ../temp/Urls-win-x86-glb.txt > ../temp/ValidUrls-win-x86-glb.txt
 	rm ../temp/Urls-win-x86-${lang}.txt
 fi
 rm ../temp/package.xml
 
-touch ../temp/StaticUrls-${sys}-${lang}.txt ../temp/StaticUrls-ie6-${lang}.txt ../temp/ValidUrls-${sys}-${lang}.txt ../temp/ValidUrls-win-x86-${lang}.txt ../temp/ValidUrls-win-x86-glb.txt ../temp/ValidUrls-${sys}-glb.txt ../temp/StaticUrls-ofc-glb.txt ../temp/StaticUrls-ofc-${lang}.txt ../temp/StaticUrls-${sys}-glb.txt ../temp/StaticUrls-${lang}.txt ../temp/StaticUrls-glb.txt ../temp/StaticUrls-dotnet.txt ../temp/StaticUrls-mssedefs-x86-glb.txt ../temp/StaticUrls-mssedefs-x64-glb.txt
+touch ../temp/StaticUrls-${sys}-${lang}.txt ../temp/StaticUrls-ie6-${lang}.txt ../temp/ValidUrls-${sys}-${lang}.txt ../temp/ValidUrls-${sys}-glb.txt ../temp/ValidUrls-win-x86-${lang}.txt ../temp/StaticUrls-ofc-glb.txt ../temp/StaticUrls-ofc-${lang}.txt ../temp/StaticUrls-${sys}-glb.txt ../temp/StaticUrls-${lang}.txt ../temp/StaticUrls-glb.txt ../temp/StaticUrls-dotnet.txt ../temp/StaticUrls-mssedefs-x86-glb.txt ../temp/StaticUrls-mssedefs-x64-glb.txt
 
 cat ../temp/StaticUrls-${sys}-${lang}.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-ie6-${lang}.txt >> ../temp/urls.txt
 cat ../temp/ValidUrls-${sys}-${lang}.txt >> ../temp/urls.txt
-cat ../temp/ValidUrls-win-x86-${lang}.txt >> ../temp/urls.txt
-cat ../temp/ValidUrls-win-x86-glb.txt >> ../temp/urls.txt
 cat ../temp/ValidUrls-${sys}-glb.txt >> ../temp/urls.txt
+cat ../temp/ValidUrls-win-x86-${lang}.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-ofc-glb.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-ofc-${lang}.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-${sys}-glb.txt >> ../temp/urls.txt
@@ -700,7 +697,6 @@ doWget -c -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
 doWget -c -i ../temp/ValidUrls-${sys}-glb.txt -P ../client/${sys}/glb
 if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
 	doWget -c -i ../temp/ValidUrls-win-x86-${lang}.txt -P ../client/win/${lang}
-	doWget -c -i ../temp/ValidUrls-win-x86-glb.txt -P ../client/win/glb
 fi
 
 printheader
@@ -729,7 +725,6 @@ doWget -c -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
 doWget -c -i ../temp/ValidUrls-${sys}-glb.txt -P ../client/${sys}/glb
 if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
 	doWget -c -i ../temp/ValidUrls-win-x86-${lang}.txt -P ../client/win/${lang}
-	doWget -c -i ../temp/ValidUrls-win-x86-glb.txt -P ../client/win/glb
 fi
 echo "**************************************"
 echo "`grep -c http: ../temp/urls.txt` patches successfully downloaded."
@@ -750,7 +745,6 @@ if [ "$CLEANUP_DOWNLOADS" != "0" ]; then
 		cleanup "../temp/ValidUrls-${lang}.txt" "../client/win/${lang}"
 		echo "Cleaning up client directory for win glb"
 		cat ../temp/StaticUrls-glb.txt > ../temp/ValidUrls-glb.txt
-		cat ../temp/ValidUrls-win-x86-glb.txt >> ../temp/ValidUrls-glb.txt
 		cleanup "../temp/ValidUrls-glb.txt" "../client/win/glb"
 	fi
 fi

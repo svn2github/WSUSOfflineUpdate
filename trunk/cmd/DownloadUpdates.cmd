@@ -10,9 +10,9 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7+ (r182)
+set WSUSOFFLINE_VERSION=6.7+ (r183)
 set DOWNLOAD_LOGFILE=..\log\download.log
-title %~n0 %1 %2
+title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 if exist %DOWNLOAD_LOGFILE% (
   echo. >>%DOWNLOAD_LOGFILE%
@@ -173,8 +173,6 @@ if not exist %CSCRIPT_PATH% goto NoCScript
 set WGET_PATH=..\bin\wget.exe
 if not exist %WGET_PATH% goto NoWGet
 if not exist ..\bin\unzip.exe goto NoUnZip
-
-title Downloading...
 
 rem *** Clean up existing directories ***
 echo Cleaning up existing directories...
@@ -346,12 +344,12 @@ del Streams.zip
 popd
 :SkipSysinternals
 
-rem *** Download most recent Windows Update Agent and catalog file ***
+rem *** Download most recent Windows Update Agent installation and catalog files ***
 if "%VERIFY_DOWNLOADS%" NEQ "1" goto DownloadWSUS
 if not exist ..\client\wsus\nul goto DownloadWSUS
 if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
 if exist ..\client\md\hashes-wsus.txt (
-  echo Verifying integrity of Windows Update Agent and catalog file...
+  echo Verifying integrity of Windows Update Agent installation and catalog files...
   pushd ..\client\md
   ..\bin\hashdeep.exe -a -l -vv -k hashes-wsus.txt -r ..\wsus
   if errorlevel 1 (
@@ -359,19 +357,35 @@ if exist ..\client\md\hashes-wsus.txt (
     goto IntegrityError
   )
   popd
-  echo %DATE% %TIME% - Info: Verified integrity of Windows Update Agent and catalog file >>%DOWNLOAD_LOGFILE%
+  echo %DATE% %TIME% - Info: Verified integrity of Windows Update Agent installation and catalog files >>%DOWNLOAD_LOGFILE%
 ) else (
   echo Warning: Integrity database ..\client\md\hashes-wsus.txt not found.
   echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-wsus.txt not found >>%DOWNLOAD_LOGFILE%
 )
 :DownloadWSUS
-echo Downloading/validating most recent Windows Update Agent and catalog file...
+echo Downloading/validating most recent Windows Update Agent installation and catalog files...
 %WGET_PATH% -N -i ..\static\StaticDownloadLinks-wsus.txt -P ..\client\wsus
 if errorlevel 1 goto DownloadError
-echo %DATE% %TIME% - Info: Downloaded/validated most recent Windows Update Agent and catalog file >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Downloaded/validated most recent Windows Update Agent installation and catalog files >>%DOWNLOAD_LOGFILE%
 if "%VERIFY_DOWNLOADS%"=="1" (
+  if not exist ..\bin\sigcheck.exe goto NoSigCheck
+  echo Verifying digital file signatures of Windows Update Agent installation and catalog files...
+  ..\bin\sigcheck.exe /accepteula -q -s -u -v ..\client\wsus >"%TEMP%\sigcheck-wsus.txt"
+  for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-wsus.txt") do (
+    del %%i 
+    echo Warning: Deleted unsigned file %%i.
+    echo %DATE% %TIME% - Warning: Deleted unsigned file %%i >>%DOWNLOAD_LOGFILE%
+    echo File signature verification failure >"%TEMP%\sigerror-wsus.txt"
+  ) 
+  if exist "%TEMP%\sigcheck-wsus.txt" del "%TEMP%\sigcheck-wsus.txt"
+  if exist "%TEMP%\sigerror-wsus.txt" (
+    if exist ..\client\md\hashes-wsus.txt del ..\client\md\hashes-wsus.txt
+    del "%TEMP%\sigerror-wsus.txt"
+    goto SignatureError
+  )
+  echo %DATE% %TIME% - Info: Verified digital file signatures of Windows Update Agent installation and catalog files >>%DOWNLOAD_LOGFILE%
   if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
-  echo Creating integrity database for Windows Update Agent and catalog file...
+  echo Creating integrity database for Windows Update Agent installation and catalog files...
   if not exist ..\client\md\nul md ..\client\md
   pushd ..\client\md
   ..\bin\hashdeep.exe -c md5,sha256 -l -r ..\wsus >hashes-wsus.txt
@@ -381,12 +395,12 @@ if "%VERIFY_DOWNLOADS%"=="1" (
     echo %DATE% %TIME% - Warning: Error creating integrity database ..\client\md\hashes-wsus.txt >>%DOWNLOAD_LOGFILE%
   ) else (
     popd
-    echo %DATE% %TIME% - Info: Created integrity database for Windows Update Agent and catalog file >>%DOWNLOAD_LOGFILE%
+    echo %DATE% %TIME% - Info: Created integrity database for Windows Update Agent installation and catalog files >>%DOWNLOAD_LOGFILE%
   )
 ) else (
   if exist ..\client\md\hashes-wsus.txt (
     del ..\client\md\hashes-wsus.txt 
-    echo %DATE% %TIME% - Info: Deleted integrity database for Windows Update Agent and catalog file >>%DOWNLOAD_LOGFILE%
+    echo %DATE% %TIME% - Info: Deleted integrity database for Windows Update Agent installation and catalog files >>%DOWNLOAD_LOGFILE%
   )
 )
 
@@ -521,28 +535,24 @@ goto RemindDate
 
 :DownloadCore
 rem *** Determine update urls for %1 %2 ***
+title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo.
 if exist "%TEMP%\StaticDownloadLinks-%1-%2.txt" del "%TEMP%\StaticDownloadLinks-%1-%2.txt"
 if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" del "%TEMP%\ValidStaticLinks-%1-%2.txt"
-if exist "%TEMP%\ValidDownloadLinks-%1-%2.txt" del "%TEMP%\ValidDownloadLinks-%1-%2.txt"
+if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" del "%TEMP%\ValidDynamicLinks-%1-%2.txt"
 
 if "%EXCLUDE_STATICS%"=="1" goto SkipStatics
 echo Determining statical update urls for %1 %2...
-if exist ..\static\StaticDownloadLinks-%1-%2.txt (
-  copy /Y ..\static\StaticDownloadLinks-%1-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
-  if exist ..\static\custom\StaticDownloadLinks-%1-%2.txt (
-    for /F %%i in (..\static\custom\StaticDownloadLinks-%1-%2.txt) do echo %%i>>"%TEMP%\StaticDownloadLinks-%1-%2.txt"
-  )
-  goto EvalStatics
+if exist ..\static\StaticDownloadLinks-%1-%2.txt copy /Y ..\static\StaticDownloadLinks-%1-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
+if exist ..\static\custom\StaticDownloadLinks-%1-%2.txt (
+  for /F %%i in (..\static\custom\StaticDownloadLinks-%1-%2.txt) do echo %%i>>"%TEMP%\StaticDownloadLinks-%1-%2.txt"
 )
-if exist ..\static\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt (
-  copy /Y ..\static\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
-  if exist ..\static\custom\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt (
-    for /F %%i in (..\static\custom\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt) do echo %%i>>"%TEMP%\StaticDownloadLinks-%1-%2.txt"
-  )
-  goto EvalStatics
+if exist "%TEMP%\StaticDownloadLinks-%1-%2.txt" goto EvalStatics
+if exist ..\static\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt copy /Y ..\static\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
+if exist ..\static\custom\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt (
+  for /F %%i in (..\static\custom\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt) do echo %%i>>"%TEMP%\StaticDownloadLinks-%1-%2.txt"
 )
-goto SkipStatics
+if not exist "%TEMP%\StaticDownloadLinks-%1-%2.txt" goto SkipStatics
 
 :EvalStatics
 if "%EXCLUDE_SP%"=="1" (
@@ -569,37 +579,33 @@ if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
 del "%TEMP%\package.cab"
 
 if exist ..\xslt\ExtractDownloadLinks-%1-%2.xsl (
-  ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractDownloadLinks-%1-%2.xsl -o "%TEMP%\DownloadLinks-%1-%2.txt"
+  ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractDownloadLinks-%1-%2.xsl -o "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
   if errorlevel 1 goto DownloadError
 )
 if exist ..\xslt\ExtractDownloadLinks-%1-%TARGET_ARCH%-%2.xsl (
-  ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractDownloadLinks-%1-%TARGET_ARCH%-%2.xsl -o "%TEMP%\DownloadLinks-%1-%2.txt"
+  ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractDownloadLinks-%1-%TARGET_ARCH%-%2.xsl -o "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
   if errorlevel 1 goto DownloadError
 )
 del "%TEMP%\package.xml"
 
-if not exist "%TEMP%\DownloadLinks-%1-%2.txt" goto DoDownload
+if not exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" goto DoDownload
 
 if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
-if exist ..\exclude\ExcludeList-%1.txt (
-  copy /Y ..\exclude\ExcludeList-%1.txt "%TEMP%\ExcludeList-%1.txt" >nul
-  if exist ..\exclude\custom\ExcludeList-%1.txt (
-    for /F %%i in (..\exclude\custom\ExcludeList-%1.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
-  )
-  goto ExcludeWindows
+if exist ..\exclude\ExcludeList-%1.txt copy /Y ..\exclude\ExcludeList-%1.txt "%TEMP%\ExcludeList-%1.txt" >nul
+if exist ..\exclude\custom\ExcludeList-%1.txt (
+  for /F %%i in (..\exclude\custom\ExcludeList-%1.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
 )
-if exist ..\exclude\ExcludeList-%1-%TARGET_ARCH%.txt (
-  copy /Y ..\exclude\ExcludeList-%1-%TARGET_ARCH%.txt "%TEMP%\ExcludeList-%1.txt" >nul
-  if exist ..\exclude\custom\ExcludeList-%1-%TARGET_ARCH%.txt (
-    for /F %%i in (..\exclude\custom\ExcludeList-%1-%TARGET_ARCH%.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
-  )
+if exist "%TEMP%\ExcludeList-%1.txt" goto ExcludeWindows
+if exist ..\exclude\ExcludeList-%1-%TARGET_ARCH%.txt copy /Y ..\exclude\ExcludeList-%1-%TARGET_ARCH%.txt "%TEMP%\ExcludeList-%1.txt" >nul
+if exist ..\exclude\custom\ExcludeList-%1-%TARGET_ARCH%.txt (
+  for /F %%i in (..\exclude\custom\ExcludeList-%1-%TARGET_ARCH%.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
 )
 
 :ExcludeWindows
-%SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDownloadLinks-%1-%2.txt"
-if not exist "%TEMP%\ValidDownloadLinks-%1-%2.txt" ren "%TEMP%\DownloadLinks-%1-%2.txt" ValidDownloadLinks-%1-%2.txt
+%SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DynamicDownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDynamicLinks-%1-%2.txt"
+if not exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" ren "%TEMP%\DynamicDownloadLinks-%1-%2.txt" ValidDynamicLinks-%1-%2.txt
 if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
-if exist "%TEMP%\DownloadLinks-%1-%2.txt" del "%TEMP%\DownloadLinks-%1-%2.txt"
+if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
 goto DoDownload
 
 :DetermineOffice
@@ -664,13 +670,13 @@ del "%TEMP%\UpdateCategoriesAndFileIds.txt"
 del "%TEMP%\OfficeFileIds.txt"
 del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 
-if exist "%TEMP%\DownloadLinks-%1-%2.txt" del "%TEMP%\DownloadLinks-%1-%2.txt"
+if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
 if exist ..\client\ofc\UpdateTable-%1-%2.csv del ..\client\ofc\UpdateTable-%1-%2.csv
 if not exist ..\client\ofc\nul md ..\client\ofc
 for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt") do (
   for /F "usebackq tokens=1,2 delims=," %%k in ("%TEMP%\OfficeUpdateAndFileIds.txt") do (
     if /i "%%l"=="%%i" (
-      echo %%j>>"%TEMP%\DownloadLinks-%1-%2.txt"
+      echo %%j>>"%TEMP%\DynamicDownloadLinks-%1-%2.txt"
       echo %%k,%%~nj>>..\client\ofc\UpdateTable-%1-%2.csv
     )
   )
@@ -680,17 +686,14 @@ del "%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
 
 :ExcludeOffice
 if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
-if exist ..\exclude\ExcludeList-%1.txt (
-  copy /Y ..\exclude\ExcludeList-%1.txt "%TEMP%\ExcludeList-%1.txt" >nul
-  if exist ..\exclude\custom\ExcludeList-%1.txt (
-    for /F %%i in (..\exclude\custom\ExcludeList-%1.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
-  )
+if exist ..\exclude\ExcludeList-%1.txt copy /Y ..\exclude\ExcludeList-%1.txt "%TEMP%\ExcludeList-%1.txt" >nul
+if exist ..\exclude\custom\ExcludeList-%1.txt (
+  for /F %%i in (..\exclude\custom\ExcludeList-%1.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
 )
-for /F "usebackq" %%i in ("%TEMP%\ExcludeList-%1.txt") do echo %%i>>"%TEMP%\InvalidIds-%1.txt"
-%SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\InvalidIds-%1.txt" "%TEMP%\DownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDownloadLinks-%1-%2.txt" 
+%SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DynamicDownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDynamicLinks-%1-%2.txt"
+if not exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" ren "%TEMP%\DynamicDownloadLinks-%1-%2.txt" ValidDynamicLinks-%1-%2.txt
 if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
-del "%TEMP%\InvalidIds-%1.txt"
-del "%TEMP%\DownloadLinks-%1-%2.txt"
+if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
 
 :DoDownload
 rem *** Verify integrity of existing updates for %1 %2 ***
@@ -731,11 +734,11 @@ for /F "delims=: tokens=1*" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TE
 echo %DATE% %TIME% - Info: Downloaded/validated %LINES_COUNT% statically defined updates for %1 %2 >>%DOWNLOAD_LOGFILE%
 
 :DownloadDynamicUpdates
-if not exist "%TEMP%\ValidDownloadLinks-%1-%2.txt" goto CleanupDownload
+if not exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" goto CleanupDownload
 echo Downloading/validating dynamically determined updates for %1 %2...
-for /F "delims=: tokens=1*" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidDownloadLinks-%1-%2.txt"') do set LINES_COUNT=%%i
+for /F "delims=: tokens=1*" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidDynamicLinks-%1-%2.txt"') do set LINES_COUNT=%%i
 if "%WSUS_URL%"=="" (
-  for /F "delims=: tokens=1*" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidDownloadLinks-%1-%2.txt"') do (
+  for /F "delims=: tokens=1*" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidDynamicLinks-%1-%2.txt"') do (
     echo Downloading/validating update %%i of %LINES_COUNT%...
     %WGET_PATH% -nv -N -P ..\client\%1\%2 -a %DOWNLOAD_LOGFILE% %%j
     if errorlevel 1 (
@@ -745,10 +748,10 @@ if "%WSUS_URL%"=="" (
   )
 ) else (
   echo Creating WSUS download table for %1 %2...
-  %CSCRIPT_PATH% //Nologo //B //E:vbs CreateDownloadTable.vbs "%TEMP%\ValidDownloadLinks-%1-%2.txt" %WSUS_URL%
+  %CSCRIPT_PATH% //Nologo //B //E:vbs CreateDownloadTable.vbs "%TEMP%\ValidDynamicLinks-%1-%2.txt" %WSUS_URL%
   if errorlevel 1 goto DownloadError
   echo %DATE% %TIME% - Info: Created WSUS download table for %1 %2 >>%DOWNLOAD_LOGFILE%
-  for /F "delims=: tokens=1*" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidDownloadLinks-%1-%2.csv"') do (
+  for /F "delims=: tokens=1*" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidDynamicLinks-%1-%2.csv"') do (
     echo Downloading/validating update %%i of %LINES_COUNT%...
     for /F "delims=, tokens=1-3" %%k in ("%%j") do (
       if "%%m"=="" (
@@ -786,7 +789,7 @@ rem *** Clean up client directory for %1 %2 ***
 if "%CLEANUP_DOWNLOADS%"=="0" goto VerifyDownload
 echo Cleaning up client directory for %1 %2...
 for /F %%i in ('dir /A:-D /B ..\client\%1\%2\*.*') do (
-  %SystemRoot%\system32\find.exe /I "%%i" "%TEMP%\ValidDownloadLinks-%1-%2.txt" >nul 2>&1
+  %SystemRoot%\system32\find.exe /I "%%i" "%TEMP%\ValidDynamicLinks-%1-%2.txt" >nul 2>&1
   if errorlevel 1 (
     %SystemRoot%\system32\find.exe /I "%%i" "%TEMP%\ValidStaticLinks-%1-%2.txt" >nul 2>&1
     if errorlevel 1 (
@@ -821,8 +824,9 @@ if not exist ..\bin\sigcheck.exe goto NoSigCheck
 echo Verifying digital file signatures for %1 %2...
 ..\bin\sigcheck.exe /accepteula -q -s -u -v ..\client\%1\%2 >"%TEMP%\sigcheck-%1-%2.txt"
 for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-%1-%2.txt") do (
-  echo Warning: File %%i is unsigned.
-  echo %DATE% %TIME% - Warning: File %%i is unsigned >>%DOWNLOAD_LOGFILE%
+  del %%i 
+  echo Warning: Deleted unsigned file %%i.
+  echo %DATE% %TIME% - Warning: Deleted unsigned file %%i >>%DOWNLOAD_LOGFILE%
 ) 
 if exist "%TEMP%\sigcheck-%1-%2.txt" del "%TEMP%\sigcheck-%1-%2.txt"
 echo %DATE% %TIME% - Info: Verified digital file signatures for %1 %2 >>%DOWNLOAD_LOGFILE%
@@ -856,8 +860,8 @@ if exist ..\client\md\hashes-%1-%2.txt (
 )
 :EndDownload
 if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" del "%TEMP%\ValidStaticLinks-%1-%2.txt"
-if exist "%TEMP%\ValidDownloadLinks-%1-%2.txt" del "%TEMP%\ValidDownloadLinks-%1-%2.txt"
-if exist "%TEMP%\ValidDownloadLinks-%1-%2.csv" del "%TEMP%\ValidDownloadLinks-%1-%2.csv"
+if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" del "%TEMP%\ValidDynamicLinks-%1-%2.txt"
+if exist "%TEMP%\ValidDynamicLinks-%1-%2.csv" del "%TEMP%\ValidDynamicLinks-%1-%2.csv"
 goto :eof
 
 :RemindDate
@@ -948,6 +952,13 @@ goto Error
 echo.
 echo ERROR: File integrity verification failure.
 echo %DATE% %TIME% - Error: File integrity verification failure >>%DOWNLOAD_LOGFILE%
+echo.
+goto Error
+
+:SignatureError
+echo.
+echo ERROR: File signature verification failure.
+echo %DATE% %TIME% - Error: File signature verification failure >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 
