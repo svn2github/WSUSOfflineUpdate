@@ -468,6 +468,7 @@ Version 6.? -- ??.??.??
 - Downloads from a local WSUS server will now only optionally use proxy settings (Thanks to "omo683")
 - Fix: Self update script UpdateOU.cmd overwrote itself while running
 - Fix: DownloadUpdates.cmd script ignored custom static and exclude lists if corresponding lists were not delivered (Thanks to "wwsmith") 
+- Fix: DoUpdate.cmd script ignored custom static installation definition list ...\static\custom\StaticUpdateIds-dotnet.txt (Thanks to "wwsmith") 
 - Fix: CopyToTarget.cmd and CreateISOImage.cmd scripts missed language specific directories when called with "all" parameter (Thanks to "psj")
 - Fix: DownloadUpdates.sh script contained a reference to the obsolete filter ExtractDownloadLinks-win-x86-glb.xsl (Thanks to "NoKurth")
 - Fix: DownloadUpdates.sh script contained a duplicate menu id (Thanks to Thomas Rieck)
