@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7+ (r184)
+set WSUSOFFLINE_VERSION=6.7+ (r185)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -548,9 +548,6 @@ if not exist %DOTNET35_FILENAME% (
 echo Installing .NET Framework 3.5 SP1...
 call InstallOSUpdate.cmd %DOTNET35_FILENAME% %VERIFY_MODE% /ignoreerrors /qb /norestart /lang:enu
 copy /Y ..\static\StaticUpdateIds-dotnet.txt "%TEMP%\MissingUpdateIds.txt" >nul
-if exist ..\static\custom\StaticUpdateIds-dotnet.txt (
-  for /F %%i in (..\static\custom\StaticUpdateIds-dotnet.txt) do echo %%i>>"%TEMP%\MissingUpdateIds.txt"
-)
 call ListUpdatesToInstall.cmd /excludestatics
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
@@ -580,6 +577,21 @@ echo Installing .NET Framework 4...
 call InstallOSUpdate.cmd %DOTNET4_FILENAME% %VERIFY_MODE% /errorsaswarnings /passive /norestart /lcid 1033
 set REBOOT_REQUIRED=1
 :SkipDotNet4Inst
+
+rem *** Install .NET Framework - Custom ***
+if "%INSTALL_DOTNET35%" EQU "/instdotnet35" goto InstallDotNetCustom
+if "%INSTALL_DOTNET4%" EQU "/instdotnet4" goto InstallDotNetCustom
+goto SkipDotNetCustomInst
+:InstallDotNetCustom
+if not exist ..\static\custom\StaticUpdateIds-dotnet.txt goto SkipDotNetCustomInst
+copy /Y ..\static\custom\StaticUpdateIds-dotnet.txt "%TEMP%\MissingUpdateIds.txt" >nul
+call ListUpdatesToInstall.cmd /excludestatics
+if errorlevel 1 goto ListError
+if exist "%TEMP%\UpdatesToInstall.txt" (
+  echo Installing .NET Framework custom updates...
+  call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
+)
+:SkipDotNetCustomInst
 
 rem *** Install Windows PowerShell 2.0 ***
 if "%INSTALL_PSH%" NEQ "/instpsh" goto SkipPShInst

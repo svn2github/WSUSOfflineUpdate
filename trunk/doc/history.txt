@@ -462,13 +462,13 @@ Version 6.7 -- 06.12.10
 - XSLT filters for Windows ("win") refined (Thanks to "Denniss")
 --------------------------------------------------------------------------------
 Version 6.? -- ??.??.??
-- Optional verification of digital file signatures will now include Windows Update Agent installation and catalog files (Thanks to "wwsmith") 
-- Files whose digital signatures can't be verified will now be automatically deleted 
+- Optional verification of digital file signatures will now include Windows Update Agent installation and catalog files (Thanks to "albertx")
+- Files whose digital signatures can't be verified will now be automatically deleted
 - CreateISOImage.cmd script will now compute hashes for generated ISO files
 - Downloads from a local WSUS server will now only optionally use proxy settings (Thanks to "omo683")
 - Fix: Self update script UpdateOU.cmd overwrote itself while running
-- Fix: DownloadUpdates.cmd script ignored custom static and exclude lists if corresponding lists were not delivered (Thanks to "wwsmith") 
-- Fix: DoUpdate.cmd script ignored custom static installation definition list ...\static\custom\StaticUpdateIds-dotnet.txt (Thanks to "wwsmith") 
+- Fix: DownloadUpdates.cmd script ignored custom static and exclude lists if corresponding lists were not delivered (Thanks to "wwsmith")
+- Fix: DoUpdate.cmd script ignored custom static installation definition list ...\static\custom\StaticUpdateIds-dotnet.txt (Thanks to "wwsmith")
 - Fix: CopyToTarget.cmd and CreateISOImage.cmd scripts missed language specific directories when called with "all" parameter (Thanks to "psj")
 - Fix: DownloadUpdates.sh script contained a reference to the obsolete filter ExtractDownloadLinks-win-x86-glb.xsl (Thanks to "NoKurth")
 - Fix: DownloadUpdates.sh script contained a duplicate menu id (Thanks to Thomas Rieck)
