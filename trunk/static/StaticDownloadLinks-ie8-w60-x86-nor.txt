@@ -1,1 +1,2 @@
 http://download.microsoft.com/download/6/0/8/6089F7CE-045F-4AC0-BD6B-75FDD9F02CC8/IE8-WindowsVista-x86-NOR.exe
+http://download.microsoft.com/download/4/F/2/4F250C6E-F388-4A85-B724-BE6AB1A79921/nb-NO/x86/mseinstall.exe,mseinstall-x86-nor.exe

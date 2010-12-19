@@ -4,5 +4,5 @@ http://download.microsoft.com/download/3/C/8/3C8CF51E-1D9D-4DAA-AAEA-5C48D1CD055
 http://download.microsoft.com/download/2/5/8/258CF867-DA0A-439A-ACD5-D808C013C749/Windows6.0-KB969084-x64.msu
 http://download.microsoft.com/download/D/C/F/DCF5DACB-313F-40C6-889C-AD1F8546099D/IE8-WindowsVista-x64-ENU.exe
 http://download.microsoft.com/download/A/0/2/A02611A6-3EF4-4610-9D82-17331A34FA68/IE8-WindowsVista-x64-DEU.exe
-http://download.microsoft.com/download/A/3/8/A38FFBF2-1122-48B4-AF60-E44F6DC28BD8/mssefullinstall-amd64fre-en-us-vista-win7.exe
-http://download.microsoft.com/download/0/2/C/02C8AB73-0774-4975-826F-9E8A0FD7F65D/mssefullinstall-amd64fre-de-de-vista-win7.exe
+http://download.microsoft.com/download/A/3/8/A38FFBF2-1122-48B4-AF60-E44F6DC28BD8/en-us/amd64/mseinstall.exe,mseinstall-x64-enu.exe
+http://download.microsoft.com/download/0/2/C/02C8AB73-0774-4975-826F-9E8A0FD7F65D/de-de/amd64/mseinstall.exe,mseinstall-x64-deu.exe

@@ -1,2 +1,2 @@
 http://download.microsoft.com/download/E/D/B/EDBDED34-6896-41CF-BBF0-EBF06553E065/IE8-WindowsVista-x64-FIN.exe
-http://download.microsoft.com/download/B/E/A/BEAB92D8-4167-4A6E-A941-7049CAADD224/mssefullinstall-amd64fre-fi-fi-vista-win7.exe
+http://download.microsoft.com/download/B/E/A/BEAB92D8-4167-4A6E-A941-7049CAADD224/fi-FI/amd64/mseinstall.exe,mseinstall-x64-fin.exe

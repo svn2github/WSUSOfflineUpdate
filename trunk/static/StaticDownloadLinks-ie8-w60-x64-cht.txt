@@ -1,2 +1,2 @@
 http://download.microsoft.com/download/4/A/A/4AA7204D-698A-4DE1-9CF7-978AD8F7B4E2/IE8-WindowsVista-x64-CHT.exe
-http://download.microsoft.com/download/3/8/5/385C19C3-1107-4EE5-9C47-D3FAB986B06C/mssefullinstall-amd64fre-zh-tw-vista-win7.exe
+http://download.microsoft.com/download/3/8/5/385C19C3-1107-4EE5-9C47-D3FAB986B06C/ZH-TW/amd64/mseinstall.exe,mseinstall-x64-cht.exe

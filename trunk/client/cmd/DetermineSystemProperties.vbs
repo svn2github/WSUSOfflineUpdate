@@ -8,7 +8,7 @@ Private Const strRegKeyDirectX                = "HKLM\Software\Microsoft\DirectX
 Private Const strRegKeyDotNet35               = "HKLM\Software\Microsoft\NET Framework Setup\NDP\v3.5\"
 Private Const strRegKeyDotNet4                = "HKLM\Software\Microsoft\NET Framework Setup\NDP\v4\Full\"
 Private Const strRegKeyPowerShell             = "HKLM\Software\Microsoft\PowerShell\1\PowerShellEngine\"
-Private Const strRegKeyMSSE                   = "HKLM\Software\Microsoft\Microsoft Security Essentials\"
+Private Const strRegKeyMSEv2                  = "HKLM\Software\Microsoft\Microsoft Security Client\"
 Private Const strRegKeyMSSEDefs               = "HKLM\Software\Microsoft\Microsoft Antimalware\Signature Updates\"
 Private Const strRegValVersion                = "Version"
 Private Const strRegValPShVersion             = "PowerShellVersion"
@@ -427,7 +427,7 @@ WriteVersionToFile objCmdFile, "DOTNET4_VER", RegRead(wshShell, strRegKeyDotNet4
 WriteVersionToFile objCmdFile, "PSH_VER", RegRead(wshShell, strRegKeyPowerShell & strRegValPShVersion)
 
 ' Determine Microsoft Security Essentials installation state
-If RegExists(wshShell, strRegKeyMSSE) Then
+If RegExists(wshShell, strRegKeyMSEv2) Then
   objCmdFile.WriteLine("set MSSE_INSTALLED=1")
 Else
   objCmdFile.WriteLine("set MSSE_INSTALLED=0")

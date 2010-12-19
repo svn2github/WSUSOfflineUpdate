@@ -1,2 +1,2 @@
 http://download.microsoft.com/download/8/E/B/8EBA4109-6472-4E1B-B98C-A47AA83659D8/IE8-WindowsVista-x86-TRK.exe
-http://download.microsoft.com/download/B/D/5/BD5BF018-34A0-4FEA-A596-9090543C8B1A/mssefullinstall-x86fre-tr-tr-vista-win7.exe
+http://download.microsoft.com/download/B/D/5/BD5BF018-34A0-4FEA-A596-9090543C8B1A/tr-TR/x86/mseinstall.exe,mseinstall-x86-trk.exe

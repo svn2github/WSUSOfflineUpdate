@@ -1,2 +1,2 @@
 http://download.microsoft.com/download/6/2/C/62C58465-E9B5-4897-974C-31BB862FB07C/IE8-WindowsVista-x86-PLK.exe
-http://download.microsoft.com/download/F/C/6/FC69D96E-8A5A-4F9B-BB60-A26566D3ACFC/mssefullinstall-x86fre-pl-pl-vista-win7.exe
+http://download.microsoft.com/download/F/C/6/FC69D96E-8A5A-4F9B-BB60-A26566D3ACFC/pl-PL/x86/mseinstall.exe,mseinstall-x86-plk.exe

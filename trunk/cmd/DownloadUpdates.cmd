@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7+ (r185)
+set WSUSOFFLINE_VERSION=6.7+ (r186)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -537,10 +537,32 @@ goto RemindDate
 rem *** Determine update urls for %1 %2 ***
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo.
+
+rem *** Verify integrity of existing updates for %1 %2 ***
+if "%VERIFY_DOWNLOADS%" NEQ "1" goto SkipAudit
+if not exist ..\client\%1\%2\nul goto SkipAudit
+if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
+for %%i in (..\client\md\hashes-%1-%2.txt) do (if %%~zi==0 del %%i)
+if exist ..\client\md\hashes-%1-%2.txt (
+  echo Verifying integrity of existing updates for %1 %2...
+  pushd ..\client\md
+  ..\bin\hashdeep.exe -a -l -vv -k hashes-%1-%2.txt -r ..\%1\%2
+  if errorlevel 1 (
+    popd
+    goto IntegrityError
+  )
+  popd
+  echo %DATE% %TIME% - Info: Verified integrity of existing updates for %1 %2 >>%DOWNLOAD_LOGFILE%
+) else (
+  echo Warning: Integrity database ..\client\md\hashes-%1-%2.txt not found.
+  echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-%1-%2.txt not found >>%DOWNLOAD_LOGFILE%
+)
+
+:SkipAudit
+rem *** Determine statical update urls for %1 %2 ***
 if exist "%TEMP%\StaticDownloadLinks-%1-%2.txt" del "%TEMP%\StaticDownloadLinks-%1-%2.txt"
 if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" del "%TEMP%\ValidStaticLinks-%1-%2.txt"
 if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" del "%TEMP%\ValidDynamicLinks-%1-%2.txt"
-
 if "%EXCLUDE_STATICS%"=="1" goto SkipStatics
 echo Determining statical update urls for %1 %2...
 if exist ..\static\StaticDownloadLinks-%1-%2.txt copy /Y ..\static\StaticDownloadLinks-%1-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
@@ -570,7 +592,7 @@ for %%i in (ofc) do (if /i "%1"=="%%i" goto DetermineOffice)
 goto DoDownload
 
 :DetermineWindows
-rem *** Extract Microsoft update catalog file package.xml ***
+rem *** Determine dynamical update urls for %1 %2 ***
 echo %TIME% - Determining dynamical update urls for %1 %2...
 if exist "%TEMP%\package.cab" del "%TEMP%\package.cab"
 if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
@@ -609,7 +631,7 @@ if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLink
 goto DoDownload
 
 :DetermineOffice
-rem *** Extract Microsoft update catalog file package.xml ***
+rem *** Determine dynamical update urls for %1 %2 ***
 echo %TIME% - Determining dynamical update urls for %1 %2 (please be patient, this will take a while)...
 if exist "%TEMP%\package.cab" del "%TEMP%\package.cab"
 if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
@@ -696,36 +718,21 @@ if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
 if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
 
 :DoDownload
-rem *** Verify integrity of existing updates for %1 %2 ***
+rem *** Download updates for %1 %2 ***
 echo %TIME% - Done.
 echo %DATE% %TIME% - Info: Determined dynamical update urls for %1 %2 >>%DOWNLOAD_LOGFILE%
-if "%VERIFY_DOWNLOADS%" NEQ "1" goto SkipAudit
-if not exist ..\client\%1\%2\nul goto SkipAudit
-if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
-for %%i in (..\client\md\hashes-%1-%2.txt) do (if %%~zi==0 del %%i)
-if exist ..\client\md\hashes-%1-%2.txt (
-  echo Verifying integrity of existing updates for %1 %2...
-  pushd ..\client\md
-  ..\bin\hashdeep.exe -a -l -vv -k hashes-%1-%2.txt -r ..\%1\%2
-  if errorlevel 1 (
-    popd
-    goto IntegrityError
-  )
-  popd
-  echo %DATE% %TIME% - Info: Verified integrity of existing updates for %1 %2 >>%DOWNLOAD_LOGFILE%
-) else (
-  echo Warning: Integrity database ..\client\md\hashes-%1-%2.txt not found.
-  echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-%1-%2.txt not found >>%DOWNLOAD_LOGFILE%
-)
-:SkipAudit
-
-rem *** Download updates for %1 %2 ***
 if not exist "%TEMP%\ValidStaticLinks-%1-%2.txt" goto DownloadDynamicUpdates
 echo Downloading/validating statically defined updates for %1 %2...
-for /F "delims=: tokens=1*" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidStaticLinks-%1-%2.txt"') do set LINES_COUNT=%%i
-for /F "delims=: tokens=1*" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidStaticLinks-%1-%2.txt"') do (
+for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidStaticLinks-%1-%2.txt"') do set LINES_COUNT=%%i
+for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidStaticLinks-%1-%2.txt"') do (
   echo Downloading/validating update %%i of %LINES_COUNT%...
-  %WGET_PATH% -N -P ..\client\%1\%2 %%j
+  for /F "tokens=1,2 delims=," %%k in ("%%j") do (
+    if "%%l"=="" (
+      %WGET_PATH% -N -P ..\client\%1\%2 %%j
+    ) else (
+      %WGET_PATH% -N -O ..\client\%1\%2\%%l %%k
+    )
+  )
   if errorlevel 1 (
     echo Warning: Download of %%j failed.
     echo %DATE% %TIME% - Warning: Download of %%j failed >>%DOWNLOAD_LOGFILE%
@@ -736,9 +743,9 @@ echo %DATE% %TIME% - Info: Downloaded/validated %LINES_COUNT% statically defined
 :DownloadDynamicUpdates
 if not exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" goto CleanupDownload
 echo Downloading/validating dynamically determined updates for %1 %2...
-for /F "delims=: tokens=1*" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidDynamicLinks-%1-%2.txt"') do set LINES_COUNT=%%i
+for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidDynamicLinks-%1-%2.txt"') do set LINES_COUNT=%%i
 if "%WSUS_URL%"=="" (
-  for /F "delims=: tokens=1*" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidDynamicLinks-%1-%2.txt"') do (
+  for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidDynamicLinks-%1-%2.txt"') do (
     echo Downloading/validating update %%i of %LINES_COUNT%...
     %WGET_PATH% -nv -N -P ..\client\%1\%2 -a %DOWNLOAD_LOGFILE% %%j
     if errorlevel 1 (
@@ -751,9 +758,9 @@ if "%WSUS_URL%"=="" (
   %CSCRIPT_PATH% //Nologo //B //E:vbs CreateDownloadTable.vbs "%TEMP%\ValidDynamicLinks-%1-%2.txt" %WSUS_URL%
   if errorlevel 1 goto DownloadError
   echo %DATE% %TIME% - Info: Created WSUS download table for %1 %2 >>%DOWNLOAD_LOGFILE%
-  for /F "delims=: tokens=1*" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidDynamicLinks-%1-%2.csv"') do (
+  for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidDynamicLinks-%1-%2.csv"') do (
     echo Downloading/validating update %%i of %LINES_COUNT%...
-    for /F "delims=, tokens=1-3" %%k in ("%%j") do (
+    for /F "tokens=1-3 delims=," %%k in ("%%j") do (
       if "%%m"=="" (
         %WGET_PATH% -nv -N -P ..\client\%1\%2 -a %DOWNLOAD_LOGFILE% %%l
         if errorlevel 1 (

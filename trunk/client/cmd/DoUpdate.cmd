@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7+ (r185)
+set WSUSOFFLINE_VERSION=6.7+ (r186)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -626,7 +626,7 @@ echo Checking Microsoft Security Essentials installation state...
 if "%MSSE_INSTALLED%"=="1" goto CheckMSSEDefs
 if "%INSTALL_MSSE%" NEQ "/instmsse" goto SkipMSSEInst
 :InstallMSSE
-set MSSE_TARGET_ID=mssefullinstall-*-%OS_LANG_EXT%-
+set MSSE_TARGET_ID=mseinstall-%OS_ARCH%-%OS_LANG%
 echo %MSSE_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics
 if errorlevel 1 goto ListError
@@ -638,6 +638,7 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
   echo %DATE% %TIME% - Warning: Microsoft Security Essentials installation file ^(%MSSE_TARGET_ID%^) not found >>%UPDATE_LOGFILE%
   goto SkipMSSEInst
 )
+set MSSE_TARGET_ID=
 set REBOOT_REQUIRED=1
 :CheckMSSEDefs
 if /i "%OS_ARCH%"=="x64" (

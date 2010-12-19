@@ -2,4 +2,4 @@ http://xpsp.dlservice.microsoft.com/download/d/c/c/dccd3e5b-aef9-4f61-bfc4-d9733
 http://download.microsoft.com/download/2/7/F/27F94727-6E49-4D63-B309-7E9554679BAA/WindowsXP-KB969084-x86-ptb.exe
 http://download.microsoft.com/download/F/F/A/FFACBA08-260A-43E7-9596-8378C85469E2/WindowsXP-KB968930-x86-PTB.exe
 http://download.microsoft.com/download/e/b/2/eb20c6d8-1e81-4f37-8fc8-47c0f97d743e/wmp11-windowsxp-x86-pt-br.exe
-http://download.microsoft.com/download/4/1/5/415CADB4-C974-4DB7-9C44-565EEEBF5509/mssefullinstall-x86fre-pt-br-xp.exe
+http://download.microsoft.com/download/4/1/5/415CADB4-C974-4DB7-9C44-565EEEBF5509/pt-br/x86/mseinstall.exe,mseinstall-x86-ptb.exe

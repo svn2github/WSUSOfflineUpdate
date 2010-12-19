@@ -462,6 +462,7 @@ Version 6.7 -- 06.12.10
 - XSLT filters for Windows ("win") refined (Thanks to "Denniss")
 --------------------------------------------------------------------------------
 Version 6.? -- ??.??.??
+- Microsoft Security Essentials installation updated to version 2.0 (Thanks to "Matjes")
 - Optional verification of digital file signatures will now include Windows Update Agent installation and catalog files (Thanks to "albertx")
 - Files whose digital signatures can't be verified will now be automatically deleted
 - CreateISOImage.cmd script will now compute hashes for generated ISO files
