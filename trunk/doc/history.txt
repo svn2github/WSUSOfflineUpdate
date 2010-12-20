@@ -467,6 +467,7 @@ Version 6.? -- ??.??.??
 - Files whose digital signatures can't be verified will now be automatically deleted
 - CreateISOImage.cmd script will now compute hashes for generated ISO files
 - Downloads from a local WSUS server will now only optionally use proxy settings (Thanks to "omo683")
+- Obsolete directories ...\client\win\<language>\ie6setup will be removed (Thanks to "boco")
 - Fix: Self update script UpdateOU.cmd overwrote itself while running
 - Fix: DownloadUpdates.cmd script ignored custom static and exclude lists if corresponding lists were not delivered (Thanks to "wwsmith")
 - Fix: DoUpdate.cmd script ignored custom static installation definition list ...\static\custom\StaticUpdateIds-dotnet.txt (Thanks to "wwsmith")

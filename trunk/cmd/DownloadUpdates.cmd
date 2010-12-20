@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7+ (r186)
+set WSUSOFFLINE_VERSION=6.7+ (r187)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -259,6 +259,9 @@ if exist ..\static\StaticDownloadLink-streams.txt del ..\static\StaticDownloadLi
 rem *** Windows 2000 stuff ***
 if exist ..\client\static\StaticUpdateIds-w2k-x86.txt del ..\client\static\StaticUpdateIds-w2k-x86.txt
 if exist FixIE6SetupDir.cmd del FixIE6SetupDir.cmd
+for %%i in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (
+  if exist ..\client\win\%%i\ie6setup\nul rd /S /Q ..\client\win\%%i\ie6setup
+)
 if exist ..\exclude\ExcludeList-w2k-x86.txt del ..\exclude\ExcludeList-w2k-x86.txt
 if exist ..\exclude\ExcludeListISO-w2k-x86.txt del ..\exclude\ExcludeListISO-w2k-x86.txt
 if exist ..\exclude\ExcludeListUSB-w2k-x86.txt del ..\exclude\ExcludeListUSB-w2k-x86.txt
@@ -730,7 +733,7 @@ for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TE
     if "%%l"=="" (
       %WGET_PATH% -N -P ..\client\%1\%2 %%j
     ) else (
-      %WGET_PATH% -N -O ..\client\%1\%2\%%l %%k
+      %WGET_PATH% -O ..\client\%1\%2\%%l %%k
     )
   )
   if errorlevel 1 (
