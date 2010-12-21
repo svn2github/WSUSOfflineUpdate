@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7+ (r187)
+set WSUSOFFLINE_VERSION=6.7+ (r188)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -626,25 +626,21 @@ echo Checking Microsoft Security Essentials installation state...
 if "%MSSE_INSTALLED%"=="1" goto CheckMSSEDefs
 if "%INSTALL_MSSE%" NEQ "/instmsse" goto SkipMSSEInst
 :InstallMSSE
-set MSSE_TARGET_ID=mseinstall-%OS_ARCH%-%OS_LANG%
-echo %MSSE_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
-call ListUpdatesToInstall.cmd /excludestatics
-if errorlevel 1 goto ListError
-if exist "%TEMP%\UpdatesToInstall.txt" (
-  echo Installing Microsoft Security Essentials...
-  call InstallListedUpdates.cmd %VERIFY_MODE% /ignoreerrors /s /runwgacheck /o
-) else (
-  echo Warning: Microsoft Security Essentials installation file ^(%MSSE_TARGET_ID%^) not found.
-  echo %DATE% %TIME% - Warning: Microsoft Security Essentials installation file ^(%MSSE_TARGET_ID%^) not found >>%UPDATE_LOGFILE%
+set MSSE_FILENAME=..\msse\%OS_ARCH%-glb\mseinstall-%OS_ARCH%-%OS_LANG%.exe
+if not exist %MSSE_FILENAME% (
+  echo Warning: Microsoft Security Essentials installation file ^(%MSSE_FILENAME%^) not found.
+  echo %DATE% %TIME% - Warning: Microsoft Security Essentials installation file ^(%MSSE_FILENAME%^) not found >>%UPDATE_LOGFILE%
   goto SkipMSSEInst
 )
-set MSSE_TARGET_ID=
+echo Installing Microsoft Security Essentials...
+call InstallOSUpdate.cmd %MSSE_FILENAME% %VERIFY_MODE% /ignoreerrors /s /runwgacheck /o
+set MSSE_FILENAME=
 set REBOOT_REQUIRED=1
 :CheckMSSEDefs
 if /i "%OS_ARCH%"=="x64" (
-  set MSSEDEFS_FILENAME=..\mssedefs\%OS_ARCH%-glb\mpam-fex64.exe
+  set MSSEDEFS_FILENAME=..\msse\%OS_ARCH%-glb\mpam-fex64.exe
 ) else (
-  set MSSEDEFS_FILENAME=..\mssedefs\%OS_ARCH%-glb\mpam-fe.exe
+  set MSSEDEFS_FILENAME=..\msse\%OS_ARCH%-glb\mpam-fe.exe
 )
 if not exist %MSSEDEFS_FILENAME% (
   echo Warning: Microsoft Security Essentials definition file ^(%MSSEDEFS_FILENAME%^) not found.
@@ -667,6 +663,7 @@ if %MSSEDEFS_VER_REVISION% GEQ %MSSEDEFS_VER_TARGET_REVISION% goto SkipMSSEInst
 :InstallMSSEDefs
 echo Installing Microsoft Security Essentials definition file...
 call InstallOSUpdate.cmd %MSSEDEFS_FILENAME% %VERIFY_MODE% /ignoreerrors -q
+set MSSEDEFS_FILENAME=
 :SkipMSSEInst
 
 if "%RECALL_REQUIRED%"=="1" goto Installed

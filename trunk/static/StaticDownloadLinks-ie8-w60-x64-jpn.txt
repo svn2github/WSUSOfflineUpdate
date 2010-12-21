@@ -1,2 +1,1 @@
 http://download.microsoft.com/download/2/2/F/22F4B780-44AF-4265-A3AD-F77865BDD40B/IE8-WindowsVista-x64-JPN.exe
-http://download.microsoft.com/download/6/B/A/6BA6CAB0-DDB8-4DDD-88E3-F707D96E84D7/ja-jp/amd64/mseinstall.exe,mseinstall-x64-jpn.exe

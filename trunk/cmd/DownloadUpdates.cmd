@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7+ (r187)
+set WSUSOFFLINE_VERSION=6.7+ (r188)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -234,21 +234,23 @@ rem *** WUA stuff - now statically defined ***
 if exist ..\xslt\ExtractDownloadLinks-wua-x86.xsl del ..\xslt\ExtractDownloadLinks-wua-x86.xsl
 if exist ..\xslt\ExtractDownloadLinks-wua-x64.xsl del ..\xslt\ExtractDownloadLinks-wua-x64.xsl
 
-rem *** MSSEDEFS stuff ***
+rem *** Microsoft Security Essentials stuff ***
 if exist ..\static\StaticDownloadLink-mssedefs-x64.txt del ..\static\StaticDownloadLink-mssedefs-x64.txt
 if exist ..\static\StaticDownloadLink-mssedefs-x86.txt del ..\static\StaticDownloadLink-mssedefs-x86.txt
+if exist ..\static\StaticDownloadLink-mssedefs-x64-glb.txt del ..\static\StaticDownloadLink-mssedefs-x64-glb.txt
+if exist ..\static\StaticDownloadLink-mssedefs-x86-glb.txt del ..\static\StaticDownloadLink-mssedefs-x86-glb.txt
 if exist ..\client\mssedefs\x64\nul (
   if not exist ..\client\mssedefs\x64-glb\nul md ..\client\mssedefs\x64-glb
   move /Y ..\client\mssedefs\x64\*.* ..\client\mssedefs\x64-glb >nul
   rd /S /Q ..\client\mssedefs\x64
-  if exist ..\client\md\hashes-mssedefs.txt del ..\client\md\hashes-mssedefs.txt
 )
 if exist ..\client\mssedefs\x86\nul (
   if not exist ..\client\mssedefs\x86-glb\nul md ..\client\mssedefs\x86-glb
   move /Y ..\client\mssedefs\x86\*.* ..\client\mssedefs\x86-glb >nul
   rd /S /Q ..\client\mssedefs\x86
-  if exist ..\client\md\hashes-mssedefs.txt del ..\client\md\hashes-mssedefs.txt
 )
+if exist ..\client\mssedefs\nul move /Y ..\client\mssedefs msse >nul
+if exist ..\client\md\hashes-mssedefs.txt del ..\client\md\hashes-mssedefs.txt
 
 rem *** Obsolete external stuff ***
 if exist ..\bin\extract.exe del ..\bin\extract.exe
@@ -457,50 +459,62 @@ call :DownloadCore dotnet %TARGET_ARCH%-glb
 if errorlevel 1 goto Error
 :SkipDotNet
 
-rem *** Download definition files for Microsoft Security Essentials - not required for w2k3 ***
+rem *** Download Microsoft Security Essentials - not required for w2k3 ***
 if /i "%1"=="w2k3" goto SkipMSSE
 if /i "%1"=="w2k3-x64" goto SkipMSSE
 if "%INCLUDE_MSSE%" NEQ "1" goto SkipMSSE
 if "%VERIFY_DOWNLOADS%" NEQ "1" goto DownloadMSSE
-if not exist ..\client\mssedefs\nul goto DownloadMSSE
+if not exist ..\client\msse\nul goto DownloadMSSE
 if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
-if exist ..\client\md\hashes-mssedefs.txt (
-  echo Verifying integrity of Microsoft Security Essentials definition files...
+if exist ..\client\md\hashes-msse.txt (
+  echo Verifying integrity of Microsoft Security Essentials installation files...
   pushd ..\client\md
-  ..\bin\hashdeep.exe -a -l -vv -k hashes-mssedefs.txt -r ..\mssedefs
+  ..\bin\hashdeep.exe -a -l -vv -k hashes-msse.txt -r ..\msse
   if errorlevel 1 (
     popd
     goto IntegrityError
   )
   popd
-  echo %DATE% %TIME% - Info: Verified integrity of Microsoft Security Essentials definition files >>%DOWNLOAD_LOGFILE%
+  echo %DATE% %TIME% - Info: Verified integrity of Microsoft Security Essentials installation files >>%DOWNLOAD_LOGFILE%
 ) else (
-  echo Warning: Integrity database ..\client\md\hashes-mssedefs.txt not found.
-  echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-mssedefs.txt not found >>%DOWNLOAD_LOGFILE%
+  echo Warning: Integrity database ..\client\md\hashes-msse.txt not found.
+  echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-msse.txt not found >>%DOWNLOAD_LOGFILE%
 )
 :DownloadMSSE
-echo Downloading/validating definition files for Microsoft Security Essentials...
-%WGET_PATH% -N -i ..\static\StaticDownloadLink-mssedefs-%TARGET_ARCH%-glb.txt -P ..\client\mssedefs\%TARGET_ARCH%-glb
-if errorlevel 1 goto DownloadError
-echo %DATE% %TIME% - Info: Downloaded/validated definition files for Microsoft Security Essentials >>%DOWNLOAD_LOGFILE%
+echo Downloading/validating Microsoft Security Essentials installation files...
+for /F "tokens=1,2 delims=," %%i in (..\static\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt) do (
+  if "%%j" NEQ "" (
+    if exist ..\client\msse\%TARGET_ARCH%-glb\%%j ren ..\client\msse\%TARGET_ARCH%-glb\%%j %%~nxi
+  )
+  %WGET_PATH% -N -P ..\client\msse\%TARGET_ARCH%-glb %%i
+  if errorlevel 1 (
+    if exist ..\client\msse\%TARGET_ARCH%-glb\%%~nxi del ..\client\msse\%TARGET_ARCH%-glb\%%~nxi
+    echo Warning: Download of %%i failed.
+    echo %DATE% %TIME% - Warning: Download of %%i failed >>%DOWNLOAD_LOGFILE%
+  )
+  if "%%j" NEQ "" (
+    if exist ..\client\msse\%TARGET_ARCH%-glb\%%~nxi ren ..\client\msse\%TARGET_ARCH%-glb\%%~nxi %%j
+  )
+)
+echo %DATE% %TIME% - Info: Downloaded/validated Microsoft Security Essentials installation files >>%DOWNLOAD_LOGFILE%
 if "%VERIFY_DOWNLOADS%"=="1" (
   if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
-  echo Creating integrity database for Microsoft Security Essentials definition files...
+  echo Creating integrity database for Microsoft Security Essentials installation files...
   if not exist ..\client\md\nul md ..\client\md
   pushd ..\client\md
-  ..\bin\hashdeep.exe -c md5,sha256 -l -r ..\mssedefs >hashes-mssedefs.txt
+  ..\bin\hashdeep.exe -c md5,sha256 -l -r ..\msse >hashes-msse.txt
   if errorlevel 1 (
     popd
-    echo Warning: Error creating integrity database ..\client\md\hashes-mssedefs.txt.
-    echo %DATE% %TIME% - Warning: Error creating integrity database ..\client\md\hashes-mssedefs.txt >>%DOWNLOAD_LOGFILE%
+    echo Warning: Error creating integrity database ..\client\md\hashes-msse.txt.
+    echo %DATE% %TIME% - Warning: Error creating integrity database ..\client\md\hashes-msse.txt >>%DOWNLOAD_LOGFILE%
   ) else (
     popd
-    echo %DATE% %TIME% - Info: Created integrity database for Microsoft Security Essentials definition files >>%DOWNLOAD_LOGFILE%
+    echo %DATE% %TIME% - Info: Created integrity database for Microsoft Security Essentials installation files >>%DOWNLOAD_LOGFILE%
   )
 ) else (
-  if exist ..\client\md\hashes-mssedefs.txt (
-    del ..\client\md\hashes-mssedefs.txt 
-    echo %DATE% %TIME% - Info: Deleted integrity database for Microsoft Security Essentials definition files >>%DOWNLOAD_LOGFILE%
+  if exist ..\client\md\hashes-msse.txt (
+    del ..\client\md\hashes-msse.txt 
+    echo %DATE% %TIME% - Info: Deleted integrity database for Microsoft Security Essentials installation files >>%DOWNLOAD_LOGFILE%
   )
 )
 :SkipMSSE
@@ -730,15 +744,18 @@ for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TE
 for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidStaticLinks-%1-%2.txt"') do (
   echo Downloading/validating update %%i of %LINES_COUNT%...
   for /F "tokens=1,2 delims=," %%k in ("%%j") do (
-    if "%%l"=="" (
-      %WGET_PATH% -N -P ..\client\%1\%2 %%j
-    ) else (
-      %WGET_PATH% -O ..\client\%1\%2\%%l %%k
+    if "%%l" NEQ "" (
+      if exist ..\client\%1\%2\%%l ren ..\client\%1\%2\%%l %%~nxk
     )
-  )
-  if errorlevel 1 (
-    echo Warning: Download of %%j failed.
-    echo %DATE% %TIME% - Warning: Download of %%j failed >>%DOWNLOAD_LOGFILE%
+    %WGET_PATH% -N -P ..\client\%1\%2 %%k
+    if errorlevel 1 (
+      if exist ..\client\%1\%2\%%~nxk del ..\client\%1\%2\%%~nxk
+      echo Warning: Download of %%k failed.
+      echo %DATE% %TIME% - Warning: Download of %%k failed >>%DOWNLOAD_LOGFILE%
+    )
+    if "%%l" NEQ "" (
+      if exist ..\client\%1\%2\%%~nxk ren ..\client\%1\%2\%%~nxk %%l
+    )
   )
 )
 echo %DATE% %TIME% - Info: Downloaded/validated %LINES_COUNT% statically defined updates for %1 %2 >>%DOWNLOAD_LOGFILE%
@@ -771,22 +788,21 @@ if "%WSUS_URL%"=="" (
           echo %DATE% %TIME% - Warning: Download of %%j failed >>%DOWNLOAD_LOGFILE%
         )
       ) else (
-        if exist ..\client\%1\%2\%%k ren ..\client\%1\%2\%%k _%%k
+        if exist ..\client\%1\%2\%%k ren ..\client\%1\%2\%%k %%~nxl
         if "%WSUS_BY_PROXY%"=="1" (
-          %WGET_PATH% -nv -O ..\client\%1\%2\%%k -a %DOWNLOAD_LOGFILE% %%l
+          %WGET_PATH% -nv -N -P ..\client\%1\%2 -a %DOWNLOAD_LOGFILE% %%l
         ) else (
-          %WGET_PATH% -nv --no-proxy -O ..\client\%1\%2\%%k -a %DOWNLOAD_LOGFILE% %%l
+          %WGET_PATH% -nv --no-proxy -N -P ..\client\%1\%2 -a %DOWNLOAD_LOGFILE% %%l
         )
         if errorlevel 1 (
-          if exist ..\client\%1\%2\%%k del ..\client\%1\%2\%%k
-          if exist ..\client\%1\%2\_%%k ren ..\client\%1\%2\_%%k %%k
+          if exist ..\client\%1\%2\%%~nxl ren ..\client\%1\%2\%%~nxl %%k
           %WGET_PATH% -nv -N -P ..\client\%1\%2 -a %DOWNLOAD_LOGFILE% %%m
           if errorlevel 1 (
             echo Warning: Download of %%m failed.
             echo %DATE% %TIME% - Warning: Download of %%m failed >>%DOWNLOAD_LOGFILE%
           )
         ) else (
-          if exist ..\client\%1\%2\_%%k del ..\client\%1\%2\_%%k
+          if exist ..\client\%1\%2\%%~nxl ren ..\client\%1\%2\%%~nxl %%k
         )
       )
     )

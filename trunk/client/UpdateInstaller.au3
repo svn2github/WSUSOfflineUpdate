@@ -69,8 +69,7 @@ Dim Const $path_rel_autologon         = "\bin\Autologon.exe"
 Dim Const $path_rel_converters        = "\ofc\glb\OCONVPCK.EXE"
 Dim Const $path_rel_instdotnet35      = "\dotnet\dotnetfx35.exe"
 Dim Const $path_rel_instdotnet4       = "\dotnet\dotNetFx40_Full_x86_x64.exe"
-Dim Const $path_rel_mssedefs_x86      = "\mssedefs\x86-glb\mpam-fe.exe"
-Dim Const $path_rel_mssedefs_x64      = "\mssedefs\x64-glb\mpam-fex64.exe"
+Dim Const $path_rel_msse              = "\msse\"
 
 Dim $maindlg, $scriptdir, $mapped, $inifilename, $backup, $converters, $ie7, $ie8, $wmp, $tsc, $dotnet35, $dotnet4, $powershell, $msse, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate 
 Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
@@ -210,8 +209,8 @@ Func DotNet4InstPresent($basepath)
   Return FileExists($basepath & $path_rel_instdotnet4)
 EndFunc
 
-Func MSSEDefsPresent($basepath)
-  Return FileExists($basepath & $path_rel_mssedefs_x86) OR FileExists($basepath & $path_rel_mssedefs_x64)
+Func MSSEPresent($basepath)
+  Return FileExists($basepath & $path_rel_msse)
 EndFunc
 
 Func CalcGUISize()
@@ -460,7 +459,7 @@ Else
   $msse = GUICtrlCreateCheckbox("Install Microsoft Security Essentials", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_2008R2") _
-  OR (MSSEInstalled()) OR (NOT MSSEDefsPresent($scriptdir)) ) Then
+  OR (MSSEInstalled()) OR (NOT MSSEPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else  

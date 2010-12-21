@@ -465,8 +465,9 @@ Version 6.? -- ??.??.??
 - Microsoft Security Essentials installation updated to version 2.0 (Thanks to "Matjes")
 - Optional verification of digital file signatures will now include Windows Update Agent installation and catalog files (Thanks to "albertx")
 - Files whose digital signatures can't be verified will now be automatically deleted
-- CreateISOImage.cmd script will now compute hashes for generated ISO files
 - Downloads from a local WSUS server will now only optionally use proxy settings (Thanks to "omo683")
+- Subsequent downloads from a local WSUS server speeded up by using wget '-N' option
+- CreateISOImage.cmd script will now compute hashes for generated ISO files
 - Obsolete directories ...\client\win\<language>\ie6setup will be removed (Thanks to "boco")
 - Fix: Self update script UpdateOU.cmd overwrote itself while running
 - Fix: DownloadUpdates.cmd script ignored custom static and exclude lists if corresponding lists were not delivered (Thanks to "wwsmith")

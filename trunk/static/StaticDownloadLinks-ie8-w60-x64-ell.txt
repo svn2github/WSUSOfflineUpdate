@@ -1,2 +1,1 @@
 http://download.microsoft.com/download/5/4/2/5428C993-C3F8-4A84-A5CD-0C69E5B4356C/IE8-WindowsVista-x64-ELL.exe
-http://download.microsoft.com/download/1/7/0/170D6F32-61C8-4AFF-AD32-D793084A7ACD/el-GR/amd64/mseinstall.exe,mseinstall-x64-ell.exe

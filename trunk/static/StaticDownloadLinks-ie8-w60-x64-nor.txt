@@ -1,2 +1,1 @@
 http://download.microsoft.com/download/F/E/0/FE003B2A-0DEC-4031-9C43-A16BB4382349/IE8-WindowsVista-x64-NOR.exe
-http://download.microsoft.com/download/4/F/2/4F250C6E-F388-4A85-B724-BE6AB1A79921/nb-NO/amd64/mseinstall.exe,mseinstall-x64-nor.exe

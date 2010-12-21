@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                    v. 6.7+ (r187)                  ###
+###                    v. 6.7+ (r188)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -33,7 +33,7 @@ Parameters:
 /excludesp - do not download servicepacks
 /makeiso   - create ISO image
 /dotnet    - download .NET framework
-/mssedefs  - download Microsoft Security Essentials definition files
+/msse      - download Microsoft Security Essentials installation files
 /nocleanup - do not cleanup client directory
 /proxy     - define proxy server (/proxy http://[username:password@]<server>:<port>)
 
@@ -139,13 +139,13 @@ evaluateparams()
 {
 syslist=("wxp" "wxp-x64" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "all-x64" "all-x86")
 langlist=("enu" "deu" "nld" "esn" "fra" "ptg" "ptb" "ita" "rus" "plk" "ell" "csy" "dan" "nor" "sve" "fin" "jpn" "kor" "chs" "cht" "hun" "trk" "ara" "heb")
-paramlist=("/excludesp" "/dotnet" "/mssedefs" "/makeiso" "/nocleanup" "/proxy")
+paramlist=("/excludesp" "/dotnet" "/msse" "/makeiso" "/nocleanup" "/proxy")
 EXCLUDE_SP="0"
 EXCLUDE_STATICS="0"
 CLEANUP_DOWNLOADS="1"
 createiso="0"
 dotnet="0"
-mssedefs="0"
+msse="0"
 param1=""
 param2=""
 param3=""
@@ -161,7 +161,7 @@ for i in ${syslist[@]}; do
 done
 
 if [ "$sys" == "w2k3" -o "$sys" == "w2k3-x64" ]; then
-	mssedefs="0"
+	msse="0"
 fi
 
 #determining language
@@ -194,9 +194,9 @@ for i in ${paramlist[@]}; do
 		param4=/nocleanup
 		CLEANUP_DOWNLOADS="0"
 	fi
-	if echo $@ | grep /mssedefs > /dev/null 2>&1; then
-		param5=/mssedefs
-		mssedefs="1"
+	if echo $@ | grep /msse > /dev/null 2>&1; then
+		param5=/msse
+		msse="1"
 	fi
 done
 
@@ -336,15 +336,15 @@ if [ "$adddotnet" == "y" ]; then
 fi
 }
 
-getmssedefs()
+getmsse()
 {
-mssedefs="0"
+msse="0"
 if [ "$sys" != "w2k3" -o "$sys" != "w2k3-x64" ]; then
-	echo "Download Microsoft Security Essentials definition files? [y/n]"
-	read addmssedefs
-	if [ "$addmssedefs" == "y" ]; then
-		mssedefs="1"
-		param5="/mssedefs"
+	echo "Download Microsoft Security Essentials installation files? [y/n]"
+	read addmsse
+	if [ "$addmsse" == "y" ]; then
+		msse="1"
+		param5="/msse"
 	fi
 fi
 }
@@ -392,7 +392,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                    v. 6.7+ (r187)                  ***
+***                    v. 6.7+ (r188)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
@@ -424,7 +424,7 @@ if [ "$1" == "" ]; then
 	getlanguage
 	getservicepack
 	getdotnet
-	getmssedefs
+	getmsse
 	getproxy
 	makeiso
 fi
@@ -551,9 +551,9 @@ if [ "$dotnet" == "1" ]; then
 	cp ../static/StaticDownloadLinks-dotnet.txt ../temp/StaticUrls-dotnet.txt
 fi
 
-if [ "$mssedefs" == "1" ]; then
-	cp ../static/StaticDownloadLink-mssedefs-x86-glb.txt ../temp/StaticUrls-mssedefs-x86-glb.txt
-	cp ../static/StaticDownloadLink-mssedefs-x64-glb.txt ../temp/StaticUrls-mssedefs-x64-glb.txt
+if [ "$msse" == "1" ]; then
+	cp ../static/StaticDownloadLink-msse-x86-glb.txt ../temp/StaticUrls-msse-x86-glb.txt
+	cp ../static/StaticDownloadLink-msse-x64-glb.txt ../temp/StaticUrls-msse-x64-glb.txt
 fi
 
 cd ../temp
@@ -644,7 +644,7 @@ if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$
 fi
 rm ../temp/package.xml
 
-touch ../temp/StaticUrls-${sys}-${lang}.txt ../temp/StaticUrls-ie6-${lang}.txt ../temp/ValidUrls-${sys}-${lang}.txt ../temp/ValidUrls-${sys}-glb.txt ../temp/ValidUrls-win-x86-${lang}.txt ../temp/StaticUrls-ofc-glb.txt ../temp/StaticUrls-ofc-${lang}.txt ../temp/StaticUrls-${sys}-glb.txt ../temp/StaticUrls-${lang}.txt ../temp/StaticUrls-glb.txt ../temp/StaticUrls-dotnet.txt ../temp/StaticUrls-mssedefs-x86-glb.txt ../temp/StaticUrls-mssedefs-x64-glb.txt
+touch ../temp/StaticUrls-${sys}-${lang}.txt ../temp/StaticUrls-ie6-${lang}.txt ../temp/ValidUrls-${sys}-${lang}.txt ../temp/ValidUrls-${sys}-glb.txt ../temp/ValidUrls-win-x86-${lang}.txt ../temp/StaticUrls-ofc-glb.txt ../temp/StaticUrls-ofc-${lang}.txt ../temp/StaticUrls-${sys}-glb.txt ../temp/StaticUrls-${lang}.txt ../temp/StaticUrls-glb.txt ../temp/StaticUrls-dotnet.txt ../temp/StaticUrls-msse-x86-glb.txt ../temp/StaticUrls-msse-x64-glb.txt
 
 cat ../temp/StaticUrls-${sys}-${lang}.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-ie6-${lang}.txt >> ../temp/urls.txt
@@ -657,8 +657,8 @@ cat ../temp/StaticUrls-${sys}-glb.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-glb.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-${lang}.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-dotnet.txt >> ../temp/urls.txt
-cat ../temp/StaticUrls-mssedefs-x86-glb.txt >> ../temp/urls.txt
-cat ../temp/StaticUrls-mssedefs-x64-glb.txt >> ../temp/urls.txt
+cat ../temp/StaticUrls-msse-x86-glb.txt >> ../temp/urls.txt
+cat ../temp/StaticUrls-msse-x64-glb.txt >> ../temp/urls.txt
 
 cat << END
 
@@ -686,10 +686,10 @@ if [ "$dotnet" == "1" ]; then
 	doWget -c -i ../temp/Urls-dotnet-x86.txt -P ../client/dotnet/x86-glb
 	doWget -c -i ../temp/Urls-dotnet-x64.txt -P ../client/dotnet/x64-glb
 fi
-if [ "$mssedefs" == "1" ]; then
+if [ "$msse" == "1" ]; then
 	echo "Downloading MSSE defs..."
-	doWget -c -i ../temp/StaticUrls-mssedefs-x86-glb.txt -P ../client/mssedefs/x86-glb
-	doWget -c -i ../temp/StaticUrls-mssedefs-x64-glb.txt -P ../client/mssedefs/x64-glb
+	doWget -c -i ../temp/StaticUrls-msse-x86-glb.txt -P ../client/msse/x86-glb
+	doWget -c -i ../temp/StaticUrls-msse-x64-glb.txt -P ../client/msse/x64-glb
 fi
 
 echo "Downloading patches for $sys $lang"
@@ -714,10 +714,10 @@ if [ "$dotnet" == "1" ]; then
 	doWget -c -i ../temp/Urls-dotnet-x86.txt -P ../client/dotnet/x86-glb
 	doWget -c -i ../temp/Urls-dotnet-x64.txt -P ../client/dotnet/x64-glb
 fi
-if [ "$mssedefs" == "1" ]; then
+if [ "$msse" == "1" ]; then
 	echo "Validating MSSE defs..."
-	doWget -c -i ../temp/StaticUrls-mssedefs-x86-glb.txt -P ../client/mssedefs/x86-glb
-	doWget -c -i ../temp/StaticUrls-mssedefs-x64-glb.txt -P ../client/mssedefs/x64-glb
+	doWget -c -i ../temp/StaticUrls-msse-x86-glb.txt -P ../client/msse/x86-glb
+	doWget -c -i ../temp/StaticUrls-msse-x64-glb.txt -P ../client/msse/x64-glb
 fi
 
 echo "Validating patches for $sys ${lang}..."

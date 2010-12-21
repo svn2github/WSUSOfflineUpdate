@@ -30,7 +30,7 @@ dan, nor, sve, fin, jpn, kor, chs, cht, hun, trk, ara, heb
 Parameter:
 /excludesp - exclude servicepacks
 /dotnet    - include .Net-Framework
-/mssedefs  - include Microsoft Security Essentials definition files
+/msse      - include Microsoft Security Essentials installation files
 
 Example: `basename $0` wxp deu /dotnet
 
@@ -87,10 +87,10 @@ evaluateparams()
 {
 syslist=("wxp" "wxp-x64" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "all-x64" "all-x86")
 langlist=("enu" "deu" "nld" "esn" "fra" "ptg" "ptb" "ita" "rus" "plk" "ell" "csy" "dan" "nor" "sve" "fin" "jpn" "kor" "chs" "cht" "hun" "trk" "ara" "heb")
-paramlist=("/excludesp" "/dotnet" "/mssedefs")
+paramlist=("/excludesp" "/dotnet" "/msse")
 EXCLUDE_SP="0"
 dotnet="0"
-mssedefs="0"
+msse="0"
 param1=""
 param2=""
 param3=""
@@ -144,14 +144,14 @@ fi
 if [ "$param3" == "/dotnet" ]; then
 	dotnet="1"
 fi
-if [ "$param1" == "/mssedefs" ]; then
-	mssedefs="1"
+if [ "$param1" == "/msse" ]; then
+	msse="1"
 fi
-if [ "$param2" == "/mssedefs" ]; then
-	mssedefs="1"
+if [ "$param2" == "/msse" ]; then
+	msse="1"
 fi
-if [ "$param3" == "/mssedefs" ]; then
-	mssedefs="1"
+if [ "$param3" == "/msse" ]; then
+	msse="1"
 fi
 }
 
@@ -177,8 +177,8 @@ fi
 if [ "$dotnet" != "1" ]; then
 	echo "dotnet*" >> ../temp/ExcludeListISO-${sys}.txt
 fi
-if [ "$mssedefs" != "1" ]; then
-	echo "mssedefs*" >> ../temp/ExcludeListISO-${sys}.txt
+if [ "$msse" != "1" ]; then
+	echo "msse*" >> ../temp/ExcludeListISO-${sys}.txt
 fi
 x=0
 langlist=("enu" "deu" "nld" "esn" "fra" "ptg" "ptb" "ita" "rus" "plk" "ell" "csy" "dan" "nor" "sve" "fin" "jpn" "kor" "chs" "cht" "hun" "trk" "ara" "heb")

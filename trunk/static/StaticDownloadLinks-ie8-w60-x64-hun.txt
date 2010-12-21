@@ -1,2 +1,1 @@
 http://download.microsoft.com/download/2/F/2/2F28EFD1-0BD9-44D8-9C20-0C01AA91F8ED/IE8-WindowsVista-x64-HUN.exe
-http://download.microsoft.com/download/0/C/F/0CF12DC1-AE67-4C19-8434-EC07EB82BB8C/hu-HU/amd64/mseinstall.exe,mseinstall-x64-hun.exe

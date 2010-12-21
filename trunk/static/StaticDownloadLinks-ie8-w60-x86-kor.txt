@@ -1,2 +1,1 @@
 http://download.microsoft.com/download/7/5/C/75CEEDD1-7596-4342-A69D-F9350F173802/IE8-WindowsVista-x86-KOR.exe
-http://download.microsoft.com/download/6/1/D/61D3BE5F-0AF0-49C2-8A14-44D8AFA4698A/ko-KR/x86/mseinstall.exe,mseinstall-x86-kor.exe

@@ -1,2 +1,1 @@
 http://download.microsoft.com/download/F/8/8/F88F09A2-A315-44C0-848E-48476A9E1577/IE8-WindowsVista-x86-ENU.exe
-http://download.microsoft.com/download/A/3/8/A38FFBF2-1122-48B4-AF60-E44F6DC28BD8/en-us/x86/mseinstall.exe,mseinstall-x86-enu.exe

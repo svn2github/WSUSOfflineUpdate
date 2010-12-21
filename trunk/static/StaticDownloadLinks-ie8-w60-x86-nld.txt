@@ -1,2 +1,1 @@
 http://download.microsoft.com/download/8/6/D/86DA3622-D6E8-4556-B3B4-AB2157B61150/IE8-WindowsVista-x86-NLD.exe
-http://download.microsoft.com/download/9/F/D/9FDD1ABA-8A02-465A-A321-535388226BD7/nl-nl/x86/mseinstall.exe,mseinstall-x86-nld.exe
