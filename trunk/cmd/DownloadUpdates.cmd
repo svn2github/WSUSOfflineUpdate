@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7+ (r188)
+set WSUSOFFLINE_VERSION=6.7.1
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -322,10 +322,6 @@ echo Downloading mkisofs tool...
 %WGET_PATH% -N -i ..\static\StaticDownloadLink-mkisofs.txt -P ..\bin
 if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded mkisofs tool >>%DOWNLOAD_LOGFILE%
-pushd ..\bin
-for /F %%i in ('dir /B cdrtools*.zip') do unzip.exe %%i mkisofs.exe
-del /Q cdrtools*.zip
-popd
 :SkipMkIsoFs
 
 rem *** Download Sysinternals' tools Autologon, Sigcheck and Streams ***
@@ -484,7 +480,11 @@ if exist ..\client\md\hashes-msse.txt (
 echo Downloading/validating Microsoft Security Essentials installation files...
 for /F "tokens=1,2 delims=," %%i in (..\static\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt) do (
   if "%%j" NEQ "" (
-    if exist ..\client\msse\%TARGET_ARCH%-glb\%%j ren ..\client\msse\%TARGET_ARCH%-glb\%%j %%~nxi
+    if exist ..\client\msse\%TARGET_ARCH%-glb\%%j (
+      echo Renaming file ..\client\msse\%TARGET_ARCH%-glb\%%j to %%~nxi...
+      ren ..\client\msse\%TARGET_ARCH%-glb\%%j %%~nxi
+      echo %DATE% %TIME% - Info: Renamed file ..\client\msse\%TARGET_ARCH%-glb\%%j to %%~nxi >>%DOWNLOAD_LOGFILE%
+    )
   )
   %WGET_PATH% -N -P ..\client\msse\%TARGET_ARCH%-glb %%i
   if errorlevel 1 (
@@ -493,7 +493,11 @@ for /F "tokens=1,2 delims=," %%i in (..\static\StaticDownloadLinks-msse-%TARGET_
     echo %DATE% %TIME% - Warning: Download of %%i failed >>%DOWNLOAD_LOGFILE%
   )
   if "%%j" NEQ "" (
-    if exist ..\client\msse\%TARGET_ARCH%-glb\%%~nxi ren ..\client\msse\%TARGET_ARCH%-glb\%%~nxi %%j
+    if exist ..\client\msse\%TARGET_ARCH%-glb\%%~nxi (
+      echo Renaming file ..\client\msse\%TARGET_ARCH%-glb\%%~nxi to %%j...
+      ren ..\client\msse\%TARGET_ARCH%-glb\%%~nxi %%j
+      echo %DATE% %TIME% - Info: Renamed file ..\client\msse\%TARGET_ARCH%-glb\%%~nxi to %%j >>%DOWNLOAD_LOGFILE%
+    )
   )
 )
 echo %DATE% %TIME% - Info: Downloaded/validated Microsoft Security Essentials installation files >>%DOWNLOAD_LOGFILE%
@@ -745,7 +749,11 @@ for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TE
   echo Downloading/validating update %%i of %LINES_COUNT%...
   for /F "tokens=1,2 delims=," %%k in ("%%j") do (
     if "%%l" NEQ "" (
-      if exist ..\client\%1\%2\%%l ren ..\client\%1\%2\%%l %%~nxk
+      if exist ..\client\%1\%2\%%l (
+        echo Renaming file ..\client\%1\%2\%%l to %%~nxk...
+        ren ..\client\%1\%2\%%l %%~nxk
+        echo %DATE% %TIME% - Info: Renamed file ..\client\%1\%2\%%l to %%~nxk >>%DOWNLOAD_LOGFILE%
+      )
     )
     %WGET_PATH% -N -P ..\client\%1\%2 %%k
     if errorlevel 1 (
@@ -754,7 +762,11 @@ for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TE
       echo %DATE% %TIME% - Warning: Download of %%k failed >>%DOWNLOAD_LOGFILE%
     )
     if "%%l" NEQ "" (
-      if exist ..\client\%1\%2\%%~nxk ren ..\client\%1\%2\%%~nxk %%l
+      if exist ..\client\%1\%2\%%~nxk (
+        echo Renaming file ..\client\%1\%2\%%~nxk to %%l...
+        ren ..\client\%1\%2\%%~nxk %%l
+        echo %DATE% %TIME% - Info: Renamed file ..\client\%1\%2\%%~nxk to %%l >>%DOWNLOAD_LOGFILE%
+      )
     )
   )
 )
@@ -788,21 +800,33 @@ if "%WSUS_URL%"=="" (
           echo %DATE% %TIME% - Warning: Download of %%j failed >>%DOWNLOAD_LOGFILE%
         )
       ) else (
-        if exist ..\client\%1\%2\%%k ren ..\client\%1\%2\%%k %%~nxl
+        if exist ..\client\%1\%2\%%k (
+          echo Renaming file ..\client\%1\%2\%%k to %%~nxl...
+          ren ..\client\%1\%2\%%k %%~nxl
+          echo %DATE% %TIME% - Info: Renamed file ..\client\%1\%2\%%k to %%~nxl >>%DOWNLOAD_LOGFILE%
+        )
         if "%WSUS_BY_PROXY%"=="1" (
           %WGET_PATH% -nv -N -P ..\client\%1\%2 -a %DOWNLOAD_LOGFILE% %%l
         ) else (
           %WGET_PATH% -nv --no-proxy -N -P ..\client\%1\%2 -a %DOWNLOAD_LOGFILE% %%l
         )
         if errorlevel 1 (
-          if exist ..\client\%1\%2\%%~nxl ren ..\client\%1\%2\%%~nxl %%k
+          if exist ..\client\%1\%2\%%~nxl (
+            echo Renaming file ..\client\%1\%2\%%~nxl to %%k...
+            ren ..\client\%1\%2\%%~nxl %%k
+            echo %DATE% %TIME% - Info: Renamed file ..\client\%1\%2\%%~nxl to %%k >>%DOWNLOAD_LOGFILE%
+          )
           %WGET_PATH% -nv -N -P ..\client\%1\%2 -a %DOWNLOAD_LOGFILE% %%m
           if errorlevel 1 (
             echo Warning: Download of %%m failed.
             echo %DATE% %TIME% - Warning: Download of %%m failed >>%DOWNLOAD_LOGFILE%
           )
         ) else (
-          if exist ..\client\%1\%2\%%~nxl ren ..\client\%1\%2\%%~nxl %%k
+          if exist ..\client\%1\%2\%%~nxl (
+            echo Renaming file ..\client\%1\%2\%%~nxl to %%k...
+            ren ..\client\%1\%2\%%~nxl %%k
+            echo %DATE% %TIME% - Info: Renamed file ..\client\%1\%2\%%~nxl to %%k >>%DOWNLOAD_LOGFILE%
+          )
         )
       )
     )

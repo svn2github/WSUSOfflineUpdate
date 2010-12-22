@@ -62,10 +62,16 @@ echo.
 goto Error
 
 :Error
-title %ComSpec%
-endlocal
-verify other 2>nul
-if "%EXIT_ON_ERROR%"=="1" exit
+if "%EXIT_ON_ERROR%"=="1" (
+  endlocal
+  verify other 2>nul
+  exit
+) else (
+  title %ComSpec%
+  endlocal
+  verify other 2>nul
+  goto :eof
+)
 
 :EoF
 title %ComSpec%

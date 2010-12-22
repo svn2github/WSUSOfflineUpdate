@@ -461,7 +461,7 @@ Version 6.7 -- 06.12.10
 - Removed obsolete utility extract.exe
 - XSLT filters for Windows ("win") refined (Thanks to "Denniss")
 --------------------------------------------------------------------------------
-Version 6.? -- ??.??.??
+Version 6.7.1 -- 22.12.10
 - Microsoft Security Essentials installation updated to version 2.0 (Thanks to "Matjes")
 - Optional verification of digital file signatures will now include Windows Update Agent installation and catalog files (Thanks to "albertx")
 - Files whose digital signatures can't be verified will now be automatically deleted
@@ -469,9 +469,11 @@ Version 6.? -- ??.??.??
 - Subsequent downloads from a local WSUS server speeded up by using wget '-N' option
 - CreateISOImage.cmd script will now compute hashes for generated ISO files
 - Obsolete directories ...\client\win\<language>\ie6setup will be removed (Thanks to "boco")
+- Fix: Self version check script CheckOUVersion.cmd did not work properly in v. 6.7
 - Fix: Self update script UpdateOU.cmd overwrote itself while running
 - Fix: DownloadUpdates.cmd script ignored custom static and exclude lists if corresponding lists were not delivered (Thanks to "wwsmith")
 - Fix: DoUpdate.cmd script ignored custom static installation definition list ...\static\custom\StaticUpdateIds-dotnet.txt (Thanks to "wwsmith")
 - Fix: CopyToTarget.cmd and CreateISOImage.cmd scripts missed language specific directories when called with "all" parameter (Thanks to "psj")
 - Fix: DownloadUpdates.sh script contained a reference to the obsolete filter ExtractDownloadLinks-win-x86-glb.xsl (Thanks to "NoKurth")
 - Fix: DownloadUpdates.sh script contained a duplicate menu id (Thanks to Thomas Rieck)
+--------------------------------------------------------------------------------
