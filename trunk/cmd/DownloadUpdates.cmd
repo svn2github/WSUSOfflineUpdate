@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7.1
+set WSUSOFFLINE_VERSION=6.7.1+ (r191)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -19,7 +19,7 @@ if exist %DOWNLOAD_LOGFILE% (
   echo -------------------------------------------------------------------------------- >>%DOWNLOAD_LOGFILE%
   echo. >>%DOWNLOAD_LOGFILE%
 )
-echo %DATE% %TIME% - Info: Starting download (v. %WSUSOFFLINE_VERSION%) for %1 %2 >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2 >>%DOWNLOAD_LOGFILE%
 
 for %%i in (wxp w2k3 w2k3-x64) do (
   if /i "%1"=="%%i" (
@@ -928,10 +928,10 @@ exit /b 1
 
 :InvalidParams
 echo.
-echo ERROR: Invalid parameter: %1 %2 %3 %4
+echo ERROR: Invalid parameter: %*
 echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| oxp ^| o2k3 ^| o2k7} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusbyproxy]
 echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| ofc} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusbyproxy]
-echo %DATE% %TIME% - Error: Invalid parameter: %1 %2 %3 %4 >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Error: Invalid parameter: %* >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 
@@ -1033,6 +1033,6 @@ if exist .\custom\FinalizationHook.cmd (
   echo %DATE% %TIME% - Info: Executed custom finalization hook >>%DOWNLOAD_LOGFILE%
 )
 echo Done.
-echo %DATE% %TIME% - Info: Ending download for %1 %2 >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Ending WSUS Offline Update download for %1 %2 >>%DOWNLOAD_LOGFILE%
 title %ComSpec%
 endlocal

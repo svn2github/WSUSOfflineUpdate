@@ -477,3 +477,6 @@ Version 6.7.1 -- 22.12.10
 - Fix: DownloadUpdates.sh script contained a reference to the obsolete filter ExtractDownloadLinks-win-x86-glb.xsl (Thanks to "NoKurth")
 - Fix: DownloadUpdates.sh script contained a duplicate menu id (Thanks to Thomas Rieck)
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.11
+- CreateISOImage.cmd and CopyToTarget.cmd scripts will now log to ..\log\download.log file (Thanks to "Matjes")
+- Fix: CreateISOImage.cmd script did not properly signal errors (Thanks to "AlBundy")

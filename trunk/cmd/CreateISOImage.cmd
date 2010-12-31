@@ -8,6 +8,16 @@ if errorlevel 1 goto NoExtensions
 %~d0
 cd "%~p0"
 
+if "%DOWNLOAD_LOGFILE%"=="" set DOWNLOAD_LOGFILE=..\log\download.log
+title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
+echo Starting ISO image creation for %1 %2 %3 %4 %5 %6 %7 %8 %9...
+if exist %DOWNLOAD_LOGFILE% (
+  echo. >>%DOWNLOAD_LOGFILE%
+  echo -------------------------------------------------------------------------------- >>%DOWNLOAD_LOGFILE%
+  echo. >>%DOWNLOAD_LOGFILE%
+)
+echo %DATE% %TIME% - Info: Starting ISO image creation for %1 %2 %3 %4 %5 %6 %7 %8 %9 >>%DOWNLOAD_LOGFILE%
+
 for %%i in (all all-x86 all-x64 enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%1"=="%%i" goto V1EvalParams)
 for %%i in (wxp w2k3 w2k3-x64) do (
   if /i "%1"=="%%i" (
@@ -132,17 +142,21 @@ rem *** Create ISO image ***
 if %OUTPUT_PATH%~==~ set OUTPUT_PATH=..\iso
 if not exist %OUTPUT_PATH%\nul goto NoOutputPath
 if not exist ..\bin\mkisofs.exe goto NoMkIsoFs
-title Creating ISO image %OUTPUT_PATH%\%ISO_NAME%.iso...
 echo Creating ISO image %OUTPUT_PATH%\%ISO_NAME%.iso...
 if exist %OUTPUT_PATH%\%ISO_NAME%.iso del %OUTPUT_PATH%\%ISO_NAME%.iso
 if exist %OUTPUT_PATH%\%ISO_NAME%-hashes.txt del %OUTPUT_PATH%\%ISO_NAME%-hashes.txt
 ..\bin\mkisofs.exe -iso-level 4 -joliet -joliet-long -rational-rock -exclude-list %ISO_FILTER% -output %OUTPUT_PATH%\%ISO_NAME%.iso -volid %ISO_VOLID% ..\client
-if errorlevel 1 goto MkIsoError
+if errorlevel 1 (
+  if exist %ISO_FILTER% del %ISO_FILTER%
+  goto MkIsoError
+)
 if exist %ISO_FILTER% del %ISO_FILTER%
+echo %DATE% %TIME% - Info: Created ISO image %OUTPUT_PATH%\%ISO_NAME%.iso >>%DOWNLOAD_LOGFILE%
 echo Creating message digest file %OUTPUT_PATH%\%ISO_NAME%-hashes.txt...
 ..\client\bin\hashdeep.exe -c md5,sha256 -b %OUTPUT_PATH%\%ISO_NAME%.iso >%OUTPUT_PATH%\%ISO_NAME%.mds
 %SystemRoot%\system32\findstr.exe /C:## /V %OUTPUT_PATH%\%ISO_NAME%.mds >%OUTPUT_PATH%\%ISO_NAME%-hashes.txt
 del %OUTPUT_PATH%\%ISO_NAME%.mds
+echo %DATE% %TIME% - Info: Created message digest file %OUTPUT_PATH%\%ISO_NAME%-hashes.txt >>%DOWNLOAD_LOGFILE%
 echo Done.
 goto EoF
 
@@ -157,32 +171,36 @@ echo.
 echo ERROR: Invalid parameter: %*
 echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| ofc} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/includedotnet] [/includemsse] [/outputpath ^<OutputPath^>]
 echo Usage2: %~n0 {all ^| all-x86 ^| all-x64 ^| wxp ^| w2k3 ^| w2k3-x64 ^| w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| ofc ^| enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/includedotnet] [/includemsse] [/outputpath ^<OutputPath^>]
+echo %DATE% %TIME% - Error: Invalid parameter: %* >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 
 :NoOutputPath
 echo.
 echo ERROR: Output path %OUTPUT_PATH% not found.
+echo %DATE% %TIME% - Error: Output path %OUTPUT_PATH% not found >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 
 :NoMkIsoFs
 echo.
 echo ERROR: Utility ..\bin\mkisofs.exe not found.
+echo %DATE% %TIME% - Error: Utility ..\bin\mkisofs.exe not found >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 
 :MkIsoError
 echo.
 echo ERROR: Creation of ISO image failed.
+echo %DATE% %TIME% - Error: Creation of ISO image failed >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 
 :Error
-if exist %ISO_FILTER% del %ISO_FILTER%
-set MKISO_ERROR=1 
+set MKISO_ERROR=1
 
 :EoF
+echo %DATE% %TIME% - Info: Ending ISO image creation for %1 %2 %3 %4 %5 %6 %7 %8 %9 >>%DOWNLOAD_LOGFILE%
 title %ComSpec%
 if "%MKISO_ERROR%"=="1" verify other 2>nul
 endlocal
