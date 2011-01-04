@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 6.7
+WSUS Offline Update 6.7.1
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -478,5 +478,7 @@ Version 6.7.1 -- 22.12.10
 - Fix: DownloadUpdates.sh script contained a duplicate menu id (Thanks to Thomas Rieck)
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.11
+- Optional download and automatic update of Windows Defender definition files
+- Optional installation of Windows Defender on Windows XP and Server 2003 (x86/x64) systems
 - CreateISOImage.cmd and CopyToTarget.cmd scripts will now log to ..\log\download.log file (Thanks to "Matjes")
 - Fix: CreateISOImage.cmd script did not properly signal errors (Thanks to "AlBundy")

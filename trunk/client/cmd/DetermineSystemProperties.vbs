@@ -10,9 +10,12 @@ Private Const strRegKeyDotNet4                = "HKLM\Software\Microsoft\NET Fra
 Private Const strRegKeyPowerShell             = "HKLM\Software\Microsoft\PowerShell\1\PowerShellEngine\"
 Private Const strRegKeyMSEv2                  = "HKLM\Software\Microsoft\Microsoft Security Client\"
 Private Const strRegKeyMSSEDefs               = "HKLM\Software\Microsoft\Microsoft Antimalware\Signature Updates\"
+Private Const strRegKeyWD                     = "HKLM\Software\Microsoft\Windows Defender\"
+Private Const strRegKeyWDDefs                 = "HKLM\Software\Microsoft\Windows Defender\Signature Updates\"
 Private Const strRegValVersion                = "Version"
 Private Const strRegValPShVersion             = "PowerShellVersion"
 Private Const strRegValAVSVersion             = "AVSignatureVersion"
+Private Const strRegValASSVersion             = "ASSignatureVersion"
 Private Const strRegKeyOfficePrefix_Mx86      = "HKLM\Software\Microsoft\Office\"
 Private Const strRegKeyOfficePrefix_Mx64      = "HKLM\Software\Wow6432Node\Microsoft\Office\"
 Private Const strRegKeyOfficePrefix_User      = "HKCU\Software\Microsoft\Office\"
@@ -23,7 +26,7 @@ Private Const strRegValOfficePath             = "Path"
 Private Const strRegValOfficeLanguage_Inst    = "SKULanguage"
 Private Const strRegValOfficeLanguage_User    = "InstallLanguage"
 Private Const strRegValOfficeVersion          = "LastProduct"
-Private Const strVersionSuffixes              = "MAJOR,MINOR,BUILD,REVISION"
+Private Const strVersionSuffixes              = "MAJOR,MINOR,REVIS,BUILD"
 Private Const strOfficeNames                  = "oxp,o2k3,o2k7,o2k10"
 Private Const strOfficeAppNames               = "Word,Excel,Outlook,Powerpoint,Access,FrontPage"
 Private Const strOfficeExeNames               = "WINWORD.EXE,EXCEL.EXE,OUTLOOK.EXE,POWERPNT.EXE,MSACCESS.EXE,FRONTPG.EXE"
@@ -37,8 +40,9 @@ Dim wshShell, objFileSystem, objCmdFile, objWMIService, objWMIQuery, arrayOffice
 Dim strSystemFolder, strTempFolder, strWUAFileName, strMSIFileName, strWSHFileName, strTSCFileName, strWMPFileName, strCmdFileName, strOSVersion, strOfficeInstallPath, strOfficeExeVersion, strProduct, languageCode, i, j
 
 Private Function RegExists(objShell, strName)
+Dim dummy
   On Error Resume Next  'Turn error reporting off
-  RegRead = objShell.RegRead(strName)
+  dummy = objShell.RegRead(strName)
   RegExists = (Err >= 0)
   Err.Clear
   On Error GoTo 0       'Turn error reporting on
@@ -54,174 +58,174 @@ Private Function RegRead(objShell, strName)
   On Error GoTo 0       'Turn error reporting on
 End Function
 
-Private Sub WriteLanguageToFile(objTextFile, varName, langCode, writeExtVar)
+Private Sub WriteLanguageToFile(cmdFile, varName, langCode, writeExtVar)
   Select Case langCode
 ' supported languages
     Case &H0009, &H0409, &H0809, &H0C09, &H1009, &H1409, &H1809, &H1C09, &H2009, &H2409, &H2809, &H2C09, &H3009, &H3409, &H4009, &H4409, &H4809
-      objTextFile.WriteLine("set " & varName & "=enu")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=en-us")
+      cmdFile.WriteLine("set " & varName & "=enu")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=en-us")
     Case &H000C, &H040C, &H080C, &H0C0C, &H100C, &H140C, &H180C
-      objTextFile.WriteLine("set " & varName & "=fra")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=fr-fr")
+      cmdFile.WriteLine("set " & varName & "=fra")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=fr-fr")
     Case &H000A, &H080A, &H0C0A, &H100A, &H140A, &H180A, &H1C0A, &H200A, &H240A, &H280A, &H2C0A, &H300A, &H340A, &H380A, &H3C0A, &H400A, &H440A, &H480A, &H4C0A, &H500A, &H540A
-      objTextFile.WriteLine("set " & varName & "=esn")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=es-es")
+      cmdFile.WriteLine("set " & varName & "=esn")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=es-es")
     Case &H0019, &H0419
-      objTextFile.WriteLine("set " & varName & "=rus")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=ru-ru")
+      cmdFile.WriteLine("set " & varName & "=rus")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=ru-ru")
     Case &H0816
-      objTextFile.WriteLine("set " & varName & "=ptg")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=pt-pt")
+      cmdFile.WriteLine("set " & varName & "=ptg")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=pt-pt")
     Case &H0416
-      objTextFile.WriteLine("set " & varName & "=ptb")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=pt-br")
+      cmdFile.WriteLine("set " & varName & "=ptb")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=pt-br")
     Case &H0007, &H0407, &H0807, &H0C07, &H1007, &H1407
-      objTextFile.WriteLine("set " & varName & "=deu")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=de-de")
+      cmdFile.WriteLine("set " & varName & "=deu")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=de-de")
     Case &H0013, &H0413, &H0813
-      objTextFile.WriteLine("set " & varName & "=nld")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=nl-nl")
+      cmdFile.WriteLine("set " & varName & "=nld")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=nl-nl")
     Case &H0010, &H0410, &H0810
-      objTextFile.WriteLine("set " & varName & "=ita")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=it-it")
+      cmdFile.WriteLine("set " & varName & "=ita")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=it-it")
     Case &H0015, &H0415
-      objTextFile.WriteLine("set " & varName & "=plk")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=pl-pl")
+      cmdFile.WriteLine("set " & varName & "=plk")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=pl-pl")
     Case &H000E, &H040E
-      objTextFile.WriteLine("set " & varName & "=hun")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=hu-hu")
+      cmdFile.WriteLine("set " & varName & "=hun")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=hu-hu")
     Case &H0005, &H0405
-      objTextFile.WriteLine("set " & varName & "=csy")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=cs-cz")
+      cmdFile.WriteLine("set " & varName & "=csy")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=cs-cz")
     Case &H001D, &H041D, &H081D
-      objTextFile.WriteLine("set " & varName & "=sve")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=sv-se")
+      cmdFile.WriteLine("set " & varName & "=sve")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=sv-se")
     Case &H001F, &H041F
-      objTextFile.WriteLine("set " & varName & "=trk")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=tr-tr")
+      cmdFile.WriteLine("set " & varName & "=trk")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=tr-tr")
     Case &H0008, &H0408
-      objTextFile.WriteLine("set " & varName & "=ell")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=el-gr")
+      cmdFile.WriteLine("set " & varName & "=ell")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=el-gr")
     Case &H0006, &H0406
-      objTextFile.WriteLine("set " & varName & "=dan")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=da-dk")
+      cmdFile.WriteLine("set " & varName & "=dan")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=da-dk")
     Case &H0014, &H0414, &H7C14, &H0814, &H7814
-      objTextFile.WriteLine("set " & varName & "=nor")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=nb-no")
+      cmdFile.WriteLine("set " & varName & "=nor")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=nb-no")
     Case &H000B, &H040B
-      objTextFile.WriteLine("set " & varName & "=fin")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=fi-fi")
+      cmdFile.WriteLine("set " & varName & "=fin")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=fi-fi")
     Case &H0004, &H0804, &H1004, &H7804
-      objTextFile.WriteLine("set " & varName & "=chs")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=zh-cn")
+      cmdFile.WriteLine("set " & varName & "=chs")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=zh-cn")
     Case &H0404, &H0C04, &H1404, &H7C04
-      objTextFile.WriteLine("set " & varName & "=cht")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=zh-tw")
+      cmdFile.WriteLine("set " & varName & "=cht")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=zh-tw")
     Case &H0011, &H0411
-      objTextFile.WriteLine("set " & varName & "=jpn")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=ja-jp")
+      cmdFile.WriteLine("set " & varName & "=jpn")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=ja-jp")
     Case &H0012, &H0412
-      objTextFile.WriteLine("set " & varName & "=kor")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=ko-kr")
+      cmdFile.WriteLine("set " & varName & "=kor")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=ko-kr")
     Case &H0001, &H0401, &H0801, &H0C01, &H1001, &H1401, &H1801, &H1C01, &H2001, &H2401, &H2801, &H2C01, &H3001, &H3401, &H3801, &H3C01, &H4001
-      objTextFile.WriteLine("set " & varName & "=ara")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=ar-sa")
+      cmdFile.WriteLine("set " & varName & "=ara")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=ar-sa")
     Case &H000D, &H040D
-      objTextFile.WriteLine("set " & varName & "=heb")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=he-il")
+      cmdFile.WriteLine("set " & varName & "=heb")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=he-il")
 
 ' unsupported languages, detection only
     Case &H002B, &H042B
-      objTextFile.WriteLine("set " & varName & "=hye")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=hy-am")
+      cmdFile.WriteLine("set " & varName & "=hye")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=hy-am")
     Case &H002D, &H042D
-      objTextFile.WriteLine("set " & varName & "=euq")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=eu-es")
+      cmdFile.WriteLine("set " & varName & "=euq")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=eu-es")
     Case &H0023, &H0423
-      objTextFile.WriteLine("set " & varName & "=bel")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=be-by")
+      cmdFile.WriteLine("set " & varName & "=bel")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=be-by")
     Case &H007E, &H047E
-      objTextFile.WriteLine("set " & varName & "=bre")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=br-fr")
+      cmdFile.WriteLine("set " & varName & "=bre")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=br-fr")
     Case &H0002, &H0402
-      objTextFile.WriteLine("set " & varName & "=bgr")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=bg-bg")
+      cmdFile.WriteLine("set " & varName & "=bgr")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=bg-bg")
     Case &H0003, &H0403
-      objTextFile.WriteLine("set " & varName & "=cat")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=ca-es")
+      cmdFile.WriteLine("set " & varName & "=cat")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=ca-es")
     Case &H0083, &H0483
-      objTextFile.WriteLine("set " & varName & "=cos")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=co-fr")
+      cmdFile.WriteLine("set " & varName & "=cos")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=co-fr")
     Case &H001A, &H041A, &H101A
-      objTextFile.WriteLine("set " & varName & "=hrv")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=hr-hr")
+      cmdFile.WriteLine("set " & varName & "=hrv")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=hr-hr")
     Case &H0025, &H0425
-      objTextFile.WriteLine("set " & varName & "=eti")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=et-ee")
+      cmdFile.WriteLine("set " & varName & "=eti")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=et-ee")
     Case &H0038, &H0438
-      objTextFile.WriteLine("set " & varName & "=fos")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=fo-fo")
+      cmdFile.WriteLine("set " & varName & "=fos")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=fo-fo")
     Case &H0062, &H0462
-      objTextFile.WriteLine("set " & varName & "=fyn")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=fy-nl")
+      cmdFile.WriteLine("set " & varName & "=fyn")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=fy-nl")
     Case &H0056, &H0456
-      objTextFile.WriteLine("set " & varName & "=glc")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=gl-es")
+      cmdFile.WriteLine("set " & varName & "=glc")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=gl-es")
     Case &H0037, &H0437
-      objTextFile.WriteLine("set " & varName & "=kat")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=ka-ge")
+      cmdFile.WriteLine("set " & varName & "=kat")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=ka-ge")
     Case &H006F, &H046F
-      objTextFile.WriteLine("set " & varName & "=kal")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=kl-gl")
+      cmdFile.WriteLine("set " & varName & "=kal")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=kl-gl")
     Case &H0039, &H0439
-      objTextFile.WriteLine("set " & varName & "=hin")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=hi-in")
+      cmdFile.WriteLine("set " & varName & "=hin")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=hi-in")
     Case &H000F, &H040F
-      objTextFile.WriteLine("set " & varName & "=isl")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=is-is")
+      cmdFile.WriteLine("set " & varName & "=isl")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=is-is")
     Case &H003C, &H083C
-      objTextFile.WriteLine("set " & varName & "=ire")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=ga-ie")
+      cmdFile.WriteLine("set " & varName & "=ire")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=ga-ie")
     Case &H0026, &H0426
-      objTextFile.WriteLine("set " & varName & "=lvi")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=lv-lv")
+      cmdFile.WriteLine("set " & varName & "=lvi")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=lv-lv")
     Case &H0027, &H0427
-      objTextFile.WriteLine("set " & varName & "=lth")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=lt-lt")
+      cmdFile.WriteLine("set " & varName & "=lth")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=lt-lt")
     Case &H0029, &H0429
-      objTextFile.WriteLine("set " & varName & "=far")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=fa-ir")
+      cmdFile.WriteLine("set " & varName & "=far")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=fa-ir")
     Case &H0046, &H0446
-      objTextFile.WriteLine("set " & varName & "=pan")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=pa-in")
+      cmdFile.WriteLine("set " & varName & "=pan")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=pa-in")
     Case &H0018, &H0418
-      objTextFile.WriteLine("set " & varName & "=rom")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=ro-ro")
+      cmdFile.WriteLine("set " & varName & "=rom")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=ro-ro")
     Case &H004F, &H044F
-      objTextFile.WriteLine("set " & varName & "=san")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=sa-in")
+      cmdFile.WriteLine("set " & varName & "=san")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=sa-in")
     Case &H001B, &H041B
-      objTextFile.WriteLine("set " & varName & "=sky")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=sk-sk")
+      cmdFile.WriteLine("set " & varName & "=sky")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=sk-sk")
     Case &H0024, &H0424
-      objTextFile.WriteLine("set " & varName & "=slv")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=sl-si")
+      cmdFile.WriteLine("set " & varName & "=slv")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=sl-si")
     Case &H001E, &H041E
-      objTextFile.WriteLine("set " & varName & "=tha")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=th-th")
+      cmdFile.WriteLine("set " & varName & "=tha")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=th-th")
     Case &H0022, &H0422
-      objTextFile.WriteLine("set " & varName & "=ukr")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=uk-ua")
+      cmdFile.WriteLine("set " & varName & "=ukr")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=uk-ua")
     Case &H002A, &H042A
-      objTextFile.WriteLine("set " & varName & "=vit")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=vi-vn")
+      cmdFile.WriteLine("set " & varName & "=vit")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=vi-vn")
     Case &H0052, &H0452
-      objTextFile.WriteLine("set " & varName & "=cym")
-      If writeExtVar Then objTextFile.WriteLine("set " & varName & "_EXT=cy-gb")
+      cmdFile.WriteLine("set " & varName & "=cym")
+      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=cy-gb")
   End Select
 End Sub
 
-Private Sub WriteVersionToFile(objTextFile, strPrefix, strVersion)
+Private Sub WriteVersionToFile(cmdFile, strPrefix, strVersion)
 Dim arraySuffixes, arrayVersion, i
 
   arraySuffixes = Split(strVersionSuffixes, ",")
@@ -232,58 +236,58 @@ Dim arraySuffixes, arrayVersion, i
   End If
   For i = 0 To UBound(arraySuffixes)
     If i > UBound(arrayVersion) Then
-      objTextFile.WriteLine("set " & strPrefix & "_" & arraySuffixes(i) & "=0")         
+      cmdFile.WriteLine("set " & strPrefix & "_" & arraySuffixes(i) & "=0")         
     Else
-      objTextFile.WriteLine("set " & strPrefix & "_" & arraySuffixes(i) & "=" & arrayVersion(i))         
+      cmdFile.WriteLine("set " & strPrefix & "_" & arraySuffixes(i) & "=" & arrayVersion(i))         
     End If
   Next
 End Sub
 
-Private Sub WriteDXNameToFile(objTextFile, strDXVersion)
+Private Sub WriteDXNameToFile(cmdFile, strDXVersion)
 
   Select Case strDXVersion
     Case "4.02.0095"
-      objTextFile.WriteLine("set DIRECTX_NAME=1.0")
+      cmdFile.WriteLine("set DIRECTX_NAME=1.0")
     Case "4.03.00.1096"
-      objTextFile.WriteLine("set DIRECTX_NAME=2.0")
+      cmdFile.WriteLine("set DIRECTX_NAME=2.0")
     Case "4.04.0068"
-      objTextFile.WriteLine("set DIRECTX_NAME=3.0")
+      cmdFile.WriteLine("set DIRECTX_NAME=3.0")
     Case "4.04.0069"
-      objTextFile.WriteLine("set DIRECTX_NAME=3.0")
+      cmdFile.WriteLine("set DIRECTX_NAME=3.0")
     Case "4.05.00.0155"
-      objTextFile.WriteLine("set DIRECTX_NAME=5.0")
+      cmdFile.WriteLine("set DIRECTX_NAME=5.0")
     Case "4.05.01.1721"
-      objTextFile.WriteLine("set DIRECTX_NAME=5.0")
+      cmdFile.WriteLine("set DIRECTX_NAME=5.0")
     Case "4.05.01.1998"
-      objTextFile.WriteLine("set DIRECTX_NAME=5.0")
+      cmdFile.WriteLine("set DIRECTX_NAME=5.0")
     Case "4.06.02.0436"
-      objTextFile.WriteLine("set DIRECTX_NAME=6.0")
+      cmdFile.WriteLine("set DIRECTX_NAME=6.0")
     Case "4.07.00.0700"
-      objTextFile.WriteLine("set DIRECTX_NAME=7.0")
+      cmdFile.WriteLine("set DIRECTX_NAME=7.0")
     Case "4.07.00.0716"
-      objTextFile.WriteLine("set DIRECTX_NAME=7.0a")
+      cmdFile.WriteLine("set DIRECTX_NAME=7.0a")
     Case "4.08.00.0400"
-      objTextFile.WriteLine("set DIRECTX_NAME=8.0")
+      cmdFile.WriteLine("set DIRECTX_NAME=8.0")
     Case "4.08.01.0881"
-      objTextFile.WriteLine("set DIRECTX_NAME=8.1")
+      cmdFile.WriteLine("set DIRECTX_NAME=8.1")
     Case "4.08.01.0810"
-      objTextFile.WriteLine("set DIRECTX_NAME=8.1")
+      cmdFile.WriteLine("set DIRECTX_NAME=8.1")
     Case "4.09.00.0900"
-      objTextFile.WriteLine("set DIRECTX_NAME=9.0")
+      cmdFile.WriteLine("set DIRECTX_NAME=9.0")
     Case "4.09.0000.0900"
-      objTextFile.WriteLine("set DIRECTX_NAME=9.0")
+      cmdFile.WriteLine("set DIRECTX_NAME=9.0")
     Case "4.09.00.0901"
-      objTextFile.WriteLine("set DIRECTX_NAME=9.0a")
+      cmdFile.WriteLine("set DIRECTX_NAME=9.0a")
     Case "4.09.0000.0901"
-      objTextFile.WriteLine("set DIRECTX_NAME=9.0a")
+      cmdFile.WriteLine("set DIRECTX_NAME=9.0a")
     Case "4.09.00.0902"
-      objTextFile.WriteLine("set DIRECTX_NAME=9.0b")
+      cmdFile.WriteLine("set DIRECTX_NAME=9.0b")
     Case "4.09.0000.0902"
-      objTextFile.WriteLine("set DIRECTX_NAME=9.0b")
+      cmdFile.WriteLine("set DIRECTX_NAME=9.0b")
     Case "4.09.00.0904"
-      objTextFile.WriteLine("set DIRECTX_NAME=9.0c")
+      cmdFile.WriteLine("set DIRECTX_NAME=9.0c")
     Case "4.09.0000.0904"
-      objTextFile.WriteLine("set DIRECTX_NAME=9.0c")
+      cmdFile.WriteLine("set DIRECTX_NAME=9.0c")
   End Select
 End Sub
 
@@ -435,6 +439,16 @@ End If
 
 ' Determine Microsoft Antimalware signatures' version
 WriteVersionToFile objCmdFile, "MSSEDEFS_VER", RegRead(wshShell, strRegKeyMSSEDefs & strRegValAVSVersion)
+
+' Determine Windows Defender installation state
+If RegExists(wshShell, strRegKeyWD) Then
+  objCmdFile.WriteLine("set WD_INSTALLED=1")
+Else
+  objCmdFile.WriteLine("set WD_INSTALLED=0")
+End If
+
+' Determine Microsoft Antispyware signatures' version
+WriteVersionToFile objCmdFile, "WDDEFS_VER", RegRead(wshShell, strRegKeyWDDefs & strRegValASSVersion)
 
 ' Determine Remote Desktop Connection (Terminal Services Client) version
 If objFileSystem.FileExists(strTSCFileName) Then

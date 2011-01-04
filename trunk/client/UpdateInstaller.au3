@@ -1,11 +1,11 @@
-; *** WSUS Offline Update 6.7.1 - Installer ***
+; *** WSUS Offline Update 6.7.2 - Installer ***
 ; ***      Author: T. Wittrock, Kiel        ***
 ; ***  Dialog scaling added by Th. Baisch   ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 
-Dim Const $caption                    = "WSUS Offline Update 6.7.1 - Installer"
+Dim Const $caption                    = "WSUS Offline Update 6.7.2 - Installer"
 
 ; Registry constants
 Dim Const $reg_key_wsh_hklm           = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings"
@@ -15,6 +15,7 @@ Dim Const $reg_key_dotnet35           = "HKEY_LOCAL_MACHINE\Software\Microsoft\N
 Dim Const $reg_key_dotnet4            = "HKEY_LOCAL_MACHINE\Software\Microsoft\NET Framework Setup\NDP\v4\Full"
 Dim Const $reg_key_powershell         = "HKEY_LOCAL_MACHINE\Software\Microsoft\PowerShell\1\PowerShellEngine"
 Dim Const $reg_key_msev2              = "HKEY_LOCAL_MACHINE\Software\Microsoft\Microsoft Security Client"
+Dim Const $reg_key_wd                 = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Defender"
 Dim Const $reg_key_fontdpi            = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontDPI"
 Dim Const $reg_key_windowmetrics      = "HKEY_CURRENT_USER\Control Panel\Desktop\WindowMetrics"
 Dim Const $reg_key_windowsupdate      = "HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsUpdate"
@@ -45,6 +46,7 @@ Dim Const $ini_value_dotnet35         = "instdotnet35"
 Dim Const $ini_value_dotnet4          = "instdotnet4"
 Dim Const $ini_value_powershell       = "instpsh"
 Dim Const $ini_value_msse             = "instmsse"
+Dim Const $ini_value_wd               = "instwd"
 
 Dim Const $ini_section_control        = "Control"
 Dim Const $ini_value_verify           = "verify"
@@ -71,7 +73,7 @@ Dim Const $path_rel_instdotnet35      = "\dotnet\dotnetfx35.exe"
 Dim Const $path_rel_instdotnet4       = "\dotnet\dotNetFx40_Full_x86_x64.exe"
 Dim Const $path_rel_msse              = "\msse\"
 
-Dim $maindlg, $scriptdir, $mapped, $inifilename, $backup, $converters, $ie7, $ie8, $wmp, $tsc, $dotnet35, $dotnet4, $powershell, $msse, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate 
+Dim $maindlg, $scriptdir, $mapped, $inifilename, $backup, $converters, $ie7, $ie8, $wmp, $tsc, $dotnet35, $dotnet4, $psh, $msse, $wd, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate 
 Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
 
 Func ShowGUIInGerman()
@@ -189,6 +191,13 @@ Dim $dummy
   Return (@error <= 0)
 EndFunc
 
+Func WDInstalled()
+Dim $dummy
+
+  $dummy = RegRead($reg_key_wd, $reg_val_default)
+  Return (@error <= 0)
+EndFunc
+
 Func HashFilesPresent($basepath)
   Return FileExists($basepath & $path_rel_hashes)
 EndFunc
@@ -223,7 +232,7 @@ Func CalcGUISize()
   If ($reg_val = "") Then
     $reg_val = $default_logpixels
   EndIf
-  $dlgheight = 265 * $reg_val / $default_logpixels
+  $dlgheight = 285 * $reg_val / $default_logpixels
   If ShowGUIInGerman() Then
     $txtwidth = 230 * $reg_val / $default_logpixels
   Else
@@ -272,7 +281,7 @@ EndIf
 ;  Installation group
 $txtxpos = $txtxoffset
 $txtypos = $txtyoffset + 1.5 * $txtheight
-GUICtrlCreateGroup("Installation", $txtxpos, $txtypos, $groupwidth, 6 * $txtheight)
+GUICtrlCreateGroup("Installation", $txtxpos, $txtypos, $groupwidth, 7 * $txtheight)
 
 ; Backup
 $txtxpos = 2 * $txtxoffset
@@ -430,13 +439,52 @@ Else
   EndIf
 EndIf
 
+; Install Microsoft Security Essentials
+$txtxpos = 2 * $txtxoffset
+$txtypos = $txtypos + $txtheight
+If ShowGUIInGerman() Then
+  $msse = GUICtrlCreateCheckbox("Microsoft Security Essentials installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+Else
+  $msse = GUICtrlCreateCheckbox("Install Microsoft Security Essentials", $txtxpos, $txtypos, $txtwidth, $txtheight)
+EndIf
+If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_2008R2") _
+  OR MSSEInstalled() OR (NOT MSSEPresent($scriptdir)) ) Then
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+  GUICtrlSetState(-1, $GUI_DISABLE)
+Else  
+  If IniRead($inifilename, $ini_section_installation, $ini_value_msse, $disabled) = $enabled Then
+    GUICtrlSetState(-1, $GUI_CHECKED)
+  Else
+    GUICtrlSetState(-1, $GUI_UNCHECKED)
+  EndIf
+EndIf
+
+; Install Windows Defender
+$txtxpos = $txtxoffset + $groupwidth / 2
+If ShowGUIInGerman() Then
+  $wd = GUICtrlCreateCheckbox("Windows Defender installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+Else
+  $wd = GUICtrlCreateCheckbox("Install Windows Defender", $txtxpos, $txtypos, $txtwidth, $txtheight)
+EndIf
+If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
+  OR WDInstalled() ) Then
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+  GUICtrlSetState(-1, $GUI_DISABLE)
+Else  
+  If IniRead($inifilename, $ini_section_installation, $ini_value_wd, $disabled) = $enabled Then
+    GUICtrlSetState(-1, $GUI_CHECKED)
+  Else
+    GUICtrlSetState(-1, $GUI_UNCHECKED)
+  EndIf
+EndIf
+
 ; Install Windows PowerShell 2.0
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
-  $powershell = GUICtrlCreateCheckbox("PowerShell 2.0 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $psh = GUICtrlCreateCheckbox("PowerShell 2.0 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $powershell = GUICtrlCreateCheckbox("Install PowerShell 2.0", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $psh = GUICtrlCreateCheckbox("Install PowerShell 2.0", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
   OR ( (DotNet35Version() <> $target_version_dotnet35) AND (BitAND(GUICtrlRead($dotnet35), $GUI_CHECKED) <> $GUI_CHECKED) ) _
@@ -445,25 +493,6 @@ If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else  
   If IniRead($inifilename, $ini_section_installation, $ini_value_powershell, $disabled) = $enabled Then
-    GUICtrlSetState(-1, $GUI_CHECKED)
-  Else
-    GUICtrlSetState(-1, $GUI_UNCHECKED)
-  EndIf
-EndIf
-
-; Install Microsoft Security Essentials
-$txtxpos = $txtxoffset + $groupwidth / 2
-If ShowGUIInGerman() Then
-  $msse = GUICtrlCreateCheckbox("Microsoft Security Essentials installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
-Else
-  $msse = GUICtrlCreateCheckbox("Install Microsoft Security Essentials", $txtxpos, $txtypos, $txtwidth, $txtheight)
-EndIf
-If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_2008R2") _
-  OR (MSSEInstalled()) OR (NOT MSSEPresent($scriptdir)) ) Then
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-  GUICtrlSetState(-1, $GUI_DISABLE)
-Else  
-  If IniRead($inifilename, $ini_section_installation, $ini_value_msse, $disabled) = $enabled Then
     GUICtrlSetState(-1, $GUI_CHECKED)
   Else
     GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -638,8 +667,8 @@ If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (@OSService
   GUICtrlSetState($dotnet35, $GUI_DISABLE)
   GUICtrlSetState($dotnet4, $GUI_UNCHECKED)
   GUICtrlSetState($dotnet4, $GUI_DISABLE)
-  GUICtrlSetState($powershell, $GUI_UNCHECKED)
-  GUICtrlSetState($powershell, $GUI_DISABLE)
+  GUICtrlSetState($psh, $GUI_UNCHECKED)
+  GUICtrlSetState($psh, $GUI_DISABLE)
   GUICtrlSetState($msse, $GUI_UNCHECKED)
   GUICtrlSetState($msse, $GUI_DISABLE)
   GUICtrlSetState($autoreboot, $GUI_CHECKED)
@@ -686,10 +715,10 @@ While 1
     Case $dotnet35             ; .NET check box toggled
       If ( (BitAND(GUICtrlRead($dotnet35), $GUI_CHECKED) = $GUI_CHECKED) _
        AND (@OSVersion <> "WIN_7") AND (@OSVersion <> "WIN_2008R2") AND (PowerShellVersion() <> $target_version_powershell) ) Then  
-        GUICtrlSetState($powershell, $GUI_ENABLE)
+        GUICtrlSetState($psh, $GUI_ENABLE)
       Else
-        GUICtrlSetState($powershell, $GUI_UNCHECKED)
-        GUICtrlSetState($powershell, $GUI_DISABLE)
+        GUICtrlSetState($psh, $GUI_UNCHECKED)
+        GUICtrlSetState($psh, $GUI_DISABLE)
       EndIf
 
     Case $msse                 ; Microsoft Security Essentials check box toggled
@@ -765,11 +794,14 @@ While 1
       If BitAND(GUICtrlRead($dotnet4), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instdotnet4"
       EndIf
-      If BitAND(GUICtrlRead($powershell), $GUI_CHECKED) = $GUI_CHECKED Then
-        $options = $options & " /instpsh"
-      EndIf
       If BitAND(GUICtrlRead($msse), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instmsse"
+      EndIf
+      If BitAND(GUICtrlRead($wd), $GUI_CHECKED) = $GUI_CHECKED Then
+        $options = $options & " /instwd"
+      EndIf
+      If BitAND(GUICtrlRead($psh), $GUI_CHECKED) = $GUI_CHECKED Then
+        $options = $options & " /instpsh"
       EndIf
       If BitAND(GUICtrlRead($verify), $GUI_CHECKED) = $GUI_CHECKED Then  
         $options = $options & " /verify"  

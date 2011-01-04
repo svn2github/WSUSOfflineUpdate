@@ -44,6 +44,7 @@ if "%2"=="" goto V1CreateFilter
 if /i "%2"=="/excludesp" set EXCLUDE_SP=1
 if /i "%2"=="/includedotnet" set INCLUDE_DOTNET=1
 if /i "%2"=="/includemsse" set INCLUDE_MSSE=1
+if /i "%2"=="/includewddefs" set INCLUDE_WDDEFS=1
 if /i "%2"=="/outputpath" (
   if %3~==~ (goto InvalidParams) else (set OUTPUT_PATH=%~fs3)
   shift /2
@@ -56,6 +57,7 @@ if "%3"=="" goto V2CreateFilter
 if /i "%3"=="/excludesp" set EXCLUDE_SP=1
 if /i "%3"=="/includedotnet" set INCLUDE_DOTNET=1
 if /i "%3"=="/includemsse" set INCLUDE_MSSE=1
+if /i "%3"=="/includewddefs" set INCLUDE_WDDEFS=1
 if /i "%3"=="/outputpath" (
   if %4~==~ (goto InvalidParams) else (set OUTPUT_PATH=%~fs4)
   shift /3
@@ -101,6 +103,9 @@ if "%INCLUDE_DOTNET%" NEQ "1" (
 )
 if "%INCLUDE_MSSE%" NEQ "1" (
   for /F %%i in (..\exclude\ExcludeList-msse.txt) do echo *%%i/*>>%ISO_FILTER%
+)
+if "%INCLUDE_WDDEFS%" NEQ "1" (
+  for /F %%i in (..\exclude\ExcludeList-wddefs.txt) do echo *%%i/*>>%ISO_FILTER%
 )
 goto :eof
 
@@ -169,8 +174,8 @@ exit /b 1
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %*
-echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| ofc} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/includedotnet] [/includemsse] [/outputpath ^<OutputPath^>]
-echo Usage2: %~n0 {all ^| all-x86 ^| all-x64 ^| wxp ^| w2k3 ^| w2k3-x64 ^| w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| ofc ^| enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/includedotnet] [/includemsse] [/outputpath ^<OutputPath^>]
+echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| ofc} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/includedotnet] [/includemsse] [/includewddefs] [/outputpath ^<OutputPath^>]
+echo Usage2: %~n0 {all ^| all-x86 ^| all-x64 ^| wxp ^| w2k3 ^| w2k3-x64 ^| w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| ofc ^| enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/includedotnet] [/includemsse] [/includewddefs] [/outputpath ^<OutputPath^>]
 echo %DATE% %TIME% - Error: Invalid parameter: %* >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error

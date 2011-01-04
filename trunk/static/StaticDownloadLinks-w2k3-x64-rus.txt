@@ -1,1 +1,2 @@
 http://download.microsoft.com/download/3/6/E/36E79530-6378-4BCD-AD6D-DF4BA55545EE/WindowsServer2003-KB968930-x64-RUS.exe
+http://download.microsoft.com/download/f/7/c/f7ca711d-dd70-4191-b4fc-fc429db1c477/WindowsDefenderX64.msi

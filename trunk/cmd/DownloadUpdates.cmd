@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7.1+ (r191)
+set WSUSOFFLINE_VERSION=6.7.1+ (r192)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -136,13 +136,14 @@ goto EvalParams
 
 :EvalParams
 if "%3"=="" goto NoMoreParams
-for %%i in (/excludesp /excludestatics /includedotnet /includemsse /nocleanup /verify /exitonerror /skipmkisofs /proxy /wsus /wsusbyproxy) do (
+for %%i in (/excludesp /excludestatics /includedotnet /includemsse /includewddefs /nocleanup /verify /exitonerror /skipmkisofs /proxy /wsus /wsusbyproxy) do (
   if /i "%3"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected >>%DOWNLOAD_LOGFILE%
 )
 if /i "%3"=="/excludesp" set EXCLUDE_SP=1
 if /i "%3"=="/excludestatics" set EXCLUDE_STATICS=1
 if /i "%3"=="/includedotnet" set INCLUDE_DOTNET=1
 if /i "%3"=="/includemsse" set INCLUDE_MSSE=1
+if /i "%3"=="/includewddefs" set INCLUDE_WDDEFS=1
 if /i "%3"=="/nocleanup" set CLEANUP_DOWNLOADS=0
 if /i "%3"=="/verify" set VERIFY_DOWNLOADS=1
 if /i "%3"=="/exitonerror" set EXIT_ON_ERROR=1
@@ -191,7 +192,6 @@ rem *** Obsolete internal stuff ***
 if exist ..\doc\faq.txt del ..\doc\faq.txt 
 if exist ..\static\StaticDownloadLinks-mkisofs.txt del ..\static\StaticDownloadLinks-mkisofs.txt
 if exist ..\static\StaticDownloadLink-unzip.txt del ..\static\StaticDownloadLink-unzip.txt
-if exist DetermineRegVersion.vbs del DetermineRegVersion.vbs
 if exist DetermineAutoDaylightTimeSet.vbs del DetermineAutoDaylightTimeSet.vbs
 if exist ..\client\cmd\Reboot.vbs del ..\client\cmd\Reboot.vbs
 if exist ..\client\msi\nul rd /S /Q ..\client\msi
@@ -432,6 +432,17 @@ echo Downloading/validating installation files for .NET Framework 3.5 SP1 and 4.
 if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded/validated installation files for .NET Framework 3.5 SP1 and 4 >>%DOWNLOAD_LOGFILE%
 if "%VERIFY_DOWNLOADS%"=="1" (
+  rem *** Verifying digital file signatures for .NET Framework installation files ***
+  if not exist ..\bin\sigcheck.exe goto NoSigCheck
+  echo Verifying digital file signatures for .NET Framework installation files...
+  ..\bin\sigcheck.exe /accepteula -q -u -v ..\client\dotnet >"%TEMP%\sigcheck-dotnet.txt"
+  for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-dotnet.txt") do (
+    del %%i 
+    echo Warning: Deleted unsigned file %%i.
+    echo %DATE% %TIME% - Warning: Deleted unsigned file %%i >>%DOWNLOAD_LOGFILE%
+  ) 
+  if exist "%TEMP%\sigcheck-dotnet.txt" del "%TEMP%\sigcheck-dotnet.txt"
+  echo %DATE% %TIME% - Info: Verified digital file signatures for .NET Framework installation files >>%DOWNLOAD_LOGFILE%
   if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
   echo Creating integrity database for .NET Framework installation files...
   if not exist ..\client\md\nul md ..\client\md
@@ -502,6 +513,17 @@ for /F "tokens=1,2 delims=," %%i in (..\static\StaticDownloadLinks-msse-%TARGET_
 )
 echo %DATE% %TIME% - Info: Downloaded/validated Microsoft Security Essentials installation files >>%DOWNLOAD_LOGFILE%
 if "%VERIFY_DOWNLOADS%"=="1" (
+  rem *** Verifying digital file signatures for Microsoft Security Essentials installation files ***
+  if not exist ..\bin\sigcheck.exe goto NoSigCheck
+  echo Verifying digital file signatures for Microsoft Security Essentials installation files...
+  ..\bin\sigcheck.exe /accepteula -q -s -u -v ..\client\msse >"%TEMP%\sigcheck-msse.txt"
+  for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-msse.txt") do (
+    del %%i 
+    echo Warning: Deleted unsigned file %%i.
+    echo %DATE% %TIME% - Warning: Deleted unsigned file %%i >>%DOWNLOAD_LOGFILE%
+  ) 
+  if exist "%TEMP%\sigcheck-msse.txt" del "%TEMP%\sigcheck-msse.txt"
+  echo %DATE% %TIME% - Info: Verified digital file signatures for Microsoft Security Essentials installation files >>%DOWNLOAD_LOGFILE%
   if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
   echo Creating integrity database for Microsoft Security Essentials installation files...
   if not exist ..\client\md\nul md ..\client\md
@@ -522,6 +544,63 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   )
 )
 :SkipMSSE
+
+rem *** Download Windows Defender definition files ***
+if "%INCLUDE_WDDEFS%" NEQ "1" goto SkipWDDefs
+if "%VERIFY_DOWNLOADS%" NEQ "1" goto DownloadWDDefs
+if not exist ..\client\wddefs\nul goto DownloadWDDefs
+if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
+if exist ..\client\md\hashes-wddefs.txt (
+  echo Verifying integrity of Windows Defender definition files...
+  pushd ..\client\md
+  ..\bin\hashdeep.exe -a -l -vv -k hashes-wddefs.txt -r ..\wddefs
+  if errorlevel 1 (
+    popd
+    goto IntegrityError
+  )
+  popd
+  echo %DATE% %TIME% - Info: Verified integrity of Windows Defender definition files >>%DOWNLOAD_LOGFILE%
+) else (
+  echo Warning: Integrity database ..\client\md\hashes-wddefs.txt not found.
+  echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-wddefs.txt not found >>%DOWNLOAD_LOGFILE%
+)
+:DownloadWDDefs
+echo Downloading/validating Windows Defender definition files...
+%WGET_PATH% -N -i ..\static\StaticDownloadLink-wddefs-%TARGET_ARCH%-glb.txt -P ..\client\wddefs\%TARGET_ARCH%-glb
+if errorlevel 1 goto DownloadError
+echo %DATE% %TIME% - Info: Downloaded/validated Windows Defender definition files >>%DOWNLOAD_LOGFILE%
+if "%VERIFY_DOWNLOADS%"=="1" (
+  rem *** Verifying digital file signatures for Windows Defender definition files ***
+  if not exist ..\bin\sigcheck.exe goto NoSigCheck
+  echo Verifying digital file signatures for Windows Defender definition files...
+  ..\bin\sigcheck.exe /accepteula -q -s -u -v ..\client\wddefs >"%TEMP%\sigcheck-wddefs.txt"
+  for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-wddefs.txt") do (
+    del %%i 
+    echo Warning: Deleted unsigned file %%i.
+    echo %DATE% %TIME% - Warning: Deleted unsigned file %%i >>%DOWNLOAD_LOGFILE%
+  ) 
+  if exist "%TEMP%\sigcheck-wddefs.txt" del "%TEMP%\sigcheck-wddefs.txt"
+  echo %DATE% %TIME% - Info: Verified digital file signatures for Windows Defender definition files >>%DOWNLOAD_LOGFILE%
+  if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
+  echo Creating integrity database for Windows Defender definition files...
+  if not exist ..\client\md\nul md ..\client\md
+  pushd ..\client\md
+  ..\bin\hashdeep.exe -c md5,sha256 -l -r ..\wddefs >hashes-wddefs.txt
+  if errorlevel 1 (
+    popd
+    echo Warning: Error creating integrity database ..\client\md\hashes-wddefs.txt.
+    echo %DATE% %TIME% - Warning: Error creating integrity database ..\client\md\hashes-wddefs.txt >>%DOWNLOAD_LOGFILE%
+  ) else (
+    popd
+    echo %DATE% %TIME% - Info: Created integrity database for Windows Defender definition files >>%DOWNLOAD_LOGFILE%
+  )
+) else (
+  if exist ..\client\md\hashes-wddefs.txt (
+    del ..\client\md\hashes-wddefs.txt 
+    echo %DATE% %TIME% - Info: Deleted integrity database for Windows Defender definition files >>%DOWNLOAD_LOGFILE%
+  )
+)
+:SkipWDDefs
 
 rem *** Download the platform specific patches ***
 for %%i in (wxp w2k3) do (
@@ -929,8 +1008,8 @@ exit /b 1
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %*
-echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| oxp ^| o2k3 ^| o2k7} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusbyproxy]
-echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| ofc} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusbyproxy]
+echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| oxp ^| o2k3 ^| o2k7} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusbyproxy]
+echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| ofc} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusbyproxy]
 echo %DATE% %TIME% - Error: Invalid parameter: %* >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error

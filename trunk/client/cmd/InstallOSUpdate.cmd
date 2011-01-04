@@ -79,7 +79,8 @@ for /F "tokens=2,3 delims=\" %%i in ("%1") do (
 :SkipVerification
 echo %1 | %SystemRoot%\system32\find.exe /I ".exe" >nul 2>&1
 if not errorlevel 1 goto InstExe
-
+echo %1 | %SystemRoot%\system32\find.exe /I ".msi" >nul 2>&1
+if not errorlevel 1 goto InstMsi
 if /i "%OS_NAME%" EQU "w60" goto FindCabMsu
 if /i "%OS_NAME%" EQU "w61" goto FindCabMsu
 goto UnsupType
@@ -114,6 +115,16 @@ if "%INSTALL_SWITCHES%"=="" (
 echo Installing %1...
 %1 %INSTALL_SWITCHES%
 set ERR_LEVEL=%errorlevel%
+if "%IGNORE_ERRORS%"=="1" goto InstSuccess
+for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
+goto InstFailure
+
+:InstMsi
+echo Installing %1...
+pushd %~dp1
+%SystemRoot%\system32\msiexec.exe /i %~nx1 /qn /norestart
+set ERR_LEVEL=%errorlevel%
+popd
 if "%IGNORE_ERRORS%"=="1" goto InstSuccess
 for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
 goto InstFailure
