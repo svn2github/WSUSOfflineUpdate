@@ -40,6 +40,7 @@ Dim Const $ini_value_backup           = "backup"
 Dim Const $ini_value_converters       = "instofccnvs"
 Dim Const $ini_value_ie7              = "instie7"
 Dim Const $ini_value_ie8              = "instie8"
+Dim Const $ini_value_ie9              = "instie9"
 Dim Const $ini_value_wmp              = "updatewmp"
 Dim Const $ini_value_tsc              = "updatetsc"
 Dim Const $ini_value_dotnet35         = "instdotnet35"
@@ -73,7 +74,7 @@ Dim Const $path_rel_instdotnet35      = "\dotnet\dotnetfx35.exe"
 Dim Const $path_rel_instdotnet4       = "\dotnet\dotNetFx40_Full_x86_x64.exe"
 Dim Const $path_rel_msse              = "\msse\"
 
-Dim $maindlg, $scriptdir, $mapped, $inifilename, $backup, $converters, $ie7, $ie8, $wmp, $tsc, $dotnet35, $dotnet4, $psh, $msse, $wd, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate 
+Dim $maindlg, $scriptdir, $mapped, $inifilename, $backup, $converters, $ie7, $ie8, $ie9, $wmp, $tsc, $dotnet35, $dotnet4, $psh, $msse, $wd, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate 
 Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
 
 Func ShowGUIInGerman()
@@ -302,39 +303,19 @@ Else
   EndIf
 EndIf
 
-; Install file format converters for Office
-$txtxpos = $txtxoffset + $groupwidth / 2
-If ShowGUIInGerman() Then
-  $converters = GUICtrlCreateCheckbox("Office-Dateiformat-Konverter installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
-Else
-  $converters = GUICtrlCreateCheckbox("Install Office file format converters", $txtxpos, $txtypos, $txtwidth, $txtheight)
-EndIf
-If NOT ConvertersInstPresent($scriptdir) Then
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-  GUICtrlSetState(-1, $GUI_DISABLE)
-Else  
-  If IniRead($inifilename, $ini_section_installation, $ini_value_converters, $disabled) = $enabled Then
-    GUICtrlSetState(-1, $GUI_CHECKED)
-  Else
-    GUICtrlSetState(-1, $GUI_UNCHECKED)
-  EndIf
-EndIf
-
 ; Install IE7
-$txtxpos = 2 * $txtxoffset
-$txtypos = $txtypos + $txtheight
+$txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
   $ie7 = GUICtrlCreateCheckbox("Internet Explorer 7 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
   $ie7 = GUICtrlCreateCheckbox("Install Internet Explorer 7", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") _
-  OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
-  OR (IEVersion() = "7") OR (IEVersion() = "8") ) Then
+If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
+  OR (IEVersion() = "7") OR (IEVersion() = "8") OR (IEVersion() = "9") ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else  
-  If IniRead($inifilename, $ini_section_installation, $ini_value_ie7, $disabled) = $enabled Then
+  If (IniRead($inifilename, $ini_section_installation, $ini_value_ie7, $disabled) = $enabled) Then
     GUICtrlSetState(-1, $GUI_CHECKED)
   Else
     GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -342,23 +323,49 @@ Else
 EndIf
 
 ; Install IE8
-$txtxpos = $txtxoffset + $groupwidth / 2
+$txtxpos = 2 * $txtxoffset
+$txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
   $ie8 = GUICtrlCreateCheckbox("Internet Explorer 8 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
   $ie8 = GUICtrlCreateCheckbox("Install Internet Explorer 8", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (IEVersion() = "8") ) Then  
+If ( (@OSVersion = "WIN_2000") OR (IEVersion() = "8") OR (IEVersion() = "9") ) Then  
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else
-  If ( (IniRead($inifilename, $ini_section_installation, $ini_value_ie8, $enabled) = $enabled) _
-   AND (BitAND(GUICtrlRead($ie7), $GUI_CHECKED) <> $GUI_CHECKED) ) Then  
+  If (IniRead($inifilename, $ini_section_installation, $ini_value_ie8, $enabled) = $enabled) Then
     GUICtrlSetState(-1, $GUI_CHECKED)  
+    GUICtrlSetState($ie7, $GUI_UNCHECKED)  
     GUICtrlSetState($ie7, $GUI_DISABLE)  
   Else  
     GUICtrlSetState(-1, $GUI_UNCHECKED)  
     If BitAND(GUICtrlRead($ie7), $GUI_CHECKED) = $GUI_CHECKED Then  
+      GUICtrlSetState(-1, $GUI_DISABLE)  
+    EndIf  
+  EndIf  
+EndIf
+
+; Install IE9
+$txtxpos = $txtxoffset + $groupwidth / 2
+If ShowGUIInGerman() Then
+  $ie9 = GUICtrlCreateCheckbox("Internet Explorer 9 Beta installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+Else
+  $ie9 = GUICtrlCreateCheckbox("Install Internet Explorer 9 Beta", $txtxpos, $txtypos, $txtwidth, $txtheight)
+EndIf
+If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (IEVersion() = "9") ) Then  
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+  GUICtrlSetState(-1, $GUI_DISABLE)
+Else
+  If (IniRead($inifilename, $ini_section_installation, $ini_value_ie9, $disabled) = $enabled) Then
+    GUICtrlSetState(-1, $GUI_CHECKED)  
+    GUICtrlSetState($ie7, $GUI_UNCHECKED)  
+    GUICtrlSetState($ie7, $GUI_DISABLE)  
+    GUICtrlSetState($ie8, $GUI_UNCHECKED)  
+    GUICtrlSetState($ie8, $GUI_DISABLE)  
+  Else  
+    GUICtrlSetState(-1, $GUI_UNCHECKED)  
+    If ( (BitAND(GUICtrlRead($ie7), $GUI_CHECKED) = $GUI_CHECKED) OR (BitAND(GUICtrlRead($ie8), $GUI_CHECKED) = $GUI_CHECKED) ) Then  
       GUICtrlSetState(-1, $GUI_DISABLE)  
     EndIf  
   EndIf  
@@ -493,6 +500,24 @@ If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else  
   If IniRead($inifilename, $ini_section_installation, $ini_value_powershell, $disabled) = $enabled Then
+    GUICtrlSetState(-1, $GUI_CHECKED)
+  Else
+    GUICtrlSetState(-1, $GUI_UNCHECKED)
+  EndIf
+EndIf
+
+; Install file format converters for Office
+$txtxpos = $txtxoffset + $groupwidth / 2
+If ShowGUIInGerman() Then
+  $converters = GUICtrlCreateCheckbox("Office-Dateiformat-Konverter installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+Else
+  $converters = GUICtrlCreateCheckbox("Install Office file format converters", $txtxpos, $txtypos, $txtwidth, $txtheight)
+EndIf
+If NOT ConvertersInstPresent($scriptdir) Then
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+  GUICtrlSetState(-1, $GUI_DISABLE)
+Else  
+  If IniRead($inifilename, $ini_section_installation, $ini_value_converters, $disabled) = $enabled Then
     GUICtrlSetState(-1, $GUI_CHECKED)
   Else
     GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -659,6 +684,8 @@ If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (@OSService
   GUICtrlSetState($converters, $GUI_DISABLE)
   GUICtrlSetState($ie8, $GUI_UNCHECKED)
   GUICtrlSetState($ie8, $GUI_DISABLE)
+  GUICtrlSetState($ie9, $GUI_UNCHECKED)
+  GUICtrlSetState($ie9, $GUI_DISABLE)
   GUICtrlSetState($wmp, $GUI_UNCHECKED)
   GUICtrlSetState($wmp, $GUI_DISABLE)
   GUICtrlSetState($tsc, $GUI_UNCHECKED)
@@ -693,23 +720,68 @@ While 1
       ExitLoop
 
     Case $ie7                ; IE7 check box toggled  
-      If ( (BitAND(GUICtrlRead($ie7), $GUI_CHECKED) = $GUI_CHECKED) _  
-        OR (@OSVersion = "WIN_2000") _  
-        OR (IEVersion() = "8") ) Then    
+      If (BitAND(GUICtrlRead($ie7), $GUI_CHECKED) = $GUI_CHECKED) Then    
         GUICtrlSetState($ie8, $GUI_UNCHECKED)  
         GUICtrlSetState($ie8, $GUI_DISABLE)  
-      Else  
-        GUICtrlSetState($ie8, $GUI_ENABLE)  
+        GUICtrlSetState($ie9, $GUI_UNCHECKED)  
+        GUICtrlSetState($ie9, $GUI_DISABLE)  
+      Else
+        If ( (@OSVersion = "WIN_2000") OR (IEVersion() = "8") OR (IEVersion() = "9") ) Then  
+          GUICtrlSetState($ie8, $GUI_UNCHECKED)  
+          GUICtrlSetState($ie8, $GUI_DISABLE)  
+        Else
+          GUICtrlSetState($ie8, $GUI_ENABLE)  
+        EndIf  
+        If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (IEVersion() = "9") ) Then  
+          GUICtrlSetState($ie9, $GUI_UNCHECKED)  
+          GUICtrlSetState($ie9, $GUI_DISABLE)  
+        Else
+          GUICtrlSetState($ie9, $GUI_ENABLE)  
+        EndIf  
       EndIf  
      
     Case $ie8                ; IE8 check box toggled  
-      If ( (BitAND(GUICtrlRead($ie8), $GUI_CHECKED) = $GUI_CHECKED) _  
-        OR (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _  
-        OR (IEVersion() = "7") OR (IEVersion() = "8") ) Then    
+      If (BitAND(GUICtrlRead($ie8), $GUI_CHECKED) = $GUI_CHECKED) Then
         GUICtrlSetState($ie7, $GUI_UNCHECKED)  
         GUICtrlSetState($ie7, $GUI_DISABLE)  
+        GUICtrlSetState($ie9, $GUI_UNCHECKED)  
+        GUICtrlSetState($ie9, $GUI_DISABLE)  
       Else  
-        GUICtrlSetState($ie7, $GUI_ENABLE)  
+        If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
+          OR (IEVersion() = "7") OR (IEVersion() = "8") OR (IEVersion() = "9") ) Then
+          GUICtrlSetState($ie7, $GUI_UNCHECKED)  
+          GUICtrlSetState($ie7, $GUI_DISABLE)  
+        Else
+          GUICtrlSetState($ie7, $GUI_ENABLE)  
+        EndIf  
+        If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (IEVersion() = "9") ) Then  
+          GUICtrlSetState($ie9, $GUI_UNCHECKED)  
+          GUICtrlSetState($ie9, $GUI_DISABLE)  
+        Else
+          GUICtrlSetState($ie9, $GUI_ENABLE)  
+        EndIf  
+      EndIf  
+
+    Case $ie9                ; IE9 check box toggled  
+      If (BitAND(GUICtrlRead($ie9), $GUI_CHECKED) = $GUI_CHECKED) Then  
+        GUICtrlSetState($ie7, $GUI_UNCHECKED)  
+        GUICtrlSetState($ie7, $GUI_DISABLE)  
+        GUICtrlSetState($ie8, $GUI_UNCHECKED)  
+        GUICtrlSetState($ie8, $GUI_DISABLE)  
+      Else  
+        If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
+          OR (IEVersion() = "7") OR (IEVersion() = "8") OR (IEVersion() = "9") ) Then
+          GUICtrlSetState($ie7, $GUI_UNCHECKED)  
+          GUICtrlSetState($ie7, $GUI_DISABLE)  
+        Else
+          GUICtrlSetState($ie7, $GUI_ENABLE)  
+        EndIf  
+        If ( (@OSVersion = "WIN_2000") OR (IEVersion() = "8") OR (IEVersion() = "9") ) Then  
+          GUICtrlSetState($ie8, $GUI_UNCHECKED)  
+          GUICtrlSetState($ie8, $GUI_DISABLE)  
+        Else
+          GUICtrlSetState($ie8, $GUI_ENABLE)  
+        EndIf  
       EndIf  
 
     Case $dotnet35             ; .NET check box toggled
@@ -773,14 +845,14 @@ While 1
       If BitAND(GUICtrlRead($backup), $GUI_CHECKED) <> $GUI_CHECKED Then
         $options = $options & " /nobackup"
       EndIf
-      If BitAND(GUICtrlRead($converters), $GUI_CHECKED) = $GUI_CHECKED Then
-        $options = $options & " /instofccnvs"
-      EndIf
       If BitAND(GUICtrlRead($ie7), $GUI_CHECKED) = $GUI_CHECKED Then  
         $options = $options & " /instie7"  
       EndIf  
       If BitAND(GUICtrlRead($ie8), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instie8"
+      EndIf
+      If BitAND(GUICtrlRead($ie9), $GUI_CHECKED) = $GUI_CHECKED Then
+        $options = $options & " /instie9"
       EndIf
       If BitAND(GUICtrlRead($wmp), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /updatewmp"
@@ -802,6 +874,9 @@ While 1
       EndIf
       If BitAND(GUICtrlRead($psh), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instpsh"
+      EndIf
+      If BitAND(GUICtrlRead($converters), $GUI_CHECKED) = $GUI_CHECKED Then
+        $options = $options & " /instofccnvs"
       EndIf
       If BitAND(GUICtrlRead($verify), $GUI_CHECKED) = $GUI_CHECKED Then  
         $options = $options & " /verify"  

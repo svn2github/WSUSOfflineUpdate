@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7.1+ (r192)
+set WSUSOFFLINE_VERSION=6.7.1+ (r193)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -20,13 +20,14 @@ echo %DATE% %TIME% - Info: Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/nobackup /verify /instie7 /instie8 /updatewmp /updatetsc /instdotnet35 /instdotnet4 /instmsse /instwd /instpsh /instofccnvs /autoreboot /shutdown /showlog /all /excludestatics) do (
+for %%i in (/nobackup /verify /instie7 /instie8 /instie9 /updatewmp /updatetsc /instdotnet35 /instdotnet4 /instmsse /instwd /instpsh /instofccnvs /autoreboot /shutdown /showlog /all /excludestatics) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected >>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/nobackup" set BACKUP_MODE=/nobackup
 if /i "%1"=="/verify" set VERIFY_MODE=/verify
 if /i "%1"=="/instie7" set INSTALL_IE=/instie7
 if /i "%1"=="/instie8" set INSTALL_IE=/instie8
+if /i "%1"=="/instie9" set INSTALL_IE=/instie9
 if /i "%1"=="/updatewmp" set UPDATE_WMP=/updatewmp
 if /i "%1"=="/updatetsc" set UPDATE_TSC=/updatetsc
 if /i "%1"=="/instdotnet35" set INSTALL_DOTNET35=/instdotnet35
@@ -451,9 +452,17 @@ goto IEInstalled
 
 :IEw60
 if /i "%OS_ARCH%"=="x64" (
-  set IE_FILENAME=..\%OS_NAME%-%OS_ARCH%\glb\IE8-WindowsVista-%OS_ARCH%-%OS_LANG%*.exe
+  if "%INSTALL_IE%"=="/instie9" (
+    set IE_FILENAME=..\%OS_NAME%-%OS_ARCH%\glb\IE9-WindowsVista-%OS_ARCH%-%OS_LANG%*.exe
+  ) else (
+    set IE_FILENAME=..\%OS_NAME%-%OS_ARCH%\glb\IE8-WindowsVista-%OS_ARCH%-%OS_LANG%*.exe
+  )
 ) else (
-  set IE_FILENAME=..\%OS_NAME%\glb\IE8-WindowsVista-%OS_ARCH%-%OS_LANG%*.exe
+  if "%INSTALL_IE%"=="/instie9" (
+    set IE_FILENAME=..\%OS_NAME%\glb\IE9-WindowsVista-%OS_ARCH%-%OS_LANG%*.exe
+  ) else (
+    set IE_FILENAME=..\%OS_NAME%\glb\IE8-WindowsVista-%OS_ARCH%-%OS_LANG%*.exe
+  )
 )
 dir /B %IE_FILENAME% >nul 2>&1
 if errorlevel 1 (
@@ -461,18 +470,48 @@ if errorlevel 1 (
   echo %DATE% %TIME% - Warning: File %IE_FILENAME% not found >>%UPDATE_LOGFILE%
   goto SkipIEInst
 )
-echo Installing Internet Explorer 8...
+if "%INSTALL_IE%"=="/instie9" (echo Installing Internet Explorer 9...) else (echo Installing Internet Explorer 8...)
 for /F %%i in ('dir /B %IE_FILENAME%') do (
   if /i "%OS_ARCH%"=="x64" (
-    call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
+    if "%INSTALL_IE%"=="/instie9" (
+      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /no-default /closeprograms /norestart
+    ) else (
+      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
+    )
   ) else (
-    call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
+    if "%INSTALL_IE%"=="/instie9" (
+      call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /no-default /closeprograms /norestart
+    ) else (
+      call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
+    )
   )
   if not errorlevel 1 set RECALL_REQUIRED=1
 )
 goto IEInstalled 
 
 :IEw61
+if /i "%OS_ARCH%"=="x64" (
+  set IE_FILENAME=..\%OS_NAME%-%OS_ARCH%\glb\IE9-Windows7-%OS_ARCH%-%OS_LANG%*.exe
+) else (
+  set IE_FILENAME=..\%OS_NAME%\glb\IE9-Windows7-%OS_ARCH%-%OS_LANG%*.exe
+)
+dir /B %IE_FILENAME% >nul 2>&1
+if errorlevel 1 (
+  echo Warning: File %IE_FILENAME% not found. 
+  echo %DATE% %TIME% - Warning: File %IE_FILENAME% not found >>%UPDATE_LOGFILE%
+  goto SkipIEInst
+)
+echo Installing Internet Explorer 9...
+for /F %%i in ('dir /B %IE_FILENAME%') do (
+  if /i "%OS_ARCH%"=="x64" (
+    call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /no-default /closeprograms /norestart
+  ) else (
+    call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /no-default /closeprograms /norestart
+  )
+  if not errorlevel 1 set REBOOT_REQUIRED=1
+)
+goto IEInstalled 
+
 goto SkipIEInst
 
 :IEInstalled
@@ -766,16 +805,16 @@ goto CNV%OFC_NAME%
 :CNVo2k3
 echo Checking installation state of Office Converter/Compatibility Packs...
 if "%OFC_CONV_PACK%" NEQ "1" (
-  if exist ..\ofc\glb\OCONVPCK.EXE (
+  if exist ..\ofc\glb\oconvpck.exe (
     echo Installing Office Converter Pack...
-    echo Installing ..\ofc\glb\OCONVPCK.EXE...
-    ..\ofc\glb\OCONVPCK.EXE /T:"%TEMP%\ocnvpack" /C /Q
+    echo Installing ..\ofc\glb\oconvpck.exe...
+    ..\ofc\glb\oconvpck.exe /T:"%TEMP%\ocnvpack" /C /Q
     call InstallOSUpdate.cmd "%TEMP%\ocnvpack\ocp11.msi"
     call SafeRmDir.cmd "%TEMP%\ocnvpack"
-    echo %DATE% %TIME% - Info: Installed ..\ofc\glb\OCONVPCK.EXE >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Info: Installed ..\ofc\glb\oconvpck.exe >>%UPDATE_LOGFILE%
   ) else (
-    echo Warning: File ..\ofc\glb\OCONVPCK.EXE not found. 
-    echo %DATE% %TIME% - Warning: File ..\ofc\glb\OCONVPCK.EXE not found >>%UPDATE_LOGFILE%
+    echo Warning: File ..\ofc\glb\oconvpck.exe not found. 
+    echo %DATE% %TIME% - Warning: File ..\ofc\glb\oconvpck.exe not found >>%UPDATE_LOGFILE%
   )
 )
 if "%OFC_COMP_PACK%" NEQ "1" (
