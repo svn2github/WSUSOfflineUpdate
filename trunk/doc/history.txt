@@ -477,11 +477,13 @@ Version 6.7.1 -- 22.12.10
 - Fix: DownloadUpdates.sh script contained a reference to the obsolete filter ExtractDownloadLinks-win-x86-glb.xsl (Thanks to "NoKurth")
 - Fix: DownloadUpdates.sh script contained a duplicate menu id (Thanks to Thomas Rieck)
 --------------------------------------------------------------------------------
-Version ?.? -- ??.??.11
+Version 6.7.2 -- 06.01.11
 - Optional installation of Internet Explorer 9 Beta on Windows Vista, 7 and Server 2008(R2) (x86/x64) systems
 - Optional download and automatic update of Windows Defender definition files
 - Optional installation of Windows Defender on Windows XP and Server 2003 (x86/x64) systems
 - CreateISOImage.cmd and CopyToTarget.cmd scripts will now log to ..\log\download.log file (Thanks to "Matjes")
 - Optional verification of digital file signatures will now include .NET, MSSE and Windows Defender packages
 - HashDeep utility updated to version 3.7
+- Fix: Microsoft removed the Office File Converter Pack (oconvpck.exe) from their servers (Thanks to "-Iwan-", "harry" and "Denniss")
 - Fix: CreateISOImage.cmd script did not properly signal errors (Thanks to "AlBundy")
+--------------------------------------------------------------------------------

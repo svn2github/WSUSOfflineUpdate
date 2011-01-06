@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7.1+ (r193)
+set WSUSOFFLINE_VERSION=6.7.2
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -805,16 +805,19 @@ goto CNV%OFC_NAME%
 :CNVo2k3
 echo Checking installation state of Office Converter/Compatibility Packs...
 if "%OFC_CONV_PACK%" NEQ "1" (
-  if exist ..\ofc\glb\oconvpck.exe (
+  if exist ..\ofc\glb\ork.exe (
     echo Installing Office Converter Pack...
-    echo Installing ..\ofc\glb\oconvpck.exe...
-    ..\ofc\glb\oconvpck.exe /T:"%TEMP%\ocnvpack" /C /Q
-    call InstallOSUpdate.cmd "%TEMP%\ocnvpack\ocp11.msi"
-    call SafeRmDir.cmd "%TEMP%\ocnvpack"
-    echo %DATE% %TIME% - Info: Installed ..\ofc\glb\oconvpck.exe >>%UPDATE_LOGFILE%
+    ..\ofc\glb\ork.exe /T:"%TEMP%\ork" /C /Q
+    %SystemRoot%\system32\expand.exe "%TEMP%\ork\ORK.CAB" -F:OCONVPCK.EXE "%TEMP%" >nul
+    call SafeRmDir.cmd "%TEMP%\ork"
+    "%TEMP%\OCONVPCK.EXE" /T:"%TEMP%\OCONVPCK" /C /Q
+    del "%TEMP%\OCONVPCK.EXE" 
+    call InstallOSUpdate.cmd "%TEMP%\OCONVPCK\ocp11.msi"
+    call SafeRmDir.cmd "%TEMP%\OCONVPCK"
+    echo %DATE% %TIME% - Info: Installed Office Converter Pack >>%UPDATE_LOGFILE%
   ) else (
-    echo Warning: File ..\ofc\glb\oconvpck.exe not found. 
-    echo %DATE% %TIME% - Warning: File ..\ofc\glb\oconvpck.exe not found >>%UPDATE_LOGFILE%
+    echo Warning: File ..\ofc\glb\ork.exe not found. 
+    echo %DATE% %TIME% - Warning: File ..\ofc\glb\ork.exe not found >>%UPDATE_LOGFILE%
   )
 )
 if "%OFC_COMP_PACK%" NEQ "1" (

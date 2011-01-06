@@ -12,7 +12,6 @@ if errorlevel 1 goto NoTempDir
 popd
 if not exist "%ProgramFiles%\7-Zip\7z.exe" goto No7Zip
 
-set TARGET_DIR="%TEMP%\wsusoffline"
 if exist "%TEMP%\wsusoffline" rd /S /Q "%TEMP%\wsusoffline" 
 md "%TEMP%\wsusoffline" 
 call PrepareReleaseTree.cmd "%TEMP%\wsusoffline"
