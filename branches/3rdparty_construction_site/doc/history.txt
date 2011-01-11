@@ -489,3 +489,5 @@ Version 6.7.2 -- 06.01.11
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.11
 - Self update will now check integrity of downloaded release archive before updating
+- Fix: Internet Explorer 9 Beta offline installation missed prerequisites according to http://support.microsoft.com/kb/2399238 (Thanks to "boco")
+- Fix: DownloadUpdates.sh script contained invalid references to StaticDownloadLink-msse-*.txt (Thanks to "Andrew")

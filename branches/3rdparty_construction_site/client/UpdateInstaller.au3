@@ -812,7 +812,7 @@ While 1
 
     Case $autoreboot         ; Automatic reboot check box toggled
       If ( (BitAND(GUICtrlRead($autoreboot), $GUI_CHECKED) = $GUI_CHECKED) _
-       AND ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) ) Then
+       AND ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) ) Then
         If ShowGUIInGerman() Then
           If MsgBox(0x2134, "Warnung", "Die Option 'Automatisch neu starten und fortsetzen'" _
                                & @LF & "deaktiviert temporär die Benutzerkontensteuerung (UAC)." _
