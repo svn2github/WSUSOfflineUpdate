@@ -487,3 +487,5 @@ Version 6.7.2 -- 06.01.11
 - Fix: Microsoft removed the Office File Converter Pack (oconvpck.exe) from their servers (Thanks to "-Iwan-", "harry" and "Denniss")
 - Fix: CreateISOImage.cmd script did not properly signal errors (Thanks to "AlBundy")
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.11
+- Fix: DownloadUpdates.sh script contained invalid references to StaticDownloadLink-msse-*.txt (Thanks to "Andrew")

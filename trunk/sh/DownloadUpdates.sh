@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                      v. 6.7.2                      ###
+###                   v. 6.7.2+ (r198)                 ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -392,7 +392,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                      v. 6.7.2                      ***
+***                   v. 6.7.2+ (r198)                 ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
@@ -552,8 +552,8 @@ if [ "$dotnet" == "1" ]; then
 fi
 
 if [ "$msse" == "1" ]; then
-	cp ../static/StaticDownloadLink-msse-x86-glb.txt ../temp/StaticUrls-msse-x86-glb.txt
-	cp ../static/StaticDownloadLink-msse-x64-glb.txt ../temp/StaticUrls-msse-x64-glb.txt
+	cp ../static/StaticDownloadLinks-msse-x86-glb.txt ../temp/StaticUrls-msse-x86-glb.txt
+	cp ../static/StaticDownloadLinks-msse-x64-glb.txt ../temp/StaticUrls-msse-x64-glb.txt
 fi
 
 cd ../temp
