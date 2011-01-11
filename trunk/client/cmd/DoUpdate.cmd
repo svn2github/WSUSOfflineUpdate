@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7.2+ (r198)
+set WSUSOFFLINE_VERSION=6.7.2+ (r200)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -304,6 +304,7 @@ for /F %%i in ('dir /B %DIRECTX_FILENAME%') do (
   set RECALL_REQUIRED=1
   goto Installed
 )
+set DIRECTX_FILENAME=
 :SkipDirectXInst
 
 rem *** Install Windows Update Agent ***
@@ -325,6 +326,7 @@ for /F %%i in ('dir /B %WUA_FILENAME%') do (
   if errorlevel 1 goto InstError
   set REBOOT_REQUIRED=1
 )
+set WUA_FILENAME=
 :SkipWUAInst
 
 rem *** Install Windows Installer ***
@@ -362,6 +364,7 @@ for /F %%i in ('dir /B %MSI_FILENAME%') do (
   )
   if not errorlevel 1 set REBOOT_REQUIRED=1
 )
+set MSI_FILENAME=
 :SkipMSIInst
 
 rem *** Install Windows Script Host ***
@@ -386,6 +389,7 @@ for /F %%i in ('dir /B %WSH_FILENAME%') do (
   call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /quiet %BACKUP_MODE% /norestart
   if not errorlevel 1 set REBOOT_REQUIRED=1
 )
+set WSH_FILENAME=
 :SkipWSHInst
 
 rem *** Install Internet Explorer ***
@@ -470,20 +474,31 @@ if errorlevel 1 (
   echo %DATE% %TIME% - Warning: File %IE_FILENAME% not found >>%UPDATE_LOGFILE%
   goto SkipIEInst
 )
+echo Checking Internet Explorer 9 prerequisites...
+if exist "%TEMP%\InstalledUpdateIds.txt" del "%TEMP%\InstalledUpdateIds.txt"
+%CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
+if exist "%TEMP%\InstalledUpdateIds.txt" (
+  %SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\InstalledUpdateIds.txt" ..\static\StaticUpdateIds-ie9-w60.txt >"%TEMP%\MissingUpdateIds.txt"
+  del "%TEMP%\InstalledUpdateIds.txt"
+) else (
+  copy /Y ..\static\StaticUpdateIds-ie9-w60.txt "%TEMP%\MissingUpdateIds.txt" >nul
+)
+call ListUpdatesToInstall.cmd /excludestatics
+if errorlevel 1 goto ListError
+if exist "%TEMP%\UpdatesToInstall.txt" (
+  echo Installing Internet Explorer 9 prerequisites...
+  call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
+  if not errorlevel 1 (
+    set RECALL_REQUIRED=1
+    goto IEInstalled
+  )
+)
 if "%INSTALL_IE%"=="/instie9" (echo Installing Internet Explorer 9...) else (echo Installing Internet Explorer 8...)
 for /F %%i in ('dir /B %IE_FILENAME%') do (
   if /i "%OS_ARCH%"=="x64" (
-    if "%INSTALL_IE%"=="/instie9" (
-      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /no-default /closeprograms /norestart
-    ) else (
-      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
-    )
+    call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
   ) else (
-    if "%INSTALL_IE%"=="/instie9" (
-      call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /no-default /closeprograms /norestart
-    ) else (
-      call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
-    )
+    call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
   )
   if not errorlevel 1 set RECALL_REQUIRED=1
 )
@@ -501,20 +516,38 @@ if errorlevel 1 (
   echo %DATE% %TIME% - Warning: File %IE_FILENAME% not found >>%UPDATE_LOGFILE%
   goto SkipIEInst
 )
+echo Checking Internet Explorer 9 prerequisites...
+if exist "%TEMP%\InstalledUpdateIds.txt" del "%TEMP%\InstalledUpdateIds.txt"
+%CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
+if exist "%TEMP%\InstalledUpdateIds.txt" (
+  %SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\InstalledUpdateIds.txt" ..\static\StaticUpdateIds-ie9-w61.txt >"%TEMP%\MissingUpdateIds.txt"
+  del "%TEMP%\InstalledUpdateIds.txt"
+) else (
+  copy /Y ..\static\StaticUpdateIds-ie9-w61.txt "%TEMP%\MissingUpdateIds.txt" >nul
+)
+call ListUpdatesToInstall.cmd /excludestatics
+if errorlevel 1 goto ListError
+if exist "%TEMP%\UpdatesToInstall.txt" (
+  echo Installing Internet Explorer 9 prerequisites...
+  call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
+  if not errorlevel 1 (
+    set RECALL_REQUIRED=1
+    goto IEInstalled
+  )
+)
 echo Installing Internet Explorer 9...
 for /F %%i in ('dir /B %IE_FILENAME%') do (
   if /i "%OS_ARCH%"=="x64" (
-    call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /no-default /closeprograms /norestart
+    call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
   ) else (
-    call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /no-default /closeprograms /norestart
+    call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
   )
-  if not errorlevel 1 set REBOOT_REQUIRED=1
+  if not errorlevel 1 set RECALL_REQUIRED=1
 )
 goto IEInstalled 
 
-goto SkipIEInst
-
 :IEInstalled
+set IE_FILENAME=
 if "%RECALL_REQUIRED%"=="1" goto Installed
 :SkipIEInst
 
@@ -601,7 +634,8 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
   call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
 )
 set RECALL_REQUIRED=1
-if "%RECALL_REQUIRED%"=="1" goto Installed
+set DOTNET35_FILENAME=
+goto Installed
 :SkipDotNet35Inst
 
 rem *** Install .NET Framework 4 ***
@@ -622,6 +656,7 @@ if not exist %DOTNET4_FILENAME% (
 echo Installing .NET Framework 4...
 call InstallOSUpdate.cmd %DOTNET4_FILENAME% %VERIFY_MODE% /errorsaswarnings /passive /norestart /lcid 1033
 set REBOOT_REQUIRED=1
+set DOTNET4_FILENAME=
 :SkipDotNet4Inst
 
 rem *** Install .NET Framework - Custom ***

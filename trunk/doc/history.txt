@@ -488,4 +488,5 @@ Version 6.7.2 -- 06.01.11
 - Fix: CreateISOImage.cmd script did not properly signal errors (Thanks to "AlBundy")
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.11
+- Fix: Internet Explorer 9 Beta offline installation missed prerequisites according to http://support.microsoft.com/kb/2399238 (Thanks to "boco")
 - Fix: DownloadUpdates.sh script contained invalid references to StaticDownloadLink-msse-*.txt (Thanks to "Andrew")
