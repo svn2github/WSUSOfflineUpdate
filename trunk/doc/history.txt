@@ -489,4 +489,5 @@ Version 6.7.2 -- 06.01.11
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.11
 - Fix: Internet Explorer 9 Beta offline installation missed prerequisites according to http://support.microsoft.com/kb/2399238 (Thanks to "boco")
+- Fix: Case sensitive file name handling lead to false audit errors when attempting to install Windows Defender on Windows XP systems (deu and jpn only)
 - Fix: DownloadUpdates.sh script contained invalid references to StaticDownloadLink-msse-*.txt (Thanks to "Andrew")

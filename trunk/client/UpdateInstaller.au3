@@ -555,20 +555,11 @@ EndIf
 ;  Automatic reboot and recall
 $txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
-  If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
-    $autoreboot = GUICtrlCreateCheckbox("Automatisch neu starten", $txtxpos, $txtypos, $txtwidth, $txtheight)
-  Else
-    $autoreboot = GUICtrlCreateCheckbox("Automatisch neu starten und fortsetzen", $txtxpos, $txtypos, $txtwidth, $txtheight)
-  EndIf
+  $autoreboot = GUICtrlCreateCheckbox("Automatisch neu starten und fortsetzen", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
-    $autoreboot = GUICtrlCreateCheckbox("Automatic reboot", $txtxpos, $txtypos, $txtwidth, $txtheight)
-  Else
-    $autoreboot = GUICtrlCreateCheckbox("Automatic reboot and recall", $txtxpos, $txtypos, $txtwidth, $txtheight)
-  EndIf
+  $autoreboot = GUICtrlCreateCheckbox("Automatic reboot and recall", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (NOT AutologonPresent($scriptdir)) _
-  OR ( (DriveGetType(@ScriptDir) = "Network") AND (@OSVersion <> "WIN_7") AND (@OSVersion <> "WIN_2008R2") ) ) Then
+If ( (NOT AutologonPresent($scriptdir)) OR (DriveGetType(@ScriptDir) = "Network") ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else  
@@ -814,14 +805,14 @@ While 1
       If ( (BitAND(GUICtrlRead($autoreboot), $GUI_CHECKED) = $GUI_CHECKED) _
        AND ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) ) Then
         If ShowGUIInGerman() Then
-          If MsgBox(0x2134, "Warnung", "Die Option 'Automatisch neu starten und fortsetzen'" _
-                               & @LF & "deaktiviert temporär die Benutzerkontensteuerung (UAC)." _
+          If MsgBox(0x2134, "Warnung", "Die Option 'Automatisch neu starten und fortsetzen' deaktiviert temporär" _
+                               & @LF & "die Benutzerkontensteuerung (UAC), falls erforderlich." _
                                & @LF & "Möchten Sie fortsetzen?") = 7 Then
             GUICtrlSetState($autoreboot, $GUI_UNCHECKED)
           EndIf
         Else
-          If MsgBox(0x2134, "Warning", "The option 'automatic reboot and recall'" _
-                               & @LF & "temporarily disables the User Account Control (UAC)." _
+          If MsgBox(0x2134, "Warning", "The option 'Automatic reboot and recall' temporarily disables" _
+                               & @LF & "the User Account Control (UAC), if required." _
                                & @LF & "Do you wish to proceed?") = 7 Then
             GUICtrlSetState($autoreboot, $GUI_UNCHECKED)
           EndIf

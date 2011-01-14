@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7.2+ (r200)
+set WSUSOFFLINE_VERSION=6.7.2+ (r202)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -378,8 +378,7 @@ if %WSH_VER_REVIS% GTR %WSH_VER_TARGET_REVIS% goto SkipWSHInst
 if %WSH_VER_BUILD% GEQ %WSH_VER_TARGET_BUILD% goto SkipWSHInst
 :InstallWSH
 set WSH_FILENAME=..\%OS_NAME%\glb\scripten.exe
-dir /B %WSH_FILENAME% >nul 2>&1
-if errorlevel 1 (
+if not exist %WSH_FILENAME% (
   echo Warning: File %WSH_FILENAME% not found.
   echo %DATE% %TIME% - Warning: File %WSH_FILENAME% not found >>%UPDATE_LOGFILE%
   goto SkipWSHInst
@@ -625,7 +624,7 @@ if not exist %DOTNET35_FILENAME% (
   goto SkipDotNet35Inst
 )
 echo Installing .NET Framework 3.5 SP1...
-call InstallOSUpdate.cmd %DOTNET35_FILENAME% %VERIFY_MODE% /ignoreerrors /qb /norestart /lang:enu
+for /F %%i in ('dir /B %DOTNET35_FILENAME%') do call InstallOSUpdate.cmd ..\dotnet\%%i %VERIFY_MODE% /ignoreerrors /qb /norestart /lang:enu
 copy /Y ..\static\StaticUpdateIds-dotnet.txt "%TEMP%\MissingUpdateIds.txt" >nul
 call ListUpdatesToInstall.cmd /excludestatics
 if errorlevel 1 goto ListError
@@ -654,7 +653,7 @@ if not exist %DOTNET4_FILENAME% (
   goto SkipDotNet4Inst
 )
 echo Installing .NET Framework 4...
-call InstallOSUpdate.cmd %DOTNET4_FILENAME% %VERIFY_MODE% /errorsaswarnings /passive /norestart /lcid 1033
+for /F %%i in ('dir /B %DOTNET4_FILENAME%') do call InstallOSUpdate.cmd ..\dotnet\%%i %VERIFY_MODE% /errorsaswarnings /passive /norestart /lcid 1033
 set REBOOT_REQUIRED=1
 set DOTNET4_FILENAME=
 :SkipDotNet4Inst
@@ -714,7 +713,7 @@ if not exist %MSSE_FILENAME% (
   goto SkipMSSEInst
 )
 echo Installing Microsoft Security Essentials...
-call InstallOSUpdate.cmd %MSSE_FILENAME% %VERIFY_MODE% /ignoreerrors /s /runwgacheck /o
+for /F %%i in ('dir /B %MSSE_FILENAME%') do call InstallOSUpdate.cmd ..\msse\%OS_ARCH%-glb\%%i %VERIFY_MODE% /ignoreerrors /s /runwgacheck /o
 set MSSE_FILENAME=
 set REBOOT_REQUIRED=1
 :CheckMSSEDefs
@@ -743,7 +742,7 @@ if %MSSEDEFS_VER_REVIS% GTR %MSSEDEFS_VER_TARGET_REVIS% goto SkipMSSEInst
 if %MSSEDEFS_VER_BUILD% GEQ %MSSEDEFS_VER_TARGET_BUILD% goto SkipMSSEInst
 :InstallMSSEDefs
 echo Installing Microsoft Security Essentials definition file...
-call InstallOSUpdate.cmd %MSSEDEFS_FILENAME% %VERIFY_MODE% /ignoreerrors -q
+for /F %%i in ('dir /B %MSSEDEFS_FILENAME%') do call InstallOSUpdate.cmd ..\msse\%OS_ARCH%-glb\%%i %VERIFY_MODE% /ignoreerrors -q
 set MSSEDEFS_FILENAME=
 :SkipMSSEInst
 
@@ -765,7 +764,13 @@ if not exist %WD_FILENAME% (
   goto SkipWDInst
 )
 echo Installing Windows Defender...
-call InstallOSUpdate.cmd %WD_FILENAME% %VERIFY_MODE% /ignoreerrors
+for /F %%i in ('dir /B %WD_FILENAME%') do (
+  if /i "%OS_ARCH%"=="x64" (
+    call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors
+  ) else (
+    call InstallOSUpdate.cmd ..\win\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors
+  )
+)
 set WD_FILENAME=
 set REBOOT_REQUIRED=1
 :CheckWDDefs
@@ -794,7 +799,7 @@ if %WDDEFS_VER_REVIS% GTR %WDDEFS_VER_TARGET_REVIS% goto SkipWDInst
 if %WDDEFS_VER_BUILD% GEQ %WDDEFS_VER_TARGET_BUILD% goto SkipWDInst
 :InstallWDDefs
 echo Installing Windows Defender definition file...
-call InstallOSUpdate.cmd %WDDEFS_FILENAME% %VERIFY_MODE% /ignoreerrors -q
+for /F %%i in ('dir /B %WDDEFS_FILENAME%') do call InstallOSUpdate.cmd ..\wddefs\%OS_ARCH%-glb\%%i %VERIFY_MODE% /ignoreerrors -q
 set WDDEFS_FILENAME=
 :SkipWDInst
 
