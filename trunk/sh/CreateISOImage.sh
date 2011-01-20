@@ -3,6 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update ISO maker            ###
 ###                  for Linux systems                 ###
+###                   v. 6.7.2+ (r203)                 ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg      ###
@@ -21,7 +22,7 @@ Invalid or missing parameter: "$@"
 Usage: `basename $0` [system] [language] [parameter]
 
 Supported systems:
-wxp, wxp-x64, w2k3, w2k3-x64, w60, w60-x64, w61, w61-x64, all-x64, all-x86
+wxp, w2k3, w2k3-x64, w60, w60-x64, w61, w61-x64, all-x64, all-x86
 
 Supported languages:
 enu, deu, nld, esn, fra, ptg, ptb, ita, rus, plk, ell, csy
@@ -45,6 +46,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update ISO maker            ***
 ***                  for Linux systems                 ***
+***                   v. 6.7.2+ (r203)                 ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Stefan Joehnke, Walter Schiessberg      ***
@@ -85,7 +87,7 @@ fi
 
 evaluateparams()
 {
-syslist=("wxp" "wxp-x64" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "all-x64" "all-x86")
+syslist=("wxp" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "all-x64" "all-x86")
 langlist=("enu" "deu" "nld" "esn" "fra" "ptg" "ptb" "ita" "rus" "plk" "ell" "csy" "dan" "nor" "sve" "fin" "jpn" "kor" "chs" "cht" "hun" "trk" "ara" "heb")
 paramlist=("/excludesp" "/dotnet" "/msse")
 EXCLUDE_SP="0"
