@@ -492,3 +492,4 @@ Version ?.? -- ??.??.11
 - Fix: Case sensitive file name handling lead to false audit errors when attempting to install Windows Defender on Windows XP systems (deu and jpn only)
 - Fix: DownloadUpdates.sh script contained invalid references to StaticDownloadLink-msse-*.txt (Thanks to "Andrew")
 - Fix: CreateISOImage.sh script erroneously supported "wxp-x64" target (Thanks to "rupat")
+- Fix: Added missing template files for statical download definitions of .NET updates (Thanks to "rednaxela")

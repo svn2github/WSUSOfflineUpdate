@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7.2+ (r203)
+set WSUSOFFLINE_VERSION=6.7.2+ (r204)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -59,12 +59,7 @@ if exist .\custom\InitializationHook.cmd (
 
 set CSCRIPT_PATH=%SystemRoot%\system32\cscript.exe
 if not exist %CSCRIPT_PATH% goto NoCScript
-
-if exist %SystemRoot%\system32\reg.exe (
-  set REG_PATH=%SystemRoot%\system32\reg.exe
-) else (
-  set REG_PATH=..\bin\reg.exe
-)
+set REG_PATH=%SystemRoot%\system32\reg.exe
 if "%BOOT_MODE%"=="/autoreboot" (if not exist %REG_PATH% goto NoReg)
 if "%SHOW_LOG%"=="/showlog" (if not exist %REG_PATH% goto NoReg)
 

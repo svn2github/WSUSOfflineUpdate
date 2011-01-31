@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7.2+ (r203)
+set WSUSOFFLINE_VERSION=6.7.2+ (r204)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -259,6 +259,7 @@ if exist ..\static\StaticDownloadLink-sigcheck.txt del ..\static\StaticDownloadL
 if exist ..\static\StaticDownloadLink-streams.txt del ..\static\StaticDownloadLink-streams.txt
 
 rem *** Windows 2000 stuff ***
+if exist ..\client\bin\reg.exe del ..\client\bin\reg.exe
 if exist ..\client\static\StaticUpdateIds-w2k-x86.txt del ..\client\static\StaticUpdateIds-w2k-x86.txt
 if exist FixIE6SetupDir.cmd del FixIE6SetupDir.cmd
 for %%i in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (
