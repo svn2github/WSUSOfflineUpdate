@@ -488,8 +488,10 @@ Version 6.7.2 -- 06.01.11
 - Fix: CreateISOImage.cmd script did not properly signal errors (Thanks to "AlBundy")
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.11
+- Self update will now check integrity of downloaded release archive before updating
 - Fix: Internet Explorer 9 Beta offline installation missed prerequisites according to http://support.microsoft.com/kb/2399238 (Thanks to "boco")
 - Fix: Case sensitive file name handling lead to false audit errors when attempting to install Windows Defender on Windows XP systems (deu and jpn only)
 - Fix: DownloadUpdates.sh script contained invalid references to StaticDownloadLink-msse-*.txt (Thanks to "Andrew")
 - Fix: CreateISOImage.sh script erroneously supported "wxp-x64" target (Thanks to "rupat")
 - Fix: Added missing template files for statical download definitions of .NET updates (Thanks to "rednaxela")
+- Fix: Download exclude lists did not contain obsolete MSXML patches kb925672, kb925673, kb927977, kb927978, kb933579, kb936021 and kb936181 (Thanks to "rustam")

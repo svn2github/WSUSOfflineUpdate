@@ -1,5 +1,5 @@
 @echo off
-rem *** Author: T. Wittrock, RZ Uni Kiel ***
+rem *** Author: T. Wittrock, Kiel ***
 
 verify other 2>nul
 setlocal enableextensions
@@ -38,16 +38,32 @@ title Updating WSUS Offline Update...
 call CheckOUVersion.cmd
 if not errorlevel 1 goto NoNewVersion 
 echo Downloading most recent released version of WSUS Offline Update...
-%WGET_PATH% -N -i ..\static\StaticDownloadLink-recent.txt -P ..
-if errorlevel 1 goto DownloadError
-echo %DATE% %TIME% - Info: Downloaded most recent released version of WSUS Offline Update >>%DOWNLOAD_LOGFILE%
-if exist ..\wsusoffline\nul rd /S /Q ..\wsusoffline
-for /F %%i in ('dir /B ..\wsusoffline*.zip') do (
-  echo Unpacking %%i...
-  ..\bin\unzip.exe -uq ..\%%i -d ..
-  echo %DATE% %TIME% - Info: Unpacked %%i >>%DOWNLOAD_LOGFILE%
-  del ..\%%i
-  echo %DATE% %TIME% - Info: Deleted %%i >>%DOWNLOAD_LOGFILE%
+for /F %%i in (..\static\StaticDownloadLink-recent.txt) do (
+  %WGET_PATH% -N -P .. %%i
+  if errorlevel 1 goto DownloadError
+  echo %DATE% %TIME% - Info: Downloaded most recent released version of WSUS Offline Update >>%DOWNLOAD_LOGFILE%
+  for /F "tokens=1-3 delims=/" %%j in ("%%i") do (
+    %WGET_PATH% -N -P .. %%j//%%k/%%~nl_hashes.txt
+    if errorlevel 1 goto DownloadError
+    echo %DATE% %TIME% - Info: Downloaded hash file of most recent WSUS Offline Update version >>%DOWNLOAD_LOGFILE%
+  )
+  pushd ..
+  echo Verifying integrity of %%~nxi...
+  .\client\bin\hashdeep.exe -a -l -vv -k %%~ni_hashes.txt %%~nxi
+  if errorlevel 1 (
+    popd
+    goto IntegrityError
+  )
+  popd
+  echo %DATE% %TIME% - Info: Verified integrity of %%~nxi >>%DOWNLOAD_LOGFILE%
+  echo Unpacking %%~nxi...
+  if exist ..\wsusoffline\nul rd /S /Q ..\wsusoffline
+  ..\bin\unzip.exe -uq ..\%%~nxi -d ..
+  echo %DATE% %TIME% - Info: Unpacked %%~nxi >>%DOWNLOAD_LOGFILE%
+  del ..\%%~nxi
+  echo %DATE% %TIME% - Info: Deleted %%~nxi >>%DOWNLOAD_LOGFILE%
+  del ..\%%~ni_hashes.txt
+  echo %DATE% %TIME% - Info: Deleted %%~ni_hashes.txt >>%DOWNLOAD_LOGFILE%
 )
 echo Updating WSUS Offline Update...
 %SystemRoot%\system32\xcopy.exe ..\wsusoffline .. /S /Q /Y
@@ -93,6 +109,13 @@ goto EoF
 echo.
 echo ERROR: Download of most recent released version of WSUS Offline Update failed.
 echo %DATE% %TIME% - Error: Download of most recent released version of WSUS Offline Update failed >>%DOWNLOAD_LOGFILE%
+echo.
+goto EoF
+
+:IntegrityError
+echo.
+echo ERROR: File integrity verification of most recent released version of WSUS Offline Update failed.
+echo %DATE% %TIME% - Error: File integrity verification of most recent released version of WSUS Offline Update failed >>%DOWNLOAD_LOGFILE%
 echo.
 goto EoF
 
