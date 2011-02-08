@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7.2+ (r206)
+set WSUSOFFLINE_VERSION=6.7.2+ (r207)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -688,6 +688,51 @@ echo %DATE% %TIME% - Info: Determined statical update urls for %1 %2 >>%DOWNLOAD
 
 :SkipStatics
 if not exist ..\bin\msxsl.exe goto NoMSXSL
+rem *** Extract Microsoft's update catalog file package.xml ***
+echo Extracting Microsoft's update catalog file package.xml...
+if exist "%TEMP%\package.cab" del "%TEMP%\package.cab"
+if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
+%SystemRoot%\system32\expand.exe ..\client\wsus\wsusscn2.cab -F:package.cab "%TEMP%" >nul
+%SystemRoot%\system32\expand.exe "%TEMP%\package.cab" "%TEMP%\package.xml" >nul
+del "%TEMP%\package.cab"
+rem *** Determine superseded updates ***
+for %%i in (..\exclude\ExcludeList-superseded.txt) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE%" >nul 2>&1
+if not errorlevel 1 goto SkipSuperseded
+echo %TIME% - Determining superseded updates (please be patient, this will take a while)...
+..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractUpdateRevisionIds.xsl -o "%TEMP%\ValidUpdateRevisionIds.txt"
+if errorlevel 1 goto DownloadError
+..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractSupersedingRevisionIds.xsl -o "%TEMP%\SupersedingRevisionIds.txt"
+if errorlevel 1 goto DownloadError
+%SystemRoot%\system32\findstr.exe /G:"%TEMP%\SupersedingRevisionIds.txt" "%TEMP%\ValidUpdateRevisionIds.txt" >"%TEMP%\ValidSupersedingRevisionIds.txt"
+del "%TEMP%\ValidUpdateRevisionIds.txt"
+del "%TEMP%\SupersedingRevisionIds.txt"
+..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractSupersededUpdateRelations.xsl -o "%TEMP%\SupersededUpdateRelations.txt"
+if errorlevel 1 goto DownloadError
+%SystemRoot%\system32\findstr.exe /G:"%TEMP%\ValidSupersedingRevisionIds.txt" "%TEMP%\SupersededUpdateRelations.txt" >"%TEMP%\ValidSupersededUpdateRelations.txt"
+del "%TEMP%\SupersededUpdateRelations.txt"
+del "%TEMP%\ValidSupersedingRevisionIds.txt"
+..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractBundledUpdateRelationsAndFileIds.xsl -o "%TEMP%\BundledUpdateRelationsAndFileIds.txt"
+if errorlevel 1 goto DownloadError
+if exist "%TEMP%\ValidSupersededRevisionIds.txt" del "%TEMP%\ValidSupersededRevisionIds.txt"
+for /F "usebackq tokens=1 delims=,;" %%i in ("%TEMP%\ValidSupersededUpdateRelations.txt") do echo %%i>>"%TEMP%\ValidSupersededRevisionIds.txt"
+del "%TEMP%\ValidSupersededUpdateRelations.txt"
+%SystemRoot%\system32\findstr.exe /G:"%TEMP%\ValidSupersededRevisionIds.txt" "%TEMP%\BundledUpdateRelationsAndFileIds.txt" >"%TEMP%\SupersededRevisionAndFileIds.txt"
+del "%TEMP%\ValidSupersededRevisionIds.txt"
+del "%TEMP%\BundledUpdateRelationsAndFileIds.txt"
+if exist "%TEMP%\SupersededFileIds.txt" del "%TEMP%\SupersededFileIds.txt"
+for /F "usebackq tokens=2 delims=,;" %%i in ("%TEMP%\SupersededRevisionAndFileIds.txt") do echo %%i>>"%TEMP%\SupersededFileIds.txt"
+del "%TEMP%\SupersededRevisionAndFileIds.txt"
+..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractUpdateCabExeIdsAndLocations.xsl -o "%TEMP%\UpdateCabExeIdsAndLocations.txt"
+if errorlevel 1 goto DownloadError
+%SystemRoot%\system32\findstr.exe /G:"%TEMP%\SupersededFileIds.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\SupersededCabExeIdsAndLocations.txt"
+del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
+del "%TEMP%\SupersededFileIds.txt"
+if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
+for /F "usebackq tokens=2 delims=," %%i in ("%TEMP%\SupersededCabExeIdsAndLocations.txt") do echo %%~ni>>..\exclude\ExcludeList-superseded.txt
+del "%TEMP%\SupersededCabExeIdsAndLocations.txt"
+echo %TIME% - Done.
+echo %DATE% %TIME% - Info: Determined superseded updates >>%DOWNLOAD_LOGFILE%
+:SkipSuperseded
 for %%i in (dotnet win wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64) do (if /i "%1"=="%%i" goto DetermineWindows)
 for %%i in (ofc) do (if /i "%1"=="%%i" goto DetermineOffice)
 goto DoDownload
@@ -695,12 +740,6 @@ goto DoDownload
 :DetermineWindows
 rem *** Determine dynamical update urls for %1 %2 ***
 echo %TIME% - Determining dynamical update urls for %1 %2...
-if exist "%TEMP%\package.cab" del "%TEMP%\package.cab"
-if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
-%SystemRoot%\system32\expand.exe ..\client\wsus\wsusscn2.cab -F:package.cab "%TEMP%" >nul
-%SystemRoot%\system32\expand.exe "%TEMP%\package.cab" "%TEMP%\package.xml" >nul
-del "%TEMP%\package.cab"
-
 if exist ..\xslt\ExtractDownloadLinks-%1-%2.xsl (
   ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractDownloadLinks-%1-%2.xsl -o "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
   if errorlevel 1 goto DownloadError
@@ -723,8 +762,10 @@ if exist ..\exclude\ExcludeList-%1-%TARGET_ARCH%.txt copy /Y ..\exclude\ExcludeL
 if exist ..\exclude\custom\ExcludeList-%1-%TARGET_ARCH%.txt (
   for /F %%i in (..\exclude\custom\ExcludeList-%1-%TARGET_ARCH%.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
 )
-
 :ExcludeWindows
+if exist ..\exclude\ExcludeList-superseded.txt (
+  for /F %%i in (..\exclude\ExcludeList-superseded.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
+)
 %SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DynamicDownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDynamicLinks-%1-%2.txt"
 if not exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" ren "%TEMP%\DynamicDownloadLinks-%1-%2.txt" ValidDynamicLinks-%1-%2.txt
 if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
@@ -734,12 +775,6 @@ goto DoDownload
 :DetermineOffice
 rem *** Determine dynamical update urls for %1 %2 ***
 echo %TIME% - Determining dynamical update urls for %1 %2 (please be patient, this will take a while)...
-if exist "%TEMP%\package.cab" del "%TEMP%\package.cab"
-if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
-%SystemRoot%\system32\expand.exe ..\client\wsus\wsusscn2.cab -F:package.cab "%TEMP%" >nul
-%SystemRoot%\system32\expand.exe "%TEMP%\package.cab" "%TEMP%\package.xml" >nul
-del "%TEMP%\package.cab"
-
 ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractUpdateCategoriesAndFileIds.xsl -o "%TEMP%\UpdateCategoriesAndFileIds.txt"
 if errorlevel 1 goto DownloadError
 ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractUpdateCabExeIdsAndLocations.xsl -o "%TEMP%\UpdateCabExeIdsAndLocations.txt"
@@ -812,6 +847,9 @@ if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
 if exist ..\exclude\ExcludeList-%1.txt copy /Y ..\exclude\ExcludeList-%1.txt "%TEMP%\ExcludeList-%1.txt" >nul
 if exist ..\exclude\custom\ExcludeList-%1.txt (
   for /F %%i in (..\exclude\custom\ExcludeList-%1.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
+)
+if exist ..\exclude\ExcludeList-superseded.txt (
+  for /F %%i in (..\exclude\ExcludeList-superseded.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
 )
 %SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DynamicDownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDynamicLinks-%1-%2.txt"
 if not exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" ren "%TEMP%\DynamicDownloadLinks-%1-%2.txt" ValidDynamicLinks-%1-%2.txt

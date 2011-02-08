@@ -17,9 +17,7 @@ if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
 del "%TEMP%\package.cab"
 
 "%TEMP%\msxsl.exe" "%TEMP%\package.xml" .\xslt\ExtractUpdateCategoriesAndFileIds.xsl -o "%TEMP%\UpdateCategoriesAndFileIds.txt"
-if errorlevel 1 goto DownloadError
 "%TEMP%\msxsl.exe" "%TEMP%\package.xml" .\xslt\ExtractUpdateCabExeIdsAndLocations.xsl -o "%TEMP%\UpdateCabExeIdsAndLocations.txt"
-if errorlevel 1 goto DownloadError
 goto DoIt
 
 :Determine

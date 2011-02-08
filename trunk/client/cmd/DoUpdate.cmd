@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7.2+ (r206)
+set WSUSOFFLINE_VERSION=6.7.2+ (r207)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -907,11 +907,12 @@ if errorlevel 1 (
 )
 if exist "%TEMP%\hash-wsusscn2.txt" del "%TEMP%\hash-wsusscn2.txt"
 :SkipVerifyWSUSScan
-echo Listing ids of missing updates...
+echo %TIME% - Listing ids of missing updates (please be patient, this will take a while)...
 copy /Y ..\wsus\wsusscn2.cab "%TEMP%" >nul
 if exist "%TEMP%\MissingUpdateIds.txt" del "%TEMP%\MissingUpdateIds.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs ListMissingUpdateIds.vbs %LIST_MODE_IDS%
 if exist "%TEMP%\wsusscn2.cab" del "%TEMP%\wsusscn2.cab"
+echo %TIME% - Done.
 
 rem *** List ids of installed updates ***
 if "%LIST_MODE_IDS%"=="/all" goto ListInstFiles

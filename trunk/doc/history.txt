@@ -488,6 +488,7 @@ Version 6.7.2 -- 06.01.11
 - Fix: CreateISOImage.cmd script did not properly signal errors (Thanks to "AlBundy")
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.11
+- Superseded updates will now be dynamically determined and automatically excluded from download (Thanks to "Denniss")
 - Self update will now check integrity of downloaded release archive before updating
 - Fix: Internet Explorer 9 Beta offline installation missed prerequisites according to http://support.microsoft.com/kb/2399238 (Thanks to "boco")
 - Fix: Case sensitive file name handling lead to false audit errors when attempting to install Windows Defender on Windows XP systems (deu and jpn only)
