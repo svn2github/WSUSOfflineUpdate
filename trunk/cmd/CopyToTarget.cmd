@@ -91,7 +91,7 @@ if "%EXCLUDE_SP%"=="1" (
   for /F %%i in (..\exclude\ExcludeList-SPs.txt) do echo %%i>>%USB_FILTER%
 )
 if "%INCLUDE_DOTNET%" NEQ "1" (
-  for /F %%i in (..\exclude\ExcludeList-dotnet.txt) do echo %%i>>%USB_FILTER%
+  for /F %%i in (..\exclude\ExcludeListISO-dotnet.txt) do echo %%i>>%USB_FILTER%
 )
 if "%INCLUDE_MSSE%" NEQ "1" (
   for /F %%i in (..\exclude\ExcludeList-msse.txt) do echo %%i>>%USB_FILTER%

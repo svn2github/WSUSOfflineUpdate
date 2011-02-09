@@ -15,9 +15,10 @@ if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
 del "%TEMP%\package.cab"
 
 "%TEMP%\msxsl.exe" "%TEMP%\package.xml" .\xslt\ExtractUpdateFileIdsAndLocations.xsl -o "%TEMP%\DownloadLinks-all.txt"
-del "%TEMP%\package.xml"
 goto EoF
 
+del "%TEMP%\package.xml"
 del "%TEMP%\wsusscn2.cab"
 del "%TEMP%\msxsl.exe"
+
 :EoF

@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7.2+ (r207)
+set WSUSOFFLINE_VERSION=6.7.2+ (r208)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -207,6 +207,7 @@ if exist ..\xslt\ExtractExpiredIds-o2k.xsl del ..\xslt\ExtractExpiredIds-o2k.xsl
 if exist ..\xslt\ExtractValidIds-o2k.xsl del ..\xslt\ExtractValidIds-o2k.xsl
 
 rem *** .NET restructuring stuff ***
+if exist ..\exclude\ExcludeList-dotnet.txt del ..\exclude\ExcludeList-dotnet.txt
 if exist ..\client\win\glb\ndp*.* (
   if not exist ..\client\dotnet\x86-glb\nul md ..\client\dotnet\x86-glb
   move /Y ..\client\win\glb\ndp*.* ..\client\dotnet\x86-glb >nul

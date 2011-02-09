@@ -88,9 +88,9 @@ call :Determine ofc deu de
 call :Determine ofc glb
 goto EoF
 
-del "%TEMP%\msxsl.exe"
-del "%TEMP%\wsusscn2.cab"
 del "%TEMP%\package.xml"
+del "%TEMP%\wsusscn2.cab"
+del "%TEMP%\msxsl.exe"
 
 :EoF
 endlocal
