@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7.2+ (r208)
+set WSUSOFFLINE_VERSION=6.7.2+ (r209)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -430,8 +430,16 @@ if exist ..\client\md\hashes-dotnet.txt (
 )
 :DownloadDotNet
 echo Downloading/validating installation files for .NET Framework 3.5 SP1 and 4...
-%WGET_PATH% -N -i ..\static\StaticDownloadLinks-dotnet.txt -P ..\client\dotnet
-if errorlevel 1 goto DownloadError
+copy /Y ..\static\StaticDownloadLinks-dotnet.txt "%TEMP%\StaticDownloadLinks-dotnet.txt" >nul
+if exist ..\static\custom\StaticDownloadLinks-dotnet.txt (
+  for /F %%i in (..\static\custom\StaticDownloadLinks-dotnet.txt) do echo %%i>>"%TEMP%\StaticDownloadLinks-dotnet.txt"
+) 
+%WGET_PATH% -N -i "%TEMP%\StaticDownloadLinks-dotnet.txt" -P ..\client\dotnet
+if errorlevel 1 (
+  del "%TEMP%\StaticDownloadLinks-dotnet.txt"
+  goto DownloadError
+)
+del "%TEMP%\StaticDownloadLinks-dotnet.txt"
 echo %DATE% %TIME% - Info: Downloaded/validated installation files for .NET Framework 3.5 SP1 and 4 >>%DOWNLOAD_LOGFILE%
 if "%VERIFY_DOWNLOADS%"=="1" (
   rem *** Verifying digital file signatures for .NET Framework installation files ***
@@ -491,7 +499,11 @@ if exist ..\client\md\hashes-msse.txt (
 )
 :DownloadMSSE
 echo Downloading/validating Microsoft Security Essentials installation files...
-for /F "tokens=1,2 delims=," %%i in (..\static\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt) do (
+copy /Y ..\static\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt "%TEMP%\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt" >nul
+if exist ..\static\custom\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt (
+  for /F %%i in (..\static\custom\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt) do echo %%i>>"%TEMP%\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt"
+) 
+for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt") do (
   if "%%j" NEQ "" (
     if exist ..\client\msse\%TARGET_ARCH%-glb\%%j (
       echo Renaming file ..\client\msse\%TARGET_ARCH%-glb\%%j to %%~nxi...
@@ -513,6 +525,7 @@ for /F "tokens=1,2 delims=," %%i in (..\static\StaticDownloadLinks-msse-%TARGET_
     )
   )
 )
+del "%TEMP%\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt"
 echo %DATE% %TIME% - Info: Downloaded/validated Microsoft Security Essentials installation files >>%DOWNLOAD_LOGFILE%
 if "%VERIFY_DOWNLOADS%"=="1" (
   rem *** Verifying digital file signatures for Microsoft Security Essentials installation files ***

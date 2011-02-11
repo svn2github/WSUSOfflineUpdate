@@ -349,9 +349,9 @@ EndIf
 ; Install IE9
 $txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
-  $ie9 = GUICtrlCreateCheckbox("Internet Explorer 9 Beta installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $ie9 = GUICtrlCreateCheckbox("Internet Explorer 9 RC installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $ie9 = GUICtrlCreateCheckbox("Install Internet Explorer 9 Beta", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $ie9 = GUICtrlCreateCheckbox("Install Internet Explorer 9 RC", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (IEVersion() = "9") ) Then  
   GUICtrlSetState(-1, $GUI_UNCHECKED)

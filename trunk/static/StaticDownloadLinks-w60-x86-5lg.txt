@@ -4,7 +4,7 @@ http://download.microsoft.com/download/A/7/5/A75BC017-63CE-47D6-8FA4-AFB5C21BAC5
 http://download.microsoft.com/download/3/9/8/398298E8-2FBB-4AD0-9B81-A5DE0131BB66/Windows6.0-KB969084-x86.msu
 http://download.microsoft.com/download/F/8/8/F88F09A2-A315-44C0-848E-48476A9E1577/IE8-WindowsVista-x86-ENU.exe
 http://download.microsoft.com/download/3/D/C/3DC5DC1B-2B60-487A-BAE2-732662BC0886/IE8-WindowsVista-x86-DEU.exe
-http://download.microsoft.com/download/7/E/4/7E41524E-B92B-4AAE-AB8D-CCC78FCDB2E8/Windows6.0-KB971512-x86.msu
-http://download.microsoft.com/download/0/7/5/07580031-9C97-4A59-BE4C-A4B32F135255/Windows6.0-KB2117917-x86.MSU
-http://download.microsoft.com/download/3/7/E/37E6953F-684E-4E6B-987C-013135FFB181/IE9-WindowsVista-x86-enu.exe
-http://download.microsoft.com/download/2/2/7/2272A0B8-2B09-471E-B6E2-8FB2CADF0011/IE9-WindowsVista-x86-deu.exe
+http://download.microsoft.com/download/B/A/F/BAF2D238-529A-4C54-AD31-BAFFE001F91E/Windows6.0-KB971512-x86.msu
+http://download.microsoft.com/download/0/E/D/0ED4ED7C-9FD8-4162-8024-F0643843B8EE/Windows6.0-KB2117917-x86.msu
+http://download.microsoft.com/download/C/1/7/C1754A31-1B2B-44F6-A51F-E7B2BB2E750E/IE9-WindowsVista-x86-enu.exe
+http://download.microsoft.com/download/C/E/A/CEA4085D-F30F-4405-AB9D-BBD993E44FB3/IE9-WindowsVista-x86-deu.exe

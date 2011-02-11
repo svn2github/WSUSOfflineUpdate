@@ -489,12 +489,15 @@ Version 6.7.2 -- 06.01.11
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.11
 - Superseded updates will now be dynamically determined and automatically excluded from download (Thanks to "Denniss" and "harry")
+- Optional installation of Internet Explorer 9 Release Candidate on Windows Vista, 7 and Server 2008(R2) (x86/x64) systems
 - Self update will now check integrity of downloaded release archive before updating
 - Fix: Internet Explorer 9 Beta offline installation missed prerequisites according to http://support.microsoft.com/kb/2399238 (Thanks to "boco")
 - Fix: Case sensitive file name handling lead to false audit errors when attempting to install Windows Defender on Windows XP systems (deu and jpn only)
 - Fix: DownloadUpdates.sh script contained invalid references to StaticDownloadLink-msse-*.txt (Thanks to "Andrew")
 - Fix: CreateISOImage.sh script erroneously supported "wxp-x64" target (Thanks to "rupat")
+- Fix: Added missing custom directory support for StaticDownloadLinks-dotnet.txt and StaticDownloadLinks-msse-<architecture>-glb.txt (Thanks to "rednaxela" and "yodog")
 - Fix: Added missing template files for statical download definitions of .NET updates (Thanks to "rednaxela")
 - Fix: Obsolete MSXML patches kb925672, kb925673, kb927977, kb927978, kb933579, kb936021 and kb936181 were not excluded (Thanks to "rustam")
 - Fix: Obsolete .NET patches kb886903, kb928366, kb971108, kb979906, kb917283, kb922770, kb947746, kb947748, kb971110, kb971111 and kb974417 were not excluded (Thanks to "Denniss")
 - Fix: Obsolete Vista patches kb972591, kb972592, kb972593, kb972594, kb974291, kb974469 and kb974470 were not excluded (Thanks to "Denniss")
+- Fix: Obsolete JScript/VBScript patches kb981332, kb981349 and kb981350 were not excluded (Thanks to "Denniss")
