@@ -492,6 +492,7 @@ Version ?.? -- ??.??.11
 - Optional installation of Internet Explorer 9 Release Candidate on Windows Vista, 7 and Server 2008(R2) (x86/x64) systems
 - Self update will now check integrity of downloaded release archive before updating
 - Fix: Internet Explorer 9 Beta offline installation missed prerequisites according to http://support.microsoft.com/kb/2399238 (Thanks to "boco")
+- Fix: Internet Explorer 9 prerequisites were erroneously installed even for IE8 on Windows Vista and Server 2008 systems (Thanks to "boco")
 - Fix: Case sensitive file name handling lead to false audit errors when attempting to install Windows Defender on Windows XP systems (deu and jpn only)
 - Fix: DownloadUpdates.sh script contained invalid references to StaticDownloadLink-msse-*.txt (Thanks to "Andrew")
 - Fix: CreateISOImage.sh script erroneously supported "wxp-x64" target (Thanks to "rupat")
@@ -501,3 +502,5 @@ Version ?.? -- ??.??.11
 - Fix: Obsolete .NET patches kb886903, kb928366, kb971108, kb979906, kb917283, kb922770, kb947746, kb947748, kb971110, kb971111 and kb974417 were not excluded (Thanks to "Denniss")
 - Fix: Obsolete Vista patches kb972591, kb972592, kb972593, kb972594, kb974291, kb974469 and kb974470 were not excluded (Thanks to "Denniss")
 - Fix: Obsolete JScript/VBScript patch kb981332 was not excluded for Windows 7 and Server 2008 R2 systems (Thanks to "Denniss")
+- Fix: Obsolete JScript/VBScript patch kb981350 was not excluded for Windows XP and Server 2003 (x86) systems (Thanks to "Denniss")
+- Fix: XSLT filter for Windows Server 2003 x64 global included Japanese updates (Thanks to "Denniss")
