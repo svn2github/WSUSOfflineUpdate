@@ -503,3 +503,4 @@ Version 6.8 -- 22.02.11
 - Fix: Numerous obsolete patches for all platforms were not excluded (Thanks to "Denniss")
 - Fix: XSLT filter for Windows Server 2003 x64 global included Japanese updates (Thanks to "Denniss")
 - Fix: DownloadUpdates.sh and CreateISOImage.sh scripts did not support symbolic links as working directories (Thanks to "NoKurth")
+- Fix: Installation of kb2416447 (security update for .NET 1.1) caused uncontrolled reboots (Thanks to "wwsmith" and "Denniss")
