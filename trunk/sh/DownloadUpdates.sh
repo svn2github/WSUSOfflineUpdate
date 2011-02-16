@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                   v. 6.7.2+ (r211)                 ###
+###                   v. 6.7.2+ (r212)                 ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -392,7 +392,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                   v. 6.7.2+ (r211)                 ***
+***                   v. 6.7.2+ (r212)                 ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
@@ -406,7 +406,7 @@ END
 printheader
 
 #set working directory
-cd $( dirname $0 )
+cd $( dirname $(readlink -f $0) )
 
 #check for required packages
 checkconfig

@@ -487,9 +487,9 @@ Version 6.7.2 -- 06.01.11
 - Fix: Microsoft removed the Office File Converter Pack (oconvpck.exe) from their servers (Thanks to "-Iwan-", "harry" and "Denniss")
 - Fix: CreateISOImage.cmd script did not properly signal errors (Thanks to "AlBundy")
 --------------------------------------------------------------------------------
-Version ?.? -- ??.??.11
-- Superseded updates will now be dynamically determined and automatically excluded from download (Thanks to "Denniss" and "harry")
+Version 6.8 -- 22.02.11
 - Optional installation of Internet Explorer 9 Release Candidate on Windows Vista, 7 and Server 2008(R2) (x86/x64) systems
+- Superseded updates will now be dynamically determined and automatically excluded from download (Thanks to "Denniss" and "harry")
 - Self update will now check integrity of downloaded release archive before updating
 - Fix: Internet Explorer 9 Beta offline installation missed prerequisites according to http://support.microsoft.com/kb/2399238 (Thanks to "boco")
 - Fix: Internet Explorer 9 prerequisites were erroneously installed even for IE8 on Windows Vista and Server 2008 systems (Thanks to "boco")
@@ -500,7 +500,6 @@ Version ?.? -- ??.??.11
 - Fix: Added missing template files for statical download definitions of .NET updates (Thanks to "rednaxela")
 - Fix: Obsolete MSXML patches kb925672, kb925673, kb927977, kb927978, kb933579, kb936021 and kb936181 were not excluded (Thanks to "rustam")
 - Fix: Obsolete .NET patches kb886903, kb928366, kb971108, kb979906, kb917283, kb922770, kb947746, kb947748, kb971110, kb971111 and kb974417 were not excluded (Thanks to "Denniss")
-- Fix: Obsolete Vista patches kb972591, kb972592, kb972593, kb972594, kb974291, kb974469 and kb974470 were not excluded (Thanks to "Denniss")
-- Fix: Obsolete JScript/VBScript patch kb981332 was not excluded for Windows 7 and Server 2008 R2 systems (Thanks to "Denniss")
-- Fix: Obsolete JScript/VBScript patch kb981350 was not excluded for Windows XP and Server 2003 (x86) systems (Thanks to "Denniss")
+- Fix: Numerous obsolete patches for all platforms were not excluded (Thanks to "Denniss")
 - Fix: XSLT filter for Windows Server 2003 x64 global included Japanese updates (Thanks to "Denniss")
+- Fix: DownloadUpdates.sh and CreateISOImage.sh scripts did not support symbolic links as working directories (Thanks to "NoKurth")
