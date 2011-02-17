@@ -87,12 +87,9 @@ goto UnsupType
 
 :FindCabMsu
 echo %1 | %SystemRoot%\system32\find.exe /I ".cab" >nul 2>&1
-if not errorlevel 1 goto InstCabMsu
+if not errorlevel 1 goto InstCab
 echo %1 | %SystemRoot%\system32\find.exe /I ".msu" >nul 2>&1
-if not errorlevel 1 (
-  set MSU=1
-  goto InstCabMsu
-)
+if not errorlevel 1 goto InstMsu
 goto UnsupType
 
 :InstExe
@@ -129,24 +126,22 @@ if "%IGNORE_ERRORS%"=="1" goto InstSuccess
 for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
 goto InstFailure
 
-:InstCabMsu
+:InstMsu
+echo Installing %1...
+%SystemRoot%\system32\wusa.exe %1 /quiet /norestart
+set ERR_LEVEL=%errorlevel%
+if "%IGNORE_ERRORS%"=="1" goto InstSuccess
+for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
+goto InstFailure
+
+:InstCab
 echo Installing %1...
 set ERR_LEVEL=0
 if "%OS_ARCH%"=="x64" (set TOKEN_KB=3) else (set TOKEN_KB=2)
 for /F "tokens=%TOKEN_KB% delims=-" %%i in ("%1") do (
   call SafeRmDir.cmd "%TEMP%\%%i"
   md "%TEMP%\%%i"
-  if "%MSU%"=="1" (
-    %SystemRoot%\system32\expand.exe %1 -F:* "%TEMP%\%%i" >nul
-    for /F %%j in ('dir /A:-D /B "%TEMP%\%%i\*%%i*.cab"') do (
-      move /Y "%TEMP%\%%i\%%j" "%TEMP%" >nul
-      del /Q "%TEMP%\%%i\*.*"
-      %SystemRoot%\system32\expand.exe "%TEMP%\%%j" -F:* "%TEMP%\%%i" >nul
-      del "%TEMP%\%%j"
-    )
-  ) else (
-    %SystemRoot%\system32\expand.exe %1 -F:* "%TEMP%\%%i" >nul
-  )
+  %SystemRoot%\system32\expand.exe %1 -F:* "%TEMP%\%%i" >nul
   %SystemRoot%\system32\pkgmgr.exe /ip /m:"%TEMP%\%%i" /quiet /norestart
   set ERR_LEVEL=%errorlevel%
   call SafeRmDir.cmd "%TEMP%\%%i"
