@@ -505,4 +505,4 @@ Version 6.8 -- 22.02.11
 - Fix: DownloadUpdates.sh and CreateISOImage.sh scripts did not support symbolic links as working directories (Thanks to "NoKurth")
 - Fix: Installation of kb2416447 (security update for .NET 1.1) caused uncontrolled reboots (Thanks to "wwsmith" and "Denniss")
 - Fix: Security update for .NET 3.5 SP1 on Windows Vista / Server 2008 (kb2416470) was not properly installed (Thanks to "Denniss")
-- Fix: Security update for Jscript for Windows Server 2003 (KB971961) was downloaded for Jscript v. 5.7 instead of v. 5.6 (Thanks to "Denniss")
+- Fix: Security update for Jscript for Windows Server 2003 (KB971961) was not downloaded for Jscript v. 5.6 (Thanks to "Denniss")
