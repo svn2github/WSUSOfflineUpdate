@@ -488,6 +488,7 @@ Version 6.7.2 -- 06.01.11
 - Fix: CreateISOImage.cmd script did not properly signal errors (Thanks to "AlBundy")
 --------------------------------------------------------------------------------
 Version 6.8 -- 22.02.11
+- Windows 7 / Server 2008 R2 Service Pack 1 integrated
 - Optional installation of Internet Explorer 9 Release Candidate on Windows Vista, 7 and Server 2008(R2) (x86/x64) systems
 - Superseded updates will now be dynamically determined and automatically excluded from download (Thanks to "Denniss" and "harry")
 - Self update will now check integrity of downloaded release archive before updating
@@ -506,3 +507,5 @@ Version 6.8 -- 22.02.11
 - Fix: Installation of kb2416447 (security update for .NET 1.1) caused uncontrolled reboots (Thanks to "wwsmith" and "Denniss")
 - Fix: Security update for .NET 3.5 SP1 on Windows Vista / Server 2008 (kb2416470) was not properly installed (Thanks to "Denniss")
 - Fix: Security update for Jscript for Windows Server 2003 (KB971961) was not downloaded for Jscript v. 5.6 (Thanks to "Denniss")
+- Fix: Double-quoted argument check in SafeRmDir.cmd could cause installation failures (Thanks to "thadsaab" and "Neb")
+--------------------------------------------------------------------------------

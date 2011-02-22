@@ -1,11 +1,11 @@
-; *** WSUS Offline Update 6.7.2 - Generator ***
-; ***      Author: T. Wittrock, Kiel        ***
-; ***    USB-Option added by Ch. Riedel     ***
-; ***  Dialog scaling added by Th. Baisch   ***
+; *** WSUS Offline Update 6.8 - Generator ***
+; ***      Author: T. Wittrock, Kiel      ***
+; ***    USB-Option added by Ch. Riedel   ***
+; ***  Dialog scaling added by Th. Baisch ***
 
 #include <GUIConstants.au3>
 
-Dim Const $caption                = "WSUS Offline Update 6.7.2"
+Dim Const $caption                = "WSUS Offline Update 6.8"
 Dim Const $title                  = $caption & " - Generator"
 Dim Const $donationURL            = "http://www.wsusoffline.net/donate.html"
 Dim Const $downloadLogFile        = "download.log"
@@ -640,10 +640,10 @@ Dim $result
   EndIf
   If $result <> 0 Then
     If ShowGUIInGerman() Then
-      $result = MsgBox(0x2023, "Versionsprüfung", "Sie setzen " & $caption & " ein. Eine neue Version ist verfügbar." _
+      $result = MsgBox(0x2023, "Versionsprüfung", "Sie setzen " & $caption & " ein. Eine neuere Version ist verfügbar." _
                        & @LF & "Möchten Sie WSUS Offline Update nun aktualisieren?")
     Else
-      $result = MsgBox(0x2023, "Version check", "You are using " & $caption & ". A new version is available." _
+      $result = MsgBox(0x2023, "Version check", "You are using " & $caption & ". A newer version is available." _
                        & @LF & "Would you like to update WSUS Offline Update now?")
     EndIf
     Switch $result
@@ -3512,9 +3512,9 @@ While 1
       WinSetState($maindlg, $maindlg, @SW_RESTORE)
       If IsCheckBoxChecked($skipdownload) Then 
         If ShowGUIInGerman() Then
-          MsgBox(0x2040, "Info", "Herunterladen / Image-Erstellung / Kopieren erfolgreich.")
+          MsgBox(0x2040, "Info", "Image-Erstellung / Kopieren erfolgreich.")
         Else
-          MsgBox(0x2040, "Info", "Download / image creation / copying successful.")
+          MsgBox(0x2040, "Info", "Image creation / copying successful.")
         EndIf
       Else
         If IsCheckBoxChecked($shutdown) Then 

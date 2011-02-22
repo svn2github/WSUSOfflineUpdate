@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.7.2+ (r215)
+set WSUSOFFLINE_VERSION=6.8
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -262,7 +262,7 @@ goto Installed
 
 :SPw60
 :SPw61
-echo %DATE% %TIME% - Info: Installing most recent Service Pack for Windows Vista >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Installing most recent Service Pack for Windows Vista / 7 >>%UPDATE_LOGFILE%
 call InstallListedUpdates.cmd %VERIFY_MODE% /unattend /forcerestart
 if errorlevel 1 goto InstError
 set RECALL_REQUIRED=1

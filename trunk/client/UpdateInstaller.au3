@@ -1,11 +1,11 @@
-; *** WSUS Offline Update 6.7.2 - Installer ***
-; ***      Author: T. Wittrock, Kiel        ***
-; ***  Dialog scaling added by Th. Baisch   ***
+; *** WSUS Offline Update 6.8 - Installer ***
+; ***      Author: T. Wittrock, Kiel      ***
+; ***  Dialog scaling added by Th. Baisch ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 
-Dim Const $caption                    = "WSUS Offline Update 6.7.2 - Installer"
+Dim Const $caption                    = "WSUS Offline Update 6.8 - Installer"
 
 ; Registry constants
 Dim Const $reg_key_wsh_hklm           = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings"
@@ -19,6 +19,7 @@ Dim Const $reg_key_wd                 = "HKEY_LOCAL_MACHINE\Software\Microsoft\W
 Dim Const $reg_key_fontdpi            = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontDPI"
 Dim Const $reg_key_windowmetrics      = "HKEY_CURRENT_USER\Control Panel\Desktop\WindowMetrics"
 Dim Const $reg_key_windowsupdate      = "HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsUpdate"
+Dim Const $reg_key_currentversion     = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion"
 
 Dim Const $reg_val_default            = ""
 Dim Const $reg_val_enabled            = "Enabled"
@@ -27,6 +28,7 @@ Dim Const $reg_val_pshversion         = "PowerShellVersion"
 Dim Const $reg_val_logpixels          = "LogPixels"
 Dim Const $reg_val_applieddpi         = "AppliedDPI"
 Dim Const $reg_val_wustatusserver     = "WUStatusServer"
+Dim Const $reg_val_csdversion         = "CSDVersion"
 
 ; Defaults
 Dim Const $default_logpixels          = 96
@@ -221,6 +223,10 @@ EndFunc
 
 Func MSSEPresent($basepath)
   Return FileExists($basepath & $path_rel_msse)
+EndFunc
+
+Func SP1Present()
+  Return StringInStr(RegRead($reg_key_currentversion, $reg_val_csdversion), "Service Pack 1") > 0
 EndFunc
 
 Func CalcGUISize()
@@ -660,16 +666,17 @@ If ( (StringRight(EnvGet("TEMP"), 1) = "\") OR (StringRight(EnvGet("TEMP"), 1) =
     Exit(1)
   EndIf
 EndIf
-If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (@OSServicePack <> "Service Pack 2") ) Then
+If ( ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (@OSServicePack <> "Service Pack 2") ) _
+  OR ( ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) AND (NOT SP1Present()) ) ) Then
   If ShowGUIInGerman() Then
-    MsgBox(0x2040, "Information", "Unter Windows Vista / Server 2008 müssen Sie" _
-                          & @LF & "nach der Installation der Service Packs 1 und 2" _
+    MsgBox(0x2040, "Information", "Unter Windows Vista / 7 / Server 2008(R2) müssen Sie" _
+                          & @LF & "nach der Installation der Service Pack(s)" _
                           & @LF & "und dem obligaten Neustart" _
                           & @LF & "die Installation der Updates manuell wiederaufnehmen.")
   Else
-    MsgBox(0x2040, "Information", "Under Windows Vista / Server 2008, you have to manually resume" _
+    MsgBox(0x2040, "Information", "Under Windows Vista / 7 / Server 2008(R2), you have to manually resume" _
                           & @LF & "the installation of updates after installation" _
-                          & @LF & "of Service Packs 1 and 2 and mandatory reboot.")
+                          & @LF & "of Service Pack(s) and mandatory reboot.")
   EndIf
   GUICtrlSetState($converters, $GUI_UNCHECKED)
   GUICtrlSetState($converters, $GUI_DISABLE)

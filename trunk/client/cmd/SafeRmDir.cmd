@@ -3,7 +3,7 @@ rem *** Author: T. Wittrock, Kiel ***
 
 if "%UPDATE_LOGFILE%"=="" set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 
-if "%1"=="" goto NoParam
+if '%1'=='' goto NoParam
 if not exist %1 goto EoF
 
 if "%CSCRIPT_PATH%"=="" set CSCRIPT_PATH=%SystemRoot%\system32\cscript.exe
