@@ -19,7 +19,6 @@ Dim Const $reg_key_wd                 = "HKEY_LOCAL_MACHINE\Software\Microsoft\W
 Dim Const $reg_key_fontdpi            = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontDPI"
 Dim Const $reg_key_windowmetrics      = "HKEY_CURRENT_USER\Control Panel\Desktop\WindowMetrics"
 Dim Const $reg_key_windowsupdate      = "HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsUpdate"
-Dim Const $reg_key_currentversion     = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion"
 
 Dim Const $reg_val_default            = ""
 Dim Const $reg_val_enabled            = "Enabled"
@@ -28,7 +27,6 @@ Dim Const $reg_val_pshversion         = "PowerShellVersion"
 Dim Const $reg_val_logpixels          = "LogPixels"
 Dim Const $reg_val_applieddpi         = "AppliedDPI"
 Dim Const $reg_val_wustatusserver     = "WUStatusServer"
-Dim Const $reg_val_csdversion         = "CSDVersion"
 
 ; Defaults
 Dim Const $default_logpixels          = 96
@@ -226,7 +224,7 @@ Func MSSEPresent($basepath)
 EndFunc
 
 Func SP1Present()
-  Return StringInStr(RegRead($reg_key_currentversion, $reg_val_csdversion), "Service Pack 1") > 0
+  Return StringInStr(@OSServicePack, "Service Pack 1") > 0
 EndFunc
 
 Func CalcGUISize()
