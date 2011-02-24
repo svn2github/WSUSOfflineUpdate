@@ -1,4 +1,3 @@
 http://download.microsoft.com/download/0/A/F/0AFB5316-3062-494A-AB78-7FB0D4461357/windows6.1-KB976932-X86.exe
-http://download.microsoft.com/download/5/E/4/5E404378-9A5D-41AB-AFBA-1AC04F3B2A13/Windows6.1-KB2454826-v2-x86.msu
 http://download.microsoft.com/download/2/A/5/2A50895F-4BF1-4A68-837B-506AE8301E9D/IE9-Windows7-x86-enu.exe
 http://download.microsoft.com/download/3/A/3/3A3E900A-E727-4200-8D06-FF336BF89067/IE9-Windows7-x86-deu.exe

@@ -145,7 +145,7 @@ goto CreateImage
 :CreateImage
 rem *** Create ISO image ***
 if %OUTPUT_PATH%~==~ set OUTPUT_PATH=..\iso
-if not exist %OUTPUT_PATH%\nul goto NoOutputPath
+if not exist %OUTPUT_PATH%\. goto NoOutputPath
 if not exist ..\bin\mkisofs.exe goto NoMkIsoFs
 echo Creating ISO image %OUTPUT_PATH%\%ISO_NAME%.iso...
 if exist %OUTPUT_PATH%\%ISO_NAME%.iso del %OUTPUT_PATH%\%ISO_NAME%.iso

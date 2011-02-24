@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.8+ (r218)
+set WSUSOFFLINE_VERSION=6.8.1
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -511,25 +511,6 @@ if errorlevel 1 (
   echo Warning: File %IE_FILENAME% not found. 
   echo %DATE% %TIME% - Warning: File %IE_FILENAME% not found >>%UPDATE_LOGFILE%
   goto SkipIEInst
-)
-echo Checking Internet Explorer 9 prerequisites...
-if exist "%TEMP%\InstalledUpdateIds.txt" del "%TEMP%\InstalledUpdateIds.txt"
-%CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
-if exist "%TEMP%\InstalledUpdateIds.txt" (
-  %SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\InstalledUpdateIds.txt" ..\static\StaticUpdateIds-ie9-w61.txt >"%TEMP%\MissingUpdateIds.txt"
-  del "%TEMP%\InstalledUpdateIds.txt"
-) else (
-  copy /Y ..\static\StaticUpdateIds-ie9-w61.txt "%TEMP%\MissingUpdateIds.txt" >nul
-)
-call ListUpdatesToInstall.cmd /excludestatics
-if errorlevel 1 goto ListError
-if exist "%TEMP%\UpdatesToInstall.txt" (
-  echo Installing Internet Explorer 9 prerequisites...
-  call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
-  if not errorlevel 1 (
-    set RECALL_REQUIRED=1
-    goto IEInstalled
-  )
 )
 echo Installing Internet Explorer 9...
 for /F %%i in ('dir /B %IE_FILENAME%') do (

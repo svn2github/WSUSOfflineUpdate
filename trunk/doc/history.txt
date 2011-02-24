@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 6.7.1
+WSUS Offline Update 6.8.1
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -509,5 +509,8 @@ Version 6.8 -- 22.02.11
 - Fix: Security update for Jscript for Windows Server 2003 (KB971961) was not downloaded for Jscript v. 5.6 (Thanks to "Denniss")
 - Fix: Double-quoted argument check in SafeRmDir.cmd could cause installation failures (Thanks to "thadsaab" and "Neb")
 --------------------------------------------------------------------------------
-Version 6.8.1 -- ??.??.11
+Version 6.8.1 -- 24.02.11
 - Fix: UpdateInstaller script did not properly detect SP1 for Windows 7 / Server 2008 R2 on x64 systems (Thanks to "Gerby")
+- Fix: Installation attempts of IE9 RC failed on Windows 7 and Server 2008 R2 SP1 systems because of obsolete prerequisites' check
+- Fix: CreateISOImage.cmd script did not support UNC targets as output paths (Thanks to "WSUS-Fan")
+--------------------------------------------------------------------------------
