@@ -514,3 +514,5 @@ Version 6.8.1 -- 24.02.11
 - Fix: Installation attempts of IE9 RC failed on Windows 7 and Server 2008 R2 SP1 systems because of obsolete prerequisites' check
 - Fix: CreateISOImage.cmd script did not support UNC targets as output paths (Thanks to "WSUS-Fan")
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.11
+- Fix: Automatic recall preparation failed for new version 3.1 of Sysinternals' tool Autologon.exe (Thanks to "Yany", "harry" and "boco")

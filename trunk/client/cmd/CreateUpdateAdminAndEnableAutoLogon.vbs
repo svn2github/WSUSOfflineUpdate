@@ -6,7 +6,8 @@ Private Const strWOUTempAdminName   = "WOUTempAdmin"
 Private Const strKeySystemPolicies  = "HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System\"
 Private Const strValAdminPrompt     = "ConsentPromptBehaviorAdmin"
 Private Const strValEnableLUA       = "EnableLUA"
-Private Const strKeyAutologon       = "HKCU\Software\Sysinternals\A\"
+Private Const strKeyAutologon30     = "HKCU\Software\Sysinternals\A\"
+Private Const strKeyAutologon31     = "HKCU\Software\Sysinternals\Autologon\"
 Private Const strValAcceptEula      = "EulaAccepted"
 
 Dim wshShell, strComputerName, objComputer, objUser, strPassword, found
@@ -38,7 +39,8 @@ End Function
 
 Private Sub EnableAutoLogonAndDisableUAC(shell, strUserName, strDomain, strPassword)
   On Error Resume Next 'Turn error reporting off
-  shell.RegWrite strKeyAutologon & strValAcceptEula, 1, "REG_DWORD"
+  shell.RegWrite strKeyAutologon30 & strValAcceptEula, 1, "REG_DWORD"
+  shell.RegWrite strKeyAutologon31 & strValAcceptEula, 1, "REG_DWORD"
   shell.Run "..\bin\Autologon.exe " & strUserName & " " & strDomain & " " & strPassword, 0, True
   shell.RegWrite strKeySystemPolicies & strValAdminPrompt, 0, "REG_DWORD"
   shell.RegWrite strKeySystemPolicies & strValEnableLUA, 0, "REG_DWORD"
