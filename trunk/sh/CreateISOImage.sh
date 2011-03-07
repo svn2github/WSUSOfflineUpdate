@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update ISO maker            ###
 ###                  for Linux systems                 ###
-###                   v. 6.8.1+ (r221)                 ###
+###                   v. 6.8.1+ (r222)                 ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg      ###
@@ -46,7 +46,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update ISO maker            ***
 ***                  for Linux systems                 ***
-***                   v. 6.8.1+ (r221)                 ***
+***                   v. 6.8.1+ (r222)                 ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Stefan Joehnke, Walter Schiessberg      ***
