@@ -58,170 +58,194 @@ Private Function RegRead(objShell, strName)
   On Error GoTo 0       'Turn error reporting on
 End Function
 
-Private Sub WriteLanguageToFile(cmdFile, varName, langCode, writeExtVar)
+Private Sub WriteLanguageToFile(cmdFile, varName, langCode, writeShortLang, writeExtLang)
   Select Case langCode
 ' supported languages
     Case &H0009, &H0409, &H0809, &H0C09, &H1009, &H1409, &H1809, &H1C09, &H2009, &H2409, &H2809, &H2C09, &H3009, &H3409, &H4009, &H4409, &H4809
       cmdFile.WriteLine("set " & varName & "=enu")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=en-us")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=en")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=en-us")
     Case &H000C, &H040C, &H080C, &H0C0C, &H100C, &H140C, &H180C
       cmdFile.WriteLine("set " & varName & "=fra")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=fr-fr")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=fr")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=fr-fr")
     Case &H000A, &H080A, &H0C0A, &H100A, &H140A, &H180A, &H1C0A, &H200A, &H240A, &H280A, &H2C0A, &H300A, &H340A, &H380A, &H3C0A, &H400A, &H440A, &H480A, &H4C0A, &H500A, &H540A
       cmdFile.WriteLine("set " & varName & "=esn")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=es-es")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=es")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=es-es")
     Case &H0019, &H0419
       cmdFile.WriteLine("set " & varName & "=rus")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=ru-ru")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=ru")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=ru-ru")
     Case &H0816
       cmdFile.WriteLine("set " & varName & "=ptg")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=pt-pt")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=pt")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=pt-pt")
     Case &H0416
       cmdFile.WriteLine("set " & varName & "=ptb")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=pt-br")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=pt")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=pt-br")
     Case &H0007, &H0407, &H0807, &H0C07, &H1007, &H1407
       cmdFile.WriteLine("set " & varName & "=deu")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=de-de")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=de")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=de-de")
     Case &H0013, &H0413, &H0813
       cmdFile.WriteLine("set " & varName & "=nld")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=nl-nl")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=nl")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=nl-nl")
     Case &H0010, &H0410, &H0810
       cmdFile.WriteLine("set " & varName & "=ita")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=it-it")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=it")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=it-it")
     Case &H0015, &H0415
       cmdFile.WriteLine("set " & varName & "=plk")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=pl-pl")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=pl")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=pl-pl")
     Case &H000E, &H040E
       cmdFile.WriteLine("set " & varName & "=hun")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=hu-hu")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=hu")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=hu-hu")
     Case &H0005, &H0405
       cmdFile.WriteLine("set " & varName & "=csy")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=cs-cz")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=cs")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=cs-cz")
     Case &H001D, &H041D, &H081D
       cmdFile.WriteLine("set " & varName & "=sve")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=sv-se")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=sv")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=sv-se")
     Case &H001F, &H041F
       cmdFile.WriteLine("set " & varName & "=trk")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=tr-tr")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=tr")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=tr-tr")
     Case &H0008, &H0408
       cmdFile.WriteLine("set " & varName & "=ell")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=el-gr")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=el")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=el-gr")
     Case &H0006, &H0406
       cmdFile.WriteLine("set " & varName & "=dan")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=da-dk")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=da")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=da-dk")
     Case &H0014, &H0414, &H7C14, &H0814, &H7814
       cmdFile.WriteLine("set " & varName & "=nor")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=nb-no")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=no")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=nb-no")
     Case &H000B, &H040B
       cmdFile.WriteLine("set " & varName & "=fin")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=fi-fi")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=fi")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=fi-fi")
     Case &H0004, &H0804, &H1004, &H7804
       cmdFile.WriteLine("set " & varName & "=chs")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=zh-cn")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=zh")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=zh-cn")
     Case &H0404, &H0C04, &H1404, &H7C04
       cmdFile.WriteLine("set " & varName & "=cht")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=zh-tw")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=zh")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=zh-tw")
     Case &H0011, &H0411
       cmdFile.WriteLine("set " & varName & "=jpn")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=ja-jp")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=ja")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=ja-jp")
     Case &H0012, &H0412
       cmdFile.WriteLine("set " & varName & "=kor")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=ko-kr")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=ko")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=ko-kr")
     Case &H0001, &H0401, &H0801, &H0C01, &H1001, &H1401, &H1801, &H1C01, &H2001, &H2401, &H2801, &H2C01, &H3001, &H3401, &H3801, &H3C01, &H4001
       cmdFile.WriteLine("set " & varName & "=ara")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=ar-sa")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=ar")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=ar-sa")
     Case &H000D, &H040D
       cmdFile.WriteLine("set " & varName & "=heb")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=he-il")
+      If writeShortLang Then cmdFile.WriteLine("set " & varName & "_SHORT=he")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=he-il")
 
 ' unsupported languages, detection only
     Case &H002B, &H042B
       cmdFile.WriteLine("set " & varName & "=hye")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=hy-am")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=hy-am")
     Case &H002D, &H042D
       cmdFile.WriteLine("set " & varName & "=euq")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=eu-es")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=eu-es")
     Case &H0023, &H0423
       cmdFile.WriteLine("set " & varName & "=bel")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=be-by")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=be-by")
     Case &H007E, &H047E
       cmdFile.WriteLine("set " & varName & "=bre")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=br-fr")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=br-fr")
     Case &H0002, &H0402
       cmdFile.WriteLine("set " & varName & "=bgr")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=bg-bg")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=bg-bg")
     Case &H0003, &H0403
       cmdFile.WriteLine("set " & varName & "=cat")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=ca-es")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=ca-es")
     Case &H0083, &H0483
       cmdFile.WriteLine("set " & varName & "=cos")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=co-fr")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=co-fr")
     Case &H001A, &H041A, &H101A
       cmdFile.WriteLine("set " & varName & "=hrv")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=hr-hr")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=hr-hr")
     Case &H0025, &H0425
       cmdFile.WriteLine("set " & varName & "=eti")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=et-ee")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=et-ee")
     Case &H0038, &H0438
       cmdFile.WriteLine("set " & varName & "=fos")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=fo-fo")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=fo-fo")
     Case &H0062, &H0462
       cmdFile.WriteLine("set " & varName & "=fyn")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=fy-nl")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=fy-nl")
     Case &H0056, &H0456
       cmdFile.WriteLine("set " & varName & "=glc")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=gl-es")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=gl-es")
     Case &H0037, &H0437
       cmdFile.WriteLine("set " & varName & "=kat")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=ka-ge")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=ka-ge")
     Case &H006F, &H046F
       cmdFile.WriteLine("set " & varName & "=kal")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=kl-gl")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=kl-gl")
     Case &H0039, &H0439
       cmdFile.WriteLine("set " & varName & "=hin")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=hi-in")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=hi-in")
     Case &H000F, &H040F
       cmdFile.WriteLine("set " & varName & "=isl")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=is-is")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=is-is")
     Case &H003C, &H083C
       cmdFile.WriteLine("set " & varName & "=ire")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=ga-ie")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=ga-ie")
     Case &H0026, &H0426
       cmdFile.WriteLine("set " & varName & "=lvi")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=lv-lv")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=lv-lv")
     Case &H0027, &H0427
       cmdFile.WriteLine("set " & varName & "=lth")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=lt-lt")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=lt-lt")
     Case &H0029, &H0429
       cmdFile.WriteLine("set " & varName & "=far")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=fa-ir")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=fa-ir")
     Case &H0046, &H0446
       cmdFile.WriteLine("set " & varName & "=pan")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=pa-in")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=pa-in")
     Case &H0018, &H0418
       cmdFile.WriteLine("set " & varName & "=rom")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=ro-ro")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=ro-ro")
     Case &H004F, &H044F
       cmdFile.WriteLine("set " & varName & "=san")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=sa-in")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=sa-in")
     Case &H001B, &H041B
       cmdFile.WriteLine("set " & varName & "=sky")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=sk-sk")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=sk-sk")
     Case &H0024, &H0424
       cmdFile.WriteLine("set " & varName & "=slv")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=sl-si")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=sl-si")
     Case &H001E, &H041E
       cmdFile.WriteLine("set " & varName & "=tha")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=th-th")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=th-th")
     Case &H0022, &H0422
       cmdFile.WriteLine("set " & varName & "=ukr")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=uk-ua")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=uk-ua")
     Case &H002A, &H042A
       cmdFile.WriteLine("set " & varName & "=vit")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=vi-vn")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=vi-vn")
     Case &H0052, &H0452
       cmdFile.WriteLine("set " & varName & "=cym")
-      If writeExtVar Then cmdFile.WriteLine("set " & varName & "_EXT=cy-gb")
+      If writeExtLang Then cmdFile.WriteLine("set " & varName & "_EXT=cy-gb")
   End Select
 End Sub
 
@@ -383,7 +407,7 @@ For Each objWMIQuery in objWMIService.ExecQuery("Select * from Win32_OperatingSy
   objCmdFile.WriteLine("set OS_SP_VER_MAJOR=" & objWMIQuery.ServicePackMajorVersion)
   objCmdFile.WriteLine("set OS_SP_VER_MINOR=" & objWMIQuery.ServicePackMinorVersion)
   objCmdFile.WriteLine("set OS_LANG_CODE=0x" & Hex(objWMIQuery.OSLanguage))
-  WriteLanguageToFile objCmdFile, "OS_LANG", objWMIQuery.OSLanguage, True
+  WriteLanguageToFile objCmdFile, "OS_LANG", objWMIQuery.OSLanguage, True, False
   objCmdFile.WriteLine("set SystemDirectory=" & objWMIQuery.SystemDirectory)
 Next
 ' Documentation: http://msdn.microsoft.com/en-us/library/aa394102(VS.85).aspx
@@ -483,7 +507,7 @@ For i = 0 To UBound(arrayOfficeNames)
         If languageCode = 0 Then
           objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_LANG=%OS_LANG%")
         Else
-          WriteLanguageToFile objCmdFile, UCase(arrayOfficeNames(i)) & "_LANG", languageCode, False
+          WriteLanguageToFile objCmdFile, UCase(arrayOfficeNames(i)) & "_LANG", languageCode, False, False
         End If
         Exit For
       End If

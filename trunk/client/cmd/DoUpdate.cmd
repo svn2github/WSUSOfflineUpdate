@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.8.1+ (r222)
+set WSUSOFFLINE_VERSION=6.8.1+ (r223)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -596,13 +596,24 @@ if %DOTNET35_VER_REVIS% GTR %DOTNET35_VER_TARGET_REVIS% goto SkipDotNet35Inst
 if %DOTNET35_VER_BUILD% GEQ %DOTNET35_VER_TARGET_BUILD% goto SkipDotNet35Inst
 :InstallDotNet35
 set DOTNET35_FILENAME=..\dotnet\dotnetfx35.exe
+set DOTNET35LP_FILENAME=..\dotnet\%OS_ARCH%-glb\dotnetfx35langpack_%OS_ARCH%%OS_LANG_SHORT%*.exe
 if not exist %DOTNET35_FILENAME% (
   echo Warning: File %DOTNET35_FILENAME% not found. 
   echo %DATE% %TIME% - Warning: File %DOTNET35_FILENAME% not found >>%UPDATE_LOGFILE%
   goto SkipDotNet35Inst
 )
 echo Installing .NET Framework 3.5 SP1...
-for /F %%i in ('dir /B %DOTNET35_FILENAME%') do call InstallOSUpdate.cmd ..\dotnet\%%i %VERIFY_MODE% /ignoreerrors /qb /norestart /lang:enu
+call InstallOSUpdate.cmd %DOTNET35_FILENAME% %VERIFY_MODE% /ignoreerrors /qb /norestart /lang:enu
+if "%OS_LANG%" NEQ "enu" (
+  dir /B %DOTNET35LP_FILENAME% >nul 2>&1
+  if errorlevel 1 (
+    echo Warning: File %DOTNET35LP_FILENAME% not found. 
+    echo %DATE% %TIME% - Warning: File %DOTNET35LP_FILENAME% not found >>%UPDATE_LOGFILE%
+  ) else (
+    echo Installing .NET Framework 3.5 SP1 Language Pack...
+    for /F %%i in ('dir /B %DOTNET35LP_FILENAME%') do call InstallOSUpdate.cmd ..\dotnet\%OS_ARCH%-glb\%%i %VERIFY_MODE% /ignoreerrors /qb /norestart /nopatch
+  )
+)
 copy /Y ..\static\StaticUpdateIds-dotnet.txt "%TEMP%\MissingUpdateIds.txt" >nul
 call ListUpdatesToInstall.cmd /excludestatics
 if errorlevel 1 goto ListError
@@ -612,6 +623,7 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
 )
 set RECALL_REQUIRED=1
 set DOTNET35_FILENAME=
+set DOTNET35LP_FILENAME=
 goto Installed
 :SkipDotNet35Inst
 
@@ -625,15 +637,27 @@ if %DOTNET4_VER_MINOR% GTR %DOTNET4_VER_TARGET_MINOR% goto SkipDotNet4Inst
 if %DOTNET4_VER_REVIS% GEQ %DOTNET4_VER_TARGET_REVIS% goto SkipDotNet4Inst
 :InstallDotNet4
 set DOTNET4_FILENAME=..\dotnet\dotNetFx40_Full_x86_x64.exe
+set DOTNET4LP_FILENAME=..\dotnet\dotNetFx40LP_Full_x86_x64%OS_LANG_SHORT%*.exe
 if not exist %DOTNET4_FILENAME% (
   echo Warning: File %DOTNET4_FILENAME% not found. 
   echo %DATE% %TIME% - Warning: File %DOTNET4_FILENAME% not found >>%UPDATE_LOGFILE%
   goto SkipDotNet4Inst
 )
 echo Installing .NET Framework 4...
-for /F %%i in ('dir /B %DOTNET4_FILENAME%') do call InstallOSUpdate.cmd ..\dotnet\%%i %VERIFY_MODE% /errorsaswarnings /passive /norestart /lcid 1033
+call InstallOSUpdate.cmd %DOTNET4_FILENAME% %VERIFY_MODE% /errorsaswarnings /passive /norestart /lcid 1033
+if "%OS_LANG%" NEQ "enu" (
+  dir /B %DOTNET4LP_FILENAME% >nul 2>&1
+  if errorlevel 1 (
+    echo Warning: File %DOTNET4LP_FILENAME% not found. 
+    echo %DATE% %TIME% - Warning: File %DOTNET4LP_FILENAME% not found >>%UPDATE_LOGFILE%
+  ) else (
+    echo Installing .NET Framework 4 Language Pack...
+    for /F %%i in ('dir /B %DOTNET4LP_FILENAME%') do call InstallOSUpdate.cmd ..\dotnet\%%i %VERIFY_MODE% /errorsaswarnings /passive /norestart
+  )
+)
 set REBOOT_REQUIRED=1
 set DOTNET4_FILENAME=
+set DOTNET4LP_FILENAME=
 :SkipDotNet4Inst
 
 rem *** Install .NET Framework - Custom ***

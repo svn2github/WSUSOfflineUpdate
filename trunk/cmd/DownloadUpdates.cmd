@@ -10,7 +10,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 %~d0
 cd "%~p0"
 
-set WSUSOFFLINE_VERSION=6.8.1+ (r222)
+set WSUSOFFLINE_VERSION=6.8.1+ (r223)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -273,7 +273,6 @@ if exist ..\exclude\ExcludeList-w2k-x86.txt del ..\exclude\ExcludeList-w2k-x86.t
 if exist ..\exclude\ExcludeListISO-w2k-x86.txt del ..\exclude\ExcludeListISO-w2k-x86.txt
 if exist ..\exclude\ExcludeListUSB-w2k-x86.txt del ..\exclude\ExcludeListUSB-w2k-x86.txt
 if exist ..\sh\FIXIE6SetupDir.sh del ..\sh\FIXIE6SetupDir.sh
-if exist ..\xslt\ExtractDownloadLinks-win-x86-glb.xsl del ..\xslt\ExtractDownloadLinks-win-x86-glb.xsl
 del /Q ..\static\*ie6-*.* >nul 2>&1
 del /Q ..\static\*w2k-*.* >nul 2>&1
 del /Q ..\xslt\*w2k-*.* >nul 2>&1
@@ -412,15 +411,15 @@ if "%VERIFY_DOWNLOADS%"=="1" (
 
 rem *** Download installation files for .NET Framework 3.5 SP1 and 4 ***
 if "%INCLUDE_DOTNET%" NEQ "1" goto SkipDotNet
-set DOTNET35_FILENAME=..\dotnet\dotnetfx35.exe
-set DOTNET4_FILENAME=..\dotnet\dotNetFx40_Full_x86_x64.exe
+for %%i in (..\client\md\hashes-dotnet.txt) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE%" >nul 2>&1
+if not errorlevel 1 goto SkipDotNet
 if "%VERIFY_DOWNLOADS%" NEQ "1" goto DownloadDotNet
 if not exist ..\client\dotnet\nul goto DownloadDotNet
 if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
 if exist ..\client\md\hashes-dotnet.txt (
   echo Verifying integrity of .NET Framework installation files...
   pushd ..\client\md
-  ..\bin\hashdeep.exe -a -l -vv -k hashes-dotnet.txt %DOTNET35_FILENAME% %DOTNET4_FILENAME%
+  ..\bin\hashdeep.exe -a -l -vv -k hashes-dotnet.txt ..\dotnet\dotnetfx*.exe
   if errorlevel 1 (
     popd
     goto IntegrityError
@@ -460,7 +459,7 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   echo Creating integrity database for .NET Framework installation files...
   if not exist ..\client\md\nul md ..\client\md
   pushd ..\client\md
-  ..\bin\hashdeep.exe -c md5,sha256 -l %DOTNET35_FILENAME% %DOTNET4_FILENAME% >hashes-dotnet.txt
+  ..\bin\hashdeep.exe -c md5,sha256 -l ..\dotnet\dotnetfx*.exe >hashes-dotnet.txt
   if errorlevel 1 (
     popd
     echo Warning: Error creating integrity database ..\client\md\hashes-dotnet.txt.
