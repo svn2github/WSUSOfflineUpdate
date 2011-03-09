@@ -1,4 +1,3 @@
 @echo off
-%~d0
-cd "%~p0cmd"
+cd /D "%~dp0cmd"
 start DoUpdate %*

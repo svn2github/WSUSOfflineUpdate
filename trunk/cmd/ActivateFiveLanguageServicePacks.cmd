@@ -1,6 +1,5 @@
 @echo off
-%~d0
-cd "%~p0"
+cd /D "%~dp0"
 if exist ..\static\StaticDownloadLinks-w60-x86-5lg.txt (
   if exist ..\static\StaticDownloadLinks-w60-x86-alg.txt del ..\static\StaticDownloadLinks-w60-x86-alg.txt
   if exist ..\static\StaticDownloadLinks-w60-x86-glb.txt ren ..\static\StaticDownloadLinks-w60-x86-glb.txt StaticDownloadLinks-w60-x86-alg.txt

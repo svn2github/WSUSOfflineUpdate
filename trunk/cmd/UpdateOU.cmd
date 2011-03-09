@@ -7,8 +7,7 @@ if errorlevel 1 goto NoExtensions
 
 if "%DIRCMD%" NEQ "" set DIRCMD=
 
-%~d0
-cd "%~p0"
+cd /D "%~dp0"
 
 set DOWNLOAD_LOGFILE=..\log\download.log
 if exist %DOWNLOAD_LOGFILE% (

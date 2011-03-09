@@ -5,8 +5,7 @@ verify other 2>nul
 setlocal enableextensions
 if errorlevel 1 goto NoExtensions
 
-%~d0
-cd "%~p0"
+cd /D "%~dp0"
 
 if "%DOWNLOAD_LOGFILE%"=="" set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9

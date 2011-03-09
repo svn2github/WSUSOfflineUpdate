@@ -5,8 +5,7 @@ setlocal
 
 if "%UPDATE_LOGFILE%"=="" set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 
-%~d0
-cd "%~p0"
+cd /D "%~dp0"
 
 if "%REG_PATH%"=="" set REG_PATH=%SystemRoot%\system32\reg.exe
 if not exist %REG_PATH% goto NoReg

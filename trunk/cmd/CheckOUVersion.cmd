@@ -5,8 +5,7 @@ verify other 2>nul
 setlocal enableextensions
 if errorlevel 1 goto NoExtensions
 
-%~d0
-cd "%~p0"
+cd /D "%~dp0"
 
 set WGET_PATH=..\bin\wget.exe
 if not exist %WGET_PATH% goto NoWGet

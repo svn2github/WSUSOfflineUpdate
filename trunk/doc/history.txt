@@ -520,3 +520,4 @@ Version ?.? -- ??.??.11
 - Fix: Automatic recall preparation failed for new version 3.1 of Sysinternals' tool Autologon.exe (Thanks to "Yany", "harry" and "boco")
 - Fix: Download exclude lists for Windows 7 / Server 2008 R2 (x86/x64) updated since Microsoft modified their list of included fixes and updates (see http://www.microsoft.com/downloads/en/details.aspx?FamilyID=61924cea-83fe-46e9-96d8-027ae59ddc11&displaylang=en) on March 4th, 2011 (Thanks to "harry")
 - Fix: Download filters missed CAPICOM security update kb931906 again
+- Fix: Several obsolete cumulative security updates for Internet Explorer remained (Thanks to "Denniss")
