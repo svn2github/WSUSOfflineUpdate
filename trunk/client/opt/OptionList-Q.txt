@@ -1,6 +1,6 @@
-kb867460
-ndp20-
+ndp1.1sp1-kb867460
+capicom
 kb913433
+rootsupd
 kb923789
 wmp11
-rootsupd
