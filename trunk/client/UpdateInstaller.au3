@@ -1,11 +1,11 @@
-; *** WSUS Offline Update 6.8.1 - Installer ***
+; *** WSUS Offline Update 6.8.2 - Installer ***
 ; ***      Author: T. Wittrock, Kiel        ***
 ; ***  Dialog scaling added by Th. Baisch   ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 
-Dim Const $caption                    = "WSUS Offline Update 6.8.1 - Installer"
+Dim Const $caption                    = "WSUS Offline Update 6.8.2 - Installer"
 
 ; Registry constants
 Dim Const $reg_key_wsh_hklm           = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings"
@@ -353,9 +353,9 @@ EndIf
 ; Install IE9
 $txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
-  $ie9 = GUICtrlCreateCheckbox("Internet Explorer 9 RC installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $ie9 = GUICtrlCreateCheckbox("Internet Explorer 9 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $ie9 = GUICtrlCreateCheckbox("Install Internet Explorer 9 RC", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $ie9 = GUICtrlCreateCheckbox("Install Internet Explorer 9", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (IEVersion() = "9") ) Then  
   GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -668,13 +668,13 @@ If ( ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (@OSServi
   OR ( ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) AND (NOT SP1Present()) ) ) Then
   If ShowGUIInGerman() Then
     MsgBox(0x2040, "Information", "Unter Windows Vista / 7 / Server 2008(R2) müssen Sie" _
-                          & @LF & "nach der Installation der Service Pack(s)" _
-                          & @LF & "und dem obligaten Neustart" _
-                          & @LF & "die Installation der Updates manuell wiederaufnehmen.")
+                          & @LF & "die Installation der Updates" _
+                          & @LF & "nach der Installation des/der Service Packs" _
+                          & @LF & "und dem obligaten Neustart manuell wiederaufnehmen.")
   Else
-    MsgBox(0x2040, "Information", "Under Windows Vista / 7 / Server 2008(R2), you have to manually resume" _
-                          & @LF & "the installation of updates after installation" _
-                          & @LF & "of Service Pack(s) and mandatory reboot.")
+    MsgBox(0x2040, "Information", "Under Windows Vista / 7 / Server 2008(R2), you have to" _
+                          & @LF & "manually resume the installation of updates" _
+                          & @LF & "after Service Pack installation and mandatory reboot.")
   EndIf
   GUICtrlSetState($converters, $GUI_UNCHECKED)
   GUICtrlSetState($converters, $GUI_DISABLE)
