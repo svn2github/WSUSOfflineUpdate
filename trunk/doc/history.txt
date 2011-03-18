@@ -523,3 +523,5 @@ Version 6.8.2 -- 15.03.11
 - Fix: Download filters missed CAPICOM security update kb931906 again
 - Fix: Several obsolete cumulative security updates for Internet Explorer remained (Thanks to "Denniss")
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.11
+- Fix: Remote Desktop Connection 7.0 client (kb969084) was erroneously attempted to be installed on Windows Server 2008 (x86/x64) systems (Thanks to "mAsTa")

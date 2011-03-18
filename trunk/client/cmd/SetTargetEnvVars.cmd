@@ -118,9 +118,14 @@ if /i "%1"=="/instie9" (set IE_VER_TARGET_MAJOR=9) else (
   if /i "%1"=="/instie8" (set IE_VER_TARGET_MAJOR=8) else (set IE_VER_TARGET_MAJOR=7)  
 )  
 set WMP_VER_TARGET_MAJOR=11
-set TSC_VER_TARGET_MAJOR=6
-set TSC_VER_TARGET_MINOR=1
-set TSC_TARGET_ID=969084
+if %OS_DOMAIN_ROLE% LEQ 1 (
+  set TSC_VER_TARGET_MAJOR=6
+  set TSC_VER_TARGET_MINOR=1
+  set TSC_TARGET_ID=969084
+) else (
+  set TSC_VER_TARGET_MAJOR=6
+  set TSC_VER_TARGET_MINOR=0
+)
 goto Windows%OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_SP_VER_MAJOR%
 :Windows6.0.
 :Windows6.0.0
