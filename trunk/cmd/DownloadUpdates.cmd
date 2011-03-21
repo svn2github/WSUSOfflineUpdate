@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.8.2+ (r229)
+set WSUSOFFLINE_VERSION=6.8.2+ (r230)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -410,7 +410,7 @@ if "%VERIFY_DOWNLOADS%"=="1" (
 
 rem *** Download installation files for .NET Framework 3.5 SP1 and 4 ***
 if "%INCLUDE_DOTNET%" NEQ "1" goto SkipDotNet
-for %%i in (..\client\md\hashes-dotnet-%TARGET_ARCH%-glb.txt) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE%" >nul 2>&1
+for %%i in (..\client\md\hashes-dotnet-%TARGET_ARCH%-glb.txt) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
 if not errorlevel 1 goto SkipDotNet
 if "%VERIFY_DOWNLOADS%" NEQ "1" goto DownloadDotNet
 if not exist ..\client\dotnet\nul goto DownloadDotNet
@@ -711,7 +711,7 @@ if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
 %SystemRoot%\system32\expand.exe "%TEMP%\package.cab" "%TEMP%\package.xml" >nul
 del "%TEMP%\package.cab"
 rem *** Determine superseded updates ***
-for %%i in (..\exclude\ExcludeList-superseded.txt) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE%" >nul 2>&1
+for %%i in (..\exclude\ExcludeList-superseded.txt) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
 if not errorlevel 1 goto SkipSuperseded
 echo %TIME% - Determining superseded updates (please be patient, this will take a while)...
 ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractUpdateRevisionIds.xsl -o "%TEMP%\ValidUpdateRevisionIds.txt"
@@ -1050,7 +1050,7 @@ goto :eof
 :RemindDate
 rem *** Remind build date ***
 echo Reminding build date...
-date /T >..\client\builddate.txt
+echo %DATE:~-10%>..\client\builddate.txt
 goto EoF
 
 :NoExtensions

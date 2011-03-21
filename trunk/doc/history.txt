@@ -525,3 +525,4 @@ Version 6.8.2 -- 15.03.11
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.11
 - Fix: Remote Desktop Connection 7.0 client (kb969084) was erroneously attempted to be installed on Windows Server 2008 (x86/x64) systems (Thanks to "mAsTa")
+- Fix: Regional date format settings could cause redundant determination of superseded updates (Thanks to "harry")
