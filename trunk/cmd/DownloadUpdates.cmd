@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.8.2+ (r230)
+set WSUSOFFLINE_VERSION=6.8.2+ (r231)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -711,8 +711,8 @@ if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
 %SystemRoot%\system32\expand.exe "%TEMP%\package.cab" "%TEMP%\package.xml" >nul
 del "%TEMP%\package.cab"
 rem *** Determine superseded updates ***
-for %%i in (..\exclude\ExcludeList-superseded.txt) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
-if not errorlevel 1 goto SkipSuperseded
+for %%i in (..\client\wsus\wsusscn2.cab) do echo %%~ai | %SystemRoot%\system32\find.exe /I "a" >nul 2>&1
+if errorlevel 1 goto SkipSuperseded
 echo %TIME% - Determining superseded updates (please be patient, this will take a while)...
 ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractUpdateRevisionIds.xsl -o "%TEMP%\ValidUpdateRevisionIds.txt"
 if errorlevel 1 goto DownloadError
@@ -745,6 +745,7 @@ del "%TEMP%\SupersededFileIds.txt"
 if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
 for /F "usebackq tokens=2 delims=," %%i in ("%TEMP%\SupersededCabExeIdsAndLocations.txt") do echo %%~ni>>..\exclude\ExcludeList-superseded.txt
 del "%TEMP%\SupersededCabExeIdsAndLocations.txt"
+%SystemRoot%\system32\attrib.exe -A ..\client\wsus\wsusscn2.cab 
 echo %TIME% - Done.
 echo %DATE% %TIME% - Info: Determined superseded updates >>%DOWNLOAD_LOGFILE%
 :SkipSuperseded
