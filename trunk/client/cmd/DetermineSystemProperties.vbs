@@ -271,47 +271,47 @@ Private Sub WriteDXNameToFile(cmdFile, strDXVersion)
 
   Select Case strDXVersion
     Case "4.02.0095"
-      cmdFile.WriteLine("set DIRECTX_NAME=1.0")
+      cmdFile.WriteLine("set DX_NAME=1.0")
     Case "4.03.00.1096"
-      cmdFile.WriteLine("set DIRECTX_NAME=2.0")
+      cmdFile.WriteLine("set DX_NAME=2.0")
     Case "4.04.0068"
-      cmdFile.WriteLine("set DIRECTX_NAME=3.0")
+      cmdFile.WriteLine("set DX_NAME=3.0")
     Case "4.04.0069"
-      cmdFile.WriteLine("set DIRECTX_NAME=3.0")
+      cmdFile.WriteLine("set DX_NAME=3.0")
     Case "4.05.00.0155"
-      cmdFile.WriteLine("set DIRECTX_NAME=5.0")
+      cmdFile.WriteLine("set DX_NAME=5.0")
     Case "4.05.01.1721"
-      cmdFile.WriteLine("set DIRECTX_NAME=5.0")
+      cmdFile.WriteLine("set DX_NAME=5.0")
     Case "4.05.01.1998"
-      cmdFile.WriteLine("set DIRECTX_NAME=5.0")
+      cmdFile.WriteLine("set DX_NAME=5.0")
     Case "4.06.02.0436"
-      cmdFile.WriteLine("set DIRECTX_NAME=6.0")
+      cmdFile.WriteLine("set DX_NAME=6.0")
     Case "4.07.00.0700"
-      cmdFile.WriteLine("set DIRECTX_NAME=7.0")
+      cmdFile.WriteLine("set DX_NAME=7.0")
     Case "4.07.00.0716"
-      cmdFile.WriteLine("set DIRECTX_NAME=7.0a")
+      cmdFile.WriteLine("set DX_NAME=7.0a")
     Case "4.08.00.0400"
-      cmdFile.WriteLine("set DIRECTX_NAME=8.0")
+      cmdFile.WriteLine("set DX_NAME=8.0")
     Case "4.08.01.0881"
-      cmdFile.WriteLine("set DIRECTX_NAME=8.1")
+      cmdFile.WriteLine("set DX_NAME=8.1")
     Case "4.08.01.0810"
-      cmdFile.WriteLine("set DIRECTX_NAME=8.1")
+      cmdFile.WriteLine("set DX_NAME=8.1")
     Case "4.09.00.0900"
-      cmdFile.WriteLine("set DIRECTX_NAME=9.0")
+      cmdFile.WriteLine("set DX_NAME=9.0")
     Case "4.09.0000.0900"
-      cmdFile.WriteLine("set DIRECTX_NAME=9.0")
+      cmdFile.WriteLine("set DX_NAME=9.0")
     Case "4.09.00.0901"
-      cmdFile.WriteLine("set DIRECTX_NAME=9.0a")
+      cmdFile.WriteLine("set DX_NAME=9.0a")
     Case "4.09.0000.0901"
-      cmdFile.WriteLine("set DIRECTX_NAME=9.0a")
+      cmdFile.WriteLine("set DX_NAME=9.0a")
     Case "4.09.00.0902"
-      cmdFile.WriteLine("set DIRECTX_NAME=9.0b")
+      cmdFile.WriteLine("set DX_NAME=9.0b")
     Case "4.09.0000.0902"
-      cmdFile.WriteLine("set DIRECTX_NAME=9.0b")
+      cmdFile.WriteLine("set DX_NAME=9.0b")
     Case "4.09.00.0904"
-      cmdFile.WriteLine("set DIRECTX_NAME=9.0c")
+      cmdFile.WriteLine("set DX_NAME=9.0c")
     Case "4.09.0000.0904"
-      cmdFile.WriteLine("set DIRECTX_NAME=9.0c")
+      cmdFile.WriteLine("set DX_NAME=9.0c")
   End Select
 End Sub
 
@@ -444,7 +444,7 @@ WriteVersionToFile objCmdFile, "IE_VER", RegRead(wshShell, strRegKeyIE & strRegV
 WriteVersionToFile objCmdFile, "MDAC_VER", RegRead(wshShell, strRegKeyMDAC & strRegValVersion)
 
 ' Determine Microsoft DirectX version
-WriteVersionToFile objCmdFile, "DIRECTX_VER", RegRead(wshShell, strRegKeyDirectX & strRegValVersion)
+WriteVersionToFile objCmdFile, "DX_CORE_VER", RegRead(wshShell, strRegKeyDirectX & strRegValVersion)
 WriteDXNameToFile objCmdFile, RegRead(wshShell, strRegKeyDirectX & strRegValVersion)
 
 ' Determine Microsoft .NET Framework 3.5 SP1 installation state

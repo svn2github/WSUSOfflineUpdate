@@ -12,7 +12,6 @@ w2k\
 wxp\
 w2k3\
 w60\
-win\
 x64-glb\
 o2k7-x64\
 w2k3-x64\

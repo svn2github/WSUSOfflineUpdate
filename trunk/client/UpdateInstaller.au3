@@ -37,10 +37,10 @@ Dim Const $target_version_powershell  = "2.0"
 ; INI file constants
 Dim Const $ini_section_installation   = "Installation"
 Dim Const $ini_value_backup           = "backup"
-Dim Const $ini_value_converters       = "instofccnvs"
 Dim Const $ini_value_ie7              = "instie7"
 Dim Const $ini_value_ie8              = "instie8"
 Dim Const $ini_value_ie9              = "instie9"
+Dim Const $ini_value_dx               = "updatedx"
 Dim Const $ini_value_wmp              = "updatewmp"
 Dim Const $ini_value_tsc              = "updatetsc"
 Dim Const $ini_value_dotnet35         = "instdotnet35"
@@ -48,6 +48,7 @@ Dim Const $ini_value_dotnet4          = "instdotnet4"
 Dim Const $ini_value_powershell       = "instpsh"
 Dim Const $ini_value_msse             = "instmsse"
 Dim Const $ini_value_wd               = "instwd"
+Dim Const $ini_value_converters       = "instofccnvs"
 
 Dim Const $ini_section_control        = "Control"
 Dim Const $ini_value_verify           = "verify"
@@ -69,12 +70,13 @@ Dim Const $path_invalid_chars         = "%&()^+,;="
 Dim Const $path_rel_builddate         = "\builddate.txt"
 Dim Const $path_rel_hashes            = "\md\"
 Dim Const $path_rel_autologon         = "\bin\Autologon.exe"
-Dim Const $path_rel_converters        = "\ofc\glb\ork.exe"
+Dim Const $path_rel_instdirectx       = "\win\glb\directx_*_redist.exe"
 Dim Const $path_rel_instdotnet35      = "\dotnet\dotnetfx35.exe"
 Dim Const $path_rel_instdotnet4       = "\dotnet\dotNetFx40_Full_x86_x64.exe"
+Dim Const $path_rel_instconverters    = "\ofc\glb\ork.exe"
 Dim Const $path_rel_msse              = "\msse\"
 
-Dim $maindlg, $scriptdir, $mapped, $inifilename, $backup, $converters, $ie7, $ie8, $ie9, $wmp, $tsc, $dotnet35, $dotnet4, $psh, $msse, $wd, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate 
+Dim $maindlg, $scriptdir, $mapped, $inifilename, $backup, $converters, $ie7, $ie8, $ie9, $dx, $wmp, $tsc, $dotnet35, $dotnet4, $psh, $msse, $wd, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate 
 Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
 
 Func ShowGUIInGerman()
@@ -207,8 +209,8 @@ Func AutologonPresent($basepath)
   Return FileExists($basepath & $path_rel_autologon)
 EndFunc
 
-Func ConvertersInstPresent($basepath)
-  Return FileExists($basepath & $path_rel_converters)
+Func DirectXInstPresent($basepath)
+  Return FileExists($basepath & $path_rel_instdirectx)
 EndFunc
 
 Func DotNet35InstPresent($basepath)
@@ -217,6 +219,10 @@ EndFunc
 
 Func DotNet4InstPresent($basepath)
   Return FileExists($basepath & $path_rel_instdotnet4)
+EndFunc
+
+Func ConvertersInstPresent($basepath)
+  Return FileExists($basepath & $path_rel_instconverters)
 EndFunc
 
 Func MSSEPresent($basepath)
@@ -237,7 +243,7 @@ Func CalcGUISize()
   If ($reg_val = "") Then
     $reg_val = $default_logpixels
   EndIf
-  $dlgheight = 285 * $reg_val / $default_logpixels
+  $dlgheight = 305 * $reg_val / $default_logpixels
   If ShowGUIInGerman() Then
     $txtwidth = 230 * $reg_val / $default_logpixels
   Else
@@ -286,7 +292,7 @@ EndIf
 ;  Installation group
 $txtxpos = $txtxoffset
 $txtypos = $txtyoffset + 1.5 * $txtheight
-GUICtrlCreateGroup("Installation", $txtxpos, $txtypos, $groupwidth, 7 * $txtheight)
+GUICtrlCreateGroup("Installation", $txtxpos, $txtypos, $groupwidth, 8 * $txtheight)
 
 ; Backup
 $txtxpos = 2 * $txtxoffset
@@ -375,9 +381,27 @@ Else
   EndIf  
 EndIf
 
-; Update Windows Media Player
+; Update DirectX Runtime Libraries
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + $txtheight
+If ShowGUIInGerman() Then
+  $dx = GUICtrlCreateCheckbox("DirectX-Laufzeitbibliotheken aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+Else
+  $dx = GUICtrlCreateCheckbox("Update DirectX Runtime Libraries", $txtxpos, $txtypos, $txtwidth, $txtheight)
+EndIf
+If DirectXInstPresent($scriptdir) Then
+  If IniRead($inifilename, $ini_section_installation, $ini_value_dx, $enabled) = $enabled Then
+    GUICtrlSetState(-1, $GUI_CHECKED)
+  Else
+    GUICtrlSetState(-1, $GUI_UNCHECKED)
+  EndIf
+Else  
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+  GUICtrlSetState(-1, $GUI_DISABLE)
+EndIf
+
+; Update Windows Media Player
+$txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
   $wmp = GUICtrlCreateCheckbox("Windows Media Player aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -395,7 +419,8 @@ Else
 EndIf
 
 ; Update Windows Terminal Services Client
-$txtxpos = $txtxoffset + $groupwidth / 2
+$txtxpos = 2 * $txtxoffset
+$txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
   $tsc = GUICtrlCreateCheckbox("Terminal Services Client aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -413,8 +438,7 @@ Else
 EndIf
 
 ; Install .NET Framework 3.5 SP1
-$txtxpos = 2 * $txtxoffset
-$txtypos = $txtypos + $txtheight
+$txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
   $dotnet35 = GUICtrlCreateCheckbox(".NET Framework 3.5 SP1 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -433,7 +457,8 @@ Else
 EndIf
 
 ; Install .NET Framework 4
-$txtxpos = $txtxoffset + $groupwidth / 2
+$txtxpos = 2 * $txtxoffset
+$txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
   $dotnet4 = GUICtrlCreateCheckbox(".NET Framework 4 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -444,6 +469,26 @@ If ( (@OSVersion = "WIN_2000") OR (DotNet4Version() = $target_version_dotnet4) O
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else  
   If IniRead($inifilename, $ini_section_installation, $ini_value_dotnet4, $disabled) = $enabled Then
+    GUICtrlSetState(-1, $GUI_CHECKED)
+  Else
+    GUICtrlSetState(-1, $GUI_UNCHECKED)
+  EndIf
+EndIf
+
+; Install Windows PowerShell 2.0
+$txtxpos = $txtxoffset + $groupwidth / 2
+If ShowGUIInGerman() Then
+  $psh = GUICtrlCreateCheckbox("PowerShell 2.0 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+Else
+  $psh = GUICtrlCreateCheckbox("Install PowerShell 2.0", $txtxpos, $txtypos, $txtwidth, $txtheight)
+EndIf
+If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
+  OR ( (DotNet35Version() <> $target_version_dotnet35) AND (BitAND(GUICtrlRead($dotnet35), $GUI_CHECKED) <> $GUI_CHECKED) ) _
+  OR (PowerShellVersion() = $target_version_powershell) ) Then
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+  GUICtrlSetState(-1, $GUI_DISABLE)
+Else  
+  If IniRead($inifilename, $ini_section_installation, $ini_value_powershell, $disabled) = $enabled Then
     GUICtrlSetState(-1, $GUI_CHECKED)
   Else
     GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -489,29 +534,9 @@ Else
   EndIf
 EndIf
 
-; Install Windows PowerShell 2.0
+; Install file format converters for Office
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + $txtheight
-If ShowGUIInGerman() Then
-  $psh = GUICtrlCreateCheckbox("PowerShell 2.0 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
-Else
-  $psh = GUICtrlCreateCheckbox("Install PowerShell 2.0", $txtxpos, $txtypos, $txtwidth, $txtheight)
-EndIf
-If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
-  OR ( (DotNet35Version() <> $target_version_dotnet35) AND (BitAND(GUICtrlRead($dotnet35), $GUI_CHECKED) <> $GUI_CHECKED) ) _
-  OR (PowerShellVersion() = $target_version_powershell) ) Then
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-  GUICtrlSetState(-1, $GUI_DISABLE)
-Else  
-  If IniRead($inifilename, $ini_section_installation, $ini_value_powershell, $disabled) = $enabled Then
-    GUICtrlSetState(-1, $GUI_CHECKED)
-  Else
-    GUICtrlSetState(-1, $GUI_UNCHECKED)
-  EndIf
-EndIf
-
-; Install file format converters for Office
-$txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
   $converters = GUICtrlCreateCheckbox("Office-Dateiformat-Konverter installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -682,6 +707,8 @@ If ( ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (@OSServi
   GUICtrlSetState($ie8, $GUI_DISABLE)
   GUICtrlSetState($ie9, $GUI_UNCHECKED)
   GUICtrlSetState($ie9, $GUI_DISABLE)
+  GUICtrlSetState($dx, $GUI_UNCHECKED)
+  GUICtrlSetState($dx, $GUI_DISABLE)
   GUICtrlSetState($wmp, $GUI_UNCHECKED)
   GUICtrlSetState($wmp, $GUI_DISABLE)
   GUICtrlSetState($tsc, $GUI_UNCHECKED)
@@ -850,6 +877,9 @@ While 1
       If BitAND(GUICtrlRead($ie9), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instie9"
       EndIf
+      If BitAND(GUICtrlRead($dx), $GUI_CHECKED) = $GUI_CHECKED Then
+        $options = $options & " /updatedx"
+      EndIf
       If BitAND(GUICtrlRead($wmp), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /updatewmp"
       EndIf
@@ -862,14 +892,14 @@ While 1
       If BitAND(GUICtrlRead($dotnet4), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instdotnet4"
       EndIf
+      If BitAND(GUICtrlRead($psh), $GUI_CHECKED) = $GUI_CHECKED Then
+        $options = $options & " /instpsh"
+      EndIf
       If BitAND(GUICtrlRead($msse), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instmsse"
       EndIf
       If BitAND(GUICtrlRead($wd), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instwd"
-      EndIf
-      If BitAND(GUICtrlRead($psh), $GUI_CHECKED) = $GUI_CHECKED Then
-        $options = $options & " /instpsh"
       EndIf
       If BitAND(GUICtrlRead($converters), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instofccnvs"

@@ -7,7 +7,6 @@ o2k10\
 w2k\
 wxp\
 w2k3\
-win\
 w61\
 x64-glb\
 o2k7-x64\

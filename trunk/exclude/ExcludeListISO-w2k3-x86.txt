@@ -15,6 +15,5 @@
 *mdac27*
 *windows2000*
 *windowsxp*
-*directx_*
 *-x64*
 *.au3

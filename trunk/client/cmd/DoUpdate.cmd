@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.8.2+ (r234)
+set WSUSOFFLINE_VERSION=6.8.2+ (r235)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -19,7 +19,7 @@ echo %DATE% %TIME% - Info: Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/nobackup /verify /instie7 /instie8 /instie9 /updatewmp /updatetsc /instdotnet35 /instdotnet4 /instmsse /instwd /instpsh /instofccnvs /autoreboot /shutdown /showlog /all /excludestatics) do (
+for %%i in (/nobackup /verify /instie7 /instie8 /instie9 /updatedx /updatewmp /updatetsc /instdotnet35 /instdotnet4 /instpsh /instmsse /instwd /instofccnvs /autoreboot /shutdown /showlog /all /excludestatics) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected >>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/nobackup" set BACKUP_MODE=/nobackup
@@ -27,13 +27,14 @@ if /i "%1"=="/verify" set VERIFY_MODE=/verify
 if /i "%1"=="/instie7" set INSTALL_IE=/instie7
 if /i "%1"=="/instie8" set INSTALL_IE=/instie8
 if /i "%1"=="/instie9" set INSTALL_IE=/instie9
+if /i "%1"=="/updatedx" set UPDATE_DX=/updatedx
 if /i "%1"=="/updatewmp" set UPDATE_WMP=/updatewmp
 if /i "%1"=="/updatetsc" set UPDATE_TSC=/updatetsc
 if /i "%1"=="/instdotnet35" set INSTALL_DOTNET35=/instdotnet35
 if /i "%1"=="/instdotnet4" set INSTALL_DOTNET4=/instdotnet4
+if /i "%1"=="/instpsh" set INSTALL_PSH=/instpsh
 if /i "%1"=="/instmsse" set INSTALL_MSSE=/instmsse
 if /i "%1"=="/instwd" set INSTALL_WD=/instwd
-if /i "%1"=="/instpsh" set INSTALL_PSH=/instpsh
 if /i "%1"=="/instofccnvs" set INSTALL_CONVERTERS=/instofccnvs
 if /i "%1"=="/autoreboot" set BOOT_MODE=/autoreboot
 if /i "%1"=="/shutdown" set FINISH_MODE=/shutdown
@@ -73,13 +74,28 @@ if "%USERNAME%"=="WOUTempAdmin" (
   )
 )
 
+rem *** Check user's privileges ***
+echo Checking user's privileges...
+if not exist ..\bin\IfAdmin.exe goto NoIfAdmin
+..\bin\IfAdmin.exe
+if not errorlevel 1 goto NoAdmin
+
 rem *** Determine system's properties ***
 echo Determining system's properties...
 %CSCRIPT_PATH% //Nologo //B //E:vbs DetermineSystemProperties.vbs
 if errorlevel 1 goto NoSysEnvVars
+if not exist "%TEMP%\SetSystemEnvVars.cmd" goto NoSysEnvVars
+if exist %SystemRoot%\system32\dxdiag.exe (
+  %SystemRoot%\system32\dxdiag.exe /whql:off /t %SystemRoot%\system32\dxdiag.txt
+  %SystemRoot%\system32\findstr.exe /C:"DirectX Version" %SystemRoot%\system32\dxdiag.txt >"%TEMP%\dxver.txt"
+  del %SystemRoot%\system32\dxdiag.txt
+  for /F "usebackq tokens=2 delims=:" %%i in ("%TEMP%\dxver.txt") do (
+    for /F "tokens=1*" %%j in ("%%i") do echo set DX_MAIN_VER=%%k>>"%TEMP%\SetSystemEnvVars.cmd"
+  )
+  del "%TEMP%\dxver.txt"
+)
 
 rem *** Set environment variables for system's properties ***
-if not exist "%TEMP%\SetSystemEnvVars.cmd" goto NoSysEnvVars
 call "%TEMP%\SetSystemEnvVars.cmd"
 del "%TEMP%\SetSystemEnvVars.cmd"
 if "%SystemDirectory%"=="" set SystemDirectory=%SystemRoot%\system32
@@ -105,7 +121,8 @@ rem echo Found Windows Installer version: %MSI_VER_MAJOR%.%MSI_VER_MINOR%.%MSI_V
 rem echo Found Windows Script Host version: %WSH_VER_MAJOR%.%WSH_VER_MINOR%.%WSH_VER_REVIS%.%WSH_VER_BUILD%
 rem echo Found Internet Explorer version: %IE_VER_MAJOR%.%IE_VER_MINOR%.%IE_VER_REVIS%.%IE_VER_BUILD%
 rem echo Found Microsoft Data Access Components version: %MDAC_VER_MAJOR%.%MDAC_VER_MINOR%.%MDAC_VER_REVIS%.%MDAC_VER_BUILD%
-rem echo Found Microsoft DirectX version: %DIRECTX_VER_MAJOR%.%DIRECTX_VER_MINOR%.%DIRECTX_VER_REVIS%.%DIRECTX_VER_BUILD% (%DIRECTX_NAME%)
+rem echo Found Microsoft DirectX main version: %DX_MAIN_VER%
+rem echo Found Microsoft DirectX core version: %DX_NAME% (%DX_CORE_VER_MAJOR%.%DX_CORE_VER_MINOR%.%DX_CORE_VER_REVIS%.%DX_CORE_VER_BUILD%)
 rem echo Found Windows Media Player version: %WMP_VER_MAJOR%.%WMP_VER_MINOR%.%WMP_VER_REVIS%.%WMP_VER_BUILD%
 rem echo Found Terminal Services Client version: %TSC_VER_MAJOR%.%TSC_VER_MINOR%.%TSC_VER_REVIS%.%TSC_VER_BUILD%
 rem echo Found Microsoft .NET Framework 3.5 version: %DOTNET35_VER_MAJOR%.%DOTNET35_VER_MINOR%.%DOTNET35_VER_REVIS%.%DOTNET35_VER_BUILD%
@@ -132,7 +149,8 @@ echo %DATE% %TIME% - Info: Found Windows Installer version %MSI_VER_MAJOR%.%MSI_
 echo %DATE% %TIME% - Info: Found Windows Script Host version %WSH_VER_MAJOR%.%WSH_VER_MINOR%.%WSH_VER_REVIS%.%WSH_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Internet Explorer version %IE_VER_MAJOR%.%IE_VER_MINOR%.%IE_VER_REVIS%.%IE_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft Data Access Components version %MDAC_VER_MAJOR%.%MDAC_VER_MINOR%.%MDAC_VER_REVIS%.%MDAC_VER_BUILD% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft DirectX version %DIRECTX_VER_MAJOR%.%DIRECTX_VER_MINOR%.%DIRECTX_VER_REVIS%.%DIRECTX_VER_BUILD% (%DIRECTX_NAME%) >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft DirectX main version %DX_MAIN_VER% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft DirectX core version %DX_NAME% (%DX_CORE_VER_MAJOR%.%DX_CORE_VER_MINOR%.%DX_CORE_VER_REVIS%.%DX_CORE_VER_BUILD%) >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows Media Player version %WMP_VER_MAJOR%.%WMP_VER_MINOR%.%WMP_VER_REVIS%.%WMP_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Terminal Services Client version %TSC_VER_MAJOR%.%TSC_VER_MINOR%.%TSC_VER_REVIS%.%TSC_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 3.5 version %DOTNET35_VER_MAJOR%.%DOTNET35_VER_MINOR%.%DOTNET35_VER_REVIS%.%DOTNET35_VER_BUILD% >>%UPDATE_LOGFILE%
@@ -152,12 +170,6 @@ if "%O2K7_VER_MAJOR%" NEQ "" (
 if "%O2K10_VER_MAJOR%" NEQ "" (
   echo %DATE% %TIME% - Info: Found Microsoft Office 2010 %O2K10_VER_APP% version %O2K10_VER_MAJOR%.%O2K10_VER_MINOR%.%O2K10_VER_REVIS%.%O2K10_VER_BUILD% ^(o2k10 %O2K10_LANG% sp%O2K10_SP_VER%^) >>%UPDATE_LOGFILE%
 )
-
-rem *** Check user's privileges ***
-echo Checking user's privileges...
-if not exist ..\bin\IfAdmin.exe goto NoIfAdmin
-..\bin\IfAdmin.exe
-if not errorlevel 1 goto NoAdmin
 
 rem *** Check medium content ***
 echo Checking medium content...
@@ -268,38 +280,6 @@ set RECALL_REQUIRED=1
 goto Installed
 
 :SkipSPInst
-
-rem *** Install DirectX End-User Runtime ***
-if "%OS_NAME%"=="w60" goto SkipDirectXInst
-if "%OS_NAME%"=="w61" goto SkipDirectXInst
-echo Checking DirectX version...
-if %DIRECTX_VER_MAJOR% LSS %DIRECTX_VER_TARGET_MAJOR% goto InstallDirectX
-if %DIRECTX_VER_MAJOR% GTR %DIRECTX_VER_TARGET_MAJOR% goto SkipDirectXInst
-if %DIRECTX_VER_MINOR% LSS %DIRECTX_VER_TARGET_MINOR% goto InstallDirectX
-if %DIRECTX_VER_MINOR% GTR %DIRECTX_VER_TARGET_MINOR% goto SkipDirectXInst
-if %DIRECTX_VER_REVIS% LSS %DIRECTX_VER_TARGET_REVIS% goto InstallDirectX
-if %DIRECTX_VER_REVIS% GTR %DIRECTX_VER_TARGET_REVIS% goto SkipDirectXInst
-if %DIRECTX_VER_BUILD% GEQ %DIRECTX_VER_TARGET_BUILD% goto SkipDirectXInst
-:InstallDirectX
-set DIRECTX_FILENAME=..\win\glb\directx_*_redist.exe
-dir /B %DIRECTX_FILENAME% >nul 2>&1
-if errorlevel 1 (
-  echo Warning: File %DIRECTX_FILENAME% not found.
-  echo %DATE% %TIME% - Warning: File %DIRECTX_FILENAME% not found >>%UPDATE_LOGFILE%
-  goto SkipDirectXInst
-)
-echo Installing most recent DirectX End-User Runtime...
-for /F %%i in ('dir /B %DIRECTX_FILENAME%') do (
-  echo Installing ..\win\glb\%%i...
-  ..\win\glb\%%i /Q /T:"%TEMP%\directx" /C
-  "%TEMP%\directx\dxsetup.exe" /silent
-  call SafeRmDir.cmd "%TEMP%\directx"
-  echo %DATE% %TIME% - Info: Installed ..\win\glb\%%i >>%UPDATE_LOGFILE%
-  set RECALL_REQUIRED=1
-  goto Installed
-)
-set DIRECTX_FILENAME=
-:SkipDirectXInst
 
 rem *** Install Windows Update Agent ***
 echo Checking Windows Update Agent version...
@@ -526,6 +506,37 @@ goto IEInstalled
 set IE_FILENAME=
 if "%RECALL_REQUIRED%"=="1" goto Installed
 :SkipIEInst
+
+rem *** Install DirectX End-User Runtime ***
+if "%UPDATE_DX%" NEQ "/updatedx" goto SkipDirectXInst
+echo Checking DirectX version...
+if %DX_CORE_VER_MAJOR% LSS %DX_CORE_VER_TARGET_MAJOR% goto InstallDirectX
+if %DX_CORE_VER_MAJOR% GTR %DX_CORE_VER_TARGET_MAJOR% goto SkipDirectXInst
+if %DX_CORE_VER_MINOR% LSS %DX_CORE_VER_TARGET_MINOR% goto InstallDirectX
+if %DX_CORE_VER_MINOR% GTR %DX_CORE_VER_TARGET_MINOR% goto SkipDirectXInst
+if %DX_CORE_VER_REVIS% LSS %DX_CORE_VER_TARGET_REVIS% goto InstallDirectX
+if %DX_CORE_VER_REVIS% GTR %DX_CORE_VER_TARGET_REVIS% goto SkipDirectXInst
+if %DX_CORE_VER_BUILD% LSS %DX_CORE_VER_TARGET_BUILD% goto InstallDirectX
+if exist %DX_DLL_LATEST% goto SkipDirectXInst
+:InstallDirectX
+set DIRECTX_FILENAME=..\win\glb\directx_*_redist.exe
+dir /B %DIRECTX_FILENAME% >nul 2>&1
+if errorlevel 1 (
+  echo Warning: File %DIRECTX_FILENAME% not found.
+  echo %DATE% %TIME% - Warning: File %DIRECTX_FILENAME% not found >>%UPDATE_LOGFILE%
+  goto SkipDirectXInst
+)
+echo Installing most recent DirectX End-User Runtime...
+for /F %%i in ('dir /B %DIRECTX_FILENAME%') do (
+  echo Installing ..\win\glb\%%i...
+  ..\win\glb\%%i /Q /T:"%TEMP%\directx" /C
+  "%TEMP%\directx\dxsetup.exe" /silent
+  call SafeRmDir.cmd "%TEMP%\directx"
+  echo %DATE% %TIME% - Info: Installed ..\win\glb\%%i >>%UPDATE_LOGFILE%
+  set REBOOT_REQUIRED=1
+)
+set DIRECTX_FILENAME=
+:SkipDirectXInst
 
 rem *** Install most recent Windows Media Player ***
 if "%OS_NAME%"=="w2k3" goto SkipWMPInst
@@ -963,7 +974,7 @@ if "%RECALL_REQUIRED%"=="1" (
     )
     if "%USERNAME%" NEQ "WOUTempAdmin" (
       echo Preparing automatic recall...
-      call PrepareRecall.cmd %~f0 %BACKUP_MODE% %VERIFY_MODE% %INSTALL_IE% %UPDATE_WMP% %UPDATE_TSC% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_MSSE% %INSTALL_WD% %INSTALL_CONVERTERS% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES%
+      call PrepareRecall.cmd %~f0 %BACKUP_MODE% %VERIFY_MODE% %INSTALL_IE% %UPDATE_DX% %UPDATE_WMP% %UPDATE_TSC% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_MSSE% %INSTALL_WD% %INSTALL_CONVERTERS% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES%
     )
     if exist %SystemRoot%\system32\bcdedit.exe (
       echo Adjusting boot sequence for next reboot...
@@ -1055,6 +1066,20 @@ echo %DATE% %TIME% - Error: Potentially endless reboot/recall loop detected >>%U
 echo.
 goto Cleanup
 
+:NoIfAdmin
+echo.
+echo ERROR: File ..\bin\IfAdmin.exe not found.
+echo %DATE% %TIME% - Error: File ..\bin\IfAdmin.exe not found >>%UPDATE_LOGFILE%
+echo.
+goto Cleanup
+
+:NoAdmin
+echo.
+echo ERROR: User %USERNAME% does not have administrative privileges.
+echo %DATE% %TIME% - Error: User %USERNAME% does not have administrative privileges >>%UPDATE_LOGFILE%
+echo.
+goto EoF
+
 :NoSysEnvVars
 echo.
 echo ERROR: Determination of OS properties failed.
@@ -1082,20 +1107,6 @@ echo ERROR: Unsupported Operating System architecture (%OS_ARCH%).
 echo %DATE% %TIME% - Error: Unsupported Operating System architecture (%OS_ARCH%) >>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
-
-:NoIfAdmin
-echo.
-echo ERROR: File ..\bin\IfAdmin.exe not found.
-echo %DATE% %TIME% - Error: File ..\bin\IfAdmin.exe not found >>%UPDATE_LOGFILE%
-echo.
-goto Cleanup
-
-:NoAdmin
-echo.
-echo ERROR: User %USERNAME% does not have administrative privileges.
-echo %DATE% %TIME% - Error: User %USERNAME% does not have administrative privileges >>%UPDATE_LOGFILE%
-echo.
-goto EoF
 
 :InvalidMedium
 echo.
