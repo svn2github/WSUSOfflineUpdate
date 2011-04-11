@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.8.2+ (r236)
+set WSUSOFFLINE_VERSION=6.8.2+ (r237)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -135,7 +135,7 @@ goto EvalParams
 
 :EvalParams
 if "%3"=="" goto NoMoreParams
-for %%i in (/excludesp /excludestatics /includedotnet /includemsse /includewddefs /nocleanup /verify /exitonerror /skipmkisofs /proxy /wsus /wsusbyproxy) do (
+for %%i in (/excludesp /excludestatics /includedotnet /includemsse /includewddefs /nocleanup /verify /exitonerror /skipmkisofs /skiptz /proxy /wsus /wsusbyproxy) do (
   if /i "%3"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected >>%DOWNLOAD_LOGFILE%
 )
 if /i "%3"=="/excludesp" set EXCLUDE_SP=1
@@ -147,6 +147,7 @@ if /i "%3"=="/nocleanup" set CLEANUP_DOWNLOADS=0
 if /i "%3"=="/verify" set VERIFY_DOWNLOADS=1
 if /i "%3"=="/exitonerror" set EXIT_ON_ERROR=1
 if /i "%3"=="/skipmkisofs" set SKIP_MKISOFS=1
+if /i "%3"=="/skiptz" set SKIP_TZ=1
 if /i "%3"=="/proxy" (
   set http_proxy=%4
   shift /3
@@ -162,12 +163,15 @@ goto EvalParams
 :NoMoreParams
 echo %1 | %SystemRoot%\system32\find.exe /I "x64" >nul 2>&1
 if errorlevel 1 (set TARGET_ARCH=x86) else (set TARGET_ARCH=x64)
-
+if "%SKIP_TZ%" NEQ "1" (
+  for /F "tokens=3" %%i in ('%SystemRoot%\system32\reg.exe QUERY HKLM\SYSTEM\CurrentControlSet\Control\TimeZoneInformation /v ActiveTimeBias /t REG_DWORD ^| %SystemRoot%\system32\find.exe /I "ActiveTimeBias"') do set /A TZ="%%i/60"
+  set TZ=LOC!TZ!
+  echo %DATE% %TIME% - Info: Set time zone to !TZ! >>%DOWNLOAD_LOGFILE%
+)
 if "%TEMP%"=="" goto NoTemp
 pushd "%TEMP%"
 if errorlevel 1 goto NoTempDir
 popd
-
 set CSCRIPT_PATH=%SystemRoot%\system32\cscript.exe
 if not exist %CSCRIPT_PATH% goto NoCScript
 set WGET_PATH=..\bin\wget.exe

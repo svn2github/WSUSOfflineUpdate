@@ -87,6 +87,7 @@ Dim Const $misc_token_proxy       = "proxy"
 Dim Const $misc_token_wsus        = "wsus"
 Dim Const $misc_token_wsus_proxy  = "wsusbyproxy"
 Dim Const $misc_token_wsus_trans  = "transferwsus"
+Dim Const $misc_token_skiptz      = "skiptz"
 Dim Const $misc_token_chkver      = "checkouversion"
 Dim Const $misc_token_minimize    = "minimizeondownload"
 Dim Const $misc_token_showdonate  = "showdonate"
@@ -565,7 +566,7 @@ EndFunc
 
 Func DetermineDownloadSwitches($chkbox_includesp, $chkbox_dotnet, $chkbox_msse, $chkbox_wddefs, $chkbox_cleanupdownloads, $chkbox_verifydownloads, $chkbox_cdiso, $chkbox_dvdiso, $str_proxy, $str_wsus)
 Dim $result = ""
-
+  
   If NOT IsCheckBoxChecked($chkbox_includesp) Then
     $result = $result & " /excludesp"
   EndIf
@@ -587,6 +588,9 @@ Dim $result = ""
   $result = $result & " /exitonerror"
   If NOT (IsCheckBoxChecked($chkbox_cdiso) OR IsCheckBoxChecked($chkbox_dvdiso)) Then
     $result = $result & " /skipmkisofs"
+  EndIf
+  If IniRead($inifilename, $ini_section_misc, $misc_token_skiptz, $disabled) = $enabled Then
+    $result = $result & " /skiptz"
   EndIf
   If $str_proxy <> "" Then
     $result = $result & " /proxy " & $str_proxy

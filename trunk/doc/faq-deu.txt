@@ -64,7 +64,7 @@ Richten Sie danach einen "zeitgesteuerten Auftrag" für das neue Skript "Download
 --------------------------------------------------------------------------------
 F: Kann ich die Installation der Updates von einer Netzwerkfreigabe starten?
 A: Ja, sofern Sie der Freigabe lokal über die Funktion "Netzlaufwerk verbinden..." einen Laufwerksbuchstaben zuweisen. Ein direkter Aufruf über einen UNC-Pfad (\\<Server>\<Freigabe>\UpdateInstaller.exe) wird hingegen nicht funktionieren, da Kommandozeilenskripte keine UNC-Pfade verarbeiten können.
-Auf die Funktion "automatic reboot and recall" müssen Sie bei einem Aufruf über das Netzwerk ebenfalls verzichten, da die Freigabe dem neu angelegten Benutzerkonto "WSUSUpdateAdmin" ggf. nicht zur Verfügung steht.
+Auf die Funktion "automatic reboot and recall" müssen Sie bei einem Aufruf über das Netzwerk ebenfalls verzichten, da die Freigabe dem neu angelegten Benutzerkonto "WOUTempAdmin" ggf. nicht zur Verfügung steht.
 Bitte bedenken Sie auch, dass eine Patch-Installation über das Netzwerk dem Gedanken des Offline Updates zuwiderläuft und der Rechner in diesem Zeitraum möglicherweise angreifbar ist.
 --------------------------------------------------------------------------------
 F: Ein Update wird immer wieder installiert, obwohl es auf dem Zielsystem schon vorhanden ist. Woran liegt das und was kann ich dagegen tun?
@@ -117,7 +117,7 @@ F: Kann ich die vom Offline Update heruntergeladenen Patches per "Slipstreaming"
 A: Da nicht alle Updates die "Slipstreaming"-Funktionalität unterstützen und jeden Monat neue Patches veröffentlicht werden, empfehlen wir, nur das jeweils neueste Service Pack per "Slipstreaming" einzubinden und die danach erschienenen Updates nach der Installation des Betriebssystems mit dem Offline Update zu installieren.
 --------------------------------------------------------------------------------
 F: Ich habe die Option "automatic reboot and recall" verwendet, aber nach dem ersten Neustart nimmt die Software nicht mehr automatisch Ihre Arbeit auf, wie es eigentlich gedacht ist. Was kann ich dagegen tun?
-A: Offenbar haben Sie das Offline Update in einem Bereich Ihres Dateisystems abgelegt, auf den der neu angelegte Benutzer "WSUSUpdateAdmin" trotz administrativer Berechtigungen keinen Zugriff hat, beispielsweise in einem benutzerspezifischen Verzeichnis wie "Eigenen Dateien" oder "Desktop". Bitte verwenden Sie ein anderes Basisverzeichnis zur Installation der Updates.
+A: Offenbar haben Sie das Offline Update in einem Bereich Ihres Dateisystems abgelegt, auf den der neu angelegte Benutzer "WOUTempAdmin" trotz administrativer Berechtigungen keinen Zugriff hat, beispielsweise in einem benutzerspezifischen Verzeichnis wie "Eigenen Dateien" oder "Desktop". Bitte verwenden Sie ein anderes Basisverzeichnis zur Installation der Updates.
 --------------------------------------------------------------------------------
 F: Obwohl ich die Option gewählt habe, bekomme ich am Ende der Installation nach dem Neustart die Log-Datei nicht angezeigt. Warum?
 A: Wahrscheinlich hat der Benutzer, mit dem Sie sich nach Abschluss der Installation anmelden, keine Berechtigung, auf den Registrierungsschlüssel HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce oder auf die Log-Datei (%SystemRoot%\ctupdate.log) zuzugreifen. Bitte melden Sie sich nach dem letzten Neustart des Offline Updates einmalig mit dem Benutzerkonto an, mit dem Sie das Update gestartet haben.
@@ -126,14 +126,14 @@ F: Unter Windows Vista oder Server 2008 verhindert die Benutzerkontensteuerung (
 A: Die Ausführung von extract_s.exe nur zum Entpacken des Programms extract.exe nach ...\bin, sofern extract.exe dort noch nicht vorhanden ist, also nur beim ersten Download.
 Bitte führen Sie daher UpdateGenerator.exe bzw. DownloadUpdates.cmd unter Windows Vista oder Server 2008 beim ersten Mal als Administrator aus.
 --------------------------------------------------------------------------------
-F: Ich habe die Option "automatic reboot and recall" verwendet; nun wird bei jedem Neustart und bei jeder Abmeldung der Benutzer "WSUSUpdateAdmin" automatisch angemeldet. Wie kann ich das verhindern und den Originalzustand des Rechners wiederherstellen?
+F: Ich habe die Option "automatic reboot and recall" verwendet; nun wird bei jedem Neustart und bei jeder Abmeldung der Benutzer "WOUTempAdmin" automatisch angemeldet. Wie kann ich das verhindern und den Originalzustand des Rechners wiederherstellen?
 A: Dieser Effekt tritt sehr selten auf. Bitte helfen Sie dabei, die Software zu verbessern, indem Sie dem Entwicklungsteam die Umstände so detailliert wie möglich schildern.
 Zur "Bereinigung" des Rechners gehen Sie bitte wie folgt vor:
   - Brechen Sie ggf. das laufende Update-Skript mit <Strg>C ab
   - Führen Sie das Skript "CleanupRecall.cmd" im Verzeichnis "cmd" aus und starten Sie danach den Rechner neu.
 
 Hilft dies nicht, gehen Sie bitte wie folgt vor:
-  - Melden Sie den "WSUSUpdateAdmin" ab. Halten Sie dabei die Taste <Shift> (<Umschalt>) gedrückt, bis der Anmeldedialog erscheint.
+  - Melden Sie den "WOUTempAdmin" ab. Halten Sie dabei die Taste <Shift> (<Umschalt>) gedrückt, bis der Anmeldedialog erscheint.
   - Melden Sie sich als "Administrator" an.
   - Prüfen Sie, ob eine Datei %SystemRoot%\wsusbak-winlogon.reg existiert
     - Wenn ja, Starten Sie den Registrierungseditor ([Start - Ausführen...] regedit), löschen Sie den Schlüssel "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" und fügen Sie die gesicherten Werte dieses Schlüssels mit einem Doppelklick auf die Datei %SystemRoot%\wsusbak-winlogon.reg in die Registrierung ein. Löschen Sie die Datei %SystemRoot%\wsusbak-winlogon.reg.
@@ -142,8 +142,8 @@ Hilft dies nicht, gehen Sie bitte wie folgt vor:
       - DefaultPassword: Wert löschen
       - AutoAdminLogon: Wert löschen
       - ForceAutoLogon: Wert löschen
-  - Löschen Sie in der Computerverwaltung das Benutzerkonto "WSUSUpdateAdmin"
-  - Löschen Sie das Benutzerprofil des "WSUSUpdateAdmin", also i.d.R. das Verzeichnis "WSUSUpdateAdmin" unter "C:\Dokumente und Einstellungen".
+  - Löschen Sie in der Computerverwaltung das Benutzerkonto "WOUTempAdmin"
+  - Löschen Sie das Benutzerprofil des "WOUTempAdmin", also i.d.R. das Verzeichnis "WOUTempAdmin" unter "C:\Dokumente und Einstellungen".
   - Starten Sie den Rechner neu.
 --------------------------------------------------------------------------------
 F: Während des Downloads erhalte ich einen "file integrity verification"-Fehler. Was kann ich dagegen tun?
@@ -159,6 +159,6 @@ F: Kann ich die Download-Fenster im Hintergrund lassen?
 A: Ja. Bitte editieren Sie die Datei UpdateGenerator.ini und fügen Sie dem Abschnitt "[Miscellaneous]" einen Eintrag bzw. eine Zeile "minimizeondownload=Enabled" hinzu.
 --------------------------------------------------------------------------------
 F: Nach der Installation von Patches mit dem Offline Update erscheint bei jedem Neustart des Rechners eine leere Box ohne jeglichen lesbaren Inhalt. Erst wenn ich auf "OK" klicke, fährt das System ordentlich hoch.
-A: Die Ursache dieses seltenen Verhaltens ist noch unklar. Bitte melden Sie sich als Administrator an, prüfen Sie, ob in der Windows-Registrierung unter "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" ein Wert namens "WSUSOfflineUpdate" oder unter "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" Werte namens "DeleteWSUSUpdateAdminProfile" oder "ShowOfflineUpdateLogFile" zu finden sind und löschen sie diese gegebenenfalls.
+A: Die Ursache dieses seltenen Verhaltens ist noch unklar. Bitte melden Sie sich als Administrator an, prüfen Sie, ob in der Windows-Registrierung unter "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" ein Wert namens "WSUSOfflineUpdate" oder unter "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" Werte namens "DeleteWOUTempAdminProfile" oder "ShowOfflineUpdateLogFile" zu finden sind und löschen sie diese gegebenenfalls.
 Finden Sie die genannten Einträge nicht, ist dieser Effekt nicht direkt auf das Offline Update zurückzuführen. Für weitere Hinweise ist das Team dankbar.    
 --------------------------------------------------------------------------------

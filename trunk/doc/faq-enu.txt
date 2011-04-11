@@ -69,7 +69,7 @@ call CreateISOImage wxp enu
 Next, create a scheduled task for your new custom script "DownloadUpdatesAndCreateISOImage.cmd" and select the desired run time. For example, if you intend to create new update media following each Microsoft Patchday, select "second Wednesday of every month".
 --------------------------------------------------------------------------------
 Q: Can I start update installation from a shared network resource?
-A: Yes, if the resource in question has been assigned a drive letter ("Map network drive" feature or "net use" command). Direct calls using UNC paths won't work, as they are not supported by command line scripts. Also you can't use the "Automatic reboot and recall" feature, as the shared resources may not be available for the temporary user account "WSUSUpdateAdmin".
+A: Yes, if the resource in question has been assigned a drive letter ("Map network drive" feature or "net use" command). Direct calls using UNC paths won't work, as they are not supported by command line scripts. Also you can't use the "Automatic reboot and recall" feature, as the shared resources may not be available for the temporary user account "WOUTempAdmin".
 Please note that installing patches over the network is against the philosophy of an Offline update, and the machine may be vulnerable to attacks while the update process is still in progress.
 --------------------------------------------------------------------------------
 Q: A patch is installed over and over again, in spite of being installed already on the target system. What is the reason and how can I resolve this?
@@ -117,7 +117,7 @@ Q: Is it possible to integrate the downloaded patches from Offline Update into a
 A: Not all patches support slipstreaming. Besides, as new patches are released every month (and sometimes even more frequently), you would have to create a new disc every time. Therefore we recommend to slipstream only the latest Service Pack and install the rest of the patches after OS installation, using the Offline Updater.
 --------------------------------------------------------------------------------
 Q: I used the "automatic reboot and recall" option, but the WSUS Offline Updater doesn't resume its work like intended. What can I do?
-A: It seems you have stored the Offline Updater files in a restricted area of your filesystem, where the temporary account "WSUSUpdateAdmin" has no access to, despite having administrative rights. This could be a user specific directory like "(My )Documents" or "Desktop", or an NTFS encrypted one. Please use another base directory for installation of patches.
+A: It seems you have stored the Offline Updater files in a restricted area of your filesystem, where the temporary account "WOUTempAdmin" has no access to, despite having administrative rights. This could be a user specific directory like "(My )Documents" or "Desktop", or an NTFS encrypted one. Please use another base directory for installation of patches.
 --------------------------------------------------------------------------------
 Q: I have selected "Show log file", but after finishing the installation and rebooting, the log is not shown. What's the reason?
 A: Maybe the user account you're logging in with after the final reboot has no permission to access the registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce or the log file (%SystemRoot%\wsusofflineupdate.log). Please log in once with a sufficiently privileged account after finishing installation and reboot.
@@ -125,7 +125,7 @@ A: Maybe the user account you're logging in with after the final reboot has no p
 Q: In Windows Vista/Server 2008 or Windows 7/Server 2008 R2, the User account control (UAC) prevents execution of %TEMP%\extract\extract_s.exe. What can I do?
 A: The extract_s.exe serves only one purpose: Extracting the file extract.exe into .\bin, unless it's already there. This is the case on the first run only. Please do the first run of UpdateGenerator.exe or Update.cmd as Administrator. Subsequent runs should not require elevation anymore.
 --------------------------------------------------------------------------------
-Q: I enabled the "automatic reboot and recall" option, and now my PC automatically logs into the "WSUSUpdateAdmin" account. How can I prevent that and revert to my previous account settings?
+Q: I enabled the "automatic reboot and recall" option, and now my PC automatically logs into the "WOUTempAdmin" account. How can I prevent that and revert to my previous account settings?
 A: That issue rarely happens. Please help improve the software by submitting a detailed error report, including the preconditions and how to reproduce the error, to the development team.
 To "clean up" your OS do the following:
 - Cancel running update scripts using <Ctrl>+C;
@@ -141,7 +141,7 @@ If it still won't work, follow this guide:
 - DefaultPassword: Delete value
 - AutoAdminLogon: Delete value
 - ForceAutoLogon: Delete value
-- Delete the "WSUSUpdateAdmin" account using the "User accounts" Control Panel item.
+- Delete the "WOUTempAdmin" account using the "User accounts" Control Panel item.
 - Delete the user profile files if they still exist (2000/XP: C:\Documents and Settings, Vista/7: C:\Users).
 - Reboot.
 --------------------------------------------------------------------------------
@@ -158,6 +158,6 @@ Q: Can I let the download window(s) stay in the background?
 A: Yes. Please edit the UpdateGenerator.ini file and add an entry/line "minimizeondownload=Enabled" to the "[Miscellaneous]" section.
 --------------------------------------------------------------------------------
 Q: After installation of patches using the WSUS Offline Update finished, an empty box without contents appears on every reboot. Only when I click "OK", the boot process continues.
-A: It's uncertain at this time what causes this behavior. Please login as "Administrator" and check if the Windows registry key "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" contains a value named "WSUSOfflineUpdate", or if the key "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" contains values named "DeleteWSUSUpdateAdminProfile" or "ShowOfflineUpdateLogFile". If they exist, delete them.
+A: It's uncertain at this time what causes this behavior. Please login as "Administrator" and check if the Windows registry key "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" contains a value named "WSUSOfflineUpdate", or if the key "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" contains values named "DeleteWOUTempAdminProfile" or "ShowOfflineUpdateLogFile". If they exist, delete them.
 Should these entries do not exist in the registry, this behavior was not caused by the Offline Updater. The WSUS Offline Updater team welcomes further hints concerning this problem.
 --------------------------------------------------------------------------------
