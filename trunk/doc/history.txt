@@ -532,3 +532,4 @@ Version ?.? -- ??.??.11
 - Fix: Regional date format settings could cause redundant determination of .NET updates (Thanks to "harry")
 - Fix: DirectX main version will now be determined correctly according to http://msdn.microsoft.com/en-us/library/ee416805(v=VS.85).aspx
 - Fix: Obsolete update for the DirectX IDirectPlay4 API (kb839643) was not excluded (Thanks to "Denniss")
+- Fix: Superseded updates' determination missed several entries (Thanks to Martin Trenkner)

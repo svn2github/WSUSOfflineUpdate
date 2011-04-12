@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.8.2+ (r237)
+set WSUSOFFLINE_VERSION=6.8.2+ (r238)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -164,8 +164,10 @@ goto EvalParams
 echo %1 | %SystemRoot%\system32\find.exe /I "x64" >nul 2>&1
 if errorlevel 1 (set TARGET_ARCH=x86) else (set TARGET_ARCH=x64)
 if "%SKIP_TZ%" NEQ "1" (
-  for /F "tokens=3" %%i in ('%SystemRoot%\system32\reg.exe QUERY HKLM\SYSTEM\CurrentControlSet\Control\TimeZoneInformation /v ActiveTimeBias /t REG_DWORD ^| %SystemRoot%\system32\find.exe /I "ActiveTimeBias"') do set /A TZ="%%i/60"
-  set TZ=LOC!TZ!
+  for /F "tokens=3" %%i in ('%SystemRoot%\system32\reg.exe QUERY HKLM\SYSTEM\CurrentControlSet\Control\TimeZoneInformation /v ActiveTimeBias ^| %SystemRoot%\system32\find.exe /I "ActiveTimeBias"') do set /A TZ="%%i/60", TZ_MIN="%%i-(TZ*60)"
+  set TZ_MIN=0!TZ_MIN!
+  set TZ=LOC!TZ!:!TZ_MIN:~-2!  
+  set TZ_MIN=
   echo %DATE% %TIME% - Info: Set time zone to !TZ! >>%DOWNLOAD_LOGFILE%
 )
 if "%TEMP%"=="" goto NoTemp
@@ -744,11 +746,21 @@ del "%TEMP%\BundledUpdateRelationsAndFileIds.txt"
 if exist "%TEMP%\SupersededFileIds.txt" del "%TEMP%\SupersededFileIds.txt"
 for /F "usebackq tokens=2 delims=,;" %%i in ("%TEMP%\SupersededRevisionAndFileIds.txt") do echo %%i>>"%TEMP%\SupersededFileIds.txt"
 del "%TEMP%\SupersededRevisionAndFileIds.txt"
+%SystemRoot%\system32\sort.exe "%TEMP%\SupersededFileIds.txt" /O "%TEMP%\SupersededFileIdsSorted.txt"
+del "%TEMP%\SupersededFileIds.txt"
+if exist "%TEMP%\SupersededFileIdsUnique.txt" del "%TEMP%\SupersededFileIdsUnique.txt"
+set LAST_LINE=
+for /F "usebackq" %%i in ("%TEMP%\SupersededFileIdsSorted.txt") do (
+  if "%%i" NEQ "!LAST_LINE!" echo %%i>>"%TEMP%\SupersededFileIdsUnique.txt"
+  set LAST_LINE=%%i
+)
+set LAST_LINE=
+del "%TEMP%\SupersededFileIdsSorted.txt"
 ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractUpdateCabExeIdsAndLocations.xsl -o "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 if errorlevel 1 goto DownloadError
-%SystemRoot%\system32\findstr.exe /G:"%TEMP%\SupersededFileIds.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\SupersededCabExeIdsAndLocations.txt"
+%SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\SupersededFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\SupersededCabExeIdsAndLocations.txt"
 del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
-del "%TEMP%\SupersededFileIds.txt"
+del "%TEMP%\SupersededFileIdsUnique.txt"
 for /F "usebackq tokens=2 delims=," %%i in ("%TEMP%\SupersededCabExeIdsAndLocations.txt") do echo %%~ni>>..\exclude\ExcludeList-superseded.txt
 del "%TEMP%\SupersededCabExeIdsAndLocations.txt"
 %SystemRoot%\system32\attrib.exe -A ..\client\wsus\wsusscn2.cab

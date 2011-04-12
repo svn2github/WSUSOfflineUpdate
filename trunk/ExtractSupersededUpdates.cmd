@@ -1,6 +1,8 @@
 @echo off
 rem *** Author: T. Wittrock, Kiel ***
 
+setlocal enabledelayedexpansion
+
 if not exist "%TEMP%\msxsl.exe" .\bin\wget.exe -N -i .\static\StaticDownloadLink-msxsl.txt -P "%TEMP%"
 if not exist "%TEMP%\wsusscn2.cab" (
   .\bin\wget.exe -N -i .\static\StaticDownloadLinks-wsus.txt -P "%TEMP%"
@@ -33,10 +35,20 @@ rem del "%TEMP%\BundledUpdateRelationsAndFileIds.txt"
 if exist "%TEMP%\SupersededFileIds.txt" del "%TEMP%\SupersededFileIds.txt"
 for /F "usebackq tokens=2 delims=,;" %%i in ("%TEMP%\SupersededRevisionAndFileIds.txt") do echo %%i>>"%TEMP%\SupersededFileIds.txt"
 rem del "%TEMP%\SupersededRevisionAndFileIds.txt"
-"%TEMP%\msxsl.exe" "%TEMP%\package.xml" .\xslt\ExtractUpdateCabExeIdsAndLocations.xsl -o "%TEMP%\UpdateCabExeIdsAndLocations.txt"
-%SystemRoot%\system32\findstr.exe /G:"%TEMP%\SupersededFileIds.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\SupersededCabExeIdsAndLocations.txt"
-rem del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
+%SystemRoot%\system32\sort.exe "%TEMP%\SupersededFileIds.txt" /O "%TEMP%\SupersededFileIdsSorted.txt"
 rem del "%TEMP%\SupersededFileIds.txt"
+if exist "%TEMP%\SupersededFileIdsUnique.txt" del "%TEMP%\SupersededFileIdsUnique.txt"
+set LAST_LINE=
+for /F "usebackq" %%i in ("%TEMP%\SupersededFileIdsSorted.txt") do (
+  if "%%i" NEQ "!LAST_LINE!" echo %%i>>"%TEMP%\SupersededFileIdsUnique.txt"
+  set LAST_LINE=%%i
+)
+set LAST_LINE=
+rem del "%TEMP%\SupersededFileIdsSorted.txt"
+"%TEMP%\msxsl.exe" "%TEMP%\package.xml" .\xslt\ExtractUpdateCabExeIdsAndLocations.xsl -o "%TEMP%\UpdateCabExeIdsAndLocations.txt"
+%SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\SupersededFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\SupersededCabExeIdsAndLocations.txt"
+rem del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
+rem del "%TEMP%\SupersededFileIdsUnique.txt"
 if exist .\exclude\ExcludeList-superseded.txt del .\exclude\ExcludeList-superseded.txt
 for /F "usebackq tokens=2 delims=," %%i in ("%TEMP%\SupersededCabExeIdsAndLocations.txt") do echo %%~ni>>.\exclude\ExcludeList-superseded.txt
 rem del "%TEMP%\SupersededCabExeIdsAndLocations.txt"
