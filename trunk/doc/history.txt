@@ -526,8 +526,9 @@ Version 6.8.2 -- 15.03.11
 Version ?.? -- ??.??.11
 - DownloadUpdates.cmd script will now avoid re-downloading after daylight saving time to standard time switch by setting TZ environment variable (Thanks to "Gerby")
 - Optional updating of DirectX End-User Runtimes (Thanks to "Denniss", "aker", "boco" and "-Iwan-")
-- Update for Root Certificates (rootsupd.exe/kb931125) updated to March 2011 (Thanks to "Gerby")
+- Microsoft Security Essentials and Windows Defender installation and definition files will now be validated only once a day (Thanks to "Denniss")
 - Superseded updates will now be determined depending on archive attribute of catalog file wsusscn2.cab (Thanks to "harry")
+- Update for Root Certificates (rootsupd.exe/kb931125) updated to March 2011 (Thanks to "Gerby")
 - Fix: Remote Desktop Connection 7.0 client (kb969084) was erroneously attempted to be installed on Windows Server 2008 (x86/x64) systems (Thanks to "mAsTa")
 - Fix: Regional date format settings could cause redundant determination of .NET updates (Thanks to "harry")
 - Fix: DirectX main version will now be determined correctly according to http://msdn.microsoft.com/en-us/library/ee416805(v=VS.85).aspx

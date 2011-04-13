@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.8.2+ (r238)
+set WSUSOFFLINE_VERSION=6.8.2+ (r239)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -85,19 +85,27 @@ echo Determining system's properties...
 %CSCRIPT_PATH% //Nologo //B //E:vbs DetermineSystemProperties.vbs
 if errorlevel 1 goto NoSysEnvVars
 if not exist "%TEMP%\SetSystemEnvVars.cmd" goto NoSysEnvVars
-if exist %SystemRoot%\system32\dxdiag.exe (
-  if /i "%OS_ARCH%"=="x64" (
-    %SystemRoot%\system32\dxdiag.exe /whql:off /64bit /t %TEMP%\dxdiag.txt
-  ) else (
-    %SystemRoot%\system32\dxdiag.exe /whql:off /t %TEMP%\dxdiag.txt
-  )
-  %SystemRoot%\system32\findstr.exe /C:"DirectX Version" "%TEMP%\dxdiag.txt" >"%TEMP%\dxver.txt"
-  del "%TEMP%\dxdiag.txt"
-  for /F "usebackq tokens=2 delims=:" %%i in ("%TEMP%\dxver.txt") do (
-    for /F "tokens=1*" %%j in ("%%i") do echo set DX_MAIN_VER=%%k>>"%TEMP%\SetSystemEnvVars.cmd"
-  )
-  del "%TEMP%\dxver.txt"
+
+rem *** Determine DirectX main version ***
+if "%UPDATE_DX%" NEQ "/updatedx" goto NoDXDiag
+if not exist %SystemRoot%\system32\dxdiag.exe goto NoDXDiag
+if /i "%OS_ARCH%"=="x64" (
+  %SystemRoot%\system32\dxdiag.exe /whql:off /64bit /t %TEMP%\dxdiag.txt
+) else (
+  %SystemRoot%\system32\dxdiag.exe /whql:off /t %TEMP%\dxdiag.txt
 )
+for /L %%i in (1,1,10) do (
+  if exist "%TEMP%\dxdiag.txt" (goto CheckDXDiag) else (%CSCRIPT_PATH% //Nologo //B //E:vbs Sleep.vbs 100)
+)
+:CheckDXDiag
+if not exist "%TEMP%\dxdiag.txt" goto NoDXDiag
+%SystemRoot%\system32\findstr.exe /C:"DirectX Version" "%TEMP%\dxdiag.txt" >"%TEMP%\dxver.txt"
+del "%TEMP%\dxdiag.txt"
+for /F "usebackq tokens=2 delims=:" %%i in ("%TEMP%\dxver.txt") do (
+  for /F "tokens=1*" %%j in ("%%i") do echo set DX_MAIN_VER=%%k>>"%TEMP%\SetSystemEnvVars.cmd"
+)
+del "%TEMP%\dxver.txt"
+:NoDXDiag
 
 rem *** Set environment variables for system's properties ***
 call "%TEMP%\SetSystemEnvVars.cmd"

@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.8.2+ (r238)
+set WSUSOFFLINE_VERSION=6.8.2+ (r239)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -416,8 +416,6 @@ if "%VERIFY_DOWNLOADS%"=="1" (
 
 rem *** Download installation files for .NET Framework 3.5 SP1 and 4 ***
 if "%INCLUDE_DOTNET%" NEQ "1" goto SkipDotNet
-for %%i in (..\client\md\hashes-dotnet-%TARGET_ARCH%-glb.txt) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
-if not errorlevel 1 goto SkipDotNet
 if "%VERIFY_DOWNLOADS%" NEQ "1" goto DownloadDotNet
 if not exist ..\client\dotnet\nul goto DownloadDotNet
 if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
@@ -436,6 +434,12 @@ if exist ..\client\md\hashes-dotnet.txt (
   echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-dotnet.txt not found >>%DOWNLOAD_LOGFILE%
 )
 :DownloadDotNet
+for %%i in (..\client\md\hashes-dotnet-%TARGET_ARCH%-glb.txt) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
+if not errorlevel 1 (
+  echo Skipping download/validation of .NET Framework 3.5 SP1 and 4 files due to 'same day' rule...
+  echo %DATE% %TIME% - Info: Skipped download/validation of .NET Framework 3.5 SP1 and 4 files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
+  goto SkipDotNet
+)
 echo Downloading/validating installation files for .NET Framework 3.5 SP1 and 4...
 copy /Y ..\static\StaticDownloadLinks-dotnet.txt "%TEMP%\StaticDownloadLinks-dotnet.txt" >nul
 if exist ..\static\custom\StaticDownloadLinks-dotnet.txt (
@@ -505,6 +509,12 @@ if exist ..\client\md\hashes-msse.txt (
   echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-msse.txt not found >>%DOWNLOAD_LOGFILE%
 )
 :DownloadMSSE
+for %%i in (..\client\msse\%TARGET_ARCH%-glb\mpam*.exe) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
+if not errorlevel 1 (
+  echo Skipping download/validation of Microsoft Security Essentials installation files due to 'same day' rule...
+  echo %DATE% %TIME% - Info: Skipped download/validation of Microsoft Security Essentials installation files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
+  goto SkipMSSE
+)
 echo Downloading/validating Microsoft Security Essentials installation files...
 copy /Y ..\static\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt "%TEMP%\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt" >nul
 if exist ..\static\custom\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt (
@@ -587,6 +597,12 @@ if exist ..\client\md\hashes-wddefs.txt (
   echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-wddefs.txt not found >>%DOWNLOAD_LOGFILE%
 )
 :DownloadWDDefs
+for %%i in (..\client\wddefs\%TARGET_ARCH%-glb\mpas*.exe) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
+if not errorlevel 1 (
+  echo Skipping download/validation of Windows Defender definition files due to 'same day' rule...
+  echo %DATE% %TIME% - Info: Skipped download/validation of Windows Defender definition files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
+  goto SkipWDDefs
+)
 echo Downloading/validating Windows Defender definition files...
 %WGET_PATH% -N -i ..\static\StaticDownloadLink-wddefs-%TARGET_ARCH%-glb.txt -P ..\client\wddefs\%TARGET_ARCH%-glb
 if errorlevel 1 goto DownloadError
@@ -721,7 +737,11 @@ for %%i in (..\client\wsus\wsusscn2.cab) do echo %%~ai | %SystemRoot%\system32\f
 if not errorlevel 1 (
   if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
 ) 
-if exist ..\exclude\ExcludeList-superseded.txt goto SkipSuperseded
+if exist ..\exclude\ExcludeList-superseded.txt (
+  echo Found valid list of superseded updates...
+  echo %DATE% %TIME% - Info: Found valid list of superseded updates >>%DOWNLOAD_LOGFILE%
+  goto SkipSuperseded
+)
 echo %TIME% - Determining superseded updates (please be patient, this will take a while)...
 ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractUpdateRevisionIds.xsl -o "%TEMP%\ValidUpdateRevisionIds.txt"
 if errorlevel 1 goto DownloadError
