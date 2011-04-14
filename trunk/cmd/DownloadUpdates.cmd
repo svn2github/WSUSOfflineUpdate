@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.8.2+ (r239)
+set WSUSOFFLINE_VERSION=6.8.2+ (r240)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -509,11 +509,13 @@ if exist ..\client\md\hashes-msse.txt (
   echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-msse.txt not found >>%DOWNLOAD_LOGFILE%
 )
 :DownloadMSSE
-for %%i in (..\client\msse\%TARGET_ARCH%-glb\mpam*.exe) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
-if not errorlevel 1 (
-  echo Skipping download/validation of Microsoft Security Essentials installation files due to 'same day' rule...
-  echo %DATE% %TIME% - Info: Skipped download/validation of Microsoft Security Essentials installation files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
-  goto SkipMSSE
+if exist ..\client\msse\%TARGET_ARCH%-glb\mpam*.exe (
+  for %%i in (..\client\msse\%TARGET_ARCH%-glb\mpam*.exe) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
+  if not errorlevel 1 (
+    echo Skipping download/validation of Microsoft Security Essentials installation files due to 'same day' rule...
+    echo %DATE% %TIME% - Info: Skipped download/validation of Microsoft Security Essentials installation files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
+    goto SkipMSSE
+  )
 )
 echo Downloading/validating Microsoft Security Essentials installation files...
 copy /Y ..\static\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt "%TEMP%\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt" >nul
@@ -597,11 +599,13 @@ if exist ..\client\md\hashes-wddefs.txt (
   echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-wddefs.txt not found >>%DOWNLOAD_LOGFILE%
 )
 :DownloadWDDefs
-for %%i in (..\client\wddefs\%TARGET_ARCH%-glb\mpas*.exe) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
-if not errorlevel 1 (
-  echo Skipping download/validation of Windows Defender definition files due to 'same day' rule...
-  echo %DATE% %TIME% - Info: Skipped download/validation of Windows Defender definition files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
-  goto SkipWDDefs
+if exist ..\client\wddefs\%TARGET_ARCH%-glb\mpas*.exe (
+  for %%i in (..\client\wddefs\%TARGET_ARCH%-glb\mpas*.exe) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
+  if not errorlevel 1 (
+    echo Skipping download/validation of Windows Defender definition files due to 'same day' rule...
+    echo %DATE% %TIME% - Info: Skipped download/validation of Windows Defender definition files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
+    goto SkipWDDefs
+  )
 )
 echo Downloading/validating Windows Defender definition files...
 %WGET_PATH% -N -i ..\static\StaticDownloadLink-wddefs-%TARGET_ARCH%-glb.txt -P ..\client\wddefs\%TARGET_ARCH%-glb
