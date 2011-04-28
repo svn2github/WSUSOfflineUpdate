@@ -47,6 +47,8 @@ if "%2"=="" goto V1CreateFilter
 if /i "%2"=="/excludesp" set EXCLUDE_SP=1
 if /i "%2"=="/includedotnet" set INCLUDE_DOTNET=1
 if /i "%2"=="/includemsse" set INCLUDE_MSSE=1
+if /i "%2"=="/includewddefs" set INCLUDE_WDDEFS=1
+if /i "%2"=="/cleanup" set CLEANUP=1
 shift /2
 goto V1EvalParams
 
@@ -59,6 +61,8 @@ if "%3"=="" goto V2CreateFilter
 if /i "%3"=="/excludesp" set EXCLUDE_SP=1
 if /i "%3"=="/includedotnet" set INCLUDE_DOTNET=1
 if /i "%3"=="/includemsse" set INCLUDE_MSSE=1
+if /i "%3"=="/includewddefs" set INCLUDE_WDDEFS=1
+if /i "%3"=="/cleanup" set CLEANUP=1
 shift /3
 goto V2EvalParams
 
@@ -94,6 +98,9 @@ if "%INCLUDE_DOTNET%" NEQ "1" (
 )
 if "%INCLUDE_MSSE%" NEQ "1" (
   for /F %%i in (..\exclude\ExcludeList-msse.txt) do echo %%i>>%USB_FILTER%
+)
+if "%INCLUDE_WDDEFS%" NEQ "1" (
+  for /F %%i in (..\exclude\ExcludeList-wddefs.txt) do echo %%i>>%USB_FILTER%
 )
 goto :eof
 
@@ -138,6 +145,19 @@ if errorlevel 1 (
 popd
 if exist %USB_FILTER% del %USB_FILTER%
 echo %DATE% %TIME% - Info: Copied client tree for %1 %2 %3 %4 %5 %6 %7 %8 %9 >>%DOWNLOAD_LOGFILE%
+
+rem *** Clean up target directory ***
+if "%CLEANUP%" NEQ "1" goto NoCleanup
+echo Cleaning up target directory %OUTPUT_PATH%...
+for /F %%i in ('dir %OUTPUT_PATH% /A:-D /B /S') do (
+  if not exist ..\client%%~pnxi (
+    del %%i
+    echo %DATE% %TIME% - Info: Deleted file %%i >>%DOWNLOAD_LOGFILE%
+  )
+)
+echo %DATE% %TIME% - Info: Cleaned up target directory %OUTPUT_PATH% >>%DOWNLOAD_LOGFILE%
+
+:NoCleanup
 goto EoF
 
 :NoExtensions
@@ -149,8 +169,8 @@ exit /b 1
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %*
-echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| ofc} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} ^<OutputPath^> [/excludesp] [/includedotnet] [/includemsse]
-echo Usage2: %~n0 {all ^| all-x86 ^| all-x64 ^| wxp ^| w2k3 ^| w2k3-x64 ^| w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| ofc ^| enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} ^<OutputPath^> [/excludesp] [/includedotnet] [/includemsse]
+echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| ofc} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} ^<OutputPath^> [/excludesp] [/includedotnet] [/includemsse] [/includewddefs] [/cleanup]
+echo Usage2: %~n0 {all ^| all-x86 ^| all-x64 ^| wxp ^| w2k3 ^| w2k3-x64 ^| w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| ofc ^| enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} ^<OutputPath^> [/excludesp] [/includedotnet] [/includemsse] [/includewddefs] [/cleanup]
 echo %DATE% %TIME% - Error: Invalid parameter: %* >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
