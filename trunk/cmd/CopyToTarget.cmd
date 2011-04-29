@@ -149,12 +149,15 @@ echo %DATE% %TIME% - Info: Copied client tree for %1 %2 %3 %4 %5 %6 %7 %8 %9 >>%
 rem *** Clean up target directory ***
 if "%CLEANUP%" NEQ "1" goto NoCleanup
 echo Cleaning up target directory %OUTPUT_PATH%...
+dir ..\client /A:-D /B /S >"%TEMP%\ValidClientFiles.txt"
 for /F %%i in ('dir %OUTPUT_PATH% /A:-D /B /S') do (
-  if not exist ..\client%%~pnxi (
+  %SystemRoot%\system32\find.exe /I "%%~nxi" "%TEMP%\ValidClientFiles.txt" >nul 2>&1
+  if errorlevel 1 (
     del %%i
     echo %DATE% %TIME% - Info: Deleted file %%i >>%DOWNLOAD_LOGFILE%
   )
 )
+del "%TEMP%\ValidClientFiles.txt"
 echo %DATE% %TIME% - Info: Cleaned up target directory %OUTPUT_PATH% >>%DOWNLOAD_LOGFILE%
 
 :NoCleanup
