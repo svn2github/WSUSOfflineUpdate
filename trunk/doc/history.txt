@@ -523,16 +523,17 @@ Version 6.8.2 -- 15.03.11
 - Fix: Download filters missed CAPICOM security update kb931906 again
 - Fix: Several obsolete cumulative security updates for Internet Explorer remained (Thanks to "Denniss")
 --------------------------------------------------------------------------------
-Version ?.? -- ??.??.11
+Version 6.8.3 -- 05.05.11
 - DownloadUpdates.cmd script will now avoid re-downloading after daylight saving time to standard time switch by setting TZ environment variable (Thanks to "Gerby")
 - Optional cleanup of target directory added to CopyToTarget.cmd script and USB stick option (Thanks to "Mike")
 - Optional updating of DirectX End-User Runtimes (Thanks to "Denniss", "aker", "boco" and "-Iwan-")
 - Microsoft Security Essentials and Windows Defender installation and definition files will now be validated only once a day (Thanks to "Denniss")
 - Superseded updates will now be determined depending on archive attribute of catalog file wsusscn2.cab (Thanks to "harry")
 - Update for Root Certificates (rootsupd.exe/kb931125) updated to March 2011 (Thanks to "Gerby")
-- HashDeep utility updated to version 3.9
+- AddCustomLanguageSupport.cmd and RemoveCustomLanguageSupport.cmd scripts added to ease download of localized IEx, .NET and MSSE installation files (Thanks to "harry" and "aker")
 - Fix: Remote Desktop Connection 7.0 client (kb969084) was erroneously attempted to be installed on Windows Server 2008 (x86/x64) systems (Thanks to "mAsTa")
 - Fix: Regional date format settings could cause redundant determination of .NET updates (Thanks to "harry")
 - Fix: DirectX main version will now be determined correctly according to http://msdn.microsoft.com/en-us/library/ee416805(v=VS.85).aspx
 - Fix: Obsolete update for the DirectX IDirectPlay4 API (kb839643) was not excluded (Thanks to "Denniss")
 - Fix: Superseded updates' determination missed several entries (Thanks to Martin Trenkner)
+- Fix: 'Clean up download directories' option will now also affect directories for .NET and MSSE installation files

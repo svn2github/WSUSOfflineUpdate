@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.8.2+ (r242)
+set WSUSOFFLINE_VERSION=6.8.2+ (r243)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -438,7 +438,7 @@ for %%i in (..\client\md\hashes-dotnet-%TARGET_ARCH%-glb.txt) do echo _%%~ti | %
 if not errorlevel 1 (
   echo Skipping download/validation of .NET Framework 3.5 SP1 and 4 files due to 'same day' rule...
   echo %DATE% %TIME% - Info: Skipped download/validation of .NET Framework 3.5 SP1 and 4 files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
-  goto SkipDotNet
+  goto VerifyDotNet
 )
 echo Downloading/validating installation files for .NET Framework 3.5 SP1 and 4...
 copy /Y ..\static\StaticDownloadLinks-dotnet.txt "%TEMP%\StaticDownloadLinks-dotnet.txt" >nul
@@ -450,8 +450,22 @@ if errorlevel 1 (
   del "%TEMP%\StaticDownloadLinks-dotnet.txt"
   goto DownloadError
 )
-del "%TEMP%\StaticDownloadLinks-dotnet.txt"
 echo %DATE% %TIME% - Info: Downloaded/validated installation files for .NET Framework 3.5 SP1 and 4 >>%DOWNLOAD_LOGFILE%
+if "%CLEANUP_DOWNLOADS%"=="0" (
+  del "%TEMP%\StaticDownloadLinks-dotnet.txt"
+  goto VerifyDotNet
+)
+echo Cleaning up client directory for .NET Framework 3.5 SP1 and 4...
+for /F %%i in ('dir ..\client\dotnet /A:-D /B') do (
+  %SystemRoot%\system32\find.exe /I "%%i" "%TEMP%\StaticDownloadLinks-dotnet.txt" >nul 2>&1
+  if errorlevel 1 (
+    del ..\client\dotnet\%%i
+    echo %DATE% %TIME% - Info: Deleted ..\client\dotnet\%%i >>%DOWNLOAD_LOGFILE%
+  )
+)
+del "%TEMP%\StaticDownloadLinks-dotnet.txt"
+echo %DATE% %TIME% - Info: Cleaned up client directory for .NET Framework 3.5 SP1 and 4 >>%DOWNLOAD_LOGFILE%
+:VerifyDotNet
 if "%VERIFY_DOWNLOADS%"=="1" (
   rem *** Verifying digital file signatures for .NET Framework installation files ***
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
@@ -514,7 +528,7 @@ if exist ..\client\msse\%TARGET_ARCH%-glb\mpam*.exe (
   if not errorlevel 1 (
     echo Skipping download/validation of Microsoft Security Essentials installation files due to 'same day' rule...
     echo %DATE% %TIME% - Info: Skipped download/validation of Microsoft Security Essentials installation files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
-    goto SkipMSSE
+    goto VerifyMSSE
   )
 )
 echo Downloading/validating Microsoft Security Essentials installation files...
@@ -544,8 +558,22 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\StaticDownloadLinks-msse-%
     )
   )
 )
-del "%TEMP%\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt"
 echo %DATE% %TIME% - Info: Downloaded/validated Microsoft Security Essentials installation files >>%DOWNLOAD_LOGFILE%
+if "%CLEANUP_DOWNLOADS%"=="0" (
+  del "%TEMP%\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt"
+  goto VerifyMSSE
+)
+echo Cleaning up client directory for Microsoft Security Essentials...
+for /F %%i in ('dir ..\client\msse\%TARGET_ARCH%-glb /A:-D /B') do (
+  %SystemRoot%\system32\find.exe /I "%%i" "%TEMP%\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt" >nul 2>&1
+  if errorlevel 1 (
+    del ..\client\msse\%TARGET_ARCH%-glb\%%i
+    echo %DATE% %TIME% - Info: Deleted ..\client\msse\%TARGET_ARCH%-glb\%%i >>%DOWNLOAD_LOGFILE%
+  )
+)
+del "%TEMP%\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt"
+echo %DATE% %TIME% - Info: Cleaned up client directory for Microsoft Security Essentials >>%DOWNLOAD_LOGFILE%
+:VerifyMSSE
 if "%VERIFY_DOWNLOADS%"=="1" (
   rem *** Verifying digital file signatures for Microsoft Security Essentials installation files ***
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
@@ -604,13 +632,14 @@ if exist ..\client\wddefs\%TARGET_ARCH%-glb\mpas*.exe (
   if not errorlevel 1 (
     echo Skipping download/validation of Windows Defender definition files due to 'same day' rule...
     echo %DATE% %TIME% - Info: Skipped download/validation of Windows Defender definition files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
-    goto SkipWDDefs
+    goto VerifyWDDefs
   )
 )
 echo Downloading/validating Windows Defender definition files...
 %WGET_PATH% -N -i ..\static\StaticDownloadLink-wddefs-%TARGET_ARCH%-glb.txt -P ..\client\wddefs\%TARGET_ARCH%-glb
 if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded/validated Windows Defender definition files >>%DOWNLOAD_LOGFILE%
+:VerifyWDDefs
 if "%VERIFY_DOWNLOADS%"=="1" (
   rem *** Verifying digital file signatures for Windows Defender definition files ***
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
@@ -684,7 +713,7 @@ rem *** Verify integrity of existing updates for %1 %2 ***
 if "%VERIFY_DOWNLOADS%" NEQ "1" goto SkipAudit
 if not exist ..\client\%1\%2\nul goto SkipAudit
 if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
-for %%i in (..\client\md\hashes-%1-%2.txt) do (if %%~zi==0 del %%i)
+for %%i in (..\client\md\hashes-%1-%2.txt) do if %%~zi==0 del %%i
 if exist ..\client\md\hashes-%1-%2.txt (
   echo Verifying integrity of existing updates for %1 %2...
   pushd ..\client\md
@@ -1014,7 +1043,7 @@ echo %DATE% %TIME% - Info: Downloaded/validated %LINES_COUNT% dynamically determ
 rem *** Clean up client directory for %1 %2 ***
 if "%CLEANUP_DOWNLOADS%"=="0" goto VerifyDownload
 echo Cleaning up client directory for %1 %2...
-for /F %%i in ('dir /A:-D /B ..\client\%1\%2\*.*') do (
+for /F %%i in ('dir ..\client\%1\%2 /A:-D /B') do (
   %SystemRoot%\system32\find.exe /I "%%i" "%TEMP%\ValidDynamicLinks-%1-%2.txt" >nul 2>&1
   if errorlevel 1 (
     %SystemRoot%\system32\find.exe /I "%%i" "%TEMP%\ValidStaticLinks-%1-%2.txt" >nul 2>&1
