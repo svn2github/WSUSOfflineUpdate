@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 6.8.2
+WSUS Offline Update 6.8.3
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -537,3 +537,4 @@ Version 6.8.3 -- 05.05.11
 - Fix: Obsolete update for the DirectX IDirectPlay4 API (kb839643) was not excluded (Thanks to "Denniss")
 - Fix: Superseded updates' determination missed several entries (Thanks to Martin Trenkner)
 - Fix: 'Clean up download directories' option will now also affect directories for .NET and MSSE installation files
+--------------------------------------------------------------------------------
