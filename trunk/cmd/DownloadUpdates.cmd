@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.8.3
+set WSUSOFFLINE_VERSION=6.8.4
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -451,6 +451,8 @@ if errorlevel 1 (
   goto DownloadError
 )
 echo %DATE% %TIME% - Info: Downloaded/validated installation files for .NET Framework 3.5 SP1 and 4 >>%DOWNLOAD_LOGFILE%
+call :DownloadCore dotnet %TARGET_ARCH%-glb
+if errorlevel 1 goto Error
 if "%CLEANUP_DOWNLOADS%"=="0" (
   del "%TEMP%\StaticDownloadLinks-dotnet.txt"
   goto VerifyDotNet
@@ -497,8 +499,6 @@ if "%VERIFY_DOWNLOADS%"=="1" (
     echo %DATE% %TIME% - Info: Deleted integrity database for .NET Framework installation files >>%DOWNLOAD_LOGFILE%
   )
 )
-call :DownloadCore dotnet %TARGET_ARCH%-glb
-if errorlevel 1 goto Error
 :SkipDotNet
 
 rem *** Download Microsoft Security Essentials - not required for w2k3 ***

@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 6.8.3
+WSUS Offline Update 6.8.4
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -523,7 +523,7 @@ Version 6.8.2 -- 15.03.11
 - Fix: Download filters missed CAPICOM security update kb931906 again
 - Fix: Several obsolete cumulative security updates for Internet Explorer remained (Thanks to "Denniss")
 --------------------------------------------------------------------------------
-Version 6.8.3 -- 05.05.11
+Version 6.8.4 -- 05.05.11
 - DownloadUpdates.cmd script will now avoid re-downloading after daylight saving time to standard time switch by setting TZ environment variable (Thanks to "Gerby")
 - Optional cleanup of target directory added to CopyToTarget.cmd script and USB stick option (Thanks to "Mike")
 - Optional updating of DirectX End-User Runtimes (Thanks to "Denniss", "aker", "boco" and "-Iwan-")
