@@ -538,3 +538,8 @@ Version 6.8.4 -- 05.05.11
 - Fix: Superseded updates' determination missed several entries (Thanks to Martin Trenkner)
 - Fix: 'Clean up download directories' option will now also affect directories for .NET and MSSE installation files
 --------------------------------------------------------------------------------
+Version ?.?.? -- ??.??.11
+- DownloadUpdates.sh script will now create hash files for downloaded updates (Thanks to Stefan Jöhnke)
+- DownloadUpdates.sh script will now support optional download of Windows Defender definition files (Thanks to Stefan Jöhnke)
+- DownloadUpdates.sh script will now support custom static and exclude directories (Thanks to Stefan Jöhnke)
+- Fix: DownloadUpdates.sh and CreateISOImage.sh scripts did not support working directories containing spaces (Thanks to Stefan Jöhnke)

@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update ISO maker            ###
 ###                  for Linux systems                 ###
-###                      v. 6.8.4                      ###
+###                   v. 6.8.4+ (r249)                 ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg      ###
@@ -11,7 +11,7 @@
 ##########################################################
 
 #set working directory
-cd $( dirname $(readlink -f $0) )
+cd "$( dirname "$(readlink -f "$0")" )"
 rm ../temp/ExcludeListISO*
 
 printusage()
@@ -32,6 +32,7 @@ Parameter:
 /excludesp - exclude servicepacks
 /dotnet    - include .Net-Framework
 /msse      - include Microsoft Security Essentials installation files
+/wddefs    - include Windows Defender definition files
 
 Example: `basename $0` wxp deu /dotnet
 
@@ -46,7 +47,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update ISO maker            ***
 ***                  for Linux systems                 ***
-***                      v. 6.8.4                      ***
+***                   v. 6.8.4+ (r249)                 ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Stefan Joehnke, Walter Schiessberg      ***
@@ -89,13 +90,12 @@ evaluateparams()
 {
 syslist=("wxp" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "all-x64" "all-x86")
 langlist=("enu" "deu" "nld" "esn" "fra" "ptg" "ptb" "ita" "rus" "plk" "ell" "csy" "dan" "nor" "sve" "fin" "jpn" "kor" "chs" "cht" "hun" "trk" "ara" "heb")
-paramlist=("/excludesp" "/dotnet" "/msse")
+paramlist=("/excludesp" "/dotnet" "/msse" "/wddefs")
 EXCLUDE_SP="0"
 dotnet="0"
 msse="0"
-param1=""
-param2=""
-param3=""
+wddefs="0"
+
 #determining system
 for i in ${syslist[@]}; do
 	if [ "$1" == "$i" ]; then
@@ -120,41 +120,23 @@ if [ "$sys" == "" -o "$lang" == "" ]; then
 fi
  
 #determining parameters
-n=1
 for i in ${paramlist[@]}; do
-	if echo $@ | grep $i > /dev/null 2>&1; then
-		export param${n}=${i}
-		n=`expr $n + 1`
+	if echo $@ | grep /dotnet > /dev/null 2>&1; then
+		dotnet="1"
+	fi
+	if echo $@ | grep /excludesp > /dev/null 2>&1; then
+		EXCLUDE_SP="1"
+	fi
+	if echo $@ | grep /nocleanup > /dev/null 2>&1; then
+		CLEANUP_DOWNLOADS="0"
+	fi
+	if echo $@ | grep /msse > /dev/null 2>&1; then
+		msse="1"
+	fi
+	if echo $@ | grep /wddefs > /dev/null 2>&1; then
+		wddefs="1"
 	fi
 done
-
-if [ "$param1" == "/excludesp" ]; then
-	EXCLUDE_SP="1"
-fi
-if [ "$param2" == "/excludesp" ]; then
-	EXCLUDE_SP="1"
-fi
-if [ "$param3" == "/excludesp" ]; then
-	EXCLUDE_SP="1"
-fi
-if [ "$param1" == "/dotnet" ]; then
-	dotnet="1"
-fi
-if [ "$param2" == "/dotnet" ]; then
-	dotnet="1"
-fi
-if [ "$param3" == "/dotnet" ]; then
-	dotnet="1"
-fi
-if [ "$param1" == "/msse" ]; then
-	msse="1"
-fi
-if [ "$param2" == "/msse" ]; then
-	msse="1"
-fi
-if [ "$param3" == "/msse" ]; then
-	msse="1"
-fi
 }
 
 evaluateparams $1 $2 $3 $4
@@ -182,6 +164,10 @@ fi
 if [ "$msse" != "1" ]; then
 	echo "msse*" >> ../temp/ExcludeListISO-${sys}.txt
 fi
+if [ "$wddefs" != "1" ]; then
+	echo "wddefs*" >> ../temp/ExcludeListISO-${sys}.txt
+fi
+
 x=0
 langlist=("enu" "deu" "nld" "esn" "fra" "ptg" "ptb" "ita" "rus" "plk" "ell" "csy" "dan" "nor" "sve" "fin" "jpn" "kor" "chs" "cht" "hun" "trk" "ara" "heb")
 for i in ${langlist[@]}; do
