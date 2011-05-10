@@ -7,6 +7,8 @@ if "%OS_NAME%"=="" goto NoOSName
 if "%REG_PATH%"=="" goto NoRegPath
 if "%CSCRIPT_PATH%"=="" goto NoCScriptPath
 
+if "%OS_NAME%"=="w60" goto SkipWinlogon
+if "%OS_NAME%"=="w61" goto SkipWinlogon
 echo Saving Winlogon registry hive...
 %REG_PATH% EXPORT "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" %SystemRoot%\wsusbak-winlogon.reg >nul 2>&1
 if errorlevel 1 (
@@ -16,6 +18,7 @@ if errorlevel 1 (
 ) else (
   echo %DATE% %TIME% - Info: Saved Winlogon registry hive >>%UPDATE_LOGFILE%
 )
+:SkipWinlogon
 
 echo Saving System policies registry hive...
 %REG_PATH% EXPORT "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" %SystemRoot%\wsusbak-system-policies.reg >nul 2>&1

@@ -36,7 +36,7 @@ Private Const strBuildNumbers_O2k7            = "4518,4518,4518,4518,4518,4518;6
 Private Const strBuildNumbers_O2k10           = "4762,4756,4760,4754,4750,4750"
 Private Const idxBuild                        = 2
 
-Dim wshShell, objFileSystem, objCmdFile, objWMIService, objWMIQuery, arrayOfficeNames, arrayOfficeVersions, arrayOfficeAppNames, arrayOfficeExeNames
+Dim wshShell, objNetwork, objFileSystem, objCmdFile, objWMIService, objQueryItem, arrayOfficeNames, arrayOfficeVersions, arrayOfficeAppNames, arrayOfficeExeNames
 Dim strSystemFolder, strTempFolder, strWUAFileName, strMSIFileName, strWSHFileName, strTSCFileName, strWMPFileName, strCmdFileName, strOSVersion, strOfficeInstallPath, strOfficeExeVersion, strProduct, languageCode, i, j
 
 Private Function RegExists(objShell, strName)
@@ -397,23 +397,28 @@ strCmdFileName = strTempFolder & "\SetSystemEnvVars.cmd"
 Set objFileSystem = CreateObject("Scripting.FileSystemObject")
 Set objCmdFile = objFileSystem.CreateTextFile(strCmdFileName, True)
 
-' Determine Windows system properties
+' Determine basic system properties
+Set objNetwork = WScript.CreateObject("WScript.Network")
 Set objWMIService = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
 ' Documentation: http://msdn.microsoft.com/en-us/library/aa394239(VS.85).aspx
-For Each objWMIQuery in objWMIService.ExecQuery("Select * from Win32_OperatingSystem") 
-  objCmdFile.WriteLine("set OS_CAPTION=" & objWMIQuery.Caption)
-  WriteVersionToFile objCmdFile, "OS_VER", objWMIQuery.Version
-  strOSVersion = Left(objWMIQuery.Version, 3) ' For determination of Windows activation state - see below
-  objCmdFile.WriteLine("set OS_SP_VER_MAJOR=" & objWMIQuery.ServicePackMajorVersion)
-  objCmdFile.WriteLine("set OS_SP_VER_MINOR=" & objWMIQuery.ServicePackMinorVersion)
-  objCmdFile.WriteLine("set OS_LANG_CODE=0x" & Hex(objWMIQuery.OSLanguage))
-  WriteLanguageToFile objCmdFile, "OS_LANG", objWMIQuery.OSLanguage, True, False
-  objCmdFile.WriteLine("set SystemDirectory=" & objWMIQuery.SystemDirectory)
+For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_OperatingSystem") 
+  objCmdFile.WriteLine("set OS_CAPTION=" & objQueryItem.Caption)
+  WriteVersionToFile objCmdFile, "OS_VER", objQueryItem.Version
+  strOSVersion = Left(objQueryItem.Version, 3) ' For determination of Windows activation state - see below
+  objCmdFile.WriteLine("set OS_SP_VER_MAJOR=" & objQueryItem.ServicePackMajorVersion)
+  objCmdFile.WriteLine("set OS_SP_VER_MINOR=" & objQueryItem.ServicePackMinorVersion)
+  objCmdFile.WriteLine("set OS_LANG_CODE=0x" & Hex(objQueryItem.OSLanguage))
+  WriteLanguageToFile objCmdFile, "OS_LANG", objQueryItem.OSLanguage, True, False
+  objCmdFile.WriteLine("set SystemDirectory=" & objQueryItem.SystemDirectory)
 Next
 ' Documentation: http://msdn.microsoft.com/en-us/library/aa394102(VS.85).aspx
-For Each objWMIQuery in objWMIService.ExecQuery("Select * from Win32_ComputerSystem")
-  objCmdFile.WriteLine("set OS_ARCH=" & LCase(Left(objWMIQuery.SystemType, 3)))
-  objCmdFile.WriteLine("set OS_DOMAIN_ROLE=" & objWMIQuery.DomainRole)
+For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_ComputerSystem")
+  objCmdFile.WriteLine("set OS_ARCH=" & LCase(Left(objQueryItem.SystemType, 3)))
+  objCmdFile.WriteLine("set OS_DOMAIN_ROLE=" & objQueryItem.DomainRole)
+Next
+' Documentation: http://msdn.microsoft.com/en-us/library/aa394507(VS.85).aspx
+For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_UserAccount Where Domain = '" & objNetwork.UserDomain & "' And Name = '" & objNetwork.UserName & "'")
+  objCmdFile.WriteLine("set USERSID=" & objQueryItem.SID)
 Next
 
 ' Determine Windows Update Agent version 
@@ -528,15 +533,15 @@ Next
 '
 
 ' Determine state of automatic updates service 
-For Each objWMIQuery in objWMIService.ExecQuery("Select * from Win32_Service Where Name = 'wuauserv'")
-  objCmdFile.WriteLine("set AU_SVC_STATE_INITIAL=" & objWMIQuery.State)
-  objCmdFile.WriteLine("set AU_SVC_START_MODE=" & objWMIQuery.StartMode)
+For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_Service Where Name = 'wuauserv'")
+  objCmdFile.WriteLine("set AU_SVC_STATE_INITIAL=" & objQueryItem.State)
+  objCmdFile.WriteLine("set AU_SVC_START_MODE=" & objQueryItem.StartMode)
 Next
 
 ' Determine Windows activation state - not available on Windows 2000 and Vista systems 
 If (strOSVersion = "5.1") Or (strOSVersion = "5.2") Then
-  For Each objWMIQuery in objWMIService.ExecQuery("Select * from Win32_WindowsProductActivation")
-    objCmdFile.WriteLine("set OS_ACTIVATION_REQUIRED=" & objWMIQuery.ActivationRequired)
+  For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_WindowsProductActivation")
+    objCmdFile.WriteLine("set OS_ACTIVATION_REQUIRED=" & objQueryItem.ActivationRequired)
   Next
 End If
 
