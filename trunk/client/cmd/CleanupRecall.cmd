@@ -61,13 +61,16 @@ if errorlevel 1 (
 
 echo Deleting WOUTempAdmin account...
 if "%USERNAME%"=="WOUTempAdmin" (
-  %REG_PATH% QUERY "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\%USERSID%" >nul 2>&1
-  if not errorlevel 1 (
-    %REG_PATH% DELETE "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\%USERSID%" /f >nul 2>&1
-    echo %DATE% %TIME% - Info: Deleted registry reference to WOUTempAdmin profile >>%UPDATE_LOGFILE%
+  if "%USERSID%"=="" (
+    echo %DATE% %TIME% - Warning: Environment variable USERSID not found - skipped deletion of registry reference to WOUTempAdmin profile >>%UPDATE_LOGFILE%
   ) else (
-    echo %DATE% %TIME% - Warning: Registry reference to WOUTempAdmin profile not found - skipped deletion >>%UPDATE_LOGFILE%
-  )
+    %REG_PATH% DELETE "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\%USERSID%" /f >nul 2>&1
+    if errorlevel 1 (
+      echo %DATE% %TIME% - Warning: Registry reference to WOUTempAdmin profile not found - skipped deletion >>%UPDATE_LOGFILE%
+    ) else (
+      echo %DATE% %TIME% - Info: Deleted registry reference to WOUTempAdmin profile >>%UPDATE_LOGFILE%
+    )
+  )    
   %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v DeleteWOUTempAdminProfile /t REG_SZ /d "cmd /c rd /S /Q \"%USERPROFILE%\"" >nul 2>&1 
   echo %DATE% %TIME% - Info: Registered deletion of WOUTempAdmin profile >>%UPDATE_LOGFILE%
 ) else (
