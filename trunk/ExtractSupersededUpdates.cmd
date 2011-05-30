@@ -49,9 +49,11 @@ rem del "%TEMP%\SupersededFileIdsSorted.txt"
 %SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\SupersededFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\SupersededCabExeIdsAndLocations.txt"
 rem del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 rem del "%TEMP%\SupersededFileIdsUnique.txt"
-if exist .\exclude\ExcludeList-superseded.txt del .\exclude\ExcludeList-superseded.txt
-for /F "usebackq tokens=2 delims=," %%i in ("%TEMP%\SupersededCabExeIdsAndLocations.txt") do echo %%~ni>>.\exclude\ExcludeList-superseded.txt
+if exist "%TEMP%\SupersededCabExeLocations.txt" del "%TEMP%\SupersededCabExeLocations.txt"
+for /F "usebackq tokens=2 delims=," %%i in ("%TEMP%\SupersededCabExeIdsAndLocations.txt") do echo %%i>>"%TEMP%\SupersededCabExeLocations.txt"
 rem del "%TEMP%\SupersededCabExeIdsAndLocations.txt"
+%SystemRoot%\system32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractIdsAndFileNames.vbs "%TEMP%\SupersededCabExeLocations.txt" .\exclude\ExcludeList-superseded.txt
+rem del "%TEMP%\SupersededCabExeLocations.txt"
 goto EoF
 
 del "%TEMP%\package.xml"

@@ -69,17 +69,19 @@ rem del "%TEMP%\OfficeFileIds.txt"
 rem del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 
 if exist "%TEMP%\DownloadLinks-%1-%2.txt" del "%TEMP%\DownloadLinks-%1-%2.txt"
-if exist "%TEMP%\UpdateTable-%1-%2.csv" del "%TEMP%\UpdateTable-%1-%2.csv"
+if exist "%TEMP%\UpdateTableURL-%1-%2.csv" del "%TEMP%\UpdateTableURL-%1-%2.csv"
 for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt") do (
   for /F "usebackq tokens=1,2 delims=," %%k in ("%TEMP%\OfficeUpdateAndFileIds.txt") do (
     if /i "%%l"=="%%i" (
       echo %%j>>"%TEMP%\DownloadLinks-%1-%2.txt"
-      echo %%k,%%~nj>>"%TEMP%\UpdateTable-%1-%2.csv"
+      echo %%k,%%j>>"%TEMP%\UpdateTableURL-%1-%2.csv"
     )
   )
 )
 rem del "%TEMP%\OfficeUpdateAndFileIds.txt"
 rem del "%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
+%SystemRoot%\system32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractIdsAndFileNames.vbs "%TEMP%\UpdateTableURL-%1-%2.csv" "%TEMP%\UpdateTable-%1-%2.csv"
+rem del "%TEMP%\UpdateTableURL-%1-%2.csv"
 goto :EoF
 
 :DoIt

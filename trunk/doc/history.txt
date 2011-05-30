@@ -544,3 +544,4 @@ Version ?.?.? -- ??.??.11
 - DownloadUpdates.sh script will now support custom static and exclude directories (Thanks to Stefan Jöhnke)
 - Fix: DownloadUpdates.sh and CreateISOImage.sh scripts did not support working directories containing spaces (Thanks to Stefan Jöhnke)
 - Fix: Registry references to WOUTempAdmin profile were not cleaned up (Thanks to Bert Schinkel-Momsen)
+- Fix: Determination of Office and superseded updates caused invalid file system activities (Thanks to "Yaso Kuhl")

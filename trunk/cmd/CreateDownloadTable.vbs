@@ -4,8 +4,7 @@ Option Explicit
 
 Private Const strWSUSRootFolder = "Content/"
 
-Dim objFileSystem, inputFile, outputFile
-Dim strInputFileName, strWSUSURL, strLine
+Dim objFileSystem, inputFile, outputFile, strInputFileName, strWSUSURL, strLine
 
 Private Function IsTextFile(objFS, strFileName)
   IsTextFile = (objFS.FileExists(strFileName)) And (LCase(objFS.GetExtensionName(strFileName)) = "txt")
