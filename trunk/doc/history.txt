@@ -545,3 +545,4 @@ Version ?.?.? -- ??.??.11
 - Fix: DownloadUpdates.sh and CreateISOImage.sh scripts did not support working directories containing spaces (Thanks to Stefan Jöhnke)
 - Fix: Registry references to WOUTempAdmin profile were not cleaned up (Thanks to Bert Schinkel-Momsen)
 - Fix: Determination of Office and superseded updates caused invalid file system activities (Thanks to "Yaso Kuhl")
+- Fix: Windows 7 / Server 2008 R2 Service Pack 1 (kb976932) was attempted to be installed as a patch (Thanks to "Denniss")
