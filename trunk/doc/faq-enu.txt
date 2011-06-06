@@ -29,15 +29,17 @@ To exclude dynamically determined updates from installation, insert their knowle
 The following updates are already excluded:
 - KB816093 (Security update for Microsoft VM)
 - KB890830 (Windows Malicious Software Removal Tool (MSRT))
-- KB926874 (Internet Explorer 7 (will be installed if selected explicitly))
-- KB940767 (Internet Explorer 7 (will be installed if selected explicitly))
-- KB944036 (Internet Explorer 8 (will be installed if selected explicitly))
-- KB326585 (Office 2000 Service Pack 3 (will be implicitly installed if required))
+- KB926874 (Internet Explorer 7 (will be explicitly installed if selected))
+- KB940767 (Internet Explorer 7 (will be explicitly installed if selected))
+- KB944036 (Internet Explorer 8 (will be explicitly installed if selected))
+- KB982861 (Internet Explorer 9 (will be explicitly installed if selected))
 - KB832671 (Office XP Service Pack 3 (will be implicitly installed if required))
 - KB923618 (Office 2003 Service Pack 3 (will be implicitly installed if required))
 - KB953195 (Office 2007 Service Pack 2 (will be implicitly installed if required))
-- KB813715 (Office 2000 Italian Grammar Tools Update)
-- KB936929 (Windows XP Service Pack 3 (will be installed if selected explicitly))
+- KB936929 (Windows XP Service Pack 3 (will be implicitly installed if required))
+- KB976002 (Browser Choice)
+- KB951847 (.NET Framework 3.5 SP1 Family Update (will be explicitly installed if selected)) 
+- KB976932 (Windows 7 Service Pack 1 (will be implicitly installed if required))
 
 Please be aware that excluding updates may have an impact on the security of your PC.
 --------------------------------------------------------------------------------
@@ -164,4 +166,7 @@ Should these entries do not exist in the registry, this behavior was not caused 
 Q: I miss IEx, .NET and MSSE installation files for my language. Why aren't they downloaded and what can I do to have them downloaded?
 A: Since Service Packs and updates for Windows Vista / 7 / Server 2008(R2) are multilingual, there's no 24-language selection table for these platforms, so by default, only the English and German versions of those localized installation packages for IEx, .NET and MSSE will be downloaded.
 To have your favorite locale(s) downloaded in addition, you may use the ...\cmd\AddCustomLanguageSupport.cmd script. 
+--------------------------------------------------------------------------------
+Q: The determination of "superseded updates" takes more than 15 minutes. How can I speed it up?
+A: Some Anti-Virus-Scanners (especially "Microsoft Security Essentials" (MSSE)) retard the required calculations. You may temporarily disable your AV scanner or define an appropriate exception.
 --------------------------------------------------------------------------------

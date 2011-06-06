@@ -29,12 +29,14 @@ Beim Ausschluss von Updates von der Installation muss ebenfalls zwischen statisc
     - KB926874 (Internet Explorer 7 (wird ggf. explizit installiert))
     - KB940767 (Internet Explorer 7 (wird ggf. explizit installiert))
     - KB944036 (Internet Explorer 8 (wird ggf. explizit installiert))
-    - KB326585 (Office 2000 Service Pack 3 (wird ggf. implizit installiert))
+    - KB982861 (Internet Explorer 9 (wird ggf. explizit installiert))
     - KB832671 (Office XP Service Pack 3 (wird ggf. implizit installiert))
     - KB923618 (Office 2003 Service Pack 3 (wird ggf. implizit installiert))
     - KB953195 (Office 2007 Service Pack 2 (wird ggf. implizit installiert))
-    - KB813715 (Office 2000-Update für italienische Grammatiktools)
-    - KB936929 (Windows XP Service Pack 3 (wird ggf. explizit installiert))
+    - KB936929 (Windows XP Service Pack 3 (wird ggf. implizit installiert))
+    - KB976002 (Browserauswahlbildschirm)
+    - KB951847 (.NET Framework 3.5 SP1 Family Update (wird ggf. explizit installiert)) 
+    - KB976932 (Windows 7 Service Pack 1 (wird ggf. implizit installiert))
     
 Bitte bedenken Sie dabei, dass Sie durch den Ausschluss von Updates die Sicherheit des Computers beeinträchtigen können.  
 --------------------------------------------------------------------------------
@@ -165,4 +167,7 @@ Finden Sie die genannten Einträge nicht, ist dieser Effekt nicht direkt auf das 
 F: Ich vermisse die Installationspakete für IEx, .NET und MSSE in meiner Sprache. Warum werden sie nicht heruntergeladen und was kann ich tun, um sie herunterzuladen?
 A: Da Service Packs und Updates für Windows Vista / 7 / Server 2008(R2) mehrsprachig sind, gibt es für diese Systeme keine 24sprachige Auswahltabelle, so dass voreingestellt nur die englisch- und deutschsprachigen Versionen der Installationspakete für IEx, .NET and MSSE heruntergeladen werden.
 Um die Sprachversionen Ihrer Wahl zusätzlich herunterladen zu lassen, können Sie das Skript...\cmd\AddCustomLanguageSupport.cmd verwenden. 
+--------------------------------------------------------------------------------
+F: Die Ermittlung ersetzter Aktualisierungen ("superseded updates") dauert sehr lange (mehr als 15 Minuten). Wie kann ich dies beschleunigen?
+A: Manche Anti-Viren-Scanner (insbesondere die "Microsoft Security Essentials" (MSSE)) verzögern die erforderlichen Berechnungen stark. Sie können Ihren AV-Scanner temporär deaktivieren oder eine entsprechende Ausnahme definieren.
 --------------------------------------------------------------------------------

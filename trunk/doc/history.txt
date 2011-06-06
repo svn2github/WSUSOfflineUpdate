@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 6.8.4
+WSUS Offline Update 6.8.5
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -538,11 +538,13 @@ Version 6.8.4 -- 05.05.11
 - Fix: Superseded updates' determination missed several entries (Thanks to Martin Trenkner)
 - Fix: 'Clean up download directories' option will now also affect directories for .NET and MSSE installation files
 --------------------------------------------------------------------------------
-Version ?.?.? -- ??.??.11
+Version 6.8.5 -- 06.06.11
 - DownloadUpdates.sh script will now create hash files for downloaded updates (Thanks to Stefan Jöhnke)
 - DownloadUpdates.sh script will now support optional download of Windows Defender definition files (Thanks to Stefan Jöhnke)
 - DownloadUpdates.sh script will now support custom static and exclude directories (Thanks to Stefan Jöhnke)
+- HashDeep utility updated to version 3.9.1
 - Fix: DownloadUpdates.sh and CreateISOImage.sh scripts did not support working directories containing spaces (Thanks to Stefan Jöhnke)
 - Fix: Registry references to WOUTempAdmin profile were not cleaned up (Thanks to Bert Schinkel-Momsen)
 - Fix: Determination of Office and superseded updates caused invalid file system activities (Thanks to "Yaso Kuhl")
 - Fix: Windows 7 / Server 2008 R2 Service Pack 1 (kb976932) was attempted to be installed as a patch (Thanks to "Denniss")
+--------------------------------------------------------------------------------
