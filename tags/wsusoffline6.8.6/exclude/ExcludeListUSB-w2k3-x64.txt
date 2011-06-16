@@ -1,0 +1,17 @@
+ofc\
+o2k\
+oxp\
+o2k3\
+o2k7\
+o2k10\
+w2k\
+wxp\
+w2k3\
+w60\
+w61\
+x86-glb\
+*-x86\
+o2k7-x64\
+w60-x64\
+w61-x64\
+.au3
