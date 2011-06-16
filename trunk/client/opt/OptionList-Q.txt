@@ -3,4 +3,5 @@ capicom
 kb913433
 rootsupd
 kb923789
+vcredist
 wmp11

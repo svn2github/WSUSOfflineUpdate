@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.8.5
+set WSUSOFFLINE_VERSION=6.8.6
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -414,13 +414,13 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   )
 )
 
-rem *** Download installation files for .NET Framework 3.5 SP1 and 4 ***
+rem *** Download installation files for .NET Frameworks 3.5 SP1 and 4 ***
 if "%INCLUDE_DOTNET%" NEQ "1" goto SkipDotNet
 if "%VERIFY_DOWNLOADS%" NEQ "1" goto DownloadDotNet
 if not exist ..\client\dotnet\nul goto DownloadDotNet
 if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
 if exist ..\client\md\hashes-dotnet.txt (
-  echo Verifying integrity of .NET Framework installation files...
+  echo Verifying integrity of .NET Frameworks' installation files...
   pushd ..\client\md
   ..\bin\hashdeep.exe -a -l -vv -k hashes-dotnet.txt ..\dotnet\dotnetfx*.exe
   if errorlevel 1 (
@@ -428,7 +428,7 @@ if exist ..\client\md\hashes-dotnet.txt (
     goto IntegrityError
   )
   popd
-  echo %DATE% %TIME% - Info: Verified integrity of .NET Framework installation files >>%DOWNLOAD_LOGFILE%
+  echo %DATE% %TIME% - Info: Verified integrity of .NET Frameworks' installation files >>%DOWNLOAD_LOGFILE%
 ) else (
   echo Warning: Integrity database ..\client\md\hashes-dotnet.txt not found.
   echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-dotnet.txt not found >>%DOWNLOAD_LOGFILE%
@@ -436,11 +436,11 @@ if exist ..\client\md\hashes-dotnet.txt (
 :DownloadDotNet
 for %%i in (..\client\md\hashes-dotnet-%TARGET_ARCH%-glb.txt) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
 if not errorlevel 1 (
-  echo Skipping download/validation of .NET Framework 3.5 SP1 and 4 files due to 'same day' rule...
-  echo %DATE% %TIME% - Info: Skipped download/validation of .NET Framework 3.5 SP1 and 4 files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
+  echo Skipping download/validation of .NET Frameworks' installation files due to 'same day' rule...
+  echo %DATE% %TIME% - Info: Skipped download/validation of .NET Frameworks' installation files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
   goto VerifyDotNet
 )
-echo Downloading/validating installation files for .NET Framework 3.5 SP1 and 4...
+echo Downloading/validating installation files for .NET Frameworks 3.5 SP1 and 4...
 copy /Y ..\static\StaticDownloadLinks-dotnet.txt "%TEMP%\StaticDownloadLinks-dotnet.txt" >nul
 if exist ..\static\custom\StaticDownloadLinks-dotnet.txt (
   for /F %%i in (..\static\custom\StaticDownloadLinks-dotnet.txt) do echo %%i>>"%TEMP%\StaticDownloadLinks-dotnet.txt"
@@ -450,14 +450,14 @@ if errorlevel 1 (
   del "%TEMP%\StaticDownloadLinks-dotnet.txt"
   goto DownloadError
 )
-echo %DATE% %TIME% - Info: Downloaded/validated installation files for .NET Framework 3.5 SP1 and 4 >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Downloaded/validated installation files for .NET Frameworks 3.5 SP1 and 4 >>%DOWNLOAD_LOGFILE%
 call :DownloadCore dotnet %TARGET_ARCH%-glb
 if errorlevel 1 goto Error
 if "%CLEANUP_DOWNLOADS%"=="0" (
   del "%TEMP%\StaticDownloadLinks-dotnet.txt"
   goto VerifyDotNet
 )
-echo Cleaning up client directory for .NET Framework 3.5 SP1 and 4...
+echo Cleaning up client directory for .NET Frameworks 3.5 SP1 and 4...
 for /F %%i in ('dir ..\client\dotnet /A:-D /B') do (
   %SystemRoot%\system32\find.exe /I "%%i" "%TEMP%\StaticDownloadLinks-dotnet.txt" >nul 2>&1
   if errorlevel 1 (
@@ -466,12 +466,12 @@ for /F %%i in ('dir ..\client\dotnet /A:-D /B') do (
   )
 )
 del "%TEMP%\StaticDownloadLinks-dotnet.txt"
-echo %DATE% %TIME% - Info: Cleaned up client directory for .NET Framework 3.5 SP1 and 4 >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Cleaned up client directory for .NET Frameworks 3.5 SP1 and 4 >>%DOWNLOAD_LOGFILE%
 :VerifyDotNet
 if "%VERIFY_DOWNLOADS%"=="1" (
-  rem *** Verifying digital file signatures for .NET Framework installation files ***
+  rem *** Verifying digital file signatures for .NET Frameworks' installation files ***
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
-  echo Verifying digital file signatures for .NET Framework installation files...
+  echo Verifying digital file signatures for .NET Frameworks' installation files...
   ..\bin\sigcheck.exe /accepteula -q -u -v ..\client\dotnet >"%TEMP%\sigcheck-dotnet.txt"
   for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-dotnet.txt") do (
     del %%i 
@@ -479,9 +479,9 @@ if "%VERIFY_DOWNLOADS%"=="1" (
     echo %DATE% %TIME% - Warning: Deleted unsigned file %%i >>%DOWNLOAD_LOGFILE%
   ) 
   if exist "%TEMP%\sigcheck-dotnet.txt" del "%TEMP%\sigcheck-dotnet.txt"
-  echo %DATE% %TIME% - Info: Verified digital file signatures for .NET Framework installation files >>%DOWNLOAD_LOGFILE%
+  echo %DATE% %TIME% - Info: Verified digital file signatures for .NET Frameworks' installation files >>%DOWNLOAD_LOGFILE%
   if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
-  echo Creating integrity database for .NET Framework installation files...
+  echo Creating integrity database for .NET Frameworks' installation files...
   if not exist ..\client\md\nul md ..\client\md
   pushd ..\client\md
   ..\bin\hashdeep.exe -c md5,sha256 -l ..\dotnet\dotnetfx*.exe >hashes-dotnet.txt
@@ -491,15 +491,110 @@ if "%VERIFY_DOWNLOADS%"=="1" (
     echo %DATE% %TIME% - Warning: Error creating integrity database ..\client\md\hashes-dotnet.txt >>%DOWNLOAD_LOGFILE%
   ) else (
     popd
-    echo %DATE% %TIME% - Info: Created integrity database for .NET Framework installation files >>%DOWNLOAD_LOGFILE%
+    echo %DATE% %TIME% - Info: Created integrity database for .NET Frameworks' installation files >>%DOWNLOAD_LOGFILE%
   )
 ) else (
   if exist ..\client\md\hashes-dotnet.txt (
     del ..\client\md\hashes-dotnet.txt 
-    echo %DATE% %TIME% - Info: Deleted integrity database for .NET Framework installation files >>%DOWNLOAD_LOGFILE%
+    echo %DATE% %TIME% - Info: Deleted integrity database for .NET Frameworks' installation files >>%DOWNLOAD_LOGFILE%
   )
 )
 :SkipDotNet
+
+rem *** Download installation files for C++ runtime libraries ***
+if "%INCLUDE_DOTNET%" NEQ "1" goto SkipCPP
+if "%VERIFY_DOWNLOADS%" NEQ "1" goto DownloadCPP
+if not exist ..\client\cpp\nul goto DownloadCPP
+if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
+if exist ..\client\md\hashes-cpp-%TARGET_ARCH%-glb.txt (
+  echo Verifying integrity of C++ runtime libraries' installation files...
+  pushd ..\client\md
+  ..\bin\hashdeep.exe -a -l -vv -k hashes-cpp-%TARGET_ARCH%-glb.txt -r ..\cpp\%TARGET_ARCH%-glb
+  if errorlevel 1 (
+    popd
+    goto IntegrityError
+  )
+  popd
+  echo %DATE% %TIME% - Info: Verified integrity of C++ runtime libraries' installation files >>%DOWNLOAD_LOGFILE%
+) else (
+  echo Warning: Integrity database ..\client\md\hashes-cpp-%TARGET_ARCH%-glb.txt not found.
+  echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-cpp-%TARGET_ARCH%-glb.txt not found >>%DOWNLOAD_LOGFILE%
+)
+:DownloadCPP
+%WGET_PATH% -N -P ..\static http://download.wsusoffline.net/StaticDownloadLinks-cpp-%TARGET_ARCH%-glb.txt
+for %%i in (..\client\md\hashes-cpp-%TARGET_ARCH%-glb.txt) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
+if not errorlevel 1 (
+  echo Skipping download/validation of C++ runtime libraries' installation files due to 'same day' rule...
+  echo %DATE% %TIME% - Info: Skipped download/validation of C++ runtime libraries' installation files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
+  goto VerifyCPP
+)
+echo Downloading/validating installation files for C++ runtime libraries...
+for /F "tokens=1,2 delims=," %%i in (..\static\StaticDownloadLinks-cpp-%TARGET_ARCH%-glb.txt) do (
+  if "%%j" NEQ "" (
+    if exist ..\client\cpp\%TARGET_ARCH%-glb\%%j (
+      echo Renaming file ..\client\cpp\%TARGET_ARCH%-glb\%%j to %%~nxi...
+      ren ..\client\cpp\%TARGET_ARCH%-glb\%%j %%~nxi
+      echo %DATE% %TIME% - Info: Renamed file ..\client\cpp\%TARGET_ARCH%-glb\%%j to %%~nxi >>%DOWNLOAD_LOGFILE%
+    )
+  )
+  %WGET_PATH% -N -P ..\client\cpp\%TARGET_ARCH%-glb %%i
+  if errorlevel 1 (
+    if exist ..\client\cpp\%TARGET_ARCH%-glb\%%~nxi del ..\client\cpp\%TARGET_ARCH%-glb\%%~nxi
+    echo Warning: Download of %%i failed.
+    echo %DATE% %TIME% - Warning: Download of %%i failed >>%DOWNLOAD_LOGFILE%
+  )
+  if "%%j" NEQ "" (
+    if exist ..\client\cpp\%TARGET_ARCH%-glb\%%~nxi (
+      echo Renaming file ..\client\cpp\%TARGET_ARCH%-glb\%%~nxi to %%j...
+      ren ..\client\cpp\%TARGET_ARCH%-glb\%%~nxi %%j
+      echo %DATE% %TIME% - Info: Renamed file ..\client\cpp\%TARGET_ARCH%-glb\%%~nxi to %%j >>%DOWNLOAD_LOGFILE%
+    )
+  )
+)
+echo %DATE% %TIME% - Info: Downloaded/validated installation files for C++ runtime libraries >>%DOWNLOAD_LOGFILE%
+if "%CLEANUP_DOWNLOADS%"=="0" goto VerifyCPP
+echo Cleaning up client directory for C++ runtime libraries...
+for /F %%i in ('dir ..\client\cpp\%TARGET_ARCH%-glb /A:-D /B') do (
+  %SystemRoot%\system32\find.exe /I "%%i" ..\static\StaticDownloadLinks-cpp-%TARGET_ARCH%-glb.txt >nul 2>&1
+  if errorlevel 1 (
+    del ..\client\cpp\%TARGET_ARCH%-glb\%%i
+    echo %DATE% %TIME% - Info: Deleted ..\client\cpp\%TARGET_ARCH%-glb\%%i >>%DOWNLOAD_LOGFILE%
+  )
+)
+echo %DATE% %TIME% - Info: Cleaned up client directory for C++ runtime libraries >>%DOWNLOAD_LOGFILE%
+:VerifyCPP
+if "%VERIFY_DOWNLOADS%"=="1" (
+  rem *** Verifying digital file signatures for C++ runtime libraries' installation files ***
+  if not exist ..\bin\sigcheck.exe goto NoSigCheck
+  echo Verifying digital file signatures for C++ runtime libraries' installation files...
+  ..\bin\sigcheck.exe /accepteula -q -u -v ..\client\cpp\%TARGET_ARCH%-glb >"%TEMP%\sigcheck-cpp-%TARGET_ARCH%-glb.txt"
+  for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-cpp-%TARGET_ARCH%-glb.txt") do (
+    del %%i 
+    echo Warning: Deleted unsigned file %%i.
+    echo %DATE% %TIME% - Warning: Deleted unsigned file %%i >>%DOWNLOAD_LOGFILE%
+  ) 
+  if exist "%TEMP%\sigcheck-cpp-%TARGET_ARCH%-glb.txt" del "%TEMP%\sigcheck-cpp-%TARGET_ARCH%-glb.txt"
+  echo %DATE% %TIME% - Info: Verified digital file signatures for C++ runtime libraries' installation files >>%DOWNLOAD_LOGFILE%
+  if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
+  echo Creating integrity database for C++ runtime libraries' installation files...
+  if not exist ..\client\md\nul md ..\client\md
+  pushd ..\client\md
+  ..\bin\hashdeep.exe -c md5,sha256 -l -r ..\cpp\%TARGET_ARCH%-glb >hashes-cpp-%TARGET_ARCH%-glb.txt
+  if errorlevel 1 (
+    popd
+    echo Warning: Error creating integrity database ..\client\md\hashes-cpp-%TARGET_ARCH%-glb.txt.
+    echo %DATE% %TIME% - Warning: Error creating integrity database ..\client\md\hashes-cpp-%TARGET_ARCH%-glb.txt >>%DOWNLOAD_LOGFILE%
+  ) else (
+    popd
+    echo %DATE% %TIME% - Info: Created integrity database for C++ runtime libraries' installation files >>%DOWNLOAD_LOGFILE%
+  )
+) else (
+  if exist ..\client\md\hashes-cpp-%TARGET_ARCH%-glb.txt (
+    del ..\client\md\hashes-cpp-%TARGET_ARCH%-glb.txt 
+    echo %DATE% %TIME% - Info: Deleted integrity database for C++ runtime libraries' installation files >>%DOWNLOAD_LOGFILE%
+  )
+)
+:SkipCPP
 
 rem *** Download Microsoft Security Essentials - not required for w2k3 ***
 if /i "%1"=="w2k3" goto SkipMSSE
@@ -578,13 +673,13 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   rem *** Verifying digital file signatures for Microsoft Security Essentials installation files ***
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
   echo Verifying digital file signatures for Microsoft Security Essentials installation files...
-  ..\bin\sigcheck.exe /accepteula -q -s -u -v ..\client\msse >"%TEMP%\sigcheck-msse.txt"
-  for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-msse.txt") do (
+  ..\bin\sigcheck.exe /accepteula -q -s -u -v ..\client\msse\%TARGET_ARCH%-glb >"%TEMP%\sigcheck-msse-%TARGET_ARCH%-glb.txt"
+  for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-msse-%TARGET_ARCH%-glb.txt") do (
     del %%i 
     echo Warning: Deleted unsigned file %%i.
     echo %DATE% %TIME% - Warning: Deleted unsigned file %%i >>%DOWNLOAD_LOGFILE%
   ) 
-  if exist "%TEMP%\sigcheck-msse.txt" del "%TEMP%\sigcheck-msse.txt"
+  if exist "%TEMP%\sigcheck-msse-%TARGET_ARCH%-glb.txt" del "%TEMP%\sigcheck-msse-%TARGET_ARCH%-glb.txt"
   echo %DATE% %TIME% - Info: Verified digital file signatures for Microsoft Security Essentials installation files >>%DOWNLOAD_LOGFILE%
   if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
   echo Creating integrity database for Microsoft Security Essentials installation files...
@@ -644,13 +739,13 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   rem *** Verifying digital file signatures for Windows Defender definition files ***
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
   echo Verifying digital file signatures for Windows Defender definition files...
-  ..\bin\sigcheck.exe /accepteula -q -s -u -v ..\client\wddefs >"%TEMP%\sigcheck-wddefs.txt"
-  for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-wddefs.txt") do (
+  ..\bin\sigcheck.exe /accepteula -q -s -u -v ..\client\wddefs\%TARGET_ARCH%-glb >"%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt"
+  for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt") do (
     del %%i 
     echo Warning: Deleted unsigned file %%i.
     echo %DATE% %TIME% - Warning: Deleted unsigned file %%i >>%DOWNLOAD_LOGFILE%
   ) 
-  if exist "%TEMP%\sigcheck-wddefs.txt" del "%TEMP%\sigcheck-wddefs.txt"
+  if exist "%TEMP%\sigcheck-wddefs.txt-%TARGET_ARCH%-glb" del "%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt"
   echo %DATE% %TIME% - Info: Verified digital file signatures for Windows Defender definition files >>%DOWNLOAD_LOGFILE%
   if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
   echo Creating integrity database for Windows Defender definition files...

@@ -5,7 +5,7 @@ Option Explicit
 Dim objFileSystem, inputFile, outputFile, strInputFileName, strOutputFileName
 
 Private Function IsTextFile(objFS, strFileName)
-  IsTextFile = (objFS.FileExists(strFileName)) And (LCase(objFS.GetExtensionName(strFileName)) = "txt")
+  IsTextFile = (objFS.FileExists(strFileName)) And ( (LCase(objFS.GetExtensionName(strFileName)) = "txt") Or (LCase(objFS.GetExtensionName(strFileName)) = "csv") )
 End Function
 
 Private Function ExtractIdAndFileName(strURL)

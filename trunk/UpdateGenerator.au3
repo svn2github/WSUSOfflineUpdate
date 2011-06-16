@@ -1,11 +1,11 @@
-; *** WSUS Offline Update 6.8.5 - Generator ***
+; *** WSUS Offline Update 6.8.6 - Generator ***
 ; ***      Author: T. Wittrock, Kiel        ***
 ; ***    USB-Option added by Ch. Riedel     ***
 ; ***  Dialog scaling added by Th. Baisch   ***
 
 #include <GUIConstants.au3>
 
-Dim Const $caption                = "WSUS Offline Update 6.8.5"
+Dim Const $caption                = "WSUS Offline Update 6.8.6"
 Dim Const $title                  = $caption & " - Generator"
 Dim Const $donationURL            = "http://www.wsusoffline.net/donate.html"
 Dim Const $downloadLogFile        = "download.log"
@@ -2236,9 +2236,9 @@ EndIf
 ;  Include .NET Frameworks 3.5 SP1 and 4
 $txtxpos = $txtxpos + $groupwidth / 2
 If ShowGUIInGerman() Then
-  $dotnet = GUICtrlCreateCheckbox(".NET Frameworks 3.5 SP1 und 4 einschlieﬂen", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
+  $dotnet = GUICtrlCreateCheckbox("C++-Laufzeitbibliotheken und .NET Frameworks einschlieﬂen", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 Else
-  $dotnet = GUICtrlCreateCheckbox("Include .NET Frameworks 3.5 SP1 and 4", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
+  $dotnet = GUICtrlCreateCheckbox("Include C++ runtime libraries and .NET Frameworks", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 EndIf
 If IniRead($inifilename, $ini_section_opts, $opts_token_dotnet, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
