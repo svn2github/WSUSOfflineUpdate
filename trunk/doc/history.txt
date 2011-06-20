@@ -552,3 +552,5 @@ Version 6.8.6 -- 16.06.11
 - Optional installation of C++ 2005, 2008 and 2010 runtime libraries (Thanks to "Denniss" and "boco") 
 - Fix: Office updates' installation tables were not updated (Thanks to "rednaxela")
 --------------------------------------------------------------------------------
+Version ?.?.? -- ??.??.11
+- Fix: Two EoLn spaces were too much for TZ environment variable setting (Thanks to "psj")
