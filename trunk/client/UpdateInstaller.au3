@@ -387,13 +387,13 @@ Else
   EndIf  
 EndIf
 
-; Update C++ runtime libraries
+; Update C++ Runtime Libraries
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
   $cpp = GUICtrlCreateCheckbox("C++-Laufzeitbibliotheken aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $cpp = GUICtrlCreateCheckbox("Update C++ runtime libraries", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $cpp = GUICtrlCreateCheckbox("Update C++ Runtime Libraries", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If CPPPresent($scriptdir) Then
   If IniRead($inifilename, $ini_section_installation, $ini_value_cpp, $enabled) = $enabled Then
@@ -406,12 +406,12 @@ Else
   GUICtrlSetState(-1, $GUI_DISABLE)
 EndIf
 
-; Update DirectX runtime libraries
+; Update DirectX Runtime Libraries
 $txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
   $dx = GUICtrlCreateCheckbox("DirectX-Laufzeitbibliotheken aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $dx = GUICtrlCreateCheckbox("Update DirectX runtime libraries", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $dx = GUICtrlCreateCheckbox("Update DirectX Runtime Libraries", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If DirectXInstPresent($scriptdir) Then
   If IniRead($inifilename, $ini_section_installation, $ini_value_dx, $enabled) = $enabled Then

@@ -16,4 +16,5 @@
 *windows2000*
 *windowsxp*
 *-x64*
+*_x64*
 *.au3

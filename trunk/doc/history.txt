@@ -549,8 +549,11 @@ Version 6.8.5 -- 06.06.11
 - Fix: Windows 7 / Server 2008 R2 Service Pack 1 (kb976932) was attempted to be installed as a patch (Thanks to "Denniss")
 --------------------------------------------------------------------------------
 Version 6.8.6 -- 16.06.11
-- Optional installation of C++ 2005, 2008 and 2010 runtime libraries (Thanks to "Denniss" and "boco") 
+- Optional installation of C++ 2005, 2008 and 2010 Runtime Libraries (Thanks to "Denniss" and "boco") 
 - Fix: Office updates' installation tables were not updated (Thanks to "rednaxela")
 --------------------------------------------------------------------------------
 Version ?.?.? -- ??.??.11
+- C++ Runtime Libraries' installation option will now only update existing versions
 - Fix: Two EoLn spaces were too much for TZ environment variable setting (Thanks to "psj")
+- Fix: C++ Runtime Libraries' x86 versions were not installed/updated on x64 Operating Systems (Thanks to "Denniss") 
+- Fix: DirectX main version detection did not use "/64bit" switch on x64 Operating Systems

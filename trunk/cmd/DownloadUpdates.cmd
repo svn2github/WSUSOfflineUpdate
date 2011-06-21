@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.8.6+ (r258)
+set WSUSOFFLINE_VERSION=6.8.6+ (r259)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -309,6 +309,18 @@ del /Q ..\xslt\ExtractDownloadLinks-o*.* >nul 2>&1
 del /Q ..\xslt\ExtractExpiredIds-o*.* >nul 2>&1
 del /Q ..\xslt\ExtractValidIds-o*.* >nul 2>&1
 
+rem *** CPP restructuring stuff ***
+if exist ..\client\md\hashes-cpp-x64-glb.txt del ..\client\md\hashes-cpp-x64-glb.txt 
+if exist ..\client\cpp\x64-glb\nul (
+  move /Y ..\client\cpp\x64-glb\*.* ..\client\cpp >nul
+  rd /S /Q ..\client\cpp\x64-glb
+)
+if exist ..\client\md\hashes-cpp-x86-glb.txt del ..\client\md\hashes-cpp-x86-glb.txt 
+if exist ..\client\cpp\x86-glb\nul (
+  move /Y ..\client\cpp\x86-glb\*.* ..\client\cpp >nul
+  rd /S /Q ..\client\cpp\x86-glb
+)
+
 rem *** Execute custom initialization hook ***
 if exist .\custom\InitializationHook.cmd (
   echo Executing custom initialization hook...
@@ -501,97 +513,101 @@ if "%VERIFY_DOWNLOADS%"=="1" (
 )
 :SkipDotNet
 
-rem *** Download installation files for C++ runtime libraries ***
+rem *** Download installation files for C++ Runtime Libraries ***
 if "%INCLUDE_DOTNET%" NEQ "1" goto SkipCPP
 if "%VERIFY_DOWNLOADS%" NEQ "1" goto DownloadCPP
 if not exist ..\client\cpp\nul goto DownloadCPP
 if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
-if exist ..\client\md\hashes-cpp-%TARGET_ARCH%-glb.txt (
-  echo Verifying integrity of C++ runtime libraries' installation files...
+if exist ..\client\md\hashes-cpp.txt (
+  echo Verifying integrity of C++ Runtime Libraries' installation files...
   pushd ..\client\md
-  ..\bin\hashdeep.exe -a -l -vv -k hashes-cpp-%TARGET_ARCH%-glb.txt -r ..\cpp\%TARGET_ARCH%-glb
+  ..\bin\hashdeep.exe -a -l -vv -k hashes-cpp.txt -r ..\cpp
   if errorlevel 1 (
     popd
     goto IntegrityError
   )
   popd
-  echo %DATE% %TIME% - Info: Verified integrity of C++ runtime libraries' installation files >>%DOWNLOAD_LOGFILE%
+  echo %DATE% %TIME% - Info: Verified integrity of C++ Runtime Libraries' installation files >>%DOWNLOAD_LOGFILE%
 ) else (
-  echo Warning: Integrity database ..\client\md\hashes-cpp-%TARGET_ARCH%-glb.txt not found.
-  echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-cpp-%TARGET_ARCH%-glb.txt not found >>%DOWNLOAD_LOGFILE%
+  echo Warning: Integrity database ..\client\md\hashes-cpp.txt not found.
+  echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-cpp.txt not found >>%DOWNLOAD_LOGFILE%
 )
 :DownloadCPP
-%WGET_PATH% -N -P ..\static http://download.wsusoffline.net/StaticDownloadLinks-cpp-%TARGET_ARCH%-glb.txt
-for %%i in (..\client\md\hashes-cpp-%TARGET_ARCH%-glb.txt) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
+for %%i in (..\client\md\hashes-cpp.txt) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
 if not errorlevel 1 (
-  echo Skipping download/validation of C++ runtime libraries' installation files due to 'same day' rule...
-  echo %DATE% %TIME% - Info: Skipped download/validation of C++ runtime libraries' installation files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
+  echo Skipping download/validation of C++ Runtime Libraries' installation files due to 'same day' rule...
+  echo %DATE% %TIME% - Info: Skipped download/validation of C++ Runtime Libraries' installation files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
   goto VerifyCPP
 )
-echo Downloading/validating installation files for C++ runtime libraries...
-for /F "tokens=1,2 delims=," %%i in (..\static\StaticDownloadLinks-cpp-%TARGET_ARCH%-glb.txt) do (
-  if "%%j" NEQ "" (
-    if exist ..\client\cpp\%TARGET_ARCH%-glb\%%j (
-      echo Renaming file ..\client\cpp\%TARGET_ARCH%-glb\%%j to %%~nxi...
-      ren ..\client\cpp\%TARGET_ARCH%-glb\%%j %%~nxi
-      echo %DATE% %TIME% - Info: Renamed file ..\client\cpp\%TARGET_ARCH%-glb\%%j to %%~nxi >>%DOWNLOAD_LOGFILE%
+echo Downloading/validating installation files for C++ Runtime Libraries...
+for %%i in (x64 x86) do (
+  for /F "tokens=1,2 delims=," %%j in (..\static\StaticDownloadLinks-cpp-%%i-glb.txt) do (
+    if "%%k" NEQ "" (
+      if exist ..\client\cpp\%%k (
+        echo Renaming file ..\client\cpp\%%k to %%~nxj...
+        ren ..\client\cpp\%%k %%~nxj
+        echo %DATE% %TIME% - Info: Renamed file ..\client\cpp\%%k to %%~nxj >>%DOWNLOAD_LOGFILE%
+      )
     )
-  )
-  %WGET_PATH% -N -P ..\client\cpp\%TARGET_ARCH%-glb %%i
-  if errorlevel 1 (
-    if exist ..\client\cpp\%TARGET_ARCH%-glb\%%~nxi del ..\client\cpp\%TARGET_ARCH%-glb\%%~nxi
-    echo Warning: Download of %%i failed.
-    echo %DATE% %TIME% - Warning: Download of %%i failed >>%DOWNLOAD_LOGFILE%
-  )
-  if "%%j" NEQ "" (
-    if exist ..\client\cpp\%TARGET_ARCH%-glb\%%~nxi (
-      echo Renaming file ..\client\cpp\%TARGET_ARCH%-glb\%%~nxi to %%j...
-      ren ..\client\cpp\%TARGET_ARCH%-glb\%%~nxi %%j
-      echo %DATE% %TIME% - Info: Renamed file ..\client\cpp\%TARGET_ARCH%-glb\%%~nxi to %%j >>%DOWNLOAD_LOGFILE%
+    %WGET_PATH% -N -P ..\client\cpp %%j
+    if errorlevel 1 (
+      if exist ..\client\cpp\%%~nxj del ..\client\cpp\%%~nxj
+      echo Warning: Download of %%j failed.
+      echo %DATE% %TIME% - Warning: Download of %%j failed >>%DOWNLOAD_LOGFILE%
+    )
+    if "%%k" NEQ "" (
+      if exist ..\client\cpp\%%~nxj (
+        echo Renaming file ..\client\cpp\%%~nxj to %%k...
+        ren ..\client\cpp\%%~nxj %%k
+        echo %DATE% %TIME% - Info: Renamed file ..\client\cpp\%%~nxj to %%k >>%DOWNLOAD_LOGFILE%
+      )
     )
   )
 )
-echo %DATE% %TIME% - Info: Downloaded/validated installation files for C++ runtime libraries >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Downloaded/validated installation files for C++ Runtime Libraries >>%DOWNLOAD_LOGFILE%
 if "%CLEANUP_DOWNLOADS%"=="0" goto VerifyCPP
-echo Cleaning up client directory for C++ runtime libraries...
-for /F %%i in ('dir ..\client\cpp\%TARGET_ARCH%-glb /A:-D /B') do (
-  %SystemRoot%\system32\find.exe /I "%%i" ..\static\StaticDownloadLinks-cpp-%TARGET_ARCH%-glb.txt >nul 2>&1
+echo Cleaning up client directory for C++ Runtime Libraries...
+for /F %%i in ('dir ..\client\cpp /A:-D /B') do (
+  %SystemRoot%\system32\find.exe /I "%%i" ..\static\StaticDownloadLinks-cpp-x64-glb.txt >nul 2>&1
   if errorlevel 1 (
-    del ..\client\cpp\%TARGET_ARCH%-glb\%%i
-    echo %DATE% %TIME% - Info: Deleted ..\client\cpp\%TARGET_ARCH%-glb\%%i >>%DOWNLOAD_LOGFILE%
+    %SystemRoot%\system32\find.exe /I "%%i" ..\static\StaticDownloadLinks-cpp-x86-glb.txt >nul 2>&1
+    if errorlevel 1 (
+      del ..\client\cpp\%%i
+      echo %DATE% %TIME% - Info: Deleted ..\client\cpp\%%i >>%DOWNLOAD_LOGFILE%
+    )
   )
 )
-echo %DATE% %TIME% - Info: Cleaned up client directory for C++ runtime libraries >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Cleaned up client directory for C++ Runtime Libraries >>%DOWNLOAD_LOGFILE%
 :VerifyCPP
 if "%VERIFY_DOWNLOADS%"=="1" (
-  rem *** Verifying digital file signatures for C++ runtime libraries' installation files ***
+  rem *** Verifying digital file signatures for C++ Runtime Libraries' installation files ***
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
-  echo Verifying digital file signatures for C++ runtime libraries' installation files...
-  ..\bin\sigcheck.exe /accepteula -q -u -v ..\client\cpp\%TARGET_ARCH%-glb >"%TEMP%\sigcheck-cpp-%TARGET_ARCH%-glb.txt"
-  for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-cpp-%TARGET_ARCH%-glb.txt") do (
+  echo Verifying digital file signatures for C++ Runtime Libraries' installation files...
+  ..\bin\sigcheck.exe /accepteula -q -u -v ..\client\cpp >"%TEMP%\sigcheck-cpp.txt"
+  for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-cpp.txt") do (
     del %%i 
     echo Warning: Deleted unsigned file %%i.
     echo %DATE% %TIME% - Warning: Deleted unsigned file %%i >>%DOWNLOAD_LOGFILE%
   ) 
-  if exist "%TEMP%\sigcheck-cpp-%TARGET_ARCH%-glb.txt" del "%TEMP%\sigcheck-cpp-%TARGET_ARCH%-glb.txt"
-  echo %DATE% %TIME% - Info: Verified digital file signatures for C++ runtime libraries' installation files >>%DOWNLOAD_LOGFILE%
+  if exist "%TEMP%\sigcheck-cpp.txt" del "%TEMP%\sigcheck-cpp.txt"
+  echo %DATE% %TIME% - Info: Verified digital file signatures for C++ Runtime Libraries' installation files >>%DOWNLOAD_LOGFILE%
   if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
-  echo Creating integrity database for C++ runtime libraries' installation files...
+  echo Creating integrity database for C++ Runtime Libraries' installation files...
   if not exist ..\client\md\nul md ..\client\md
   pushd ..\client\md
-  ..\bin\hashdeep.exe -c md5,sha256 -l -r ..\cpp\%TARGET_ARCH%-glb >hashes-cpp-%TARGET_ARCH%-glb.txt
+  ..\bin\hashdeep.exe -c md5,sha256 -l -r ..\cpp >hashes-cpp.txt
   if errorlevel 1 (
     popd
-    echo Warning: Error creating integrity database ..\client\md\hashes-cpp-%TARGET_ARCH%-glb.txt.
-    echo %DATE% %TIME% - Warning: Error creating integrity database ..\client\md\hashes-cpp-%TARGET_ARCH%-glb.txt >>%DOWNLOAD_LOGFILE%
+    echo Warning: Error creating integrity database ..\client\md\hashes-cpp.txt.
+    echo %DATE% %TIME% - Warning: Error creating integrity database ..\client\md\hashes-cpp.txt >>%DOWNLOAD_LOGFILE%
   ) else (
     popd
-    echo %DATE% %TIME% - Info: Created integrity database for C++ runtime libraries' installation files >>%DOWNLOAD_LOGFILE%
+    echo %DATE% %TIME% - Info: Created integrity database for C++ Runtime Libraries' installation files >>%DOWNLOAD_LOGFILE%
   )
 ) else (
-  if exist ..\client\md\hashes-cpp-%TARGET_ARCH%-glb.txt (
-    del ..\client\md\hashes-cpp-%TARGET_ARCH%-glb.txt 
-    echo %DATE% %TIME% - Info: Deleted integrity database for C++ runtime libraries' installation files >>%DOWNLOAD_LOGFILE%
+  if exist ..\client\md\hashes-cpp.txt (
+    del ..\client\md\hashes-cpp.txt 
+    echo %DATE% %TIME% - Info: Deleted integrity database for C++ Runtime Libraries' installation files >>%DOWNLOAD_LOGFILE%
   )
 )
 :SkipCPP

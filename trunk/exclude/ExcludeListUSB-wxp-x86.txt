@@ -23,4 +23,5 @@ mdac25
 mdac27
 windows2000
 *-x64
+*_x64
 .au3

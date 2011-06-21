@@ -526,6 +526,35 @@ For Each strProduct In CreateObject("WindowsInstaller.Installer").Products
   If UCase(strProduct) = "{90120000-0020-0407-0000-0000000FF1CE}" Then
     objCmdFile.WriteLine("set OFC_COMP_PACK=1")
   End If
+  ' Documentation: http://blogs.msdn.com/b/astebner/archive/2007/01/16/mailbag-how-to-detect-the-presence-of-the-vc-8-0-runtime-redistributable-package.aspx
+  If ( (UCase(strProduct) = "{A49F249F-0C91-497F-86DF-B2585E8E76B7}") _
+    Or (UCase(strProduct) = "{7299052B-02A4-4627-81F2-1818DA5D550D}") _
+    Or (UCase(strProduct) = "{837B34E3-7C30-493C-8F6A-2B0F04E2912C}") ) Then
+    objCmdFile.WriteLine("set CPP_2005_x86=1")
+  End If
+  If ( (UCase(strProduct) = "{6E8E85E8-CE4B-4FF5-91F7-04999C9FAE6A}") _
+    Or (UCase(strProduct) = "{071C9B48-7C32-4621-A0AC-3F809523288F}") _
+    Or (UCase(strProduct) = "{6CE5BAE9-D3CA-4B99-891A-1DC6C118A5FC}") ) Then
+    objCmdFile.WriteLine("set CPP_2005_x64=1")
+  End If
+  ' Documentation: http://blogs.msdn.com/b/astebner/archive/2009/01/29/9384143.aspx
+  If ( (UCase(strProduct) = "{FF66E9F6-83E7-3A3E-AF14-8DE9A809A6A4}") _
+    Or (UCase(strProduct) = "{9A25302D-30C0-39D9-BD6F-21E6EC160475}") _
+    Or (UCase(strProduct) = "{1F1C2DFC-2D24-3E06-BCB8-725134ADF989}") ) Then
+    objCmdFile.WriteLine("set CPP_2008_x86=1")
+  End If
+  If ( (UCase(strProduct) = "{350AA351-21FA-3270-8B7A-835434E766AD}") _
+    Or (UCase(strProduct) = "{8220EEFE-38CD-377E-8595-13398D740ACE}") _
+    Or (UCase(strProduct) = "{4B6C7001-C7D6-3710-913E-5BC23FCE91E6}") ) Then
+    objCmdFile.WriteLine("set CPP_2008_x64=1")
+  End If
+  ' Documentation: http://blogs.msdn.com/b/astebner/archive/2010/05/05/10008146.aspx
+  If (UCase(strProduct) = "{196BB40D-1578-3D01-B289-BEFC77A11A1E}") Then
+    objCmdFile.WriteLine("set CPP_2010_x86=1")
+  End If
+  If (UCase(strProduct) = "{DA5E371C-6333-3D8A-93A4-6FD5B20BCC6E}") Then
+    objCmdFile.WriteLine("set CPP_2010_x64=1")
+  End If
 Next
 
 '

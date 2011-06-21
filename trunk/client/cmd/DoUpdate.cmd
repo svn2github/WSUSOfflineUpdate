@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.8.6+ (r258)
+set WSUSOFFLINE_VERSION=6.8.6+ (r259)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -87,6 +87,13 @@ echo Determining system's properties...
 if errorlevel 1 goto NoSysEnvVars
 if not exist "%TEMP%\SetSystemEnvVars.cmd" goto NoSysEnvVars
 
+rem *** Set environment variables for system's properties ***
+call "%TEMP%\SetSystemEnvVars.cmd"
+del "%TEMP%\SetSystemEnvVars.cmd"
+if "%SystemDirectory%"=="" set SystemDirectory=%SystemRoot%\system32
+if "%OS_ARCH%"=="" set OS_ARCH=%PROCESSOR_ARCHITECTURE%
+if "%OS_LANG%"=="" goto UnsupLang
+
 rem *** Determine DirectX main version ***
 if "%UPDATE_DX%" NEQ "/updatedx" goto NoDXDiag
 if not exist %SystemRoot%\system32\dxdiag.exe goto NoDXDiag
@@ -103,17 +110,12 @@ if not exist "%TEMP%\dxdiag.txt" goto NoDXDiag
 %SystemRoot%\system32\findstr.exe /C:"DirectX Version" "%TEMP%\dxdiag.txt" >"%TEMP%\dxver.txt"
 del "%TEMP%\dxdiag.txt"
 for /F "usebackq tokens=2 delims=:" %%i in ("%TEMP%\dxver.txt") do (
-  for /F "tokens=1*" %%j in ("%%i") do echo set DX_MAIN_VER=%%k>>"%TEMP%\SetSystemEnvVars.cmd"
+  for /F "tokens=1*" %%j in ("%%i") do echo set DX_MAIN_VER=%%k>"%TEMP%\SetDXVer.cmd"
 )
 del "%TEMP%\dxver.txt"
+call "%TEMP%\SetDXVer.cmd"
+del "%TEMP%\SetDXVer.cmd"
 :NoDXDiag
-
-rem *** Set environment variables for system's properties ***
-call "%TEMP%\SetSystemEnvVars.cmd"
-del "%TEMP%\SetSystemEnvVars.cmd"
-if "%SystemDirectory%"=="" set SystemDirectory=%SystemRoot%\system32
-if "%OS_ARCH%"=="" set OS_ARCH=%PROCESSOR_ARCHITECTURE%
-if "%OS_LANG%"=="" goto UnsupLang
 
 rem *** Set target environment variables ***
 call SetTargetEnvVars.cmd %INSTALL_IE%
@@ -520,18 +522,67 @@ set IE_FILENAME=
 if "%RECALL_REQUIRED%"=="1" goto Installed
 :SkipIEInst
 
-rem *** Install C++ runtime libraries ***
+rem *** Install C++ Runtime Libraries ***
 if "%UPDATE_CPP%" NEQ "/updatecpp" goto SkipCPPInst
-set CPP_FILENAME=..\cpp\%OS_ARCH%-glb\vcredist*_%OS_ARCH%.exe
-dir /B %CPP_FILENAME% >nul 2>&1
-if errorlevel 1 (
-  echo Warning: File %CPP_FILENAME% not found.
-  echo %DATE% %TIME% - Warning: File %CPP_FILENAME% not found >>%UPDATE_LOGFILE%
-  goto SkipCPPInst
+echo Checking C++ Runtime Libraries' installation state...
+goto CPPInst%OS_ARCH%
+
+:CPPInstx64
+if "%CPP_2005_x64%"=="1" (
+  if exist ..\cpp\vcredist2005_x64.exe (
+    echo Installing most recent C++ 2005 x64 Runtime Library...
+    call InstallOSUpdate.cmd ..\cpp\vcredist2005_x64.exe %VERIFY_MODE% /errorsaswarnings /Q
+  ) else (
+    echo Warning: File ..\cpp\vcredist2005_x64.exe not found.
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2005_x64.exe not found >>%UPDATE_LOGFILE%
+  )
 )
-echo Installing most recent C++ runtime libraries...
-for /F %%i in ('dir /B %CPP_FILENAME%') do call InstallOSUpdate.cmd ..\cpp\%OS_ARCH%-glb\%%i %VERIFY_MODE% /errorsaswarnings /q
-set CPP_FILENAME=
+if "%CPP_2008_x64%"=="1" (
+  if exist ..\cpp\vcredist2008_x64.exe (
+    echo Installing most recent C++ 2008 x64 Runtime Library...
+    call InstallOSUpdate.cmd ..\cpp\vcredist2008_x64.exe %VERIFY_MODE% /errorsaswarnings /q
+  ) else (
+    echo Warning: File ..\cpp\vcredist2008_x64.exe not found.
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2008_x64.exe not found >>%UPDATE_LOGFILE%
+  )
+)
+if "%CPP_2010_x64%"=="1" (
+  if exist ..\cpp\vcredist2010_x64.exe (
+    echo Installing most recent C++ 2010 x64 Runtime Library...
+    call InstallOSUpdate.cmd ..\cpp\vcredist2010_x64.exe %VERIFY_MODE% /errorsaswarnings /q /norestart
+  ) else (
+    echo Warning: File ..\cpp\vcredist2010_x64.exe not found.
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2010_x64.exe not found >>%UPDATE_LOGFILE%
+  )
+)
+:CPPInstx86
+if "%CPP_2005_x86%"=="1" (
+  if exist ..\cpp\vcredist2005_x86.exe (
+    echo Installing most recent C++ 2005 x86 Runtime Library...
+    call InstallOSUpdate.cmd ..\cpp\vcredist2005_x86.exe %VERIFY_MODE% /errorsaswarnings /Q
+  ) else (
+    echo Warning: File ..\cpp\vcredist2005_x86.exe not found.
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2005_x86.exe not found >>%UPDATE_LOGFILE%
+  )
+)
+if "%CPP_2008_x86%"=="1" (
+  if exist ..\cpp\vcredist2008_x86.exe (
+    echo Installing most recent C++ 2008 x86 Runtime Library...
+    call InstallOSUpdate.cmd ..\cpp\vcredist2008_x86.exe %VERIFY_MODE% /errorsaswarnings /q
+  ) else (
+    echo Warning: File ..\cpp\vcredist2008_x86.exe not found.
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2008_x86.exe not found >>%UPDATE_LOGFILE%
+  )
+)
+if "%CPP_2010_x86%"=="1" (
+  if exist ..\cpp\vcredist2010_x86.exe (
+    echo Installing most recent C++ 2010 x86 Runtime Library...
+    call InstallOSUpdate.cmd ..\cpp\vcredist2010_x86.exe %VERIFY_MODE% /errorsaswarnings /q /norestart
+  ) else (
+    echo Warning: File ..\cpp\vcredist2010_x86.exe not found.
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2010_x86.exe not found >>%UPDATE_LOGFILE%
+  )
+)
 :SkipCPPInst
 
 rem *** Install DirectX End-User Runtime ***

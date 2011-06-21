@@ -1,3 +1,3 @@
 http://download.microsoft.com/download/8/B/4/8B42259F-5D70-43F4-AC2E-4B208FD8D66A/vcredist_x86.EXE,vcredist2005_x86.exe
 http://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x86.exe,vcredist2008_x86.exe
-http://download.microsoft.com/download/4/D/0/4D00D6C0-09FC-446C-AE9C-C923AF2DF29A/vcredist_x86.exe,vcredist2010_x86.exe
+http://download.microsoft.com/download/C/6/D/C6D0FD4E-9E53-4897-9B91-836EBA2AACD3/vcredist_x86.exe,vcredist2010_x86.exe

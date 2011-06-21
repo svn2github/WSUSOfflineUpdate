@@ -2238,7 +2238,7 @@ $txtxpos = $txtxpos + $groupwidth / 2
 If ShowGUIInGerman() Then
   $dotnet = GUICtrlCreateCheckbox("C++-Laufzeitbibliotheken und .NET Frameworks einschlieﬂen", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 Else
-  $dotnet = GUICtrlCreateCheckbox("Include C++ runtime libraries and .NET Frameworks", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
+  $dotnet = GUICtrlCreateCheckbox("Include C++ Runtime Libraries and .NET Frameworks", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 EndIf
 If IniRead($inifilename, $ini_section_opts, $opts_token_dotnet, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
