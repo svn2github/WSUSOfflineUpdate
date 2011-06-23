@@ -557,3 +557,5 @@ Version ?.?.? -- ??.??.11
 - Fix: Two EoLn spaces were too much for TZ environment variable setting (Thanks to "psj")
 - Fix: C++ Runtime Libraries' x86 versions were not installed/updated on x64 Operating Systems (Thanks to "Denniss") 
 - Fix: DirectX main version detection did not use "/64bit" switch on x64 Operating Systems
+- Fix: Temporary file package.xml remained after Office downloads (Thanks to "Denniss")
+- Fix: "Clean up download directories" functionality could lead to "file not found" error messages (Thanks to "rednaxela")

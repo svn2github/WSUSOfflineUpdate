@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.8.6+ (r260)
+set WSUSOFFLINE_VERSION=6.8.6+ (r261)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -936,6 +936,7 @@ echo %DATE% %TIME% - Info: Determined superseded updates >>%DOWNLOAD_LOGFILE%
 :SkipSuperseded
 for %%i in (dotnet win wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64) do (if /i "%1"=="%%i" goto DetermineWindows)
 for %%i in (ofc) do (if /i "%1"=="%%i" goto DetermineOffice)
+del "%TEMP%\package.xml"
 goto DoDownload
 
 :DetermineWindows
@@ -971,6 +972,8 @@ if exist ..\exclude\ExcludeList-superseded.txt (
 if not exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" ren "%TEMP%\DynamicDownloadLinks-%1-%2.txt" ValidDynamicLinks-%1-%2.txt
 if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
 if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
+echo %TIME% - Done.
+echo %DATE% %TIME% - Info: Determined dynamical update urls for %1 %2 >>%DOWNLOAD_LOGFILE%
 goto DoDownload
 
 :DetermineOffice
@@ -1058,11 +1061,11 @@ if exist ..\exclude\ExcludeList-superseded.txt (
 if not exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" ren "%TEMP%\DynamicDownloadLinks-%1-%2.txt" ValidDynamicLinks-%1-%2.txt
 if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
 if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
+echo %TIME% - Done.
+echo %DATE% %TIME% - Info: Determined dynamical update urls for %1 %2 >>%DOWNLOAD_LOGFILE%
 
 :DoDownload
 rem *** Download updates for %1 %2 ***
-echo %TIME% - Done.
-echo %DATE% %TIME% - Info: Determined dynamical update urls for %1 %2 >>%DOWNLOAD_LOGFILE%
 if not exist "%TEMP%\ValidStaticLinks-%1-%2.txt" goto DownloadDynamicUpdates
 echo Downloading/validating statically defined updates for %1 %2...
 for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidStaticLinks-%1-%2.txt"') do set LINES_COUNT=%%i
@@ -1159,16 +1162,26 @@ echo %DATE% %TIME% - Info: Downloaded/validated %LINES_COUNT% dynamically determ
 rem *** Clean up client directory for %1 %2 ***
 if "%CLEANUP_DOWNLOADS%"=="0" goto VerifyDownload
 echo Cleaning up client directory for %1 %2...
-for /F %%i in ('dir ..\client\%1\%2 /A:-D /B') do (
-  %SystemRoot%\system32\find.exe /I "%%i" "%TEMP%\ValidDynamicLinks-%1-%2.txt" >nul 2>&1
-  if errorlevel 1 (
-    %SystemRoot%\system32\find.exe /I "%%i" "%TEMP%\ValidStaticLinks-%1-%2.txt" >nul 2>&1
-    if errorlevel 1 (
-      del ..\client\%1\%2\%%i
-      echo %DATE% %TIME% - Info: Deleted ..\client\%1\%2\%%i >>%DOWNLOAD_LOGFILE%
-    )
+if exist "%TEMP%\ValidLinks-%1-%2.txt" del "%TEMP%\ValidLinks-%1-%2.txt"
+if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" (
+  for /F "usebackq" %%i in ("%TEMP%\ValidStaticLinks-%1-%2.txt") do (
+    echo %%i>>"%TEMP%\ValidLinks-%1-%2.txt"
   )
 )
+if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" (
+  for /F "usebackq" %%i in ("%TEMP%\ValidDynamicLinks-%1-%2.txt") do (
+    echo %%i>>"%TEMP%\ValidLinks-%1-%2.txt"
+  )
+)
+if not exist "%TEMP%\ValidLinks-%1-%2.txt" goto VerifyDownload
+for /F %%i in ('dir ..\client\%1\%2 /A:-D /B') do (
+  %SystemRoot%\system32\find.exe /I "%%i" "%TEMP%\ValidLinks-%1-%2.txt" >nul 2>&1
+  if errorlevel 1 (
+    del ..\client\%1\%2\%%i
+    echo %DATE% %TIME% - Info: Deleted ..\client\%1\%2\%%i >>%DOWNLOAD_LOGFILE%
+  )
+)
+del "%TEMP%\ValidLinks-%1-%2.txt"
 dir ..\client\%1\%2 /A:-D >nul 2>&1
 if errorlevel 1 rd ..\client\%1\%2
 echo %DATE% %TIME% - Info: Cleaned up client directory for %1 %2 >>%DOWNLOAD_LOGFILE%
