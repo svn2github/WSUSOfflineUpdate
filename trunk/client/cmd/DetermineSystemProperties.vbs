@@ -38,6 +38,7 @@ Private Const idxBuild                        = 2
 
 Dim wshShell, objNetwork, objFileSystem, objCmdFile, objWMIService, objQueryItem, arrayOfficeNames, arrayOfficeVersions, arrayOfficeAppNames, arrayOfficeExeNames
 Dim strSystemFolder, strTempFolder, strWUAFileName, strMSIFileName, strWSHFileName, strTSCFileName, strWMPFileName, strCmdFileName, strOSVersion, strOfficeInstallPath, strOfficeExeVersion, strProduct, languageCode, i, j
+Dim cpp2005_x86_old, cpp2005_x86_new, cpp2005_x64_old, cpp2005_x64_new, cpp2008_x86_old, cpp2008_x86_new, cpp2008_x64_old, cpp2008_x64_new
 
 Private Function RegExists(objShell, strName)
 Dim dummy
@@ -268,21 +269,14 @@ Dim arraySuffixes, arrayVersion, i
 End Sub
 
 Private Sub WriteDXNameToFile(cmdFile, strDXVersion)
-
   Select Case strDXVersion
     Case "4.02.0095"
       cmdFile.WriteLine("set DX_NAME=1.0")
     Case "4.03.00.1096"
       cmdFile.WriteLine("set DX_NAME=2.0")
-    Case "4.04.0068"
+    Case "4.04.0068", "4.04.0069"
       cmdFile.WriteLine("set DX_NAME=3.0")
-    Case "4.04.0069"
-      cmdFile.WriteLine("set DX_NAME=3.0")
-    Case "4.05.00.0155"
-      cmdFile.WriteLine("set DX_NAME=5.0")
-    Case "4.05.01.1721"
-      cmdFile.WriteLine("set DX_NAME=5.0")
-    Case "4.05.01.1998"
+    Case "4.05.00.0155", "4.05.01.1721", "4.05.01.1998"
       cmdFile.WriteLine("set DX_NAME=5.0")
     Case "4.06.02.0436"
       cmdFile.WriteLine("set DX_NAME=6.0")
@@ -292,25 +286,15 @@ Private Sub WriteDXNameToFile(cmdFile, strDXVersion)
       cmdFile.WriteLine("set DX_NAME=7.0a")
     Case "4.08.00.0400"
       cmdFile.WriteLine("set DX_NAME=8.0")
-    Case "4.08.01.0881"
+    Case "4.08.01.0881", "4.08.01.0810"
       cmdFile.WriteLine("set DX_NAME=8.1")
-    Case "4.08.01.0810"
-      cmdFile.WriteLine("set DX_NAME=8.1")
-    Case "4.09.00.0900"
+    Case "4.09.00.0900", "4.09.0000.0900"
       cmdFile.WriteLine("set DX_NAME=9.0")
-    Case "4.09.0000.0900"
-      cmdFile.WriteLine("set DX_NAME=9.0")
-    Case "4.09.00.0901"
+    Case "4.09.00.0901", "4.09.0000.0901"
       cmdFile.WriteLine("set DX_NAME=9.0a")
-    Case "4.09.0000.0901"
-      cmdFile.WriteLine("set DX_NAME=9.0a")
-    Case "4.09.00.0902"
+    Case "4.09.00.0902", "4.09.0000.0902"
       cmdFile.WriteLine("set DX_NAME=9.0b")
-    Case "4.09.0000.0902"
-      cmdFile.WriteLine("set DX_NAME=9.0b")
-    Case "4.09.00.0904"
-      cmdFile.WriteLine("set DX_NAME=9.0c")
-    Case "4.09.0000.0904"
+    Case "4.09.00.0904", "4.09.0000.0904"
       cmdFile.WriteLine("set DX_NAME=9.0c")
   End Select
 End Sub
@@ -519,43 +503,61 @@ For i = 0 To UBound(arrayOfficeNames)
     Next
   End If
 Next
+
+' Determine installed products
+cpp2005_x86_old = False
+cpp2005_x86_new = False
+cpp2005_x64_old = False
+cpp2005_x64_new = False
+cpp2008_x86_old = False
+cpp2008_x86_new = False
+cpp2008_x64_old = False
+cpp2008_x64_new = False
 For Each strProduct In CreateObject("WindowsInstaller.Installer").Products
-  If UCase(strProduct) = "{6EECB283-E65F-40EF-86D3-D51BF02A8D43}" Then
-    objCmdFile.WriteLine("set OFC_CONV_PACK=1")
-  End If
-  If UCase(strProduct) = "{90120000-0020-0407-0000-0000000FF1CE}" Then
-    objCmdFile.WriteLine("set OFC_COMP_PACK=1")
-  End If
-  ' Documentation: http://blogs.msdn.com/b/astebner/archive/2007/01/16/mailbag-how-to-detect-the-presence-of-the-vc-8-0-runtime-redistributable-package.aspx
-  If ( (UCase(strProduct) = "{A49F249F-0C91-497F-86DF-B2585E8E76B7}") _
-    Or (UCase(strProduct) = "{7299052B-02A4-4627-81F2-1818DA5D550D}") _
-    Or (UCase(strProduct) = "{837B34E3-7C30-493C-8F6A-2B0F04E2912C}") ) Then
-    objCmdFile.WriteLine("set CPP_2005_x86=1")
-  End If
-  If ( (UCase(strProduct) = "{6E8E85E8-CE4B-4FF5-91F7-04999C9FAE6A}") _
-    Or (UCase(strProduct) = "{071C9B48-7C32-4621-A0AC-3F809523288F}") _
-    Or (UCase(strProduct) = "{6CE5BAE9-D3CA-4B99-891A-1DC6C118A5FC}") ) Then
-    objCmdFile.WriteLine("set CPP_2005_x64=1")
-  End If
-  ' Documentation: http://blogs.msdn.com/b/astebner/archive/2009/01/29/9384143.aspx
-  If ( (UCase(strProduct) = "{FF66E9F6-83E7-3A3E-AF14-8DE9A809A6A4}") _
-    Or (UCase(strProduct) = "{9A25302D-30C0-39D9-BD6F-21E6EC160475}") _
-    Or (UCase(strProduct) = "{1F1C2DFC-2D24-3E06-BCB8-725134ADF989}") ) Then
-    objCmdFile.WriteLine("set CPP_2008_x86=1")
-  End If
-  If ( (UCase(strProduct) = "{350AA351-21FA-3270-8B7A-835434E766AD}") _
-    Or (UCase(strProduct) = "{8220EEFE-38CD-377E-8595-13398D740ACE}") _
-    Or (UCase(strProduct) = "{4B6C7001-C7D6-3710-913E-5BC23FCE91E6}") ) Then
-    objCmdFile.WriteLine("set CPP_2008_x64=1")
-  End If
-  ' Documentation: http://blogs.msdn.com/b/astebner/archive/2010/05/05/10008146.aspx
-  If (UCase(strProduct) = "{196BB40D-1578-3D01-B289-BEFC77A11A1E}") Then
-    objCmdFile.WriteLine("set CPP_2010_x86=1")
-  End If
-  If (UCase(strProduct) = "{DA5E371C-6333-3D8A-93A4-6FD5B20BCC6E}") Then
-    objCmdFile.WriteLine("set CPP_2010_x64=1")
-  End If
+  Select Case UCase(strProduct)
+    Case "{6EECB283-E65F-40EF-86D3-D51BF02A8D43}"
+      objCmdFile.WriteLine("set OFC_CONV_PACK=1")
+    Case "{90120000-0020-0407-0000-0000000FF1CE}"
+      objCmdFile.WriteLine("set OFC_COMP_PACK=1")
+    ' Documentation: http://blogs.msdn.com/b/astebner/archive/2007/01/16/mailbag-how-to-detect-the-presence-of-the-vc-8-0-runtime-redistributable-package.aspx
+    Case "{A49F249F-0C91-497F-86DF-B2585E8E76B7}", "{7299052B-02A4-4627-81F2-1818DA5D550D}", "{837B34E3-7C30-493C-8F6A-2B0F04E2912C}"
+      cpp2005_x86_old = True
+    Case "{710F4C1C-CC18-4C49-8CBF-51240C89A1A2}"
+      cpp2005_x86_new = True
+    Case "{6E8E85E8-CE4B-4FF5-91F7-04999C9FAE6A}", "{071C9B48-7C32-4621-A0AC-3F809523288F}", "{6CE5BAE9-D3CA-4B99-891A-1DC6C118A5FC}"
+      cpp2005_x64_old = True
+    Case "{AD8A2FA1-06E7-4B0D-927D-6E54B3D31028}"
+      cpp2005_x64_new = True
+    ' Documentation: http://blogs.msdn.com/b/astebner/archive/2009/01/29/9384143.aspx
+    Case "{09298F26-A95C-31E2-9D95-2C60F586F075}", "{09C0A8D5-EEC1-369D-8C7A-2E2DD17DCA5E}", "{31B44A9A-7CFE-3039-AEAE-A664F3C5F7BD}", "{402ED4A1-8F5B-387A-8688-997ABF58B8F2}", _
+         "{527BBE2F-1FED-3D8B-91CB-4DB0F838E69E}", "{57660847-B1F7-35BD-9118-F62EB863A598}", "{6AFCA4E1-9B78-3640-8F72-A7BF33448200}", "{820B6609-4C97-3A2B-B644-573B06A0F0CC}", _
+         "{86CE1746-9EFF-3C9C-8755-81EA8903AC34}", "{887868A2-D6DE-3255-AA92-AA0B5A59B874}", "{9A25302D-30C0-39D9-BD6F-21E6EC160475}", "{9B775AA1-7B10-379A-9B16-7E373790568C}", _
+         "{A09D5493-0D9F-3211-B3BF-DD7ABBB318C1}", "{CA8A885F-E95B-3FC6-BB91-F4D9377C7686}", "{CC1DB186-550F-3CFE-A2A9-EBA5E5A34BC1}", "{DCB46B42-723F-350E-B18A-449BC6C21636}", _
+         "{F03CB3EF-DC16-35CE-B3C1-C68EA09E5E97}", "{F2E0402D-AA60-32E3-8480-39AD5CE79DF2}", "{FF66E9F6-83E7-3A3E-AF14-8DE9A809A6A4}", "{1F1C2DFC-2D24-3E06-BCB8-725134ADF989}"
+      cpp2008_x86_old = True
+    Case "{9BE518E6-ECC6-35A9-88E4-87755C07200F}"
+      cpp2008_x86_new = True
+    Case "{02A39130-2CF3-30CA-8623-30F6071A4221}", "{092EE08C-60DE-3FE6-B113-90076EC06D0D}", "{0A157668-EDB7-34C8-8C51-6A914CAC1EA6}", "{14297226-E0A0-3781-8911-E9D529552663}", _
+         "{2DFD8316-9EF1-3210-908C-4CB61961C1AC}", "{32A08044-0CFA-3758-902C-5D97746BA9A9}", "{350AA351-21FA-3270-8B7A-835434E766AD}", "{484D36AC-327E-390E-85C8-9F2B176BA2B6}", _
+         "{56F27690-F6EA-3356-980A-02BA379506EE}", "{6F29F195-B11C-3EAD-B883-997BB29DFA17}", "{8220EEFE-38CD-377E-8595-13398D740ACE}", "{92B8FD1F-C1AE-3750-8577-631B0AA85DF5}", _
+         "{9B3F0A88-790D-3AD9-9F96-B19CF2746452}", "{9EDBA064-0381-3D1F-9096-CD1710366647}", "{A96702F7-EFC8-3EED-BE46-22C809D4EBE5}", "{D04659D1-EB2D-3DE5-A833-837A623CCCF7}", _
+         "{D285FC5F-3021-32E9-9C59-24CA325BDC5C}", "{E34002C7-8CE7-3F76-B36C-09FA973BC4F6}", "{F1685080-A18F-39F7-87CC-1FC1C5357364}", "{4B6C7001-C7D6-3710-913E-5BC23FCE91E6}"
+      cpp2008_x64_old = True
+    Case "{5FCE6D76-F5DC-37AB-B2B8-22AB8CEDB1D4}"
+      cpp2008_x64_new = True
+    ' Documentation: http://blogs.msdn.com/b/astebner/archive/2010/05/05/10008146.aspx
+    Case "{196BB40D-1578-3D01-B289-BEFC77A11A1E}"
+      objCmdFile.WriteLine("set CPP_2010_x86=1")
+      ' Recent code: {F0C3E5D1-1ADE-321E-8167-68EF0DE699A5}
+    Case "{DA5E371C-6333-3D8A-93A4-6FD5B20BCC6E}"
+      objCmdFile.WriteLine("set CPP_2010_x64=1")
+      ' Recent code: {1D8E6291-B0D5-35EC-8441-6616F567A0F7}
+  End Select
 Next
+If (cpp2005_x86_old) And (Not cpp2005_x86_new) Then objCmdFile.WriteLine("set CPP_2005_x86=1")
+If (cpp2005_x64_old) And (Not cpp2005_x64_new) Then objCmdFile.WriteLine("set CPP_2005_x64=1")
+If (cpp2008_x86_old) And (Not cpp2008_x86_new) Then objCmdFile.WriteLine("set CPP_2008_x86=1")
+If (cpp2008_x64_old) And (Not cpp2008_x64_new) Then objCmdFile.WriteLine("set CPP_2008_x64=1")
 
 '
 ' Perform the following WMI queries last, since they might fail if WMI is damaged 
