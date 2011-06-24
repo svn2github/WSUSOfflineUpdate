@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.8.6+ (r263)
+set WSUSOFFLINE_VERSION=6.8.6+ (r264)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -1160,6 +1160,7 @@ echo %DATE% %TIME% - Info: Downloaded/validated %LINES_COUNT% dynamically determ
 
 :CleanupDownload
 rem *** Clean up client directory for %1 %2 ***
+if not exist ..\client\%1\%2\nul goto RemoveHashes
 if "%CLEANUP_DOWNLOADS%"=="0" goto VerifyDownload
 echo Cleaning up client directory for %1 %2...
 if exist "%TEMP%\ValidLinks-%1-%2.txt" del "%TEMP%\ValidLinks-%1-%2.txt"
@@ -1191,7 +1192,6 @@ if errorlevel 1 rd ..\client\%1\%2
 echo %DATE% %TIME% - Info: Cleaned up client directory for %1 %2 >>%DOWNLOAD_LOGFILE%
 
 :VerifyDownload
-if not exist ..\client\%1\%2\nul goto RemoveHashes
 rem *** Delete alternate data streams for %1 %2 ***
 if exist ..\bin\streams.exe (
   echo Deleting alternate data streams for %1 %2...
