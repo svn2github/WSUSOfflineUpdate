@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.8.6+ (r262)
+set WSUSOFFLINE_VERSION=6.8.6+ (r263)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -1185,7 +1185,7 @@ for /F %%i in ('dir ..\client\%1\%2 /A:-D /B') do (
     echo %DATE% %TIME% - Info: Deleted ..\client\%1\%2\%%i >>%DOWNLOAD_LOGFILE%
   )
 )
-del "%TEMP%\ValidLinks-%1-%2.txt"
+if exist "%TEMP%\ValidLinks-%1-%2.txt" del "%TEMP%\ValidLinks-%1-%2.txt"
 dir ..\client\%1\%2 /A:-D >nul 2>&1
 if errorlevel 1 rd ..\client\%1\%2
 echo %DATE% %TIME% - Info: Cleaned up client directory for %1 %2 >>%DOWNLOAD_LOGFILE%
