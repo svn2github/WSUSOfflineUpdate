@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.8.6+ (r261)
+set WSUSOFFLINE_VERSION=6.8.6+ (r262)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -1173,10 +1173,14 @@ if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" (
     echo %%i>>"%TEMP%\ValidLinks-%1-%2.txt"
   )
 )
-if not exist "%TEMP%\ValidLinks-%1-%2.txt" goto VerifyDownload
 for /F %%i in ('dir ..\client\%1\%2 /A:-D /B') do (
-  %SystemRoot%\system32\find.exe /I "%%i" "%TEMP%\ValidLinks-%1-%2.txt" >nul 2>&1
-  if errorlevel 1 (
+  if exist "%TEMP%\ValidLinks-%1-%2.txt" (
+    %SystemRoot%\system32\find.exe /I "%%i" "%TEMP%\ValidLinks-%1-%2.txt" >nul 2>&1
+    if errorlevel 1 (
+      del ..\client\%1\%2\%%i
+      echo %DATE% %TIME% - Info: Deleted ..\client\%1\%2\%%i >>%DOWNLOAD_LOGFILE%
+    )
+  ) else (
     del ..\client\%1\%2\%%i
     echo %DATE% %TIME% - Info: Deleted ..\client\%1\%2\%%i >>%DOWNLOAD_LOGFILE%
   )
