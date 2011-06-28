@@ -462,7 +462,7 @@ Version 6.7 -- 06.12.10
 - XSLT filters for Windows ("win") refined (Thanks to "Denniss")
 --------------------------------------------------------------------------------
 Version 6.7.1 -- 22.12.10
-- Microsoft Security Essentials installation updated to version 2.0 (Thanks to "Matjes")
+- Microsoft Security Essentials' installation updated to version 2.0 (Thanks to "Matjes")
 - Optional verification of digital file signatures will now include Windows Update Agent installation and catalog files (Thanks to "albertx")
 - Files whose digital signatures can't be verified will now be automatically deleted
 - Downloads from a local WSUS server will now only optionally use proxy settings (Thanks to "omo683")
@@ -554,6 +554,7 @@ Version 6.8.6 -- 16.06.11
 --------------------------------------------------------------------------------
 Version ?.?.? -- ??.??.11
 - C++ Runtime Libraries' installation option will now only update existing versions
+- Static download definitions for Microsoft Security Essentials updated to version 2.1 (Thanks to "Denniss")
 - Fix: Two EoLn spaces were too much for TZ environment variable setting (Thanks to "psj")
 - Fix: C++ Runtime Libraries' x86 versions were not installed/updated on x64 Operating Systems (Thanks to "Denniss") 
 - Fix: DirectX main version detection did not use "/64bit" switch on x64 Operating Systems

@@ -1,1 +1,1 @@
-http://download.microsoft.com/download/0/2/C/02C8AB73-0774-4975-826F-9E8A0FD7F65D/de-de/x86/mseinstall.exe,mseinstall-x86-deu.exe
+http://mse.dlservice.microsoft.com/download/0/2/C/02C8AB73-0774-4975-826F-9E8A0FD7F65D/dede/x86/mseinstall.exe,mseinstall-x86-deu.exe

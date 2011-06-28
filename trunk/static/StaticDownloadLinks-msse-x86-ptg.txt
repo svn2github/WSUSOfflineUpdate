@@ -1,1 +1,1 @@
-http://download.microsoft.com/download/4/2/1/421FB61D-B89E-423C-B726-D39EAA99CFC3/pt-PT/x86/mseinstall.exe,mseinstall-x86-ptg.exe
+http://mse.dlservice.microsoft.com/download/4/2/1/421FB61D-B89E-423C-B726-D39EAA99CFC3/ptpt/x86/mseinstall.exe,mseinstall-x86-ptg.exe

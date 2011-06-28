@@ -1,1 +1,1 @@
-http://download.microsoft.com/download/6/B/A/6BA6CAB0-DDB8-4DDD-88E3-F707D96E84D7/ja-jp/x86/mseinstall.exe,mseinstall-x86-jpn.exe
+http://mse.dlservice.microsoft.com/download/6/B/A/6BA6CAB0-DDB8-4DDD-88E3-F707D96E84D7/jajp/x86/mseinstall.exe,mseinstall-x86-jpn.exe

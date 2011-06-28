@@ -1,1 +1,1 @@
-http://download.microsoft.com/download/3/C/8/3C8517F6-5CCB-4787-9081-40AEA853B2A1/da-DK/amd64/mseinstall.exe,mseinstall-x64-dan.exe
+http://mse.dlservice.microsoft.com/download/3/C/8/3C8517F6-5CCB-4787-9081-40AEA853B2A1/daDK/amd64/mseinstall.exe,mseinstall-x64-dan.exe
