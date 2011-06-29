@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 6.8.6
+WSUS Offline Update 6.9
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -553,6 +553,8 @@ Version 6.8.6 -- 16.06.11
 - Fix: Office updates' installation tables were not updated (Thanks to "rednaxela")
 --------------------------------------------------------------------------------
 Version 6.9 -- ??.07.11
+- NOTE: This version is supposed to be the last one supporting Office XP (see http://support.microsoft.com/lifecycle/?p1=2533)
+- Office 2010 Service Pack 1 integrated
 - Optional installation of Office File Validation Add-in (Thanks to "Gerby")
 - C++ Runtime Libraries' installation option will now only update existing versions
 - Static download definitions for Microsoft Security Essentials updated to version 2.1 (Thanks to "Denniss")

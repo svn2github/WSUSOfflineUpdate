@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.8.6+ (r267)
+set WSUSOFFLINE_VERSION=6.8.6+ (r268)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -155,7 +155,7 @@ if "%O2K7_VER_MAJOR%" NEQ "" (
   echo Found Microsoft Office 2007 %O2K7_VER_APP% version: %O2K7_VER_MAJOR%.%O2K7_VER_MINOR%.%O2K7_VER_REVIS%.%O2K7_VER_BUILD% ^(o2k7 %O2K7_LANG% sp%O2K7_SP_VER%^)
 )
 if "%O2K10_VER_MAJOR%" NEQ "" (
-  echo Found Microsoft Office 2010 %O2K10_VER_APP% version: %O2K10_VER_MAJOR%.%O2K10_VER_MINOR%.%O2K10_VER_REVIS%.%O2K10_VER_BUILD% ^(o2k10 %O2K10_LANG% sp%O2K10_SP_VER%^)
+  echo Found Microsoft Office 2010 %O2K10_VER_APP% version: %O2K10_VER_MAJOR%.%O2K10_VER_MINOR%.%O2K10_VER_REVIS%.%O2K10_VER_BUILD% ^(o2k10 %O2K10_ARCH% %O2K10_LANG% sp%O2K10_SP_VER%^)
 )
 echo %DATE% %TIME% - Info: Found OS caption '%OS_CAPTION%' >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft Windows version %OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_VER_REVIS% (%OS_NAME% %OS_ARCH% %OS_LANG% sp%OS_SP_VER_MAJOR%) >>%UPDATE_LOGFILE%
@@ -183,7 +183,7 @@ if "%O2K7_VER_MAJOR%" NEQ "" (
   echo %DATE% %TIME% - Info: Found Microsoft Office 2007 %O2K7_VER_APP% version %O2K7_VER_MAJOR%.%O2K7_VER_MINOR%.%O2K7_VER_REVIS%.%O2K7_VER_BUILD% ^(o2k7 %O2K7_LANG% sp%O2K7_SP_VER%^) >>%UPDATE_LOGFILE%
 )
 if "%O2K10_VER_MAJOR%" NEQ "" (
-  echo %DATE% %TIME% - Info: Found Microsoft Office 2010 %O2K10_VER_APP% version %O2K10_VER_MAJOR%.%O2K10_VER_MINOR%.%O2K10_VER_REVIS%.%O2K10_VER_BUILD% ^(o2k10 %O2K10_LANG% sp%O2K10_SP_VER%^) >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Found Microsoft Office 2010 %O2K10_VER_APP% version %O2K10_VER_MAJOR%.%O2K10_VER_MINOR%.%O2K10_VER_REVIS%.%O2K10_VER_BUILD% ^(o2k10 %O2K10_ARCH% %O2K10_LANG% sp%O2K10_SP_VER%^) >>%UPDATE_LOGFILE%
 )
 
 rem *** Check medium content ***

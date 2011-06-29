@@ -1,7 +1,7 @@
 OfficeXpSp
 2003SP
-2007SP
-compatibilitypacksp
+2007sp
+2010sp
 KB936929
 KB914961
 KB936330

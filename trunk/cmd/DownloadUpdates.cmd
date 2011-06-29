@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.8.6+ (r267)
+set WSUSOFFLINE_VERSION=6.8.6+ (r268)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -30,7 +30,7 @@ for %%i in (w60 w60-x64 w61 w61-x64 ofc) do (
     if /i "%2"=="glb" goto EvalParams
   )
 )
-for %%i in (oxp o2k3 o2k7) do (
+for %%i in (oxp o2k3 o2k7 o2k10) do (
   if /i "%1"=="%%i" (
     for %%j in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%2"=="%%j" goto Lang_%%j)
   )
@@ -292,11 +292,10 @@ if exist ..\client\wsus\invcm.exe (
   if exist ..\client\md\hashes-wsus.txt del ..\client\md\hashes-wsus.txt
   del ..\client\wsus\invcm.exe
 )
-if exist ..\client\static\StaticUpdateIds-o2k7-x64.txt del ..\client\static\StaticUpdateIds-o2k7-x64.txt
-if exist ..\client\static\StaticUpdateIds-o2k7-x86.txt del ..\client\static\StaticUpdateIds-o2k7-x86.txt
+if exist ..\client\static\StaticUpdateIds-o2k7-x*.txt del ..\client\static\StaticUpdateIds-o2k7-x*.txt
 if exist ..\ExtractDownloadLinks-oall.cmd del ..\ExtractDownloadLinks-oall.cmd
 if exist ..\ExtractDownloadLinks-wall.cmd del ..\ExtractDownloadLinks-wall.cmd
-if exist ..\static\StaticDownloadLinks-o2k7-x64-glb.txt del ..\static\StaticDownloadLinks-o2k7-x64-glb.txt
+if exist ..\static\StaticDownloadLinks-o2k7-x*.txt del ..\static\StaticDownloadLinks-o2k7-x*.txt
 if exist ..\xslt\ExtractDownloadLinks-oall-deu.xsl del ..\xslt\ExtractDownloadLinks-oall-deu.xsl
 if exist ..\xslt\ExtractDownloadLinks-oall-enu.xsl del ..\xslt\ExtractDownloadLinks-oall-enu.xsl
 if exist ..\xslt\ExtractDownloadLinks-oall-fra.xsl del ..\xslt\ExtractDownloadLinks-oall-fra.xsl
@@ -793,13 +792,13 @@ for %%i in (wxp w2k3) do (
     if errorlevel 1 goto Error
   )
 )
-for %%i in (oxp o2k3 o2k7) do (
+for %%i in (oxp o2k3 o2k7 o2k10) do (
   if /i "%1"=="%%i" (
     call :DownloadCore ofc %2
     if errorlevel 1 goto Error
   )
 )
-for %%i in (wxp w2k3 w2k3-x64 oxp o2k3 o2k7) do (
+for %%i in (wxp w2k3 w2k3-x64 oxp o2k3 o2k7 o2k10) do (
   if /i "%1"=="%%i" (
     call :DownloadCore %1 glb
     if errorlevel 1 goto Error
@@ -1268,7 +1267,7 @@ exit /b 1
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %*
-echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| oxp ^| o2k3 ^| o2k7} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusbyproxy]
+echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| oxp ^| o2k3 ^| o2k7 ^| o2k10} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusbyproxy]
 echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| ofc} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusbyproxy]
 echo %DATE% %TIME% - Error: Invalid parameter: %* >>%DOWNLOAD_LOGFILE%
 echo.

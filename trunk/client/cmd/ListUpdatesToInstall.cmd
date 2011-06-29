@@ -81,7 +81,7 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
       )
     )
     if not exist "%TEMP%\Update.txt" (
-      for %%k in (%OFC_NAME%-%OS_ARCH% %OFC_NAME% ofc oxp o2k3 o2k7 o2k10) do (
+      for %%k in (%OFC_NAME% ofc oxp o2k3 o2k7 o2k10) do (
         for %%l in (%OFC_LANG% glb) do (
           call ListUpdateFile.cmd %%i ..\%%k\%%l
         )
