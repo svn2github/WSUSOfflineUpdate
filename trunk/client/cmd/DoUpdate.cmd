@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.8.6+ (r266)
+set WSUSOFFLINE_VERSION=6.8.6+ (r267)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -927,13 +927,13 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
 set REBOOT_REQUIRED=1
 :SkipSPOfc
 
-rem *** Check installation state of Office Converter/Compatibility Packs ***
+rem *** Check installation state of Office File Converter/Validation Packs ***
 if "%INSTALL_CONVERTERS%" NEQ "/instofccnvs" goto CheckAUService
 goto CNV%OFC_NAME%
 
 :CNVoxp
 :CNVo2k3
-echo Checking installation state of Office Converter/Compatibility Packs...
+echo Checking installation state of Office File Converter/Validation Packs...
 if "%OFC_CONV_PACK%" NEQ "1" (
   if exist ..\ofc\glb\ork.exe (
     echo Installing Office Converter Pack...
@@ -961,7 +961,19 @@ if "%OFC_COMP_PACK%" NEQ "1" (
     echo %DATE% %TIME% - Warning: File ..\ofc\%OFC_LANG%\FileFormatConverters.exe not found >>%UPDATE_LOGFILE%
   )
 )
+if "%OFC_NAME%"=="oxp" goto CheckAUService
 :CNVo2k7
+if "%OFC_FILE_VALID%" NEQ "1" (
+  if exist ..\ofc\glb\OFV.exe (
+    echo Installing Office File Validation Add-in...
+    echo Installing ..\ofc\glb\OFV.exe...
+    ..\ofc\glb\OFV.exe /quiet /norestart
+    echo %DATE% %TIME% - Info: Installed ..\ofc\glb\OFV.exe >>%UPDATE_LOGFILE%
+  ) else (
+    echo Warning: File ..\ofc\glb\OFV.exe not found. 
+    echo %DATE% %TIME% - Warning: File ..\ofc\glb\OFV.exe not found >>%UPDATE_LOGFILE%
+  )
+)
 :CNVo2k10
 
 :CheckAUService

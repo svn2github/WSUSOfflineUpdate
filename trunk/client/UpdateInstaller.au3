@@ -71,7 +71,7 @@ Dim Const $path_invalid_chars         = "%&()^+,;="
 Dim Const $path_rel_builddate         = "\builddate.txt"
 Dim Const $path_rel_hashes            = "\md\"
 Dim Const $path_rel_autologon         = "\bin\Autologon.exe"
-Dim Const $path_rel_cpp               = "\cpp\"
+Dim Const $path_rel_cpp               = "\cpp\vcredist*.exe"
 Dim Const $path_rel_instdirectx       = "\win\glb\directx_*_redist.exe"
 Dim Const $path_rel_instdotnet35      = "\dotnet\dotnetfx35.exe"
 Dim Const $path_rel_instdotnet4       = "\dotnet\dotNetFx40_Full_x86_x64.exe"
@@ -251,9 +251,9 @@ Func CalcGUISize()
   EndIf
   $dlgheight = 305 * $reg_val / $default_logpixels
   If ShowGUIInGerman() Then
-    $txtwidth = 230 * $reg_val / $default_logpixels
+    $txtwidth = 240 * $reg_val / $default_logpixels
   Else
-    $txtwidth = 200 * $reg_val / $default_logpixels
+    $txtwidth = 220 * $reg_val / $default_logpixels
   EndIf
   $txtheight = 20 * $reg_val / $default_logpixels
   $btnwidth = 80 * $reg_val / $default_logpixels
@@ -562,9 +562,9 @@ EndIf
 ; Install file format converters for Office
 $txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
-  $converters = GUICtrlCreateCheckbox("Office-Dateiformat-Konverter installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $converters = GUICtrlCreateCheckbox("Office-Dateikonverter und -überprüfung inst.", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $converters = GUICtrlCreateCheckbox("Install Office file format converters", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $converters = GUICtrlCreateCheckbox("Install Office file converters and validation", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If NOT ConvertersInstPresent($scriptdir) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
