@@ -171,3 +171,6 @@ Um die Sprachversionen Ihrer Wahl zusätzlich herunterladen zu lassen, können Sie
 F: Die Ermittlung ersetzter Aktualisierungen ("superseded updates") dauert sehr lange (mehr als 15 Minuten). Wie kann ich dies beschleunigen?
 A: Manche Anti-Viren-Scanner (insbesondere die "Microsoft Security Essentials" (MSSE)) verzögern die erforderlichen Berechnungen stark. Sie können Ihren AV-Scanner temporär deaktivieren oder eine entsprechende Ausnahme definieren.
 --------------------------------------------------------------------------------
+Q: Ich vermisse die x64-Version des Service Packs 1 für Office 2010. Wie bekomme ich sie heruntergeladen?
+A: Bitte führen Sie einmalig ...\cmd\AddOffice2010x64Support.cmd {lng} aus, um die URL des Pakets Ihren benutzerspezifischen Download-Definitionen hinzuzufügen (siehe Verzeichnis ...\static\custom). 
+--------------------------------------------------------------------------------

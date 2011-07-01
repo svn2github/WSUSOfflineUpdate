@@ -552,7 +552,8 @@ Version 6.8.6 -- 16.06.11
 - Optional installation of C++ 2005, 2008 and 2010 Runtime Libraries (Thanks to "Denniss" and "boco") 
 - Fix: Office updates' installation tables were not updated (Thanks to "rednaxela")
 --------------------------------------------------------------------------------
-Version 6.9 -- ??.07.11
+Version 6.9 -- 01.07.11
+- INSTALLATION HINT: If you localized your installation using AddCustomLanguageSupport.cmd {lng}, please call it again after updating WOU in order to get MSSE 2.1 downloaded (see below)
 - NOTE: This version is supposed to be the last one supporting Office XP (see http://support.microsoft.com/lifecycle/?p1=2533)
 - Office 2010 Service Pack 1 integrated
 - Optional installation of Office File Validation Add-in (Thanks to "Gerby")
@@ -561,6 +562,8 @@ Version 6.9 -- ??.07.11
 - Update for Root Certificates (rootsupd.exe/kb931125) updated to June 2011 (Thanks to "Denniss")
 - Fix: Two EoLn spaces were too much for TZ environment variable setting (Thanks to "psj")
 - Fix: C++ Runtime Libraries' x86 versions were not installed/updated on x64 Operating Systems (Thanks to "Denniss") 
+- Fix: C++ 2005 and 2008 Runtime Libraries' installations will now be called using undocumented "/r:n" switch (Thanks to "pdietrich") 
 - Fix: DirectX main version detection did not use "/64bit" switch on x64 Operating Systems
 - Fix: Temporary file package.xml remained after Office downloads (Thanks to "Denniss")
 - Fix: "Clean up download directories" functionality could lead to "file not found" error messages (Thanks to "rednaxela")
+--------------------------------------------------------------------------------

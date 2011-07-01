@@ -170,3 +170,6 @@ To have your favorite locale(s) downloaded in addition, you may use the ...\cmd\
 Q: The determination of "superseded updates" takes more than 15 minutes. How can I speed it up?
 A: Some Anti-Virus-Scanners (especially "Microsoft Security Essentials" (MSSE)) retard the required calculations. You may temporarily disable your AV scanner or define an appropriate exception.
 --------------------------------------------------------------------------------
+Q: I miss the x64 version of Office 2010 Service Pack 1. How can I have it downloaded?
+A: Please call ...\cmd\AddOffice2010x64Support.cmd {lng} once to add its URL to your custom static download definitions (see directory ...\static\custom). 
+--------------------------------------------------------------------------------

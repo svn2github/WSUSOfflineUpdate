@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.8.6+ (r268)
+set WSUSOFFLINE_VERSION=6.9
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -1067,6 +1067,7 @@ echo %DATE% %TIME% - Info: Determined dynamical update urls for %1 %2 >>%DOWNLOA
 rem *** Download updates for %1 %2 ***
 if not exist "%TEMP%\ValidStaticLinks-%1-%2.txt" goto DownloadDynamicUpdates
 echo Downloading/validating statically defined updates for %1 %2...
+set LINES_COUNT=0
 for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidStaticLinks-%1-%2.txt"') do set LINES_COUNT=%%i
 for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidStaticLinks-%1-%2.txt"') do (
   echo Downloading/validating update %%i of %LINES_COUNT%...
@@ -1098,6 +1099,7 @@ echo %DATE% %TIME% - Info: Downloaded/validated %LINES_COUNT% statically defined
 :DownloadDynamicUpdates
 if not exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" goto CleanupDownload
 echo Downloading/validating dynamically determined updates for %1 %2...
+set LINES_COUNT=0
 for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidDynamicLinks-%1-%2.txt"') do set LINES_COUNT=%%i
 if "%WSUS_URL%"=="" (
   for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidDynamicLinks-%1-%2.txt"') do (

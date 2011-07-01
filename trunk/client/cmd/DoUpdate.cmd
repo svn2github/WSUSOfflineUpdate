@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.8.6+ (r268)
+set WSUSOFFLINE_VERSION=6.9
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
 title %~n0 %*
@@ -531,7 +531,7 @@ goto CPPInst%OS_ARCH%
 if "%CPP_2005_x64%"=="1" (
   if exist ..\cpp\vcredist2005_x64.exe (
     echo Installing most recent C++ 2005 x64 Runtime Library...
-    call InstallOSUpdate.cmd ..\cpp\vcredist2005_x64.exe %VERIFY_MODE% /errorsaswarnings /Q
+    call InstallOSUpdate.cmd ..\cpp\vcredist2005_x64.exe %VERIFY_MODE% /errorsaswarnings /Q /r:n
   ) else (
     echo Warning: File ..\cpp\vcredist2005_x64.exe not found.
     echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2005_x64.exe not found >>%UPDATE_LOGFILE%
@@ -540,7 +540,7 @@ if "%CPP_2005_x64%"=="1" (
 if "%CPP_2008_x64%"=="1" (
   if exist ..\cpp\vcredist2008_x64.exe (
     echo Installing most recent C++ 2008 x64 Runtime Library...
-    call InstallOSUpdate.cmd ..\cpp\vcredist2008_x64.exe %VERIFY_MODE% /errorsaswarnings /q
+    call InstallOSUpdate.cmd ..\cpp\vcredist2008_x64.exe %VERIFY_MODE% /errorsaswarnings /q /r:n
   ) else (
     echo Warning: File ..\cpp\vcredist2008_x64.exe not found.
     echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2008_x64.exe not found >>%UPDATE_LOGFILE%
@@ -559,7 +559,7 @@ if "%CPP_2010_x64%"=="1" (
 if "%CPP_2005_x86%"=="1" (
   if exist ..\cpp\vcredist2005_x86.exe (
     echo Installing most recent C++ 2005 x86 Runtime Library...
-    call InstallOSUpdate.cmd ..\cpp\vcredist2005_x86.exe %VERIFY_MODE% /errorsaswarnings /Q
+    call InstallOSUpdate.cmd ..\cpp\vcredist2005_x86.exe %VERIFY_MODE% /errorsaswarnings /Q /r:n
   ) else (
     echo Warning: File ..\cpp\vcredist2005_x86.exe not found.
     echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2005_x86.exe not found >>%UPDATE_LOGFILE%
@@ -568,7 +568,7 @@ if "%CPP_2005_x86%"=="1" (
 if "%CPP_2008_x86%"=="1" (
   if exist ..\cpp\vcredist2008_x86.exe (
     echo Installing most recent C++ 2008 x86 Runtime Library...
-    call InstallOSUpdate.cmd ..\cpp\vcredist2008_x86.exe %VERIFY_MODE% /errorsaswarnings /q
+    call InstallOSUpdate.cmd ..\cpp\vcredist2008_x86.exe %VERIFY_MODE% /errorsaswarnings /q /r:n
   ) else (
     echo Warning: File ..\cpp\vcredist2008_x86.exe not found.
     echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2008_x86.exe not found >>%UPDATE_LOGFILE%
