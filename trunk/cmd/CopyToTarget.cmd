@@ -113,7 +113,7 @@ copy /Y ..\exclude\ExcludeListUSB-all-x86.txt %USB_FILTER% >nul
 if exist ..\exclude\custom\ExcludeListUSB-all-x86.txt (
   for /F %%i in (..\exclude\custom\ExcludeListUSB-all-x86.txt) do echo %%i>>%USB_FILTER%
 )
-call :LocaleFilter %1 
+call :LocaleFilter %1
 call :ExtendFilter
 goto CreateImage
 
@@ -127,7 +127,7 @@ rem *** Create USB filter ***
 echo Creating USB filter for %1 %2...
 set USB_FILTER=..\ExcludeListUSB-%1-%2.txt
 call :CopyFilter %1
-call :LocaleFilter %2 
+call :LocaleFilter %2
 call :ExtendFilter
 goto CreateImage
 

@@ -21,20 +21,20 @@ for /F %%i in (..\static\StaticDownloadLinks-o2k10-x64-%1.txt) do (
   )
 )
 for %%i in (..\static\custom\StaticDownloadLinks-o2k10-%1.txt) do if %%~zi==0 del %%i
-goto EoF 
+goto EoF
 
 :NoExtensions
 echo.
 echo ERROR: No command extensions / delayed variable expansion available.
 echo.
-goto EoF 
+goto EoF
 
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %*
 echo Usage: %~n0 {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin}
 echo.
-goto EoF 
+goto EoF
 
 :EoF
 endlocal

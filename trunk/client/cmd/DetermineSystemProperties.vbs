@@ -2,6 +2,7 @@
 
 Option Explicit
 
+Private Const strWOUTempAdminName             = "WOUTempAdmin"
 Private Const strRegKeyIE                     = "HKLM\Software\Microsoft\Internet Explorer\"
 Private Const strRegKeyMDAC                   = "HKLM\Software\Microsoft\DataAccess\"
 Private Const strRegKeyDirectX                = "HKLM\Software\Microsoft\DirectX\"
@@ -263,9 +264,9 @@ Dim arraySuffixes, arrayVersion, i
   End If
   For i = 0 To UBound(arraySuffixes)
     If i > UBound(arrayVersion) Then
-      cmdFile.WriteLine("set " & strPrefix & "_" & arraySuffixes(i) & "=0")         
+      cmdFile.WriteLine("set " & strPrefix & "_" & arraySuffixes(i) & "=0")
     Else
-      cmdFile.WriteLine("set " & strPrefix & "_" & arraySuffixes(i) & "=" & arrayVersion(i))         
+      cmdFile.WriteLine("set " & strPrefix & "_" & arraySuffixes(i) & "=" & arrayVersion(i))
     End If
   Next
 End Sub
@@ -306,12 +307,12 @@ Dim strRegVal
 
   OfficeInstallPath = ""
   strRegVal = RegRead(objShell, strRegKeyOfficePrefix_Mx86 & strVersionInfix & strRegKeyOfficeSuffix_InstRoot & strRegValOfficePath)
-  If strRegVal <> "" Then 
+  If strRegVal <> "" Then
     OfficeInstallPath = strRegVal
     Exit Function
   End If
   strRegVal = RegRead(objShell, strRegKeyOfficePrefix_Mx64 & strVersionInfix & strRegKeyOfficeSuffix_InstRoot & strRegValOfficePath)
-  If strRegVal <> "" Then 
+  If strRegVal <> "" Then
     OfficeInstallPath = strRegVal
     Exit Function
   End If
@@ -322,17 +323,17 @@ Dim strRegVal
 
   OfficeLanguageCode = 0
   strRegVal = RegRead(objShell, strRegKeyOfficePrefix_Mx86 & strVersionInfix & strRegKeyOfficeSuffix_Language & strRegValOfficeLanguage_Inst)
-  If strRegVal <> "" Then 
+  If strRegVal <> "" Then
     OfficeLanguageCode = CInt(strRegVal)
     Exit Function
   End If
   strRegVal = RegRead(objShell, strRegKeyOfficePrefix_Mx64 & strVersionInfix & strRegKeyOfficeSuffix_Language & strRegValOfficeLanguage_Inst)
-  If strRegVal <> "" Then 
+  If strRegVal <> "" Then
     OfficeLanguageCode = CInt(strRegVal)
     Exit Function
   End If
   strRegVal = RegRead(objShell, strRegKeyOfficePrefix_User & strVersionInfix & strRegKeyOfficeSuffix_Language & strRegValOfficeLanguage_User)
-  If strRegVal <> "" Then 
+  If strRegVal <> "" Then
     OfficeLanguageCode = CInt(strRegVal)
     Exit Function
   End If
@@ -397,7 +398,7 @@ Set objCmdFile = objFileSystem.CreateTextFile(strCmdFileName, True)
 Set objNetwork = WScript.CreateObject("WScript.Network")
 Set objWMIService = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
 ' Documentation: http://msdn.microsoft.com/en-us/library/aa394239(VS.85).aspx
-For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_OperatingSystem") 
+For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_OperatingSystem")
   objCmdFile.WriteLine("set OS_CAPTION=" & objQueryItem.Caption)
   WriteVersionToFile objCmdFile, "OS_VER", objQueryItem.Version
   strOSVersion = Left(objQueryItem.Version, 3) ' For determination of Windows activation state - see below
@@ -412,12 +413,14 @@ For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_ComputerSy
   objCmdFile.WriteLine("set OS_ARCH=" & LCase(Left(objQueryItem.SystemType, 3)))
   objCmdFile.WriteLine("set OS_DOMAIN_ROLE=" & objQueryItem.DomainRole)
 Next
-' Documentation: http://msdn.microsoft.com/en-us/library/aa394507(VS.85).aspx
-For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_UserAccount Where Domain = '" & objNetwork.UserDomain & "' And Name = '" & objNetwork.UserName & "'")
-  objCmdFile.WriteLine("set USERSID=" & objQueryItem.SID)
-Next
+If objNetwork.UserName = strWOUTempAdminName Then
+  ' Documentation: http://msdn.microsoft.com/en-us/library/aa394507(VS.85).aspx
+  For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_UserAccount Where Domain = '" & objNetwork.ComputerName & "' And Name = '" & objNetwork.UserName & "'")
+    objCmdFile.WriteLine("set USERSID=" & objQueryItem.SID)
+  Next
+End If
 
-' Determine Windows Update Agent version 
+' Determine Windows Update Agent version
 If objFileSystem.FileExists(strWUAFileName) Then
   WriteVersionToFile objCmdFile, "WUA_VER", objFileSystem.GetFileVersion(strWUAFileName)
 Else
@@ -495,13 +498,13 @@ arrayOfficeVersions = Split(strRegKeyOfficeInfixes_Version, ",")
 arrayOfficeAppNames = Split(strOfficeAppNames, ",")
 arrayOfficeExeNames = Split(strOfficeExeNames, ",")
 For i = 0 To UBound(arrayOfficeNames)
-  strOfficeInstallPath = OfficeInstallPath(wshShell, arrayOfficeVersions(i)) 
+  strOfficeInstallPath = OfficeInstallPath(wshShell, arrayOfficeVersions(i))
   If strOfficeInstallPath <> "" Then
     For j = 0 To UBound(arrayOfficeExeNames)
       If objFileSystem.FileExists(strOfficeInstallPath & arrayOfficeExeNames(j)) Then
         objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_VER_APP=" & arrayOfficeAppNames(j))
-        strOfficeExeVersion = objFileSystem.GetFileVersion(strOfficeInstallPath & arrayOfficeExeNames(j)) 
-        WriteVersionToFile objCmdFile, UCase(arrayOfficeNames(i)) & "_VER", strOfficeExeVersion  
+        strOfficeExeVersion = objFileSystem.GetFileVersion(strOfficeInstallPath & arrayOfficeExeNames(j))
+        WriteVersionToFile objCmdFile, UCase(arrayOfficeNames(i)) & "_VER", strOfficeExeVersion
         objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_SP_VER=" & OfficeSPVersion(strOfficeExeVersion, j))
         objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_ARCH=" & OfficeArchitecture(wshShell, arrayOfficeVersions(i)))
         languageCode = OfficeLanguageCode(wshShell, arrayOfficeVersions(i))
@@ -575,16 +578,16 @@ If (cpp2008_x86_old) And (Not cpp2008_x86_new) Then objCmdFile.WriteLine("set CP
 If (cpp2008_x64_old) And (Not cpp2008_x64_new) Then objCmdFile.WriteLine("set CPP_2008_x64=1")
 
 '
-' Perform the following WMI queries last, since they might fail if WMI is damaged 
+' Perform the following WMI queries last, since they might fail if WMI is damaged
 '
 
-' Determine state of automatic updates service 
+' Determine state of automatic updates service
 For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_Service Where Name = 'wuauserv'")
   objCmdFile.WriteLine("set AU_SVC_STATE_INITIAL=" & objQueryItem.State)
   objCmdFile.WriteLine("set AU_SVC_START_MODE=" & objQueryItem.StartMode)
 Next
 
-' Determine Windows activation state - not available on Windows 2000 and Vista systems 
+' Determine Windows activation state - not available on Windows 2000 and Vista systems
 If (strOSVersion = "5.1") Or (strOSVersion = "5.2") Then
   For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_WindowsProductActivation")
     objCmdFile.WriteLine("set OS_ACTIVATION_REQUIRED=" & objQueryItem.ActivationRequired)

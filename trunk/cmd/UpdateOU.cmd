@@ -35,7 +35,7 @@ goto EvalParams
 rem *** Update WSUS Offline Update ***
 title Updating WSUS Offline Update...
 call CheckOUVersion.cmd
-if not errorlevel 1 goto NoNewVersion 
+if not errorlevel 1 goto NoNewVersion
 echo Downloading most recent released version of WSUS Offline Update...
 for /F %%i in (..\static\StaticDownloadLink-recent.txt) do (
   %WGET_PATH% -N -P .. %%i

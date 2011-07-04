@@ -119,7 +119,7 @@ copy /Y ..\exclude\ExcludeListISO-all-x86.txt %ISO_FILTER% >nul
 if exist ..\exclude\custom\ExcludeListISO-all-x86.txt (
   for /F %%i in (..\exclude\custom\ExcludeListISO-all-x86.txt) do echo %%i>>%ISO_FILTER%
 )
-call :LocaleFilter %1 
+call :LocaleFilter %1
 call :ExtendFilter %1
 goto CreateImage
 
@@ -137,7 +137,7 @@ set ISO_FILTER="%TEMP%\ExcludeListISO-%1-%2.txt"
 set ISO_NAME=wsusoffline-%1-%2
 set ISO_VOLID=wou_%1_%2
 call :CopyFilter %1
-call :LocaleFilter %2 
+call :LocaleFilter %2
 call :ExtendFilter %1
 goto CreateImage
 

@@ -15,7 +15,7 @@ For Each objUser In objComputer
   If LCase(objUser.Name) = LCase(strWOUTempAdminName) Then
     found = true
     Exit For
-  End If    
+  End If
 Next
 If found Then
   objComputer.Delete "user", strWOUTempAdminName

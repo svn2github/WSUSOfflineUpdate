@@ -9,9 +9,9 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.9
+set WSUSOFFLINE_VERSION=6.9+ (r271)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
-if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log 
+if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 if exist %UPDATE_LOGFILE% echo. >>%UPDATE_LOGFILE%
@@ -332,7 +332,7 @@ if "%MSI_TARGET_ID%"=="" (
   echo Warning: Environment variable MSI_TARGET_ID not set.
   echo %DATE% %TIME% - Warning: Environment variable MSI_TARGET_ID not set >>%UPDATE_LOGFILE%
   goto SkipMSIInst
-) 
+)
 if /i "%OS_ARCH%"=="x64" (
   set MSI_FILENAME=..\%OS_NAME%-%OS_ARCH%\glb\*%MSI_TARGET_ID%*-%OS_ARCH%.*
 ) else (
@@ -406,7 +406,7 @@ if /i "%OS_ARCH%"=="x64" (
     set IE_FILENAME=..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\IE8-WindowsServer2003-%OS_ARCH%-%OS_LANG%*.exe
   ) else (
     set IE_FILENAME=..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\ie7-windowsserver2003-%OS_ARCH%-%OS_LANG%*.exe
-  ) 
+  )
 ) else (
   if "%INSTALL_IE%"=="/instie8" (
     set IE_FILENAME=..\%OS_NAME%\%OS_LANG%\IE8-WindowsServer2003-%OS_ARCH%-%OS_LANG%*.exe
@@ -419,9 +419,9 @@ goto IEwxp2k3
 :IEwxp2k3
 dir /B %IE_FILENAME% >nul 2>&1
 if errorlevel 1 (
-  echo Warning: File %IE_FILENAME% not found. 
+  echo Warning: File %IE_FILENAME% not found.
   echo %DATE% %TIME% - Warning: File %IE_FILENAME% not found >>%UPDATE_LOGFILE%
-  goto SkipIEInst 
+  goto SkipIEInst
 )
 if "%INSTALL_IE%"=="/instie8" (echo Installing Internet Explorer 8...) else (echo Installing Internet Explorer 7...)
 for /F %%i in ('dir /B %IE_FILENAME%') do (
@@ -440,7 +440,7 @@ for /F %%i in ('dir /B %IE_FILENAME%') do (
   )
   if not errorlevel 1 set RECALL_REQUIRED=1
 )
-goto IEInstalled 
+goto IEInstalled
 
 :IEw60
 if /i "%OS_ARCH%"=="x64" (
@@ -458,13 +458,12 @@ if /i "%OS_ARCH%"=="x64" (
 )
 dir /B %IE_FILENAME% >nul 2>&1
 if errorlevel 1 (
-  echo Warning: File %IE_FILENAME% not found. 
+  echo Warning: File %IE_FILENAME% not found.
   echo %DATE% %TIME% - Warning: File %IE_FILENAME% not found >>%UPDATE_LOGFILE%
   goto SkipIEInst
 )
 if "%INSTALL_IE%"=="/instie9" (
   echo Checking Internet Explorer 9 prerequisites...
-  if exist "%TEMP%\InstalledUpdateIds.txt" del "%TEMP%\InstalledUpdateIds.txt"
   %CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
   if exist "%TEMP%\InstalledUpdateIds.txt" (
     %SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\InstalledUpdateIds.txt" ..\static\StaticUpdateIds-ie9-w60.txt >"%TEMP%\MissingUpdateIds.txt"
@@ -492,7 +491,7 @@ for /F %%i in ('dir /B %IE_FILENAME%') do (
   )
   if not errorlevel 1 set RECALL_REQUIRED=1
 )
-goto IEInstalled 
+goto IEInstalled
 
 :IEw61
 if /i "%OS_ARCH%"=="x64" (
@@ -502,7 +501,7 @@ if /i "%OS_ARCH%"=="x64" (
 )
 dir /B %IE_FILENAME% >nul 2>&1
 if errorlevel 1 (
-  echo Warning: File %IE_FILENAME% not found. 
+  echo Warning: File %IE_FILENAME% not found.
   echo %DATE% %TIME% - Warning: File %IE_FILENAME% not found >>%UPDATE_LOGFILE%
   goto SkipIEInst
 )
@@ -515,7 +514,7 @@ for /F %%i in ('dir /B %IE_FILENAME%') do (
   )
   if not errorlevel 1 set RECALL_REQUIRED=1
 )
-goto IEInstalled 
+goto IEInstalled
 
 :IEInstalled
 set IE_FILENAME=
@@ -630,7 +629,7 @@ if "%WMP_TARGET_ID%"=="" (
   echo Warning: Environment variable WMP_TARGET_ID not set.
   echo %DATE% %TIME% - Warning: Environment variable WMP_TARGET_ID not set >>%UPDATE_LOGFILE%
   goto SkipWMPInst
-) 
+)
 echo %WMP_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics
 if errorlevel 1 goto ListError
@@ -657,7 +656,7 @@ if "%TSC_TARGET_ID%"=="" (
   echo Warning: Environment variable TSC_TARGET_ID not set.
   echo %DATE% %TIME% - Warning: Environment variable TSC_TARGET_ID not set >>%UPDATE_LOGFILE%
   goto SkipTSCInst
-) 
+)
 echo %TSC_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics
 if errorlevel 1 goto ListError
@@ -686,7 +685,7 @@ if %DOTNET35_VER_BUILD% GEQ %DOTNET35_VER_TARGET_BUILD% goto SkipDotNet35Inst
 set DOTNET35_FILENAME=..\dotnet\dotnetfx35.exe
 set DOTNET35LP_FILENAME=..\dotnet\%OS_ARCH%-glb\dotnetfx35langpack_%OS_ARCH%%OS_LANG_SHORT%*.exe
 if not exist %DOTNET35_FILENAME% (
-  echo Warning: File %DOTNET35_FILENAME% not found. 
+  echo Warning: File %DOTNET35_FILENAME% not found.
   echo %DATE% %TIME% - Warning: File %DOTNET35_FILENAME% not found >>%UPDATE_LOGFILE%
   goto SkipDotNet35Inst
 )
@@ -695,7 +694,7 @@ call InstallOSUpdate.cmd %DOTNET35_FILENAME% %VERIFY_MODE% /ignoreerrors /qb /no
 if "%OS_LANG%" NEQ "enu" (
   dir /B %DOTNET35LP_FILENAME% >nul 2>&1
   if errorlevel 1 (
-    echo Warning: File %DOTNET35LP_FILENAME% not found. 
+    echo Warning: File %DOTNET35LP_FILENAME% not found.
     echo %DATE% %TIME% - Warning: File %DOTNET35LP_FILENAME% not found >>%UPDATE_LOGFILE%
   ) else (
     echo Installing .NET Framework 3.5 SP1 Language Pack...
@@ -727,7 +726,7 @@ if %DOTNET4_VER_REVIS% GEQ %DOTNET4_VER_TARGET_REVIS% goto SkipDotNet4Inst
 set DOTNET4_FILENAME=..\dotnet\dotNetFx40_Full_x86_x64.exe
 set DOTNET4LP_FILENAME=..\dotnet\dotNetFx40LP_Full_x86_x64%OS_LANG_SHORT%*.exe
 if not exist %DOTNET4_FILENAME% (
-  echo Warning: File %DOTNET4_FILENAME% not found. 
+  echo Warning: File %DOTNET4_FILENAME% not found.
   echo %DATE% %TIME% - Warning: File %DOTNET4_FILENAME% not found >>%UPDATE_LOGFILE%
   goto SkipDotNet4Inst
 )
@@ -736,7 +735,7 @@ call InstallOSUpdate.cmd %DOTNET4_FILENAME% %VERIFY_MODE% /errorsaswarnings /pas
 if "%OS_LANG%" NEQ "enu" (
   dir /B %DOTNET4LP_FILENAME% >nul 2>&1
   if errorlevel 1 (
-    echo Warning: File %DOTNET4LP_FILENAME% not found. 
+    echo Warning: File %DOTNET4LP_FILENAME% not found.
     echo %DATE% %TIME% - Warning: File %DOTNET4LP_FILENAME% not found >>%UPDATE_LOGFILE%
   ) else (
     echo Installing .NET Framework 4 Language Pack...
@@ -775,7 +774,7 @@ if "%PSH_TARGET_ID%"=="" (
   echo Warning: Environment variable PSH_TARGET_ID not set.
   echo %DATE% %TIME% - Warning: Environment variable PSH_TARGET_ID not set >>%UPDATE_LOGFILE%
   goto SkipPShInst
-) 
+)
 echo %PSH_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics
 if errorlevel 1 goto ListError
@@ -941,12 +940,12 @@ if "%OFC_CONV_PACK%" NEQ "1" (
     %SystemRoot%\system32\expand.exe "%TEMP%\ork\ORK.CAB" -F:OCONVPCK.EXE "%TEMP%" >nul
     call SafeRmDir.cmd "%TEMP%\ork"
     "%TEMP%\OCONVPCK.EXE" /T:"%TEMP%\OCONVPCK" /C /Q
-    del "%TEMP%\OCONVPCK.EXE" 
+    del "%TEMP%\OCONVPCK.EXE"
     call InstallOSUpdate.cmd "%TEMP%\OCONVPCK\ocp11.msi"
     call SafeRmDir.cmd "%TEMP%\OCONVPCK"
     echo %DATE% %TIME% - Info: Installed Office Converter Pack >>%UPDATE_LOGFILE%
   ) else (
-    echo Warning: File ..\ofc\glb\ork.exe not found. 
+    echo Warning: File ..\ofc\glb\ork.exe not found.
     echo %DATE% %TIME% - Warning: File ..\ofc\glb\ork.exe not found >>%UPDATE_LOGFILE%
   )
 )
@@ -957,7 +956,7 @@ if "%OFC_COMP_PACK%" NEQ "1" (
     ..\ofc\%OFC_LANG%\FileFormatConverters.exe /quiet /norestart
     echo %DATE% %TIME% - Info: Installed ..\ofc\%OFC_LANG%\FileFormatConverters.exe >>%UPDATE_LOGFILE%
   ) else (
-    echo Warning: File ..\ofc\%OFC_LANG%\FileFormatConverters.exe not found. 
+    echo Warning: File ..\ofc\%OFC_LANG%\FileFormatConverters.exe not found.
     echo %DATE% %TIME% - Warning: File ..\ofc\%OFC_LANG%\FileFormatConverters.exe not found >>%UPDATE_LOGFILE%
   )
 )
@@ -970,7 +969,7 @@ if "%OFC_FILE_VALID%" NEQ "1" (
     ..\ofc\glb\OFV.exe /quiet /norestart
     echo %DATE% %TIME% - Info: Installed ..\ofc\glb\OFV.exe >>%UPDATE_LOGFILE%
   ) else (
-    echo Warning: File ..\ofc\glb\OFV.exe not found. 
+    echo Warning: File ..\ofc\glb\OFV.exe not found.
     echo %DATE% %TIME% - Warning: File ..\ofc\glb\OFV.exe not found >>%UPDATE_LOGFILE%
   )
 )
@@ -1016,23 +1015,19 @@ if exist "%TEMP%\hash-wsusscn2.txt" del "%TEMP%\hash-wsusscn2.txt"
 :SkipVerifyWSUSScan
 echo %TIME% - Listing ids of missing updates (please be patient, this will take a while)...
 copy /Y ..\wsus\wsusscn2.cab "%TEMP%" >nul
-if exist "%TEMP%\MissingUpdateIds.txt" del "%TEMP%\MissingUpdateIds.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs ListMissingUpdateIds.vbs %LIST_MODE_IDS%
 if exist "%TEMP%\wsusscn2.cab" del "%TEMP%\wsusscn2.cab"
 echo %TIME% - Done.
+if not exist "%TEMP%\MissingUpdateIds.txt" set NO_MISSING_IDS=1
 
 rem *** List ids of installed updates ***
 if "%LIST_MODE_IDS%"=="/all" goto ListInstFiles
 if "%LIST_MODE_UPDATES%"=="/excludestatics" goto ListInstFiles
 echo Listing ids of installed updates...
-if exist "%TEMP%\InstalledUpdateIds.txt" del "%TEMP%\InstalledUpdateIds.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
 
 :ListInstFiles
 rem *** List update files ***
-if not exist "%TEMP%\MissingUpdateIds.txt" (
-  if "%REBOOT_REQUIRED%"=="1" (goto Installed) else (goto NoMissingIds)
-)
 echo Listing update files...
 call ListUpdatesToInstall.cmd %LIST_MODE_UPDATES%
 if errorlevel 1 goto ListError
@@ -1050,13 +1045,13 @@ set REBOOT_REQUIRED=1
 :Installed
 if "%RECALL_REQUIRED%"=="1" (
   if "%BOOT_MODE%"=="/autoreboot" (
-    if %OS_DOMAIN_ROLE% GEQ 4 (                 
+    if %OS_DOMAIN_ROLE% GEQ 4 (
       echo.
       echo Automatic recall is not supported on domain controllers.
       echo %DATE% %TIME% - Info: Automatic recall is not supported on domain controllers >>%UPDATE_LOGFILE%
       goto ManualRecall
     )
-    if not exist ..\bin\Autologon.exe (                 
+    if not exist ..\bin\Autologon.exe (
       echo.
       echo Warning: Utility ..\bin\Autologon.exe not found. Automatic recall is unavailable.
       echo %DATE% %TIME% - Warning: Utility ..\bin\Autologon.exe not found. Automatic recall is unavailable >>%UPDATE_LOGFILE%
@@ -1207,7 +1202,7 @@ goto Cleanup
 
 :NoWUAInst
 echo.
-echo ERROR: File %WUA_FILENAME% not found. 
+echo ERROR: File %WUA_FILENAME% not found.
 echo %DATE% %TIME% - Error: File %WUA_FILENAME% not found >>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
@@ -1228,7 +1223,7 @@ goto Cleanup
 
 :NoWSUSScan
 echo.
-echo ERROR: File ..\wsus\wsusscn2.cab not found. 
+echo ERROR: File ..\wsus\wsusscn2.cab not found.
 echo %DATE% %TIME% - Error: File ..\wsus\wsusscn2.cab not found >>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
@@ -1240,17 +1235,15 @@ echo %DATE% %TIME% - Error: File hash does not match stored value (file: ..\wsus
 echo.
 goto Cleanup
 
-:NoMissingIds
-echo.
-echo No missing update found. Nothing to do!
-echo %DATE% %TIME% - Info: No missing update found >>%UPDATE_LOGFILE%
-echo.
-goto Cleanup
-
 :NoUpdates
 echo.
-echo Any missing update was either black listed or not found.
-echo %DATE% %TIME% - Info: Any missing update was either black listed or not found >>%UPDATE_LOGFILE%
+if "%NO_MISSING_IDS%"=="1" (
+  echo No missing update found. Nothing to do!
+  echo %DATE% %TIME% - Info: No missing update found >>%UPDATE_LOGFILE%
+) else (
+  echo Any missing update was either black listed or not found.
+  echo %DATE% %TIME% - Info: Any missing update was either black listed or not found >>%UPDATE_LOGFILE%
+)
 echo.
 goto Cleanup
 

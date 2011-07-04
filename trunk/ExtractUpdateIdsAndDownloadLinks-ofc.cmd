@@ -9,7 +9,7 @@ if not exist "%TEMP%\wsusscn2.cab" (
   if exist "%TEMP%\wuredist.cab" del "%TEMP%\wuredist.cab"
   if exist "%TEMP%\WindowsUpdateAgent30-x64.exe" del "%TEMP%\WindowsUpdateAgent30-x64.exe"
   if exist "%TEMP%\WindowsUpdateAgent30-x86.exe" del "%TEMP%\WindowsUpdateAgent30-x86.exe"
-) 
+)
 if exist "%TEMP%\package.cab" del "%TEMP%\package.cab"
 if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
 %SystemRoot%\system32\expand.exe "%TEMP%\wsusscn2.cab" -F:package.cab "%TEMP%"
@@ -46,9 +46,9 @@ for /F "usebackq tokens=1,2 delims=;" %%i in ("%TEMP%\UpdateCategoriesAndFileIds
               echo %%l>>"%TEMP%\OfficeFileIds.txt"
             )
           )
-        ) 
-      ) 
-    ) 
+        )
+      )
+    )
   ) else (
     for /F "tokens=1 delims=," %%k in ("%%i") do (
       set UPDATE_ID=%%k
@@ -62,7 +62,7 @@ for /F "usebackq tokens=1,2 delims=;" %%i in ("%TEMP%\UpdateCategoriesAndFileIds
 set UPDATE_ID=
 set UPDATE_CATEGORY=
 set UPDATE_LANGUAGES=
-rem del "%TEMP%\UpdateCategoriesAndFileIds.txt"                         
+rem del "%TEMP%\UpdateCategoriesAndFileIds.txt"
 
 %SystemRoot%\system32\findstr.exe /B /G:"%TEMP%\OfficeFileIds.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
 rem del "%TEMP%\OfficeFileIds.txt"

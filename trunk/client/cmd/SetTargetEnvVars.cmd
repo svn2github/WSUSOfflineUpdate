@@ -70,9 +70,9 @@ set MSI_VER_TARGET_MINOR=5
 set MSI_TARGET_ID=942288
 set WSH_VER_TARGET_MAJOR=5
 set WSH_VER_TARGET_MINOR=7
-if /i "%1"=="/instie8" (set IE_VER_TARGET_MAJOR=8) else (  
-  if /i "%1"=="/instie7" (set IE_VER_TARGET_MAJOR=7) else (set IE_VER_TARGET_MAJOR=6)  
-)  
+if /i "%1"=="/instie8" (set IE_VER_TARGET_MAJOR=8) else (
+  if /i "%1"=="/instie7" (set IE_VER_TARGET_MAJOR=7) else (set IE_VER_TARGET_MAJOR=6)
+)
 set WMP_VER_TARGET_MAJOR=11
 set WMP_TARGET_ID=wmp11-windowsxp-x86
 set TSC_VER_TARGET_MAJOR=6
@@ -94,9 +94,9 @@ if /i "%OS_ARCH%"=="x64" (
 ) else (
   set WSH_VER_TARGET_MINOR=7
 )
-if /i "%1"=="/instie8" (set IE_VER_TARGET_MAJOR=8) else (  
-  if /i "%1"=="/instie7" (set IE_VER_TARGET_MAJOR=7) else (set IE_VER_TARGET_MAJOR=6)  
-)  
+if /i "%1"=="/instie8" (set IE_VER_TARGET_MAJOR=8) else (
+  if /i "%1"=="/instie7" (set IE_VER_TARGET_MAJOR=7) else (set IE_VER_TARGET_MAJOR=6)
+)
 set WMP_VER_TARGET_MAJOR=0
 if /i "%OS_ARCH%"=="x64" (
   set TSC_VER_TARGET_MAJOR=5
@@ -115,9 +115,9 @@ set MSI_VER_TARGET_MAJOR=4
 set MSI_VER_TARGET_MINOR=5
 set WSH_VER_TARGET_MAJOR=5
 set WSH_VER_TARGET_MINOR=7
-if /i "%1"=="/instie9" (set IE_VER_TARGET_MAJOR=9) else (  
-  if /i "%1"=="/instie8" (set IE_VER_TARGET_MAJOR=8) else (set IE_VER_TARGET_MAJOR=7)  
-)  
+if /i "%1"=="/instie9" (set IE_VER_TARGET_MAJOR=9) else (
+  if /i "%1"=="/instie8" (set IE_VER_TARGET_MAJOR=8) else (set IE_VER_TARGET_MAJOR=7)
+)
 set WMP_VER_TARGET_MAJOR=11
 if %OS_DOMAIN_ROLE% LEQ 1 (
   set TSC_VER_TARGET_MAJOR=6

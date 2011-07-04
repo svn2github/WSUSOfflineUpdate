@@ -9,7 +9,6 @@ Private Const strRegValDisplayName  = "DisplayName"
 Private Const strIdStartToken       = "("
 Private Const strIdKBToken          = "KB"
 Private Const strIdEndToken         = ")"
-Private Const lenStrId              = 6
 
 Dim wshShell, objFileSystem, objWMIService, objQuickFix, objIDFile, arraySubKeys
 Dim strTempFolder, strIdFileName, strId, strSubKey, posStartToken, posEndToken
@@ -26,7 +25,9 @@ Set objWMIService = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\
 For Each objQuickFix in objWMIService.ExecQuery("Select * from Win32_QuickFixEngineering")
   posStartToken = InStr(1, objQuickFix.HotFixID, strIdKBToken, vbTextCompare)
   If posStartToken > 0 Then
-    objIDFile.WriteLine(Mid(objQuickFix.HotFixID, posStartToken + Len(strIdKBToken), lenStrId)) 
+    objIDFile.WriteLine(Right(objQuickFix.HotFixID, Len(objQuickFix.HotFixID) - (posStartToken + Len(strIdKBToken) - 1)))
+  Else
+    objIDFile.WriteLine(objQuickFix.HotFixID)
   End If
 Next
 
@@ -36,13 +37,13 @@ objWMIService.EnumKey HKEY_LOCAL_MACHINE, strRegKeyUninstall, arraySubKeys
 For Each strSubKey In arraySubKeys
 	objWMIService.GetStringValue HKEY_LOCAL_MACHINE, strRegKeyUninstall & "\" & strSubKey, strRegValDisplayName, strId
   If IsNull(strId) Or (strId = "") Then
-    strId = strSubKey 
+    strId = strSubKey
   End If
   posStartToken = InStr(1, strId, strIdStartToken & strIdKBToken, vbTextCompare)
   If posStartToken > 0 Then
     posEndToken = InStr(posStartToken, strId, strIdEndToken, vbTextCompare)
     If posEndToken > 0 Then
-      objIDFile.WriteLine(Mid(strId, posStartToken + Len(strIdStartToken & strIdKBToken), lenStrId)) 
+      objIDFile.WriteLine(Mid(strId, posStartToken + Len(strIdStartToken & strIdKBToken), posEndToken - (posStartToken + Len(strIdStartToken & strIdKBToken))))
     End If
   End If
 Next
@@ -51,6 +52,6 @@ objIDFile.Close
 ' Delete id file if it does not contain valid data
 Set objIDFile = objFileSystem.GetFile(strIdFileName)
 If objIDFile.Size <= 2 Then
-  objIDFile.Delete 
+  objIDFile.Delete
 End If
 WScript.Quit(0)

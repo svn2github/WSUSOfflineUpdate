@@ -12,8 +12,8 @@ if errorlevel 1 goto NoTempDir
 popd
 if not exist "%ProgramFiles%\7-Zip\7z.exe" goto No7Zip
 
-if exist "%TEMP%\wsusoffline" rd /S /Q "%TEMP%\wsusoffline" 
-md "%TEMP%\wsusoffline" 
+if exist "%TEMP%\wsusoffline" rd /S /Q "%TEMP%\wsusoffline"
+md "%TEMP%\wsusoffline"
 call PrepareReleaseTree.cmd "%TEMP%\wsusoffline"
 pushd "%TEMP%"
 if exist wsusoffline%1.zip del wsusoffline%1.zip
@@ -27,7 +27,7 @@ echo Creating message digest file "%TEMP%\wsusoffline%1_hashes.txt"...
 %SystemRoot%\system32\findstr.exe /C:## /V wsusoffline%1.mds >wsusoffline%1_hashes.txt
 del wsusoffline%1.mds
 popd
-rd /S /Q "%TEMP%\wsusoffline" 
+rd /S /Q "%TEMP%\wsusoffline"
 goto EoF
 
 :NoExtensions

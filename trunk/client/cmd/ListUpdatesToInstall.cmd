@@ -26,7 +26,7 @@ if exist %1 (
   if exist "%TEMP%\InstalledUpdateIds.txt" (
     %SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\InstalledUpdateIds.txt" %1 >>"%TEMP%\MissingUpdateIds.txt"
   ) else (
-    for /F %%i in (%1) do echo %%i>>"%TEMP%\MissingUpdateIds.txt" 
+    for /F %%i in (%1) do echo %%i>>"%TEMP%\MissingUpdateIds.txt"
   )
 )
 goto :eof
@@ -40,9 +40,9 @@ if exist ..\static\StaticUpdateIds-%OFC_NAME%.txt call :EvalStatics ..\static\St
 if exist ..\static\custom\StaticUpdateIds-%OFC_NAME%.txt call :EvalStatics ..\static\custom\StaticUpdateIds-%OFC_NAME%.txt
 
 :ExcludeStatics
-if exist "%TEMP%\InstalledUpdateIds.txt" del "%TEMP%\InstalledUpdateIds.txt"
 rem *** List update files ***
-if not exist "%TEMP%\MissingUpdateIds.txt" goto NoMissingUpdateIds
+if exist "%TEMP%\InstalledUpdateIds.txt" del "%TEMP%\InstalledUpdateIds.txt"
+if not exist "%TEMP%\MissingUpdateIds.txt" goto EoF
 if exist "%TEMP%\UpdatesToInstall.txt" del "%TEMP%\UpdatesToInstall.txt"
 if exist ..\exclude\ExcludeList.txt copy /Y ..\exclude\ExcludeList.txt "%TEMP%\ExcludeList.txt" >nul
 if exist ..\exclude\custom\ExcludeList.txt (
@@ -92,7 +92,7 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
     ) else (
       echo Warning: Update KB%%i not found.
       echo %DATE% %TIME% - Warning: Update KB%%i not found >>%UPDATE_LOGFILE%
-    )        
+    )
   ) else (
     echo Info: Skipping update KB%%i due to matching black list entry.
     echo %DATE% %TIME% - Info: Skipped update KB%%i due to matching black list entry >>%UPDATE_LOGFILE%
@@ -129,11 +129,6 @@ goto Error
 :NoOSArch
 echo ERROR: Environment variable OS_ARCH not set.
 echo %DATE% %TIME% - Error: Environment variable OS_ARCH not set >>%UPDATE_LOGFILE%
-goto Error
-
-:NoMissingUpdateIds
-echo ERROR: File "%TEMP%\MissingUpdateIds.txt" not found.
-echo %DATE% %TIME% - Error: File "%TEMP%\MissingUpdateIds.txt" not found >>%UPDATE_LOGFILE%
 goto Error
 
 :Error

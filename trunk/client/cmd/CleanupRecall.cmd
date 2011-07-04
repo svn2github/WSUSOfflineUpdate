@@ -37,12 +37,12 @@ if exist %SystemRoot%\wsusbak-system-policies.reg (
     echo %DATE% %TIME% - Info: Restored System policies registry hive >>%UPDATE_LOGFILE%
   )
 ) else (
-  %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v ConsentPromptBehaviorAdmin /t REG_DWORD /d 2 /f >nul 2>&1 
-  %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v EnableLUA /t REG_DWORD /d 1 /f >nul 2>&1 
+  %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v ConsentPromptBehaviorAdmin /t REG_DWORD /d 2 /f >nul 2>&1
+  %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v EnableLUA /t REG_DWORD /d 1 /f >nul 2>&1
 )
 
 echo Unregistering recall...
-%REG_PATH% DELETE "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v WSUSOfflineUpdate /f >nul 2>&1 
+%REG_PATH% DELETE "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v WSUSOfflineUpdate /f >nul 2>&1
 if errorlevel 1 (
   echo Warning: Deregistration of recall failed.
   echo %DATE% %TIME% - Warning: Deregistration of recall failed >>%UPDATE_LOGFILE%
@@ -51,7 +51,7 @@ if errorlevel 1 (
 )
 
 echo Disabling autologon...
-%REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v AutoAdminLogon /t REG_SZ /d "0" /f >nul 2>&1 
+%REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v AutoAdminLogon /t REG_SZ /d "0" /f >nul 2>&1
 if errorlevel 1 (
   echo Warning: Disabling of autologon failed.
   echo %DATE% %TIME% - Warning: Disabling of autologon failed >>%UPDATE_LOGFILE%
@@ -70,8 +70,8 @@ if "%USERNAME%"=="WOUTempAdmin" (
     ) else (
       echo %DATE% %TIME% - Info: Deleted registry reference to WOUTempAdmin profile >>%UPDATE_LOGFILE%
     )
-  )    
-  %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v DeleteWOUTempAdminProfile /t REG_SZ /d "cmd /c rd /S /Q \"%USERPROFILE%\"" >nul 2>&1 
+  )
+  %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v DeleteWOUTempAdminProfile /t REG_SZ /d "cmd /c rd /S /Q \"%USERPROFILE%\"" >nul 2>&1
   echo %DATE% %TIME% - Info: Registered deletion of WOUTempAdmin profile >>%UPDATE_LOGFILE%
 ) else (
   echo %DATE% %TIME% - Warning: WOUTempAdmin is not logged on - skipped registration of profile deletion >>%UPDATE_LOGFILE%

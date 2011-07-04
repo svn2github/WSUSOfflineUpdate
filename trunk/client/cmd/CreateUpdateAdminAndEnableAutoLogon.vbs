@@ -33,7 +33,7 @@ Dim objWMIService, objWOUTempAdmin, objGroup, objItem, strResult
   ' Clear objects memory
   Set objWOUTempAdmin = Nothing
   Set objWMIService = Nothing
-  CreateUpdateAdmin = strResult   
+  CreateUpdateAdmin = strResult
   On Error GoTo 0 'Turn error reporting on
 End Function
 
@@ -57,12 +57,12 @@ For Each objUser In objComputer
   If LCase(objUser.Name) = LCase(strWOUTempAdminName) Then
     found = true
     Exit For
-  End If    
+  End If
 Next
 If found Then
   WScript.Echo("ERROR: User account '" & strWOUTempAdminName & "' already exists.")
   WScript.Quit(1)
 End If
 strPassword = CreateUpdateAdmin(objComputer)
-EnableAutoLogonAndDisableUAC wshShell, strWOUTempAdminName, strComputerName, strPassword   
+EnableAutoLogonAndDisableUAC wshShell, strWOUTempAdminName, strComputerName, strPassword
 WScript.Quit(0)

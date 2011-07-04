@@ -23,7 +23,7 @@ Dim strBase, strChecksum, posUnderline
   If posUnderline > 0 Then
     strChecksum = Right(strBase, Len(strBase) - posUnderline)
     If Len(strChecksum) >= 31 Then
-      WSUSFileURL = strWSUS & UCase(Right(strChecksum, 2)) & "/" & UCase(strChecksum) & "." & objFS.GetExtensionName(strURL)  
+      WSUSFileURL = strWSUS & UCase(Right(strChecksum, 2)) & "/" & UCase(strChecksum) & "." & objFS.GetExtensionName(strURL)
     End If
   End If
 End Function

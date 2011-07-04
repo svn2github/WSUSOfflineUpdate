@@ -126,9 +126,9 @@ Dim $wxp_heb, $w2k3_heb, $oxp_heb, $o2k3_heb, $o2k7_heb, $o2k10_heb ; Hebrew
 Dim $wxp_dan, $w2k3_dan, $oxp_dan, $o2k3_dan, $o2k7_dan, $o2k10_dan ; Danish
 Dim $wxp_nor, $w2k3_nor, $oxp_nor, $o2k3_nor, $o2k7_nor, $o2k10_nor ; Norwegian
 Dim $wxp_fin, $w2k3_fin, $oxp_fin, $o2k3_fin, $o2k7_fin, $o2k10_fin ; Finnish
-Dim $w60_glb, $w60_x64_glb                              ; Windows Vista / Windows Server 2008 (global)  
-Dim $w61_glb, $w61_x64_glb                              ; Windows 7 / Windows Server 2008 R2 (global)  
-Dim $ofc_glb                                            ; Office (global)  
+Dim $w60_glb, $w60_x64_glb                              ; Windows Vista / Windows Server 2008 (global)
+Dim $w61_glb, $w61_x64_glb                              ; Windows 7 / Windows Server 2008 R2 (global)
+Dim $ofc_glb                                            ; Office (global)
 
 Dim $dlgheight, $groupwidth, $groupheight, $txtwidth, $txtheight, $slimheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
 
@@ -560,7 +560,7 @@ Func EnableGUI()
   If NOT IsOlderOfficeChecked() Then
     GUICtrlSetState($ofc_glb, $GUI_ENABLE)
   EndIf
-  
+
   If NOT IsCheckBoxChecked($skipdownload) Then
     GUICtrlSetState($cleanupdownloads, $GUI_ENABLE)
     GUICtrlSetState($verifydownloads, $GUI_ENABLE)
@@ -592,7 +592,7 @@ EndFunc
 
 Func DetermineDownloadSwitches($chkbox_includesp, $chkbox_dotnet, $chkbox_msse, $chkbox_wddefs, $chkbox_cleanupdownloads, $chkbox_verifydownloads, $chkbox_cdiso, $chkbox_dvdiso, $str_proxy, $str_wsus)
 Dim $result = ""
-  
+
   If NOT IsCheckBoxChecked($chkbox_includesp) Then
     $result = $result & " /excludesp"
   EndIf
@@ -703,7 +703,7 @@ EndFunc
 
 Func RunDownloadScript($stroptions, $strswitches)
 Dim $result
-  
+
   If ShowGUIInGerman() Then
     WinSetTitle($maindlg, $maindlg, $caption & " - Lade Updates für " & $stroptions & "...")
   Else
@@ -806,7 +806,7 @@ EndFunc
 Func RunScripts($stroptions, $skipdl, $strdownloadswitches, $runiso, $strisoswitches, $runusb, $strusbpath)
 Dim $result
 
-  If $skipdl Then 
+  If $skipdl Then
     $result = 0
   Else
     $result = RunDownloadScript($stroptions, $strdownloadswitches)
@@ -1015,13 +1015,13 @@ Func SaveSettings()
   IniWrite($inifilename, $ini_section_opts, $opts_token_wddefs, CheckBoxStateToString($wddefs))
   IniWrite($inifilename, $ini_section_misc, $misc_token_proxy, $proxy)
   IniWrite($inifilename, $ini_section_misc, $misc_token_wsus, $wsus)
-  
+
   Return 0
 EndFunc
 
 Func CalcGUISize()
   Dim $reg_val
-  
+
   $reg_val = RegRead($reg_key_windowmetrics, $reg_val_applieddpi)
   If ($reg_val = "") Then
     $reg_val = RegRead($reg_key_fontdpi, $reg_val_logpixels)
@@ -1036,9 +1036,9 @@ Func CalcGUISize()
     $txtwidth = 80 * $reg_val / $default_logpixels
   EndIf
   $txtheight = 20 * $reg_val / $default_logpixels
-  $slimheight = 15 * $reg_val / $default_logpixels 
+  $slimheight = 15 * $reg_val / $default_logpixels
   $btnwidth = 80 * $reg_val / $default_logpixels
-  $btnheight = 30 * $reg_val / $default_logpixels  
+  $btnheight = 30 * $reg_val / $default_logpixels
   $txtxoffset = 10 * $reg_val / $default_logpixels
   $txtyoffset = 10 * $reg_val / $default_logpixels
   Return 0
@@ -1050,7 +1050,7 @@ AutoItSetOption("TrayAutoPause", 0)
 AutoItSetOption("TrayIconHide", 1)
 CalcGUISize()
 $groupwidth = 8 * $txtwidth + 2 * $txtxoffset
-$groupheight = 4 * $txtheight 
+$groupheight = 4 * $txtheight
 $maindlg = GUICreate($title, $groupwidth + 4 * $txtxoffset, $dlgheight)
 GUISetFont(8.5, 400, 0, "Sans Serif")
 $inifilename = StringLeft(@ScriptFullPath, StringInStr(@ScriptFullPath, ".", 0, -1)) & "ini"
@@ -2221,10 +2221,10 @@ Else
 EndIf
 If IsOlderOfficeChecked() Then
   GUICtrlSetState($ofc_glb, $GUI_CHECKED + $GUI_DISABLE)
-Else      
+Else
   If IniRead($inifilename, $ini_section_ofc, $lang_token_glb, $disabled) = $enabled Then
     GUICtrlSetState(-1, $GUI_CHECKED)
-  Else      
+  Else
     GUICtrlSetState(-1, $GUI_UNCHECKED)
   EndIf
 EndIf
@@ -2708,7 +2708,7 @@ While 1
          $oxp_heb, $o2k3_heb, $o2k7_heb, $o2k10_heb, $oxp_dan, $o2k3_dan, $o2k7_dan, $o2k10_dan, $oxp_nor, $o2k3_nor, $o2k7_nor, $o2k10_nor, $oxp_fin, $o2k3_fin, $o2k7_fin, $o2k10_fin
       If IsOlderOfficeChecked() Then
         GUICtrlSetState($ofc_glb, $GUI_CHECKED + $GUI_DISABLE)
-      Else      
+      Else
         GUICtrlSetState($ofc_glb, $GUI_ENABLE)
       EndIf
 
@@ -2763,7 +2763,7 @@ While 1
 
     Case $usbfsf            ; FSF button pressed
       If ShowGUIInGerman() Then
-        $dummy = FileSelectFolder("Wählen Sie das Zielverzeichnis:", "", 1, GUICtrlRead($usbpath)) 
+        $dummy = FileSelectFolder("Wählen Sie das Zielverzeichnis:", "", 1, GUICtrlRead($usbpath))
       Else
         $dummy = FileSelectFolder("Choose target directory:", "", 1, GUICtrlRead($usbpath))
       EndIf
@@ -2836,7 +2836,7 @@ While 1
       If @error = 0 Then
         $wsus = $dummy
       EndIf
-      
+
     Case $btn_donate        ; Donate button pressed
       RunDonationSite()
 
@@ -3920,14 +3920,14 @@ While 1
 
 ;  Restore window and show success dialog
       WinSetState($maindlg, $maindlg, @SW_RESTORE)
-      If IsCheckBoxChecked($skipdownload) Then 
+      If IsCheckBoxChecked($skipdownload) Then
         If ShowGUIInGerman() Then
           MsgBox(0x2040, "Info", "Image-Erstellung / Kopieren erfolgreich.")
         Else
           MsgBox(0x2040, "Info", "Image creation / copying successful.")
         EndIf
       Else
-        If IsCheckBoxChecked($shutdown) Then 
+        If IsCheckBoxChecked($shutdown) Then
           Run(@SystemDir & "\shutdown.exe /s /f /t 5", @SystemDir, @SW_HIDE)
           ExitLoop
         EndIf

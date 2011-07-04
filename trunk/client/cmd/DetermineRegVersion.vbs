@@ -33,9 +33,9 @@ Dim arraySuffixes, arrayVersion, i
   End If
   For i = 0 To UBound(arraySuffixes)
     If i > UBound(arrayVersion) Then
-      cmdFile.WriteLine("set " & prefix & "_" & arraySuffixes(i) & "=0")         
+      cmdFile.WriteLine("set " & prefix & "_" & arraySuffixes(i) & "=0")
     Else
-      cmdFile.WriteLine("set " & prefix & "_" & arraySuffixes(i) & "=" & arrayVersion(i))         
+      cmdFile.WriteLine("set " & prefix & "_" & arraySuffixes(i) & "=" & arrayVersion(i))
     End If
   Next
 End Sub
