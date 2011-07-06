@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.9+ (r271)
+set WSUSOFFLINE_VERSION=6.9+ (r272)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -760,7 +760,7 @@ if "%VERIFY_DOWNLOADS%"=="1" (
     echo Warning: Deleted unsigned file %%i.
     echo %DATE% %TIME% - Warning: Deleted unsigned file %%i >>%DOWNLOAD_LOGFILE%
   )
-  if exist "%TEMP%\sigcheck-wddefs.txt-%TARGET_ARCH%-glb" del "%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt"
+  if exist "%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt" del "%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt"
   echo %DATE% %TIME% - Info: Verified digital file signatures for Windows Defender definition files >>%DOWNLOAD_LOGFILE%
   if not exist ..\client\bin\hashdeep.exe goto NoHashDeep
   echo Creating integrity database for Windows Defender definition files...

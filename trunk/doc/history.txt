@@ -570,3 +570,4 @@ Version 6.9 -- 01.07.11
 Version ?.? -- ??.??.11
 - User's SID will only be determined if WOUTempAdmin is logged on (Thanks to "Adorno")
 - Fix: Temporary file "%TEMP%\InstalledUpdateIds.txt" remained after update run without any missing update (Thanks to "Denniss")
+- Fix: Temporary files "%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt" remained after download of Windows Defender definition files (Thanks to "boco")
