@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.9+ (r273)
+set WSUSOFFLINE_VERSION=6.9+ (r274)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log
 title %~n0 %*
@@ -145,9 +145,6 @@ rem echo Found Microsoft .NET Framework 4 version: %DOTNET4_VER_MAJOR%.%DOTNET4_
 rem echo Found Microsoft Security Essentials definitions version: %MSSEDEFS_VER_MAJOR%.%MSSEDEFS_VER_MINOR%.%MSSEDEFS_VER_REVIS%.%MSSEDEFS_VER_BUILD%
 rem echo Found Windows Defender definitions version: %WDDEFS_VER_MAJOR%.%WDDEFS_VER_MINOR%.%WDDEFS_VER_REVIS%.%WDDEFS_VER_BUILD%
 rem echo Found Windows PowerShell version: %PSH_VER_MAJOR%.%PSH_VER_MINOR%
-if "%OXP_VER_MAJOR%" NEQ "" (
-  echo Found Microsoft Office XP %OXP_VER_APP% version: %OXP_VER_MAJOR%.%OXP_VER_MINOR%.%OXP_VER_REVIS%.%OXP_VER_BUILD% ^(oxp %OXP_LANG% sp%OXP_SP_VER%^)
-)
 if "%O2K3_VER_MAJOR%" NEQ "" (
   echo Found Microsoft Office 2003 %O2K3_VER_APP% version: %O2K3_VER_MAJOR%.%O2K3_VER_MINOR%.%O2K3_VER_REVIS%.%O2K3_VER_BUILD% ^(o2k3 %O2K3_LANG% sp%O2K3_SP_VER%^)
 )
@@ -173,9 +170,6 @@ echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 4 version %DOTNET4_VER
 echo %DATE% %TIME% - Info: Found Microsoft Security Essentials definitions version %MSSEDEFS_VER_MAJOR%.%MSSEDEFS_VER_MINOR%.%MSSEDEFS_VER_REVIS%.%MSSEDEFS_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows Defender definitions version %WDDEFS_VER_MAJOR%.%WDDEFS_VER_MINOR%.%WDDEFS_VER_REVIS%.%WDDEFS_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows PowerShell version %PSH_VER_MAJOR%.%PSH_VER_MINOR% >>%UPDATE_LOGFILE%
-if "%OXP_VER_MAJOR%" NEQ "" (
-  echo %DATE% %TIME% - Info: Found Microsoft Office XP %OXP_VER_APP% version %OXP_VER_MAJOR%.%OXP_VER_MINOR%.%OXP_VER_REVIS%.%OXP_VER_BUILD% ^(oxp %OXP_LANG% sp%OXP_SP_VER%^) >>%UPDATE_LOGFILE%
-)
 if "%O2K3_VER_MAJOR%" NEQ "" (
   echo %DATE% %TIME% - Info: Found Microsoft Office 2003 %O2K3_VER_APP% version %O2K3_VER_MAJOR%.%O2K3_VER_MINOR%.%O2K3_VER_REVIS%.%O2K3_VER_BUILD% ^(o2k3 %O2K3_LANG% sp%O2K3_SP_VER%^) >>%UPDATE_LOGFILE%
 )
@@ -900,9 +894,6 @@ if not exist ..\%OFC_NAME%\%OFC_LANG%\nul (
 rem *** Check Office Service Pack versions ***
 echo Checking Office Service Pack versions...
 if exist "%TEMP%\MissingUpdateIds.txt" del "%TEMP%\MissingUpdateIds.txt"
-if "%OXP_VER_MAJOR%"=="" goto SkipSPoxp
-if %OXP_SP_VER% LSS %OXP_SP_VER_TARGET% echo %OXP_SP_TARGET_ID% >>"%TEMP%\MissingUpdateIds.txt"
-:SkipSPoxp
 if "%O2K3_VER_MAJOR%"=="" goto SkipSPo2k3
 if %O2K3_SP_VER% LSS %O2K3_SP_VER_TARGET% echo %O2K3_SP_TARGET_ID% >>"%TEMP%\MissingUpdateIds.txt"
 :SkipSPo2k3
@@ -930,7 +921,6 @@ rem *** Check installation state of Office File Converter/Validation Packs ***
 if "%INSTALL_CONVERTERS%" NEQ "/instofccnvs" goto CheckAUService
 goto CNV%OFC_NAME%
 
-:CNVoxp
 :CNVo2k3
 echo Checking installation state of Office File Converter/Validation Packs...
 if "%OFC_CONV_PACK%" NEQ "1" (
@@ -960,7 +950,6 @@ if "%OFC_COMP_PACK%" NEQ "1" (
     echo %DATE% %TIME% - Warning: File ..\ofc\%OFC_LANG%\FileFormatConverters.exe not found >>%UPDATE_LOGFILE%
   )
 )
-if "%OFC_NAME%"=="oxp" goto CheckAUService
 :CNVo2k7
 if "%OFC_FILE_VALID%" NEQ "1" (
   if exist ..\ofc\glb\OFV.exe (

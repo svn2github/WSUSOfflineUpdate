@@ -155,13 +155,6 @@ set TSC_VER_TARGET_MINOR=1
 goto SetOfficeName
 
 :SetOfficeName
-if "%OXP_VER_MAJOR%"=="" goto NoOxp
-rem *** Office XP ***
-set OFC_NAME=oxp
-set OFC_LANG=%OXP_LANG%
-set OXP_SP_VER_TARGET=3
-set OXP_SP_TARGET_ID=832671
-:NoOxp
 if "%O2K3_VER_MAJOR%"=="" goto NoO2k3
 rem *** Office 2003 ***
 set OFC_NAME=o2k3
