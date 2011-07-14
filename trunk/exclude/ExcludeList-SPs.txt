@@ -1,4 +1,3 @@
-OfficeXpSp
 2003SP
 2007sp
 2010sp
