@@ -2159,7 +2159,7 @@ EndIf
 ;  Office group
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
-GUICtrlCreateGroup("Office Updates XP - 2010", $txtxpos, $txtypos, $groupwidth, $groupheight - 2 * $txtheight)
+GUICtrlCreateGroup("Office Updates 2003 - 2010", $txtxpos, $txtypos, $groupwidth, $groupheight - 2 * $txtheight)
 ;  Office global
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
