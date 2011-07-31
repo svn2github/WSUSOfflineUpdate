@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update ISO maker            ###
 ###                  for Linux systems                 ###
-###                    v. 6.9+ (r278)                  ###
+###                    v. 6.9+ (r279)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg      ###
@@ -22,7 +22,7 @@ Invalid or missing parameter: "$@"
 Usage: `basename $0` [system] [language] [parameter]
 
 Supported systems:
-wxp, w2k3, w2k3-x64, w60, w60-x64, w61, w61-x64, all-x64, all-x86
+wxp, w2k3, w2k3-x64, w60, w60-x64, w61, w61-x64, o2k3, o2k7, ofc, all-x64, all-x86
 
 Supported languages:
 enu, deu, nld, esn, fra, ptg, ptb, ita, rus, plk, ell, csy
@@ -47,7 +47,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update ISO maker            ***
 ***                  for Linux systems                 ***
-***                    v. 6.9+ (r278)                  ***
+***                    v. 6.9+ (r279)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Stefan Joehnke, Walter Schiessberg      ***
@@ -88,7 +88,7 @@ fi
 
 evaluateparams()
 {
-syslist=("wxp" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "all-x64" "all-x86")
+syslist=("wxp" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "o2k3" "o2k7" "ofc" "all-x64" "all-x86")
 langlist=("enu" "deu" "nld" "esn" "fra" "ptg" "ptb" "ita" "rus" "plk" "ell" "csy" "dan" "nor" "sve" "fin" "jpn" "kor" "chs" "cht" "hun" "trk" "ara" "heb")
 paramlist=("/excludesp" "/dotnet" "/msse" "/wddefs")
 EXCLUDE_SP="0"
@@ -115,6 +115,11 @@ if [ "$sys" == "w60" -o "$sys" == "w60-x64" -o "$sys" == "w61" -o "$sys" == "w61
 	lang="glb"
 fi
 
+sys_old=""
+if [ "$sys" == "o2k3" -o "$sys"=="o2k7" ]; then
+	sys_old=$sys
+  sys="ofc"
+fi
 if [ "$sys" == "" -o "$lang" == "" ]; then
  	printusage
 fi
@@ -145,15 +150,25 @@ echo "Creating ISO filter..."
 
 excludeiso1="../exclude/ExcludeListISO-${sys}.txt"
 excludeiso2="../exclude/ExcludeListISO-${sys}-x86.txt"
+if [ "$sys"=="ofc" ]; then
+  excludeiso3="../exclude/ExcludeListISO-${sys_old}.txt"
+  excludeiso4="../exclude/ExcludeListISO-${sys_old}-x86.txt"  
+  if [ -f "$excludeiso3" ]; then
+    tr -d '\r' < ../exclude/ExcludeListISO-${sys_old}.txt > ../temp/ExcludeListISO-${sys}.txt
+  fi
+  if [ -f "$excludeiso4" ]; then
+    tr -d '\r' < ../exclude/ExcludeListISO-${sys_old}-x86.txt > ../temp/ExcludeListISO-${sys}.txt
+  fi  
+fi
 
 echo "Writing builddate.txt..."
 date +%d.%m.%Y > ../client/builddate.txt
 
 if [ -f "$excludeiso1" ]; then
-  tr -d '\r' < ../exclude/ExcludeListISO-${sys}.txt > ../temp/ExcludeListISO-${sys}.txt
+  tr -d '\r' < ../exclude/ExcludeListISO-${sys}.txt >> ../temp/ExcludeListISO-${sys}.txt
 fi
 if [ -f "$excludeiso2" ]; then
-  tr -d '\r' < ../exclude/ExcludeListISO-${sys}-x86.txt > ../temp/ExcludeListISO-${sys}.txt
+  tr -d '\r' < ../exclude/ExcludeListISO-${sys}-x86.txt >> ../temp/ExcludeListISO-${sys}.txt
 fi
 if [ "$EXCLUDE_SP" == "1" ]; then
 	cat ../exclude/ExcludeList-SPs.txt | while read line; do echo \*${line}\* >> ../temp/ExcludeListISO-${sys}.txt; done;

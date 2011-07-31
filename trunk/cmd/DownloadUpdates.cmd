@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.9+ (r278)
+set WSUSOFFLINE_VERSION=6.9+ (r279)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -135,7 +135,7 @@ goto EvalParams
 
 :EvalParams
 if "%3"=="" goto NoMoreParams
-for %%i in (/excludesp /excludestatics /includedotnet /includemsse /includewddefs /nocleanup /verify /exitonerror /skipmkisofs /skiptz /proxy /wsus /wsusbyproxy) do (
+for %%i in (/excludesp /excludestatics /includedotnet /includemsse /includewddefs /nocleanup /verify /exitonerror /skipmkisofs /skiptz /proxy /wsus /wsusonly /wsusbyproxy) do (
   if /i "%3"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected >>%DOWNLOAD_LOGFILE%
 )
 if /i "%3"=="/excludesp" set EXCLUDE_SP=1
@@ -156,6 +156,7 @@ if /i "%3"=="/wsus" (
   set WSUS_URL=%4
   shift /3
 )
+if /i "%3"=="/wsusonly" set WSUS_ONLY=1
 if /i "%3"=="/wsusbyproxy" set WSUS_BY_PROXY=1
 shift /3
 goto EvalParams
@@ -1145,10 +1146,15 @@ if "%WSUS_URL%"=="" (
             ren ..\client\%1\%2\%%~nxl %%k
             echo %DATE% %TIME% - Info: Renamed file ..\client\%1\%2\%%~nxl to %%k >>%DOWNLOAD_LOGFILE%
           )
-          %WGET_PATH% -nv -N -P ..\client\%1\%2 -a %DOWNLOAD_LOGFILE% %%m
-          if errorlevel 1 (
-            echo Warning: Download of %%m failed.
-            echo %DATE% %TIME% - Warning: Download of %%m failed >>%DOWNLOAD_LOGFILE%
+          if "%WSUS_ONLY%"=="1" (
+            echo Warning: Download of %%l ^(%%k^) failed.
+            echo %DATE% %TIME% - Warning: Download of %%l ^(%%k^) failed >>%DOWNLOAD_LOGFILE%
+          ) else (
+            %WGET_PATH% -nv -N -P ..\client\%1\%2 -a %DOWNLOAD_LOGFILE% %%m
+            if errorlevel 1 (
+              echo Warning: Download of %%m failed.
+              echo %DATE% %TIME% - Warning: Download of %%m failed >>%DOWNLOAD_LOGFILE%
+            )
           )
         ) else (
           if exist ..\client\%1\%2\%%~nxl (
@@ -1273,8 +1279,8 @@ exit /b 1
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %*
-echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| o2k3 ^| o2k7 ^| o2k10} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusbyproxy]
-echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| ofc} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusbyproxy]
+echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| o2k3 ^| o2k7 ^| o2k10} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
+echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| ofc} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
 echo %DATE% %TIME% - Error: Invalid parameter: %* >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error

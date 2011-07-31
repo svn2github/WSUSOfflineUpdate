@@ -282,7 +282,7 @@ Version 6.1 -- 30.07.09
 Version 6.2 -- 23.10.09
 - Support added for Microsoft Windows 7 and Server 2008 R2
 - Office updates up to 10/2009 integrated by static definitions (Thanks to "Denniss")
-- WSUS Offline Update will now check for new versions of itself when starting download
+- UpdateGenerator script will now check for new versions of itself before starting download
 - Installation of IE7 remade optional
 - Automatic shutdown after updating option added (Thanks to "gw_1966")
 - UpdateGenerator and UpdateInstaller dialogs will now be scaled dependent on system's font size (dpi) setting (Thanks to Thomas Baisch)
@@ -303,7 +303,7 @@ Version 6.2 -- 23.10.09
 Version 6.3 -- 13.11.09
 - Support removed for Office 2000 since Microsoft discontinued support for it on July 14th, 2009 (see http://support.microsoft.com/lifecycle/?p1=2484)
 - Office updates up to 11/2009 integrated by static definitions
-- WSUS Offline Update will now fake SP1 on Windows XP SP0 target systems (Thanks to "Ralph")
+- DoUpdate.cmd script will now fake SP1 on Windows XP SP0 target systems (Thanks to "Ralph")
 - CopyToTarget.cmd script will now only copy newer files (Thanks to "Georg")
 - Installation part won't any longer evaluate the "Office Update Inventory Tool Catalog" (invcif.exe) since Microsoft discontinued support for it on August 1st, 2009 (see http://office.microsoft.com/OfficeUpdate/catalog/inventory/InventoryCatalog.html)
 - Fix: UpdateGenerator and UpdateInstaller dialog scaling could lead to zero size dialog dimensions (Thanks to "MG8371")
@@ -568,8 +568,10 @@ Version 6.9 -- 01.07.11
 - Fix: "Clean up download directories" functionality could lead to "file not found" error messages (Thanks to "rednaxela")
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.11
+- Linux download and ISO creation scripts now support Office again and exclusion of superseded updates (Thanks to Stefan Jöhnke)
 - Support removed for Office XP since Microsoft discontinued support for it on July 12th, 2011 (see http://support.microsoft.com/lifecycle/?p1=2533)
-- User's SID will only be determined if WOUTempAdmin is logged on (Thanks to "Adorno")
+- User's SID will now only be determined if WOUTempAdmin is logged on (Thanks to "Adorno")
+- Download of updates will optionally use a local WSUS server only (Thanks to "FrankWeber" and "balonik")
 - Fix: Temporary file "%TEMP%\InstalledUpdateIds.txt" remained after update run without any missing update (Thanks to "Denniss")
 - Fix: Temporary files "%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt" remained after download of Windows Defender definition files (Thanks to "boco")
 - Fix: ISO and USB filters for x86 platforms erroneously excluded .NET Framework 4 installation packages (Thanks to "boco")
