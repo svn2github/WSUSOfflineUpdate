@@ -572,6 +572,7 @@ Version ?.? -- ??.??.11
 - Support removed for Office XP since Microsoft discontinued support for it on July 12th, 2011 (see http://support.microsoft.com/lifecycle/?p1=2533)
 - User's SID will now only be determined if WOUTempAdmin is logged on (Thanks to "Adorno")
 - Download of updates will optionally use a local WSUS server only (Thanks to "FrankWeber" and "balonik")
+- HashDeep utility updated to version 3.9.2
 - Fix: Temporary file "%TEMP%\InstalledUpdateIds.txt" remained after update run without any missing update (Thanks to "Denniss")
 - Fix: Temporary files "%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt" remained after download of Windows Defender definition files (Thanks to "boco")
 - Fix: ISO and USB filters for x86 platforms erroneously excluded .NET Framework 4 installation packages (Thanks to "boco")
