@@ -38,8 +38,8 @@ Private Const strBuildNumbers_O2k7            = "4518,4518,4518,4518,4518,4518;6
 Private Const strBuildNumbers_O2k10           = "4762,4756,4760,4754,4750,4750;6024,6024,6025,6009,6024,6024"
 Private Const idxBuild                        = 2
 
-Dim wshShell, objNetwork, objFileSystem, objCmdFile, objWMIService, objQueryItem, arrayOfficeNames, arrayOfficeVersions, arrayOfficeAppNames, arrayOfficeExeNames
-Dim strSystemFolder, strTempFolder, strWUAFileName, strMSIFileName, strWSHFileName, strTSCFileName, strWMPFileName, strCmdFileName, strOSVersion, strOfficeInstallPath, strOfficeExeVersion, strProduct, languageCode, i, j
+Dim wshShell, objNetwork, objFileSystem, objCmdFile, objWMIService, objQueryItem, objInstaller, arrayOfficeNames, arrayOfficeVersions, arrayOfficeAppNames, arrayOfficeExeNames
+Dim strSystemFolder, strTempFolder, strWUAFileName, strMSIFileName, strWSHFileName, strTSCFileName, strWMPFileName, strCmdFileName, strOSVersion, strOfficeInstallPath, strOfficeExeVersion, strProduct, strPatch, languageCode, i, j
 Dim cpp2005_x86_old, cpp2005_x86_new, cpp2005_x64_old, cpp2005_x64_new, cpp2008_x86_old, cpp2008_x86_new, cpp2008_x64_old, cpp2008_x64_new, cpp2010_x86_old, cpp2010_x86_new, cpp2010_x64_old, cpp2010_x64_new
 
 Private Function RegExists(objShell, strName)
@@ -526,7 +526,12 @@ cpp2008_x86_old = False
 cpp2008_x86_new = False
 cpp2008_x64_old = False
 cpp2008_x64_new = False
-For Each strProduct In CreateObject("WindowsInstaller.Installer").Products
+cpp2010_x86_old = False
+cpp2010_x86_new = False
+cpp2010_x64_old = False
+cpp2010_x64_new = False
+Set objInstaller = CreateObject("WindowsInstaller.Installer") 
+For Each strProduct In objInstaller.Products
   Select Case UCase(strProduct)
     Case "{6EECB283-E65F-40EF-86D3-D51BF02A8D43}"
       objCmdFile.WriteLine("set OFC_CONV_PACK=1")
@@ -563,14 +568,17 @@ For Each strProduct In CreateObject("WindowsInstaller.Installer").Products
     ' Documentation: http://blogs.msdn.com/b/astebner/archive/2010/05/05/10008146.aspx
     Case "{196BB40D-1578-3D01-B289-BEFC77A11A1E}", "{F0C3E5D1-1ADE-321E-8167-68EF0DE699A5}"
       cpp2010_x86_old = True
-    Case "{F0C3E5D1-1ADE-321E-8167-68EF0DE699A5}.KB2565063"
-      cpp2010_x86_new = True
+      For Each strPatch In objInstaller.Patches(strProduct)
+        If UCase(strPatch) = "{6F8500D2-A80F-3347-9081-B41E71C8592B}" Then cpp2010_x86_new = True
+      Next
     Case "{DA5E371C-6333-3D8A-93A4-6FD5B20BCC6E}", "{1D8E6291-B0D5-35EC-8441-6616F567A0F7}"
       cpp2010_x64_old = True
-    Case "{1D8E6291-B0D5-35EC-8441-6616F567A0F7}.KB2565063"
-      cpp2010_x64_new = True
+      For Each strPatch In objInstaller.Patches(strProduct)
+        If UCase(strPatch) = "{C67045D4-F4DE-3AB5-B2DB-E3F5DAC14D9C}" Then cpp2010_x64_new = True
+      Next
   End Select
 Next
+
 If (cpp2005_x86_old) And (Not cpp2005_x86_new) Then objCmdFile.WriteLine("set CPP_2005_x86=1")
 If (cpp2005_x64_old) And (Not cpp2005_x64_new) Then objCmdFile.WriteLine("set CPP_2005_x64=1")
 If (cpp2008_x86_old) And (Not cpp2008_x86_new) Then objCmdFile.WriteLine("set CPP_2008_x86=1")
