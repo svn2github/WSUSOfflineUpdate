@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.9+ (r280)
+set WSUSOFFLINE_VERSION=6.9+ (r281)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log
 title %~n0 %*
@@ -93,6 +93,7 @@ del "%TEMP%\SetSystemEnvVars.cmd"
 if "%SystemDirectory%"=="" set SystemDirectory=%SystemRoot%\system32
 if "%OS_ARCH%"=="" set OS_ARCH=%PROCESSOR_ARCHITECTURE%
 if "%OS_LANG%"=="" goto UnsupLang
+if /i "%OS_ARCH%"=="x64" (set HASHDEEP_PATH=..\bin\hashdeep64.exe) else (set HASHDEEP_PATH=..\bin\hashdeep.exe)
 
 rem *** Determine DirectX main version ***
 if "%UPDATE_DX%" NEQ "/updatedx" goto NoDXDiag
@@ -190,29 +191,29 @@ if exist ..\builddate.txt (
 )
 if /i "%OS_ARCH%"=="x64" (
   if exist ..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\nul (
-    echo Medium supports Microsoft Windows ^(%OS_NAME%-%OS_ARCH% %OS_LANG%^).
-    echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME%-%OS_ARCH% %OS_LANG%^) >>%UPDATE_LOGFILE%
+    echo Medium supports Microsoft Windows ^(%OS_NAME% %OS_ARCH% %OS_LANG%^).
+    echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME% %OS_ARCH% %OS_LANG%^) >>%UPDATE_LOGFILE%
     goto CheckOfficeMedium
   )
   if exist ..\%OS_NAME%-%OS_ARCH%\glb\nul (
-    echo Medium supports Microsoft Windows ^(%OS_NAME%-%OS_ARCH% glb^).
-    echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME%-%OS_ARCH% glb^) >>%UPDATE_LOGFILE%
+    echo Medium supports Microsoft Windows ^(%OS_NAME% %OS_ARCH% glb^).
+    echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME% %OS_ARCH% glb^) >>%UPDATE_LOGFILE%
     goto CheckOfficeMedium
   )
 ) else (
   if exist ..\%OS_NAME%\%OS_LANG%\nul (
-    echo Medium supports Microsoft Windows ^(%OS_NAME% %OS_LANG%^).
-    echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME% %OS_LANG%^) >>%UPDATE_LOGFILE%
+    echo Medium supports Microsoft Windows ^(%OS_NAME% %OS_ARCH% %OS_LANG%^).
+    echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME% %OS_ARCH% %OS_LANG%^) >>%UPDATE_LOGFILE%
     goto CheckOfficeMedium
   )
   if exist ..\%OS_NAME%\glb\nul (
-    echo Medium supports Microsoft Windows ^(%OS_NAME% glb^).
-    echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME% glb^) >>%UPDATE_LOGFILE%
+    echo Medium supports Microsoft Windows ^(%OS_NAME% %OS_ARCH% glb^).
+    echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME% %OS_ARCH% glb^) >>%UPDATE_LOGFILE%
     goto CheckOfficeMedium
   )
 )
-echo Medium does not support Microsoft Windows (%OS_NAME% %OS_LANG%).
-echo %DATE% %TIME% - Info: Medium does not support Microsoft Windows (%OS_NAME% %OS_LANG%) >>%UPDATE_LOGFILE%
+echo Medium does not support Microsoft Windows (%OS_NAME% %OS_ARCH% %OS_LANG%).
+echo %DATE% %TIME% - Info: Medium does not support Microsoft Windows (%OS_NAME% %OS_ARCH% %OS_LANG%) >>%UPDATE_LOGFILE%
 if "%OFC_NAME%"=="" goto InvalidMedium
 
 :CheckOfficeMedium
@@ -983,9 +984,9 @@ echo %DATE% %TIME% - Info: Started service 'automatic updates' (wuauserv) >>%UPD
 rem *** List ids of missing updates ***
 if not exist ..\wsus\wsusscn2.cab goto NoWSUSScan
 if "%VERIFY_MODE%" NEQ "/verify" goto SkipVerifyWSUSScan
-if not exist ..\bin\hashdeep.exe (
-  echo Warning: Hash computing/auditing utility ..\bin\hashdeep.exe not found.
-  echo %DATE% %TIME% - Warning: Hash computing/auditing utility ..\bin\hashdeep.exe not found >>%UPDATE_LOGFILE%
+if not exist %HASHDEEP_PATH% (
+  echo Warning: Hash computing/auditing utility %HASHDEEP_PATH% not found.
+  echo %DATE% %TIME% - Warning: Hash computing/auditing utility %HASHDEEP_PATH% not found >>%UPDATE_LOGFILE%
   goto SkipVerifyWSUSScan
 )
 if not exist ..\md\hashes-wsus.txt (
@@ -995,7 +996,7 @@ if not exist ..\md\hashes-wsus.txt (
 )
 echo Verifying integrity of Windows Update catalog file...
 %SystemRoot%\system32\findstr.exe /C:%% /C:## /C:..\wsus\wsusscn2.cab ..\md\hashes-wsus.txt >"%TEMP%\hash-wsusscn2.txt"
-..\bin\hashdeep.exe -a -l -k "%TEMP%\hash-wsusscn2.txt" ..\wsus\wsusscn2.cab
+%HASHDEEP_PATH% -a -l -k "%TEMP%\hash-wsusscn2.txt" ..\wsus\wsusscn2.cab
 if errorlevel 1 (
   if exist "%TEMP%\hash-wsusscn2.txt" del "%TEMP%\hash-wsusscn2.txt"
   goto WSUSScanIntegrityError

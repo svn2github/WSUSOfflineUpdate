@@ -157,7 +157,11 @@ if errorlevel 1 (
 if exist %ISO_FILTER% del %ISO_FILTER%
 echo %DATE% %TIME% - Info: Created ISO image %OUTPUT_PATH%\%ISO_NAME%.iso >>%DOWNLOAD_LOGFILE%
 echo Creating message digest file %OUTPUT_PATH%\%ISO_NAME%-hashes.txt...
-..\client\bin\hashdeep.exe -c md5,sha256 -b %OUTPUT_PATH%\%ISO_NAME%.iso >%OUTPUT_PATH%\%ISO_NAME%.mds
+if "%PROCESSOR_ARCHITEW6432%"=="" (
+  ..\client\bin\hashdeep.exe -c md5,sha256 -b %OUTPUT_PATH%\%ISO_NAME%.iso >%OUTPUT_PATH%\%ISO_NAME%.mds
+) else (
+  ..\client\bin\hashdeep64.exe -c md5,sha256 -b %OUTPUT_PATH%\%ISO_NAME%.iso >%OUTPUT_PATH%\%ISO_NAME%.mds
+)
 %SystemRoot%\system32\findstr.exe /C:## /V %OUTPUT_PATH%\%ISO_NAME%.mds >%OUTPUT_PATH%\%ISO_NAME%-hashes.txt
 del %OUTPUT_PATH%\%ISO_NAME%.mds
 echo %DATE% %TIME% - Info: Created message digest file %OUTPUT_PATH%\%ISO_NAME%-hashes.txt >>%DOWNLOAD_LOGFILE%

@@ -48,7 +48,11 @@ for /F %%i in (..\static\StaticDownloadLink-recent.txt) do (
   )
   pushd ..
   echo Verifying integrity of %%~nxi...
-  .\client\bin\hashdeep.exe -a -l -vv -k %%~ni_hashes.txt %%~nxi
+  if "%PROCESSOR_ARCHITEW6432%"=="" (
+    .\client\bin\hashdeep.exe -a -l -vv -k %%~ni_hashes.txt %%~nxi
+  ) else (
+    .\client\bin\hashdeep64.exe -a -l -vv -k %%~ni_hashes.txt %%~nxi
+  )
   if errorlevel 1 (
     popd
     goto IntegrityError

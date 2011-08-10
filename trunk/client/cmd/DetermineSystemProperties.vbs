@@ -40,7 +40,7 @@ Private Const idxBuild                        = 2
 
 Dim wshShell, objNetwork, objFileSystem, objCmdFile, objWMIService, objQueryItem, arrayOfficeNames, arrayOfficeVersions, arrayOfficeAppNames, arrayOfficeExeNames
 Dim strSystemFolder, strTempFolder, strWUAFileName, strMSIFileName, strWSHFileName, strTSCFileName, strWMPFileName, strCmdFileName, strOSVersion, strOfficeInstallPath, strOfficeExeVersion, strProduct, languageCode, i, j
-Dim cpp2005_x86_old, cpp2005_x86_new, cpp2005_x64_old, cpp2005_x64_new, cpp2008_x86_old, cpp2008_x86_new, cpp2008_x64_old, cpp2008_x64_new
+Dim cpp2005_x86_old, cpp2005_x86_new, cpp2005_x64_old, cpp2005_x64_new, cpp2008_x86_old, cpp2008_x86_new, cpp2008_x64_old, cpp2008_x64_new, cpp2010_x86_old, cpp2010_x86_new, cpp2010_x64_old, cpp2010_x64_new
 
 Private Function RegExists(objShell, strName)
 Dim dummy
@@ -561,18 +561,22 @@ For Each strProduct In CreateObject("WindowsInstaller.Installer").Products
     Case "{5FCE6D76-F5DC-37AB-B2B8-22AB8CEDB1D4}"
       cpp2008_x64_new = True
     ' Documentation: http://blogs.msdn.com/b/astebner/archive/2010/05/05/10008146.aspx
-    Case "{196BB40D-1578-3D01-B289-BEFC77A11A1E}"
-      objCmdFile.WriteLine("set CPP_2010_x86=1")
-      ' Recent code: {F0C3E5D1-1ADE-321E-8167-68EF0DE699A5}
-    Case "{DA5E371C-6333-3D8A-93A4-6FD5B20BCC6E}"
-      objCmdFile.WriteLine("set CPP_2010_x64=1")
-      ' Recent code: {1D8E6291-B0D5-35EC-8441-6616F567A0F7}
+    Case "{196BB40D-1578-3D01-B289-BEFC77A11A1E}", "{F0C3E5D1-1ADE-321E-8167-68EF0DE699A5}"
+      cpp2010_x86_old = True
+    Case "{F0C3E5D1-1ADE-321E-8167-68EF0DE699A5}.KB2565063"
+      cpp2010_x86_new = True
+    Case "{DA5E371C-6333-3D8A-93A4-6FD5B20BCC6E}", "{1D8E6291-B0D5-35EC-8441-6616F567A0F7}"
+      cpp2010_x64_old = True
+    Case "{1D8E6291-B0D5-35EC-8441-6616F567A0F7}.KB2565063"
+      cpp2010_x64_new = True
   End Select
 Next
 If (cpp2005_x86_old) And (Not cpp2005_x86_new) Then objCmdFile.WriteLine("set CPP_2005_x86=1")
 If (cpp2005_x64_old) And (Not cpp2005_x64_new) Then objCmdFile.WriteLine("set CPP_2005_x64=1")
 If (cpp2008_x86_old) And (Not cpp2008_x86_new) Then objCmdFile.WriteLine("set CPP_2008_x86=1")
 If (cpp2008_x64_old) And (Not cpp2008_x64_new) Then objCmdFile.WriteLine("set CPP_2008_x64=1")
+If (cpp2010_x86_old) And (Not cpp2010_x86_new) Then objCmdFile.WriteLine("set CPP_2010_x86=1")
+If (cpp2010_x64_old) And (Not cpp2010_x64_new) Then objCmdFile.WriteLine("set CPP_2010_x64=1")
 
 '
 ' Perform the following WMI queries last, since they might fail if WMI is damaged

@@ -570,9 +570,10 @@ Version 6.9 -- 01.07.11
 Version ?.? -- ??.??.11
 - Linux download and ISO creation scripts now support Office again and exclusion of superseded updates (Thanks to Stefan Jöhnke)
 - Support removed for Office XP since Microsoft discontinued support for it on July 12th, 2011 (see http://support.microsoft.com/lifecycle/?p1=2533)
-- User's SID will now only be determined if WOUTempAdmin is logged on (Thanks to "Adorno")
+- C++ 2010 Runtime Libraries updated to include kb2565063 / MS11-025 (Thanks to "Denniss")
 - Download of updates will optionally use a local WSUS server only (Thanks to "FrankWeber" and "balonik")
-- HashDeep utility updated to version 3.9.2
+- User's SID will now only be determined if WOUTempAdmin is logged on (Thanks to "Adorno")
+- HashDeep utility updated to version 3.9.2, x64 variant included (Thanks to "Gerby" and "boco")
 - Fix: Temporary file "%TEMP%\InstalledUpdateIds.txt" remained after update run without any missing update (Thanks to "Denniss")
 - Fix: Temporary files "%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt" remained after download of Windows Defender definition files (Thanks to "boco")
 - Fix: ISO and USB filters for x86 platforms erroneously excluded .NET Framework 4 installation packages (Thanks to "boco")

@@ -7,6 +7,9 @@ if errorlevel 1 goto NoExtensions
 
 if "%DIRCMD%" NEQ "" set DIRCMD=
 if "%UPDATE_LOGFILE%"=="" set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
+if "%HASHDEEP_PATH%"=="" (
+  if /i "%OS_ARCH%"=="x64" (set HASHDEEP_PATH=..\bin\hashdeep64.exe) else (set HASHDEEP_PATH=..\bin\hashdeep.exe)
+)
 
 if "%1"=="" goto NoParam
 if not exist %1 goto InvalidParam
@@ -46,16 +49,16 @@ if /i "%2"=="/ignoreerrors" (
 
 :NoMoreParams
 if "%VERIFY_FILES%" NEQ "1" goto SkipVerification
-if not exist ..\bin\hashdeep.exe (
-  echo Warning: Hash computing/auditing utility ..\bin\hashdeep.exe not found.
-  echo %DATE% %TIME% - Warning: Hash computing/auditing utility ..\bin\hashdeep.exe not found >>%UPDATE_LOGFILE%
+if not exist %HASHDEEP_PATH% (
+  echo Warning: Hash computing/auditing utility %HASHDEEP_PATH% not found.
+  echo %DATE% %TIME% - Warning: Hash computing/auditing utility %HASHDEEP_PATH% not found >>%UPDATE_LOGFILE%
   goto SkipVerification
 )
 echo Verifying integrity of %1...
 for /F "tokens=2,3 delims=\" %%i in ("%1") do (
   if exist ..\md\hashes-%%i-%%j.txt (
     %SystemRoot%\system32\findstr.exe /C:%% /C:## /C:%1 ..\md\hashes-%%i-%%j.txt >"%TEMP%\hash-%%i-%%j.txt"
-    ..\bin\hashdeep.exe -a -l -k "%TEMP%\hash-%%i-%%j.txt" %1
+    %HASHDEEP_PATH% -a -l -k "%TEMP%\hash-%%i-%%j.txt" %1
     if errorlevel 1 (
       if exist "%TEMP%\hash-%%i-%%j.txt" del "%TEMP%\hash-%%i-%%j.txt"
       goto IntegrityError
@@ -65,7 +68,7 @@ for /F "tokens=2,3 delims=\" %%i in ("%1") do (
   )
   if exist ..\md\hashes-%%i.txt (
     %SystemRoot%\system32\findstr.exe /C:%% /C:## /C:%1 ..\md\hashes-%%i.txt >"%TEMP%\hash-%%i.txt"
-    ..\bin\hashdeep.exe -a -l -k "%TEMP%\hash-%%i.txt" %1
+    %HASHDEEP_PATH% -a -l -k "%TEMP%\hash-%%i.txt" %1
     if errorlevel 1 (
       if exist "%TEMP%\hash-%%i.txt" del "%TEMP%\hash-%%i.txt"
       goto IntegrityError
