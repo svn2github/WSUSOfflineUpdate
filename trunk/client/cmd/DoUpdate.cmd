@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.9+ (r282)
+set WSUSOFFLINE_VERSION=6.9+ (r283)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log
 title %~n0 %*
@@ -91,7 +91,11 @@ rem *** Set environment variables for system's properties ***
 call "%TEMP%\SetSystemEnvVars.cmd"
 del "%TEMP%\SetSystemEnvVars.cmd"
 if "%SystemDirectory%"=="" set SystemDirectory=%SystemRoot%\system32
-if "%OS_ARCH%"=="" set OS_ARCH=%PROCESSOR_ARCHITECTURE%
+if "%OS_ARCH%"=="" (
+  if /i "%PROCESSOR_ARCHITECTURE%"=="AMD64" (set OS_ARCH=x64) else (
+    if /i "%PROCESSOR_ARCHITEW6432%"=="AMD64" (set OS_ARCH=x64) else (set OS_ARCH=x86)
+  )
+)
 if "%OS_LANG%"=="" goto UnsupLang
 if /i "%OS_ARCH%"=="x64" (set HASHDEEP_PATH=..\bin\hashdeep64.exe) else (set HASHDEEP_PATH=..\bin\hashdeep.exe)
 

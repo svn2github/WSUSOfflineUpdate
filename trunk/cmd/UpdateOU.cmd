@@ -20,6 +20,10 @@ echo %DATE% %TIME% - Info: Starting WSUS Offline Update self update >>%DOWNLOAD_
 set WGET_PATH=..\bin\wget.exe
 if not exist %WGET_PATH% goto NoWGet
 if not exist ..\bin\unzip.exe goto NoUnZip
+if /i "%PROCESSOR_ARCHITECTURE%"=="AMD64" (set HASHDEEP_EXE=hashdeep64.exe) else (
+  if /i "%PROCESSOR_ARCHITEW6432%"=="AMD64" (set HASHDEEP_EXE=hashdeep64.exe) else (set HASHDEEP_EXE=hashdeep.exe)
+)
+if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
@@ -48,11 +52,7 @@ for /F %%i in (..\static\StaticDownloadLink-recent.txt) do (
   )
   pushd ..
   echo Verifying integrity of %%~nxi...
-  if "%PROCESSOR_ARCHITEW6432%"=="" (
-    .\client\bin\hashdeep.exe -a -l -vv -k %%~ni_hashes.txt %%~nxi
-  ) else (
-    .\client\bin\hashdeep64.exe -a -l -vv -k %%~ni_hashes.txt %%~nxi
-  )
+  .\client\bin\%HASHDEEP_EXE% -a -l -vv -k %%~ni_hashes.txt %%~nxi
   if errorlevel 1 (
     popd
     goto IntegrityError
@@ -98,6 +98,13 @@ goto EoF
 echo.
 echo ERROR: Utility ..\bin\unzip.exe not found.
 echo %DATE% %TIME% - Error: Utility ..\bin\unzip.exe not found >>%DOWNLOAD_LOGFILE%
+echo.
+goto EoF
+
+:NoHashDeep
+echo.
+echo ERROR: Hash computing/auditing utility ..\client\bin\%HASHDEEP_EXE% not found.
+echo %DATE% %TIME% - Error: Hash computing/auditing utility ..\client\bin\%HASHDEEP_EXE% not found >>%DOWNLOAD_LOGFILE%
 echo.
 goto EoF
 

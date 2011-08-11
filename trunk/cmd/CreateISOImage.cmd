@@ -146,6 +146,9 @@ rem *** Create ISO image ***
 if %OUTPUT_PATH%~==~ set OUTPUT_PATH=..\iso
 if not exist %OUTPUT_PATH%\. goto NoOutputPath
 if not exist ..\bin\mkisofs.exe goto NoMkIsoFs
+if /i "%PROCESSOR_ARCHITECTURE%"=="AMD64" (set HASHDEEP_EXE=hashdeep64.exe) else (
+  if /i "%PROCESSOR_ARCHITEW6432%"=="AMD64" (set HASHDEEP_EXE=hashdeep64.exe) else (set HASHDEEP_EXE=hashdeep.exe)
+)
 echo Creating ISO image %OUTPUT_PATH%\%ISO_NAME%.iso...
 if exist %OUTPUT_PATH%\%ISO_NAME%.iso del %OUTPUT_PATH%\%ISO_NAME%.iso
 if exist %OUTPUT_PATH%\%ISO_NAME%-hashes.txt del %OUTPUT_PATH%\%ISO_NAME%-hashes.txt
@@ -156,15 +159,16 @@ if errorlevel 1 (
 )
 if exist %ISO_FILTER% del %ISO_FILTER%
 echo %DATE% %TIME% - Info: Created ISO image %OUTPUT_PATH%\%ISO_NAME%.iso >>%DOWNLOAD_LOGFILE%
-echo Creating message digest file %OUTPUT_PATH%\%ISO_NAME%-hashes.txt...
-if "%PROCESSOR_ARCHITEW6432%"=="" (
-  ..\client\bin\hashdeep.exe -c md5,sha256 -b %OUTPUT_PATH%\%ISO_NAME%.iso >%OUTPUT_PATH%\%ISO_NAME%.mds
+if exist ..\client\bin\%HASHDEEP_EXE% (
+  echo Creating message digest file %OUTPUT_PATH%\%ISO_NAME%-hashes.txt...
+  ..\client\bin\%HASHDEEP_EXE% -c md5,sha256 -b %OUTPUT_PATH%\%ISO_NAME%.iso >%OUTPUT_PATH%\%ISO_NAME%.mds
+  %SystemRoot%\system32\findstr.exe /C:## /V %OUTPUT_PATH%\%ISO_NAME%.mds >%OUTPUT_PATH%\%ISO_NAME%-hashes.txt
+  del %OUTPUT_PATH%\%ISO_NAME%.mds
+  echo %DATE% %TIME% - Info: Created message digest file %OUTPUT_PATH%\%ISO_NAME%-hashes.txt >>%DOWNLOAD_LOGFILE%
 ) else (
-  ..\client\bin\hashdeep64.exe -c md5,sha256 -b %OUTPUT_PATH%\%ISO_NAME%.iso >%OUTPUT_PATH%\%ISO_NAME%.mds
+  echo Warning: Hash computing/auditing utility ..\client\bin\%HASHDEEP_EXE% not found.
+  echo %DATE% %TIME% - Warning: Hash computing/auditing utility ..\client\bin\%HASHDEEP_EXE% not found >>%DOWNLOAD_LOGFILE%
 )
-%SystemRoot%\system32\findstr.exe /C:## /V %OUTPUT_PATH%\%ISO_NAME%.mds >%OUTPUT_PATH%\%ISO_NAME%-hashes.txt
-del %OUTPUT_PATH%\%ISO_NAME%.mds
-echo %DATE% %TIME% - Info: Created message digest file %OUTPUT_PATH%\%ISO_NAME%-hashes.txt >>%DOWNLOAD_LOGFILE%
 echo Done.
 goto EoF
 
