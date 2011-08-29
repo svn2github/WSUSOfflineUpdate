@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.9+ (r283)
+set WSUSOFFLINE_VERSION=6.9+ (r284)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -400,7 +400,7 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
   echo Verifying digital file signatures of Windows Update Agent installation and catalog files...
   ..\bin\sigcheck.exe /accepteula -q -s -u -v ..\client\wsus >"%TEMP%\sigcheck-wsus.txt"
-  for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-wsus.txt") do (
+  for /F "usebackq skip=1 eol=N tokens=1 delims=," %%i in ("%TEMP%\sigcheck-wsus.txt") do (
     del %%i
     echo Warning: Deleted unsigned file %%i.
     echo %DATE% %TIME% - Warning: Deleted unsigned file %%i >>%DOWNLOAD_LOGFILE%
@@ -417,7 +417,7 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   echo Creating integrity database for Windows Update Agent installation and catalog files...
   if not exist ..\client\md\nul md ..\client\md
   pushd ..\client\md
-  ..\bin\%HASHDEEP_EXE% -c md5,sha256 -l -r ..\wsus >hashes-wsus.txt
+  ..\bin\%HASHDEEP_EXE% -c md5,sha1,sha256 -l -r ..\wsus >hashes-wsus.txt
   if errorlevel 1 (
     popd
     echo Warning: Error creating integrity database ..\client\md\hashes-wsus.txt.
@@ -492,7 +492,7 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
   echo Verifying digital file signatures for .NET Frameworks' installation files...
   ..\bin\sigcheck.exe /accepteula -q -u -v ..\client\dotnet >"%TEMP%\sigcheck-dotnet.txt"
-  for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-dotnet.txt") do (
+  for /F "usebackq skip=1 eol=N tokens=1 delims=," %%i in ("%TEMP%\sigcheck-dotnet.txt") do (
     del %%i
     echo Warning: Deleted unsigned file %%i.
     echo %DATE% %TIME% - Warning: Deleted unsigned file %%i >>%DOWNLOAD_LOGFILE%
@@ -503,7 +503,7 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   echo Creating integrity database for .NET Frameworks' installation files...
   if not exist ..\client\md\nul md ..\client\md
   pushd ..\client\md
-  ..\bin\%HASHDEEP_EXE% -c md5,sha256 -l ..\dotnet\dotnetfx*.exe >hashes-dotnet.txt
+  ..\bin\%HASHDEEP_EXE% -c md5,sha1,sha256 -l ..\dotnet\dotnetfx*.exe >hashes-dotnet.txt
   if errorlevel 1 (
     popd
     echo Warning: Error creating integrity database ..\client\md\hashes-dotnet.txt.
@@ -591,7 +591,7 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
   echo Verifying digital file signatures for C++ Runtime Libraries' installation files...
   ..\bin\sigcheck.exe /accepteula -q -u -v ..\client\cpp >"%TEMP%\sigcheck-cpp.txt"
-  for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-cpp.txt") do (
+  for /F "usebackq skip=1 eol=N tokens=1 delims=," %%i in ("%TEMP%\sigcheck-cpp.txt") do (
     del %%i
     echo Warning: Deleted unsigned file %%i.
     echo %DATE% %TIME% - Warning: Deleted unsigned file %%i >>%DOWNLOAD_LOGFILE%
@@ -602,7 +602,7 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   echo Creating integrity database for C++ Runtime Libraries' installation files...
   if not exist ..\client\md\nul md ..\client\md
   pushd ..\client\md
-  ..\bin\%HASHDEEP_EXE% -c md5,sha256 -l -r ..\cpp >hashes-cpp.txt
+  ..\bin\%HASHDEEP_EXE% -c md5,sha1,sha256 -l -r ..\cpp >hashes-cpp.txt
   if errorlevel 1 (
     popd
     echo Warning: Error creating integrity database ..\client\md\hashes-cpp.txt.
@@ -697,7 +697,7 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
   echo Verifying digital file signatures for Microsoft Security Essentials installation files...
   ..\bin\sigcheck.exe /accepteula -q -s -u -v ..\client\msse\%TARGET_ARCH%-glb >"%TEMP%\sigcheck-msse-%TARGET_ARCH%-glb.txt"
-  for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-msse-%TARGET_ARCH%-glb.txt") do (
+  for /F "usebackq skip=1 eol=N tokens=1 delims=," %%i in ("%TEMP%\sigcheck-msse-%TARGET_ARCH%-glb.txt") do (
     del %%i
     echo Warning: Deleted unsigned file %%i.
     echo %DATE% %TIME% - Warning: Deleted unsigned file %%i >>%DOWNLOAD_LOGFILE%
@@ -708,7 +708,7 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   echo Creating integrity database for Microsoft Security Essentials installation files...
   if not exist ..\client\md\nul md ..\client\md
   pushd ..\client\md
-  ..\bin\%HASHDEEP_EXE% -c md5,sha256 -l -r ..\msse >hashes-msse.txt
+  ..\bin\%HASHDEEP_EXE% -c md5,sha1,sha256 -l -r ..\msse >hashes-msse.txt
   if errorlevel 1 (
     popd
     echo Warning: Error creating integrity database ..\client\md\hashes-msse.txt.
@@ -763,7 +763,7 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
   echo Verifying digital file signatures for Windows Defender definition files...
   ..\bin\sigcheck.exe /accepteula -q -s -u -v ..\client\wddefs\%TARGET_ARCH%-glb >"%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt"
-  for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt") do (
+  for /F "usebackq skip=1 eol=N tokens=1 delims=," %%i in ("%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt") do (
     del %%i
     echo Warning: Deleted unsigned file %%i.
     echo %DATE% %TIME% - Warning: Deleted unsigned file %%i >>%DOWNLOAD_LOGFILE%
@@ -774,7 +774,7 @@ if "%VERIFY_DOWNLOADS%"=="1" (
   echo Creating integrity database for Windows Defender definition files...
   if not exist ..\client\md\nul md ..\client\md
   pushd ..\client\md
-  ..\bin\%HASHDEEP_EXE% -c md5,sha256 -l -r ..\wddefs >hashes-wddefs.txt
+  ..\bin\%HASHDEEP_EXE% -c md5,sha1,sha256 -l -r ..\wddefs >hashes-wddefs.txt
   if errorlevel 1 (
     popd
     echo Warning: Error creating integrity database ..\client\md\hashes-wddefs.txt.
@@ -867,7 +867,7 @@ if not exist "%TEMP%\StaticDownloadLinks-%1-%2.txt" goto SkipStatics
 
 :EvalStatics
 if "%EXCLUDE_SP%"=="1" (
-  %SystemRoot%\system32\findstr.exe /I /V /G:..\exclude\ExcludeList-SPs.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >>"%TEMP%\ValidStaticLinks-%1-%2.txt"
+  %SystemRoot%\system32\findstr.exe /L /I /V /G:..\exclude\ExcludeList-SPs.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >"%TEMP%\ValidStaticLinks-%1-%2.txt"
   del "%TEMP%\StaticDownloadLinks-%1-%2.txt"
 ) else (
   ren "%TEMP%\StaticDownloadLinks-%1-%2.txt" ValidStaticLinks-%1-%2.txt
@@ -898,12 +898,12 @@ echo %TIME% - Determining superseded updates (please be patient, this will take 
 if errorlevel 1 goto DownloadError
 ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractSupersedingRevisionIds.xsl -o "%TEMP%\SupersedingRevisionIds.txt"
 if errorlevel 1 goto DownloadError
-%SystemRoot%\system32\findstr.exe /G:"%TEMP%\SupersedingRevisionIds.txt" "%TEMP%\ValidUpdateRevisionIds.txt" >"%TEMP%\ValidSupersedingRevisionIds.txt"
+%SystemRoot%\system32\findstr.exe /L /G:"%TEMP%\SupersedingRevisionIds.txt" "%TEMP%\ValidUpdateRevisionIds.txt" >"%TEMP%\ValidSupersedingRevisionIds.txt"
 del "%TEMP%\ValidUpdateRevisionIds.txt"
 del "%TEMP%\SupersedingRevisionIds.txt"
 ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractSupersededUpdateRelations.xsl -o "%TEMP%\SupersededUpdateRelations.txt"
 if errorlevel 1 goto DownloadError
-%SystemRoot%\system32\findstr.exe /G:"%TEMP%\ValidSupersedingRevisionIds.txt" "%TEMP%\SupersededUpdateRelations.txt" >"%TEMP%\ValidSupersededUpdateRelations.txt"
+%SystemRoot%\system32\findstr.exe /L /G:"%TEMP%\ValidSupersedingRevisionIds.txt" "%TEMP%\SupersededUpdateRelations.txt" >"%TEMP%\ValidSupersededUpdateRelations.txt"
 del "%TEMP%\SupersededUpdateRelations.txt"
 del "%TEMP%\ValidSupersedingRevisionIds.txt"
 ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractBundledUpdateRelationsAndFileIds.xsl -o "%TEMP%\BundledUpdateRelationsAndFileIds.txt"
@@ -911,7 +911,7 @@ if errorlevel 1 goto DownloadError
 if exist "%TEMP%\ValidSupersededRevisionIds.txt" del "%TEMP%\ValidSupersededRevisionIds.txt"
 for /F "usebackq tokens=1 delims=,;" %%i in ("%TEMP%\ValidSupersededUpdateRelations.txt") do echo %%i>>"%TEMP%\ValidSupersededRevisionIds.txt"
 del "%TEMP%\ValidSupersededUpdateRelations.txt"
-%SystemRoot%\system32\findstr.exe /G:"%TEMP%\ValidSupersededRevisionIds.txt" "%TEMP%\BundledUpdateRelationsAndFileIds.txt" >"%TEMP%\SupersededRevisionAndFileIds.txt"
+%SystemRoot%\system32\findstr.exe /L /G:"%TEMP%\ValidSupersededRevisionIds.txt" "%TEMP%\BundledUpdateRelationsAndFileIds.txt" >"%TEMP%\SupersededRevisionAndFileIds.txt"
 del "%TEMP%\ValidSupersededRevisionIds.txt"
 del "%TEMP%\BundledUpdateRelationsAndFileIds.txt"
 if exist "%TEMP%\SupersededFileIds.txt" del "%TEMP%\SupersededFileIds.txt"
@@ -975,7 +975,7 @@ if exist ..\exclude\custom\ExcludeList-%1-%TARGET_ARCH%.txt (
 if exist ..\exclude\ExcludeList-superseded.txt (
   for /F %%i in (..\exclude\ExcludeList-superseded.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
 )
-%SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DynamicDownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDynamicLinks-%1-%2.txt"
+%SystemRoot%\system32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DynamicDownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDynamicLinks-%1-%2.txt"
 if not exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" ren "%TEMP%\DynamicDownloadLinks-%1-%2.txt" ValidDynamicLinks-%1-%2.txt
 if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
 if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
@@ -1035,7 +1035,7 @@ set UPDATE_CATEGORY=
 set UPDATE_LANGUAGES=
 del "%TEMP%\UpdateCategoriesAndFileIds.txt"
 
-%SystemRoot%\system32\findstr.exe /B /G:"%TEMP%\OfficeFileIds.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
+%SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIds.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
 del "%TEMP%\OfficeFileIds.txt"
 del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 
@@ -1064,7 +1064,7 @@ if exist ..\exclude\custom\ExcludeList-%1.txt (
 if exist ..\exclude\ExcludeList-superseded.txt (
   for /F %%i in (..\exclude\ExcludeList-superseded.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
 )
-%SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DynamicDownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDynamicLinks-%1-%2.txt"
+%SystemRoot%\system32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DynamicDownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDynamicLinks-%1-%2.txt"
 if not exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" ren "%TEMP%\DynamicDownloadLinks-%1-%2.txt" ValidDynamicLinks-%1-%2.txt
 if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
 if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
@@ -1226,7 +1226,7 @@ rem *** Verifying digital file signatures for %1 %2 ***
 if not exist ..\bin\sigcheck.exe goto NoSigCheck
 echo Verifying digital file signatures for %1 %2...
 ..\bin\sigcheck.exe /accepteula -q -s -u -v ..\client\%1\%2 >"%TEMP%\sigcheck-%1-%2.txt"
-for /F "usebackq eol=N skip=1 tokens=1 delims=," %%i in ("%TEMP%\sigcheck-%1-%2.txt") do (
+for /F "usebackq skip=1 eol=N tokens=1 delims=," %%i in ("%TEMP%\sigcheck-%1-%2.txt") do (
   del %%i
   echo Warning: Deleted unsigned file %%i.
   echo %DATE% %TIME% - Warning: Deleted unsigned file %%i >>%DOWNLOAD_LOGFILE%
@@ -1238,7 +1238,7 @@ if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
 echo Creating integrity database for %1 %2...
 if not exist ..\client\md\nul md ..\client\md
 pushd ..\client\md
-..\bin\%HASHDEEP_EXE% -c md5,sha256 -l -r ..\%1\%2 >hashes-%1-%2.txt
+..\bin\%HASHDEEP_EXE% -c md5,sha1,sha256 -l -r ..\%1\%2 >hashes-%1-%2.txt
 if errorlevel 1 (
   popd
   echo Warning: Error creating integrity database ..\client\md\hashes-%1-%2.txt.
@@ -1254,6 +1254,25 @@ if errorlevel 1 (
     )
   )
 )
+if not exist ..\client\md\hashes-%1-%2.txt goto EndDownload
+%SystemRoot%\system32\findstr.exe _[A-Fa-f0-9]*\.[A-Za-z0-9][A-Za-z0-9][A-Za-z0-9]$ ..\client\md\hashes-%1-%2.txt >"%TEMP%\sha1-%1-%2.txt"
+for /F "usebackq tokens=3,5 delims=," %%i in ("%TEMP%\sha1-%1-%2.txt") do (
+  for /F "tokens=2 delims=_" %%k in ("%%j") do (
+    for /F "tokens=1 delims=." %%l in ("%%k") do (
+      if "%%l" NEQ "%%i" (
+        pushd ..\client\md
+        del %%j
+        ren hashes-%1-%2.txt hashes-%1-%2.bak
+        %SystemRoot%\system32\findstr.exe /L /I /V "%%j" hashes-%1-%2.bak >hashes-%1-%2.txt
+        del hashes-%1-%2.bak
+        popd
+        echo Warning: Deleted file %%j due to mismatching SHA-1 message digest ^(%%i^).
+        echo %DATE% %TIME% - Warning: Deleted file %%j due to mismatching SHA-1 message digest ^(%%i^) >>%DOWNLOAD_LOGFILE%
+      )
+    )
+  )
+)
+del "%TEMP%\sha1-%1-%2.txt"
 goto EndDownload
 
 :RemoveHashes

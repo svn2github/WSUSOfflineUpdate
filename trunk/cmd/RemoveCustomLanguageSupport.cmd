@@ -17,12 +17,12 @@ for %%i in (x86 x64) do (
   for /F %%j in (..\static\StaticDownloadLinks-dotnet-%%i-%1.txt) do (
     if exist ..\static\custom\StaticDownloadLinks-dotnet.txt (
       ren ..\static\custom\StaticDownloadLinks-dotnet.txt StaticDownloadLinks-dotnet.tmp
-      %SystemRoot%\system32\findstr.exe /I /V "%%~nxj" ..\static\custom\StaticDownloadLinks-dotnet.tmp>..\static\custom\StaticDownloadLinks-dotnet.txt
+      %SystemRoot%\system32\findstr.exe /L /I /V "%%~nxj" ..\static\custom\StaticDownloadLinks-dotnet.tmp>..\static\custom\StaticDownloadLinks-dotnet.txt
       del ..\static\custom\StaticDownloadLinks-dotnet.tmp
     )
     if exist ..\static\custom\StaticDownloadLinks-dotnet-%%i-glb.txt (
       ren ..\static\custom\StaticDownloadLinks-dotnet-%%i-glb.txt StaticDownloadLinks-dotnet-%%i-glb.tmp
-      %SystemRoot%\system32\findstr.exe /I /V "%%~nxj" ..\static\custom\StaticDownloadLinks-dotnet-%%i-glb.tmp>..\static\custom\StaticDownloadLinks-dotnet-%%i-glb.txt
+      %SystemRoot%\system32\findstr.exe /L /I /V "%%~nxj" ..\static\custom\StaticDownloadLinks-dotnet-%%i-glb.tmp>..\static\custom\StaticDownloadLinks-dotnet-%%i-glb.txt
       del ..\static\custom\StaticDownloadLinks-dotnet-%%i-glb.tmp
     )
   )
@@ -35,7 +35,7 @@ for %%i in (x86 x64) do (
   for /F %%j in (..\static\StaticDownloadLinks-ie8-w60-%%i-%1.txt) do (
     if exist ..\static\custom\StaticDownloadLinks-w60-%%i-glb.txt (
       ren ..\static\custom\StaticDownloadLinks-w60-%%i-glb.txt StaticDownloadLinks-w60-%%i-glb.tmp
-      %SystemRoot%\system32\findstr.exe /I /V "%%~nxj" ..\static\custom\StaticDownloadLinks-w60-%%i-glb.tmp>..\static\custom\StaticDownloadLinks-w60-%%i-glb.txt
+      %SystemRoot%\system32\findstr.exe /L /I /V "%%~nxj" ..\static\custom\StaticDownloadLinks-w60-%%i-glb.tmp>..\static\custom\StaticDownloadLinks-w60-%%i-glb.txt
       del ..\static\custom\StaticDownloadLinks-w60-%%i-glb.tmp
     )
   )
@@ -43,7 +43,7 @@ for %%i in (x86 x64) do (
   for /F %%j in (..\static\StaticDownloadLinks-ie9-w61-%%i-%1.txt) do (
     if exist ..\static\custom\StaticDownloadLinks-w61-%%i-glb.txt (
       ren ..\static\custom\StaticDownloadLinks-w61-%%i-glb.txt StaticDownloadLinks-w61-%%i-glb.tmp
-      %SystemRoot%\system32\findstr.exe /I /V "%%~nxj" ..\static\custom\StaticDownloadLinks-w61-%%i-glb.tmp>..\static\custom\StaticDownloadLinks-w61-%%i-glb.txt
+      %SystemRoot%\system32\findstr.exe /L /I /V "%%~nxj" ..\static\custom\StaticDownloadLinks-w61-%%i-glb.tmp>..\static\custom\StaticDownloadLinks-w61-%%i-glb.txt
       del ..\static\custom\StaticDownloadLinks-w61-%%i-glb.tmp
     )
   )
@@ -56,7 +56,7 @@ for %%i in (x86 x64) do (
     for /F %%j in (..\static\StaticDownloadLinks-msse-%%i-%1.txt) do (
       if exist ..\static\custom\StaticDownloadLinks-msse-%%i-glb.txt (
         ren ..\static\custom\StaticDownloadLinks-msse-%%i-glb.txt StaticDownloadLinks-msse-%%i-glb.tmp
-        %SystemRoot%\system32\findstr.exe /I /V "%%~nxj" ..\static\custom\StaticDownloadLinks-msse-%%i-glb.tmp>..\static\custom\StaticDownloadLinks-msse-%%i-glb.txt
+        %SystemRoot%\system32\findstr.exe /L /I /V "%%~nxj" ..\static\custom\StaticDownloadLinks-msse-%%i-glb.tmp>..\static\custom\StaticDownloadLinks-msse-%%i-glb.txt
         del ..\static\custom\StaticDownloadLinks-msse-%%i-glb.tmp
       )
     )

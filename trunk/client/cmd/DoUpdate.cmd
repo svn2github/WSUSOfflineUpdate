@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=6.9+ (r283)
+set WSUSOFFLINE_VERSION=6.9+ (r284)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log
 title %~n0 %*
@@ -112,7 +112,7 @@ for /L %%i in (1,1,10) do (
 )
 :CheckDXDiag
 if not exist "%TEMP%\dxdiag.txt" goto NoDXDiag
-%SystemRoot%\system32\findstr.exe /C:"DirectX Version" "%TEMP%\dxdiag.txt" >"%TEMP%\dxver.txt"
+%SystemRoot%\system32\findstr.exe /L /C:"DirectX Version" "%TEMP%\dxdiag.txt" >"%TEMP%\dxver.txt"
 del "%TEMP%\dxdiag.txt"
 for /F "usebackq tokens=2 delims=:" %%i in ("%TEMP%\dxver.txt") do (
   for /F "tokens=1*" %%j in ("%%i") do echo set DX_MAIN_VER=%%k>"%TEMP%\SetDXVer.cmd"
@@ -465,7 +465,7 @@ if "%INSTALL_IE%"=="/instie9" (
   echo Checking Internet Explorer 9 prerequisites...
   %CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
   if exist "%TEMP%\InstalledUpdateIds.txt" (
-    %SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\InstalledUpdateIds.txt" ..\static\StaticUpdateIds-ie9-w60.txt >"%TEMP%\MissingUpdateIds.txt"
+    %SystemRoot%\system32\findstr.exe /L /I /V /G:"%TEMP%\InstalledUpdateIds.txt" ..\static\StaticUpdateIds-ie9-w60.txt >"%TEMP%\MissingUpdateIds.txt"
     del "%TEMP%\InstalledUpdateIds.txt"
   ) else (
     copy /Y ..\static\StaticUpdateIds-ie9-w60.txt "%TEMP%\MissingUpdateIds.txt" >nul
@@ -999,7 +999,7 @@ if not exist ..\md\hashes-wsus.txt (
   goto SkipVerifyWSUSScan
 )
 echo Verifying integrity of Windows Update catalog file...
-%SystemRoot%\system32\findstr.exe /C:%% /C:## /C:..\wsus\wsusscn2.cab ..\md\hashes-wsus.txt >"%TEMP%\hash-wsusscn2.txt"
+%SystemRoot%\system32\findstr.exe /L /C:%% /C:## /C:..\wsus\wsusscn2.cab ..\md\hashes-wsus.txt >"%TEMP%\hash-wsusscn2.txt"
 %HASHDEEP_PATH% -a -l -k "%TEMP%\hash-wsusscn2.txt" ..\wsus\wsusscn2.cab
 if errorlevel 1 (
   if exist "%TEMP%\hash-wsusscn2.txt" del "%TEMP%\hash-wsusscn2.txt"

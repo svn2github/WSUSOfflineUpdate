@@ -24,7 +24,7 @@ goto EvalParams
 :EvalStatics
 if exist %1 (
   if exist "%TEMP%\InstalledUpdateIds.txt" (
-    %SystemRoot%\system32\findstr.exe /I /V /G:"%TEMP%\InstalledUpdateIds.txt" %1 >>"%TEMP%\MissingUpdateIds.txt"
+    %SystemRoot%\system32\findstr.exe /L /I /V /G:"%TEMP%\InstalledUpdateIds.txt" %1 >>"%TEMP%\MissingUpdateIds.txt"
   ) else (
     for /F %%i in (%1) do echo %%i>>"%TEMP%\MissingUpdateIds.txt"
   )

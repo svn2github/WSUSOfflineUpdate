@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                    v. 6.9+ (r283)                  ###
+###                    v. 6.9+ (r284)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -497,7 +497,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                    v. 6.9+ (r283)                  ***
+***                    v. 6.9+ (r284)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
@@ -1138,8 +1138,8 @@ if [ "$sys"=="ofc" ] && [ "$sys_old"!="" ]; then
    doWget -c -i ../temp/StaticUrls-${sys_old}-glb.txt -P ../client/${sys_old}/glb
    echo "Creating integrity database for ${sys_old} ${lang}..."
 	 cd ../client/bin
-   "$PATH_PWD"/hashdeep -c md5,sha256 -l -r ../${sys_old}/${lang} | sed 's/\//\\/g' > ../md/hashes-${sys_old}-${lang}.txt
-   "$PATH_PWD"/hashdeep -c md5,sha256 -l -r ../${sys_old}/glb | sed 's/\//\\/g' > ../md/hashes-${sys_old}-glb.txt
+   "$PATH_PWD"/hashdeep -c md5,sha1,sha256 -l -r ../${sys_old}/${lang} | sed 's/\//\\/g' > ../md/hashes-${sys_old}-${lang}.txt
+   "$PATH_PWD"/hashdeep -c md5,sha1,sha256 -l -r ../${sys_old}/glb | sed 's/\//\\/g' > ../md/hashes-${sys_old}-glb.txt
    cd "$PATH_PWD"
 fi
 
@@ -1149,7 +1149,7 @@ if [ "$dotnet" == "1" ]; then
 	if [ -f "$PATH_PWD"/hashdeep ]; then
 	 echo "Creating integrity database for .Net ..."
 	 cd ../client/bin
-	 "$PATH_PWD"/hashdeep -c md5,sha256 -l ../dotnet/*.exe | sed 's/\//\\/g' > ../md/hashes-dotnet.txt
+	 "$PATH_PWD"/hashdeep -c md5,sha1,sha256 -l ../dotnet/*.exe | sed 's/\//\\/g' > ../md/hashes-dotnet.txt
 	 cd "$PATH_PWD"
 	fi
 	if echo $sys | grep x64 > /dev/null 2>&1; then
@@ -1157,7 +1157,7 @@ if [ "$dotnet" == "1" ]; then
 	 if [ -f "$PATH_PWD"/hashdeep ]; then
 	   echo "Creating integrity database for .Net-x64-glb ..."
 	   cd ../client/bin
-    "$PATH_PWD"/hashdeep -c md5,sha256 -l -r ../dotnet/x64-glb | sed 's/\//\\/g' > ../md/hashes-dotnet-x64-glb.txt
+    "$PATH_PWD"/hashdeep -c md5,sha1,sha256 -l -r ../dotnet/x64-glb | sed 's/\//\\/g' > ../md/hashes-dotnet-x64-glb.txt
     cd "$PATH_PWD"
    fi
 	else
@@ -1165,7 +1165,7 @@ if [ "$dotnet" == "1" ]; then
 	 if [ -f "$PATH_PWD"/hashdeep ]; then
 	   echo "Creating integrity database for .Net-x86-glb ..."
 	   cd ../client/bin
-	   "$PATH_PWD"/hashdeep -c md5,sha256 -l -r ../dotnet/x86-glb | sed 's/\//\\/g' > ../md/hashes-dotnet-x86-glb.txt
+	   "$PATH_PWD"/hashdeep -c md5,sha1,sha256 -l -r ../dotnet/x86-glb | sed 's/\//\\/g' > ../md/hashes-dotnet-x86-glb.txt
 	   cd "$PATH_PWD"
 	 fi
 	fi
@@ -1197,7 +1197,7 @@ if [ "$msse" == "1" ]; then
 	if [ -f "$PATH_PWD"/hashdeep ]; then
 	  echo "Creating integrity database for MSSE ..."
 	  cd ../client/bin
-	  "$PATH_PWD"/hashdeep -c md5,sha256 -l -r ../msse | sed 's/\//\\/g' > ../md/hashes-msse.txt
+	  "$PATH_PWD"/hashdeep -c md5,sha1,sha256 -l -r ../msse | sed 's/\//\\/g' > ../md/hashes-msse.txt
 	  cd "$PATH_PWD"
   fi
 fi
@@ -1212,7 +1212,7 @@ if [ "$wddefs" == "1" ]; then
 	if [ -f "$PATH_PWD"/hashdeep ] && [ -d ../client/${sys}/glb ]; then
     echo "Creating integrity database for Windows Defender definition files ..."
     cd ../client/bin
-    "$PATH_PWD"/hashdeep -c md5,sha256 -l -r ../wddefs | sed 's/\//\\/g' > ../md/hashes-wddefs.txt
+    "$PATH_PWD"/hashdeep -c md5,sha1,sha256 -l -r ../wddefs | sed 's/\//\\/g' > ../md/hashes-wddefs.txt
     cd "$PATH_PWD"
   fi
 fi
@@ -1222,14 +1222,14 @@ doWget -c -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
 if [ -f "$PATH_PWD"/hashdeep ] && [ -d ../client/${sys}/${lang} ]; then
   echo "Creating integrity database for $sys-$lang ..."
   cd ../client/bin
- "$PATH_PWD"/hashdeep -c md5,sha256 -l -r ../${sys}/${lang} | sed 's/\//\\/g' > ../md/hashes-${sys}-${lang}.txt
+ "$PATH_PWD"/hashdeep -c md5,sha1,sha256 -l -r ../${sys}/${lang} | sed 's/\//\\/g' > ../md/hashes-${sys}-${lang}.txt
  cd "$PATH_PWD"
 fi
 doWget -c -i ../temp/ValidUrls-${sys}-glb.txt -P ../client/${sys}/glb
 if [ -f "$PATH_PWD"/hashdeep ] && [ -d ../client/${sys}/glb ]; then
   echo "Creating integrity database for $sys-glb ..."
   cd ../client/bin
- "$PATH_PWD"/hashdeep -c md5,sha256 -l -r ../${sys}/glb | sed 's/\//\\/g' > ../md/hashes-${sys}-glb.txt
+ "$PATH_PWD"/hashdeep -c md5,sha1,sha256 -l -r ../${sys}/glb | sed 's/\//\\/g' > ../md/hashes-${sys}-glb.txt
  cd "$PATH_PWD"
 fi
 if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
@@ -1238,19 +1238,19 @@ fi
 if [ -f "$PATH_PWD"/hashdeep ] && [ -d ../client/win/glb ]; then
   echo "Creating integrity database for win-glb ..."
   cd ../client/bin
- "$PATH_PWD"/hashdeep -c md5,sha256 -l -r ../win/glb | sed 's/\//\\/g' > ../md/hashes-win-glb.txt
+ "$PATH_PWD"/hashdeep -c md5,sha1,sha256 -l -r ../win/glb | sed 's/\//\\/g' > ../md/hashes-win-glb.txt
  cd "$PATH_PWD"
 fi
 if [ -f "$PATH_PWD"/hashdeep ] && [ -d ../client/win/${lang} ]; then
   cd ../client/bin
   echo "Creating integrity database for win-$lang ..."
- "$PATH_PWD"/hashdeep -c md5,sha256 -l -r ../win/${lang} | sed 's/\//\\/g' > ../md/hashes-win-${lang}.txt
+ "$PATH_PWD"/hashdeep -c md5,sha1,sha256 -l -r ../win/${lang} | sed 's/\//\\/g' > ../md/hashes-win-${lang}.txt
  cd "$PATH_PWD"
 fi
 if [ -f "$PATH_PWD"/hashdeep ] && [ -d ../client/wsus ]; then
   cd ../client/bin
   echo "Creating integrity database for WSUS ..."
- "$PATH_PWD"/hashdeep -c md5,sha256 -l -r ../wsus | sed 's/\//\\/g' > ../md/hashes-wsus.txt
+ "$PATH_PWD"/hashdeep -c md5,sha1,sha256 -l -r ../wsus | sed 's/\//\\/g' > ../md/hashes-wsus.txt
  cd "$PATH_PWD"
 fi
 

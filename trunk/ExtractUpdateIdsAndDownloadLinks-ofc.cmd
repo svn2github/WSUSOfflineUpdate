@@ -64,7 +64,7 @@ set UPDATE_CATEGORY=
 set UPDATE_LANGUAGES=
 rem del "%TEMP%\UpdateCategoriesAndFileIds.txt"
 
-%SystemRoot%\system32\findstr.exe /B /G:"%TEMP%\OfficeFileIds.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
+%SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIds.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
 rem del "%TEMP%\OfficeFileIds.txt"
 rem del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 

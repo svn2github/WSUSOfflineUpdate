@@ -16,7 +16,7 @@ if /i "%2" NEQ "/quiet" echo Removing x64 support from Office 2010 custom URL fi
 for /F %%i in (..\static\StaticDownloadLinks-o2k10-x64-%1.txt) do (
   if exist ..\static\custom\StaticDownloadLinks-o2k10-%1.txt (
     ren ..\static\custom\StaticDownloadLinks-o2k10-%1.txt StaticDownloadLinks-o2k10-%1.tmp
-    %SystemRoot%\system32\findstr.exe /I /V "%%~nxi" ..\static\custom\StaticDownloadLinks-o2k10-%1.tmp>..\static\custom\StaticDownloadLinks-o2k10-%1.txt
+    %SystemRoot%\system32\findstr.exe /L /I /V "%%~nxi" ..\static\custom\StaticDownloadLinks-o2k10-%1.tmp>..\static\custom\StaticDownloadLinks-o2k10-%1.txt
     del ..\static\custom\StaticDownloadLinks-o2k10-%1.tmp
   )
 )
