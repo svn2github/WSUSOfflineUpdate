@@ -571,6 +571,7 @@ Version ?.? -- ??.??.11
 - Linux download and ISO creation scripts now support Office again and exclusion of superseded updates (Thanks to Stefan Jöhnke)
 - Support removed for Office XP since Microsoft discontinued support for it on July 12th, 2011 (see http://support.microsoft.com/lifecycle/?p1=2533)
 - C++ 2010 Runtime Libraries updated to include kb2565063 / MS11-025 (Thanks to "Denniss")
+- Update for Root Certificates (rootsupd.exe/kb931125) download URL updated to provide most recent version always (Thanks to "Gerby")
 - Optional verification of downloaded updates will now check SHA-1 message digest included in file names
 - Download of updates will optionally use a local WSUS server only (Thanks to "FrankWeber" and "balonik")
 - User's SID will now only be determined if WOUTempAdmin is logged on (Thanks to "Adorno")
