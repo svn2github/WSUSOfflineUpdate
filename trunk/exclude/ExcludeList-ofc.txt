@@ -1,8 +1,8 @@
-fullfile-
-server_
-srvapp_
-srv_
-sts_
-wacwfe_
-project_
+fullfile
+server
+srvapp
+srv
+sts
+wacwfe
+project
 visio
