@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                    v. 6.9+ (r289)                  ###
+###                    v. 6.9+ (r290)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -325,8 +325,8 @@ fi
 doWget()
 {
 mydate=`date +%Y%m%d`
-echo "wget --no-cache -nv -N --timeout=120 $*" | tee -a /tmp/wget.$mydate
-wget --no-cache -nv -N --timeout=120 $* 2>>/tmp/wget.$mydate
+echo "wget -nv -N --timeout=120 $*" | tee -a /tmp/wget.$mydate
+wget -nv -N --timeout=120 $* 2>>/tmp/wget.$mydate
 return $?
 }
 
@@ -497,7 +497,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                    v. 6.9+ (r289)                  ***
+***                    v. 6.9+ (r290)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
@@ -607,7 +607,7 @@ if [ "$sys" == "all-x86" ]; then
 fi
 
 echo "Downloading most recent Windows Update Agent and catalog file..."
-doWget -c -i ../static/StaticDownloadLinks-wsus.txt -P ../client/wsus
+doWget -i ../static/StaticDownloadLinks-wsus.txt -P ../client/wsus
 
 echo "Determining static URLs for ${sys} ${lang}..."
 
@@ -1060,25 +1060,25 @@ mkdir -p ../client/${sys}/ ../client/${sys}/glb ../client/${sys}/${lang} ../clie
 printheader
 echo "Downloading patches for ${sys}..."
 echo "Downloading static patches..."
-doWget -c -i ../temp/StaticUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
+doWget -i ../temp/StaticUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
 if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
-	doWget -c -i ../temp/StaticUrls-${lang}.txt -P ../client/win/${lang}
-	doWget -c -i ../temp/StaticUrls-glb.txt -P ../client/win/glb
+	doWget -i ../temp/StaticUrls-${lang}.txt -P ../client/win/${lang}
+	doWget -i ../temp/StaticUrls-glb.txt -P ../client/win/glb
 fi
-doWget -c -i ../temp/StaticUrls-${sys}-glb.txt -P ../client/${sys}/glb
+doWget -i ../temp/StaticUrls-${sys}-glb.txt -P ../client/${sys}/glb
 
 if [ "$sys"=="ofc" ] && [ "$sys_old"!="" ]; then
-   doWget -c -i ../temp/StaticUrls-${sys_old}-${lang}.txt -P ../client/${sys_old}/${lang}
-   doWget -c -i ../temp/StaticUrls-${sys_old}-glb.txt -P ../client/${sys_old}/glb
+   doWget -i ../temp/StaticUrls-${sys_old}-${lang}.txt -P ../client/${sys_old}/${lang}
+   doWget -i ../temp/StaticUrls-${sys_old}-glb.txt -P ../client/${sys_old}/glb
 fi
 
 if [ "$dotnet" == "1" ]; then
 	echo "Downloading .Net framework..."
-	doWget -c -i ../temp/StaticUrls-dotnet.txt -P ../client/dotnet
+	doWget -i ../temp/StaticUrls-dotnet.txt -P ../client/dotnet
 	if echo $sys | grep x64 > /dev/null 2>&1; then
-	 doWget -c -i ../temp/Urls-dotnet-x64.txt -P ../client/dotnet/x64-glb
+	 doWget -i ../temp/Urls-dotnet-x64.txt -P ../client/dotnet/x64-glb
 	else
-	 doWget -c -i ../temp/Urls-dotnet-x86.txt -P ../client/dotnet/x86-glb
+	 doWget -i ../temp/Urls-dotnet-x86.txt -P ../client/dotnet/x86-glb
 	fi
 fi
 if [ "$msse" == "1" ]; then
@@ -1091,9 +1091,9 @@ if [ "$msse" == "1" ]; then
       oldname=`echo $x | awk -F"," '{print $1}'`
       newname=`echo $x | awk -F"," '{print $2}'`
       mkdir -p ../client/msse/x64-glb
-      doWget -c $oldname -O ../client/msse/x64-glb/$newname       
+      doWget $oldname -O ../client/msse/x64-glb/$newname       
     done
-	  doWget -c -i ../temp/StaticUrls-msse-x64-glb.txt -P ../client/msse/x64-glb
+	  doWget -i ../temp/StaticUrls-msse-x64-glb.txt -P ../client/msse/x64-glb
 	 else
     mssestring=`cat ../temp/StaticUrls-msse-x86-glb.txt | grep ,`
 	   arr=$(echo $mssestring | tr " " "\n")
@@ -1102,40 +1102,40 @@ if [ "$msse" == "1" ]; then
         oldname=`echo $x | awk -F"," '{print $1}'`
         newname=`echo $x | awk -F"," '{print $2}'`
         mkdir -p ../client/msse/x86-glb
-        doWget -c $oldname -O ../client/msse/x86-glb/$newname       
+        doWget $oldname -O ../client/msse/x86-glb/$newname       
       done
-	   doWget -c -i ../temp/StaticUrls-msse-x86-glb.txt -P ../client/msse/x86-glb
+	   doWget -i ../temp/StaticUrls-msse-x86-glb.txt -P ../client/msse/x86-glb
 	 fi
 fi
 if [ "$wddefs" == "1" ]; then
 	echo "Downloading Windows Defender definition files..."
 	if echo $sys | grep x64 > /dev/null 2>&1; then
-	 doWget -c -i ../temp/StaticUrls-wddefs-x64-glb.txt -P ../client/wddefs/x64-glb
+	 doWget -i ../temp/StaticUrls-wddefs-x64-glb.txt -P ../client/wddefs/x64-glb
 	else
-	 doWget -c -i ../temp/StaticUrls-wddefs-x86-glb.txt -P ../client/wddefs/x86-glb
+	 doWget -i ../temp/StaticUrls-wddefs-x86-glb.txt -P ../client/wddefs/x86-glb
 	fi
 fi
 
 echo "Downloading patches for $sys $lang"
-doWget -c -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
-doWget -c -i ../temp/ValidUrls-${sys}-glb.txt -P ../client/${sys}/glb
+doWget -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
+doWget -i ../temp/ValidUrls-${sys}-glb.txt -P ../client/${sys}/glb
 if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
-	doWget -c -i ../temp/ValidUrls-win-x86-${lang}.txt -P ../client/win/${lang}
+	doWget -i ../temp/ValidUrls-win-x86-${lang}.txt -P ../client/win/${lang}
 fi
 
 printheader
 echo "Validating patches for ${sys}..."
 echo "Validating static patches..."
-doWget -c -i ../temp/StaticUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
+doWget -i ../temp/StaticUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
 if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
-	doWget -c -i ../temp/StaticUrls-${lang}.txt -P ../client/win/${lang}
-	doWget -c -i ../temp/StaticUrls-glb.txt -P ../client/win/glb
+	doWget -i ../temp/StaticUrls-${lang}.txt -P ../client/win/${lang}
+	doWget -i ../temp/StaticUrls-glb.txt -P ../client/win/glb
 fi
-doWget -c -i ../temp/StaticUrls-${sys}-glb.txt -P ../client/${sys}/glb
+doWget -i ../temp/StaticUrls-${sys}-glb.txt -P ../client/${sys}/glb
 
 if [ "$sys"=="ofc" ] && [ "$sys_old"!="" ]; then
-   doWget -c -i ../temp/StaticUrls-${sys_old}-${lang}.txt -P ../client/${sys_old}/${lang}
-   doWget -c -i ../temp/StaticUrls-${sys_old}-glb.txt -P ../client/${sys_old}/glb
+   doWget -i ../temp/StaticUrls-${sys_old}-${lang}.txt -P ../client/${sys_old}/${lang}
+   doWget -i ../temp/StaticUrls-${sys_old}-glb.txt -P ../client/${sys_old}/glb
    echo "Creating integrity database for ${sys_old} ${lang}..."
 	 cd ../client/bin
    "$PATH_PWD"/hashdeep -c md5,sha1,sha256 -l -r ../${sys_old}/${lang} | sed 's/\//\\/g' > ../md/hashes-${sys_old}-${lang}.txt
@@ -1145,7 +1145,7 @@ fi
 
 if [ "$dotnet" == "1" ]; then
 	echo "Validating .Net framework..."
-	doWget -c -i ../temp/StaticUrls-dotnet.txt -P ../client/dotnet
+	doWget -i ../temp/StaticUrls-dotnet.txt -P ../client/dotnet
 	if [ -f "$PATH_PWD"/hashdeep ]; then
 	 echo "Creating integrity database for .Net ..."
 	 cd ../client/bin
@@ -1153,7 +1153,7 @@ if [ "$dotnet" == "1" ]; then
 	 cd "$PATH_PWD"
 	fi
 	if echo $sys | grep x64 > /dev/null 2>&1; then
-	 doWget -c -i ../temp/Urls-dotnet-x64.txt -P ../client/dotnet/x64-glb
+	 doWget -i ../temp/Urls-dotnet-x64.txt -P ../client/dotnet/x64-glb
 	 if [ -f "$PATH_PWD"/hashdeep ]; then
 	   echo "Creating integrity database for .Net-x64-glb ..."
 	   cd ../client/bin
@@ -1161,7 +1161,7 @@ if [ "$dotnet" == "1" ]; then
     cd "$PATH_PWD"
    fi
 	else
-	 doWget -c -i ../temp/Urls-dotnet-x86.txt -P ../client/dotnet/x86-glb
+	 doWget -i ../temp/Urls-dotnet-x86.txt -P ../client/dotnet/x86-glb
 	 if [ -f "$PATH_PWD"/hashdeep ]; then
 	   echo "Creating integrity database for .Net-x86-glb ..."
 	   cd ../client/bin
@@ -1180,9 +1180,9 @@ if [ "$msse" == "1" ]; then
     do
       oldname=`echo $x | awk -F"," '{print $1}'`
       newname=`echo $x | awk -F"," '{print $2}'`
-      doWget -c $oldname -O ../client/msse/x64-glb/$newname       
+      doWget $oldname -O ../client/msse/x64-glb/$newname       
     done
-	  doWget -c -i ../temp/StaticUrls-msse-x64-glb.txt -P ../client/msse/x64-glb
+	  doWget -i ../temp/StaticUrls-msse-x64-glb.txt -P ../client/msse/x64-glb
 	 else
 	  mssestring=`cat ../temp/StaticUrls-msse-x86-glb.txt | grep ,`
 	  arr=$(echo $mssestring | tr " " "\n")
@@ -1190,9 +1190,9 @@ if [ "$msse" == "1" ]; then
      do
       oldname=`echo $x | awk -F"," '{print $1}'`
       newname=`echo $x | awk -F"," '{print $2}'`
-      doWget -c $oldname -O ../client/msse/x86-glb/$newname       
+      doWget $oldname -O ../client/msse/x86-glb/$newname       
      done
-	  doWget -c -i ../temp/StaticUrls-msse-x86-glb.txt -P ../client/msse/x86-glb
+	  doWget -i ../temp/StaticUrls-msse-x86-glb.txt -P ../client/msse/x86-glb
 	 fi
 	if [ -f "$PATH_PWD"/hashdeep ]; then
 	  echo "Creating integrity database for MSSE ..."
@@ -1205,9 +1205,9 @@ fi
 if [ "$wddefs" == "1" ]; then
 	echo "Validating Windows Defender definition files..."
 	if echo $sys | grep x64 > /dev/null 2>&1; then
-	 doWget -c -i ../temp/StaticUrls-wddefs-x64-glb.txt -P ../client/wddefs
+	 doWget -i ../temp/StaticUrls-wddefs-x64-glb.txt -P ../client/wddefs
 	else
-	 doWget -c -i ../temp/StaticUrls-wddefs-x86-glb.txt -P ../client/wddefs
+	 doWget -i ../temp/StaticUrls-wddefs-x86-glb.txt -P ../client/wddefs
 	fi
 	if [ -f "$PATH_PWD"/hashdeep ] && [ -d ../client/${sys}/glb ]; then
     echo "Creating integrity database for Windows Defender definition files ..."
@@ -1218,14 +1218,14 @@ if [ "$wddefs" == "1" ]; then
 fi
 
 echo "Validating patches for $sys ${lang}..."
-doWget -c -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
+doWget -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
 if [ -f "$PATH_PWD"/hashdeep ] && [ -d ../client/${sys}/${lang} ]; then
   echo "Creating integrity database for $sys-$lang ..."
   cd ../client/bin
  "$PATH_PWD"/hashdeep -c md5,sha1,sha256 -l -r ../${sys}/${lang} | sed 's/\//\\/g' > ../md/hashes-${sys}-${lang}.txt
  cd "$PATH_PWD"
 fi
-doWget -c -i ../temp/ValidUrls-${sys}-glb.txt -P ../client/${sys}/glb
+doWget -i ../temp/ValidUrls-${sys}-glb.txt -P ../client/${sys}/glb
 if [ -f "$PATH_PWD"/hashdeep ] && [ -d ../client/${sys}/glb ]; then
   echo "Creating integrity database for $sys-glb ..."
   cd ../client/bin
@@ -1233,7 +1233,7 @@ if [ -f "$PATH_PWD"/hashdeep ] && [ -d ../client/${sys}/glb ]; then
  cd "$PATH_PWD"
 fi
 if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
-	doWget -c -i ../temp/ValidUrls-win-x86-${lang}.txt -P ../client/win/${lang}
+	doWget -i ../temp/ValidUrls-win-x86-${lang}.txt -P ../client/win/${lang}
 fi
 if [ -f "$PATH_PWD"/hashdeep ] && [ -d ../client/win/glb ]; then
   echo "Creating integrity database for win-glb ..."
