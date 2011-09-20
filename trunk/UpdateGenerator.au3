@@ -96,6 +96,8 @@ Dim Const $misc_token_showdonate  = "showdonate"
 Dim Const $misc_token_clt_wustat  = "WUStatusServer"
 
 ; Paths
+Dim Const $path_max_length        = 128
+Dim Const $path_invalid_chars     = "!%&()^+,;="
 Dim Const $paths_rel_structure    = "\bin\,\client\bin\,\client\cmd\,\client\exclude\,\client\opt\,\client\static\,\cmd\,\exclude\,\iso\,\log\,\static\,\xslt\"
 Dim Const $path_rel_builddate     = "\client\builddate.txt"
 Dim Const $path_rel_clientini     = "\client\UpdateInstaller.ini"
@@ -142,6 +144,24 @@ Func ShowGUIInGerman()
     EndSwitch
   EndIf
   Return ( (@OSLang = "0007") OR (@OSLang = "0407") OR (@OSLang = "0807") OR (@OSLang = "0C07") OR (@OSLang = "1007") OR (@OSLang = "1407") )
+EndFunc
+
+Func PathValid()
+Dim $result, $arr_invalid, $i
+
+  If StringLen(@ScriptDir) > $path_max_length Then
+    $result = False
+  Else
+    $result = True
+    $arr_invalid = StringSplit($path_invalid_chars, "")
+    For $i = 1 to $arr_invalid[0]
+      If StringInStr(@ScriptDir, $arr_invalid[$i]) > 0 Then
+        $result = False
+        ExitLoop
+      EndIf
+    Next
+  EndIf
+  Return $result
 EndFunc
 
 Func DirectoryStructureExists()
@@ -2420,6 +2440,17 @@ GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM)
 
 ; GUI message loop
 GUISetState()
+If NOT PathValid() Then
+  If ShowGUIInGerman() Then
+    MsgBox(0x2010, "Fehler", "Der Skript-Pfad darf nicht mehr als " & $path_max_length & " Zeichen lang sein und" _
+                     & @LF & "darf keines der folgenden Zeichen enthalten: " & $path_invalid_chars)
+    Exit(1)
+  Else
+    MsgBox(0x2010, "Fehler", "The script path must not be more than " & $path_max_length & " characters long and" _
+                     & @LF & "must not contain any of the following characters: " & $path_invalid_chars)
+    Exit(1)
+  EndIf
+EndIf
 If NOT DirectoryStructureExists() Then
   If ShowGUIInGerman() Then
     MsgBox(0x2010, "Fehler", "Die Verzeichnisstruktur ist unvollständig." & @LF & "Bitte behalten Sie diese beim Entpacken des Zip-Archivs bei.")

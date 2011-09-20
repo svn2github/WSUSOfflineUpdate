@@ -581,3 +581,4 @@ Version ?.? -- ??.??.11
 - Fix: ISO and USB filters for x86 platforms erroneously excluded .NET Framework 4 installation packages (Thanks to "boco")
 - Fix: Download exclude lists for Windows 7 / Server 2008 R2 (x86/x64) modified since Microsoft updated their list of updates included in SP1 (see http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=269) on March 24th, 2011
 - Fix: Download exclude list for Office (...\exclude\ExcludeList-ofc.txt) improved
+- Fix: UpdateGenerator will now also check for valid script path (Thanks to "Sydnelson")

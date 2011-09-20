@@ -67,7 +67,7 @@ Dim Const $disabled                   = "Disabled"
 
 ; Paths
 Dim Const $path_max_length            = 128
-Dim Const $path_invalid_chars         = "%&()^+,;="
+Dim Const $path_invalid_chars         = "!%&()^+,;="
 Dim Const $path_rel_builddate         = "\builddate.txt"
 Dim Const $path_rel_hashes            = "\md\"
 Dim Const $path_rel_autologon         = "\bin\Autologon.exe"
@@ -695,12 +695,12 @@ If $scriptdir = "" Then
 EndIf
 If NOT PathValid($scriptdir) Then
   If ShowGUIInGerman() Then
-    MsgBox(0x2010, "Fehler", "Der Skript-Pfad darf nicht mehr als " & $path_max_length & " Zeichen lang sein" _
-                     & @LF & "und darf keines der folgenden Zeichen enthalten: " & $path_invalid_chars)
+    MsgBox(0x2010, "Fehler", "Der Skript-Pfad darf nicht mehr als " & $path_max_length & " Zeichen lang sein und" _
+                     & @LF & "darf keines der folgenden Zeichen enthalten: " & $path_invalid_chars)
     Exit(1)
   Else
-    MsgBox(0x2010, "Fehler", "The script path must not be more than " & $path_max_length & " characters long" _
-                     & @LF & "and must not contain any of the following characters: " & $path_invalid_chars)
+    MsgBox(0x2010, "Fehler", "The script path must not be more than " & $path_max_length & " characters long and" _
+                     & @LF & "must not contain any of the following characters: " & $path_invalid_chars)
     Exit(1)
   EndIf
 EndIf
