@@ -583,3 +583,4 @@ Version ?.? -- ??.??.11
 - Fix: Download exclude list for Office (...\exclude\ExcludeList-ofc.txt) improved
 - Fix: UpdateGenerator will now also check for valid script path (Thanks to "Sydnelson")
 - Fix: DownloadUpdates.sh script called wget using problematic -c and --no-cache switches (Thanks to "Medvedko")
+- Fix: Linux scripts again contained invalid Windows (<CR><LF>) instead of Unix (<LF>) line feeds (Thanks to "harry" and http://www.xconv.com/)
