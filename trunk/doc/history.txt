@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 6.9
+WSUS Offline Update 7.0
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -567,7 +567,7 @@ Version 6.9 -- 01.07.11
 - Fix: Temporary file package.xml remained after Office downloads (Thanks to "Denniss")
 - Fix: "Clean up download directories" functionality could lead to "file not found" error messages (Thanks to "rednaxela")
 --------------------------------------------------------------------------------
-Version ?.? -- ??.??.11
+Version 7.0 -- 01.10.11
 - Linux download and ISO creation scripts now support Office again and exclusion of superseded updates (Thanks to Stefan Jöhnke)
 - Support removed for Office XP since Microsoft discontinued support for it on July 12th, 2011 (see http://support.microsoft.com/lifecycle/?p1=2533)
 - C++ 2010 Runtime Libraries updated to include kb2565063 / MS11-025 (Thanks to "Denniss")
@@ -583,4 +583,4 @@ Version ?.? -- ??.??.11
 - Fix: Download exclude list for Office (...\exclude\ExcludeList-ofc.txt) improved
 - Fix: UpdateGenerator will now also check for valid script path (Thanks to "Sydnelson")
 - Fix: DownloadUpdates.sh script called wget using problematic -c and --no-cache switches (Thanks to "Medvedko")
-- Fix: Linux scripts again contained invalid Windows (<CR><LF>) instead of Unix (<LF>) line feeds (Thanks to "harry" and http://www.xconv.com/)
+--------------------------------------------------------------------------------
