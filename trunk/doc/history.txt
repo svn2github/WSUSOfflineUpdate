@@ -584,3 +584,5 @@ Version 7.0 -- 01.10.11
 - Fix: UpdateGenerator will now also check for valid script path (Thanks to "Sydnelson")
 - Fix: DownloadUpdates.sh script called wget using problematic -c and --no-cache switches (Thanks to "Medvedko")
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.11
+- Fix: Linux download scripts contained invalid formatted conditional statements (Thanks to "t3573r")

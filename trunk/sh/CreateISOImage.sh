@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update ISO maker            ###
 ###                  for Linux systems                 ###
-###                        v. 7.0                      ###
+###                    v. 7.0+ (r294)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg      ###
@@ -47,7 +47,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update ISO maker            ***
 ***                  for Linux systems                 ***
-***                        v. 7.0                      ***
+***                    v. 7.0+ (r294)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Stefan Joehnke, Walter Schiessberg      ***
@@ -116,7 +116,7 @@ if [ "$sys" == "w60" -o "$sys" == "w60-x64" -o "$sys" == "w61" -o "$sys" == "w61
 fi
 
 sys_old=""
-if [ "$sys" == "o2k3" -o "$sys"=="o2k7" ]; then
+if [ "$sys" == "o2k3" -o "$sys" == "o2k7" ]; then
 	sys_old=$sys
   sys="ofc"
 fi
@@ -150,7 +150,7 @@ echo "Creating ISO filter..."
 
 excludeiso1="../exclude/ExcludeListISO-${sys}.txt"
 excludeiso2="../exclude/ExcludeListISO-${sys}-x86.txt"
-if [ "$sys"=="ofc" ]; then
+if [ "$sys" == "ofc" ]; then
   excludeiso3="../exclude/ExcludeListISO-${sys_old}.txt"
   excludeiso4="../exclude/ExcludeListISO-${sys_old}-x86.txt"  
   if [ -f "$excludeiso3" ]; then

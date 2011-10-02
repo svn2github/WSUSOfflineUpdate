@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                        v. 7.0                      ###
+###                    v. 7.0+ (r294)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -175,7 +175,7 @@ if [ "$sys" == "w60" -o "$sys" == "w60-x64" -o "$sys" == "w61" -o "$sys" == "w61
 	lang="glb"
 fi
 sys_old=""
-if [ "$sys" == "o2k3" -o "$sys"=="o2k7" ]; then
+if [ "$sys" == "o2k3" -o "$sys" == "o2k7" ]; then
 	sys_old=$sys
   sys="ofc"
 fi
@@ -497,7 +497,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                        v. 7.0                      ***
+***                    v. 7.0+ (r294)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
@@ -611,7 +611,7 @@ doWget -i ../static/StaticDownloadLinks-wsus.txt -P ../client/wsus
 
 echo "Determining static URLs for ${sys} ${lang}..."
 
-if [ "$sys"=="ofc" ] && [ "$sys_old"!="" ]; then
+if [ "$sys" == "ofc" ] && [ "$sys_old" != "" ]; then
   echo "Determining static URLs for ${sys_old} ${lang}..."
    static1="../static/StaticDownloadLinks-${sys_old}-x86-${lang}.txt"
   if [ -f "$static1" ]; then
@@ -1067,7 +1067,7 @@ if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$
 fi
 doWget -i ../temp/StaticUrls-${sys}-glb.txt -P ../client/${sys}/glb
 
-if [ "$sys"=="ofc" ] && [ "$sys_old"!="" ]; then
+if [ "$sys" == "ofc" ] && [ "$sys_old" != "" ]; then
    doWget -i ../temp/StaticUrls-${sys_old}-${lang}.txt -P ../client/${sys_old}/${lang}
    doWget -i ../temp/StaticUrls-${sys_old}-glb.txt -P ../client/${sys_old}/glb
 fi
@@ -1133,7 +1133,7 @@ if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$
 fi
 doWget -i ../temp/StaticUrls-${sys}-glb.txt -P ../client/${sys}/glb
 
-if [ "$sys"=="ofc" ] && [ "$sys_old"!="" ]; then
+if [ "$sys" == "ofc" ] && [ "$sys_old" != "" ]; then
    doWget -i ../temp/StaticUrls-${sys_old}-${lang}.txt -P ../client/${sys_old}/${lang}
    doWget -i ../temp/StaticUrls-${sys_old}-glb.txt -P ../client/${sys_old}/glb
    echo "Creating integrity database for ${sys_old} ${lang}..."
