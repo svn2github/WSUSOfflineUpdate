@@ -612,7 +612,7 @@ If ShowGUIInGerman() Then
 Else
   $autoreboot = GUICtrlCreateCheckbox("Automatic reboot and recall", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (NOT AutologonPresent($scriptdir)) OR (DriveGetType(@ScriptDir) = "Network") ) Then
+If NOT AutologonPresent($scriptdir) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else
@@ -861,14 +861,33 @@ While 1
       If ( (BitAND(GUICtrlRead($autoreboot), $GUI_CHECKED) = $GUI_CHECKED) _
        AND ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) ) Then
         If ShowGUIInGerman() Then
-          If MsgBox(0x2134, "Warnung", "Die Option 'Automatisch neu starten und fortsetzen' deaktiviert temporär" _
-                               & @LF & "die Benutzerkontensteuerung (UAC), falls erforderlich." _
+          If MsgBox(0x2134, "Warnung", "Die Option 'Automatisch neu starten und fortsetzen' deaktiviert" _
+                               & @LF & "temporär die Benutzerkontensteuerung (UAC), falls erforderlich." _
                                & @LF & "Möchten Sie fortsetzen?") = 7 Then
             GUICtrlSetState($autoreboot, $GUI_UNCHECKED)
           EndIf
         Else
           If MsgBox(0x2134, "Warning", "The option 'Automatic reboot and recall' temporarily disables" _
                                & @LF & "the User Account Control (UAC), if required." _
+                               & @LF & "Do you wish to proceed?") = 7 Then
+            GUICtrlSetState($autoreboot, $GUI_UNCHECKED)
+          EndIf
+        EndIf
+      EndIf
+      If ( (BitAND(GUICtrlRead($autoreboot), $GUI_CHECKED) = $GUI_CHECKED) AND (DriveGetType($scriptdir) = "Network") ) Then
+        If ShowGUIInGerman() Then
+          If MsgBox(0x2134, "Warnung", @ScriptName & " wurde von einer Netzwerkfreigabe gestartet." _
+                               & @LF & "Die Option 'Automatisch neu starten und fortsetzen'" _
+                               & @LF & "funktioniert nur dann ohne Benutzereingriff," _
+                               & @LF & "wenn diese Freigabe anonymen Zugriff erlaubt." _
+                               & @LF & "Möchten Sie fortsetzen?") = 7 Then
+            GUICtrlSetState($autoreboot, $GUI_UNCHECKED)
+          EndIf
+        Else
+          If MsgBox(0x2134, "Warning", @ScriptName & " was started from a network share." _
+                               & @LF & "The option 'Automatic reboot and recall'" _
+                               & @LF & "does only work without user intervention," _
+                               & @LF & "if that share permits anonymous access." _
                                & @LF & "Do you wish to proceed?") = 7 Then
             GUICtrlSetState($autoreboot, $GUI_UNCHECKED)
           EndIf

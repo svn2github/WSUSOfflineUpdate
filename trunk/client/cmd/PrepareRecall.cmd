@@ -37,8 +37,21 @@ if errorlevel 1 (
   echo %DATE% %TIME% - Info: Created WOUTempAdmin account >>%UPDATE_LOGFILE%
 )
 
+echo Preparing recall directory...
+if not exist %SystemRoot%\Temp\WOURecall\nul md %SystemRoot%\Temp\WOURecall
+for %%i in (CleanupRecall.cmd DeleteUpdateAdmin.vbs RecallStub.cmd Shutdown.vbs) do copy /Y %%i %SystemRoot%\Temp\WOURecall >nul
+echo @%*>%SystemRoot%\Temp\WOURecall\RecallUpdate.cmd
+%SystemRoot%\system32\net.exe use %~d0 >nul 2>&1  
+if errorlevel 1 (
+  echo %DATE% %TIME% - Info: WSUS Offline Update was started from a local drive >>%UPDATE_LOGFILE%
+) else (
+  for /F "tokens=2" %%i in ('%SystemRoot%\system32\net.exe use %~d0') do echo @%SystemRoot%\system32\net.exe use %~d0 %%i | find "\\">>%SystemRoot%\Temp\WOURecall\ReconnectNetDrive.cmd
+  echo %DATE% %TIME% - Info: WSUS Offline Update was started from a network drive >>%UPDATE_LOGFILE%
+)
+echo %DATE% %TIME% - Info: Prepared recall directory >>%UPDATE_LOGFILE%
+
 echo Registering recall...
-%REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v WSUSOfflineUpdate /t REG_SZ /d "%*" >nul 2>&1
+%REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v WSUSOfflineUpdate /t REG_SZ /d "%SystemRoot%\Temp\WOURecall\RecallStub.cmd" >nul 2>&1
 if errorlevel 1 (
   echo Warning: Registration of recall failed.
   echo %DATE% %TIME% - Warning: Registration of recall failed >>%UPDATE_LOGFILE%

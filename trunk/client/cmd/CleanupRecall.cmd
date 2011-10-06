@@ -73,8 +73,10 @@ if "%USERNAME%"=="WOUTempAdmin" (
   )
   %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v DeleteWOUTempAdminProfile /t REG_SZ /d "cmd /c rd /S /Q \"%USERPROFILE%\"" >nul 2>&1
   echo %DATE% %TIME% - Info: Registered deletion of WOUTempAdmin profile >>%UPDATE_LOGFILE%
+  %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v DeleteWOURecallDir /t REG_SZ /d "cmd /c rd /S /Q \"%SystemRoot%\Temp\WOURecall\"" >nul 2>&1
+  echo %DATE% %TIME% - Info: Registered deletion of recall directory >>%UPDATE_LOGFILE%
 ) else (
-  echo %DATE% %TIME% - Warning: WOUTempAdmin is not logged on - skipped registration of profile deletion >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: WOUTempAdmin is not logged on - skipped registration of profile and recall directory deletion >>%UPDATE_LOGFILE%
 )
 %CSCRIPT_PATH% //Nologo //B //E:vbs DeleteUpdateAdmin.vbs
 if errorlevel 1 (
