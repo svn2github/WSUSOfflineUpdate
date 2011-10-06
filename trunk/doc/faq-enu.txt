@@ -74,7 +74,7 @@ call CreateISOImage wxp enu
 Next, create a scheduled task for your new custom script "DownloadUpdatesAndCreateISOImage.cmd" and select the desired run time. For example, if you intend to create new update media following each Microsoft Patchday, select "second Wednesday of every month".
 --------------------------------------------------------------------------------
 Q: Can I start update installation from a shared network resource?
-A: Yes, but you can't use the "Automatic reboot and recall" feature, because the shared resource may not accessible for the temporary user account "WOUTempAdmin".
+A: Yes, but you should only use the "Automatic reboot and recall" feature, if the shared resource permits anonymous access. Otherwise the automatic recall will fail, because the share won't be accessible for the temporary administrator account "WOUTempAdmin".
 If the network share doesn't have a drive letter assigned to, the "UpdateInstaller" script will automatically do a drive mapping, because cmd.exe does not support UNC paths (\\<server>\<share>) as the current directory (see http://support.microsoft.com/kb/156276/).
 If you like to assign a drive letter yourself using the "map network drive" feature or "net use" command, you'll have to do this in an administrative context/command shell (Windows Vista/7/Server 2008(R2)), because the "UpdateInstaller" script requests administrative privileges for patch installation.
 Please keep in mind that installing patches over the network is against the philosophy of an Offline update, and the machine may be vulnerable to attacks while the update process is still in progress.

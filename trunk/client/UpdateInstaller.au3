@@ -867,8 +867,8 @@ While 1
             GUICtrlSetState($autoreboot, $GUI_UNCHECKED)
           EndIf
         Else
-          If MsgBox(0x2134, "Warning", "The option 'Automatic reboot and recall' temporarily disables" _
-                               & @LF & "the User Account Control (UAC), if required." _
+          If MsgBox(0x2134, "Warning", "The option 'Automatic reboot and recall' temporarily" _
+                               & @LF & "disables the User Account Control (UAC), if required." _
                                & @LF & "Do you wish to proceed?") = 7 Then
             GUICtrlSetState($autoreboot, $GUI_UNCHECKED)
           EndIf
