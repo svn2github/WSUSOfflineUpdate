@@ -28,18 +28,9 @@ if errorlevel 1 (
   echo %DATE% %TIME% - Info: Saved System policies registry hive >>%UPDATE_LOGFILE%
 )
 
-echo Creating WOUTempAdmin account...
-%CSCRIPT_PATH% //Nologo //B //E:vbs CreateUpdateAdminAndEnableAutoLogon.vbs
-if errorlevel 1 (
-  echo Warning: Creation of WOUTempAdmin account failed.
-  echo %DATE% %TIME% - Warning: Creation of WOUTempAdmin account failed >>%UPDATE_LOGFILE%
-) else (
-  echo %DATE% %TIME% - Info: Created WOUTempAdmin account >>%UPDATE_LOGFILE%
-)
-
 echo Preparing recall directory...
 if not exist %SystemRoot%\Temp\WOURecall\nul md %SystemRoot%\Temp\WOURecall
-for %%i in (CleanupRecall.cmd DeleteUpdateAdmin.vbs RecallStub.cmd Shutdown.vbs) do copy /Y %%i %SystemRoot%\Temp\WOURecall >nul
+for %%i in (CleanupRecall.cmd DeleteUpdateAdmin.vbs RecallStub.cmd Shutdown.vbs ..\bin\Autologon.exe) do copy /Y %%i %SystemRoot%\Temp\WOURecall >nul
 echo @%*>%SystemRoot%\Temp\WOURecall\RecallUpdate.cmd
 %SystemRoot%\system32\net.exe use %~d0 >nul 2>&1  
 if errorlevel 1 (
@@ -50,6 +41,15 @@ if errorlevel 1 (
   echo %DATE% %TIME% - Info: WSUS Offline Update was started from a network drive >>%UPDATE_LOGFILE%
 )
 echo %DATE% %TIME% - Info: Prepared recall directory >>%UPDATE_LOGFILE%
+
+echo Creating WOUTempAdmin account...
+%CSCRIPT_PATH% //Nologo //B //E:vbs CreateUpdateAdminAndEnableAutoLogon.vbs
+if errorlevel 1 (
+  echo Warning: Creation of WOUTempAdmin account failed.
+  echo %DATE% %TIME% - Warning: Creation of WOUTempAdmin account failed >>%UPDATE_LOGFILE%
+) else (
+  echo %DATE% %TIME% - Info: Created WOUTempAdmin account >>%UPDATE_LOGFILE%
+)
 
 echo Registering recall...
 %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v WSUSOfflineUpdate /t REG_SZ /d "%SystemRoot%\Temp\WOURecall\RecallStub.cmd" >nul 2>&1

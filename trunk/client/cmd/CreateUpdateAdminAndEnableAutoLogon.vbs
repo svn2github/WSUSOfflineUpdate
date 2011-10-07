@@ -41,7 +41,7 @@ Private Sub EnableAutoLogonAndDisableUAC(shell, strUserName, strDomain, strPassw
   On Error Resume Next 'Turn error reporting off
   shell.RegWrite strKeyAutologon30 & strValAcceptEula, 1, "REG_DWORD"
   shell.RegWrite strKeyAutologon31 & strValAcceptEula, 1, "REG_DWORD"
-  shell.Run "..\bin\Autologon.exe " & strUserName & " " & strDomain & " " & strPassword, 0, True
+  shell.Run shell.ExpandEnvironmentStrings("%SystemRoot%") & "\Temp\WOURecall\Autologon.exe " & strUserName & " " & strDomain & " " & strPassword, 0, True
   shell.RegWrite strKeySystemPolicies & strValAdminPrompt, 0, "REG_DWORD"
   shell.RegWrite strKeySystemPolicies & strValEnableLUA, 0, "REG_DWORD"
   On Error GoTo 0 'Turn error reporting on
