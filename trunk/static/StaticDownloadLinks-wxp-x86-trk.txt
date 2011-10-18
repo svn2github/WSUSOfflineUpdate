@@ -2,3 +2,4 @@ http://xpsp.dlservice.microsoft.com/download/4/7/9/4797a8f7-bf89-45ae-ad3d-900d0
 http://download.microsoft.com/download/E/9/C/E9C87DF9-75C1-4B60-82DA-A07DA824D6F1/WindowsXP-KB969084-x86-trk.exe
 http://download.microsoft.com/download/0/D/7/0D718509-9CB6-4C17-B804-C1A9FAD58294/WindowsXP-KB968930-x86-TRK.exe
 http://download.microsoft.com/download/c/0/6/c0691e20-5317-43e8-a9c1-ff0cb9f79053/wmp11-windowsxp-x86-TR-TR.exe
+http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-tr-tr-kb2564958_32fe96064c84b31f90cca39d4d3680eede516d51.exe

@@ -587,3 +587,5 @@ Version 7.0 -- 01.10.11
 Version ?.? -- ??.??.11
 - Automatic recall feature enhanced to support network shares permitting anonymous access
 - Fix: Linux download scripts contained invalid formatted conditional statements (Thanks to "t3573r")
+- Fix: Linux download scripts did not support o2k10 target (Thanks to "Medvedko")
+- Fix: Download procedure missed kb2564958 for Windows XP / Server 2003 (x86/x64) because of variant file name scheme (Thanks to "peter2" and "harry")

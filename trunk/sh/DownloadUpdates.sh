@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                    v. 7.0+ (r298)                  ###
+###                    v. 7.0+ (r299)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -23,7 +23,7 @@ cat << END
 Usage: `basename $0` [system] [language] [parameter]
 
 Supported systems:
-wxp, wxp-x64, w2k3, w2k3-x64, w60, w60-x64, w61, w61-x64, o2k3, o2k7, ofc, all-x64, all-x86
+wxp, wxp-x64, w2k3, w2k3-x64, w60, w60-x64, w61, w61-x64, o2k3, o2k7, o2k10, ofc, all-x64, all-x86
 
 Supported languages:
 enu, deu, nld, esn, fra, ptg, ptb, ita, rus, plk, ell, csy
@@ -138,7 +138,7 @@ exit 2
 
 evaluateparams()
 {
-syslist=("wxp" "wxp-x64" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "o2k3" "o2k7" "ofc" "all-x64" "all-x86")
+syslist=("wxp" "wxp-x64" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "o2k3" "o2k7" "o2k10" "ofc" "all-x86" "all-x64")
 langlist=("enu" "deu" "nld" "esn" "fra" "ptg" "ptb" "ita" "rus" "plk" "ell" "csy" "dan" "nor" "sve" "fin" "jpn" "kor" "chs" "cht" "hun" "trk" "ara" "heb")
 paramlist=("/excludesp" "/dotnet" "/msse" "/makeiso" "/nocleanup" "/proxy" "/wddefs")
 EXCLUDE_SP="0"
@@ -175,7 +175,7 @@ if [ "$sys" == "w60" -o "$sys" == "w60-x64" -o "$sys" == "w61" -o "$sys" == "w61
 	lang="glb"
 fi
 sys_old=""
-if [ "$sys" == "o2k3" -o "$sys" == "o2k7" ]; then
+if [ "$sys" == "o2k3" -o "$sys" == "o2k7" -o "$sys" == "o2k10" ]; then
 	sys_old=$sys
   sys="ofc"
 fi
@@ -342,18 +342,18 @@ rm -f index.html
 
 getsystem()
 {
-syslist=("wxp" "wxp-x64" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "ofc" "all-x86" "all-x64")
+syslist=("wxp" "wxp-x64" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "o2k3" "o2k7" "o2k10" "ofc" "all-x86" "all-x64")
 cat << END
 Please select your OS:
-[1] Windows XP                   [5] Windows Vista/Server 2008
-[2] Windowx XP 64 bit            [6] Windows Vista/Server 2008 64 bit
-[3] Windows Server 2003          [7] Windows 7/Server 2008 R2
-[4] Windows Server 2003 64 bit   [8] Windows 7/Server 2008 R2 64 bit
+[1] Windows XP                   [5] Windows Vista / Server 2008
+[2] Windowx XP 64 bit            [6] Windows Vista / Server 2008 64 bit
+[3] Windows Server 2003          [7] Windows 7
+[4] Windows Server 2003 64 bit   [8] Windows 7 / Server 2008 R2 64 bit
 
 [9] Office 2003                 [10] Office 2007
-[11] Office 2010
+[11] Office 2010                [12] Office updates only (2003 - 2010)
 
-[12] All 32 bit                 [13] All 64 bit
+[13] All 32 bit                 [14] All 64 bit
 END
 read syschoice
 echo
@@ -497,7 +497,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                    v. 7.0+ (r298)                  ***
+***                    v. 7.0+ (r299)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***

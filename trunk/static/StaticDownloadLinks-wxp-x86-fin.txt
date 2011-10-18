@@ -2,3 +2,4 @@ http://xpsp.dlservice.microsoft.com/download/4/7/4/474e6c1a-fd6d-464e-bf50-65e92
 http://download.microsoft.com/download/F/2/8/F288C00C-A109-48D6-92C4-2EB5D273B4DF/WindowsXP-KB969084-x86-fin.exe
 http://download.microsoft.com/download/8/0/8/808E6B2D-02B2-43F1-BB17-A2BDE211812A/WindowsXP-KB968930-x86-FIN.exe
 http://download.microsoft.com/download/9/7/f/97f1d243-01f8-4738-8b05-fe512e68489d/wmp11-windowsxp-x86-FI-FI.exe
+http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-fi-fi-kb2564958_8fff29379187e88bbcc0972ec2009f77d9ded948.exe

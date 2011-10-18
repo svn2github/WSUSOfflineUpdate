@@ -1,3 +1,4 @@
 http://www.download.windowsupdate.com/msdownload/update/software/dflt/2008/02/windowsserver2003-kb914961-sp2-x86-jpn_af70b74d70df32c530352b75e42ce772e9bb68d2.exe
 http://download.microsoft.com/download/d/3/f/d3f03715-ce9a-4942-8909-da9a6c749d0c/WindowsServer2003-KB925876-v2-x86-JPN.exe
 http://download.microsoft.com/download/6/1/B/61B3B57B-808E-46AB-AB96-85AD789A9931/WindowsServer2003-KB968930-x86-JPN.exe
+http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-ja-jp-kb2564958_9923ecc1d89b686d44f1ff50e5c91994f82ed0ed.exe

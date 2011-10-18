@@ -2,3 +2,4 @@ http://xpsp.dlservice.microsoft.com/download/b/6/3/b633eaca-8fc7-4471-a459-577df
 http://download.microsoft.com/download/B/8/A/B8A20DD7-3C81-4733-803C-85594BF923D5/WindowsXP-KB969084-x86-ptg.exe
 http://download.microsoft.com/download/A/6/4/A64B09B6-11E4-4202-848B-F86A4F6AF770/WindowsXP-KB968930-x86-PTG.exe
 http://download.microsoft.com/download/5/f/a/5fa9e431-a21e-4e66-a730-ab7e436c1d8e/wmp11-windowsxp-x86-PT-PT.exe
+http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-pt-pt-kb2564958_1be65fc21ea6078c1581b34abcaa0aca15cdbd83.exe

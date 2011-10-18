@@ -1,3 +1,4 @@
 http://www.download.windowsupdate.com/msdownload/update/software/dflt/2008/02/windowsserver2003-kb914961-sp2-x86-plk_213469cc7ac58cfa82215f1e5ca6753675061b57.exe
 http://download.microsoft.com/download/d/3/6/d36d7436-e820-49ae-91c1-23d220765fda/WindowsServer2003-KB925876-v2-x86-PLK.exe
 http://download.microsoft.com/download/2/2/6/226138F6-7A6B-4944-9EFA-63CD26AFF7AD/WindowsServer2003-KB968930-x86-PLK.exe
+http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-pl-pl-kb2564958_56802553baaa3bdb8ef40b3e6c81ecff16690729.exe

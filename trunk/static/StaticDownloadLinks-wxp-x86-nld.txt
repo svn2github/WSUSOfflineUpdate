@@ -2,3 +2,4 @@ http://xpsp.dlservice.microsoft.com/download/e/a/1/ea15b9ae-f5d4-4971-8d31-22ce2
 http://download.microsoft.com/download/B/5/D/B5D6EA8A-8703-4AEE-AC6A-471EA7095ACA/WindowsXP-KB969084-x86-nld.exe
 http://download.microsoft.com/download/6/8/B/68BE321D-540C-4B2F-9E78-699117D7D1D4/WindowsXP-KB968930-x86-NLD.exe
 http://download.microsoft.com/download/c/8/9/c8906739-1129-466a-ac3b-a5656e83c4da/wmp11-windowsxp-x86-nl-nl.exe
+http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-nl-nl-kb2564958_9bb9d2e2150ddc905cce403b2b02abd1a1dee144.exe

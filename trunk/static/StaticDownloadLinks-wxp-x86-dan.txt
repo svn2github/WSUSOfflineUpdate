@@ -2,3 +2,4 @@ http://xpsp.dlservice.microsoft.com/download/9/8/2/982c99b3-d968-4a5c-973e-12e97
 http://download.microsoft.com/download/6/C/7/6C7378B7-9CFC-4656-8A68-12FA18D8B22A/WindowsXP-KB969084-x86-dan.exe
 http://download.microsoft.com/download/7/B/2/7B2F3C3E-2ED9-4467-A8EC-98CEC318FDE3/WindowsXP-KB968930-x86-DAN.exe
 http://download.microsoft.com/download/6/f/b/6fb0c238-92f0-4828-9601-022d65ff8cc2/wmp11-windowsxp-x86-DA-DK.exe
+http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-da-dk-kb2564958_1dd556474f9b4d098e3a01237c9017d97d7cd3df.exe
