@@ -47,9 +47,12 @@ Dim Const $ini_value_tsc              = "updatetsc"
 Dim Const $ini_value_dotnet35         = "instdotnet35"
 Dim Const $ini_value_dotnet4          = "instdotnet4"
 Dim Const $ini_value_powershell       = "instpsh"
-Dim Const $ini_value_wd               = "instwd"
 Dim Const $ini_value_msse             = "instmsse"
+Dim Const $ini_value_wd               = "instwd"
 Dim Const $ini_value_converters       = "instofccnvs"
+Dim Const $ini_value_all              = "all"
+Dim Const $ini_value_excludestatics   = "excludestatics"
+Dim Const $ini_value_skipdynamic      = "skipdynamic"
 
 Dim Const $ini_section_control        = "Control"
 Dim Const $ini_value_verify           = "verify"
@@ -962,6 +965,15 @@ While 1
       EndIf
       If BitAND(GUICtrlRead($showlog), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /showlog"
+      EndIf
+      If IniRead($inifilename, $ini_section_installation, $ini_value_all, $disabled) = $enabled Then
+        $options = $options & " /all"
+      EndIf
+      If IniRead($inifilename, $ini_section_installation, $ini_value_excludestatics, $disabled) = $enabled Then
+        $options = $options & " /excludestatics"
+      EndIf
+      If IniRead($inifilename, $ini_section_installation, $ini_value_skipdynamic, $disabled) = $enabled Then
+        $options = $options & " /skipdynamic"
       EndIf
       If (@OSArch <> "X86") Then
         DllCall("kernel32.dll", "int", "Wow64DisableWow64FsRedirection", "int", 1)

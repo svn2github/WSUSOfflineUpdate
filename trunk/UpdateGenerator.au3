@@ -90,6 +90,7 @@ Dim Const $misc_token_wsus_only   = "wsusonly"
 Dim Const $misc_token_wsus_proxy  = "wsusbyproxy"
 Dim Const $misc_token_wsus_trans  = "transferwsus"
 Dim Const $misc_token_skiptz      = "skiptz"
+Dim Const $misc_token_skipdynamic = "skipdynamic"
 Dim Const $misc_token_chkver      = "checkouversion"
 Dim Const $misc_token_minimize    = "minimizeondownload"
 Dim Const $misc_token_showdonate  = "showdonate"
@@ -609,10 +610,13 @@ Dim $result = ""
   EndIf
   $result = $result & " /exitonerror"
   If NOT (IsCheckBoxChecked($chkbox_cdiso) OR IsCheckBoxChecked($chkbox_dvdiso)) Then
-    $result = $result & " /skipmkisofs"
+    $result = $result & " /skipiso"
   EndIf
   If IniRead($inifilename, $ini_section_misc, $misc_token_skiptz, $disabled) = $enabled Then
     $result = $result & " /skiptz"
+  EndIf
+  If IniRead($inifilename, $ini_section_misc, $misc_token_skipdynamic, $disabled) = $enabled Then
+    $result = $result & " /skipdynamic"
   EndIf
   If $str_proxy <> "" Then
     $result = $result & " /proxy " & $str_proxy
@@ -1783,7 +1787,7 @@ EndIf
 ;  Office 2007 group
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
-GUICtrlCreateGroup("Office 2007 SP2 + Statics", $txtxpos, $txtypos, $groupwidth, $groupheight)
+GUICtrlCreateGroup("Office 2007 SP3 + Statics", $txtxpos, $txtypos, $groupwidth, $groupheight)
 ;  Office 2007 English
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset

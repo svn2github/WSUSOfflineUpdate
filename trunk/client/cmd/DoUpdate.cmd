@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.0+ (r299)
+set WSUSOFFLINE_VERSION=7.0+ (r300)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log
 title %~n0 %*
@@ -19,7 +19,7 @@ echo %DATE% %TIME% - Info: Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/nobackup /verify /instie7 /instie8 /instie9 /updatecpp /updatedx /updatewmp /updatetsc /instdotnet35 /instdotnet4 /instpsh /instmsse /instwd /instofccnvs /autoreboot /shutdown /showlog /all /excludestatics) do (
+for %%i in (/nobackup /verify /instie7 /instie8 /instie9 /updatecpp /updatedx /updatewmp /updatetsc /instdotnet35 /instdotnet4 /instpsh /instmsse /instwd /instofccnvs /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected >>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/nobackup" set BACKUP_MODE=/nobackup
@@ -42,6 +42,7 @@ if /i "%1"=="/shutdown" set FINISH_MODE=/shutdown
 if /i "%1"=="/showlog" set SHOW_LOG=/showlog
 if /i "%1"=="/all" set LIST_MODE_IDS=/all
 if /i "%1"=="/excludestatics" set LIST_MODE_UPDATES=/excludestatics
+if /i "%1"=="/skipdynamic" set SKIP_DYNAMIC=/skipdynamic
 shift /1
 goto EvalParams
 
@@ -55,7 +56,7 @@ rem *** Execute custom initialization hook ***
 if exist .\custom\InitializationHook.cmd (
   echo Executing custom initialization hook...
   call .\custom\InitializationHook.cmd
-  echo %DATE% %TIME% - Info: Executed custom initialization hook >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Executed custom initialization hook ^(Errorlevel: %errorlevel%^) >>%UPDATE_LOGFILE%
 )
 
 set CSCRIPT_PATH=%SystemRoot%\system32\cscript.exe
@@ -971,12 +972,16 @@ if "%OFC_FILE_VALID%" NEQ "1" (
 
 :CheckAUService
 rem *** Check state of service 'automatic updates' ***
-if "%USERNAME%"=="WOUTempAdmin" goto ListUpdateIds
+if "%SKIP_DYNAMIC%"=="/skipdynamic" (
+  echo Skipping determination of missing updates on demand...
+  echo %DATE% %TIME% - Info: Skipped determination of missing updates on demand >>%UPDATE_LOGFILE%
+  goto ListInstalledIds
+)
 echo Checking state of service 'automatic updates'...
 echo %DATE% %TIME% - Info: Detected state of service 'automatic updates': %AU_SVC_STATE_INITIAL% (start mode: %AU_SVC_START_MODE%) >>%UPDATE_LOGFILE%
-if /i "%AU_SVC_STATE_INITIAL%"=="" goto ListUpdateIds
-if /i "%AU_SVC_STATE_INITIAL%"=="Unknown" goto ListUpdateIds
-if /i "%AU_SVC_STATE_INITIAL%"=="Running" goto ListUpdateIds
+if /i "%AU_SVC_STATE_INITIAL%"=="" goto ListMissingIds
+if /i "%AU_SVC_STATE_INITIAL%"=="Unknown" goto ListMissingIds
+if /i "%AU_SVC_STATE_INITIAL%"=="Running" goto ListMissingIds
 if /i "%AU_SVC_START_MODE%"=="Disabled" goto AUSvcNotRunning
 echo Starting service 'automatic updates' (wuauserv)...
 %SystemRoot%\system32\net.exe start wuauserv >nul
@@ -984,7 +989,7 @@ if errorlevel 1 goto AUSvcNotRunning
 set AU_SVC_STARTED=1
 echo %DATE% %TIME% - Info: Started service 'automatic updates' (wuauserv) >>%UPDATE_LOGFILE%
 
-:ListUpdateIds
+:ListMissingIds
 rem *** List ids of missing updates ***
 if not exist ..\wsus\wsusscn2.cab goto NoWSUSScan
 if "%VERIFY_MODE%" NEQ "/verify" goto SkipVerifyWSUSScan
@@ -1014,6 +1019,7 @@ if exist "%TEMP%\wsusscn2.cab" del "%TEMP%\wsusscn2.cab"
 echo %TIME% - Done.
 if not exist "%TEMP%\MissingUpdateIds.txt" set NO_MISSING_IDS=1
 
+:ListInstalledIds
 rem *** List ids of installed updates ***
 if "%LIST_MODE_IDS%"=="/all" goto ListInstFiles
 if "%LIST_MODE_UPDATES%"=="/excludestatics" goto ListInstFiles
@@ -1053,7 +1059,7 @@ if "%RECALL_REQUIRED%"=="1" (
     )
     if "%USERNAME%" NEQ "WOUTempAdmin" (
       echo Preparing automatic recall...
-      call PrepareRecall.cmd %~f0 %BACKUP_MODE% %VERIFY_MODE% %INSTALL_IE% %UPDATE_CPP% %UPDATE_DX% %UPDATE_WMP% %UPDATE_TSC% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_MSSE% %INSTALL_WD% %INSTALL_CONVERTERS% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES%
+      call PrepareRecall.cmd %~f0 %BACKUP_MODE% %VERIFY_MODE% %INSTALL_IE% %UPDATE_CPP% %UPDATE_DX% %UPDATE_WMP% %UPDATE_TSC% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_MSSE% %INSTALL_WD% %INSTALL_CONVERTERS% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES% %SKIP_DYNAMIC%
     )
     if exist %SystemRoot%\system32\bcdedit.exe (
       echo Adjusting boot sequence for next reboot...
@@ -1287,7 +1293,7 @@ rem *** Execute custom finalization hook ***
 if exist .\custom\FinalizationHook.cmd (
   echo Executing custom finalization hook...
   call .\custom\FinalizationHook.cmd
-  echo %DATE% %TIME% - Info: Executed custom finalization hook >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Executed custom finalization hook ^(Errorlevel: %errorlevel%^) >>%UPDATE_LOGFILE%
 )
 cd ..
 echo Ending WSUS Offline Update at %TIME%...

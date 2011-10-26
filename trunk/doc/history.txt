@@ -584,8 +584,11 @@ Version 7.0 -- 01.10.11
 - Fix: UpdateGenerator will now also check for valid script path (Thanks to "Sydnelson")
 - Fix: DownloadUpdates.sh script called wget using problematic -c and --no-cache switches (Thanks to "Medvedko")
 --------------------------------------------------------------------------------
-Version ?.? -- ??.??.11
+Version 7.1 -- ??.11.11
+- Office 2007 Service Pack 3 integrated
 - Automatic recall feature enhanced to support network shares permitting anonymous access
+- DownloadUpdates.cmd and DoUpdate.cmd scripts now support "/skipdynamic" switch for "statics only" mode
+- DownloadUpdates.cmd and DoUpdate.cmd scripts will now log errorlevels of custom initialization and finalization hook scripts (Thanks to "aker")
 - Fix: Linux download scripts contained invalid formatted conditional statements (Thanks to "t3573r")
 - Fix: Linux download scripts did not support o2k10 target (Thanks to "Medvedko")
 - Fix: Download procedure missed kb2564958 for Windows XP / Server 2003 (x86/x64) because of variant file name scheme (Thanks to "peter2" and "harry")

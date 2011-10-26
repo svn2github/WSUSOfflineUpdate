@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.0+ (r299)
+set WSUSOFFLINE_VERSION=7.0+ (r300)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -135,7 +135,7 @@ goto EvalParams
 
 :EvalParams
 if "%3"=="" goto NoMoreParams
-for %%i in (/excludesp /excludestatics /includedotnet /includemsse /includewddefs /nocleanup /verify /exitonerror /skipmkisofs /skiptz /proxy /wsus /wsusonly /wsusbyproxy) do (
+for %%i in (/excludesp /excludestatics /includedotnet /includemsse /includewddefs /nocleanup /verify /exitonerror /skipiso /skiptz /skipdynamic /skipdownload /proxy /wsus /wsusonly /wsusbyproxy) do (
   if /i "%3"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected >>%DOWNLOAD_LOGFILE%
 )
 if /i "%3"=="/excludesp" set EXCLUDE_SP=1
@@ -146,8 +146,13 @@ if /i "%3"=="/includewddefs" set INCLUDE_WDDEFS=1
 if /i "%3"=="/nocleanup" set CLEANUP_DOWNLOADS=0
 if /i "%3"=="/verify" set VERIFY_DOWNLOADS=1
 if /i "%3"=="/exitonerror" set EXIT_ON_ERROR=1
-if /i "%3"=="/skipmkisofs" set SKIP_MKISOFS=1
+if /i "%3"=="/skipiso" set SKIP_ISO=1
 if /i "%3"=="/skiptz" set SKIP_TZ=1
+if /i "%3"=="/skipdynamic" set SKIP_DYNAMIC=/skipdynamic
+if /i "%3"=="/skipdownload" (
+  set SKIP_DOWNLOAD=/skipdownload  
+  set SKIP_ISO=1
+)
 if /i "%3"=="/proxy" (
   set http_proxy=%4
   shift /3
@@ -332,7 +337,7 @@ rem *** Execute custom initialization hook ***
 if exist .\custom\InitializationHook.cmd (
   echo Executing custom initialization hook...
   call .\custom\InitializationHook.cmd
-  echo %DATE% %TIME% - Info: Executed custom initialization hook >>%DOWNLOAD_LOGFILE%
+  echo %DATE% %TIME% - Info: Executed custom initialization hook ^(Errorlevel: %errorlevel%^) >>%DOWNLOAD_LOGFILE%
 )
 
 rem *** Download Microsoft XSL processor frontend ***
@@ -344,7 +349,7 @@ echo %DATE% %TIME% - Info: Downloaded/validated Microsoft XSL processor frontend
 :SkipMSXSL
 
 rem *** Download mkisofs tool ***
-if "%SKIP_MKISOFS%"=="1" goto SkipMkIsoFs
+if "%SKIP_ISO%"=="1" goto SkipMkIsoFs
 if exist ..\bin\mkisofs.exe goto SkipMkIsoFs
 echo Downloading mkisofs tool...
 %WGET_PATH% -N -i ..\static\StaticDownloadLink-mkisofs.txt -P ..\bin
@@ -470,7 +475,7 @@ if errorlevel 1 (
   goto DownloadError
 )
 echo %DATE% %TIME% - Info: Downloaded/validated installation files for .NET Frameworks 3.5 SP1 and 4 >>%DOWNLOAD_LOGFILE%
-call :DownloadCore dotnet %TARGET_ARCH%-glb
+call :DownloadCore dotnet %TARGET_ARCH%-glb %SKIP_DYNAMIC% %SKIP_DOWNLOAD%
 if errorlevel 1 goto Error
 if "%CLEANUP_DOWNLOADS%"=="0" (
   del "%TEMP%\StaticDownloadLinks-dotnet.txt"
@@ -794,29 +799,29 @@ if "%VERIFY_DOWNLOADS%"=="1" (
 rem *** Download the platform specific patches ***
 for %%i in (wxp w2k3) do (
   if /i "%1"=="%%i" (
-    call :DownloadCore win glb
+    call :DownloadCore win glb %SKIP_DYNAMIC% %SKIP_DOWNLOAD%
     if errorlevel 1 goto Error
-    call :DownloadCore win %2
+    call :DownloadCore win %2 %SKIP_DYNAMIC% %SKIP_DOWNLOAD%
     if errorlevel 1 goto Error
   )
 )
 for %%i in (o2k3 o2k7 o2k10) do (
   if /i "%1"=="%%i" (
-    call :DownloadCore ofc %2
+    call :DownloadCore ofc %2 %SKIP_DYNAMIC% %SKIP_DOWNLOAD%
     if errorlevel 1 goto Error
   )
 )
 for %%i in (wxp w2k3 w2k3-x64 o2k3 o2k7 o2k10) do (
   if /i "%1"=="%%i" (
-    call :DownloadCore %1 glb
+    call :DownloadCore %1 glb %SKIP_DYNAMIC% %SKIP_DOWNLOAD%
     if errorlevel 1 goto Error
-    call :DownloadCore %1 %2
+    call :DownloadCore %1 %2 %SKIP_DYNAMIC% %SKIP_DOWNLOAD%
     if errorlevel 1 goto Error
   )
 )
 for %%i in (w60 w60-x64 w61 w61-x64 ofc) do (
   if /i "%1"=="%%i" (
-    call :DownloadCore %1 %2
+    call :DownloadCore %1 %2 %SKIP_DYNAMIC% %SKIP_DOWNLOAD%
     if errorlevel 1 goto Error
   )
 )
@@ -875,6 +880,13 @@ if "%EXCLUDE_SP%"=="1" (
 echo %DATE% %TIME% - Info: Determined statical update urls for %1 %2 >>%DOWNLOAD_LOGFILE%
 
 :SkipStatics
+if "%3"=="/skipdynamic" (
+  echo Skipping unneeded determination of superseded updates...
+  echo %DATE% %TIME% - Info: Skipped unneeded determination of superseded updates >>%DOWNLOAD_LOGFILE%
+  echo Skipping determination of dynamical update urls for %1 %2 on demand...
+  echo %DATE% %TIME% - Info: Skipped determination of dynamical update urls for %1 %2 on demand >>%DOWNLOAD_LOGFILE%
+  goto DoDownload
+)
 if not exist ..\bin\msxsl.exe goto NoMSXSL
 rem *** Extract Microsoft's update catalog file package.xml ***
 echo Extracting Microsoft's update catalog file package.xml...
@@ -1073,6 +1085,11 @@ echo %DATE% %TIME% - Info: Determined dynamical update urls for %1 %2 >>%DOWNLOA
 
 :DoDownload
 rem *** Download updates for %1 %2 ***
+if "%3"=="/skipdownload" (
+  echo Skipping download/validation of updates for %1 %2 on demand...
+  echo %DATE% %TIME% - Info: Skipped download/validation of updates for %1 %2 on demand >>%DOWNLOAD_LOGFILE%
+  goto EndDownload
+)
 if not exist "%TEMP%\ValidStaticLinks-%1-%2.txt" goto DownloadDynamicUpdates
 echo Downloading/validating statically defined updates for %1 %2...
 set LINES_COUNT=0
@@ -1281,6 +1298,7 @@ if exist ..\client\md\hashes-%1-%2.txt (
   echo %DATE% %TIME% - Info: Deleted integrity database for %1 %2 >>%DOWNLOAD_LOGFILE%
 )
 :EndDownload
+if "%3"=="/skipdownload" goto :eof
 if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" del "%TEMP%\ValidStaticLinks-%1-%2.txt"
 if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" del "%TEMP%\ValidDynamicLinks-%1-%2.txt"
 if exist "%TEMP%\ValidDynamicLinks-%1-%2.csv" del "%TEMP%\ValidDynamicLinks-%1-%2.csv"
@@ -1402,7 +1420,7 @@ rem *** Execute custom finalization hook ***
 if exist .\custom\FinalizationHook.cmd (
   echo Executing custom finalization hook...
   call .\custom\FinalizationHook.cmd
-  echo %DATE% %TIME% - Info: Executed custom finalization hook >>%DOWNLOAD_LOGFILE%
+  echo %DATE% %TIME% - Info: Executed custom finalization hook ^(Errorlevel: %errorlevel%^) >>%DOWNLOAD_LOGFILE%
 )
 echo Done.
 echo %DATE% %TIME% - Info: Ending WSUS Offline Update download for %1 %2 >>%DOWNLOAD_LOGFILE%

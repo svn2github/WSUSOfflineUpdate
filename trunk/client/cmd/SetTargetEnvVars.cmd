@@ -166,8 +166,8 @@ if "%O2K7_VER_MAJOR%"=="" goto NoO2k7
 rem *** Office 2007 ***
 set OFC_NAME=o2k7
 set OFC_LANG=%O2K7_LANG%
-set O2K7_SP_VER_TARGET=2
-set O2K7_SP_TARGET_ID=953195
+set O2K7_SP_VER_TARGET=3
+set O2K7_SP_TARGET_ID=2526086
 :NoO2k7
 if "%O2K10_VER_MAJOR%"=="" goto NoO2k10
 rem *** Office 2010 ***
