@@ -580,7 +580,9 @@ Func EnableGUI()
     GUICtrlSetState($shutdown, $GUI_ENABLE)
   EndIf
   GUICtrlSetState($btn_proxy, $GUI_ENABLE)
-  GUICtrlSetState($btn_wsus, $GUI_ENABLE)
+  If IniRead($inifilename, $ini_section_misc, $misc_token_skipdynamic, $disabled) = $disabled Then
+    GUICtrlSetState($btn_wsus, $GUI_ENABLE)
+  EndIf
   GUICtrlSetState($btn_donate, $GUI_ENABLE)
   GUICtrlSetState($btn_exit, $GUI_ENABLE)
 
@@ -2410,7 +2412,7 @@ Else
 EndIf
 
 ;  Proxy button
-$txtxpos = 2* $txtxoffset + $groupwidth / 2 - $btnwidth
+$txtxpos = 2 * $txtxoffset + $groupwidth / 2 - $btnwidth
 $btn_proxy = GUICtrlCreateButton("Proxy...", $txtxpos, $txtypos, $btnwidth, $btnheight)
 GUICtrlSetResizing(-1, $GUI_DOCKBOTTOM)
 $proxy = IniRead($inifilename, $ini_section_misc, $misc_token_proxy, "")
@@ -2419,6 +2421,9 @@ $proxy = IniRead($inifilename, $ini_section_misc, $misc_token_proxy, "")
 $txtxpos = 2 * $txtxoffset + $groupwidth / 2
 $btn_wsus = GUICtrlCreateButton("WSUS...", $txtxpos, $txtypos, $btnwidth, $btnheight)
 GUICtrlSetResizing(-1, $GUI_DOCKBOTTOM)
+If IniRead($inifilename, $ini_section_misc, $misc_token_skipdynamic, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_DISABLE)
+EndIf
 $wsus = IniRead($inifilename, $ini_section_misc, $misc_token_wsus, "")
 
 ;  Donate button
