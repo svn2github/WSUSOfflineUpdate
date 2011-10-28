@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.0+ (r302)
+set WSUSOFFLINE_VERSION=7.0+ (r303)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -170,10 +170,14 @@ goto EvalParams
 echo %1 | %SystemRoot%\system32\find.exe /I "x64" >nul 2>&1
 if errorlevel 1 (set TARGET_ARCH=x86) else (set TARGET_ARCH=x64)
 if "%SKIP_TZ%" NEQ "1" (
-  for /F "tokens=3" %%i in ('%SystemRoot%\system32\reg.exe QUERY HKLM\SYSTEM\CurrentControlSet\Control\TimeZoneInformation /v ActiveTimeBias ^| %SystemRoot%\system32\find.exe /I "ActiveTimeBias"') do set /A TZ="%%i/60", TZ_MIN="%%i-(TZ*60)"
+  for /F "tokens=3" %%i in ('%SystemRoot%\system32\reg.exe QUERY HKLM\SYSTEM\CurrentControlSet\Control\TimeZoneInformation /v ActiveTimeBias ^| %SystemRoot%\system32\find.exe /I "ActiveTimeBias"') do set TZAB=%%i
+  set TZAB=0000000!TZAB:~2!
+  set TZAB=!TZAB:~-8!
+  set /A TZ=(0x!TZAB:~0,4!^<^<16^|0x!TZAB:~-4!)/60, TZ_MIN=(0x!TZAB:~0,4!^<^<16^|0x!TZAB:~-4!)-(TZ*60) 
   set TZ_MIN=0!TZ_MIN!
   set TZ=LOC!TZ!:!TZ_MIN:~-2!
   set TZ_MIN=
+  set TZAB=
   echo %DATE% %TIME% - Info: Set time zone to !TZ! >>%DOWNLOAD_LOGFILE%
 )
 if "%TEMP%"=="" goto NoTemp

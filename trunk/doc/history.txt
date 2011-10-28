@@ -592,3 +592,4 @@ Version 7.1 -- ??.11.11
 - Fix: Linux download scripts contained invalid formatted conditional statements (Thanks to "t3573r")
 - Fix: Linux download scripts did not support o2k10 target (Thanks to "Medvedko")
 - Fix: Download procedure missed kb2564958 for Windows XP / Server 2003 (x86/x64) because of variant file name scheme (Thanks to "peter2" and "harry")
+- Fix: TZ environment variable setting failed under Windows Server 2003 (x86) due to "SET /A" bug (erroneous INT overflow error)
