@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.0+ (r304)
+set WSUSOFFLINE_VERSION=7.0+ (r305)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log
 title %~n0 %*
@@ -947,7 +947,7 @@ if "%OFC_CONV_PACK%" NEQ "1" (
 )
 if "%OFC_COMP_PACK%" NEQ "1" (
   if exist ..\ofc\%OFC_LANG%\FileFormatConverters.exe (
-    echo Installing Office 2007 Compatibility Pack...
+    echo Installing Office Compatibility Pack...
     echo Installing ..\ofc\%OFC_LANG%\FileFormatConverters.exe...
     ..\ofc\%OFC_LANG%\FileFormatConverters.exe /quiet /norestart
     echo %DATE% %TIME% - Info: Installed ..\ofc\%OFC_LANG%\FileFormatConverters.exe >>%UPDATE_LOGFILE%
