@@ -40,10 +40,10 @@ goto InvalidParams
 
 :V1EvalParams
 if "%2"=="" goto V1CreateFilter
-if /i "%2"=="/excludesp" set EXCLUDE_SP=1
-if /i "%2"=="/includedotnet" set INCLUDE_DOTNET=1
-if /i "%2"=="/includemsse" set INCLUDE_MSSE=1
-if /i "%2"=="/includewddefs" set INCLUDE_WDDEFS=1
+if /i "%2"=="/excludesp" set EXC_SP=1
+if /i "%2"=="/includedotnet" set INC_DOTNET=1
+if /i "%2"=="/includemsse" set INC_MSSE=1
+if /i "%2"=="/includewddefs" set INC_WDDEFS=1
 if /i "%2"=="/outputpath" (
   if %3~==~ (goto InvalidParams) else (set OUTPUT_PATH=%~fs3)
   shift /2
@@ -53,10 +53,10 @@ goto V1EvalParams
 
 :V2EvalParams
 if "%3"=="" goto V2CreateFilter
-if /i "%3"=="/excludesp" set EXCLUDE_SP=1
-if /i "%3"=="/includedotnet" set INCLUDE_DOTNET=1
-if /i "%3"=="/includemsse" set INCLUDE_MSSE=1
-if /i "%3"=="/includewddefs" set INCLUDE_WDDEFS=1
+if /i "%3"=="/excludesp" set EXC_SP=1
+if /i "%3"=="/includedotnet" set INC_DOTNET=1
+if /i "%3"=="/includemsse" set INC_MSSE=1
+if /i "%3"=="/includewddefs" set INC_WDDEFS=1
 if /i "%3"=="/outputpath" (
   if %4~==~ (goto InvalidParams) else (set OUTPUT_PATH=%~fs4)
   shift /3
@@ -88,7 +88,7 @@ for %%i in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve 
 goto :eof
 
 :ExtendFilter
-if "%EXCLUDE_SP%"=="1" (
+if "%EXC_SP%"=="1" (
   for /F %%i in (..\exclude\ExcludeList-SPs.txt) do echo *%%i*>>%ISO_FILTER%
 )
 for %%i in (ofc) do (
@@ -97,13 +97,13 @@ for %%i in (ofc) do (
     for /F %%j in (..\exclude\ExcludeList-msse.txt) do echo *%%j/*>>%ISO_FILTER%
   )
 )
-if "%INCLUDE_DOTNET%" NEQ "1" (
+if "%INC_DOTNET%" NEQ "1" (
   for /F %%i in (..\exclude\ExcludeListISO-dotnet.txt) do echo *%%i/*>>%ISO_FILTER%
 )
-if "%INCLUDE_MSSE%" NEQ "1" (
+if "%INC_MSSE%" NEQ "1" (
   for /F %%i in (..\exclude\ExcludeList-msse.txt) do echo *%%i/*>>%ISO_FILTER%
 )
-if "%INCLUDE_WDDEFS%" NEQ "1" (
+if "%INC_WDDEFS%" NEQ "1" (
   for /F %%i in (..\exclude\ExcludeList-wddefs.txt) do echo *%%i/*>>%ISO_FILTER%
 )
 goto :eof

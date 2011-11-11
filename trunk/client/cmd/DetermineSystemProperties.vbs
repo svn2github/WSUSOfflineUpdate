@@ -530,7 +530,7 @@ cpp2010_x86_old = False
 cpp2010_x86_new = False
 cpp2010_x64_old = False
 cpp2010_x64_new = False
-Set objInstaller = CreateObject("WindowsInstaller.Installer") 
+Set objInstaller = CreateObject("WindowsInstaller.Installer")
 For Each strProduct In objInstaller.Products
   Select Case UCase(strProduct)
     Case "{6EECB283-E65F-40EF-86D3-D51BF02A8D43}"

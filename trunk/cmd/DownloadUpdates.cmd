@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.1
+set WSUSOFFLINE_VERSION=7.1+ (r308)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -135,24 +135,24 @@ goto EvalParams
 
 :EvalParams
 if "%3"=="" goto NoMoreParams
-for %%i in (/excludesp /excludestatics /includedotnet /includemsse /includewddefs /nocleanup /verify /exitonerror /skipiso /skiptz /skipdynamic /skipdownload /proxy /wsus /wsusonly /wsusbyproxy) do (
+for %%i in (/excludesp /excludestatics /includedotnet /includemsse /includewddefs /nocleanup /verify /exitonerror /skipiso /skiptz /skipdownload /skipdynamic /proxy /wsus /wsusonly /wsusbyproxy) do (
   if /i "%3"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected >>%DOWNLOAD_LOGFILE%
 )
-if /i "%3"=="/excludesp" set EXCLUDE_SP=1
-if /i "%3"=="/excludestatics" set EXCLUDE_STATICS=1
-if /i "%3"=="/includedotnet" set INCLUDE_DOTNET=1
-if /i "%3"=="/includemsse" set INCLUDE_MSSE=1
-if /i "%3"=="/includewddefs" set INCLUDE_WDDEFS=1
-if /i "%3"=="/nocleanup" set CLEANUP_DOWNLOADS=0
-if /i "%3"=="/verify" set VERIFY_DOWNLOADS=1
-if /i "%3"=="/exitonerror" set EXIT_ON_ERROR=1
+if /i "%3"=="/excludesp" set EXC_SP=1
+if /i "%3"=="/excludestatics" set EXC_STATICS=1
+if /i "%3"=="/includedotnet" set INC_DOTNET=1
+if /i "%3"=="/includemsse" set INC_MSSE=1
+if /i "%3"=="/includewddefs" set INC_WDDEFS=1
+if /i "%3"=="/nocleanup" set CLEANUP_DL=0
+if /i "%3"=="/verify" set VERIFY_DL=1
+if /i "%3"=="/exitonerror" set EXIT_ERR=1
 if /i "%3"=="/skipiso" set SKIP_ISO=1
 if /i "%3"=="/skiptz" set SKIP_TZ=1
-if /i "%3"=="/skipdynamic" set SKIP_DYNAMIC=/skipdynamic
 if /i "%3"=="/skipdownload" (
-  set SKIP_DOWNLOAD=/skipdownload  
-  set SKIP_ISO=1
+  set SKIP_DL=1
+  set SKIP_PARAM=/skipdownload
 )
+if /i "%3"=="/skipdynamic" (if "%SKIP_PARAM%"=="" set SKIP_PARAM=/skipdynamic)
 if /i "%3"=="/proxy" (
   set http_proxy=%4
   shift /3
@@ -353,6 +353,7 @@ echo %DATE% %TIME% - Info: Downloaded/validated Microsoft XSL processor frontend
 :SkipMSXSL
 
 rem *** Download mkisofs tool ***
+if "%SKIP_DL%"=="1" goto SkipMkIsoFs
 if "%SKIP_ISO%"=="1" goto SkipMkIsoFs
 if exist ..\bin\mkisofs.exe goto SkipMkIsoFs
 echo Downloading mkisofs tool...
@@ -362,6 +363,7 @@ echo %DATE% %TIME% - Info: Downloaded mkisofs tool >>%DOWNLOAD_LOGFILE%
 :SkipMkIsoFs
 
 rem *** Download Sysinternals' tools Autologon, Sigcheck and Streams ***
+if "%SKIP_DL%"=="1" goto SkipSysinternals
 if not exist ..\client\bin\Autologon.exe goto DownloadSysinternals
 if not exist ..\bin\sigcheck.exe goto DownloadSysinternals
 if not exist ..\bin\streams.exe goto DownloadSysinternals
@@ -383,7 +385,7 @@ popd
 :SkipSysinternals
 
 rem *** Download most recent Windows Update Agent installation and catalog files ***
-if "%VERIFY_DOWNLOADS%" NEQ "1" goto DownloadWSUS
+if "%VERIFY_DL%" NEQ "1" goto DownloadWSUS
 if not exist ..\client\wsus\nul goto DownloadWSUS
 if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
 if exist ..\client\md\hashes-wsus.txt (
@@ -405,7 +407,7 @@ echo Downloading/validating most recent Windows Update Agent installation and ca
 %WGET_PATH% -N -i ..\static\StaticDownloadLinks-wsus.txt -P ..\client\wsus
 if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded/validated most recent Windows Update Agent installation and catalog files >>%DOWNLOAD_LOGFILE%
-if "%VERIFY_DOWNLOADS%"=="1" (
+if "%VERIFY_DL%"=="1" (
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
   echo Verifying digital file signatures of Windows Update Agent installation and catalog files...
   ..\bin\sigcheck.exe /accepteula -q -s -u -v ..\client\wsus >"%TEMP%\sigcheck-wsus.txt"
@@ -443,8 +445,12 @@ if "%VERIFY_DOWNLOADS%"=="1" (
 )
 
 rem *** Download installation files for .NET Frameworks 3.5 SP1 and 4 ***
-if "%INCLUDE_DOTNET%" NEQ "1" goto SkipDotNet
-if "%VERIFY_DOWNLOADS%" NEQ "1" goto DownloadDotNet
+if "%INC_DOTNET%" NEQ "1" goto SkipDotNet
+if "%SKIP_DL%"=="1" (
+  call :DownloadCore dotnet %TARGET_ARCH%-glb %SKIP_PARAM%
+  goto SkipDotNet
+)
+if "%VERIFY_DL%" NEQ "1" goto DownloadDotNet
 if not exist ..\client\dotnet\nul goto DownloadDotNet
 if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
 if exist ..\client\md\hashes-dotnet.txt (
@@ -479,9 +485,9 @@ if errorlevel 1 (
   goto DownloadError
 )
 echo %DATE% %TIME% - Info: Downloaded/validated installation files for .NET Frameworks 3.5 SP1 and 4 >>%DOWNLOAD_LOGFILE%
-call :DownloadCore dotnet %TARGET_ARCH%-glb %SKIP_DYNAMIC% %SKIP_DOWNLOAD%
+call :DownloadCore dotnet %TARGET_ARCH%-glb %SKIP_PARAM%
 if errorlevel 1 goto Error
-if "%CLEANUP_DOWNLOADS%"=="0" (
+if "%CLEANUP_DL%"=="0" (
   del "%TEMP%\StaticDownloadLinks-dotnet.txt"
   goto VerifyDotNet
 )
@@ -496,7 +502,7 @@ for /F %%i in ('dir ..\client\dotnet /A:-D /B') do (
 del "%TEMP%\StaticDownloadLinks-dotnet.txt"
 echo %DATE% %TIME% - Info: Cleaned up client directory for .NET Frameworks 3.5 SP1 and 4 >>%DOWNLOAD_LOGFILE%
 :VerifyDotNet
-if "%VERIFY_DOWNLOADS%"=="1" (
+if "%VERIFY_DL%"=="1" (
   rem *** Verifying digital file signatures for .NET Frameworks' installation files ***
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
   echo Verifying digital file signatures for .NET Frameworks' installation files...
@@ -530,8 +536,9 @@ if "%VERIFY_DOWNLOADS%"=="1" (
 :SkipDotNet
 
 rem *** Download installation files for C++ Runtime Libraries ***
-if "%INCLUDE_DOTNET%" NEQ "1" goto SkipCPP
-if "%VERIFY_DOWNLOADS%" NEQ "1" goto DownloadCPP
+if "%INC_DOTNET%" NEQ "1" goto SkipCPP
+if "%SKIP_DL%"=="1" goto SkipCPP
+if "%VERIFY_DL%" NEQ "1" goto DownloadCPP
 if not exist ..\client\cpp\nul goto DownloadCPP
 if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
 if exist ..\client\md\hashes-cpp.txt (
@@ -581,7 +588,7 @@ for %%i in (x64 x86) do (
   )
 )
 echo %DATE% %TIME% - Info: Downloaded/validated installation files for C++ Runtime Libraries >>%DOWNLOAD_LOGFILE%
-if "%CLEANUP_DOWNLOADS%"=="0" goto VerifyCPP
+if "%CLEANUP_DL%"=="0" goto VerifyCPP
 echo Cleaning up client directory for C++ Runtime Libraries...
 for /F %%i in ('dir ..\client\cpp /A:-D /B') do (
   %SystemRoot%\system32\find.exe /I "%%i" ..\static\StaticDownloadLinks-cpp-x64-glb.txt >nul 2>&1
@@ -595,7 +602,7 @@ for /F %%i in ('dir ..\client\cpp /A:-D /B') do (
 )
 echo %DATE% %TIME% - Info: Cleaned up client directory for C++ Runtime Libraries >>%DOWNLOAD_LOGFILE%
 :VerifyCPP
-if "%VERIFY_DOWNLOADS%"=="1" (
+if "%VERIFY_DL%"=="1" (
   rem *** Verifying digital file signatures for C++ Runtime Libraries' installation files ***
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
   echo Verifying digital file signatures for C++ Runtime Libraries' installation files...
@@ -631,8 +638,9 @@ if "%VERIFY_DOWNLOADS%"=="1" (
 rem *** Download Microsoft Security Essentials - not required for w2k3 ***
 if /i "%1"=="w2k3" goto SkipMSSE
 if /i "%1"=="w2k3-x64" goto SkipMSSE
-if "%INCLUDE_MSSE%" NEQ "1" goto SkipMSSE
-if "%VERIFY_DOWNLOADS%" NEQ "1" goto DownloadMSSE
+if "%INC_MSSE%" NEQ "1" goto SkipMSSE
+if "%SKIP_DL%"=="1" goto SkipMSSE
+if "%VERIFY_DL%" NEQ "1" goto DownloadMSSE
 if not exist ..\client\msse\nul goto DownloadMSSE
 if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
 if exist ..\client\md\hashes-msse.txt (
@@ -686,7 +694,7 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\StaticDownloadLinks-msse-%
   )
 )
 echo %DATE% %TIME% - Info: Downloaded/validated Microsoft Security Essentials installation files >>%DOWNLOAD_LOGFILE%
-if "%CLEANUP_DOWNLOADS%"=="0" (
+if "%CLEANUP_DL%"=="0" (
   del "%TEMP%\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt"
   goto VerifyMSSE
 )
@@ -701,7 +709,7 @@ for /F %%i in ('dir ..\client\msse\%TARGET_ARCH%-glb /A:-D /B') do (
 del "%TEMP%\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt"
 echo %DATE% %TIME% - Info: Cleaned up client directory for Microsoft Security Essentials >>%DOWNLOAD_LOGFILE%
 :VerifyMSSE
-if "%VERIFY_DOWNLOADS%"=="1" (
+if "%VERIFY_DL%"=="1" (
   rem *** Verifying digital file signatures for Microsoft Security Essentials installation files ***
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
   echo Verifying digital file signatures for Microsoft Security Essentials installation files...
@@ -735,8 +743,9 @@ if "%VERIFY_DOWNLOADS%"=="1" (
 :SkipMSSE
 
 rem *** Download Windows Defender definition files ***
-if "%INCLUDE_WDDEFS%" NEQ "1" goto SkipWDDefs
-if "%VERIFY_DOWNLOADS%" NEQ "1" goto DownloadWDDefs
+if "%INC_WDDEFS%" NEQ "1" goto SkipWDDefs
+if "%SKIP_DL%"=="1" goto SkipWDDefs
+if "%VERIFY_DL%" NEQ "1" goto DownloadWDDefs
 if not exist ..\client\wddefs\nul goto DownloadWDDefs
 if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
 if exist ..\client\md\hashes-wddefs.txt (
@@ -767,7 +776,7 @@ echo Downloading/validating Windows Defender definition files...
 if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded/validated Windows Defender definition files >>%DOWNLOAD_LOGFILE%
 :VerifyWDDefs
-if "%VERIFY_DOWNLOADS%"=="1" (
+if "%VERIFY_DL%"=="1" (
   rem *** Verifying digital file signatures for Windows Defender definition files ***
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
   echo Verifying digital file signatures for Windows Defender definition files...
@@ -803,29 +812,29 @@ if "%VERIFY_DOWNLOADS%"=="1" (
 rem *** Download the platform specific patches ***
 for %%i in (wxp w2k3) do (
   if /i "%1"=="%%i" (
-    call :DownloadCore win glb %SKIP_DYNAMIC% %SKIP_DOWNLOAD%
+    call :DownloadCore win glb %SKIP_PARAM%
     if errorlevel 1 goto Error
-    call :DownloadCore win %2 %SKIP_DYNAMIC% %SKIP_DOWNLOAD%
+    call :DownloadCore win %2 %SKIP_PARAM%
     if errorlevel 1 goto Error
   )
 )
 for %%i in (o2k3 o2k7 o2k10) do (
   if /i "%1"=="%%i" (
-    call :DownloadCore ofc %2 %SKIP_DYNAMIC% %SKIP_DOWNLOAD%
+    call :DownloadCore ofc %2 %SKIP_PARAM%
     if errorlevel 1 goto Error
   )
 )
 for %%i in (wxp w2k3 w2k3-x64 o2k3 o2k7 o2k10) do (
   if /i "%1"=="%%i" (
-    call :DownloadCore %1 glb %SKIP_DYNAMIC% %SKIP_DOWNLOAD%
+    call :DownloadCore %1 glb %SKIP_PARAM%
     if errorlevel 1 goto Error
-    call :DownloadCore %1 %2 %SKIP_DYNAMIC% %SKIP_DOWNLOAD%
+    call :DownloadCore %1 %2 %SKIP_PARAM%
     if errorlevel 1 goto Error
   )
 )
 for %%i in (w60 w60-x64 w61 w61-x64 ofc) do (
   if /i "%1"=="%%i" (
-    call :DownloadCore %1 %2 %SKIP_DYNAMIC% %SKIP_DOWNLOAD%
+    call :DownloadCore %1 %2 %SKIP_PARAM%
     if errorlevel 1 goto Error
   )
 )
@@ -837,7 +846,8 @@ title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo.
 
 rem *** Verify integrity of existing updates for %1 %2 ***
-if "%VERIFY_DOWNLOADS%" NEQ "1" goto SkipAudit
+if "%3"=="/skipdownload" goto SkipStatics
+if "%VERIFY_DL%" NEQ "1" goto SkipAudit
 if not exist ..\client\%1\%2\nul goto SkipAudit
 if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
 for %%i in (..\client\md\hashes-%1-%2.txt) do if %%~zi==0 del %%i
@@ -860,22 +870,20 @@ if exist ..\client\md\hashes-%1-%2.txt (
 rem *** Determine statical update urls for %1 %2 ***
 if exist "%TEMP%\StaticDownloadLinks-%1-%2.txt" del "%TEMP%\StaticDownloadLinks-%1-%2.txt"
 if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" del "%TEMP%\ValidStaticLinks-%1-%2.txt"
-if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" del "%TEMP%\ValidDynamicLinks-%1-%2.txt"
-if "%EXCLUDE_STATICS%"=="1" goto SkipStatics
+if "%EXC_STATICS%"=="1" goto SkipStatics
 echo Determining statical update urls for %1 %2...
 if exist ..\static\StaticDownloadLinks-%1-%2.txt copy /Y ..\static\StaticDownloadLinks-%1-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
+if exist ..\static\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt copy /Y ..\static\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
 if exist ..\static\custom\StaticDownloadLinks-%1-%2.txt (
   for /F %%i in (..\static\custom\StaticDownloadLinks-%1-%2.txt) do echo %%i>>"%TEMP%\StaticDownloadLinks-%1-%2.txt"
 )
-if exist "%TEMP%\StaticDownloadLinks-%1-%2.txt" goto EvalStatics
-if exist ..\static\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt copy /Y ..\static\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
 if exist ..\static\custom\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt (
   for /F %%i in (..\static\custom\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt) do echo %%i>>"%TEMP%\StaticDownloadLinks-%1-%2.txt"
 )
 if not exist "%TEMP%\StaticDownloadLinks-%1-%2.txt" goto SkipStatics
 
 :EvalStatics
-if "%EXCLUDE_SP%"=="1" (
+if "%EXC_SP%"=="1" (
   %SystemRoot%\system32\findstr.exe /L /I /V /G:..\exclude\ExcludeList-SPs.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >"%TEMP%\ValidStaticLinks-%1-%2.txt"
   del "%TEMP%\StaticDownloadLinks-%1-%2.txt"
 ) else (
@@ -884,6 +892,8 @@ if "%EXCLUDE_SP%"=="1" (
 echo %DATE% %TIME% - Info: Determined statical update urls for %1 %2 >>%DOWNLOAD_LOGFILE%
 
 :SkipStatics
+if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
+if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" del "%TEMP%\ValidDynamicLinks-%1-%2.txt"
 if "%3"=="/skipdynamic" (
   echo Skipping unneeded determination of superseded updates...
   echo %DATE% %TIME% - Info: Skipped unneeded determination of superseded updates >>%DOWNLOAD_LOGFILE%
@@ -1196,7 +1206,7 @@ echo %DATE% %TIME% - Info: Downloaded/validated %LINES_COUNT% dynamically determ
 :CleanupDownload
 rem *** Clean up client directory for %1 %2 ***
 if not exist ..\client\%1\%2\nul goto RemoveHashes
-if "%CLEANUP_DOWNLOADS%"=="0" goto VerifyDownload
+if "%CLEANUP_DL%"=="0" goto VerifyDownload
 echo Cleaning up client directory for %1 %2...
 if exist "%TEMP%\ValidLinks-%1-%2.txt" del "%TEMP%\ValidLinks-%1-%2.txt"
 if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" (
@@ -1242,7 +1252,7 @@ if exist ..\bin\streams.exe (
   echo Warning: Sysinternals' NTFS alternate data stream handling tool ..\bin\streams.exe not found.
   echo %DATE% %TIME% - Warning: Sysinternals' NTFS alternate data stream handling tool ..\bin\streams.exe not found >>%DOWNLOAD_LOGFILE%
 )
-if "%VERIFY_DOWNLOADS%" NEQ "1" goto RemoveHashes
+if "%VERIFY_DL%" NEQ "1" goto RemoveHashes
 rem *** Verifying digital file signatures for %1 %2 ***
 if not exist ..\bin\sigcheck.exe goto NoSigCheck
 echo Verifying digital file signatures for %1 %2...
@@ -1302,14 +1312,23 @@ if exist ..\client\md\hashes-%1-%2.txt (
   echo %DATE% %TIME% - Info: Deleted integrity database for %1 %2 >>%DOWNLOAD_LOGFILE%
 )
 :EndDownload
-if "%3"=="/skipdownload" goto :eof
 if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" del "%TEMP%\ValidStaticLinks-%1-%2.txt"
-if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" del "%TEMP%\ValidDynamicLinks-%1-%2.txt"
 if exist "%TEMP%\ValidDynamicLinks-%1-%2.csv" del "%TEMP%\ValidDynamicLinks-%1-%2.csv"
+if "%3"=="/skipdownload" (
+  for %%i in (win wxp w2k3 w60 w61) do (
+    if /i "%1"=="%%i" (
+      if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" move /Y "%TEMP%\ValidDynamicLinks-%1-%2.txt" ..\static\custom\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt >nul
+    )
+  )
+  if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" move /Y "%TEMP%\ValidDynamicLinks-%1-%2.txt" ..\static\custom\StaticDownloadLinks-%1-%2.txt >nul
+) else (
+  if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" del "%TEMP%\ValidDynamicLinks-%1-%2.txt"
+)
 goto :eof
 
 :RemindDate
 rem *** Remind build date ***
+if "%SKIP_DL%"=="1" goto EoF
 echo Reminding build date...
 echo %DATE:~-10%>..\client\builddate.txt
 goto EoF
@@ -1323,8 +1342,8 @@ exit /b 1
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %*
-echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| o2k3 ^| o2k7 ^| o2k10} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdynamic] [/skipdownload] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
-echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| ofc} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdynamic] [/skipdownload] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
+echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| o2k3 ^| o2k7 ^| o2k10} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
+echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| ofc} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
 echo %DATE% %TIME% - Error: Invalid parameter: %* >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
@@ -1407,7 +1426,7 @@ echo.
 goto Error
 
 :Error
-if "%EXIT_ON_ERROR%"=="1" (
+if "%EXIT_ERR%"=="1" (
   endlocal
   pause
   verify other 2>nul

@@ -595,3 +595,7 @@ Version 7.1 -- 01.11.11
 - Fix: Download procedure missed kb2564958 for Windows XP / Server 2003 (x86/x64) because of variant file name scheme (Thanks to "peter2" and "harry")
 - Fix: TZ environment variable setting failed under Windows Server 2003 (x86) due to "SET /A" bug (erroneous INT overflow error)
 --------------------------------------------------------------------------------
+Version 7.? -- ??.??.11
+- DownloadUpdates.cmd script now supports "/skipdownload" switch for "determine only" mode
+- DownloadUpdates.cmd switches "/skipdownload" and "/skipdynamic" may be preset in UpdateGenerator.ini file
+- Fix: Linux script DownloadUpdates.sh did not download C++ Runtime Libraries (Thanks to "Spider-Mann")

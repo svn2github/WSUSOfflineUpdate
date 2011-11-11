@@ -44,10 +44,10 @@ if %OUTPUT_PATH%~==~ (
   shift /2
 )
 if "%2"=="" goto V1CreateFilter
-if /i "%2"=="/excludesp" set EXCLUDE_SP=1
-if /i "%2"=="/includedotnet" set INCLUDE_DOTNET=1
-if /i "%2"=="/includemsse" set INCLUDE_MSSE=1
-if /i "%2"=="/includewddefs" set INCLUDE_WDDEFS=1
+if /i "%2"=="/excludesp" set EXC_SP=1
+if /i "%2"=="/includedotnet" set INC_DOTNET=1
+if /i "%2"=="/includemsse" set INC_MSSE=1
+if /i "%2"=="/includewddefs" set INC_WDDEFS=1
 if /i "%2"=="/cleanup" set CLEANUP=1
 shift /2
 goto V1EvalParams
@@ -58,10 +58,10 @@ if %OUTPUT_PATH%~==~ (
   shift /3
 )
 if "%3"=="" goto V2CreateFilter
-if /i "%3"=="/excludesp" set EXCLUDE_SP=1
-if /i "%3"=="/includedotnet" set INCLUDE_DOTNET=1
-if /i "%3"=="/includemsse" set INCLUDE_MSSE=1
-if /i "%3"=="/includewddefs" set INCLUDE_WDDEFS=1
+if /i "%3"=="/excludesp" set EXC_SP=1
+if /i "%3"=="/includedotnet" set INC_DOTNET=1
+if /i "%3"=="/includemsse" set INC_MSSE=1
+if /i "%3"=="/includewddefs" set INC_WDDEFS=1
 if /i "%3"=="/cleanup" set CLEANUP=1
 shift /3
 goto V2EvalParams
@@ -90,16 +90,16 @@ for %%i in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve 
 goto :eof
 
 :ExtendFilter
-if "%EXCLUDE_SP%"=="1" (
+if "%EXC_SP%"=="1" (
   for /F %%i in (..\exclude\ExcludeList-SPs.txt) do echo %%i>>%USB_FILTER%
 )
-if "%INCLUDE_DOTNET%" NEQ "1" (
+if "%INC_DOTNET%" NEQ "1" (
   for /F %%i in (..\exclude\ExcludeListISO-dotnet.txt) do echo %%i>>%USB_FILTER%
 )
-if "%INCLUDE_MSSE%" NEQ "1" (
+if "%INC_MSSE%" NEQ "1" (
   for /F %%i in (..\exclude\ExcludeList-msse.txt) do echo %%i>>%USB_FILTER%
 )
-if "%INCLUDE_WDDEFS%" NEQ "1" (
+if "%INC_WDDEFS%" NEQ "1" (
   for /F %%i in (..\exclude\ExcludeList-wddefs.txt) do echo %%i>>%USB_FILTER%
 )
 goto :eof

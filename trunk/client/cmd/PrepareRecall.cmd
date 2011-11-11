@@ -32,7 +32,7 @@ echo Preparing recall directory...
 if not exist %SystemRoot%\Temp\WOURecall\nul md %SystemRoot%\Temp\WOURecall
 for %%i in (CleanupRecall.cmd DeleteUpdateAdmin.vbs RecallStub.cmd Shutdown.vbs ..\bin\Autologon.exe) do copy /Y %%i %SystemRoot%\Temp\WOURecall >nul
 echo @%*>%SystemRoot%\Temp\WOURecall\RecallUpdate.cmd
-%SystemRoot%\system32\net.exe use %~d0 >nul 2>&1  
+%SystemRoot%\system32\net.exe use %~d0 >nul 2>&1
 if errorlevel 1 (
   echo %DATE% %TIME% - Info: WSUS Offline Update was started from a local drive >>%UPDATE_LOGFILE%
 ) else (

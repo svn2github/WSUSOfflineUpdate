@@ -17,7 +17,7 @@ if "%OS_ARCH%"=="" goto NoOSArch
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-if /i "%1"=="/excludestatics" set EXCLUDE_STATICS=/excludestatics
+if /i "%1"=="/excludestatics" set EXC_STATICS=1
 shift /1
 goto EvalParams
 
@@ -33,7 +33,7 @@ goto :eof
 
 :NoMoreParams
 rem *** Add statically defined update ids ***
-if "%EXCLUDE_STATICS%"=="/excludestatics" goto ExcludeStatics
+if "%EXC_STATICS%"=="1" goto ExcludeStatics
 if exist ..\static\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt call :EvalStatics ..\static\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt
 if exist ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt call :EvalStatics ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt
 if exist ..\static\StaticUpdateIds-%OFC_NAME%.txt call :EvalStatics ..\static\StaticUpdateIds-%OFC_NAME%.txt

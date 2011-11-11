@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                      v. 7.1                        ###
+###                    v. 7.1+ (r308)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -497,7 +497,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                      v. 7.1                        ***
+***                    v. 7.1+ (r308)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
@@ -698,6 +698,8 @@ fi
 
 if [ "$dotnet" == "1" ]; then
 	cp ../static/StaticDownloadLinks-dotnet.txt ../temp/StaticUrls-dotnet.txt
+	cp ../static/StaticDownloadLinks-cpp-x86-glb.txt ../temp/StaticUrls-cpp-x86-glb.txt
+	cp ../static/StaticDownloadLinks-cpp-x64-glb.txt ../temp/StaticUrls-cpp-x64-glb.txt
 fi
 
 if [ "$msse" == "1" ]; then
@@ -741,6 +743,12 @@ fi
 if [ "$dotnet" == "1" ]; then
   if [ -f ../static/custom/StaticDownloadLinks-dotnet.txt ]; then
     cat ../static/custom/StaticDownloadLinks-dotnet.txt >> ../temp/StaticUrls-dotnet.txt
+  fi
+  if [ -f ../static/custom/StaticDownloadLinks-cpp-x86-glb.txt ]; then
+    cat ../static/custom/StaticDownloadLinks-cpp-x86-glb.txt >> ../temp/StaticUrls-cpp-x86-glb.txt
+  fi
+  if [ -f ../static/custom/StaticDownloadLinks-cpp-x64-glb.txt ]; then
+    cat ../static/custom/StaticDownloadLinks-cpp-x64-glb.txt >> ../temp/StaticUrls-cpp-x64-glb.txt
   fi
 fi
 if [ "$msse" == "1" ]; then
@@ -1027,7 +1035,7 @@ fi
 
 rm ../temp/package.xml
 
-touch ../temp/ValidDynamicLinks-${sys}-${lang}.txt ../temp/StaticUrls-${sys_old}-${lang}.txt ../temp/StaticUrls-${sys_old}-glb.txt ../temp/StaticUrls-${sys}-${lang}.txt ../temp/StaticUrls-ie6-${lang}.txt ../temp/ValidUrls-${sys}-${lang}.txt ../temp/ValidUrls-${sys}-glb.txt ../temp/ValidUrls-win-x86-${lang}.txt ../temp/StaticUrls-ofc-glb.txt ../temp/StaticUrls-ofc-${lang}.txt ../temp/StaticUrls-${sys}-glb.txt ../temp/StaticUrls-${lang}.txt ../temp/StaticUrls-glb.txt ../temp/StaticUrls-dotnet.txt ../temp/StaticUrls-msse-x86-glb.txt ../temp/StaticUrls-msse-x64-glb.txt ../temp/StaticUrls-wddefs-x86-glb.txt ../temp/StaticUrls-wddefs-x64-glb.txt
+touch ../temp/ValidDynamicLinks-${sys}-${lang}.txt ../temp/StaticUrls-${sys_old}-${lang}.txt ../temp/StaticUrls-${sys_old}-glb.txt ../temp/StaticUrls-${sys}-${lang}.txt ../temp/StaticUrls-ie6-${lang}.txt ../temp/ValidUrls-${sys}-${lang}.txt ../temp/ValidUrls-${sys}-glb.txt ../temp/ValidUrls-win-x86-${lang}.txt ../temp/StaticUrls-ofc-glb.txt ../temp/StaticUrls-ofc-${lang}.txt ../temp/StaticUrls-${sys}-glb.txt ../temp/StaticUrls-${lang}.txt ../temp/StaticUrls-glb.txt ../temp/StaticUrls-dotnet.txt ../temp/StaticUrls-cpp-x86-glb.txt ../temp/StaticUrls-cpp-x64-glb.txt ../temp/StaticUrls-msse-x86-glb.txt ../temp/StaticUrls-msse-x64-glb.txt ../temp/StaticUrls-wddefs-x86-glb.txt ../temp/StaticUrls-wddefs-x64-glb.txt
 
 cat ../temp/StaticUrls-${sys}-${lang}.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-ie6-${lang}.txt >> ../temp/urls.txt
@@ -1040,6 +1048,8 @@ cat ../temp/StaticUrls-${sys}-glb.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-glb.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-${lang}.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-dotnet.txt >> ../temp/urls.txt
+cat ../temp/StaticUrls-cpp-x86-glb.txt >> ../temp/urls.txt
+cat ../temp/StaticUrls-cpp-x64-glb.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-msse-x86-glb.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-msse-x64-glb.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-wddefs-x86-glb.txt >> ../temp/urls.txt 
@@ -1080,6 +1090,26 @@ if [ "$dotnet" == "1" ]; then
 	else
 	 doWget -i ../temp/Urls-dotnet-x86.txt -P ../client/dotnet/x86-glb
 	fi
+	echo "Downloading CPP files..."
+  cppstring=`cat ../temp/StaticUrls-cpp-x86-glb.txt | grep ,`
+  arr=$(echo $cppstring | tr " " "\n")
+  for x in $arr
+  do
+    oldname=`echo $x | awk -F"," '{print $1}'`
+    newname=`echo $x | awk -F"," '{print $2}'`
+    mkdir -p ../client/cpp
+    doWget $oldname -O ../client/cpp/$newname       
+  done
+	if echo $sys | grep x64 > /dev/null 2>&1; then
+	 cppstring=`cat ../temp/StaticUrls-cpp-x64-glb.txt | grep ,`
+	 arr=$(echo $cppstring | tr " " "\n")
+	 for x in $arr
+    do
+      oldname=`echo $x | awk -F"," '{print $1}'`
+      newname=`echo $x | awk -F"," '{print $2}'`
+      doWget $oldname -O ../client/cpp/$newname       
+    done
+  fi
 fi
 if [ "$msse" == "1" ]; then
 	echo "Downloading MSSE files..."
@@ -1093,19 +1123,17 @@ if [ "$msse" == "1" ]; then
       mkdir -p ../client/msse/x64-glb
       doWget $oldname -O ../client/msse/x64-glb/$newname       
     done
-	  doWget -i ../temp/StaticUrls-msse-x64-glb.txt -P ../client/msse/x64-glb
-	 else
-    mssestring=`cat ../temp/StaticUrls-msse-x86-glb.txt | grep ,`
-	   arr=$(echo $mssestring | tr " " "\n")
-	   for x in $arr
-      do
-        oldname=`echo $x | awk -F"," '{print $1}'`
-        newname=`echo $x | awk -F"," '{print $2}'`
-        mkdir -p ../client/msse/x86-glb
-        doWget $oldname -O ../client/msse/x86-glb/$newname       
-      done
-	   doWget -i ../temp/StaticUrls-msse-x86-glb.txt -P ../client/msse/x86-glb
-	 fi
+  else
+   mssestring=`cat ../temp/StaticUrls-msse-x86-glb.txt | grep ,`
+   arr=$(echo $mssestring | tr " " "\n")
+   for x in $arr
+    do
+      oldname=`echo $x | awk -F"," '{print $1}'`
+      newname=`echo $x | awk -F"," '{print $2}'`
+      mkdir -p ../client/msse/x86-glb
+      doWget $oldname -O ../client/msse/x86-glb/$newname       
+    done
+  fi
 fi
 if [ "$wddefs" == "1" ]; then
 	echo "Downloading Windows Defender definition files..."
@@ -1169,6 +1197,32 @@ if [ "$dotnet" == "1" ]; then
 	   cd "$PATH_PWD"
 	 fi
 	fi
+	echo "Validating CPP files..."
+  cppstring=`cat ../temp/StaticUrls-cpp-x86-glb.txt | grep ,`
+  arr=$(echo $cppstring | tr " " "\n")
+  for x in $arr
+  do
+    oldname=`echo $x | awk -F"," '{print $1}'`
+    newname=`echo $x | awk -F"," '{print $2}'`
+    mkdir -p ../client/cpp
+    doWget $oldname -O ../client/cpp/$newname       
+  done
+	if echo $sys | grep x64 > /dev/null 2>&1; then
+	 cppstring=`cat ../temp/StaticUrls-cpp-x64-glb.txt | grep ,`
+	 arr=$(echo $cppstring | tr " " "\n")
+	 for x in $arr
+    do
+      oldname=`echo $x | awk -F"," '{print $1}'`
+      newname=`echo $x | awk -F"," '{print $2}'`
+      doWget $oldname -O ../client/cpp/$newname       
+    done
+  fi
+	if [ -f "$PATH_PWD"/hashdeep ]; then
+	  echo "Creating integrity database for CPP ..."
+	  cd ../client/bin
+	  "$PATH_PWD"/hashdeep -c md5,sha1,sha256 -l -r ../cpp | sed 's/\//\\/g' > ../md/hashes-cpp.txt
+	  cd "$PATH_PWD"
+  fi
 fi
 
 if [ "$msse" == "1" ]; then
@@ -1182,18 +1236,16 @@ if [ "$msse" == "1" ]; then
       newname=`echo $x | awk -F"," '{print $2}'`
       doWget $oldname -O ../client/msse/x64-glb/$newname       
     done
-	  doWget -i ../temp/StaticUrls-msse-x64-glb.txt -P ../client/msse/x64-glb
-	 else
-	  mssestring=`cat ../temp/StaticUrls-msse-x86-glb.txt | grep ,`
-	  arr=$(echo $mssestring | tr " " "\n")
-	  for x in $arr
-     do
+  else
+   mssestring=`cat ../temp/StaticUrls-msse-x86-glb.txt | grep ,`
+   arr=$(echo $mssestring | tr " " "\n")
+ 	 for x in $arr
+    do
       oldname=`echo $x | awk -F"," '{print $1}'`
       newname=`echo $x | awk -F"," '{print $2}'`
       doWget $oldname -O ../client/msse/x86-glb/$newname       
-     done
-	  doWget -i ../temp/StaticUrls-msse-x86-glb.txt -P ../client/msse/x86-glb
-	 fi
+    done
+  fi
 	if [ -f "$PATH_PWD"/hashdeep ]; then
 	  echo "Creating integrity database for MSSE ..."
 	  cd ../client/bin
