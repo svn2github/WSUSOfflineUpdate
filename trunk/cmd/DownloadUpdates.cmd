@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.1+ (r308)
+set WSUSOFFLINE_VERSION=7.1+ (r309)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -470,7 +470,7 @@ if exist ..\client\md\hashes-dotnet.txt (
 :DownloadDotNet
 for %%i in (..\client\md\hashes-dotnet-%TARGET_ARCH%-glb.txt) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
 if not errorlevel 1 (
-  echo Skipping download/validation of .NET Frameworks' installation files due to 'same day' rule...
+  echo Skipping download/validation of .NET Frameworks' installation files due to 'same day' rule.
   echo %DATE% %TIME% - Info: Skipped download/validation of .NET Frameworks' installation files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
   goto VerifyDotNet
 )
@@ -558,7 +558,7 @@ if exist ..\client\md\hashes-cpp.txt (
 :DownloadCPP
 for %%i in (..\client\md\hashes-cpp.txt) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
 if not errorlevel 1 (
-  echo Skipping download/validation of C++ Runtime Libraries' installation files due to 'same day' rule...
+  echo Skipping download/validation of C++ Runtime Libraries' installation files due to 'same day' rule.
   echo %DATE% %TIME% - Info: Skipped download/validation of C++ Runtime Libraries' installation files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
   goto VerifyCPP
 )
@@ -661,7 +661,7 @@ if exist ..\client\md\hashes-msse.txt (
 if exist ..\client\msse\%TARGET_ARCH%-glb\mpam*.exe (
   for %%i in (..\client\msse\%TARGET_ARCH%-glb\mpam*.exe) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
   if not errorlevel 1 (
-    echo Skipping download/validation of Microsoft Security Essentials installation files due to 'same day' rule...
+    echo Skipping download/validation of Microsoft Security Essentials installation files due to 'same day' rule.
     echo %DATE% %TIME% - Info: Skipped download/validation of Microsoft Security Essentials installation files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
     goto VerifyMSSE
   )
@@ -766,7 +766,7 @@ if exist ..\client\md\hashes-wddefs.txt (
 if exist ..\client\wddefs\%TARGET_ARCH%-glb\mpas*.exe (
   for %%i in (..\client\wddefs\%TARGET_ARCH%-glb\mpas*.exe) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
   if not errorlevel 1 (
-    echo Skipping download/validation of Windows Defender definition files due to 'same day' rule...
+    echo Skipping download/validation of Windows Defender definition files due to 'same day' rule.
     echo %DATE% %TIME% - Info: Skipped download/validation of Windows Defender definition files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
     goto VerifyWDDefs
   )
@@ -895,9 +895,9 @@ echo %DATE% %TIME% - Info: Determined statical update urls for %1 %2 >>%DOWNLOAD
 if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
 if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" del "%TEMP%\ValidDynamicLinks-%1-%2.txt"
 if "%3"=="/skipdynamic" (
-  echo Skipping unneeded determination of superseded updates...
+  echo Skipping unneeded determination of superseded updates.
   echo %DATE% %TIME% - Info: Skipped unneeded determination of superseded updates >>%DOWNLOAD_LOGFILE%
-  echo Skipping determination of dynamical update urls for %1 %2 on demand...
+  echo Skipping determination of dynamical update urls for %1 %2 on demand.
   echo %DATE% %TIME% - Info: Skipped determination of dynamical update urls for %1 %2 on demand >>%DOWNLOAD_LOGFILE%
   goto DoDownload
 )
@@ -915,7 +915,7 @@ if not errorlevel 1 (
   if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
 )
 if exist ..\exclude\ExcludeList-superseded.txt (
-  echo Found valid list of superseded updates...
+  echo Found valid list of superseded updates.
   echo %DATE% %TIME% - Info: Found valid list of superseded updates >>%DOWNLOAD_LOGFILE%
   goto SkipSuperseded
 )
@@ -1100,7 +1100,7 @@ echo %DATE% %TIME% - Info: Determined dynamical update urls for %1 %2 >>%DOWNLOA
 :DoDownload
 rem *** Download updates for %1 %2 ***
 if "%3"=="/skipdownload" (
-  echo Skipping download/validation of updates for %1 %2 on demand...
+  echo Skipping download/validation of updates for %1 %2 on demand.
   echo %DATE% %TIME% - Info: Skipped download/validation of updates for %1 %2 on demand >>%DOWNLOAD_LOGFILE%
   goto EndDownload
 )
@@ -1238,15 +1238,20 @@ echo %DATE% %TIME% - Info: Cleaned up client directory for %1 %2 >>%DOWNLOAD_LOG
 
 :VerifyDownload
 if not exist ..\client\%1\%2\nul goto RemoveHashes
-rem *** Delete alternate data streams for %1 %2 ***
+rem *** Remove NTFS alternate data streams for %1 %2 ***
 if exist ..\bin\streams.exe (
-  echo Deleting alternate data streams for %1 %2...
-  ..\bin\streams.exe /accepteula -s -d ..\client\%1\%2\*.* >nul 2>&1
+  ..\bin\streams.exe /accepteula -s ..\client\%1\%2\*.* >nul 2>&1
   if errorlevel 1 (
-    echo Warning: Unable to delete alternate data streams for %1 %2.
-    echo %DATE% %TIME% - Warning: Unable to delete alternate data streams for %1 %2 >>%DOWNLOAD_LOGFILE%
+    echo %DATE% %TIME% - Info: File system does not support streams >>%DOWNLOAD_LOGFILE%
   ) else (
-    echo %DATE% %TIME% - Info: Deleted alternate data streams for %1 %2 >>%DOWNLOAD_LOGFILE%
+    echo Removing NTFS alternate data streams for %1 %2...
+    ..\bin\streams.exe /accepteula -s -d ..\client\%1\%2\*.* >nul 2>&1
+    if errorlevel 1 (
+      echo Warning: Unable to remove NTFS alternate data streams for %1 %2.
+      echo %DATE% %TIME% - Warning: Unable to remove NTFS alternate data streams for %1 %2 >>%DOWNLOAD_LOGFILE%
+    ) else (
+      echo %DATE% %TIME% - Info: Removed NTFS alternate data streams for %1 %2 >>%DOWNLOAD_LOGFILE%
+    )
   )
 ) else (
   echo Warning: Sysinternals' NTFS alternate data stream handling tool ..\bin\streams.exe not found.

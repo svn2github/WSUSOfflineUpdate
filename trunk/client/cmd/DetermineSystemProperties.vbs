@@ -416,6 +416,8 @@ If objNetwork.UserName = strWOUTempAdminName Then
     objCmdFile.WriteLine("set USERSID=" & objQueryItem.SID)
   Next
 End If
+' Documentation: http://msdn.microsoft.com/en-us/library/hww8txat(v=VS.85).aspx
+objCmdFile.WriteLine("set FS_TYPE=" & objFileSystem.GetDrive(objFileSystem.GetDriveName(wshShell.CurrentDirectory)).FileSystem)
 
 ' Determine Windows Update Agent version
 If objFileSystem.FileExists(strWUAFileName) Then
