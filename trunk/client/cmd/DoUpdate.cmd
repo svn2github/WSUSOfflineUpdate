@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.1+ (r309)
+set WSUSOFFLINE_VERSION=7.1+ (r310)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log
 title %~n0 %*
@@ -1106,7 +1106,7 @@ goto EoF
 :ManualRecall
 echo.
 echo Installation successful. Please reboot your system now and recall Update afterwards.
-echo %DATE% %TIME% - Info: Installation successful >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Installation successful (Updates pending) >>%UPDATE_LOGFILE%
 echo.
 goto EoF
 
