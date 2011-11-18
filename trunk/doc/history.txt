@@ -600,3 +600,4 @@ Version 7.? -- ??.??.11
 - DownloadUpdates.cmd switches "/skipdownload" and "/skipdynamic" may be preset in UpdateGenerator.ini file
 - Fix: Linux script DownloadUpdates.sh did not download C++ Runtime Libraries (Thanks to "Spider-Mann")
 - Fix: DownloadUpdates.cmd showed misleading warnings when attempting to remove alternate data streams on non-NTFS file systems (Thanks to "aker")
+- Fix: Linux script DownloadUpdates.sh missed grep -F option ('fixed strings') several times (Thanks to "zoc")

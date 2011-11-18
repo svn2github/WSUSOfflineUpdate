@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                    v. 7.1+ (r310)                  ###
+###                    v. 7.1+ (r311)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -497,7 +497,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                    v. 7.1+ (r310)                  ***
+***                    v. 7.1+ (r311)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
@@ -885,8 +885,8 @@ if [ "$dotnet" == "1" ]; then
 fi
 
 if [ -f "$valid1" -o -f "$valid2" ] && [ -f "$expired1" -o -f "$expired2" ]; then
-	grep -i -v -f ../temp/Expiredid-${sys}.txt ../temp/Urls-${sys}-${lang}.txt > ../temp/tmpUrls-${sys}-${lang}.txt
-	grep -i -f ../temp/Validid-${sys}.txt ../temp/Urls-${sys}-${lang}.txt >> ../temp/tmpUrls-${sys}-${lang}.txt
+	grep -F -i -v -f ../temp/Expiredid-${sys}.txt ../temp/Urls-${sys}-${lang}.txt > ../temp/tmpUrls-${sys}-${lang}.txt
+	grep -F -i -f ../temp/Validid-${sys}.txt ../temp/Urls-${sys}-${lang}.txt >> ../temp/tmpUrls-${sys}-${lang}.txt
 else
   touch ../temp/Urls-${sys}-${lang}.txt
 	cp ../temp/Urls-${sys}-${lang}.txt ../temp/tmpUrls-${sys}-${lang}.txt
@@ -905,29 +905,29 @@ if [ -f ../exclude/custom/ExcludeList-${sys}-x86.txt ]; then
   cat ../exclude/custom/ExcludeList-${sys}-x86.txt >> ../temp/tmpExcludeList-${sys}.txt
 fi
   cat ../exclude/ExcludeList-superseded.txt >> ../temp/tmpExcludeList-${sys}.txt
-	grep -i -v -f ../temp/tmpExcludeList-${sys}.txt ../temp/tmpUrls-${sys}-${lang}.txt > ../temp/ValidUrls-${sys}-${lang}.txt
+	grep -F -i -v -f ../temp/tmpExcludeList-${sys}.txt ../temp/tmpUrls-${sys}-${lang}.txt > ../temp/ValidUrls-${sys}-${lang}.txt
 
 if [ -f "$glb1" ] && [ "$lang" != "glb" ]; then
 	$xml tr ../xslt/ExtractDownloadLinks-${sys}-glb.xsl ../temp/package.xml > ../temp/Urls-${sys}-glb.txt
 	if [ -f "$valid1" -o -f "$valid2" ] && [ -f "$expired1" -o -f "$expired2" ]; then
-		grep -i -f ../temp/Validid-${sys}.txt ../temp/Urls-${sys}-glb.txt > ../temp/tmpValidUrls-${sys}-glb.txt
-		grep -i -v -f ../temp/Expiredid-${sys}.txt ../temp/Urls-${sys}-glb.txt >> ../temp/tmpValidUrls-${sys}-glb.txt
+		grep -F -i -f ../temp/Validid-${sys}.txt ../temp/Urls-${sys}-glb.txt > ../temp/tmpValidUrls-${sys}-glb.txt
+		grep -F -i -v -f ../temp/Expiredid-${sys}.txt ../temp/Urls-${sys}-glb.txt >> ../temp/tmpValidUrls-${sys}-glb.txt
 	else
 		cp ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
 	fi
-	grep -i -v -f ../temp/tmpExcludeList-${sys}.txt ../temp/tmpValidUrls-${sys}-glb.txt > ../temp/ValidUrls-${sys}-glb.txt
+	grep -F -i -v -f ../temp/tmpExcludeList-${sys}.txt ../temp/tmpValidUrls-${sys}-glb.txt > ../temp/ValidUrls-${sys}-glb.txt
 	rm ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
 fi
 
 if [ -f "$glb2" ] && [ "$lang" != "glb" ]; then
 	$xml tr ../xslt/ExtractDownloadLinks-${sys}-x86-glb.xsl ../temp/package.xml > ../temp/Urls-${sys}-glb.txt
 	if [ -f "$valid1" -o -f "$valid2" ] && [ -f "$expired1" -o -f "$expired2" ]; then
-		grep -i -f ../temp/Validid-${sys}.txt ../temp/Urls-${sys}-glb.txt > ../temp/tmpValidUrls-${sys}-glb.txt
-		grep -i -v -f ../temp/Expiredid-${sys}.txt ../temp/Urls-${sys}-glb.txt >> ../temp/tmpValidUrls-${sys}-glb.txt
+		grep -F -i -f ../temp/Validid-${sys}.txt ../temp/Urls-${sys}-glb.txt > ../temp/tmpValidUrls-${sys}-glb.txt
+		grep -F -i -v -f ../temp/Expiredid-${sys}.txt ../temp/Urls-${sys}-glb.txt >> ../temp/tmpValidUrls-${sys}-glb.txt
 	else
 		cp ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
 	fi
-	grep -i -v -f ../temp/tmpExcludeList-${sys}.txt ../temp/tmpValidUrls-${sys}-glb.txt > ../temp/ValidUrls-${sys}-glb.txt
+	grep -F -i -v -f ../temp/tmpExcludeList-${sys}.txt ../temp/tmpValidUrls-${sys}-glb.txt > ../temp/ValidUrls-${sys}-glb.txt
 	rm ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
 fi
 if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ] && [ "$sys" != "ofc" ]; then
@@ -936,7 +936,7 @@ if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$
 	cat ../exclude/ExcludeList-win-x86.txt > ../temp/tmpExcludeList-win-x86.txt
 	cat ../exclude/custom/ExcludeList-win-x86.txt >> ../temp/tmpExcludeList-win-x86.txt
 	  cat ../exclude/ExcludeList-superseded.txt >> ../temp/tmpExcludeList-win-x86.txt
-	grep -i -v -f ../temp/tmpExcludeList-win-x86.txt ../temp/Urls-win-x86-${lang}.txt > ../temp/ValidUrls-win-x86-${lang}.txt
+	grep -F -i -v -f ../temp/tmpExcludeList-win-x86.txt ../temp/Urls-win-x86-${lang}.txt > ../temp/ValidUrls-win-x86-${lang}.txt
 	rm ../temp/Urls-win-x86-${lang}.txt
 fi
 
@@ -1001,7 +1001,7 @@ fi
       fi   
     done
 
-  grep -F --file=../temp/OfficeFileIds.txt ../temp/UpdateCabExeIdsAndLocations.txt > ../temp/OfficeUpdateCabExeIdsAndLocations.txt
+  grep -F -f ../temp/OfficeFileIds.txt ../temp/UpdateCabExeIdsAndLocations.txt > ../temp/OfficeUpdateCabExeIdsAndLocations.txt
   if [ ! -d "../client/ofc" ]; then
     mkdir ../client/ofc
   fi
