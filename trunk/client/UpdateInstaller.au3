@@ -734,6 +734,8 @@ If ( ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (@OSServi
   GUICtrlSetState($ie8, $GUI_DISABLE)
   GUICtrlSetState($ie9, $GUI_UNCHECKED)
   GUICtrlSetState($ie9, $GUI_DISABLE)
+  GUICtrlSetState($cpp, $GUI_UNCHECKED)
+  GUICtrlSetState($cpp, $GUI_DISABLE)
   GUICtrlSetState($dx, $GUI_UNCHECKED)
   GUICtrlSetState($dx, $GUI_DISABLE)
   GUICtrlSetState($wmp, $GUI_UNCHECKED)
