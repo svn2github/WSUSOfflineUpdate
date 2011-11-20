@@ -601,3 +601,4 @@ Version 7.? -- ??.??.11
 - Fix: Linux script DownloadUpdates.sh did not download C++ Runtime Libraries (Thanks to "Spider-Mann")
 - Fix: DownloadUpdates.cmd showed misleading warnings when attempting to remove alternate data streams on non-NTFS file systems (Thanks to "aker")
 - Fix: Linux script DownloadUpdates.sh missed grep -F option ('fixed strings') several times (Thanks to "zoc")
+- Fix: C++ Runtime Libraries' x64 versions were even downloaded for x86 target platforms (Thanks to "aker")
