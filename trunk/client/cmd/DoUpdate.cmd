@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.1+ (r313)
+set WSUSOFFLINE_VERSION=7.1+ (r314)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log
 title %~n0 %*
@@ -133,6 +133,36 @@ if "%OS_NAME%"=="w2k" goto UnsupOS
 for %%i in (x86 x64) do (if /i "%OS_ARCH%"=="%%i" goto ValidArch)
 goto UnsupArch
 :ValidArch
+
+rem *** Adjust power management settings ***
+if "%USERNAME%" NEQ "WOUTempAdmin" goto SkipPowerCfg
+if not exist "%TEMP%\wsusadmin-recall.1" goto SkipPowerCfg
+if "%PWR_POL_IDX%"=="" goto SkipPowerCfg
+if not exist %SystemRoot%\system32\powercfg.exe goto SkipPowerCfg
+echo Adjusting power management settings...
+goto PWR%OS_NAME%
+
+:PWRwxp
+:PWRw2k3
+for %%i in (ac dc) do (
+  %SystemRoot%\system32\powercfg.exe /X %PWR_POL_IDX% /N /monitor-timeout-%%i 0
+  %SystemRoot%\system32\powercfg.exe /X %PWR_POL_IDX% /N /disk-timeout-%%i 0
+  %SystemRoot%\system32\powercfg.exe /X %PWR_POL_IDX% /N /standby-timeout-%%i 0
+  %SystemRoot%\system32\powercfg.exe /X %PWR_POL_IDX% /N /hibernate-timeout-%%i 0
+)
+goto SkipPowerCfg
+
+:PWRw60
+:PWRw61
+for %%i in (ac dc) do (
+  %SystemRoot%\system32\powercfg.exe -X -monitor-timeout-%%i 0
+  %SystemRoot%\system32\powercfg.exe -X -disk-timeout-%%i 0
+  %SystemRoot%\system32\powercfg.exe -X -standby-timeout-%%i 0
+  %SystemRoot%\system32\powercfg.exe -X -hibernate-timeout-%%i 0
+)
+goto SkipPowerCfg
+
+:SkipPowerCfg
 
 rem *** Echo OS properties ***
 echo Found OS caption: %OS_CAPTION%

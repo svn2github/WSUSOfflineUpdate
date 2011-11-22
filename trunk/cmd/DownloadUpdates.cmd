@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.1+ (r313)
+set WSUSOFFLINE_VERSION=7.1+ (r314)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -563,8 +563,7 @@ if not errorlevel 1 (
   goto VerifyCPP
 )
 echo Downloading/validating installation files for C++ Runtime Libraries...
-if "%TARGET_ARCH%"=="x64" (set CPP_ARCH=x86 x64) else (set CPP_ARCH=x86)
-for %%i in (%CPP_ARCH%) do (
+for %%i in (x64 x86) do (
   for /F "tokens=1,2 delims=," %%j in (..\static\StaticDownloadLinks-cpp-%%i-glb.txt) do (
     if "%%k" NEQ "" (
       if exist ..\client\cpp\%%k (
@@ -588,7 +587,6 @@ for %%i in (%CPP_ARCH%) do (
     )
   )
 )
-set CPP_ARCH=
 echo %DATE% %TIME% - Info: Downloaded/validated installation files for C++ Runtime Libraries >>%DOWNLOAD_LOGFILE%
 if "%CLEANUP_DL%"=="0" goto VerifyCPP
 echo Cleaning up client directory for C++ Runtime Libraries...

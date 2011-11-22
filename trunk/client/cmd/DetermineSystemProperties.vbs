@@ -13,10 +13,12 @@ Private Const strRegKeyMSEv2                  = "HKLM\Software\Microsoft\Microso
 Private Const strRegKeyMSSEDefs               = "HKLM\Software\Microsoft\Microsoft Antimalware\Signature Updates\"
 Private Const strRegKeyWD                     = "HKLM\Software\Microsoft\Windows Defender\"
 Private Const strRegKeyWDDefs                 = "HKLM\Software\Microsoft\Windows Defender\Signature Updates\"
+Private Const strRegKeyPowerCfg               = "HKCU\Control Panel\PowerCfg\"
 Private Const strRegValVersion                = "Version"
 Private Const strRegValPShVersion             = "PowerShellVersion"
 Private Const strRegValAVSVersion             = "AVSignatureVersion"
 Private Const strRegValASSVersion             = "ASSignatureVersion"
+Private Const strRegValCurrentPowerPolicy     = "CurrentPowerPolicy"
 Private Const strRegKeyOfficePrefix_Mx86      = "HKLM\Software\Microsoft\Office\"
 Private Const strRegKeyOfficePrefix_Mx64      = "HKLM\Software\Wow6432Node\Microsoft\Office\"
 Private Const strRegKeyOfficePrefix_User      = "HKCU\Software\Microsoft\Office\"
@@ -418,6 +420,8 @@ If objNetwork.UserName = strWOUTempAdminName Then
 End If
 ' Documentation: http://msdn.microsoft.com/en-us/library/hww8txat(v=VS.85).aspx
 objCmdFile.WriteLine("set FS_TYPE=" & objFileSystem.GetDrive(objFileSystem.GetDriveName(wshShell.CurrentDirectory)).FileSystem)
+' Determine current power policy
+objCmdFile.WriteLine("set PWR_POL_IDX=" & RegRead(wshShell, strRegKeyPowerCfg & strRegValCurrentPowerPolicy))
 
 ' Determine Windows Update Agent version
 If objFileSystem.FileExists(strWUAFileName) Then

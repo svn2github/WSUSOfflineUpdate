@@ -10,7 +10,7 @@ if "%CSCRIPT_PATH%"=="" goto NoCScriptPath
 if "%OS_NAME%"=="w60" goto SkipWinlogon
 if "%OS_NAME%"=="w61" goto SkipWinlogon
 echo Saving Winlogon registry hive...
-%REG_PATH% EXPORT "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" %SystemRoot%\wsusbak-winlogon.reg >nul 2>&1
+%REG_PATH% EXPORT "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" %SystemRoot%\woubak-winlogon.reg >nul 2>&1
 if errorlevel 1 (
   echo ERROR: Saving of Winlogon registry hive failed.
   echo %DATE% %TIME% - Error: Saving of Winlogon registry hive failed >>%UPDATE_LOGFILE%
@@ -21,12 +21,31 @@ if errorlevel 1 (
 :SkipWinlogon
 
 echo Saving System policies registry hive...
-%REG_PATH% EXPORT "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" %SystemRoot%\wsusbak-system-policies.reg >nul 2>&1
+%REG_PATH% EXPORT "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" %SystemRoot%\woubak-system-policies.reg >nul 2>&1
 if errorlevel 1 (
   echo %DATE% %TIME% - Info: Saving of System policies registry hive failed >>%UPDATE_LOGFILE%
 ) else (
   echo %DATE% %TIME% - Info: Saved System policies registry hive >>%UPDATE_LOGFILE%
 )
+
+if "%OS_NAME%"=="wxp" goto SkipPowerCfg
+if "%OS_NAME%"=="w2k3" goto SkipPowerCfg
+echo Creating temporary power scheme...
+for /F "delims=:( tokens=2" %%i in ('%SystemRoot%\system32\powercfg.exe -getactivescheme') do echo %%i>%SystemRoot%\woubak-pwrscheme-act.txt
+for /F %%i in (%SystemRoot%\woubak-pwrscheme-act.txt) do (
+  for /F "delims=:( tokens=2" %%j in ('%SystemRoot%\system32\powercfg.exe -duplicatescheme %%i') do echo %%j>%SystemRoot%\woubak-pwrscheme-temp.txt
+)
+for /F %%i in (%SystemRoot%\woubak-pwrscheme-temp.txt) do (
+  %SystemRoot%\system32\powercfg.exe -changename %%i WOUTemp
+  %SystemRoot%\system32\powercfg.exe -setactive %%i
+)
+if errorlevel 1 (
+  echo Warning: Activation of temporary power scheme failed.
+  echo %DATE% %TIME% - Warning: Activation of temporary power scheme failed >>%UPDATE_LOGFILE%
+) else (
+  echo %DATE% %TIME% - Info: Activated temporary power scheme >>%UPDATE_LOGFILE%
+)
+:SkipPowerCfg
 
 echo Preparing recall directory...
 if not exist %SystemRoot%\Temp\WOURecall\nul md %SystemRoot%\Temp\WOURecall
