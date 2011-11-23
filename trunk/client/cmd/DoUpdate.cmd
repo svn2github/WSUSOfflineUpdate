@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.1+ (r314)
+set WSUSOFFLINE_VERSION=7.1+ (r315)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log
 title %~n0 %*
@@ -144,22 +144,18 @@ goto PWR%OS_NAME%
 
 :PWRwxp
 :PWRw2k3
-for %%i in (ac dc) do (
-  %SystemRoot%\system32\powercfg.exe /X %PWR_POL_IDX% /N /monitor-timeout-%%i 0
-  %SystemRoot%\system32\powercfg.exe /X %PWR_POL_IDX% /N /disk-timeout-%%i 0
-  %SystemRoot%\system32\powercfg.exe /X %PWR_POL_IDX% /N /standby-timeout-%%i 0
-  %SystemRoot%\system32\powercfg.exe /X %PWR_POL_IDX% /N /hibernate-timeout-%%i 0
+for %%i in (monitor disk standby hibernate) do (
+  for %%j in (ac dc) do %SystemRoot%\system32\powercfg.exe /X %PWR_POL_IDX% /N /%%i-timeout-%%j 0
 )
+echo %DATE% %TIME% - Info: Adjusted power management settings >>%UPDATE_LOGFILE%
 goto SkipPowerCfg
 
 :PWRw60
 :PWRw61
-for %%i in (ac dc) do (
-  %SystemRoot%\system32\powercfg.exe -X -monitor-timeout-%%i 0
-  %SystemRoot%\system32\powercfg.exe -X -disk-timeout-%%i 0
-  %SystemRoot%\system32\powercfg.exe -X -standby-timeout-%%i 0
-  %SystemRoot%\system32\powercfg.exe -X -hibernate-timeout-%%i 0
+for %%i in (monitor disk standby hibernate) do (
+  for %%j in (ac dc) do %SystemRoot%\system32\powercfg.exe -X -%%i-timeout-%%j 0
 )
+echo %DATE% %TIME% - Info: Adjusted power management settings >>%UPDATE_LOGFILE%
 goto SkipPowerCfg
 
 :SkipPowerCfg
@@ -1009,6 +1005,9 @@ if "%SKIP_DYNAMIC%"=="/skipdynamic" (
 )
 echo Checking state of service 'automatic updates'...
 echo %DATE% %TIME% - Info: Detected state of service 'automatic updates': %AU_SVC_STATE_INITIAL% (start mode: %AU_SVC_START_MODE%) >>%UPDATE_LOGFILE%
+if /i "%AU_SVC_START_MODE%"=="Auto" (
+  if "%USERNAME%"=="WOUTempAdmin" goto ListMissingIds
+)
 if /i "%AU_SVC_STATE_INITIAL%"=="" goto ListMissingIds
 if /i "%AU_SVC_STATE_INITIAL%"=="Unknown" goto ListMissingIds
 if /i "%AU_SVC_STATE_INITIAL%"=="Running" goto ListMissingIds

@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update ISO maker            ###
 ###                  for Linux systems                 ###
-###                    v. 7.1+ (r314)                  ###
+###                    v. 7.1+ (r315)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg      ###
@@ -12,7 +12,7 @@
 
 #set working directory
 cd "$( dirname "$(readlink -f "$0")" )"
-rm ../temp/ExcludeListISO*
+rm -f ../temp/ExcludeListISO*
 
 printusage()
 {
@@ -47,7 +47,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update ISO maker            ***
 ***                  for Linux systems                 ***
-***                    v. 7.1+ (r314)                  ***
+***                    v. 7.1+ (r315)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Stefan Joehnke, Walter Schiessberg      ***

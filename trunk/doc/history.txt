@@ -602,3 +602,4 @@ Version 7.? -- ??.??.11
 - Fix: Linux script DownloadUpdates.sh did not download C++ Runtime Libraries (Thanks to "Spider-Mann")
 - Fix: DownloadUpdates.cmd showed misleading warnings when attempting to remove alternate data streams on non-NTFS file systems (Thanks to "aker")
 - Fix: Linux script DownloadUpdates.sh missed grep -F option ('fixed strings') several times (Thanks to "zoc")
+- Fix: When running under WOUTempAdmin user account, DoUpdate.cmd script will now assume that the service 'automatic updates' (wuauserv) is running if its start mode is 'Auto' (Thanks to "1inux")
