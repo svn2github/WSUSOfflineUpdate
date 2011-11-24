@@ -49,7 +49,8 @@ Dim Const $ini_value_dotnet4          = "instdotnet4"
 Dim Const $ini_value_powershell       = "instpsh"
 Dim Const $ini_value_msse             = "instmsse"
 Dim Const $ini_value_wd               = "instwd"
-Dim Const $ini_value_converters       = "instofccnvs"
+Dim Const $ini_value_ofc              = "instofc"
+Dim Const $ini_value_ofv              = "instofv"
 Dim Const $ini_value_all              = "all"
 Dim Const $ini_value_excludestatics   = "excludestatics"
 Dim Const $ini_value_skipdynamic      = "skipdynamic"
@@ -79,9 +80,10 @@ Dim Const $path_rel_instdirectx       = "\win\glb\directx_*_redist.exe"
 Dim Const $path_rel_instdotnet35      = "\dotnet\dotnetfx35.exe"
 Dim Const $path_rel_instdotnet4       = "\dotnet\dotNetFx40_Full_x86_x64.exe"
 Dim Const $path_rel_instconverters    = "\ofc\glb\ork.exe"
+Dim Const $path_rel_instvalidation    = "\ofc\glb\OFV.exe"
 Dim Const $path_rel_msse              = "\msse\"
 
-Dim $maindlg, $scriptdir, $mapped, $inifilename, $backup, $converters, $ie7, $ie8, $ie9, $cpp, $dx, $wmp, $tsc, $dotnet35, $dotnet4, $psh, $msse, $wd, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate
+Dim $maindlg, $scriptdir, $mapped, $inifilename, $backup, $ie7, $ie8, $ie9, $cpp, $dx, $wmp, $tsc, $dotnet35, $dotnet4, $psh, $msse, $wd, $ofc, $ofv, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate
 Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
 
 Func ShowGUIInGerman()
@@ -234,6 +236,10 @@ Func ConvertersInstPresent($basepath)
   Return FileExists($basepath & $path_rel_instconverters)
 EndFunc
 
+Func ValidationInstPresent($basepath)
+  Return FileExists($basepath & $path_rel_instvalidation)
+EndFunc
+
 Func MSSEPresent($basepath)
   Return FileExists($basepath & $path_rel_msse)
 EndFunc
@@ -252,7 +258,7 @@ Func CalcGUISize()
   If ($reg_val = "") Then
     $reg_val = $default_logpixels
   EndIf
-  $dlgheight = 305 * $reg_val / $default_logpixels
+  $dlgheight = 325 * $reg_val / $default_logpixels
   If ShowGUIInGerman() Then
     $txtwidth = 240 * $reg_val / $default_logpixels
   Else
@@ -301,7 +307,7 @@ EndIf
 ;  Installation group
 $txtxpos = $txtxoffset
 $txtypos = $txtyoffset + 1.5 * $txtheight
-GUICtrlCreateGroup("Installation", $txtxpos, $txtypos, $groupwidth, 8 * $txtheight)
+GUICtrlCreateGroup("Installation", $txtxpos, $txtypos, $groupwidth, 9 * $txtheight)
 
 ; Backup
 $txtxpos = 2 * $txtxoffset
@@ -524,7 +530,8 @@ Else
 EndIf
 
 ; Install Windows Defender
-$txtxpos = $txtxoffset + $groupwidth / 2
+$txtxpos = 2 * $txtxoffset
+$txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
   $wd = GUICtrlCreateCheckbox("Windows Defender installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -543,8 +550,7 @@ Else
 EndIf
 
 ; Install Microsoft Security Essentials
-$txtxpos = 2 * $txtxoffset
-$txtypos = $txtypos + $txtheight
+$txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
   $msse = GUICtrlCreateCheckbox("Microsoft Security Essentials installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -563,17 +569,36 @@ Else
 EndIf
 
 ; Install file format converters for Office
-$txtxpos = $txtxoffset + $groupwidth / 2
+$txtxpos = 2 * $txtxoffset
+$txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
-  $converters = GUICtrlCreateCheckbox("Office-Dateikonverter und -überprüfung inst.", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $ofc = GUICtrlCreateCheckbox("Office-Dateikonverter installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $converters = GUICtrlCreateCheckbox("Install Office file converters and validation", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $ofc = GUICtrlCreateCheckbox("Install Office File Converters", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If NOT ConvertersInstPresent($scriptdir) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED)
   GUICtrlSetState(-1, $GUI_DISABLE)
 Else
-  If IniRead($inifilename, $ini_section_installation, $ini_value_converters, $disabled) = $enabled Then
+  If IniRead($inifilename, $ini_section_installation, $ini_value_ofc, $disabled) = $enabled Then
+    GUICtrlSetState(-1, $GUI_CHECKED)
+  Else
+    GUICtrlSetState(-1, $GUI_UNCHECKED)
+  EndIf
+EndIf
+
+; Install Office File Validation
+$txtxpos = $txtxoffset + $groupwidth / 2
+If ShowGUIInGerman() Then
+  $ofv = GUICtrlCreateCheckbox("Office-Dateiüberprüfung installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+Else
+  $ofv = GUICtrlCreateCheckbox("Install Office File Validation", $txtxpos, $txtypos, $txtwidth, $txtheight)
+EndIf
+If NOT ConvertersInstPresent($scriptdir) Then
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+  GUICtrlSetState(-1, $GUI_DISABLE)
+Else
+  If IniRead($inifilename, $ini_section_installation, $ini_value_ofv, $disabled) = $enabled Then
     GUICtrlSetState(-1, $GUI_CHECKED)
   Else
     GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -728,8 +753,6 @@ If ( ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (@OSServi
                           & @LF & "manually resume the installation of updates" _
                           & @LF & "after Service Pack installation and mandatory reboot.")
   EndIf
-  GUICtrlSetState($converters, $GUI_UNCHECKED)
-  GUICtrlSetState($converters, $GUI_DISABLE)
   GUICtrlSetState($ie8, $GUI_UNCHECKED)
   GUICtrlSetState($ie8, $GUI_DISABLE)
   GUICtrlSetState($ie9, $GUI_UNCHECKED)
@@ -750,6 +773,10 @@ If ( ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (@OSServi
   GUICtrlSetState($psh, $GUI_DISABLE)
   GUICtrlSetState($msse, $GUI_UNCHECKED)
   GUICtrlSetState($msse, $GUI_DISABLE)
+  GUICtrlSetState($ofc, $GUI_UNCHECKED)
+  GUICtrlSetState($ofc, $GUI_DISABLE)
+  GUICtrlSetState($ofv, $GUI_UNCHECKED)
+  GUICtrlSetState($ofv, $GUI_DISABLE)
   GUICtrlSetState($autoreboot, $GUI_CHECKED)
   GUICtrlSetState($autoreboot, $GUI_DISABLE)
   GUICtrlSetState($shutdown, $GUI_UNCHECKED)
@@ -952,8 +979,11 @@ While 1
       If BitAND(GUICtrlRead($msse), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instmsse"
       EndIf
-      If BitAND(GUICtrlRead($converters), $GUI_CHECKED) = $GUI_CHECKED Then
-        $options = $options & " /instofccnvs"
+      If BitAND(GUICtrlRead($ofc), $GUI_CHECKED) = $GUI_CHECKED Then
+        $options = $options & " /instofc"
+      EndIf
+      If BitAND(GUICtrlRead($ofv), $GUI_CHECKED) = $GUI_CHECKED Then
+        $options = $options & " /instofv"
       EndIf
       If BitAND(GUICtrlRead($verify), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /verify"

@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.1+ (r315)
+set WSUSOFFLINE_VERSION=7.1+ (r316)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log
 title %~n0 %*
@@ -19,7 +19,7 @@ echo %DATE% %TIME% - Info: Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/nobackup /verify /instie7 /instie8 /instie9 /updatecpp /updatedx /updatewmp /updatetsc /instdotnet35 /instdotnet4 /instpsh /instmsse /instwd /instofccnvs /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
+for %%i in (/nobackup /verify /instie7 /instie8 /instie9 /updatecpp /updatedx /updatewmp /updatetsc /instdotnet35 /instdotnet4 /instpsh /instmsse /instwd /instofc /instofv /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected >>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/nobackup" set BACKUP_MODE=/nobackup
@@ -36,7 +36,8 @@ if /i "%1"=="/instdotnet4" set INSTALL_DOTNET4=/instdotnet4
 if /i "%1"=="/instpsh" set INSTALL_PSH=/instpsh
 if /i "%1"=="/instmsse" set INSTALL_MSSE=/instmsse
 if /i "%1"=="/instwd" set INSTALL_WD=/instwd
-if /i "%1"=="/instofccnvs" set INSTALL_CONVERTERS=/instofccnvs
+if /i "%1"=="/instofc" set INSTALL_OFC=/instofc
+if /i "%1"=="/instofv" set INSTALL_OFV=/instofv
 if /i "%1"=="/autoreboot" set BOOT_MODE=/autoreboot
 if /i "%1"=="/shutdown" set FINISH_MODE=/shutdown
 if /i "%1"=="/showlog" set SHOW_LOG=/showlog
@@ -949,15 +950,15 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
 set REBOOT_REQUIRED=1
 :SkipSPOfc
 
-rem *** Check installation state of Office File Converter/Validation Packs ***
-if "%INSTALL_CONVERTERS%" NEQ "/instofccnvs" goto CheckAUService
-goto CNV%OFC_NAME%
+rem *** Check installation state of Office File Converter Packs ***
+if "%INSTALL_OFC%" NEQ "/instofc" goto SkipOFCNV
+goto OFCNV%OFC_NAME%
 
-:CNVo2k3
-echo Checking installation state of Office File Converter/Validation Packs...
+:OFCNVo2k3
+echo Checking installation state of Office File Converter Pack...
 if "%OFC_CONV_PACK%" NEQ "1" (
   if exist ..\ofc\glb\ork.exe (
-    echo Installing Office Converter Pack...
+    echo Installing Office File Converter Pack...
     ..\ofc\glb\ork.exe /T:"%TEMP%\ork" /C /Q
     %SystemRoot%\system32\expand.exe "%TEMP%\ork\ORK.CAB" -F:OCONVPCK.EXE "%TEMP%" >nul
     call SafeRmDir.cmd "%TEMP%\ork"
@@ -965,36 +966,58 @@ if "%OFC_CONV_PACK%" NEQ "1" (
     del "%TEMP%\OCONVPCK.EXE"
     call InstallOSUpdate.cmd "%TEMP%\OCONVPCK\ocp11.msi"
     call SafeRmDir.cmd "%TEMP%\OCONVPCK"
-    echo %DATE% %TIME% - Info: Installed Office Converter Pack >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Info: Installed Office File Converter Pack >>%UPDATE_LOGFILE%
   ) else (
     echo Warning: File ..\ofc\glb\ork.exe not found.
     echo %DATE% %TIME% - Warning: File ..\ofc\glb\ork.exe not found >>%UPDATE_LOGFILE%
   )
 )
+echo Checking installation state of Office Compatibility Pack...
 if "%OFC_COMP_PACK%" NEQ "1" (
   if exist ..\ofc\%OFC_LANG%\FileFormatConverters.exe (
     echo Installing Office Compatibility Pack...
     echo Installing ..\ofc\%OFC_LANG%\FileFormatConverters.exe...
     ..\ofc\%OFC_LANG%\FileFormatConverters.exe /quiet /norestart
-    echo %DATE% %TIME% - Info: Installed ..\ofc\%OFC_LANG%\FileFormatConverters.exe >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Info: Installed Office Compatibility Pack >>%UPDATE_LOGFILE%
   ) else (
     echo Warning: File ..\ofc\%OFC_LANG%\FileFormatConverters.exe not found.
     echo %DATE% %TIME% - Warning: File ..\ofc\%OFC_LANG%\FileFormatConverters.exe not found >>%UPDATE_LOGFILE%
   )
 )
-:CNVo2k7
+:OFCNVo2k7
+:OFCNVo2k10
+:SkipOFCNV
+
+rem *** Check installation state of Office File Validation ***
+if "%INSTALL_OFV%" NEQ "/instofv" goto SkipOFVAL
+goto OFVAL%OFC_NAME%
+
+:OFVALo2k3
+:OFVALo2k7
+echo Checking installation state of Office File Validation Add-In...
 if "%OFC_FILE_VALID%" NEQ "1" (
   if exist ..\ofc\glb\OFV.exe (
-    echo Installing Office File Validation Add-in...
+    echo Installing Office File Validation Add-In...
     echo Installing ..\ofc\glb\OFV.exe...
     ..\ofc\glb\OFV.exe /quiet /norestart
-    echo %DATE% %TIME% - Info: Installed ..\ofc\glb\OFV.exe >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Info: Installed Office File Validation Add-In >>%UPDATE_LOGFILE%
   ) else (
     echo Warning: File ..\ofc\glb\OFV.exe not found.
     echo %DATE% %TIME% - Warning: File ..\ofc\glb\OFV.exe not found >>%UPDATE_LOGFILE%
   )
+  dir /B ..\ofc\glb\*kb2553065*.exe >nul 2>&1
+  if errorlevel 1 (
+    echo Warning: File ..\ofc\glb\*kb2553065*.exe not found.
+    echo %DATE% %TIME% - Warning: File ..\ofc\glb\*kb2553065*.exe not found >>%UPDATE_LOGFILE%
+  ) else (
+    for /F %%i in ('dir /B ..\ofc\glb\*kb2553065*.exe') do (
+      echo Installing Office File Validation update...
+      call InstallOfficeUpdate.cmd ..\ofc\glb\%%i /selectoptions %VERIFY_MODE% /errorsaswarnings
+    )
+  )
 )
-:CNVo2k10
+:OFVALo2k10
+:SkipOFVAL
 
 :CheckAUService
 rem *** Check state of service 'automatic updates' ***
@@ -1088,7 +1111,7 @@ if "%RECALL_REQUIRED%"=="1" (
     )
     if "%USERNAME%" NEQ "WOUTempAdmin" (
       echo Preparing automatic recall...
-      call PrepareRecall.cmd %~f0 %BACKUP_MODE% %VERIFY_MODE% %INSTALL_IE% %UPDATE_CPP% %UPDATE_DX% %UPDATE_WMP% %UPDATE_TSC% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_MSSE% %INSTALL_WD% %INSTALL_CONVERTERS% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES% %SKIP_DYNAMIC%
+      call PrepareRecall.cmd %~f0 %BACKUP_MODE% %VERIFY_MODE% %INSTALL_IE% %UPDATE_CPP% %UPDATE_DX% %UPDATE_WMP% %UPDATE_TSC% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_MSSE% %INSTALL_WD% %INSTALL_OFC% %INSTALL_OFV% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES% %SKIP_DYNAMIC%
     )
     if exist %SystemRoot%\system32\bcdedit.exe (
       echo Adjusting boot sequence for next reboot...

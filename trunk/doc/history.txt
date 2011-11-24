@@ -596,6 +596,7 @@ Version 7.1 -- 01.11.11
 - Fix: TZ environment variable setting failed under Windows Server 2003 (x86) due to "SET /A" bug (erroneous INT overflow error)
 --------------------------------------------------------------------------------
 Version 7.? -- ??.??.11
+- Office File Converter/Compatibility Packs and Office File Validation Add-In may now be installed separately
 - Installation routine will now adjust power management settings when running under WOUTempAdmin user account to avoid standby and hibernate modes
 - DownloadUpdates.cmd script now supports "/skipdownload" switch for "determine only" mode
 - DownloadUpdates.cmd switches "/skipdownload" and "/skipdynamic" may be preset in UpdateGenerator.ini file
@@ -603,3 +604,4 @@ Version 7.? -- ??.??.11
 - Fix: DownloadUpdates.cmd showed misleading warnings when attempting to remove alternate data streams on non-NTFS file systems (Thanks to "aker")
 - Fix: Linux script DownloadUpdates.sh missed grep -F option ('fixed strings') several times (Thanks to "zoc")
 - Fix: When running under WOUTempAdmin user account, DoUpdate.cmd script will now assume that the service 'automatic updates' (wuauserv) is running if its start mode is 'Auto' (Thanks to "1inux")
+- Fix: Office File Validation installation now includes update kb2553065 (Thanks to "harry" and "-Iwan-")
