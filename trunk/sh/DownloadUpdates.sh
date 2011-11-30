@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                    v. 7.1+ (r316)                  ###
+###                    v. 7.1+ (r317)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -497,7 +497,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                    v. 7.1+ (r316)                  ***
+***                    v. 7.1+ (r317)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
@@ -546,10 +546,8 @@ checkconnection
 
 #set up needed directories
 mkdir -p ../client
-mkdir -p ../client/wsus
-mkdir -p ../client/msi
 mkdir -p ../client/bin
-
+mkdir -p ../client/wsus
 mkdir -p ../temp
 rm -f ../temp/*
 
