@@ -13,7 +13,7 @@ if not exist RecallUpdate.cmd (
   goto Cleanup
 )
 if not exist ReconnectNetDrive.cmd goto SkipReconnect
-for /F "tokens=3,4" %%i in (ReconnectNetDrive.cmd) do (
+for /F "tokens=3*" %%i in (ReconnectNetDrive.cmd) do (
   echo Reconnecting network drive %%i to %%j...
   call ReconnectNetDrive.cmd
   if errorlevel 1 (

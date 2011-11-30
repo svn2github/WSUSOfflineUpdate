@@ -79,7 +79,9 @@ Dim Const $usb_token_copy           = "copy"
 Dim Const $usb_token_path           = "path"
 Dim Const $usb_token_cleanup        = "cleanup"
 Dim Const $opts_token_includesp     = "includesp"
-Dim Const $opts_token_dotnet        = "includedotnet"
+Dim Const $opts_token_allowsp       = "allowsp"
+Dim Const $opts_token_includedotnet = "includedotnet"
+Dim Const $opts_token_allowdotnet   = "allowdotnet"
 Dim Const $opts_token_msse          = "includemsse"
 Dim Const $opts_token_wddefs        = "includewddefs"
 Dim Const $opts_token_cleanup       = "cleanupdownloads"
@@ -1000,7 +1002,7 @@ Func SaveSettings()
   IniWrite($inifilename, $ini_section_opts, $opts_token_cleanup, CheckBoxStateToString($cleanupdownloads))
   IniWrite($inifilename, $ini_section_opts, $opts_token_verify, CheckBoxStateToString($verifydownloads))
   IniWrite($inifilename, $ini_section_opts, $opts_token_includesp, CheckBoxStateToString($includesp))
-  IniWrite($inifilename, $ini_section_opts, $opts_token_dotnet, CheckBoxStateToString($dotnet))
+  IniWrite($inifilename, $ini_section_opts, $opts_token_includedotnet, CheckBoxStateToString($dotnet))
   IniWrite($inifilename, $ini_section_opts, $opts_token_msse, CheckBoxStateToString($msse))
   IniWrite($inifilename, $ini_section_opts, $opts_token_wddefs, CheckBoxStateToString($wddefs))
   IniWrite($inifilename, $ini_section_misc, $misc_token_proxy, $proxy)
@@ -2274,10 +2276,14 @@ If ShowGUIInGerman() Then
 Else
   $includesp = GUICtrlCreateCheckbox("Include Service Packs", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 EndIf
-If IniRead($inifilename, $ini_section_opts, $opts_token_includesp, $enabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
+If IniRead($inifilename, $ini_section_opts, $opts_token_allowsp, $enabled) = $enabled Then
+  If IniRead($inifilename, $ini_section_opts, $opts_token_includesp, $enabled) = $enabled Then
+    GUICtrlSetState(-1, $GUI_CHECKED)
+  Else
+    GUICtrlSetState(-1, $GUI_UNCHECKED)
+  EndIf
 Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
+  GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 EndIf
 If IniRead($inifilename, $ini_section_misc, $misc_token_skipdownload, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_DISABLE)
@@ -2290,10 +2296,14 @@ If ShowGUIInGerman() Then
 Else
   $dotnet = GUICtrlCreateCheckbox("Include C++ Runtime Libraries and .NET Frameworks", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 EndIf
-If IniRead($inifilename, $ini_section_opts, $opts_token_dotnet, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
+If IniRead($inifilename, $ini_section_opts, $opts_token_allowdotnet, $enabled) = $enabled Then
+  If IniRead($inifilename, $ini_section_opts, $opts_token_includedotnet, $disabled) = $enabled Then
+    GUICtrlSetState(-1, $GUI_CHECKED)
+  Else
+    GUICtrlSetState(-1, $GUI_UNCHECKED)
+  EndIf
 Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
+  GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 EndIf
 
 ;  Include Microsoft Security Essentials
