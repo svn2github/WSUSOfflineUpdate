@@ -94,8 +94,15 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
       echo %DATE% %TIME% - Warning: Update KB%%i not found >>%UPDATE_LOGFILE%
     )
   ) else (
-    echo Info: Skipping update KB%%i due to matching black list entry.
-    echo %DATE% %TIME% - Info: Skipped update KB%%i due to matching black list entry >>%UPDATE_LOGFILE%
+    for /F "tokens=1* delims=,;" %%k in ('%SystemRoot%\system32\findstr.exe /I "%%i" "%TEMP%\ExcludeList.txt"') do (
+      if "%%l"=="" (
+        echo Info: Skipping update %%k due to matching black list entry.
+        echo %DATE% %TIME% - Info: Skipped update %%k due to matching black list entry >>%UPDATE_LOGFILE%
+      ) else (
+        echo Info: Skipping update %%k ^(%%l^) due to matching black list entry.
+        echo %DATE% %TIME% - Info: Skipped update %%k ^(%%l^) due to matching black list entry >>%UPDATE_LOGFILE%
+      )
+    )
   )
 )
 del "%TEMP%\MissingUpdateIds.txt"
