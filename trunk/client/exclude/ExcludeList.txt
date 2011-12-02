@@ -1,17 +1,17 @@
-816093,MS03-011: Flaw in the Microsoft VM could enable system compromise
-951847,.NET Framework 3.5 Service Pack 1
-890830,Malicious Software Removal Tool
-926874,Internet Explorer 7
-940767,Internet Explorer 7
-944036,Internet Explorer 8
-982861,Internet Explorer 9
-976002,Browser Choice
-923618,Office 2003 Service Pack 3
-953195,Office 2007 Service Pack 2
-2526086,Office 2007 Service Pack 3
-2460049,Office 2010 Service Pack 1
-936929,Windows XP Service Pack 3
-914961,Windows Server 2003 Service Pack 2
-936330,Windows Vista / Server 2008 Service Pack 1
-948465,Windows Vista / Server 2008 Service Pack 2
-976932,Windows 7 / Server 2008 R2 Service Pack 1
+kb816093,MS03-011: Flaw in the Microsoft VM could enable system compromise
+kb951847,.NET Framework 3.5 Service Pack 1
+kb890830,Malicious Software Removal Tool
+kb926874,Internet Explorer 7
+kb940767,Internet Explorer 7
+kb944036,Internet Explorer 8
+kb982861,Internet Explorer 9
+kb976002,Browser Choice
+kb923618,Office 2003 Service Pack 3
+kb953195,Office 2007 Service Pack 2
+kb2526086,Office 2007 Service Pack 3
+kb2460049,Office 2010 Service Pack 1
+kb936929,Windows XP Service Pack 3
+kb914961,Windows Server 2003 Service Pack 2
+kb936330,Windows Vista / Server 2008 Service Pack 1
+kb948465,Windows Vista / Server 2008 Service Pack 2
+kb976932,Windows 7 / Server 2008 R2 Service Pack 1

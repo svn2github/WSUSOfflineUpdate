@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update ISO maker            ###
 ###                  for Linux systems                 ###
-###                    v. 7.1+ (r320)                  ###
+###                    v. 7.1+ (r321)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg      ###
@@ -47,7 +47,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update ISO maker            ***
 ***                  for Linux systems                 ***
-***                    v. 7.1+ (r320)                  ***
+***                    v. 7.1+ (r321)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Stefan Joehnke, Walter Schiessberg      ***
@@ -152,13 +152,13 @@ excludeiso1="../exclude/ExcludeListISO-${sys}.txt"
 excludeiso2="../exclude/ExcludeListISO-${sys}-x86.txt"
 if [ "$sys" == "ofc" ]; then
   excludeiso3="../exclude/ExcludeListISO-${sys_old}.txt"
-  excludeiso4="../exclude/ExcludeListISO-${sys_old}-x86.txt"  
+  excludeiso4="../exclude/ExcludeListISO-${sys_old}-x86.txt"
   if [ -f "$excludeiso3" ]; then
-    tr -d '\r' < ../exclude/ExcludeListISO-${sys_old}.txt > ../temp/ExcludeListISO-${sys}.txt
+    tr -d '\r' < "$excludeiso3" > ../temp/ExcludeListISO-${sys}.txt
   fi
   if [ -f "$excludeiso4" ]; then
-    tr -d '\r' < ../exclude/ExcludeListISO-${sys_old}-x86.txt > ../temp/ExcludeListISO-${sys}.txt
-  fi  
+    tr -d '\r' < "$excludeiso4" > ../temp/ExcludeListISO-${sys}.txt
+  fi
 fi
 
 echo "Writing builddate.txt..."

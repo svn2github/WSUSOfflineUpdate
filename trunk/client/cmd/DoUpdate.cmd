@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.1+ (r320)
+set WSUSOFFLINE_VERSION=7.1+ (r321)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log
 title %~n0 %*
@@ -104,6 +104,7 @@ if /i "%OS_ARCH%"=="x64" (set HASHDEEP_PATH=..\bin\hashdeep64.exe) else (set HAS
 rem *** Determine DirectX main version ***
 if "%UPDATE_DX%" NEQ "/updatedx" goto NoDXDiag
 if not exist %SystemRoot%\system32\dxdiag.exe goto NoDXDiag
+echo Determining DirectX main version...
 if /i "%OS_ARCH%"=="x64" (
   %SystemRoot%\system32\dxdiag.exe /whql:off /64bit /t %TEMP%\dxdiag.txt
 ) else (
