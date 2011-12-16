@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.2
+set WSUSOFFLINE_VERSION=7.2+ (r325)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log
 title %~n0 %*
@@ -408,6 +408,7 @@ set WSH_FILENAME=
 :SkipWSHInst
 
 rem *** Install Internet Explorer ***
+if "%OS_CORE%"=="1" goto SkipIEInst
 echo Checking Internet Explorer version...
 if %IE_VER_MAJOR% LSS %IE_VER_TARGET_MAJOR% goto InstallIE
 if %IE_VER_MAJOR% GTR %IE_VER_TARGET_MAJOR% goto SkipIEInst

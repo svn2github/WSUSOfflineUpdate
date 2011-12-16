@@ -90,8 +90,8 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
     if exist "%TEMP%\Update.txt" (
       del "%TEMP%\Update.txt"
     ) else (
-      echo Warning: Update KB%%i not found.
-      echo %DATE% %TIME% - Warning: Update KB%%i not found >>%UPDATE_LOGFILE%
+      echo Warning: Update kb%%i ^(id: %%j^) not found.
+      echo %DATE% %TIME% - Warning: Update kb%%i ^(id: %%j^) not found >>%UPDATE_LOGFILE%
     )
   ) else (
     for /F "tokens=1* delims=,;" %%k in ('%SystemRoot%\system32\findstr.exe /I "%%i" "%TEMP%\ExcludeList.txt"') do (

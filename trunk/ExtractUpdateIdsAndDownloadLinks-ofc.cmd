@@ -64,16 +64,18 @@ set UPDATE_CATEGORY=
 set UPDATE_LANGUAGES=
 rem del "%TEMP%\UpdateCategoriesAndFileIds.txt"
 
-%SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIds.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
+%SystemRoot%\system32\sort.exe "%TEMP%\OfficeFileIds.txt" /O "%TEMP%\OfficeFileIdsSorted.txt"
 rem del "%TEMP%\OfficeFileIds.txt"
+%SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIdsSorted.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
+rem del "%TEMP%\OfficeFileIdsSorted.txt"
 rem del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 
-if exist "%TEMP%\DownloadLinks-%1-%2.txt" del "%TEMP%\DownloadLinks-%1-%2.txt"
+if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
 if exist "%TEMP%\UpdateTableURL-%1-%2.csv" del "%TEMP%\UpdateTableURL-%1-%2.csv"
 for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt") do (
   for /F "usebackq tokens=1,2 delims=," %%k in ("%TEMP%\OfficeUpdateAndFileIds.txt") do (
     if /i "%%l"=="%%i" (
-      echo %%j>>"%TEMP%\DownloadLinks-%1-%2.txt"
+      echo %%j>>"%TEMP%\DynamicDownloadLinks-%1-%2.txt"
       echo %%k,%%j>>"%TEMP%\UpdateTableURL-%1-%2.csv"
     )
   )

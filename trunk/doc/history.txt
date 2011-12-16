@@ -609,3 +609,6 @@ Version 7.2 -- 06.12.11
 - Fix: Office File Validation installation now includes update kb2553065 (Thanks to "harry" and "-Iwan-")
 - Fix: Automatic recall failed if script path contained a blank (Thanks to "abox")
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- Fix: Download part missed Excel 2003 Security Update kb2596954 (Thanks to "peter2")
+- Fix: Installation part tried to install IEx on Server 2008(R2) Core systems (Thanks to "herbert")

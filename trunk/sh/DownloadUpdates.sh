@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                       v. 7.2                       ###
+###                    v. 7.2+ (r325)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -486,7 +486,7 @@ for i in $(ls -l "$path" | tr -s " " | cut -d " " -f 9 | grep "\b"); do
 done
 currentpath=$(pwd)
 cd "$path"
-rm -f "`cat "$currentpath/../temp/cleanup.txt"`"
+rm -f `cat "$currentpath/../temp/cleanup.txt"`
 cd "$currentpath"
 }
 
@@ -497,7 +497,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                       v. 7.2                       ***
+***                    v. 7.2+ (r325)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***

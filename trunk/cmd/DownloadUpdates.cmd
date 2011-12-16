@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.2
+set WSUSOFFLINE_VERSION=7.2+ (r325)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -1061,13 +1061,14 @@ set UPDATE_CATEGORY=
 set UPDATE_LANGUAGES=
 del "%TEMP%\UpdateCategoriesAndFileIds.txt"
 
-%SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIds.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
+%SystemRoot%\system32\sort.exe "%TEMP%\OfficeFileIds.txt" /O "%TEMP%\OfficeFileIdsSorted.txt"
 del "%TEMP%\OfficeFileIds.txt"
+%SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIdsSorted.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
+del "%TEMP%\OfficeFileIdsSorted.txt"
 del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 
 if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
 if exist "%TEMP%\UpdateTableURL-%1-%2.csv" del "%TEMP%\UpdateTableURL-%1-%2.csv"
-if not exist ..\client\ofc\nul md ..\client\ofc
 for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt") do (
   for /F "usebackq tokens=1,2 delims=," %%k in ("%TEMP%\OfficeUpdateAndFileIds.txt") do (
     if /i "%%l"=="%%i" (
@@ -1078,6 +1079,7 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\OfficeUpdateCabExeIdsAndLo
 )
 del "%TEMP%\OfficeUpdateAndFileIds.txt"
 del "%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
+if not exist ..\client\ofc\nul md ..\client\ofc
 %CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\UpdateTableURL-%1-%2.csv" ..\client\ofc\UpdateTable-%1-%2.csv
 del "%TEMP%\UpdateTableURL-%1-%2.csv"
 
