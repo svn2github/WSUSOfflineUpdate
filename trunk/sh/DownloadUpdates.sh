@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                    v. 7.2+ (r325)                  ###
+###                    v. 7.2+ (r326)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -325,8 +325,8 @@ fi
 doWget()
 {
 mydate=`date +%Y%m%d`
-echo "wget -nv -N --timeout=120 $*" | tee -a /tmp/wget.$mydate
-wget -nv -N --timeout=120 $* 2>>/tmp/wget.$mydate
+echo "wget -nv -N --timeout=120 $*" | tee -a ../temp/wget.$mydate
+wget -nv -N --timeout=120 $* 2>>../temp/wget.$mydate
 return $?
 }
 
@@ -497,7 +497,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                    v. 7.2+ (r325)                  ***
+***                    v. 7.2+ (r326)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
@@ -1095,8 +1095,15 @@ if [ "$dotnet" == "1" ]; then
   do
     oldname=`echo $x | awk -F"," '{print $1}'`
     newname=`echo $x | awk -F"," '{print $2}'`
+    tmpname=`basename $oldname`
     mkdir -p ../client/cpp
-    doWget $oldname -O ../client/cpp/$newname       
+    if [ -f "../client/cpp/$newname" ]; then
+      mv -f "../client/cpp/$newname" "../client/cpp/$tmpname"
+    fi
+    doWget $oldname -P ../client/cpp
+    if [ -f "../client/cpp/$tmpname" ]; then
+      mv -f "../client/cpp/$tmpname" "../client/cpp/$newname"
+    fi
   done
 	if echo $sys | grep x64 > /dev/null 2>&1; then
 	 cppstring=`cat ../temp/StaticUrls-cpp-x64-glb.txt | grep ,`
@@ -1105,7 +1112,14 @@ if [ "$dotnet" == "1" ]; then
     do
       oldname=`echo $x | awk -F"," '{print $1}'`
       newname=`echo $x | awk -F"," '{print $2}'`
-      doWget $oldname -O ../client/cpp/$newname       
+      tmpname=`basename $oldname`
+      if [ -f "../client/cpp/$newname" ]; then
+        mv -f "../client/cpp/$newname" "../client/cpp/$tmpname"
+      fi
+      doWget $oldname -P ../client/cpp
+      if [ -f "../client/cpp/$tmpname" ]; then
+        mv -f "../client/cpp/$tmpname" "../client/cpp/$newname"
+      fi
     done
   fi
 fi
@@ -1118,8 +1132,15 @@ if [ "$msse" == "1" ]; then
     do
       oldname=`echo $x | awk -F"," '{print $1}'`
       newname=`echo $x | awk -F"," '{print $2}'`
+      tmpname=`basename $oldname`
       mkdir -p ../client/msse/x64-glb
-      doWget $oldname -O ../client/msse/x64-glb/$newname       
+      if [ -f "../client/msse/x64-glb/$newname" ]; then
+        mv -f "../client/msse/x64-glb/$newname" "../client/msse/x64-glb/$tmpname"
+      fi
+      doWget $oldname -P ../client/msse/x64-glb
+      if [ -f "../client/msse/x64-glb/$tmpname" ]; then
+        mv -f "../client/msse/x64-glb/$tmpname" "../client/msse/x64-glb/$newname"
+      fi
     done
   else
    mssestring=`cat ../temp/StaticUrls-msse-x86-glb.txt | grep ,`
@@ -1128,8 +1149,15 @@ if [ "$msse" == "1" ]; then
     do
       oldname=`echo $x | awk -F"," '{print $1}'`
       newname=`echo $x | awk -F"," '{print $2}'`
+      tmpname=`basename $oldname`
       mkdir -p ../client/msse/x86-glb
-      doWget $oldname -O ../client/msse/x86-glb/$newname       
+      if [ -f "../client/msse/x86-glb/$newname" ]; then
+        mv -f "../client/msse/x86-glb/$newname" "../client/msse/x86-glb/$tmpname"
+      fi
+      doWget $oldname -P ../client/msse/x86-glb
+      if [ -f "../client/msse/x86-glb/$tmpname" ]; then
+        mv -f "../client/msse/x86-glb/$tmpname" "../client/msse/x86-glb/$newname"
+      fi
     done
   fi
 fi

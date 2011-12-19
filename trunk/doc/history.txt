@@ -612,3 +612,4 @@ Version 7.2 -- 06.12.11
 Version ?.? -- ??.??.??
 - Fix: Download part missed Excel 2003 Security Update kb2596954 (Thanks to "peter2")
 - Fix: Installation part tried to install IEx on Server 2008(R2) Core systems (Thanks to "herbert")
+- Fix: Linux script DownloadUpdates.sh used invalid wget parameter combination '-N -O' (Thanks to "harry", "nebyah" and "Spider-Mann")
