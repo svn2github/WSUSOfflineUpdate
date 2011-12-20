@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                    v. 7.2+ (r326)                  ###
+###                    v. 7.2+ (r327)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -497,7 +497,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                    v. 7.2+ (r326)                  ***
+***                    v. 7.2+ (r327)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
@@ -1164,9 +1164,11 @@ fi
 if [ "$wddefs" == "1" ]; then
 	echo "Downloading Windows Defender definition files..."
 	if echo $sys | grep x64 > /dev/null 2>&1; then
-	 doWget -i ../temp/StaticUrls-wddefs-x64-glb.txt -P ../client/wddefs/x64-glb
+    mkdir -p ../client/wddefs/x64-glb
+    doWget -i ../temp/StaticUrls-wddefs-x64-glb.txt -P ../client/wddefs/x64-glb
 	else
-	 doWget -i ../temp/StaticUrls-wddefs-x86-glb.txt -P ../client/wddefs/x86-glb
+    mkdir -p ../client/wddefs/x86-glb
+    doWget -i ../temp/StaticUrls-wddefs-x86-glb.txt -P ../client/wddefs/x86-glb
 	fi
 fi
 
@@ -1230,8 +1232,15 @@ if [ "$dotnet" == "1" ]; then
   do
     oldname=`echo $x | awk -F"," '{print $1}'`
     newname=`echo $x | awk -F"," '{print $2}'`
+    tmpname=`basename $oldname`
     mkdir -p ../client/cpp
-    doWget $oldname -O ../client/cpp/$newname       
+    if [ -f "../client/cpp/$newname" ]; then
+      mv -f "../client/cpp/$newname" "../client/cpp/$tmpname"
+    fi
+    doWget $oldname -P ../client/cpp
+    if [ -f "../client/cpp/$tmpname" ]; then
+      mv -f "../client/cpp/$tmpname" "../client/cpp/$newname"
+    fi
   done
 	if echo $sys | grep x64 > /dev/null 2>&1; then
 	 cppstring=`cat ../temp/StaticUrls-cpp-x64-glb.txt | grep ,`
@@ -1240,7 +1249,14 @@ if [ "$dotnet" == "1" ]; then
     do
       oldname=`echo $x | awk -F"," '{print $1}'`
       newname=`echo $x | awk -F"," '{print $2}'`
-      doWget $oldname -O ../client/cpp/$newname       
+      tmpname=`basename $oldname`
+      if [ -f "../client/cpp/$newname" ]; then
+        mv -f "../client/cpp/$newname" "../client/cpp/$tmpname"
+      fi
+      doWget $oldname -P ../client/cpp
+      if [ -f "../client/cpp/$tmpname" ]; then
+        mv -f "../client/cpp/$tmpname" "../client/cpp/$newname"
+      fi
     done
   fi
 	if [ -f "$PATH_PWD"/hashdeep ]; then
@@ -1260,7 +1276,15 @@ if [ "$msse" == "1" ]; then
     do
       oldname=`echo $x | awk -F"," '{print $1}'`
       newname=`echo $x | awk -F"," '{print $2}'`
-      doWget $oldname -O ../client/msse/x64-glb/$newname       
+      tmpname=`basename $oldname`
+      mkdir -p ../client/msse/x64-glb
+      if [ -f "../client/msse/x64-glb/$newname" ]; then
+        mv -f "../client/msse/x64-glb/$newname" "../client/msse/x64-glb/$tmpname"
+      fi
+      doWget $oldname -P ../client/msse/x64-glb
+      if [ -f "../client/msse/x64-glb/$tmpname" ]; then
+        mv -f "../client/msse/x64-glb/$tmpname" "../client/msse/x64-glb/$newname"
+      fi
     done
   else
    mssestring=`cat ../temp/StaticUrls-msse-x86-glb.txt | grep ,`
@@ -1269,7 +1293,15 @@ if [ "$msse" == "1" ]; then
     do
       oldname=`echo $x | awk -F"," '{print $1}'`
       newname=`echo $x | awk -F"," '{print $2}'`
-      doWget $oldname -O ../client/msse/x86-glb/$newname       
+      tmpname=`basename $oldname`
+      mkdir -p ../client/msse/x86-glb
+      if [ -f "../client/msse/x86-glb/$newname" ]; then
+        mv -f "../client/msse/x86-glb/$newname" "../client/msse/x86-glb/$tmpname"
+      fi
+      doWget $oldname -P ../client/msse/x86-glb
+      if [ -f "../client/msse/x86-glb/$tmpname" ]; then
+        mv -f "../client/msse/x86-glb/$tmpname" "../client/msse/x86-glb/$newname"
+      fi
     done
   fi
 	if [ -f "$PATH_PWD"/hashdeep ]; then
@@ -1283,9 +1315,11 @@ fi
 if [ "$wddefs" == "1" ]; then
 	echo "Validating Windows Defender definition files..."
 	if echo $sys | grep x64 > /dev/null 2>&1; then
-	 doWget -i ../temp/StaticUrls-wddefs-x64-glb.txt -P ../client/wddefs
+    mkdir -p ../client/wddefs/x64-glb
+    doWget -i ../temp/StaticUrls-wddefs-x64-glb.txt -P ../client/wddefs/x64-glb
 	else
-	 doWget -i ../temp/StaticUrls-wddefs-x86-glb.txt -P ../client/wddefs
+    mkdir -p ../client/wddefs/x86-glb
+    doWget -i ../temp/StaticUrls-wddefs-x86-glb.txt -P ../client/wddefs/x86-glb
 	fi
 	if [ -f "$PATH_PWD"/hashdeep ] && [ -d ../client/${sys}/glb ]; then
     echo "Creating integrity database for Windows Defender definition files ..."
