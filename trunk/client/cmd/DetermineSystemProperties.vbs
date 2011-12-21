@@ -13,6 +13,7 @@ Private Const strRegKeyMSEv2                  = "HKLM\Software\Microsoft\Microso
 Private Const strRegKeyMSSEDefs               = "HKLM\Software\Microsoft\Microsoft Antimalware\Signature Updates\"
 Private Const strRegKeyWD                     = "HKLM\Software\Microsoft\Windows Defender\"
 Private Const strRegKeyWDDefs                 = "HKLM\Software\Microsoft\Windows Defender\Signature Updates\"
+Private Const strRegKeyRootCerts              = "HKLM\Software\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}\"
 Private Const strRegKeyPowerCfg               = "HKCU\Control Panel\PowerCfg\"
 Private Const strRegValVersion                = "Version"
 Private Const strRegValPShVersion             = "PowerShellVersion"
@@ -485,6 +486,9 @@ End If
 
 ' Determine Microsoft Antispyware signatures' version
 WriteVersionToFile objCmdFile, "WDDEFS_VER", RegRead(wshShell, strRegKeyWDDefs & strRegValASSVersion)
+
+' Determine Microsoft Root Certificates' version
+WriteVersionToFile objCmdFile, "RCERTS_VER", Replace(RegRead(wshShell, strRegKeyRootCerts & strRegValVersion), ",", ".")
 
 ' Determine Remote Desktop Connection (Terminal Services Client) version
 If objFileSystem.FileExists(strTSCFileName) Then

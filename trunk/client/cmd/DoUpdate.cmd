@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.2+ (r327)
+set WSUSOFFLINE_VERSION=7.2+ (r328)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log
 title %~n0 %*
@@ -19,7 +19,7 @@ echo %DATE% %TIME% - Info: Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/nobackup /verify /instie7 /instie8 /instie9 /updatecpp /updatedx /updatewmp /updatetsc /instdotnet35 /instdotnet4 /instpsh /instmsse /instwd /instofc /instofv /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
+for %%i in (/nobackup /verify /instie7 /instie8 /instie9 /updatercerts /updatecpp /updatedx /updatewmp /updatetsc /instdotnet35 /instdotnet4 /instpsh /instmsse /instwd /instofc /instofv /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected >>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/nobackup" set BACKUP_MODE=/nobackup
@@ -27,6 +27,7 @@ if /i "%1"=="/verify" set VERIFY_MODE=/verify
 if /i "%1"=="/instie7" set INSTALL_IE=/instie7
 if /i "%1"=="/instie8" set INSTALL_IE=/instie8
 if /i "%1"=="/instie9" set INSTALL_IE=/instie9
+if /i "%1"=="/updatercerts" set UPDATE_RCERTS=/updatercerts
 if /i "%1"=="/updatecpp" set UPDATE_CPP=/updatecpp
 if /i "%1"=="/updatedx" set UPDATE_DX=/updatedx
 if /i "%1"=="/updatewmp" set UPDATE_WMP=/updatewmp
@@ -169,6 +170,7 @@ rem echo Found Windows Update Agent version: %WUA_VER_MAJOR%.%WUA_VER_MINOR%.%WU
 rem echo Found Windows Installer version: %MSI_VER_MAJOR%.%MSI_VER_MINOR%.%MSI_VER_REVIS%.%MSI_VER_BUILD%
 rem echo Found Windows Script Host version: %WSH_VER_MAJOR%.%WSH_VER_MINOR%.%WSH_VER_REVIS%.%WSH_VER_BUILD%
 rem echo Found Internet Explorer version: %IE_VER_MAJOR%.%IE_VER_MINOR%.%IE_VER_REVIS%.%IE_VER_BUILD%
+rem echo Found Root Certificates' version: %RCERTS_VER_MAJOR%.%RCERTS_VER_MINOR%.%RCERTS_VER_REVIS%.%RCERTS_VER_BUILD%
 rem echo Found Microsoft Data Access Components version: %MDAC_VER_MAJOR%.%MDAC_VER_MINOR%.%MDAC_VER_REVIS%.%MDAC_VER_BUILD%
 rem echo Found Microsoft DirectX main version: %DX_MAIN_VER%
 rem echo Found Microsoft DirectX core version: %DX_NAME% (%DX_CORE_VER_MAJOR%.%DX_CORE_VER_MINOR%.%DX_CORE_VER_REVIS%.%DX_CORE_VER_BUILD%)
@@ -194,6 +196,7 @@ echo %DATE% %TIME% - Info: Found Windows Update Agent version %WUA_VER_MAJOR%.%W
 echo %DATE% %TIME% - Info: Found Windows Installer version %MSI_VER_MAJOR%.%MSI_VER_MINOR%.%MSI_VER_REVIS%.%MSI_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows Script Host version %WSH_VER_MAJOR%.%WSH_VER_MINOR%.%WSH_VER_REVIS%.%WSH_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Internet Explorer version %IE_VER_MAJOR%.%IE_VER_MINOR%.%IE_VER_REVIS%.%IE_VER_BUILD% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Root Certificates' version %RCERTS_VER_MAJOR%.%RCERTS_VER_MINOR%.%RCERTS_VER_REVIS%.%RCERTS_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft Data Access Components version %MDAC_VER_MAJOR%.%MDAC_VER_MINOR%.%MDAC_VER_REVIS%.%MDAC_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft DirectX main version %DX_MAIN_VER% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft DirectX core version %DX_NAME% (%DX_CORE_VER_MAJOR%.%DX_CORE_VER_MINOR%.%DX_CORE_VER_REVIS%.%DX_CORE_VER_BUILD%) >>%UPDATE_LOGFILE%
@@ -549,6 +552,34 @@ set IE_FILENAME=
 if "%RECALL_REQUIRED%"=="1" goto Installed
 :SkipIEInst
 
+rem *** Install Update for Root Certificates ***
+if "%UPDATE_RCERTS%" NEQ "/updatercerts" goto SkipRCertsInst
+echo Checking Root Certificates' version...
+set RCERTS_FILENAME=..\win\glb\rootsupd.exe
+if not exist %RCERTS_FILENAME% (
+  echo Warning: File %RCERTS_FILENAME% not found.
+  echo %DATE% %TIME% - Warning: File %RCERTS_FILENAME% not found >>%UPDATE_LOGFILE%
+  goto SkipRCertsInst
+)
+%RCERTS_FILENAME% /T:"%TEMP%\rootsupd" /C /Q
+for /F "tokens=2 delims== " %%i in ('%SystemRoot%\system32\findstr.exe /B /L /I "Version" "%TEMP%\rootsupd\rootsupd.inf"') do (
+  call SafeRmDir.cmd "%TEMP%\rootsupd"
+  for /F "tokens=1-4 delims=," %%j in (%%i) do (
+    if %RCERTS_VER_MAJOR% LSS %%j goto InstallRCerts
+    if %RCERTS_VER_MAJOR% GTR %%j goto SkipRCertsInst
+    if %RCERTS_VER_MINOR% LSS %%k goto InstallRCerts
+    if %RCERTS_VER_MINOR% GTR %%k goto SkipRCertsInst
+    if %RCERTS_VER_REVIS% LSS %%l goto InstallRCerts
+    if %RCERTS_VER_REVIS% GTR %%l goto SkipRCertsInst
+    if %RCERTS_VER_BUILD% GEQ %%m goto SkipRCertsInst
+  )
+)
+:InstallRCerts
+echo Installing most recent Update for Root Certificates...
+call InstallOSUpdate.cmd %RCERTS_FILENAME% %VERIFY_MODE% /errorsaswarnings /Q
+set RCERTS_FILENAME=
+:SkipRCertsInst
+
 rem *** Install C++ Runtime Libraries ***
 if "%UPDATE_CPP%" NEQ "/updatecpp" goto SkipCPPInst
 echo Checking C++ Runtime Libraries' installation state...
@@ -634,7 +665,7 @@ if errorlevel 1 (
 echo Installing most recent DirectX End-User Runtime...
 for /F %%i in ('dir /B %DIRECTX_FILENAME%') do (
   echo Installing ..\win\glb\%%i...
-  ..\win\glb\%%i /Q /T:"%TEMP%\directx" /C
+  ..\win\glb\%%i /T:"%TEMP%\directx" /C /Q
   "%TEMP%\directx\dxsetup.exe" /silent
   call SafeRmDir.cmd "%TEMP%\directx"
   echo %DATE% %TIME% - Info: Installed ..\win\glb\%%i >>%UPDATE_LOGFILE%
@@ -1112,7 +1143,7 @@ if "%RECALL_REQUIRED%"=="1" (
     )
     if "%USERNAME%" NEQ "WOUTempAdmin" (
       echo Preparing automatic recall...
-      call PrepareRecall.cmd "%~f0" %BACKUP_MODE% %VERIFY_MODE% %INSTALL_IE% %UPDATE_CPP% %UPDATE_DX% %UPDATE_WMP% %UPDATE_TSC% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_MSSE% %INSTALL_WD% %INSTALL_OFC% %INSTALL_OFV% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES% %SKIP_DYNAMIC%
+      call PrepareRecall.cmd "%~f0" %BACKUP_MODE% %VERIFY_MODE% %INSTALL_IE% %UPDATE_RCERTS% %UPDATE_CPP% %UPDATE_DX% %UPDATE_WMP% %UPDATE_TSC% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_MSSE% %INSTALL_WD% %INSTALL_OFC% %INSTALL_OFV% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES% %SKIP_DYNAMIC%
     )
     if exist %SystemRoot%\system32\bcdedit.exe (
       echo Adjusting boot sequence for next reboot...

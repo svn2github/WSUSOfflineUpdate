@@ -31,9 +31,9 @@ if errorlevel 1 (
 if "%OS_NAME%"=="wxp" goto SkipPowerCfg
 if "%OS_NAME%"=="w2k3" goto SkipPowerCfg
 echo Creating temporary power scheme...
-for /F "delims=:( tokens=2" %%i in ('%SystemRoot%\system32\powercfg.exe -getactivescheme') do echo %%i>%SystemRoot%\woubak-pwrscheme-act.txt
+for /F "tokens=2 delims=:(" %%i in ('%SystemRoot%\system32\powercfg.exe -getactivescheme') do echo %%i>%SystemRoot%\woubak-pwrscheme-act.txt
 for /F %%i in (%SystemRoot%\woubak-pwrscheme-act.txt) do (
-  for /F "delims=:( tokens=2" %%j in ('%SystemRoot%\system32\powercfg.exe -duplicatescheme %%i') do echo %%j>%SystemRoot%\woubak-pwrscheme-temp.txt
+  for /F "tokens=2 delims=:(" %%j in ('%SystemRoot%\system32\powercfg.exe -duplicatescheme %%i') do echo %%j>%SystemRoot%\woubak-pwrscheme-temp.txt
 )
 for /F %%i in (%SystemRoot%\woubak-pwrscheme-temp.txt) do (
   %SystemRoot%\system32\powercfg.exe -changename %%i WOUTemp

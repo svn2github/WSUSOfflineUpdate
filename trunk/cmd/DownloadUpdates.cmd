@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.2+ (r327)
+set WSUSOFFLINE_VERSION=7.2+ (r328)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -335,6 +335,14 @@ if exist ..\client\md\hashes-cpp-x86-glb.txt del ..\client\md\hashes-cpp-x86-glb
 if exist ..\client\cpp\x86-glb\nul (
   move /Y ..\client\cpp\x86-glb\*.* ..\client\cpp >nul
   rd /S /Q ..\client\cpp\x86-glb
+)
+
+rem *** rootsupd restructuring stuff ***
+if exist ..\client\wxp\glb\rootsupd.exe (
+  if not exist ..\client\win\glb\nul md ..\client\win\glb
+  move /Y ..\client\wxp\glb\rootsupd.exe ..\client\win\glb >nul
+  if exist ..\client\md\hashes-win-glb.txt del ..\client\md\hashes-win-glb.txt
+  if exist ..\client\md\hashes-wxp-glb.txt del ..\client\md\hashes-wxp-glb.txt
 )
 
 rem *** Execute custom initialization hook ***
@@ -810,10 +818,14 @@ if "%VERIFY_DL%"=="1" (
 :SkipWDDefs
 
 rem *** Download the platform specific patches ***
-for %%i in (wxp w2k3) do (
+for %%i in (wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64) do (
   if /i "%1"=="%%i" (
     call :DownloadCore win glb %SKIP_PARAM%
     if errorlevel 1 goto Error
+  )
+)
+for %%i in (wxp w2k3) do (
+  if /i "%1"=="%%i" (
     call :DownloadCore win %2 %SKIP_PARAM%
     if errorlevel 1 goto Error
   )
