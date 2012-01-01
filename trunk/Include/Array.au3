@@ -165,10 +165,10 @@ Func _ArrayCombinations(ByRef $avArray, $iSet, $sDelim = "")
 	Next
 	Local $iTotal = __Array_Combinations($iN, $iR)
 	Local $iLeft = $iTotal
-	Local  $aResult[$iTotal + 1]
+	Local $aResult[$iTotal + 1]
 	$aResult[0] = $iTotal
 
-	Local  $iCount = 1
+	Local $iCount = 1
 	While $iLeft > 0
 		__Array_GetNext($iN, $iR, $iLeft, $iTotal, $aIdx)
 		For $i = 0 To $iSet - 1
@@ -326,7 +326,6 @@ Func _ArrayDisplay(Const ByRef $avArray, $sTitle = "Array: ListView Display", $i
 	If $iDimension > 2 Then Return SetError(2, 0, 0)
 
 	; Separator handling
-;~     If $sSeparator = "" Then $sSeparator = Chr(1)
 	If $sSeparator = "" Then $sSeparator = Chr(124)
 
 	;  Check the separator to make sure it's not used literally in the array
@@ -342,7 +341,7 @@ Func _ArrayDisplay(Const ByRef $avArray, $sTitle = "Array: ListView Display", $i
 	EndIf
 
 	; Declare variables
-	Local $vTmp, $iBuffer = 64
+	Local $vTmp, $iBuffer = 4094 ; AutoIt max item size
 	Local $iColLimit = 250
 	Local $iOnEventMode = Opt("GUIOnEventMode", 0), $sDataSeparatorChar = Opt("GUIDataSeparatorChar", $sSeparator)
 
@@ -361,7 +360,7 @@ Func _ArrayDisplay(Const ByRef $avArray, $sTitle = "Array: ListView Display", $i
 
 	; Set header up
 	If $sHeader = "" Then
-		$sHeader = "Row  "	; blanks added to adjust column size for big number of rows
+		$sHeader = "Row  " ; blanks added to adjust column size for big number of rows
 		For $i = 0 To $iSubMax
 			$sHeader &= $sSeparator & "Col " & $i
 		Next
@@ -389,14 +388,13 @@ Func _ArrayDisplay(Const ByRef $avArray, $sTitle = "Array: ListView Display", $i
 
 			; Add to text array
 			$vTmp = StringReplace($vTmp, $sSeparator, $sReplace, 0, 1)
-			$avArrayText[$i] &= $sSeparator & $vTmp
 
 			; Set max buffer size
-			$vTmp = StringLen($vTmp)
-			If $vTmp > $iBuffer Then $iBuffer = $vTmp
+			If StringLen($vTmp) > $iBuffer Then $vTmp = StringLeft($vTmp, $iBuffer)
+
+			$avArrayText[$i] &= $sSeparator & $vTmp
 		Next
 	Next
-	$iBuffer += 1
 
 	; GUI Constants
 	Local Const $_ARRAYCONSTANT_GUI_DOCKBORDERS = 0x66
@@ -405,14 +403,10 @@ Func _ArrayDisplay(Const ByRef $avArray, $sTitle = "Array: ListView Display", $i
 	Local Const $_ARRAYCONSTANT_GUI_DOCKLEFT = 0x2
 	Local Const $_ARRAYCONSTANT_GUI_DOCKRIGHT = 0x4
 	Local Const $_ARRAYCONSTANT_GUI_EVENT_CLOSE = -3
-	Local Const $_ARRAYCONSTANT_LVIF_PARAM = 0x4
-	Local Const $_ARRAYCONSTANT_LVIF_TEXT = 0x1
 	Local Const $_ARRAYCONSTANT_LVM_GETCOLUMNWIDTH = (0x1000 + 29)
 	Local Const $_ARRAYCONSTANT_LVM_GETITEMCOUNT = (0x1000 + 4)
 	Local Const $_ARRAYCONSTANT_LVM_GETITEMSTATE = (0x1000 + 44)
-	Local Const $_ARRAYCONSTANT_LVM_INSERTITEMW = (0x1000 + 77)
 	Local Const $_ARRAYCONSTANT_LVM_SETEXTENDEDLISTVIEWSTYLE = (0x1000 + 54)
-	Local Const $_ARRAYCONSTANT_LVM_SETITEMW = (0x1000 + 76)
 	Local Const $_ARRAYCONSTANT_LVS_EX_FULLROWSELECT = 0x20
 	Local Const $_ARRAYCONSTANT_LVS_EX_GRIDLINES = 0x1
 	Local Const $_ARRAYCONSTANT_LVS_SHOWSELALWAYS = 0x8
@@ -420,14 +414,6 @@ Func _ArrayDisplay(Const ByRef $avArray, $sTitle = "Array: ListView Display", $i
 	Local Const $_ARRAYCONSTANT_WS_MAXIMIZEBOX = 0x00010000
 	Local Const $_ARRAYCONSTANT_WS_MINIMIZEBOX = 0x00020000
 	Local Const $_ARRAYCONSTANT_WS_SIZEBOX = 0x00040000
-	Local Const $_ARRAYCONSTANT_tagLVITEM = "int Mask;int Item;int SubItem;int State;int StateMask;ptr Text;int TextMax;int Image;int Param;int Indent;int GroupID;int Columns;ptr pColumns"
-
-	Local $iAddMask = BitOR($_ARRAYCONSTANT_LVIF_TEXT, $_ARRAYCONSTANT_LVIF_PARAM)
-	Local $tBuffer = DllStructCreate("wchar Text[" & $iBuffer & "]"), $pBuffer = DllStructGetPtr($tBuffer)
-	Local $tItem = DllStructCreate($_ARRAYCONSTANT_tagLVITEM), $pItem = DllStructGetPtr($tItem)
-	DllStructSetData($tItem, "Param", 0)
-	DllStructSetData($tItem, "Text", $pBuffer)
-	DllStructSetData($tItem, "TextMax", $iBuffer)
 
 	; Set interface up
 	Local $iWidth = 640, $iHeight = 480
@@ -442,27 +428,8 @@ Func _ArrayDisplay(Const ByRef $avArray, $sTitle = "Array: ListView Display", $i
 	GUICtrlSendMsg($hListView, $_ARRAYCONSTANT_LVM_SETEXTENDEDLISTVIEWSTYLE, $_ARRAYCONSTANT_WS_EX_CLIENTEDGE, $_ARRAYCONSTANT_WS_EX_CLIENTEDGE)
 
 	; Fill listview
-	Local $aItem
 	For $i = 0 To $iUBound
-		If GUICtrlCreateListViewItem($avArrayText[$i], $hListView) = 0 Then
-			; use GUICtrlSendMsg() to overcome AutoIt limitation
-			$aItem = StringSplit($avArrayText[$i], $sSeparator)
-			DllStructSetData($tBuffer, "Text", $aItem[1])
-
-			; Add listview item
-			DllStructSetData($tItem, "Item", $i)
-			DllStructSetData($tItem, "SubItem", 0)
-			DllStructSetData($tItem, "Mask", $iAddMask)
-			GUICtrlSendMsg($hListView, $_ARRAYCONSTANT_LVM_INSERTITEMW, 0, $pItem)
-
-			; Set listview subitem text
-			DllStructSetData($tItem, "Mask", $_ARRAYCONSTANT_LVIF_TEXT)
-			For $j = 2 To $aItem[0]
-				DllStructSetData($tBuffer, "Text", $aItem[$j])
-				DllStructSetData($tItem, "SubItem", $j - 1)
-				GUICtrlSendMsg($hListView, $_ARRAYCONSTANT_LVM_SETITEMW, 0, $pItem)
-			Next
-		EndIf
+		GUICtrlCreateListViewItem($avArrayText[$i], $hListView)
 	Next
 
 	; adjust window width
@@ -475,7 +442,7 @@ Func _ArrayDisplay(Const ByRef $avArray, $sTitle = "Array: ListView Display", $i
 
 	If $iWidth > @DesktopWidth Then $iWidth = @DesktopWidth - 100
 
-	WinMove($hGUI, "", (@DesktopWidth - $iWidth)/2, Default, $iWidth)
+	WinMove($hGUI, "", (@DesktopWidth - $iWidth) / 2, Default, $iWidth)
 
 	; Show dialog
 	GUISetState(@SW_SHOW, $hGUI)
@@ -528,7 +495,9 @@ EndFunc   ;==>_ArrayDisplay
 ;                  $iStart   - [optional] Index of array to start searching at
 ;                  $iEnd     - [optional] Index of array to stop searching at
 ;                  $iCase    - [optional] If set to 1, search is case sensitive
-;                  $iPartial - [optional] If set to 1, executes a partial search
+;                  $iCompare - [optional] 0 AutoIt variables compare (default), "string" = 0, "" = 0  or "0" = 0 match
+;                                         1 executes a partial search (StringInStr)
+;                                         2 comparison match if variables have same type and same value
 ;                  $iSubItem - [optional] Sub-index to search on in 2D arrays
 ; Return values .: Success - An array of all index numbers in array containing $vValue
 ;                  Failure - -1, sets @error (see _ArraySearch() description for error codes)
@@ -539,15 +508,15 @@ EndFunc   ;==>_ArrayDisplay
 ; Link ..........:
 ; Example .......: Yes
 ; ===============================================================================================================================
-Func _ArrayFindAll(Const ByRef $avArray, $vValue, $iStart = 0, $iEnd = 0, $iCase = 0, $iPartial = 0, $iSubItem = 0)
-	$iStart = _ArraySearch($avArray, $vValue, $iStart, $iEnd, $iCase, $iPartial, 1, $iSubItem)
+Func _ArrayFindAll(Const ByRef $avArray, $vValue, $iStart = 0, $iEnd = 0, $iCase = 0, $iCompare = 0, $iSubItem = 0)
+	$iStart = _ArraySearch($avArray, $vValue, $iStart, $iEnd, $iCase, $iCompare, 1, $iSubItem)
 	If @error Then Return SetError(@error, 0, -1)
 
 	Local $iIndex = 0, $avResult[UBound($avArray)]
 	Do
 		$avResult[$iIndex] = $iStart
 		$iIndex += 1
-		$iStart = _ArraySearch($avArray, $vValue, $iStart + 1, $iEnd, $iCase, $iPartial, 1, $iSubItem)
+		$iStart = _ArraySearch($avArray, $vValue, $iStart + 1, $iEnd, $iCase, $iCompare, 1, $iSubItem)
 	Until @error
 
 	ReDim $avResult[$iIndex]
@@ -924,7 +893,9 @@ EndFunc   ;==>_ArrayReverse
 ;                  $iStart   - [optional] Index of array to start searching at
 ;                  $iEnd     - [optional] Index of array to stop searching at
 ;                  $iCase    - [optional] If set to 1, search is case sensitive
-;                  $iPartial - [optional] If set to 1, executes a partial search
+;                  $iCompare - [optional] 0 AutoIt variables compare (default), "string" = 0, "" = 0  or "0" = 0 match
+;                                         1 executes a partial search (StringInStr)
+;                                         2 comparison match if variables have same type and same value
 ;                  $iForward - [optional] If set to 0, searches the array from end to beginning (instead of beginning to end)
 ;                  $iSubItem - [optional] Sub-index to search on in 2D arrays
 ; Return values .: Success - The index that $vValue was found at
@@ -934,7 +905,6 @@ EndFunc   ;==>_ArrayReverse
 ;                  |4 - $iStart is greater than $iEnd
 ;                  |6 - $vValue was not found in array
 ;                  |7 - $avArray has too many dimensions
-;                  |(3, 5 - Deprecated error codes)
 ; Author ........: SolidSnake <MetalGX91 at GMail dot com>
 ; Modified.......: gcriaco <gcriaco at gmail dot com>, Ultima - 2D arrays supported, directional search, code cleanup, optimization
 ; Remarks .......: This function might be slower than _ArrayBinarySearch() but is useful when the array's order can't be altered.
@@ -942,7 +912,7 @@ EndFunc   ;==>_ArrayReverse
 ; Link ..........:
 ; Example .......: Yes
 ; ===============================================================================================================================
-Func _ArraySearch(Const ByRef $avArray, $vValue, $iStart = 0, $iEnd = 0, $iCase = 0, $iPartial = 0, $iForward = 1, $iSubItem = -1)
+Func _ArraySearch(Const ByRef $avArray, $vValue, $iStart = 0, $iEnd = 0, $iCase = 0, $iCompare = 0, $iForward = 1, $iSubItem = -1)
 	If Not IsArray($avArray) Then Return SetError(1, 0, -1)
 	If UBound($avArray, 0) > 2 Or UBound($avArray, 0) < 1 Then Return SetError(2, 0, -1)
 
@@ -962,16 +932,25 @@ Func _ArraySearch(Const ByRef $avArray, $vValue, $iStart = 0, $iEnd = 0, $iCase 
 		$iStep = -1
 	EndIf
 
+	; same var Type of comparison
+	Local $iCompType = False
+	If $iCompare = 2 Then
+		$iCompare = 0
+		$iCompType = True
+	EndIf
+
 	; Search
 	Switch UBound($avArray, 0)
 		Case 1 ; 1D array search
-			If Not $iPartial Then
+			If Not $iCompare Then
 				If Not $iCase Then
 					For $i = $iStart To $iEnd Step $iStep
+						If $iCompType And VarGetType($avArray[$i]) <> VarGetType($vValue) Then ContinueLoop
 						If $avArray[$i] = $vValue Then Return $i
 					Next
 				Else
 					For $i = $iStart To $iEnd Step $iStep
+						If $iCompType And VarGetType($avArray[$i]) <> VarGetType($vValue) Then ContinueLoop
 						If $avArray[$i] == $vValue Then Return $i
 					Next
 				EndIf
@@ -991,13 +970,15 @@ Func _ArraySearch(Const ByRef $avArray, $vValue, $iStart = 0, $iEnd = 0, $iCase 
 			EndIf
 
 			For $j = $iSubItem To $iUBoundSub
-				If Not $iPartial Then
+				If Not $iCompare Then
 					If Not $iCase Then
 						For $i = $iStart To $iEnd Step $iStep
+							If $iCompType And VarGetType($avArray[$i][$j]) <> VarGetType($vValue) Then ContinueLoop
 							If $avArray[$i][$j] = $vValue Then Return $i
 						Next
 					Else
 						For $i = $iStart To $iEnd Step $iStep
+							If $iCompType And VarGetType($avArray[$i][$j]) <> VarGetType($vValue) Then ContinueLoop
 							If $avArray[$i][$j] == $vValue Then Return $i
 						Next
 					EndIf

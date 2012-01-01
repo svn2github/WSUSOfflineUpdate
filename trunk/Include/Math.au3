@@ -8,6 +8,12 @@
 ; Author(s) .....: Valik, Gary Frost, ...
 ; ===============================================================================================================================
 
+; #NO_DOC_FUNCTION# =============================================================================================================
+; Not working/documented/implimented at this time
+;
+;_ATan2
+; ===============================================================================================================================
+
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _ATan2()
 ; Description ...: Returns the standard position angle (in radians) to the point ($nX, $nY).
@@ -41,7 +47,7 @@ Func _ATan2(Const $nY, Const $nX)
 		ElseIf $nY < 0 Then
 			$nResult = 3.0 * $nPi / 2.0
 		Else
-			SetError(2) 	; no direction can be determined.
+			SetError(2) ; no direction can be determined.
 			Return 0
 		EndIf
 	ElseIf $nX < 0 Then

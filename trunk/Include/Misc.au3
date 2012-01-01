@@ -6,7 +6,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: Misc
-; AutoIt Version : 3.1.1++
+; AutoIt Version : 3.3.7.20++
 ; Language ......: English
 ; Description ...: Functions that assist with Common Dialogs.
 ; Author(s) .....: Gary Frost, Florian Fida (Piccaso), Dale (Klaatu) Thompson, Valik, ezzetabi, Jon, Paul Campbell (PaulIA)
@@ -14,9 +14,9 @@
 ; ===============================================================================================================================
 
 ; #CONSTANTS# ===================================================================================================================
-Global Const $__MISCCONSTANT_CC_ANYCOLOR	= 0x0100
-Global Const $__MISCCONSTANT_CC_FULLOPEN	= 0x0002
-Global Const $__MISCCONSTANT_CC_RGBINIT		= 0x0001
+Global Const $__MISCCONSTANT_CC_ANYCOLOR = 0x0100
+Global Const $__MISCCONSTANT_CC_FULLOPEN = 0x0002
+Global Const $__MISCCONSTANT_CC_RGBINIT = 0x0001
 ; ===============================================================================================================================
 
 ; #CURRENT# =====================================================================================================================
@@ -196,7 +196,7 @@ Func _ChooseColor($iReturnType = 0, $iColorRef = 0, $iRefType = 0, $hWndOwnder =
 	DllStructSetData($tChoose, "CustColors", DllStructGetPtr($tcc))
 	DllStructSetData($tChoose, "Flags", BitOR($__MISCCONSTANT_CC_ANYCOLOR, $__MISCCONSTANT_CC_FULLOPEN, $__MISCCONSTANT_CC_RGBINIT))
 
-	Local $aResult = DllCall("comdlg32.dll", "bool", "ChooseColor", "ptr", DllStructGetPtr($tChoose))
+	Local $aResult = DllCall("comdlg32.dll", "bool", "ChooseColor", "struct*", $tChoose)
 	If @error Then Return SetError(@error, @extended, -1)
 	If $aResult[0] = 0 Then Return SetError(-3, -3, -1) ; user selected cancel or struct settings incorrect
 
@@ -268,7 +268,7 @@ Func _ChooseFont($sFontName = "Courier New", $iPointSize = 10, $iColorRef = 0, $
 	DllStructSetData($tLogFont, "Strikeout", $iStrikethru)
 	DllStructSetData($tLogFont, "FaceName", $sFontName)
 
-	Local $aResult = DllCall("comdlg32.dll", "bool", "ChooseFontW", "ptr", DllStructGetPtr($tChooseFont))
+	Local $aResult = DllCall("comdlg32.dll", "bool", "ChooseFontW", "struct*", $tChooseFont)
 	If @error Then Return SetError(@error, @extended, -1)
 	If $aResult[0] = 0 Then Return SetError(-3, -3, -1) ; user selected cancel or struct settings incorrect
 
@@ -316,7 +316,7 @@ Func _ClipPutFile($sFile, $sSeparator = "|")
 	Local Const $GMEM_MOVEABLE = 0x0002, $CF_HDROP = 15
 
 	$sFile &= $sSeparator & $sSeparator
-	Local $nGlobMemSize = (StringLen($sFile) + 20)
+	Local $nGlobMemSize = 2 * (StringLen($sFile) + 20)
 
 	Local $aResult = DllCall("user32.dll", "bool", "OpenClipboard", "hwnd", 0)
 	If @error Or $aResult[0] = 0 Then Return SetError(1, _WinAPI_GetLastError(), False)
@@ -338,16 +338,16 @@ Func _ClipPutFile($sFile, $sSeparator = "|")
 				$iLastError = _WinAPI_GetLastError()
 			Else
 				Local $hLock = $aResult[0]
-				Local $DROPFILES = DllStructCreate("dword;ptr;int;int;int;char[" & StringLen($sFile) + 1 & "]", $hLock)
+				Local $DROPFILES = DllStructCreate("dword pFiles;" & $tagPOINT & ";bool fNC;bool fWide;wchar[" & StringLen($sFile) + 1 & "]", $hLock)
 				If @error Then Return SetError(5, 6, False)
 
-				Local $tempStruct = DllStructCreate("dword;ptr;int;int;int")
+				Local $tempStruct = DllStructCreate("dword;long;long;bool;bool")
 
-				DllStructSetData($DROPFILES, 1, DllStructGetSize($tempStruct))
-				DllStructSetData($DROPFILES, 2, 0)
-				DllStructSetData($DROPFILES, 3, 0)
-				DllStructSetData($DROPFILES, 4, 0)
-				DllStructSetData($DROPFILES, 5, 0)
+				DllStructSetData($DROPFILES, "pFiles", DllStructGetSize($tempStruct))
+				DllStructSetData($DROPFILES, "X", 0)
+				DllStructSetData($DROPFILES, "Y", 0)
+				DllStructSetData($DROPFILES, "fNC", 0)
+				DllStructSetData($DROPFILES, "fWide", 1)
 				DllStructSetData($DROPFILES, 6, $sFile)
 				For $i = 1 To StringLen($sFile)
 					If DllStructGetData($DROPFILES, 6, $i) = $sSeparator Then DllStructSetData($DROPFILES, 6, Chr(0), $i)
@@ -366,14 +366,14 @@ Func _ClipPutFile($sFile, $sSeparator = "|")
 				EndIf
 			EndIf
 			$aResult = DllCall("kernel32.dll", "ptr", "GlobalFree", "handle", $hGlobal)
-			If (@error Or Not $aResult[0]) And Not $iError Then
+			If (@error Or $aResult[0]) And Not $iError Then
 				$iError = 9
 				$iLastError = _WinAPI_GetLastError()
 			EndIf
 		EndIf
 	EndIf
 	$aResult = DllCall("user32.dll", "bool", "CloseClipboard")
-	If (@error Or Not $aResult[0])  And Not $iError Then Return SetError(7, _WinAPI_GetLastError(), False)
+	If (@error Or Not $aResult[0]) And Not $iError Then Return SetError(7, _WinAPI_GetLastError(), False)
 	If $iError Then Return SetError($iError, $iLastError, False)
 	Return True
 EndFunc   ;==>_ClipPutFile
@@ -434,7 +434,7 @@ Func _MouseTrap($iLeft = 0, $iTop = 0, $iRight = 0, $iBottom = 0)
 		DllStructSetData($tRect, "Top", $iTop)
 		DllStructSetData($tRect, "Right", $iRight)
 		DllStructSetData($tRect, "Bottom", $iBottom)
-		$aResult = DllCall("user32.dll", "bool", "ClipCursor", "ptr", DllStructGetPtr($tRect))
+		$aResult = DllCall("user32.dll", "bool", "ClipCursor", "struct*", $tRect)
 		If @error Or Not $aResult[0] Then Return SetError(2, _WinAPI_GetLastError(), False)
 	EndIf
 	Return True
@@ -461,38 +461,35 @@ EndFunc   ;==>_MouseTrap
 Func _Singleton($sOccurenceName, $iFlag = 0)
 	Local Const $ERROR_ALREADY_EXISTS = 183
 	Local Const $SECURITY_DESCRIPTOR_REVISION = 1
-	Local $pSecurityAttributes = 0
+	Local $tSecurityAttributes = 0
 
 	If BitAND($iFlag, 2) Then
 		; The size of SECURITY_DESCRIPTOR is 20 bytes.  We just
 		; need a block of memory the right size, we aren't going to
 		; access any members directly so it's not important what
 		; the members are, just that the total size is correct.
-		Local $tSecurityDescriptor = DllStructCreate("dword[5]")
-		Local $pSecurityDescriptor = DllStructGetPtr($tSecurityDescriptor)
+		Local $tSecurityDescriptor = DllStructCreate("byte;byte;word;ptr[4]")
 		; Initialize the security descriptor.
 		Local $aRet = DllCall("advapi32.dll", "bool", "InitializeSecurityDescriptor", _
-				"ptr", $pSecurityDescriptor, "dword", $SECURITY_DESCRIPTOR_REVISION)
+				"struct*", $tSecurityDescriptor, "dword", $SECURITY_DESCRIPTOR_REVISION)
 		If @error Then Return SetError(@error, @extended, 0)
 		If $aRet[0] Then
 			; Add the NULL DACL specifying access to everybody.
 			$aRet = DllCall("advapi32.dll", "bool", "SetSecurityDescriptorDacl", _
-					"ptr", $pSecurityDescriptor, "bool", 1, "ptr", 0, "bool", 0)
+					"struct*", $tSecurityDescriptor, "bool", 1, "ptr", 0, "bool", 0)
 			If @error Then Return SetError(@error, @extended, 0)
 			If $aRet[0] Then
 				; Create a SECURITY_ATTRIBUTES structure.
-				Local $structSecurityAttributes = DllStructCreate($tagSECURITY_ATTRIBUTES)
+				$tSecurityAttributes = DllStructCreate($tagSECURITY_ATTRIBUTES)
 				; Assign the members.
-				DllStructSetData($structSecurityAttributes, 1, DllStructGetSize($structSecurityAttributes))
-				DllStructSetData($structSecurityAttributes, 2, $pSecurityDescriptor)
-				DllStructSetData($structSecurityAttributes, 3, 0)
-				; Everything went okay so update our pointer to point to our structure.
-				$pSecurityAttributes = DllStructGetPtr($structSecurityAttributes)
+				DllStructSetData($tSecurityAttributes, 1, DllStructGetSize($tSecurityAttributes))
+				DllStructSetData($tSecurityAttributes, 2, DllStructGetPtr($tSecurityDescriptor))
+				DllStructSetData($tSecurityAttributes, 3, 0)
 			EndIf
 		EndIf
 	EndIf
 
-	Local $handle = DllCall("kernel32.dll", "handle", "CreateMutexW", "ptr", $pSecurityAttributes, "bool", 1, "wstr", $sOccurenceName)
+	Local $handle = DllCall("kernel32.dll", "handle", "CreateMutexW", "struct*", $tSecurityAttributes, "bool", 1, "wstr", $sOccurenceName)
 	If @error Then Return SetError(@error, @extended, 0)
 	Local $lastError = DllCall("kernel32.dll", "dword", "GetLastError")
 	If @error Then Return SetError(@error, @extended, 0)

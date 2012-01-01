@@ -9,7 +9,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: Edit
-; AutoIt Version : 3.2.3++
+; AutoIt Version : 3.3.7.20++
 ; Language ......: English
 ; Description ...: Functions that assist with Edit control management.
 ;                  An edit control is a rectangular control window typically used in a dialog box to permit the user to enter
@@ -287,8 +287,8 @@ EndFunc   ;==>_GUICtrlEdit_CharFromPos
 ; Example .......: Yes
 ; ===============================================================================================================================
 Func _GUICtrlEdit_Create($hWnd, $sText, $iX, $iY, $iWidth = 150, $iHeight = 150, $iStyle = 0x003010C4, $iExStyle = 0x00000200)
-	If Not IsHWnd($hWnd) Then Return SetError(1, 0, 0)		; Invalid Window handle for _GUICtrlEdit_Create 1st parameter
-	If Not IsString($sText) Then Return SetError(2, 0, 0)	; 2nd parameter not a string for _GUICtrlEdit_Create
+	If Not IsHWnd($hWnd) Then Return SetError(1, 0, 0) ; Invalid Window handle for _GUICtrlEdit_Create 1st parameter
+	If Not IsString($sText) Then Return SetError(2, 0, 0) ; 2nd parameter not a string for _GUICtrlEdit_Create
 
 	If $iWidth = -1 Then $iWidth = 150
 	If $iHeight = -1 Then $iHeight = 150
@@ -666,7 +666,7 @@ Func _GUICtrlEdit_GetHandle($hWnd)
 	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Return _SendMessage($hWnd, $EM_GETHANDLE)
+	Return Ptr(_SendMessage($hWnd, $EM_GETHANDLE))
 EndFunc   ;==>_GUICtrlEdit_GetHandle
 
 ; #NO_DOC_FUNCTION# =============================================================================================================
@@ -737,13 +737,12 @@ Func _GUICtrlEdit_GetLine($hWnd, $iLine)
 	Local $iLength = _GUICtrlEdit_LineLength($hWnd, $iLine)
 	If $iLength = 0 Then Return ""
 	Local $tBuffer = DllStructCreate("short Len;wchar Text[" & $iLength & "]")
-	Local $pBuffer = DllStructGetPtr($tBuffer)
 	DllStructSetData($tBuffer, "Len", $iLength + 1)
-	Local $iRet = _SendMessage($hWnd, $EM_GETLINE, $iLine, $pBuffer, 0, "wparam", "ptr")
+	Local $iRet = _SendMessage($hWnd, $EM_GETLINE, $iLine, $tBuffer, 0, "wparam", "struct*")
 
 	If $iRet = 0 Then Return SetError($EC_ERR, $EC_ERR, "")
 
-	Local $tText = DllStructCreate("wchar Text[" & $iLength & "]", $pBuffer)
+	Local $tText = DllStructCreate("wchar Text[" & $iLength & "]", DllStructGetPtr($tBuffer))
 	Return DllStructGetData($tText, "Text")
 EndFunc   ;==>_GUICtrlEdit_GetLine
 
@@ -897,7 +896,7 @@ Func _GUICtrlEdit_GetRECTEx($hWnd)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
 	Local $tRect = DllStructCreate($tagRECT)
-	_SendMessage($hWnd, $EM_GETRECT, 0, DllStructGetPtr($tRect), 0, "wparam", "ptr")
+	_SendMessage($hWnd, $EM_GETRECT, 0, $tRect, 0, "wparam", "struct*")
 	Return $tRect
 EndFunc   ;==>_GUICtrlEdit_GetRECTEx
 
@@ -923,7 +922,7 @@ Func _GUICtrlEdit_GetSel($hWnd)
 	Local $aSel[2]
 	Local $wparam = DllStructCreate("uint Start")
 	Local $lparam = DllStructCreate("uint End")
-	_SendMessage($hWnd, $EM_GETSEL, DllStructGetPtr($wparam), DllStructGetPtr($lparam), 0, "ptr", "ptr")
+	_SendMessage($hWnd, $EM_GETSEL, $wparam, $lparam, 0, "struct*", "struct*")
 	$aSel[0] = DllStructGetData($wparam, "Start")
 	$aSel[1] = DllStructGetData($lparam, "End")
 	Return $aSel
@@ -949,7 +948,7 @@ Func _GUICtrlEdit_GetText($hWnd)
 
 	Local $iTextLen = _GUICtrlEdit_GetTextLen($hWnd) + 1
 	Local $tText = DllStructCreate("wchar Text[" & $iTextLen & "]")
-	_SendMessage($hWnd, $__EDITCONSTANT_WM_GETTEXT, $iTextLen, DllStructGetPtr($tText), 0, "wparam", "ptr")
+	_SendMessage($hWnd, $__EDITCONSTANT_WM_GETTEXT, $iTextLen, $tText, 0, "wparam", "struct*")
 	Return DllStructGetData($tText, "Text")
 EndFunc   ;==>_GUICtrlEdit_GetText
 
@@ -1032,7 +1031,7 @@ Func _GUICtrlEdit_HideBalloonTip($hWnd)
 	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Return _SendMessage($hWnd, $EM_HIDEBALLOONTIP)
+	Return _SendMessage($hWnd, $EM_HIDEBALLOONTIP) <> 0
 EndFunc   ;==>_GUICtrlEdit_HideBalloonTip
 
 ; #FUNCTION# ====================================================================================================================
@@ -1269,7 +1268,7 @@ Func _GUICtrlEdit_SetHandle($hWnd, $hMemory)
 	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	Return _SendMessage($hWnd, $EM_SETHANDLE, $hMemory, 0, 0, "hwnd")
+	_SendMessage($hWnd, $EM_SETHANDLE, $hMemory, 0, 0, "handle")
 EndFunc   ;==>_GUICtrlEdit_SetHandle
 
 ; #NO_DOC_FUNCTION# =============================================================================================================
@@ -1453,7 +1452,7 @@ Func _GUICtrlEdit_SetRECT($hWnd, $aRect)
 	DllStructSetData($tRect, "Top", $aRect[1])
 	DllStructSetData($tRect, "Right", $aRect[2])
 	DllStructSetData($tRect, "Bottom", $aRect[3])
-	_GUICtrlEdit_SetRectEx($hWnd, $tRect)
+	_GUICtrlEdit_SetRECTEx($hWnd, $tRect)
 EndFunc   ;==>_GUICtrlEdit_SetRECT
 
 ; #FUNCTION# ====================================================================================================================
@@ -1470,12 +1469,12 @@ EndFunc   ;==>_GUICtrlEdit_SetRECT
 ; Link ..........:
 ; Example .......: Yes
 ; ===============================================================================================================================
-Func _GUICtrlEdit_SetRectEx($hWnd, $tRect)
+Func _GUICtrlEdit_SetRECTEx($hWnd, $tRect)
 	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	_SendMessage($hWnd, $EM_SETRECT, 0, DllStructGetPtr($tRect), 0, "wparam", "ptr")
-EndFunc   ;==>_GUICtrlEdit_SetRectEx
+	_SendMessage($hWnd, $EM_SETRECT, 0, $tRect, 0, "wparam", "struct*")
+EndFunc   ;==>_GUICtrlEdit_SetRECTEx
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _GUICtrlEdit_SetRECTNP
@@ -1524,7 +1523,7 @@ Func _GUICtrlEdit_SetRectNPEx($hWnd, $tRect)
 	If $Debug_Ed Then __UDF_ValidateClassName($hWnd, $__EDITCONSTANT_ClassName)
 	If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 
-	_SendMessage($hWnd, $EM_SETRECTNP, 0, DllStructGetPtr($tRect), 0, "wparam", "ptr")
+	_SendMessage($hWnd, $EM_SETRECTNP, 0, $tRect, 0, "wparam", "struct*")
 EndFunc   ;==>_GUICtrlEdit_SetRectNPEx
 
 ; #FUNCTION# ====================================================================================================================
@@ -1595,7 +1594,7 @@ Func _GUICtrlEdit_SetTabStops($hWnd, $aTabStops)
 	For $x = 0 To $iNumTabStops - 1
 		DllStructSetData($tTabStops, $x + 1, $aTabStops[$x])
 	Next
-	Local $iRet = _SendMessage($hWnd, $EM_SETTABSTOPS, $iNumTabStops, DllStructGetPtr($tTabStops), 0, "wparam", "ptr") <> 0
+	Local $iRet = _SendMessage($hWnd, $EM_SETTABSTOPS, $iNumTabStops, $tTabStops, 0, "wparam", "struct*") <> 0
 	_WinAPI_InvalidateRect($hWnd)
 	Return $iRet
 EndFunc   ;==>_GUICtrlEdit_SetTabStops
@@ -1678,7 +1677,7 @@ Func _GUICtrlEdit_ShowBalloonTip($hWnd, $sTitle, $sText, $iIcon)
 	DllStructSetData($tTT, "Title", DllStructGetPtr($tTitle))
 	DllStructSetData($tTT, "Text", DllStructGetPtr($tText))
 	DllStructSetData($tTT, "Icon", $iIcon)
-	Return _SendMessage($hWnd, $EM_SHOWBALLOONTIP, 0, DllStructGetPtr($tTT), 0, "wparam", "ptr") <> 0
+	Return _SendMessage($hWnd, $EM_SHOWBALLOONTIP, 0, $tTT, 0, "wparam", "struct*") <> 0
 EndFunc   ;==>_GUICtrlEdit_ShowBalloonTip
 
 ; #FUNCTION# ====================================================================================================================

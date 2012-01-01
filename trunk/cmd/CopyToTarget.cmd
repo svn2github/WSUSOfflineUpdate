@@ -17,22 +17,22 @@ if exist %DOWNLOAD_LOGFILE% (
 )
 echo %DATE% %TIME% - Info: Starting copying for %1 %2 %3 %4 %5 %6 %7 %8 %9 >>%DOWNLOAD_LOGFILE%
 
-for %%i in (all all-x86 all-x64 enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%1"=="%%i" goto V1EvalParams)
+for %%i in (all all-x86 all-x64 enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%~1"=="%%i" goto V1EvalParams)
 for %%i in (wxp w2k3 w2k3-x64) do (
-  if /i "%1"=="%%i" (
-    for %%j in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%2"=="%%j" goto V2EvalParams)
+  if /i "%~1"=="%%i" (
+    for %%j in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%~2"=="%%j" goto V2EvalParams)
     goto V1EvalParams
   )
 )
 for %%i in (w60 w60-x64 w61 w61-x64) do (
-  if /i "%1"=="%%i" (
-    if /i "%2"=="glb" shift /2
+  if /i "%~1"=="%%i" (
+    if /i "%~2"=="glb" shift /2
     goto V1EvalParams
   )
 )
 for %%i in (ofc) do (
-  if /i "%1"=="%%i" (
-    for %%j in (glb enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%2"=="%%j" goto V2EvalParams)
+  if /i "%~1"=="%%i" (
+    for %%j in (glb enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%~2"=="%%j" goto V2EvalParams)
     goto V1EvalParams
   )
 )
@@ -40,7 +40,7 @@ goto InvalidParams
 
 :V1EvalParams
 if %OUTPUT_PATH%~==~ (
-  if %2~==~ (goto InvalidParams) else (set OUTPUT_PATH=%~fs2)
+  if %2~==~ (goto InvalidParams) else (set OUTPUT_PATH=%2)
   shift /2
 )
 if "%2"=="" goto V1CreateFilter
@@ -54,7 +54,7 @@ goto V1EvalParams
 
 :V2EvalParams
 if %OUTPUT_PATH%~==~ (
-  if %3~==~ (goto InvalidParams) else (set OUTPUT_PATH=%~fs3)
+  if %3~==~ (goto InvalidParams) else (set OUTPUT_PATH=%3)
   shift /3
 )
 if "%3"=="" goto V2CreateFilter
@@ -107,7 +107,7 @@ goto :eof
 :V1CreateFilter
 rem *** Create USB filter ***
 echo Creating USB filter for %1...
-set USB_FILTER=..\ExcludeListUSB-%1.txt
+set USB_FILTER="%TEMP%\ExcludeListUSB-%1.txt"
 for %%i in (all all-x86 all-x64 wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 ofc) do (if /i "%1"=="%%i" goto V1CopyFilter)
 copy /Y ..\exclude\ExcludeListUSB-all-x86.txt %USB_FILTER% >nul
 if exist ..\exclude\custom\ExcludeListUSB-all-x86.txt (
@@ -125,7 +125,7 @@ goto CreateImage
 :V2CreateFilter
 rem *** Create USB filter ***
 echo Creating USB filter for %1 %2...
-set USB_FILTER=..\ExcludeListUSB-%1-%2.txt
+set USB_FILTER="%TEMP%\ExcludeListUSB-%1-%2.txt"
 call :CopyFilter %1
 call :LocaleFilter %2
 call :ExtendFilter
@@ -135,12 +135,14 @@ goto CreateImage
 rem *** Copy client tree ***
 if not exist %SystemRoot%\system32\xcopy.exe goto NoXCopy
 echo Copying client tree for %1 %2 %3 %4 %5 %6 %7 %8 %9...
-pushd ..\client
-%SystemRoot%\system32\xcopy.exe *.* %OUTPUT_PATH% /D /E /I /Y /EXCLUDE:%USB_FILTER%
-if errorlevel 1 (
-  popd
-  if exist %USB_FILTER% del %USB_FILTER%
-  goto XCopyError
+for %%i in (%USB_FILTER%) do (
+  pushd "%%~dpi"
+  %SystemRoot%\system32\xcopy.exe "%~dp0..\client\*.*" %OUTPUT_PATH% /D /E /I /Y /EXCLUDE:%%~nxi
+  if errorlevel 1 (
+    popd
+    if exist %USB_FILTER% del %USB_FILTER%
+    goto XCopyError
+  )
 )
 popd
 if exist %USB_FILTER% del %USB_FILTER%
@@ -150,11 +152,11 @@ rem *** Clean up target directory ***
 if "%CLEANUP%" NEQ "1" goto NoCleanup
 echo Cleaning up target directory %OUTPUT_PATH%...
 dir ..\client /A:-D /B /S >"%TEMP%\ValidClientFiles.txt"
-for /F %%i in ('dir %OUTPUT_PATH% /A:-D /B /S') do (
+for /F "tokens=*" %%i in ('dir %OUTPUT_PATH% /A:-D /B /S') do (
   %SystemRoot%\system32\find.exe /I "%%~nxi" "%TEMP%\ValidClientFiles.txt" >nul 2>&1
   if errorlevel 1 (
-    del %%i
-    echo %DATE% %TIME% - Info: Deleted file %%i >>%DOWNLOAD_LOGFILE%
+    del "%%i"
+    echo %DATE% %TIME% - Info: Deleted file "%%i" >>%DOWNLOAD_LOGFILE%
   )
 )
 del "%TEMP%\ValidClientFiles.txt"

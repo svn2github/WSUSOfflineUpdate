@@ -611,6 +611,9 @@ Version 7.2 -- 06.12.11
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
 - Optional installation of most recent Update for Root Certificates (Thanks to "mth404")
+- AutoIt script compiler updated to version 3.3.8.0
 - Fix: Download part missed Excel 2003 Security Update kb2596954 (Thanks to "peter2")
 - Fix: Installation part tried to install IEx on Server 2008(R2) Core systems (Thanks to "herbert")
 - Fix: Linux script DownloadUpdates.sh used invalid wget parameter combination '-N -O' (Thanks to "harry", "nebyah" and "Spider-Mann")
+- Fix: CopyToTarget.cmd script failed when started from a read-only share (Thanks to "OlegK")
+- Fix: CopyToTarget.cmd script failed when output path contained a blank
