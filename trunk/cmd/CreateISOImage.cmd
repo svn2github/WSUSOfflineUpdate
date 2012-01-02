@@ -72,10 +72,10 @@ if exist ..\exclude\ExcludeListISO-%1.txt (
   copy /Y ..\exclude\ExcludeListISO-%1-x86.txt %ISO_FILTER% >nul
 )
 if exist ..\exclude\custom\ExcludeListISO-%1.txt (
-  for /F %%i in (..\exclude\custom\ExcludeListISO-%1.txt) do echo %%i>>%ISO_FILTER%
+  type ..\exclude\custom\ExcludeListISO-%1.txt >>%ISO_FILTER%
 )
 if exist ..\exclude\custom\ExcludeListISO-%1-x86.txt (
-  for /F %%i in (..\exclude\custom\ExcludeListISO-%1-x86.txt) do echo %%i>>%ISO_FILTER%
+  type ..\exclude\custom\ExcludeListISO-%1-x86.txt >>%ISO_FILTER%
 )
 goto :eof
 
@@ -117,7 +117,7 @@ set ISO_NAME=wsusoffline-%1-x86
 set ISO_VOLID=wou_%1_x86
 copy /Y ..\exclude\ExcludeListISO-all-x86.txt %ISO_FILTER% >nul
 if exist ..\exclude\custom\ExcludeListISO-all-x86.txt (
-  for /F %%i in (..\exclude\custom\ExcludeListISO-all-x86.txt) do echo %%i>>%ISO_FILTER%
+  type ..\exclude\custom\ExcludeListISO-all-x86.txt >>%ISO_FILTER%
 )
 call :LocaleFilter %1
 call :ExtendFilter %1

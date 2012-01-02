@@ -26,8 +26,7 @@ rem del "%TEMP%\SupersedingRevisionIds.txt"
 rem del "%TEMP%\SupersededUpdateRelations.txt"
 rem del "%TEMP%\ValidSupersedingRevisionIds.txt"
 "%TEMP%\msxsl.exe" "%TEMP%\package.xml" .\xslt\ExtractBundledUpdateRelationsAndFileIds.xsl -o "%TEMP%\BundledUpdateRelationsAndFileIds.txt"
-if exist "%TEMP%\ValidSupersededRevisionIds.txt" del "%TEMP%\ValidSupersededRevisionIds.txt"
-for /F "usebackq tokens=1 delims=,;" %%i in ("%TEMP%\ValidSupersededUpdateRelations.txt") do echo %%i>>"%TEMP%\ValidSupersededRevisionIds.txt"
+%SystemRoot%\system32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractIdsAndFileNames.vbs "%TEMP%\ValidSupersededUpdateRelations.txt" "%TEMP%\ValidSupersededRevisionIds.txt" /idsonly
 rem del "%TEMP%\ValidSupersededUpdateRelations.txt"
 %SystemRoot%\system32\findstr.exe /L /G:"%TEMP%\ValidSupersededRevisionIds.txt" "%TEMP%\BundledUpdateRelationsAndFileIds.txt" >"%TEMP%\SupersededRevisionAndFileIds.txt"
 rem del "%TEMP%\ValidSupersededRevisionIds.txt"
@@ -37,23 +36,14 @@ for /F "usebackq tokens=2 delims=,;" %%i in ("%TEMP%\SupersededRevisionAndFileId
 rem del "%TEMP%\SupersededRevisionAndFileIds.txt"
 %SystemRoot%\system32\sort.exe "%TEMP%\SupersededFileIds.txt" /O "%TEMP%\SupersededFileIdsSorted.txt"
 rem del "%TEMP%\SupersededFileIds.txt"
-if exist "%TEMP%\SupersededFileIdsUnique.txt" del "%TEMP%\SupersededFileIdsUnique.txt"
-set LAST_LINE=
-for /F "usebackq" %%i in ("%TEMP%\SupersededFileIdsSorted.txt") do (
-  if "%%i" NEQ "!LAST_LINE!" echo %%i>>"%TEMP%\SupersededFileIdsUnique.txt"
-  set LAST_LINE=%%i
-)
-set LAST_LINE=
+%SystemRoot%\system32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractUniqueFromSorted.vbs "%TEMP%\SupersededFileIdsSorted.txt" "%TEMP%\SupersededFileIdsUnique.txt"
 rem del "%TEMP%\SupersededFileIdsSorted.txt"
 "%TEMP%\msxsl.exe" "%TEMP%\package.xml" .\xslt\ExtractUpdateCabExeIdsAndLocations.xsl -o "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 %SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\SupersededFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\SupersededCabExeIdsAndLocations.txt"
 rem del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 rem del "%TEMP%\SupersededFileIdsUnique.txt"
-if exist "%TEMP%\SupersededCabExeLocations.txt" del "%TEMP%\SupersededCabExeLocations.txt"
-for /F "usebackq tokens=2 delims=," %%i in ("%TEMP%\SupersededCabExeIdsAndLocations.txt") do echo %%i>>"%TEMP%\SupersededCabExeLocations.txt"
+%SystemRoot%\system32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractIdsAndFileNames.vbs "%TEMP%\SupersededCabExeIdsAndLocations.txt" .\exclude\ExcludeList-superseded.txt /noids
 rem del "%TEMP%\SupersededCabExeIdsAndLocations.txt"
-%SystemRoot%\system32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractIdsAndFileNames.vbs "%TEMP%\SupersededCabExeLocations.txt" .\exclude\ExcludeList-superseded.txt
-rem del "%TEMP%\SupersededCabExeLocations.txt"
 goto EoF
 
 del "%TEMP%\package.xml"

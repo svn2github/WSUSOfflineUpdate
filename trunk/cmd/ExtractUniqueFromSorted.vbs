@@ -2,22 +2,10 @@
 
 Option Explicit
 
-Dim objFileSystem, inputFile, outputFile, strInputFileName, strOutputFileName, bIdsOnly, bNoIds
+Dim objFileSystem, inputFile, outputFile, strInputFileName, strOutputFileName, strLastLine, strCurrentLine
 
 Private Function IsTextFile(objFS, strFileName)
   IsTextFile = (objFS.FileExists(strFileName)) And ( (LCase(objFS.GetExtensionName(strFileName)) = "txt") Or (LCase(objFS.GetExtensionName(strFileName)) = "csv") )
-End Function
-
-Private Function ExtractId(strURL)
-  ExtractId = Left(strURL, InStr(strURL, ",") - 1)
-End Function
-
-Private Function ExtractFileName(strURL)
-  ExtractFileName = Right(strURL, Len(strURL) - InStrRev(strURL, "/"))
-End Function
-
-Private Function ExtractIdAndFileName(strURL)
-  ExtractIdAndFileName = ExtractId(strURL) & "," & ExtractFileName(strURL)
 End Function
 
 Set objFileSystem = CreateObject("Scripting.FileSystemObject")
@@ -33,26 +21,16 @@ If Not IsTextFile(objFileSystem, strInputFileName) Then
   WScript.Quit(1)
 End If
 strOutputFileName = WScript.Arguments(1)
-If WScript.Arguments.Count > 2 Then
-  bIdsOnly = LCase(WScript.Arguments(2)) = "/idsonly"
-  bNoIds = LCase(WScript.Arguments(2)) = "/noids"
-Else
-  bIdsOnly = False
-  bNoIds = False
-End If
 
 Set inputFile = objFileSystem.OpenTextFile(strInputFileName, 1)
 Set outputFile = objFileSystem.CreateTextFile(strOutputFileName, True)
+strLastLine = ""
 Do While Not inputFile.AtEndOfStream
-  If bIdsOnly Then
-    outputFile.WriteLine(ExtractId(inputFile.ReadLine()))
-  Else
-    If bNoIds Then
-      outputFile.WriteLine(ExtractFileName(inputFile.ReadLine()))
-    Else
-      outputFile.WriteLine(ExtractIdAndFileName(inputFile.ReadLine()))
-    End If
+  strCurrentLine = inputFile.ReadLine()
+  If strCurrentLine <> strLastLine Then
+    outputFile.WriteLine(strCurrentLine)
   End If
+  strLastLine = strCurrentLine
 Loop
 inputFile.Close()
 outputFile.Close()

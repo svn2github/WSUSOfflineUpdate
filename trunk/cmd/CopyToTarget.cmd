@@ -74,10 +74,10 @@ if exist ..\exclude\ExcludeListUSB-%1.txt (
   copy /Y ..\exclude\ExcludeListUSB-%1-x86.txt %USB_FILTER% >nul
 )
 if exist ..\exclude\custom\ExcludeListUSB-%1.txt (
-  for /F %%i in (..\exclude\custom\ExcludeListUSB-%1.txt) do echo %%i>>%USB_FILTER%
+  type ..\exclude\custom\ExcludeListUSB-%1.txt >>%USB_FILTER%
 )
 if exist ..\exclude\custom\ExcludeListUSB-%1-x86.txt (
-  for /F %%i in (..\exclude\custom\ExcludeListUSB-%1-x86.txt) do echo %%i>>%USB_FILTER%
+  type ..\exclude\custom\ExcludeListUSB-%1-x86.txt >>%USB_FILTER%
 )
 goto :eof
 
@@ -91,16 +91,16 @@ goto :eof
 
 :ExtendFilter
 if "%EXC_SP%"=="1" (
-  for /F %%i in (..\exclude\ExcludeList-SPs.txt) do echo %%i>>%USB_FILTER%
+  type ..\exclude\ExcludeList-SPs.txt >>%USB_FILTER%
 )
 if "%INC_DOTNET%" NEQ "1" (
-  for /F %%i in (..\exclude\ExcludeListISO-dotnet.txt) do echo %%i>>%USB_FILTER%
+  type ..\exclude\ExcludeListISO-dotnet.txt >>%USB_FILTER%
 )
 if "%INC_MSSE%" NEQ "1" (
-  for /F %%i in (..\exclude\ExcludeList-msse.txt) do echo %%i>>%USB_FILTER%
+  type ..\exclude\ExcludeList-msse.txt >>%USB_FILTER%
 )
 if "%INC_WDDEFS%" NEQ "1" (
-  for /F %%i in (..\exclude\ExcludeList-wddefs.txt) do echo %%i>>%USB_FILTER%
+  type ..\exclude\ExcludeList-wddefs.txt >>%USB_FILTER%
 )
 goto :eof
 
@@ -111,7 +111,7 @@ set USB_FILTER="%TEMP%\ExcludeListUSB-%1.txt"
 for %%i in (all all-x86 all-x64 wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 ofc) do (if /i "%1"=="%%i" goto V1CopyFilter)
 copy /Y ..\exclude\ExcludeListUSB-all-x86.txt %USB_FILTER% >nul
 if exist ..\exclude\custom\ExcludeListUSB-all-x86.txt (
-  for /F %%i in (..\exclude\custom\ExcludeListUSB-all-x86.txt) do echo %%i>>%USB_FILTER%
+  type ..\exclude\custom\ExcludeListUSB-all-x86.txt >>%USB_FILTER%
 )
 call :LocaleFilter %1
 call :ExtendFilter

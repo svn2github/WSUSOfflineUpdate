@@ -26,7 +26,7 @@ if exist %1 (
   if exist "%TEMP%\InstalledUpdateIds.txt" (
     %SystemRoot%\system32\findstr.exe /L /I /V /G:"%TEMP%\InstalledUpdateIds.txt" %1 >>"%TEMP%\MissingUpdateIds.txt"
   ) else (
-    for /F %%i in (%1) do echo %%i>>"%TEMP%\MissingUpdateIds.txt"
+    type %1 >>"%TEMP%\MissingUpdateIds.txt"
   )
 )
 goto :eof
@@ -46,7 +46,7 @@ if not exist "%TEMP%\MissingUpdateIds.txt" goto EoF
 if exist "%TEMP%\UpdatesToInstall.txt" del "%TEMP%\UpdatesToInstall.txt"
 if exist ..\exclude\ExcludeList.txt copy /Y ..\exclude\ExcludeList.txt "%TEMP%\ExcludeList.txt" >nul
 if exist ..\exclude\custom\ExcludeList.txt (
-  for /F "tokens=*" %%i in (..\exclude\custom\ExcludeList.txt) do echo %%i>>"%TEMP%\ExcludeList.txt"
+  type ..\exclude\custom\ExcludeList.txt >>"%TEMP%\ExcludeList.txt"
 )
 for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do (
   if exist "%TEMP%\Update.txt" del "%TEMP%\Update.txt"

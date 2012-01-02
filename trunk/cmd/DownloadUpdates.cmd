@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.2+ (r330)
+set WSUSOFFLINE_VERSION=7.2+ (r331)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -485,7 +485,7 @@ if not errorlevel 1 (
 echo Downloading/validating installation files for .NET Frameworks 3.5 SP1 and 4...
 copy /Y ..\static\StaticDownloadLinks-dotnet.txt "%TEMP%\StaticDownloadLinks-dotnet.txt" >nul
 if exist ..\static\custom\StaticDownloadLinks-dotnet.txt (
-  for /F %%i in (..\static\custom\StaticDownloadLinks-dotnet.txt) do echo %%i>>"%TEMP%\StaticDownloadLinks-dotnet.txt"
+  type ..\static\custom\StaticDownloadLinks-dotnet.txt >>"%TEMP%\StaticDownloadLinks-dotnet.txt"
 )
 %WGET_PATH% -N -i "%TEMP%\StaticDownloadLinks-dotnet.txt" -P ..\client\dotnet
 if errorlevel 1 (
@@ -677,7 +677,7 @@ if exist ..\client\msse\%TARGET_ARCH%-glb\mpam*.exe (
 echo Downloading/validating Microsoft Security Essentials installation files...
 copy /Y ..\static\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt "%TEMP%\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt" >nul
 if exist ..\static\custom\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt (
-  for /F %%i in (..\static\custom\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt) do echo %%i>>"%TEMP%\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt"
+  type ..\static\custom\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt >>"%TEMP%\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt"
 )
 for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt") do (
   if "%%j" NEQ "" (
@@ -887,10 +887,10 @@ echo Determining statical update urls for %1 %2...
 if exist ..\static\StaticDownloadLinks-%1-%2.txt copy /Y ..\static\StaticDownloadLinks-%1-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
 if exist ..\static\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt copy /Y ..\static\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
 if exist ..\static\custom\StaticDownloadLinks-%1-%2.txt (
-  for /F %%i in (..\static\custom\StaticDownloadLinks-%1-%2.txt) do echo %%i>>"%TEMP%\StaticDownloadLinks-%1-%2.txt"
+  type ..\static\custom\StaticDownloadLinks-%1-%2.txt >>"%TEMP%\StaticDownloadLinks-%1-%2.txt"
 )
 if exist ..\static\custom\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt (
-  for /F %%i in (..\static\custom\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt) do echo %%i>>"%TEMP%\StaticDownloadLinks-%1-%2.txt"
+  type ..\static\custom\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt >>"%TEMP%\StaticDownloadLinks-%1-%2.txt"
 )
 if not exist "%TEMP%\StaticDownloadLinks-%1-%2.txt" goto SkipStatics
 
@@ -946,8 +946,7 @@ del "%TEMP%\SupersededUpdateRelations.txt"
 del "%TEMP%\ValidSupersedingRevisionIds.txt"
 ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractBundledUpdateRelationsAndFileIds.xsl -o "%TEMP%\BundledUpdateRelationsAndFileIds.txt"
 if errorlevel 1 goto DownloadError
-if exist "%TEMP%\ValidSupersededRevisionIds.txt" del "%TEMP%\ValidSupersededRevisionIds.txt"
-for /F "usebackq tokens=1 delims=,;" %%i in ("%TEMP%\ValidSupersededUpdateRelations.txt") do echo %%i>>"%TEMP%\ValidSupersededRevisionIds.txt"
+%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\ValidSupersededUpdateRelations.txt" "%TEMP%\ValidSupersededRevisionIds.txt" /idsonly
 del "%TEMP%\ValidSupersededUpdateRelations.txt"
 %SystemRoot%\system32\findstr.exe /L /G:"%TEMP%\ValidSupersededRevisionIds.txt" "%TEMP%\BundledUpdateRelationsAndFileIds.txt" >"%TEMP%\SupersededRevisionAndFileIds.txt"
 del "%TEMP%\ValidSupersededRevisionIds.txt"
@@ -957,24 +956,15 @@ for /F "usebackq tokens=2 delims=,;" %%i in ("%TEMP%\SupersededRevisionAndFileId
 del "%TEMP%\SupersededRevisionAndFileIds.txt"
 %SystemRoot%\system32\sort.exe "%TEMP%\SupersededFileIds.txt" /O "%TEMP%\SupersededFileIdsSorted.txt"
 del "%TEMP%\SupersededFileIds.txt"
-if exist "%TEMP%\SupersededFileIdsUnique.txt" del "%TEMP%\SupersededFileIdsUnique.txt"
-set LAST_LINE=
-for /F "usebackq" %%i in ("%TEMP%\SupersededFileIdsSorted.txt") do (
-  if "%%i" NEQ "!LAST_LINE!" echo %%i>>"%TEMP%\SupersededFileIdsUnique.txt"
-  set LAST_LINE=%%i
-)
-set LAST_LINE=
+%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractUniqueFromSorted.vbs "%TEMP%\SupersededFileIdsSorted.txt" "%TEMP%\SupersededFileIdsUnique.txt"
 del "%TEMP%\SupersededFileIdsSorted.txt"
 ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractUpdateCabExeIdsAndLocations.xsl -o "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 if errorlevel 1 goto DownloadError
 %SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\SupersededFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\SupersededCabExeIdsAndLocations.txt"
 del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 del "%TEMP%\SupersededFileIdsUnique.txt"
-if exist "%TEMP%\SupersededCabExeLocations.txt" del "%TEMP%\SupersededCabExeLocations.txt"
-for /F "usebackq tokens=2 delims=," %%i in ("%TEMP%\SupersededCabExeIdsAndLocations.txt") do echo %%i>>"%TEMP%\SupersededCabExeLocations.txt"
+%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\SupersededCabExeIdsAndLocations.txt" ..\exclude\ExcludeList-superseded.txt /noids
 del "%TEMP%\SupersededCabExeIdsAndLocations.txt"
-%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\SupersededCabExeLocations.txt" ..\exclude\ExcludeList-superseded.txt
-del "%TEMP%\SupersededCabExeLocations.txt"
 %SystemRoot%\system32\attrib.exe -A ..\client\wsus\wsusscn2.cab
 echo %TIME% - Done.
 echo %DATE% %TIME% - Info: Determined superseded updates >>%DOWNLOAD_LOGFILE%
@@ -1002,16 +992,16 @@ if not exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" goto DoDownload
 if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
 if exist ..\exclude\ExcludeList-%1.txt copy /Y ..\exclude\ExcludeList-%1.txt "%TEMP%\ExcludeList-%1.txt" >nul
 if exist ..\exclude\custom\ExcludeList-%1.txt (
-  for /F %%i in (..\exclude\custom\ExcludeList-%1.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
+  type ..\exclude\custom\ExcludeList-%1.txt >>"%TEMP%\ExcludeList-%1.txt"
 )
 if exist "%TEMP%\ExcludeList-%1.txt" goto ExcludeWindows
 if exist ..\exclude\ExcludeList-%1-%TARGET_ARCH%.txt copy /Y ..\exclude\ExcludeList-%1-%TARGET_ARCH%.txt "%TEMP%\ExcludeList-%1.txt" >nul
 if exist ..\exclude\custom\ExcludeList-%1-%TARGET_ARCH%.txt (
-  for /F %%i in (..\exclude\custom\ExcludeList-%1-%TARGET_ARCH%.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
+  type ..\exclude\custom\ExcludeList-%1-%TARGET_ARCH%.txt >>"%TEMP%\ExcludeList-%1.txt"
 )
 :ExcludeWindows
 if exist ..\exclude\ExcludeList-superseded.txt (
-  for /F %%i in (..\exclude\ExcludeList-superseded.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
+  type ..\exclude\ExcludeList-superseded.txt >>"%TEMP%\ExcludeList-%1.txt"
 )
 %SystemRoot%\system32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DynamicDownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDynamicLinks-%1-%2.txt"
 if not exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" ren "%TEMP%\DynamicDownloadLinks-%1-%2.txt" ValidDynamicLinks-%1-%2.txt
@@ -1099,10 +1089,10 @@ del "%TEMP%\UpdateTableURL-%1-%2.csv"
 if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
 if exist ..\exclude\ExcludeList-%1.txt copy /Y ..\exclude\ExcludeList-%1.txt "%TEMP%\ExcludeList-%1.txt" >nul
 if exist ..\exclude\custom\ExcludeList-%1.txt (
-  for /F %%i in (..\exclude\custom\ExcludeList-%1.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
+  type ..\exclude\custom\ExcludeList-%1.txt >>"%TEMP%\ExcludeList-%1.txt"
 )
 if exist ..\exclude\ExcludeList-superseded.txt (
-  for /F %%i in (..\exclude\ExcludeList-superseded.txt) do echo %%i>>"%TEMP%\ExcludeList-%1.txt"
+  type ..\exclude\ExcludeList-superseded.txt >>"%TEMP%\ExcludeList-%1.txt"
 )
 %SystemRoot%\system32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DynamicDownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDynamicLinks-%1-%2.txt"
 if not exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" ren "%TEMP%\DynamicDownloadLinks-%1-%2.txt" ValidDynamicLinks-%1-%2.txt
