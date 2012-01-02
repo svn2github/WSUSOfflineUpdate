@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.2+ (r331)
+set WSUSOFFLINE_VERSION=7.2+ (r332)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -371,7 +371,6 @@ echo %DATE% %TIME% - Info: Downloaded mkisofs tool >>%DOWNLOAD_LOGFILE%
 :SkipMkIsoFs
 
 rem *** Download Sysinternals' tools Autologon, Sigcheck and Streams ***
-if "%SKIP_DL%"=="1" goto SkipSysinternals
 if not exist ..\client\bin\Autologon.exe goto DownloadSysinternals
 if not exist ..\bin\sigcheck.exe goto DownloadSysinternals
 if not exist ..\bin\streams.exe goto DownloadSysinternals
@@ -455,7 +454,7 @@ if "%VERIFY_DL%"=="1" (
 rem *** Download installation files for .NET Frameworks 3.5 SP1 and 4 ***
 if "%INC_DOTNET%" NEQ "1" goto SkipDotNet
 if "%SKIP_DL%"=="1" (
-  call :DownloadCore dotnet %TARGET_ARCH%-glb %SKIP_PARAM%
+  call :DownloadCore dotnet %TARGET_ARCH%-glb %TARGET_ARCH% %SKIP_PARAM%
   goto SkipDotNet
 )
 if "%VERIFY_DL%" NEQ "1" goto DownloadDotNet
@@ -493,7 +492,7 @@ if errorlevel 1 (
   goto DownloadError
 )
 echo %DATE% %TIME% - Info: Downloaded/validated installation files for .NET Frameworks 3.5 SP1 and 4 >>%DOWNLOAD_LOGFILE%
-call :DownloadCore dotnet %TARGET_ARCH%-glb %SKIP_PARAM%
+call :DownloadCore dotnet %TARGET_ARCH%-glb %TARGET_ARCH% %SKIP_PARAM%
 if errorlevel 1 goto Error
 if "%CLEANUP_DL%"=="0" (
   del "%TEMP%\StaticDownloadLinks-dotnet.txt"
@@ -818,35 +817,35 @@ if "%VERIFY_DL%"=="1" (
 :SkipWDDefs
 
 rem *** Download the platform specific patches ***
-for %%i in (wxp w2k3 w60 w61) do (
+for %%i in (wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64) do (
   if /i "%1"=="%%i" (
-    call :DownloadCore win glb %SKIP_PARAM%
+    call :DownloadCore win glb x86 %SKIP_PARAM%
     if errorlevel 1 goto Error
   )
 )
 for %%i in (wxp w2k3) do (
   if /i "%1"=="%%i" (
-    call :DownloadCore win %2 %SKIP_PARAM%
+    call :DownloadCore win %2 %TARGET_ARCH% %SKIP_PARAM%
     if errorlevel 1 goto Error
   )
 )
 for %%i in (o2k3 o2k7 o2k10) do (
   if /i "%1"=="%%i" (
-    call :DownloadCore ofc %2 %SKIP_PARAM%
+    call :DownloadCore ofc %2 %TARGET_ARCH% %SKIP_PARAM%
     if errorlevel 1 goto Error
   )
 )
 for %%i in (wxp w2k3 w2k3-x64 o2k3 o2k7 o2k10) do (
   if /i "%1"=="%%i" (
-    call :DownloadCore %1 glb %SKIP_PARAM%
+    call :DownloadCore %1 glb %TARGET_ARCH% %SKIP_PARAM%
     if errorlevel 1 goto Error
-    call :DownloadCore %1 %2 %SKIP_PARAM%
+    call :DownloadCore %1 %2 %TARGET_ARCH% %SKIP_PARAM%
     if errorlevel 1 goto Error
   )
 )
 for %%i in (w60 w60-x64 w61 w61-x64 ofc) do (
   if /i "%1"=="%%i" (
-    call :DownloadCore %1 %2 %SKIP_PARAM%
+    call :DownloadCore %1 %2 %TARGET_ARCH% %SKIP_PARAM%
     if errorlevel 1 goto Error
   )
 )
@@ -858,7 +857,7 @@ title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo.
 
 rem *** Verify integrity of existing updates for %1 %2 ***
-if "%3"=="/skipdownload" goto SkipStatics
+if "%4"=="/skipdownload" goto SkipStatics
 if "%VERIFY_DL%" NEQ "1" goto SkipAudit
 if not exist ..\client\%1\%2\nul goto SkipAudit
 if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
@@ -885,12 +884,12 @@ if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" del "%TEMP%\ValidStaticLinks-%1-%2.
 if "%EXC_STATICS%"=="1" goto SkipStatics
 echo Determining statical update urls for %1 %2...
 if exist ..\static\StaticDownloadLinks-%1-%2.txt copy /Y ..\static\StaticDownloadLinks-%1-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
-if exist ..\static\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt copy /Y ..\static\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
+if exist ..\static\StaticDownloadLinks-%1-%3-%2.txt copy /Y ..\static\StaticDownloadLinks-%1-%3-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
 if exist ..\static\custom\StaticDownloadLinks-%1-%2.txt (
   type ..\static\custom\StaticDownloadLinks-%1-%2.txt >>"%TEMP%\StaticDownloadLinks-%1-%2.txt"
 )
-if exist ..\static\custom\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt (
-  type ..\static\custom\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt >>"%TEMP%\StaticDownloadLinks-%1-%2.txt"
+if exist ..\static\custom\StaticDownloadLinks-%1-%3-%2.txt (
+  type ..\static\custom\StaticDownloadLinks-%1-%3-%2.txt >>"%TEMP%\StaticDownloadLinks-%1-%2.txt"
 )
 if not exist "%TEMP%\StaticDownloadLinks-%1-%2.txt" goto SkipStatics
 
@@ -906,7 +905,7 @@ echo %DATE% %TIME% - Info: Determined statical update urls for %1 %2 >>%DOWNLOAD
 :SkipStatics
 if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
 if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" del "%TEMP%\ValidDynamicLinks-%1-%2.txt"
-if "%3"=="/skipdynamic" (
+if "%4"=="/skipdynamic" (
   echo Skipping unneeded determination of superseded updates.
   echo %DATE% %TIME% - Info: Skipped unneeded determination of superseded updates >>%DOWNLOAD_LOGFILE%
   echo Skipping determination of dynamical update urls for %1 %2 on demand.
@@ -981,8 +980,8 @@ if exist ..\xslt\ExtractDownloadLinks-%1-%2.xsl (
   ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractDownloadLinks-%1-%2.xsl -o "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
   if errorlevel 1 goto DownloadError
 )
-if exist ..\xslt\ExtractDownloadLinks-%1-%TARGET_ARCH%-%2.xsl (
-  ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractDownloadLinks-%1-%TARGET_ARCH%-%2.xsl -o "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
+if exist ..\xslt\ExtractDownloadLinks-%1-%3-%2.xsl (
+  ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractDownloadLinks-%1-%3-%2.xsl -o "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
   if errorlevel 1 goto DownloadError
 )
 del "%TEMP%\package.xml"
@@ -995,9 +994,9 @@ if exist ..\exclude\custom\ExcludeList-%1.txt (
   type ..\exclude\custom\ExcludeList-%1.txt >>"%TEMP%\ExcludeList-%1.txt"
 )
 if exist "%TEMP%\ExcludeList-%1.txt" goto ExcludeWindows
-if exist ..\exclude\ExcludeList-%1-%TARGET_ARCH%.txt copy /Y ..\exclude\ExcludeList-%1-%TARGET_ARCH%.txt "%TEMP%\ExcludeList-%1.txt" >nul
-if exist ..\exclude\custom\ExcludeList-%1-%TARGET_ARCH%.txt (
-  type ..\exclude\custom\ExcludeList-%1-%TARGET_ARCH%.txt >>"%TEMP%\ExcludeList-%1.txt"
+if exist ..\exclude\ExcludeList-%1-%3.txt copy /Y ..\exclude\ExcludeList-%1-%3.txt "%TEMP%\ExcludeList-%1.txt" >nul
+if exist ..\exclude\custom\ExcludeList-%1-%3.txt (
+  type ..\exclude\custom\ExcludeList-%1-%3.txt >>"%TEMP%\ExcludeList-%1.txt"
 )
 :ExcludeWindows
 if exist ..\exclude\ExcludeList-superseded.txt (
@@ -1103,7 +1102,7 @@ echo %DATE% %TIME% - Info: Determined dynamical update urls for %1 %2 >>%DOWNLOA
 
 :DoDownload
 rem *** Download updates for %1 %2 ***
-if "%3"=="/skipdownload" (
+if "%4"=="/skipdownload" (
   echo Skipping download/validation of updates for %1 %2 on demand.
   echo %DATE% %TIME% - Info: Skipped download/validation of updates for %1 %2 on demand >>%DOWNLOAD_LOGFILE%
   goto EndDownload
@@ -1323,10 +1322,10 @@ if exist ..\client\md\hashes-%1-%2.txt (
 :EndDownload
 if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" del "%TEMP%\ValidStaticLinks-%1-%2.txt"
 if exist "%TEMP%\ValidDynamicLinks-%1-%2.csv" del "%TEMP%\ValidDynamicLinks-%1-%2.csv"
-if "%3"=="/skipdownload" (
+if "%4"=="/skipdownload" (
   for %%i in (win wxp w2k3 w60 w61) do (
     if /i "%1"=="%%i" (
-      if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" move /Y "%TEMP%\ValidDynamicLinks-%1-%2.txt" ..\static\custom\StaticDownloadLinks-%1-%TARGET_ARCH%-%2.txt >nul
+      if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" move /Y "%TEMP%\ValidDynamicLinks-%1-%2.txt" ..\static\custom\StaticDownloadLinks-%1-%3-%2.txt >nul
     )
   )
   if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" move /Y "%TEMP%\ValidDynamicLinks-%1-%2.txt" ..\static\custom\StaticDownloadLinks-%1-%2.txt >nul
