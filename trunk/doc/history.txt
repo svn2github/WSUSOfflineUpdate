@@ -618,3 +618,4 @@ Version ?.? -- ??.??.??
 - Fix: Linux script DownloadUpdates.sh used invalid wget parameter combination '-N -O' (Thanks to "harry", "nebyah" and "Spider-Mann")
 - Fix: CopyToTarget.cmd script failed when started from a read-only share (Thanks to "OlegK")
 - Fix: CopyToTarget.cmd script failed when output path contained a blank
+- Fix: Office Compatibility Pack SP3 will now be stringently installed after Office Compatibility Pack (Thanks to "aker" and "Denniss")

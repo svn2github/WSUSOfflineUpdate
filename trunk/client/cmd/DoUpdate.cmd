@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.2+ (r332)
+set WSUSOFFLINE_VERSION=7.2+ (r333)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log
 title %~n0 %*
@@ -1008,12 +1008,22 @@ echo Checking installation state of Office Compatibility Pack...
 if "%OFC_COMP_PACK%" NEQ "1" (
   if exist ..\ofc\%OFC_LANG%\FileFormatConverters.exe (
     echo Installing Office Compatibility Pack...
-    echo Installing ..\ofc\%OFC_LANG%\FileFormatConverters.exe...
-    ..\ofc\%OFC_LANG%\FileFormatConverters.exe /quiet /norestart
+    call InstallOfficeUpdate.cmd ..\ofc\%OFC_LANG%\FileFormatConverters.exe /selectoptions %VERIFY_MODE% /errorsaswarnings
     echo %DATE% %TIME% - Info: Installed Office Compatibility Pack >>%UPDATE_LOGFILE%
   ) else (
     echo Warning: File ..\ofc\%OFC_LANG%\FileFormatConverters.exe not found.
     echo %DATE% %TIME% - Warning: File ..\ofc\%OFC_LANG%\FileFormatConverters.exe not found >>%UPDATE_LOGFILE%
+  )
+  dir /B ..\ofc\%OFC_LANG%\compatibilitypacksp*.exe >nul 2>&1
+  if errorlevel 1 (
+    echo Warning: File ..\ofc\%OFC_LANG%\compatibilitypacksp*.exe not found.
+    echo %DATE% %TIME% - Warning: File ..\ofc\%OFC_LANG%\compatibilitypacksp*.exe not found >>%UPDATE_LOGFILE%
+  ) else (
+    for /F %%i in ('dir /B ..\ofc\%OFC_LANG%\compatibilitypacksp*.exe') do (
+      echo Installing most recent Service Pack for Office Compatibility Pack...
+      call InstallOfficeUpdate.cmd ..\ofc\%OFC_LANG%\%%i /selectoptions %VERIFY_MODE% /errorsaswarnings
+      echo %DATE% %TIME% - Info: Installed most recent Service Pack for Office Compatibility Pack >>%UPDATE_LOGFILE%
+    )
   )
 )
 :OFCNVo2k7
@@ -1030,8 +1040,7 @@ echo Checking installation state of Office File Validation Add-In...
 if "%OFC_FILE_VALID%" NEQ "1" (
   if exist ..\ofc\glb\OFV.exe (
     echo Installing Office File Validation Add-In...
-    echo Installing ..\ofc\glb\OFV.exe...
-    ..\ofc\glb\OFV.exe /quiet /norestart
+    call InstallOfficeUpdate.cmd ..\ofc\glb\OFV.exe /selectoptions %VERIFY_MODE% /errorsaswarnings
     echo %DATE% %TIME% - Info: Installed Office File Validation Add-In >>%UPDATE_LOGFILE%
   ) else (
     echo Warning: File ..\ofc\glb\OFV.exe not found.

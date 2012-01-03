@@ -76,14 +76,14 @@ Dim Const $path_invalid_chars         = "!%&()^+,;="
 Dim Const $path_rel_builddate         = "\builddate.txt"
 Dim Const $path_rel_hashes            = "\md\"
 Dim Const $path_rel_autologon         = "\bin\Autologon.exe"
-Dim Const $path_rel_rcerts            = "\win\glb\rootsupd.exe"
+Dim Const $path_rel_win_glb           = "\win\glb\"
 Dim Const $path_rel_cpp               = "\cpp\vcredist*.exe"
-Dim Const $path_rel_instdirectx       = "\win\glb\directx_*_redist.exe"
 Dim Const $path_rel_instdotnet35      = "\dotnet\dotnetfx35.exe"
 Dim Const $path_rel_instdotnet4       = "\dotnet\dotNetFx40_Full_x86_x64.exe"
 Dim Const $path_rel_instconverters    = "\ofc\glb\ork.exe"
 Dim Const $path_rel_instvalidation    = "\ofc\glb\OFV.exe"
-Dim Const $path_rel_msse              = "\msse\"
+Dim Const $path_rel_msse_x86          = "\msse\x86-glb\mseinstall-x86-*.exe"
+Dim Const $path_rel_msse_x64          = "\msse\x64-glb\mseinstall-x64-*.exe"
 
 Dim $maindlg, $scriptdir, $mapped, $inifilename, $backup, $ie7, $ie8, $ie9, $rcerts, $cpp, $dx, $wmp, $tsc, $dotnet35, $dotnet4, $psh, $msse, $wd, $ofc, $ofv, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate
 Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
@@ -218,16 +218,12 @@ Func AutologonPresent($basepath)
   Return FileExists($basepath & $path_rel_autologon)
 EndFunc
 
-Func RCertsPresent($basepath)
-  Return FileExists($basepath & $path_rel_rcerts)
+Func WinGlbPresent($basepath)
+  Return FileExists($basepath & $path_rel_win_glb)
 EndFunc
 
 Func CPPPresent($basepath)
   Return FileExists($basepath & $path_rel_cpp)
-EndFunc
-
-Func DirectXInstPresent($basepath)
-  Return FileExists($basepath & $path_rel_instdirectx)
 EndFunc
 
 Func DotNet35InstPresent($basepath)
@@ -247,7 +243,7 @@ Func ValidationInstPresent($basepath)
 EndFunc
 
 Func MSSEPresent($basepath)
-  Return FileExists($basepath & $path_rel_msse)
+  Return (FileExists($basepath & $path_rel_msse_x86) OR FileExists($basepath & $path_rel_msse_x64))
 EndFunc
 
 Func SP1Present()
@@ -341,7 +337,7 @@ Else
   $ie7 = GUICtrlCreateCheckbox("Install Internet Explorer 7", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
-  OR (IEVersion() = "7") OR (IEVersion() = "8") OR (IEVersion() = "9") ) Then
+  OR (IEVersion() = "7") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (NOT WinGlbPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If (IniRead($inifilename, $ini_section_installation, $ini_value_ie7, $disabled) = $enabled) Then
@@ -359,7 +355,7 @@ If ShowGUIInGerman() Then
 Else
   $ie8 = GUICtrlCreateCheckbox("Install Internet Explorer 8", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (IEVersion() = "8") OR (IEVersion() = "9") ) Then
+If ( (@OSVersion = "WIN_2000") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (NOT WinGlbPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If (IniRead($inifilename, $ini_section_installation, $ini_value_ie8, $enabled) = $enabled) Then
@@ -380,7 +376,7 @@ If ShowGUIInGerman() Then
 Else
   $ie9 = GUICtrlCreateCheckbox("Install Internet Explorer 9", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (IEVersion() = "9") ) Then
+If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (IEVersion() = "9") OR (NOT WinGlbPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If (IniRead($inifilename, $ini_section_installation, $ini_value_ie9, $disabled) = $enabled) Then
@@ -403,7 +399,7 @@ If ShowGUIInGerman() Then
 Else
   $rcerts = GUICtrlCreateCheckbox("Update Root Certificates", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If RCertsPresent($scriptdir) Then
+If WinGlbPresent($scriptdir) Then
   If IniRead($inifilename, $ini_section_installation, $ini_value_rcerts, $enabled) = $enabled Then
     GUICtrlSetState(-1, $GUI_CHECKED)
   Else
@@ -438,7 +434,7 @@ If ShowGUIInGerman() Then
 Else
   $dx = GUICtrlCreateCheckbox("Update DirectX Runtime Libraries", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If DirectXInstPresent($scriptdir) Then
+If WinGlbPresent($scriptdir) Then
   If IniRead($inifilename, $ini_section_installation, $ini_value_dx, $enabled) = $enabled Then
     GUICtrlSetState(-1, $GUI_CHECKED)
   Else
@@ -455,7 +451,7 @@ If ShowGUIInGerman() Then
 Else
   $wmp = GUICtrlCreateCheckbox("Update Windows Media Player", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
+If ( (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (NOT WinGlbPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If IniRead($inifilename, $ini_section_installation, $ini_value_wmp, $enabled) = $enabled Then
@@ -473,7 +469,7 @@ If ShowGUIInGerman() Then
 Else
   $tsc = GUICtrlCreateCheckbox("Update Terminal Services Client", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
+If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (NOT WinGlbPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If IniRead($inifilename, $ini_section_installation, $ini_value_tsc, $enabled) = $enabled Then
@@ -547,7 +543,7 @@ Else
   $wd = GUICtrlCreateCheckbox("Install Windows Defender", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
-  OR WDInstalled() ) Then
+  OR WDInstalled() OR (NOT WinGlbPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If IniRead($inifilename, $ini_section_installation, $ini_value_wd, $disabled) = $enabled Then
