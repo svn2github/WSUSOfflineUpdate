@@ -246,10 +246,6 @@ Func MSSEPresent($basepath)
   Return (FileExists($basepath & $path_rel_msse_x86) OR FileExists($basepath & $path_rel_msse_x64))
 EndFunc
 
-Func SP1Present()
-  Return StringInStr(@OSServicePack, "Service Pack 1") > 0
-EndFunc
-
 Func CalcGUISize()
   Dim $reg_val
 
@@ -740,8 +736,8 @@ If ( (StringRight(EnvGet("TEMP"), 1) = "\") OR (StringRight(EnvGet("TEMP"), 1) =
     Exit(1)
   EndIf
 EndIf
-If ( ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (@OSServicePack <> "Service Pack 2") ) _
-  OR ( ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) AND (NOT SP1Present()) ) ) Then
+If ( ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (StringInStr(@OSServicePack, "Service Pack 2") = 0) ) _
+  OR ( ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) AND (StringInStr(@OSServicePack, "Service Pack 1") = 0) ) ) Then
   If ShowGUIInGerman() Then
     MsgBox(0x2040, "Information", "Unter Windows Vista / 7 / Server 2008(R2) müssen Sie" _
                           & @LF & "die Installation der Updates" _
@@ -752,22 +748,6 @@ If ( ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (@OSServi
                           & @LF & "manually resume the installation of updates" _
                           & @LF & "after Service Pack installation and mandatory reboot.")
   EndIf
-  GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
-  GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
-  GUICtrlSetState($rcerts, $GUI_UNCHECKED + $GUI_DISABLE)
-  GUICtrlSetState($cpp, $GUI_UNCHECKED + $GUI_DISABLE)
-  GUICtrlSetState($dx, $GUI_UNCHECKED + $GUI_DISABLE)
-  GUICtrlSetState($wmp, $GUI_UNCHECKED + $GUI_DISABLE)
-  GUICtrlSetState($tsc, $GUI_UNCHECKED + $GUI_DISABLE)
-  GUICtrlSetState($dotnet35, $GUI_UNCHECKED + $GUI_DISABLE)
-  GUICtrlSetState($dotnet4, $GUI_UNCHECKED + $GUI_DISABLE)
-  GUICtrlSetState($psh, $GUI_UNCHECKED + $GUI_DISABLE)
-  GUICtrlSetState($msse, $GUI_UNCHECKED + $GUI_DISABLE)
-  GUICtrlSetState($ofc, $GUI_UNCHECKED + $GUI_DISABLE)
-  GUICtrlSetState($ofv, $GUI_UNCHECKED + $GUI_DISABLE)
-  GUICtrlSetState($autoreboot, $GUI_UNCHECKED + $GUI_DISABLE)
-  GUICtrlSetState($shutdown, $GUI_UNCHECKED + $GUI_DISABLE)
-  GUICtrlSetState($showlog, $GUI_UNCHECKED + $GUI_DISABLE)
 EndIf
 While 1
   Switch GUIGetMsg()

@@ -33,13 +33,13 @@ goto :eof
 
 :NoMoreParams
 rem *** Add statically defined update ids ***
-if "%EXC_STATICS%"=="1" goto ExcludeStatics
+if "%EXC_STATICS%"=="1" goto ListFiles
 if exist ..\static\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt call :EvalStatics ..\static\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt
 if exist ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt call :EvalStatics ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt
 if exist ..\static\StaticUpdateIds-%OFC_NAME%.txt call :EvalStatics ..\static\StaticUpdateIds-%OFC_NAME%.txt
 if exist ..\static\custom\StaticUpdateIds-%OFC_NAME%.txt call :EvalStatics ..\static\custom\StaticUpdateIds-%OFC_NAME%.txt
 
-:ExcludeStatics
+:ListFiles
 rem *** List update files ***
 if exist "%TEMP%\InstalledUpdateIds.txt" del "%TEMP%\InstalledUpdateIds.txt"
 if not exist "%TEMP%\MissingUpdateIds.txt" goto EoF
@@ -48,19 +48,18 @@ if exist ..\exclude\ExcludeList.txt copy /Y ..\exclude\ExcludeList.txt "%TEMP%\E
 if exist ..\exclude\custom\ExcludeList.txt (
   type ..\exclude\custom\ExcludeList.txt >>"%TEMP%\ExcludeList.txt"
 )
+if "%OS_ARCH%"=="x64" (set OS_SEARCH_DIRS=%OS_NAME%-%OS_ARCH%) else (set OS_SEARCH_DIRS=%OS_NAME% win)
 for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do (
   if exist "%TEMP%\Update.txt" del "%TEMP%\Update.txt"
   %SystemRoot%\system32\find.exe /I "%%i" "%TEMP%\ExcludeList.txt" >nul 2>&1
   if errorlevel 1 (
-    for %%k in (%OS_NAME%-%OS_ARCH% %OS_NAME% win) do (
+    for %%k in (%OS_SEARCH_DIRS%) do (
       for %%l in (%OS_LANG% glb) do (
         call ListUpdateFile.cmd ie%IE_VER_MAJOR%-*%%i ..\%%k\%%l
         call ListUpdateFile.cmd windowsmedia%WMP_VER_MAJOR%-*%%i ..\%%k\%%l
         call ListUpdateFile.cmd windowsmedia-*%%i ..\%%k\%%l
         call ListUpdateFile.cmd mdac%MDAC_VER_MAJOR%%MDAC_VER_MINOR%-*%%i ..\%%k\%%l
-        call ListUpdateFile.cmd windows2000*%%i ..\%%k\%%l /searchleftmost
         call ListUpdateFile.cmd windowsxp*%%i ..\%%k\%%l /searchleftmost
-        call ListUpdateFile.cmd windowsserver2003*%%i-js%WSH_VER_MAJOR%%WSH_VER_MINOR% ..\%%k\%%l /searchleftmost
         call ListUpdateFile.cmd windowsserver2003*%%i ..\%%k\%%l /searchleftmost
         call ListUpdateFile.cmd windows6*%%i ..\%%k\%%l /searchleftmost
         call ListUpdateFile.cmd windows*%%i ..\%%k\%%l /searchleftmost
