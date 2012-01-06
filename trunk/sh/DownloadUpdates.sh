@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                    v. 7.2+ (r334)                  ###
+###                    v. 7.2+ (r335)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -497,7 +497,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                    v. 7.2+ (r334)                  ***
+***                    v. 7.2+ (r335)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
@@ -552,9 +552,9 @@ mkdir -p ../temp
 rm -f ../temp/*
 
 #convert files to Linux format
-dos2unix ../exclude/* > /dev/null 2>&1
-dos2unix ../xslt/* > /dev/null 2>&1
-dos2unix ../static/* > /dev/null 2>&1
+find ../exclude/ -type f -exec dos2unix {} > /dev/null 2>&1 \;
+find ../xslt/ -type f -exec dos2unix {} > /dev/null 2>&1 \;
+find ../static/ -type f -exec dos2unix {} > /dev/null 2>&1 \;
 
 printheader
 

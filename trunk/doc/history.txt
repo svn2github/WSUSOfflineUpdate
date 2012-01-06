@@ -619,4 +619,5 @@ Version 7.3 -- ??.??.12
 - Fix: CopyToTarget.cmd script failed when started from a read-only share (Thanks to "OlegK")
 - Fix: CopyToTarget.cmd script failed when output path contained a blank
 - Fix: Office Compatibility Pack SP3 will now be stringently installed after Office Compatibility Pack (Thanks to "aker" and "Denniss")
-- Fix: Using an incomplete update medium, the installation procedure could try to install x86 patches on x64 platforms (Thanks to U. Bookjans)
+- Fix: Using an incomplete cross-platform update medium, the installation procedure could try to install x86 patches on x64 platforms (Thanks to U. Bookjans)
+- Fix: Linux script DownloadUpdates.sh performed invalid dos2unix conversions (Thanks to "ewasscher")
