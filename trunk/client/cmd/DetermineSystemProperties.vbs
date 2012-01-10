@@ -47,21 +47,27 @@ Dim cpp2005_x86_old, cpp2005_x86_new, cpp2005_x64_old, cpp2005_x64_new, cpp2008_
 
 Private Function RegExists(objShell, strName)
 Dim dummy
-  On Error Resume Next  'Turn error reporting off
+  On Error Resume Next
   dummy = objShell.RegRead(strName)
   RegExists = (Err >= 0)
   Err.Clear
-  On Error GoTo 0       'Turn error reporting on
 End Function
 
 Private Function RegRead(objShell, strName)
-  On Error Resume Next  'Turn error reporting off
+  On Error Resume Next
   RegRead = objShell.RegRead(strName)
   If Err <> 0 Then
     RegRead = ""
     Err.Clear
   End If
-  On Error GoTo 0       'Turn error reporting on
+End Function
+
+Private Function GetFileVersion(objFS, strName)
+  On Error Resume Next
+  GetFileVersion = objFS.GetFileVersion(strName)
+  If Err <> 0 Then
+    WScript.Quit(1)
+  End If
 End Function
 
 Private Sub WriteLanguageToFile(cmdFile, varName, langCode, writeShortLang, writeExtLang)
@@ -431,21 +437,21 @@ objCmdFile.WriteLine("set PWR_POL_IDX=" & RegRead(wshShell, strRegKeyPowerCfg & 
 
 ' Determine Windows Update Agent version
 If objFileSystem.FileExists(strWUAFileName) Then
-  WriteVersionToFile objCmdFile, "WUA_VER", objFileSystem.GetFileVersion(strWUAFileName)
+  WriteVersionToFile objCmdFile, "WUA_VER", GetFileVersion(objFileSystem, strWUAFileName)
 Else
   WriteVersionToFile objCmdFile, "WUA_VER", ""
 End If
 
 ' Determine Microsoft Installer version
 If objFileSystem.FileExists(strMSIFileName) Then
-  WriteVersionToFile objCmdFile, "MSI_VER", objFileSystem.GetFileVersion(strMSIFileName)
+  WriteVersionToFile objCmdFile, "MSI_VER", GetFileVersion(objFileSystem, strMSIFileName)
 Else
   WriteVersionToFile objCmdFile, "MSI_VER", ""
 End If
 
 ' Determine Windows Script Host version
 If objFileSystem.FileExists(strWSHFileName) Then
-  WriteVersionToFile objCmdFile, "WSH_VER", objFileSystem.GetFileVersion(strWSHFileName)
+  WriteVersionToFile objCmdFile, "WSH_VER", GetFileVersion(objFileSystem, strWSHFileName)
 Else
   WriteVersionToFile objCmdFile, "WSH_VER", ""
 End If
@@ -492,14 +498,14 @@ WriteVersionToFile objCmdFile, "RCERTS_VER", Replace(RegRead(wshShell, strRegKey
 
 ' Determine Remote Desktop Connection (Terminal Services Client) version
 If objFileSystem.FileExists(strTSCFileName) Then
-  WriteVersionToFile objCmdFile, "TSC_VER", objFileSystem.GetFileVersion(strTSCFileName)
+  WriteVersionToFile objCmdFile, "TSC_VER", GetFileVersion(objFileSystem, strTSCFileName)
 Else
   WriteVersionToFile objCmdFile, "TSC_VER", ""
 End If
 
 ' Determine Windows Media Player version
 If objFileSystem.FileExists(strWMPFileName) Then
-  WriteVersionToFile objCmdFile, "WMP_VER", objFileSystem.GetFileVersion(strWMPFileName)
+  WriteVersionToFile objCmdFile, "WMP_VER", GetFileVersion(objFileSystem, strWMPFileName)
 Else
   WriteVersionToFile objCmdFile, "WMP_VER", ""
 End If
@@ -515,7 +521,7 @@ For i = 0 To UBound(arrayOfficeNames)
     For j = 0 To UBound(arrayOfficeExeNames)
       If objFileSystem.FileExists(strOfficeInstallPath & arrayOfficeExeNames(j)) Then
         objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_VER_APP=" & arrayOfficeAppNames(j))
-        strOfficeExeVersion = objFileSystem.GetFileVersion(strOfficeInstallPath & arrayOfficeExeNames(j))
+        strOfficeExeVersion = GetFileVersion(objFileSystem, strOfficeInstallPath & arrayOfficeExeNames(j))
         WriteVersionToFile objCmdFile, UCase(arrayOfficeNames(i)) & "_VER", strOfficeExeVersion
         objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_SP_VER=" & OfficeSPVersion(strOfficeExeVersion, j))
         objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_ARCH=" & OfficeArchitecture(wshShell, arrayOfficeVersions(i)))

@@ -26,7 +26,7 @@ echo Creating message digest file "%TEMP%\wsusoffline%1_hashes.txt"...
 if /i "%PROCESSOR_ARCHITECTURE%"=="AMD64" (set HASHDEEP_EXE=hashdeep64.exe) else (
   if /i "%PROCESSOR_ARCHITEW6432%"=="AMD64" (set HASHDEEP_EXE=hashdeep64.exe) else (set HASHDEEP_EXE=hashdeep.exe)
 )
-%~dps0client\bin\%HASHDEEP_EXE% -c md5,sha1,sha256 -b wsusoffline%1.zip >wsusoffline%1.mds
+%~dps0client\bin\%HASHDEEP_EXE% -c md5,sha1,sha256 -b -j0 wsusoffline%1.zip >wsusoffline%1.mds
 %SystemRoot%\system32\findstr.exe /L /C:## /V wsusoffline%1.mds >wsusoffline%1_hashes.txt
 del wsusoffline%1.mds
 popd

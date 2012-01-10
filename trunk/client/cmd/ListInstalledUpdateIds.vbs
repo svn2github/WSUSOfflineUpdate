@@ -13,7 +13,7 @@ Private Const strIdEndToken         = ")"
 Dim wshShell, objFileSystem, objWMIService, objQuickFix, objIDFile, arraySubKeys
 Dim strTempFolder, strIdFileName, strId, strSubKey, posStartToken, posEndToken
 
-On Error Resume Next  'Turn error reporting off
+On Error Resume Next
 Set wshShell = WScript.CreateObject("WScript.Shell")
 strTempFolder = wshShell.ExpandEnvironmentStrings("%TEMP%")
 strIdFileName = strTempFolder & "\InstalledUpdateIds.txt"

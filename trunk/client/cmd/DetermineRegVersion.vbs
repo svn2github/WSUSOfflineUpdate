@@ -8,13 +8,12 @@ Dim wshShell, objFileSystem, objCmdFile
 Dim strRegVal, strPrefix, strTempFolder, strCmdFileName
 
 Private Function RegRead(objShell, strName)
-  On Error Resume Next  'Turn error reporting off
+  On Error Resume Next
   RegRead = objShell.RegRead(strName)
   If Err <> 0 Then
     RegRead = ""
     Err.Clear
   End If
-  On Error GoTo 0       'Turn error reporting on
 End Function
 
 Private Sub WriteVersionToFile(cmdFile, prefix, strVersion)

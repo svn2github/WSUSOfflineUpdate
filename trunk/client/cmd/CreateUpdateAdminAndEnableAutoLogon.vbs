@@ -15,7 +15,7 @@ Dim wshShell, strComputerName, objComputer, objUser, strPassword, found
 Private Function CreateUpdateAdmin(objComp)
 Dim objWMIService, objWOUTempAdmin, objGroup, objItem, strResult
 
-  On Error Resume Next 'Turn error reporting off
+  On Error Resume Next
   Set objWMIService = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
   Set objWOUTempAdmin = objComp.Create("user", strWOUTempAdminName)
   Randomize
@@ -34,17 +34,15 @@ Dim objWMIService, objWOUTempAdmin, objGroup, objItem, strResult
   Set objWOUTempAdmin = Nothing
   Set objWMIService = Nothing
   CreateUpdateAdmin = strResult
-  On Error GoTo 0 'Turn error reporting on
 End Function
 
 Private Sub EnableAutoLogonAndDisableUAC(shell, strUserName, strDomain, strPassword)
-  On Error Resume Next 'Turn error reporting off
+  On Error Resume Next
   shell.RegWrite strKeyAutologon30 & strValAcceptEula, 1, "REG_DWORD"
   shell.RegWrite strKeyAutologon31 & strValAcceptEula, 1, "REG_DWORD"
   shell.Run shell.ExpandEnvironmentStrings("%SystemRoot%") & "\Temp\WOURecall\Autologon.exe " & strUserName & " " & strDomain & " " & strPassword, 0, True
   shell.RegWrite strKeySystemPolicies & strValAdminPrompt, 0, "REG_DWORD"
   shell.RegWrite strKeySystemPolicies & strValEnableLUA, 0, "REG_DWORD"
-  On Error GoTo 0 'Turn error reporting on
 End Sub
 
 Set wshShell = WScript.CreateObject("WScript.Shell")
