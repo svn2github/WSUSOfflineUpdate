@@ -161,7 +161,7 @@ if exist %ISO_FILTER% del %ISO_FILTER%
 echo %DATE% %TIME% - Info: Created ISO image %OUTPUT_PATH%\%ISO_NAME%.iso >>%DOWNLOAD_LOGFILE%
 if exist ..\client\bin\%HASHDEEP_EXE% (
   echo Creating message digest file %OUTPUT_PATH%\%ISO_NAME%-hashes.txt...
-  ..\client\bin\%HASHDEEP_EXE% -c md5,sha1,sha256 -b -j0 %OUTPUT_PATH%\%ISO_NAME%.iso >%OUTPUT_PATH%\%ISO_NAME%.mds
+  ..\client\bin\%HASHDEEP_EXE% -c md5,sha1,sha256 -b -j1 %OUTPUT_PATH%\%ISO_NAME%.iso >%OUTPUT_PATH%\%ISO_NAME%.mds
   %SystemRoot%\system32\findstr.exe /L /C:## /V %OUTPUT_PATH%\%ISO_NAME%.mds >%OUTPUT_PATH%\%ISO_NAME%-hashes.txt
   del %OUTPUT_PATH%\%ISO_NAME%.mds
   echo %DATE% %TIME% - Info: Created message digest file %OUTPUT_PATH%\%ISO_NAME%-hashes.txt >>%DOWNLOAD_LOGFILE%
