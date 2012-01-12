@@ -614,6 +614,7 @@ Version 7.3 -- ??.??.12
 - Superseded updates' determination speeded up for systems running paranoid AV scanners (Thanks to Peter Schöll)
 - HashDeep utility updated to version 4.0.0
 - AutoIt script compiler updated to version 3.3.8.0
+- Removed proprietary, w2k-compatible shutdown/reboot implementation
 - Fix: Download part missed Excel 2003 Security Update kb2596954 (Thanks to "peter2")
 - Fix: Installation part tried to install IEx on Server 2008(R2) Core systems (Thanks to "herbert")
 - Fix: Linux script DownloadUpdates.sh used invalid wget parameter combination '-N -O' (Thanks to "harry", "nebyah" and "Spider-Mann")

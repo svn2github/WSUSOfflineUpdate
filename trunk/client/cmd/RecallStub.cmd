@@ -36,7 +36,7 @@ if exist %SystemRoot%\system32\bcdedit.exe (
   echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot >>%UPDATE_LOGFILE%
 )
 echo Rebooting...
-%SystemRoot%\system32\cscript.exe //Nologo //B //E:vbs Shutdown.vbs /reboot
+%SystemRoot%\system32\shutdown.exe /r /f /t 1
 goto EoF
 
 :EoF

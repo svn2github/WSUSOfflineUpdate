@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.2+ (r338)
+set WSUSOFFLINE_VERSION=7.2+ (r339)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log
 title %~n0 %*
@@ -1160,7 +1160,7 @@ if "%RECALL_REQUIRED%"=="1" (
       echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot >>%UPDATE_LOGFILE%
     )
     echo Rebooting...
-    %CSCRIPT_PATH% //Nologo //B //E:vbs Shutdown.vbs /reboot
+    %SystemRoot%\system32\shutdown.exe /r /f /t 3
   ) else goto ManualRecall
 ) else (
   if "%SHOW_LOG%"=="/showlog" call PrepareShowLogFile.cmd
@@ -1172,7 +1172,7 @@ if "%RECALL_REQUIRED%"=="1" (
     )
     if "%FINISH_MODE%"=="/shutdown" (
       echo Shutting down...
-      %CSCRIPT_PATH% //Nologo //B //E:vbs Shutdown.vbs
+      %SystemRoot%\system32\shutdown.exe /s /f /t 3
     ) else (
       if exist %SystemRoot%\system32\bcdedit.exe (
         echo Adjusting boot sequence for next reboot...
@@ -1180,12 +1180,12 @@ if "%RECALL_REQUIRED%"=="1" (
         echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot >>%UPDATE_LOGFILE%
       )
       echo Rebooting...
-      %CSCRIPT_PATH% //Nologo //B //E:vbs Shutdown.vbs /reboot
+      %SystemRoot%\system32\shutdown.exe /r /f /t 3
     )
   ) else (
     if "%FINISH_MODE%"=="/shutdown" (
       echo Shutting down...
-      %CSCRIPT_PATH% //Nologo //B //E:vbs Shutdown.vbs
+      %SystemRoot%\system32\shutdown.exe /s /f /t 3
     ) else (
       echo.
       echo Installation successful. Please reboot your system now.
@@ -1366,7 +1366,7 @@ if "%USERNAME%"=="WOUTempAdmin" (
     echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot >>%UPDATE_LOGFILE%
   )
   echo Rebooting...
-  %CSCRIPT_PATH% //Nologo //B //E:vbs Shutdown.vbs /reboot
+  %SystemRoot%\system32\shutdown.exe /r /f /t 3
 ) else (
   if "%AU_SVC_STARTED%"=="1" (
     echo Stopping service 'automatic updates' ^(wuauserv^)...
