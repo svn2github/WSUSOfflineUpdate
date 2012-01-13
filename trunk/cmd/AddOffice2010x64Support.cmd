@@ -15,8 +15,8 @@ call RemoveOffice2010x64Support.cmd %1 /quiet
 
 rem *** Add x64 support for %1 to Office 2010 custom URL files ***
 echo Adding x64 support for %1 to Office 2010 custom URL files...
-for /F %%i in (..\static\StaticDownloadLinks-o2k10-x64-%1.txt) do (
-  echo %%i>>..\static\custom\StaticDownloadLinks-o2k10-%1.txt
+if exist ..\static\StaticDownloadLinks-o2k10-x64-%1.txt (
+  type ..\static\StaticDownloadLinks-o2k10-x64-%1.txt >>..\static\custom\StaticDownloadLinks-o2k10-%1.txt
 )
 goto EoF
 

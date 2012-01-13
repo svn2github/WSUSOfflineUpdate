@@ -26,13 +26,12 @@ rem del "%TEMP%\SupersedingRevisionIds.txt"
 rem del "%TEMP%\SupersededUpdateRelations.txt"
 rem del "%TEMP%\ValidSupersedingRevisionIds.txt"
 "%TEMP%\msxsl.exe" "%TEMP%\package.xml" .\xslt\ExtractBundledUpdateRelationsAndFileIds.xsl -o "%TEMP%\BundledUpdateRelationsAndFileIds.txt"
-%SystemRoot%\system32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractIdsAndFileNames.vbs "%TEMP%\ValidSupersededUpdateRelations.txt" "%TEMP%\ValidSupersededRevisionIds.txt" /idsonly
+%SystemRoot%\system32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractIdsAndFileNames.vbs "%TEMP%\ValidSupersededUpdateRelations.txt" "%TEMP%\ValidSupersededRevisionIds.txt" /firstonly
 rem del "%TEMP%\ValidSupersededUpdateRelations.txt"
 %SystemRoot%\system32\findstr.exe /L /G:"%TEMP%\ValidSupersededRevisionIds.txt" "%TEMP%\BundledUpdateRelationsAndFileIds.txt" >"%TEMP%\SupersededRevisionAndFileIds.txt"
 rem del "%TEMP%\ValidSupersededRevisionIds.txt"
 rem del "%TEMP%\BundledUpdateRelationsAndFileIds.txt"
-if exist "%TEMP%\SupersededFileIds.txt" del "%TEMP%\SupersededFileIds.txt"
-for /F "usebackq tokens=2 delims=,;" %%i in ("%TEMP%\SupersededRevisionAndFileIds.txt") do echo %%i>>"%TEMP%\SupersededFileIds.txt"
+%SystemRoot%\system32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractIdsAndFileNames.vbs "%TEMP%\SupersededRevisionAndFileIds.txt" "%TEMP%\SupersededFileIds.txt" /secondonly
 rem del "%TEMP%\SupersededRevisionAndFileIds.txt"
 %SystemRoot%\system32\sort.exe "%TEMP%\SupersededFileIds.txt" /O "%TEMP%\SupersededFileIdsSorted.txt"
 rem del "%TEMP%\SupersededFileIds.txt"
@@ -42,7 +41,7 @@ rem del "%TEMP%\SupersededFileIdsSorted.txt"
 %SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\SupersededFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\SupersededCabExeIdsAndLocations.txt"
 rem del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 rem del "%TEMP%\SupersededFileIdsUnique.txt"
-%SystemRoot%\system32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractIdsAndFileNames.vbs "%TEMP%\SupersededCabExeIdsAndLocations.txt" .\exclude\ExcludeList-superseded.txt /noids
+%SystemRoot%\system32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractIdsAndFileNames.vbs "%TEMP%\SupersededCabExeIdsAndLocations.txt" "%TEMP%\ExcludeList-superseded.txt" /noids
 rem del "%TEMP%\SupersededCabExeIdsAndLocations.txt"
 goto EoF
 

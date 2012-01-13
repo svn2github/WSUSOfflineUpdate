@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.2+ (r339)
+set WSUSOFFLINE_VERSION=7.2+ (r340)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -946,13 +946,12 @@ del "%TEMP%\SupersededUpdateRelations.txt"
 del "%TEMP%\ValidSupersedingRevisionIds.txt"
 ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractBundledUpdateRelationsAndFileIds.xsl -o "%TEMP%\BundledUpdateRelationsAndFileIds.txt"
 if errorlevel 1 goto DownloadError
-%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\ValidSupersededUpdateRelations.txt" "%TEMP%\ValidSupersededRevisionIds.txt" /idsonly
+%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\ValidSupersededUpdateRelations.txt" "%TEMP%\ValidSupersededRevisionIds.txt" /firstonly
 del "%TEMP%\ValidSupersededUpdateRelations.txt"
 %SystemRoot%\system32\findstr.exe /L /G:"%TEMP%\ValidSupersededRevisionIds.txt" "%TEMP%\BundledUpdateRelationsAndFileIds.txt" >"%TEMP%\SupersededRevisionAndFileIds.txt"
 del "%TEMP%\ValidSupersededRevisionIds.txt"
 del "%TEMP%\BundledUpdateRelationsAndFileIds.txt"
-if exist "%TEMP%\SupersededFileIds.txt" del "%TEMP%\SupersededFileIds.txt"
-for /F "usebackq tokens=2 delims=,;" %%i in ("%TEMP%\SupersededRevisionAndFileIds.txt") do echo %%i>>"%TEMP%\SupersededFileIds.txt"
+%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\SupersededRevisionAndFileIds.txt" "%TEMP%\SupersededFileIds.txt" /secondonly
 del "%TEMP%\SupersededRevisionAndFileIds.txt"
 %SystemRoot%\system32\sort.exe "%TEMP%\SupersededFileIds.txt" /O "%TEMP%\SupersededFileIdsSorted.txt"
 del "%TEMP%\SupersededFileIds.txt"
@@ -1214,14 +1213,10 @@ if "%CLEANUP_DL%"=="0" goto VerifyDownload
 echo Cleaning up client directory for %1 %2...
 if exist "%TEMP%\ValidLinks-%1-%2.txt" del "%TEMP%\ValidLinks-%1-%2.txt"
 if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" (
-  for /F "usebackq" %%i in ("%TEMP%\ValidStaticLinks-%1-%2.txt") do (
-    echo %%i>>"%TEMP%\ValidLinks-%1-%2.txt"
-  )
+  type "%TEMP%\ValidStaticLinks-%1-%2.txt" >>"%TEMP%\ValidLinks-%1-%2.txt"
 )
 if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" (
-  for /F "usebackq" %%i in ("%TEMP%\ValidDynamicLinks-%1-%2.txt") do (
-    echo %%i>>"%TEMP%\ValidLinks-%1-%2.txt"
-  )
+  type "%TEMP%\ValidDynamicLinks-%1-%2.txt" >>"%TEMP%\ValidLinks-%1-%2.txt"
 )
 for /F %%i in ('dir ..\client\%1\%2 /A:-D /B') do (
   if exist "%TEMP%\ValidLinks-%1-%2.txt" (

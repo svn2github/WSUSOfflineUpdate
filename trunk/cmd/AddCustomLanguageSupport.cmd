@@ -25,20 +25,18 @@ for /F %%i in (..\static\StaticDownloadLinks-dotnet-x64-%1.txt) do (
 rem *** Add support for %1 to IEx custom URL files ***
 echo Adding support for %1 to IEx custom URL files...
 for %%i in (x86 x64) do (
-  for /F %%j in (..\static\StaticDownloadLinks-ie8-w60-%%i-%1.txt) do (
-    echo %%j>>..\static\custom\StaticDownloadLinks-w60-%%i-glb.txt
+  if exist ..\static\StaticDownloadLinks-ie8-w60-%%i-%1.txt (
+    type ..\static\StaticDownloadLinks-ie8-w60-%%i-%1.txt >>..\static\custom\StaticDownloadLinks-w60-%%i-glb.txt
   )
-  for /F %%j in (..\static\StaticDownloadLinks-ie9-w61-%%i-%1.txt) do (
-    echo %%j>>..\static\custom\StaticDownloadLinks-w61-%%i-glb.txt
+  if exist ..\static\StaticDownloadLinks-ie9-w61-%%i-%1.txt (
+    type ..\static\StaticDownloadLinks-ie9-w61-%%i-%1.txt >>..\static\custom\StaticDownloadLinks-w61-%%i-glb.txt
   )
 )
 rem *** Add support for %1 to MSSE custom URL files ***
 echo Adding support for %1 to MSSE custom URL files...
 for %%i in (x86 x64) do (
   if exist ..\static\StaticDownloadLinks-msse-%%i-%1.txt (
-    for /F %%j in (..\static\StaticDownloadLinks-msse-%%i-%1.txt) do (
-      echo %%j>>..\static\custom\StaticDownloadLinks-msse-%%i-glb.txt
-    )
+    type ..\static\StaticDownloadLinks-msse-%%i-%1.txt >>..\static\custom\StaticDownloadLinks-msse-%%i-glb.txt
   )
 )
 goto EoF
