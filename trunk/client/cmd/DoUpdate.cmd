@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.2+ (r340)
+set WSUSOFFLINE_VERSION=7.3
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log
 title %~n0 %*
@@ -172,7 +172,7 @@ rem echo Found Windows Script Host version: %WSH_VER_MAJOR%.%WSH_VER_MINOR%.%WSH
 rem echo Found Internet Explorer version: %IE_VER_MAJOR%.%IE_VER_MINOR%.%IE_VER_REVIS%.%IE_VER_BUILD%
 rem echo Found Root Certificates' version: %RCERTS_VER_MAJOR%.%RCERTS_VER_MINOR%.%RCERTS_VER_REVIS%.%RCERTS_VER_BUILD%
 rem echo Found Microsoft Data Access Components version: %MDAC_VER_MAJOR%.%MDAC_VER_MINOR%.%MDAC_VER_REVIS%.%MDAC_VER_BUILD%
-rem echo Found Microsoft DirectX main version: %DX_MAIN_VER%
+rem if "%UPDATE_DX%"=="/updatedx" echo Found Microsoft DirectX main version: %DX_MAIN_VER%
 rem echo Found Microsoft DirectX core version: %DX_NAME% (%DX_CORE_VER_MAJOR%.%DX_CORE_VER_MINOR%.%DX_CORE_VER_REVIS%.%DX_CORE_VER_BUILD%)
 rem echo Found Windows Media Player version: %WMP_VER_MAJOR%.%WMP_VER_MINOR%.%WMP_VER_REVIS%.%WMP_VER_BUILD%
 rem echo Found Terminal Services Client version: %TSC_VER_MAJOR%.%TSC_VER_MINOR%.%TSC_VER_REVIS%.%TSC_VER_BUILD%
@@ -198,7 +198,7 @@ echo %DATE% %TIME% - Info: Found Windows Script Host version %WSH_VER_MAJOR%.%WS
 echo %DATE% %TIME% - Info: Found Internet Explorer version %IE_VER_MAJOR%.%IE_VER_MINOR%.%IE_VER_REVIS%.%IE_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Root Certificates' version %RCERTS_VER_MAJOR%.%RCERTS_VER_MINOR%.%RCERTS_VER_REVIS%.%RCERTS_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft Data Access Components version %MDAC_VER_MAJOR%.%MDAC_VER_MINOR%.%MDAC_VER_REVIS%.%MDAC_VER_BUILD% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft DirectX main version %DX_MAIN_VER% >>%UPDATE_LOGFILE%
+if "%UPDATE_DX%"=="/updatedx" echo %DATE% %TIME% - Info: Found Microsoft DirectX main version %DX_MAIN_VER% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft DirectX core version %DX_NAME% (%DX_CORE_VER_MAJOR%.%DX_CORE_VER_MINOR%.%DX_CORE_VER_REVIS%.%DX_CORE_VER_BUILD%) >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows Media Player version %WMP_VER_MAJOR%.%WMP_VER_MINOR%.%WMP_VER_REVIS%.%WMP_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Terminal Services Client version %TSC_VER_MAJOR%.%TSC_VER_MINOR%.%TSC_VER_REVIS%.%TSC_VER_BUILD% >>%UPDATE_LOGFILE%
@@ -282,8 +282,8 @@ rem *** Install Windows Service Pack ***
 echo Checking Windows Service Pack version...
 if %OS_SP_VER_MAJOR% GEQ %OS_SP_VER_TARGET_MAJOR% goto SkipSPInst
 if "%OS_SP_TARGET_ID%"=="" goto NoSPTargetId
-echo %OS_SP_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
-call ListUpdatesToInstall.cmd /excludestatics
+echo %OS_SP_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
+call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if not exist "%TEMP%\UpdatesToInstall.txt" (
   echo Warning: Windows Service Pack installation file ^(kb%OS_SP_TARGET_ID%^) not found.
@@ -502,7 +502,7 @@ if "%INSTALL_IE%"=="/instie9" (
   ) else (
     copy /Y ..\static\StaticUpdateIds-ie9-w60.txt "%TEMP%\MissingUpdateIds.txt" >nul
   )
-  call ListUpdatesToInstall.cmd /excludestatics
+  call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
   if errorlevel 1 goto ListError
   if exist "%TEMP%\UpdatesToInstall.txt" (
     echo Installing Internet Explorer 9 prerequisites...
@@ -689,8 +689,8 @@ if "%WMP_TARGET_ID%"=="" (
   echo %DATE% %TIME% - Warning: Environment variable WMP_TARGET_ID not set >>%UPDATE_LOGFILE%
   goto SkipWMPInst
 )
-echo %WMP_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
-call ListUpdatesToInstall.cmd /excludestatics
+echo %WMP_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
+call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing most recent Windows Media Player...
@@ -716,8 +716,8 @@ if "%TSC_TARGET_ID%"=="" (
   echo %DATE% %TIME% - Warning: Environment variable TSC_TARGET_ID not set >>%UPDATE_LOGFILE%
   goto SkipTSCInst
 )
-echo %TSC_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
-call ListUpdatesToInstall.cmd /excludestatics
+echo %TSC_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
+call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing most recent Windows Terminal Services Client...
@@ -761,7 +761,7 @@ if "%OS_LANG%" NEQ "enu" (
   )
 )
 copy /Y ..\static\StaticUpdateIds-dotnet.txt "%TEMP%\MissingUpdateIds.txt" >nul
-call ListUpdatesToInstall.cmd /excludestatics
+call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing .NET Framework 3.5 SP1 Family Update...
@@ -813,7 +813,7 @@ goto SkipDotNetCustomInst
 :InstallDotNetCustom
 if not exist ..\static\custom\StaticUpdateIds-dotnet.txt goto SkipDotNetCustomInst
 copy /Y ..\static\custom\StaticUpdateIds-dotnet.txt "%TEMP%\MissingUpdateIds.txt" >nul
-call ListUpdatesToInstall.cmd /excludestatics
+call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing .NET Framework custom updates...
@@ -834,8 +834,8 @@ if "%PSH_TARGET_ID%"=="" (
   echo %DATE% %TIME% - Warning: Environment variable PSH_TARGET_ID not set >>%UPDATE_LOGFILE%
   goto SkipPShInst
 )
-echo %PSH_TARGET_ID% >"%TEMP%\MissingUpdateIds.txt"
-call ListUpdatesToInstall.cmd /excludestatics
+echo %PSH_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
+call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing Windows PowerShell 2.0...
@@ -960,16 +960,16 @@ rem *** Check Office Service Pack versions ***
 echo Checking Office Service Pack versions...
 if exist "%TEMP%\MissingUpdateIds.txt" del "%TEMP%\MissingUpdateIds.txt"
 if "%O2K3_VER_MAJOR%"=="" goto SkipSPo2k3
-if %O2K3_SP_VER% LSS %O2K3_SP_VER_TARGET% echo %O2K3_SP_TARGET_ID% >>"%TEMP%\MissingUpdateIds.txt"
+if %O2K3_SP_VER% LSS %O2K3_SP_VER_TARGET% echo %O2K3_SP_TARGET_ID%>>"%TEMP%\MissingUpdateIds.txt"
 :SkipSPo2k3
 if "%O2K7_VER_MAJOR%"=="" goto SkipSPo2k7
-if %O2K7_SP_VER% LSS %O2K7_SP_VER_TARGET% echo %O2K7_SP_TARGET_ID% >>"%TEMP%\MissingUpdateIds.txt"
+if %O2K7_SP_VER% LSS %O2K7_SP_VER_TARGET% echo %O2K7_SP_TARGET_ID%>>"%TEMP%\MissingUpdateIds.txt"
 :SkipSPo2k7
 if "%O2K10_VER_MAJOR%"=="" goto SkipSPo2k10
-if %O2K10_SP_VER% LSS %O2K10_SP_VER_TARGET% echo %O2K10_SP_TARGET_ID% >>"%TEMP%\MissingUpdateIds.txt"
+if %O2K10_SP_VER% LSS %O2K10_SP_VER_TARGET% echo %O2K10_SP_TARGET_ID%>>"%TEMP%\MissingUpdateIds.txt"
 :SkipSPo2k10
 if not exist "%TEMP%\MissingUpdateIds.txt" goto SkipSPOfc
-call ListUpdatesToInstall.cmd /excludestatics
+call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing most recent Office Service Pack^(s^)...

@@ -18,6 +18,7 @@ if "%OS_ARCH%"=="" goto NoOSArch
 :EvalParams
 if "%1"=="" goto NoMoreParams
 if /i "%1"=="/excludestatics" set EXC_STATICS=1
+if /i "%1"=="/ignoreblacklist" set IGNORE_BL=1
 shift /1
 goto EvalParams
 
@@ -44,10 +45,15 @@ rem *** List update files ***
 if exist "%TEMP%\InstalledUpdateIds.txt" del "%TEMP%\InstalledUpdateIds.txt"
 if not exist "%TEMP%\MissingUpdateIds.txt" goto EoF
 if exist "%TEMP%\UpdatesToInstall.txt" del "%TEMP%\UpdatesToInstall.txt"
-if exist ..\exclude\ExcludeList.txt copy /Y ..\exclude\ExcludeList.txt "%TEMP%\ExcludeList.txt" >nul
+echo.>"%TEMP%\ExcludeList.txt"
+if "%IGNORE_BL%"=="1" goto IgnoreBL
+if exist ..\exclude\ExcludeList.txt (
+  type ..\exclude\ExcludeList.txt >"%TEMP%\ExcludeList.txt"
+)
 if exist ..\exclude\custom\ExcludeList.txt (
   type ..\exclude\custom\ExcludeList.txt >>"%TEMP%\ExcludeList.txt"
 )
+:IgnoreBL
 if "%OS_ARCH%"=="x64" (set OS_SEARCH_DIRS=%OS_NAME%-%OS_ARCH%) else (set OS_SEARCH_DIRS=%OS_NAME% win)
 for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do (
   if exist "%TEMP%\Update.txt" del "%TEMP%\Update.txt"
@@ -89,8 +95,13 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
     if exist "%TEMP%\Update.txt" (
       del "%TEMP%\Update.txt"
     ) else (
-      echo Warning: Update kb%%i ^(id: %%j^) not found.
-      echo %DATE% %TIME% - Warning: Update kb%%i ^(id: %%j^) not found >>%UPDATE_LOGFILE%
+      if "%%j"=="" (
+        echo Warning: Update kb%%i not found.
+        echo %DATE% %TIME% - Warning: Update kb%%i not found >>%UPDATE_LOGFILE%
+      ) else (
+        echo Warning: Update kb%%i ^(id: %%j^) not found.
+        echo %DATE% %TIME% - Warning: Update kb%%i ^(id: %%j^) not found >>%UPDATE_LOGFILE%
+      )
     )
   ) else (
     for /F "tokens=1* delims=,;" %%k in ('%SystemRoot%\system32\findstr.exe /I "%%i" "%TEMP%\ExcludeList.txt"') do (

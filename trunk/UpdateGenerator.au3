@@ -1,11 +1,11 @@
-; ***  WSUS Offline Update 7.2 - Generator  ***
+; ***  WSUS Offline Update 7.3 - Generator  ***
 ; ***      Author: T. Wittrock, Kiel        ***
 ; ***    USB-Option added by Ch. Riedel     ***
 ; ***  Dialog scaling added by Th. Baisch   ***
 
 #include <GUIConstants.au3>
 
-Dim Const $caption                  = "WSUS Offline Update 7.2"
+Dim Const $caption                  = "WSUS Offline Update 7.3"
 Dim Const $title                    = $caption & " - Generator"
 Dim Const $donationURL              = "http://www.wsusoffline.net/donate.html"
 Dim Const $downloadLogFile          = "download.log"

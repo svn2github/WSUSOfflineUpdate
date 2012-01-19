@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 7.2
+WSUS Offline Update 7.3
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -609,7 +609,7 @@ Version 7.2 -- 06.12.11
 - Fix: Office File Validation installation now includes update kb2553065 (Thanks to "harry" and "-Iwan-")
 - Fix: Automatic recall failed if script path contained a blank (Thanks to "abox")
 --------------------------------------------------------------------------------
-Version 7.3 -- ??.??.12
+Version 7.3 -- 19.01.12
 - Optional installation of most recent Update for Root Certificates (Thanks to "mth404")
 - Superseded updates' determination speeded up for systems running paranoid AV scanners (Thanks to Peter Schöll)
 - HashDeep utility updated to version 4.0.0
@@ -624,3 +624,4 @@ Version 7.3 -- ??.??.12
 - Fix: Using an incomplete cross-platform update medium, the installation procedure could try to install x86 patches on x64 platforms (Thanks to U. Bookjans)
 - Fix: Linux script DownloadUpdates.sh performed invalid dos2unix conversions (Thanks to "ewasscher")
 - Fix: Damaged Windows Scripting (WSH) installations could cause misleading syntax errors in DoUpdate.cmd (Thanks to "martink")
+--------------------------------------------------------------------------------
