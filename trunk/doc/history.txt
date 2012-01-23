@@ -625,3 +625,5 @@ Version 7.3 -- 19.01.12
 - Fix: Linux script DownloadUpdates.sh performed invalid dos2unix conversions (Thanks to "ewasscher")
 - Fix: Damaged Windows Scripting (WSH) installations could cause misleading syntax errors in DoUpdate.cmd (Thanks to "martink")
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- HashDeep utility updated to version 4.0.1

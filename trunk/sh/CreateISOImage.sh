@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update ISO maker            ###
 ###                  for Linux systems                 ###
-###                       v. 7.3                       ###
+###                    v. 7.3+ (r343)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg      ###
@@ -47,7 +47,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update ISO maker            ***
 ***                  for Linux systems                 ***
-***                       v. 7.3                       ***
+***                    v. 7.3+ (r343)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Stefan Joehnke, Walter Schiessberg      ***
@@ -63,7 +63,7 @@ X=`which mkisofs`
 Y=`which genisoimage`
 iso_tool=""
 if [ ! -x "$X" ] && [ ! -x "$Y" ]; then
-	cat << END
+  cat << END
 Please install mkisofs.
 
 Command in Fedora:
@@ -81,9 +81,9 @@ END
 fi
 
 if [ -x "$X" ]; then
-	iso_tool="mkisofs"
+  iso_tool="mkisofs"
 else
-	iso_tool="genisoimage"
+  iso_tool="genisoimage"
 fi
 
 evaluateparams()
@@ -98,49 +98,49 @@ wddefs="0"
 
 #determining system
 for i in ${syslist[@]}; do
-	if [ "$1" == "$i" ]; then
-		sys="$1"
-	fi
+  if [ "$1" == "$i" ]; then
+    sys="$1"
+  fi
 done
 
 #determining language
 for i in ${langlist[@]}; do
-	if [ "$2" == "$i" ]; then
-		lang="$2"
-	fi
+  if [ "$2" == "$i" ]; then
+    lang="$2"
+  fi
 done
 
 if [ "$sys" == "w60" -o "$sys" == "w60-x64" -o "$sys" == "w61" -o "$sys" == "w61-x64" ]; then
-	echo "Setting language to glb..."
-	lang="glb"
+  echo "Setting language to glb..."
+  lang="glb"
 fi
 
 sys_old=""
 if [ "$sys" == "o2k3" -o "$sys" == "o2k7" -o "$sys" == "o2k10" ]; then
-	sys_old=$sys
+  sys_old=$sys
   sys="ofc"
 fi
 if [ "$sys" == "" -o "$lang" == "" ]; then
- 	printusage
+  printusage
 fi
- 
+
 #determining parameters
 for i in ${paramlist[@]}; do
-	if echo $@ | grep /dotnet > /dev/null 2>&1; then
-		dotnet="1"
-	fi
-	if echo $@ | grep /excludesp > /dev/null 2>&1; then
-		EXCLUDE_SP="1"
-	fi
-	if echo $@ | grep /nocleanup > /dev/null 2>&1; then
-		CLEANUP_DOWNLOADS="0"
-	fi
-	if echo $@ | grep /msse > /dev/null 2>&1; then
-		msse="1"
-	fi
-	if echo $@ | grep /wddefs > /dev/null 2>&1; then
-		wddefs="1"
-	fi
+  if echo $@ | grep /dotnet > /dev/null 2>&1; then
+    dotnet="1"
+  fi
+  if echo $@ | grep /excludesp > /dev/null 2>&1; then
+    EXCLUDE_SP="1"
+  fi
+  if echo $@ | grep /nocleanup > /dev/null 2>&1; then
+    CLEANUP_DOWNLOADS="0"
+  fi
+  if echo $@ | grep /msse > /dev/null 2>&1; then
+    msse="1"
+  fi
+  if echo $@ | grep /wddefs > /dev/null 2>&1; then
+    wddefs="1"
+  fi
 done
 }
 
@@ -171,27 +171,27 @@ if [ -f "$excludeiso2" ]; then
   tr -d '\r' < ../exclude/ExcludeListISO-${sys}-x86.txt >> ../temp/ExcludeListISO-${sys}.txt
 fi
 if [ "$EXCLUDE_SP" == "1" ]; then
-	cat ../exclude/ExcludeList-SPs.txt | while read line; do echo \*${line}\* >> ../temp/ExcludeListISO-${sys}.txt; done;
+  cat ../exclude/ExcludeList-SPs.txt | while read line; do echo \*${line}\* >> ../temp/ExcludeListISO-${sys}.txt; done;
 fi
 if [ "$dotnet" != "1" ]; then
-	echo "dotnet*" >> ../temp/ExcludeListISO-${sys}.txt
+  echo "dotnet*" >> ../temp/ExcludeListISO-${sys}.txt
 fi
 if [ "$msse" != "1" ]; then
-	echo "msse*" >> ../temp/ExcludeListISO-${sys}.txt
+  echo "msse*" >> ../temp/ExcludeListISO-${sys}.txt
 fi
 if [ "$wddefs" != "1" ]; then
-	echo "wddefs*" >> ../temp/ExcludeListISO-${sys}.txt
+  echo "wddefs*" >> ../temp/ExcludeListISO-${sys}.txt
 fi
 
 x=0
 langlist=("enu" "deu" "nld" "esn" "fra" "ptg" "ptb" "ita" "rus" "plk" "ell" "csy" "dan" "nor" "sve" "fin" "jpn" "kor" "chs" "cht" "hun" "trk" "ara" "heb")
 for i in ${langlist[@]}; do
-	if [ "${langlist[x]}" == "enu" ]; then
-		echo ${langlist[x]}* | grep -v $lang >> ../temp/ExcludeListISO-${sys}.txt
-	else
-		echo *${langlist[x]}* | grep -v $lang >> ../temp/ExcludeListISO-${sys}.txt
-	fi
-	x=$x+1
+  if [ "${langlist[x]}" == "enu" ]; then
+    echo ${langlist[x]}* | grep -v $lang >> ../temp/ExcludeListISO-${sys}.txt
+  else
+    echo *${langlist[x]}* | grep -v $lang >> ../temp/ExcludeListISO-${sys}.txt
+  fi
+  x=$x+1
 done
 cp ../temp/ExcludeListISO-${sys}.txt ../temp/ExcludeListISOtmp-${sys}.txt
 cat ../temp/ExcludeListISOtmp-${sys}.txt | grep "\/" | sed 's/\\\/\*//' | sed 's;*;;' >> ../temp/ExcludeListISO-${sys}.txt
