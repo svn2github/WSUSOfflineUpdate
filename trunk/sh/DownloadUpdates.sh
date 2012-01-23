@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                    v. 7.3+ (r343)                  ###
+###                    v. 7.3+ (r344)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -516,7 +516,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                    v. 7.3+ (r343)                  ***
+***                    v. 7.3+ (r344)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
@@ -1116,11 +1116,11 @@ if [ "$dotnet" == "1" ]; then
     newname=`echo $x | awk -F"," '{print $2}'`
     tmpname=`basename $oldname`
     mkdir -p ../client/cpp
-    if [ -f "../client/cpp/$newname" ]; then
+    if [ "$newname" != "" ] && [ -f "../client/cpp/$newname" ]; then
       mv -f "../client/cpp/$newname" "../client/cpp/$tmpname"
     fi
     doWget $oldname -P ../client/cpp
-    if [ -f "../client/cpp/$tmpname" ]; then
+    if [ "$newname" != "" ] && [ -f "../client/cpp/$tmpname" ]; then
       mv -f "../client/cpp/$tmpname" "../client/cpp/$newname"
     fi
   done
@@ -1132,11 +1132,11 @@ if [ "$dotnet" == "1" ]; then
       oldname=`echo $x | awk -F"," '{print $1}'`
       newname=`echo $x | awk -F"," '{print $2}'`
       tmpname=`basename $oldname`
-      if [ -f "../client/cpp/$newname" ]; then
+      if [ "$newname" != "" ] && [ -f "../client/cpp/$newname" ]; then
         mv -f "../client/cpp/$newname" "../client/cpp/$tmpname"
       fi
       doWget $oldname -P ../client/cpp
-      if [ -f "../client/cpp/$tmpname" ]; then
+      if [ "$newname" != "" ] && [ -f "../client/cpp/$tmpname" ]; then
         mv -f "../client/cpp/$tmpname" "../client/cpp/$newname"
       fi
     done
@@ -1145,7 +1145,7 @@ fi
 if [ "$msse" == "1" ]; then
   echo "Downloading MSSE files..."
   if echo $sys | grep x64 > /dev/null 2>&1; then
-   mssestring=`cat ../temp/StaticUrls-msse-x64-glb.txt | grep ,`
+   mssestring=`cat ../temp/StaticUrls-msse-x64-glb.txt`
    arr=$(echo $mssestring | tr " " "\n")
    for x in $arr
     do
@@ -1153,16 +1153,16 @@ if [ "$msse" == "1" ]; then
       newname=`echo $x | awk -F"," '{print $2}'`
       tmpname=`basename $oldname`
       mkdir -p ../client/msse/x64-glb
-      if [ -f "../client/msse/x64-glb/$newname" ]; then
+      if [ "$newname" != "" ] && [ -f "../client/msse/x64-glb/$newname" ]; then
         mv -f "../client/msse/x64-glb/$newname" "../client/msse/x64-glb/$tmpname"
       fi
       doWget $oldname -P ../client/msse/x64-glb
-      if [ -f "../client/msse/x64-glb/$tmpname" ]; then
+      if [ "$newname" != "" ] && [ -f "../client/msse/x64-glb/$tmpname" ]; then
         mv -f "../client/msse/x64-glb/$tmpname" "../client/msse/x64-glb/$newname"
       fi
     done
   else
-   mssestring=`cat ../temp/StaticUrls-msse-x86-glb.txt | grep ,`
+   mssestring=`cat ../temp/StaticUrls-msse-x86-glb.txt`
    arr=$(echo $mssestring | tr " " "\n")
    for x in $arr
     do
@@ -1170,11 +1170,11 @@ if [ "$msse" == "1" ]; then
       newname=`echo $x | awk -F"," '{print $2}'`
       tmpname=`basename $oldname`
       mkdir -p ../client/msse/x86-glb
-      if [ -f "../client/msse/x86-glb/$newname" ]; then
+      if [ "$newname" != "" ] && [ -f "../client/msse/x86-glb/$newname" ]; then
         mv -f "../client/msse/x86-glb/$newname" "../client/msse/x86-glb/$tmpname"
       fi
       doWget $oldname -P ../client/msse/x86-glb
-      if [ -f "../client/msse/x86-glb/$tmpname" ]; then
+      if [ "$newname" != "" ] && [ -f "../client/msse/x86-glb/$tmpname" ]; then
         mv -f "../client/msse/x86-glb/$tmpname" "../client/msse/x86-glb/$newname"
       fi
     done
@@ -1247,11 +1247,11 @@ if [ "$dotnet" == "1" ]; then
     newname=`echo $x | awk -F"," '{print $2}'`
     tmpname=`basename $oldname`
     mkdir -p ../client/cpp
-    if [ -f "../client/cpp/$newname" ]; then
+    if [ "$newname" != "" ] && [ -f "../client/cpp/$newname" ]; then
       mv -f "../client/cpp/$newname" "../client/cpp/$tmpname"
     fi
     doWget $oldname -P ../client/cpp
-    if [ -f "../client/cpp/$tmpname" ]; then
+    if [ "$newname" != "" ] && [ -f "../client/cpp/$tmpname" ]; then
       mv -f "../client/cpp/$tmpname" "../client/cpp/$newname"
     fi
   done
@@ -1263,11 +1263,11 @@ if [ "$dotnet" == "1" ]; then
       oldname=`echo $x | awk -F"," '{print $1}'`
       newname=`echo $x | awk -F"," '{print $2}'`
       tmpname=`basename $oldname`
-      if [ -f "../client/cpp/$newname" ]; then
+      if [ "$newname" != "" ] && [ -f "../client/cpp/$newname" ]; then
         mv -f "../client/cpp/$newname" "../client/cpp/$tmpname"
       fi
       doWget $oldname -P ../client/cpp
-      if [ -f "../client/cpp/$tmpname" ]; then
+      if [ "$newname" != "" ] && [ -f "../client/cpp/$tmpname" ]; then
         mv -f "../client/cpp/$tmpname" "../client/cpp/$newname"
       fi
     done
@@ -1281,7 +1281,7 @@ fi
 if [ "$msse" == "1" ]; then
   echo "Validating MSSE defs..."
   if echo $sys | grep x64 > /dev/null 2>&1; then
-   mssestring=`cat ../temp/StaticUrls-msse-x64-glb.txt | grep ,`
+   mssestring=`cat ../temp/StaticUrls-msse-x64-glb.txt`
    arr=$(echo $mssestring | tr " " "\n")
    for x in $arr
     do
@@ -1289,16 +1289,16 @@ if [ "$msse" == "1" ]; then
       newname=`echo $x | awk -F"," '{print $2}'`
       tmpname=`basename $oldname`
       mkdir -p ../client/msse/x64-glb
-      if [ -f "../client/msse/x64-glb/$newname" ]; then
+      if [ "$newname" != "" ] && [ -f "../client/msse/x64-glb/$newname" ]; then
         mv -f "../client/msse/x64-glb/$newname" "../client/msse/x64-glb/$tmpname"
       fi
       doWget $oldname -P ../client/msse/x64-glb
-      if [ -f "../client/msse/x64-glb/$tmpname" ]; then
+      if [ "$newname" != "" ] && [ -f "../client/msse/x64-glb/$tmpname" ]; then
         mv -f "../client/msse/x64-glb/$tmpname" "../client/msse/x64-glb/$newname"
       fi
     done
   else
-   mssestring=`cat ../temp/StaticUrls-msse-x86-glb.txt | grep ,`
+   mssestring=`cat ../temp/StaticUrls-msse-x86-glb.txt`
    arr=$(echo $mssestring | tr " " "\n")
    for x in $arr
     do
@@ -1306,11 +1306,11 @@ if [ "$msse" == "1" ]; then
       newname=`echo $x | awk -F"," '{print $2}'`
       tmpname=`basename $oldname`
       mkdir -p ../client/msse/x86-glb
-      if [ -f "../client/msse/x86-glb/$newname" ]; then
+      if [ "$newname" != "" ] && [ -f "../client/msse/x86-glb/$newname" ]; then
         mv -f "../client/msse/x86-glb/$newname" "../client/msse/x86-glb/$tmpname"
       fi
       doWget $oldname -P ../client/msse/x86-glb
-      if [ -f "../client/msse/x86-glb/$tmpname" ]; then
+      if [ "$newname" != "" ] && [ -f "../client/msse/x86-glb/$tmpname" ]; then
         mv -f "../client/msse/x86-glb/$tmpname" "../client/msse/x86-glb/$newname"
       fi
     done

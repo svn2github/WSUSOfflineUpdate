@@ -627,3 +627,4 @@ Version 7.3 -- 19.01.12
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
 - HashDeep utility updated to version 4.0.1
+- Fix: Linux script DownloadUpdates.sh did not download MSSE definition files (Thanks to M. Speck)
