@@ -2,3 +2,4 @@ http://www.download.windowsupdate.com/msdownload/update/software/dflt/2008/02/wi
 http://download.microsoft.com/download/8/8/7/8879aabf-6352-4ffe-a65a-11b3f70eb6eb/WindowsServer2003-KB925876-v2-x86-ENU.exe
 http://download.microsoft.com/download/1/1/7/117FB25C-BB2D-41E1-B01E-0FEB0BC72C30/WindowsServer2003-KB968930-x86-ENG.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-en-us-kb2564958_eac36fe4548b42a26f79b1970de1998c82966bce.exe
+http://download.microsoft.com/download/f/f/1/ff178bb1-da91-48ed-89e5-478a99387d4f/wic_x86_enu.exe

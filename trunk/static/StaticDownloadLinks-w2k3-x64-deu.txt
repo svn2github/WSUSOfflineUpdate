@@ -1,3 +1,4 @@
 http://download.microsoft.com/download/B/2/4/B2490B2C-0E5F-434B-A82E-98F0241F27F5/WindowsServer2003-KB968930-x64-DEU.exe
 http://download.microsoft.com/download/6/f/c/6fce52ea-8077-4883-ae7d-4cc89bbcdba6/windowsdefenderX64.msi
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-de-de-kb2564958_6076b09190f6d88f478b3051561547e5c76940a7.exe
+http://download.microsoft.com/download/6/4/5/645fed5f-a6e7-44d9-9d10-fe83348796b0/wic_x64_deu.exe
