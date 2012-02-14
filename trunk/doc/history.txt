@@ -626,7 +626,7 @@ Version 7.3 -- 19.01.12
 - Fix: Damaged Windows Scripting (WSH) installations could cause misleading syntax errors in DoUpdate.cmd (Thanks to "martink")
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
-- HashDeep utility updated to version 4.0.1
+- HashDeep utility updated to version 4.1
 - AutoIt script compiler updated to version 3.3.8.1
 - Fix: Installation of .NET Framework 4 could fail on Windows Server 2003 (x86/x64) systems due to missing prerequisite "Windows Imaging Component (WIC)" (Thanks to "dreamz")
 - Fix: Linux script DownloadUpdates.sh did not download MSSE definition files (Thanks to M. Speck)
