@@ -630,3 +630,4 @@ Version ?.? -- ??.??.??
 - AutoIt script compiler updated to version 3.3.8.1
 - Fix: Installation of .NET Framework 4 could fail on Windows Server 2003 (x86/x64) systems due to missing prerequisite "Windows Imaging Component (WIC)" (Thanks to "dreamz")
 - Fix: Linux script DownloadUpdates.sh did not download MSSE definition files (Thanks to M. Speck)
+- Fix: Download URLs of Sysinternals' tools changed (Thanks to "rednaxela")
