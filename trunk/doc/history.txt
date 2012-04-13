@@ -625,9 +625,12 @@ Version 7.3 -- 19.01.12
 - Fix: Linux script DownloadUpdates.sh performed invalid dos2unix conversions (Thanks to "ewasscher")
 - Fix: Damaged Windows Scripting (WSH) installations could cause misleading syntax errors in DoUpdate.cmd (Thanks to "martink")
 --------------------------------------------------------------------------------
-Version ?.? -- ??.??.??
+Version 7.3.1 -- 13.04.12
 - HashDeep utility updated to version 4.1
 - AutoIt script compiler updated to version 3.3.8.1
 - Fix: Installation of .NET Framework 4 could fail on Windows Server 2003 (x86/x64) systems due to missing prerequisite "Windows Imaging Component (WIC)" (Thanks to "dreamz")
 - Fix: Linux script DownloadUpdates.sh did not download MSSE definition files (Thanks to M. Speck)
-- Fix: Download URLs of Sysinternals' tools changed (Thanks to "rednaxela")
+- Fix: Linux script DownloadUpdates.sh did not report dos2unix conversion failures (Thanks to R. Zocholl)
+- Fix: Download URLs of Sysinternals' tools changed (Thanks to "harry")
+- Fix: Download part missed Office 2010 Security Update kb2598039
+--------------------------------------------------------------------------------
