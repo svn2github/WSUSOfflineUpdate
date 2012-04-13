@@ -1,0 +1,14 @@
+*ndp1*
+*ndp2*
+*ndp3*
+*dotnetfx35.exe
+*o2k*
+*oxp*
+*ofc*
+*w2k*
+*wxp*
+*w60*
+*w61\/*
+*x86-glb\/*
+*-x86*
+*.au3
