@@ -634,3 +634,5 @@ Version 7.3.1 -- 13.04.12
 - Fix: Download URLs of Sysinternals' tools changed (Thanks to "harry")
 - Fix: Download part missed Office 2010 Security Update kb2598039
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.12
+- Fix: Linux script DownloadUpdates.sh attempted invalid dos2unix calls (Thanks to "Spider-Mann")
