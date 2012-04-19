@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                   v. 7.3.1+ (r353)                 ###
+###                   v. 7.3.1+ (r354)                 ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -516,7 +516,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                   v. 7.3.1+ (r353)                 ***
+***                   v. 7.3.1+ (r354)                 ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
@@ -571,9 +571,9 @@ mkdir -p ../temp
 rm -f ../temp/*
 
 #convert files to Linux format
-find ../exclude/ -type f -exec dos2unix -q "{}" + 2>&1 \; || echo find has a problem with exclude
-find ../xslt/ -type f -exec dos2unix -q "{}" + 2>&1 \; || echo find has a problem with xslt
-find ../static/ -type f -exec dos2unix -q "{}" + 2>&1 \; || echo find has a problem with static
+find ../exclude/ -type f -exec dos2unix "{}" + 2>&1 \; || echo find has a problem with exclude
+find ../xslt/ -type f -exec dos2unix "{}" + 2>&1 \; || echo find has a problem with xslt
+find ../static/ -type f -exec dos2unix "{}" + 2>&1 \; || echo find has a problem with static
 
 printheader
 
