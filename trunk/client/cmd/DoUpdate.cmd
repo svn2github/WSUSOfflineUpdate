@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.3.1+ (r354)
+set WSUSOFFLINE_VERSION=7.3.1+ (r355)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log
 title %~n0 %*
@@ -140,6 +140,8 @@ goto UnsupArch
 rem *** Adjust power management settings ***
 if "%USERNAME%" NEQ "WOUTempAdmin" goto SkipPowerCfg
 if not exist "%TEMP%\wsusadmin-recall.1" goto SkipPowerCfg
+rem *** Disable Screensaver for WOUTempAdmin ***
+%REG_PATH% ADD "HKCU\Control Panel\Desktop" /v ScreenSaveActive /t REG_SZ /d 0 /f
 if "%PWR_POL_IDX%"=="" goto SkipPowerCfg
 if not exist %SystemRoot%\system32\powercfg.exe goto SkipPowerCfg
 echo Adjusting power management settings...
