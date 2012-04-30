@@ -58,10 +58,10 @@ For adding an update to be downloaded, insert its download URL into the matching
 
 Add an update to installation by inserting its knowledge base ID (KBxxxxxx or simply xxxxxx) into the matching "StaticUpdateIds-<platform>[-<architecture>].txt file (directory ".\client\static"). This update will then be installed every time, even if it was already installed.
 --------------------------------------------------------------------------------
-Q: Can I skip the dynamical update determination during downloading/installation in order to use my statical definitions only?
+Q: Can I skip the dynamic update determination during downloading/installation in order to use my static definitions only?
 A: Yes.
-To avoid dynamical update URL determination during download, add "skipdynamic=Enabled" to the [Miscellaneous] section of your UpdateGenerator.ini file.
-To avoid dynamical update ID determination during installation, set "skipdynamic=Enabled" in the [Installation] section of your UpdateInstaller.ini file.
+To avoid dynamic update URL determination during download, add "skipdynamic=Enabled" to the [Miscellaneous] section of your UpdateGenerator.ini file.
+To avoid dynamic update ID determination during installation, set "skipdynamic=Enabled" in the [Installation] section of your UpdateInstaller.ini file.
 --------------------------------------------------------------------------------
 Q: I already have the latest Service Pack for my selected OS and don't want to have it downloaded again. Can I integrate it into the WSUS Offline Updater
 somehow?

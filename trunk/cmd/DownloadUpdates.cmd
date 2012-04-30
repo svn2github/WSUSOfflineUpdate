@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.3.1+ (r355)
+set WSUSOFFLINE_VERSION=7.3.1+ (r356)
 set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
@@ -880,11 +880,11 @@ if exist ..\client\md\hashes-%1-%2.txt (
 )
 
 :SkipAudit
-rem *** Determine statical update urls for %1 %2 ***
+rem *** Determine static update urls for %1 %2 ***
 if exist "%TEMP%\StaticDownloadLinks-%1-%2.txt" del "%TEMP%\StaticDownloadLinks-%1-%2.txt"
 if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" del "%TEMP%\ValidStaticLinks-%1-%2.txt"
 if "%EXC_STATICS%"=="1" goto SkipStatics
-echo Determining statical update urls for %1 %2...
+echo Determining static update urls for %1 %2...
 if exist ..\static\StaticDownloadLinks-%1-%2.txt copy /Y ..\static\StaticDownloadLinks-%1-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
 if exist ..\static\StaticDownloadLinks-%1-%3-%2.txt copy /Y ..\static\StaticDownloadLinks-%1-%3-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
 if exist ..\static\custom\StaticDownloadLinks-%1-%2.txt (
@@ -902,7 +902,7 @@ if "%EXC_SP%"=="1" (
 ) else (
   ren "%TEMP%\StaticDownloadLinks-%1-%2.txt" ValidStaticLinks-%1-%2.txt
 )
-echo %DATE% %TIME% - Info: Determined statical update urls for %1 %2 >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Determined static update urls for %1 %2 >>%DOWNLOAD_LOGFILE%
 
 :SkipStatics
 if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
@@ -910,8 +910,8 @@ if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" del "%TEMP%\ValidDynamicLinks-%1-%
 if "%4"=="/skipdynamic" (
   echo Skipping unneeded determination of superseded updates.
   echo %DATE% %TIME% - Info: Skipped unneeded determination of superseded updates >>%DOWNLOAD_LOGFILE%
-  echo Skipping determination of dynamical update urls for %1 %2 on demand.
-  echo %DATE% %TIME% - Info: Skipped determination of dynamical update urls for %1 %2 on demand >>%DOWNLOAD_LOGFILE%
+  echo Skipping determination of dynamic update urls for %1 %2 on demand.
+  echo %DATE% %TIME% - Info: Skipped determination of dynamic update urls for %1 %2 on demand >>%DOWNLOAD_LOGFILE%
   goto DoDownload
 )
 if not exist ..\bin\msxsl.exe goto NoMSXSL
@@ -975,8 +975,8 @@ del "%TEMP%\package.xml"
 goto DoDownload
 
 :DetermineWindows
-rem *** Determine dynamical update urls for %1 %2 ***
-echo %TIME% - Determining dynamical update urls for %1 %2...
+rem *** Determine dynamic update urls for %1 %2 ***
+echo %TIME% - Determining dynamic update urls for %1 %2...
 if exist ..\xslt\ExtractDownloadLinks-%1-%2.xsl (
   ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractDownloadLinks-%1-%2.xsl -o "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
   if errorlevel 1 goto DownloadError
@@ -1008,12 +1008,12 @@ if not exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" ren "%TEMP%\DynamicDownloadLin
 if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
 if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
 echo %TIME% - Done.
-echo %DATE% %TIME% - Info: Determined dynamical update urls for %1 %2 >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Determined dynamic update urls for %1 %2 >>%DOWNLOAD_LOGFILE%
 goto DoDownload
 
 :DetermineOffice
-rem *** Determine dynamical update urls for %1 %2 ***
-echo %TIME% - Determining dynamical update urls for %1 %2 (please be patient, this will take a while)...
+rem *** Determine dynamic update urls for %1 %2 ***
+echo %TIME% - Determining dynamic update urls for %1 %2 (please be patient, this will take a while)...
 ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractUpdateCategoriesAndFileIds.xsl -o "%TEMP%\UpdateCategoriesAndFileIds.txt"
 if errorlevel 1 goto DownloadError
 ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractUpdateCabExeIdsAndLocations.xsl -o "%TEMP%\UpdateCabExeIdsAndLocations.txt"
@@ -1099,7 +1099,7 @@ if not exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" ren "%TEMP%\DynamicDownloadLin
 if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
 if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
 echo %TIME% - Done.
-echo %DATE% %TIME% - Info: Determined dynamical update urls for %1 %2 >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Determined dynamic update urls for %1 %2 >>%DOWNLOAD_LOGFILE%
 
 :DoDownload
 rem *** Download updates for %1 %2 ***

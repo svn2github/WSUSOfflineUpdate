@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                   v. 7.3.1+ (r355)                 ###
+###                   v. 7.3.1+ (r356)                 ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -516,7 +516,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                   v. 7.3.1+ (r355)                 ***
+***                   v. 7.3.1+ (r356)                 ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
@@ -959,7 +959,7 @@ fi
 
 if [ "$sys" == "ofc" ]; then
 
-echo "Determining dynamical update urls for ${sys}..."
+echo "Determining dynamic update urls for ${sys}..."
 if [ -f ../exclude/ExcludeList-${sys}.txt ]; then
   cat ../exclude/ExcludeList-${sys}.txt >> ../temp/ExcludeList-${sys}.txt
 fi
@@ -978,7 +978,7 @@ do
 if [ $c == 1 ]; then
   lang="glb"
 fi
-  echo "Determining dynamical update urls for ${sys} ${lang} (please be patient, this will take a while)..."
+  echo "Determining dynamic update urls for ${sys} ${lang} (please be patient, this will take a while)..."
   UPDATE_ID=""
   UPDATE_CATEGORY=""
   UPDATE_LANGUAGES=""

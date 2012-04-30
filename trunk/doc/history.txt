@@ -20,8 +20,8 @@ German article: "Linux patcht Windows" (c't 12/09, S. 162; http://www.heise.de/k
 Versions' history:
 --------------------------------------------------------------------------------
 Version 3.0 -- 25.10.06
-- Dynamical integration of new updates using wsusscan.cab
-- Dynamical installation of new updates using Windows Update Agent
+- Dynamic integration of new updates using wsusscan.cab
+- Dynamic installation of new updates using Windows Update Agent
 --------------------------------------------------------------------------------
 Version 3.01 -- 31.10.06
 - Fix: "%~dps0 problem" on Windows 2000 systems
@@ -69,7 +69,7 @@ Version 3.11 -- 05.05.07
 - DownloadStarterGUI.exe saves settings now
 - UpdateStarterGUI.exe checks availability of Windows Script Host now
 - DoUpdate.cmd and UpdateStarterGUI.exe support /nobackup parameter now (installs updates without saving uninstallation info)
-- Dynamical determination of Windows Update Agent URLs using wuredist.cab
+- Dynamic determination of Windows Update Agent URLs using wuredist.cab
 - Implementation of administrators' group determination changed to support multiple languages (Thanks to Bert Schinkel-Momsen)
 - DVD ISO image creation options diversified to support multiple languages and platforms
 - CreateISOImage.cmd understands /outputpath parameter now
@@ -498,7 +498,7 @@ Version 6.8 -- 22.02.11
 - Fix: DownloadUpdates.sh script contained invalid references to StaticDownloadLink-msse-*.txt (Thanks to "Andrew")
 - Fix: CreateISOImage.sh script erroneously supported "wxp-x64" target (Thanks to "rupat")
 - Fix: Added missing custom directory support for StaticDownloadLinks-dotnet.txt and StaticDownloadLinks-msse-<architecture>-glb.txt (Thanks to "rednaxela" and "yodog")
-- Fix: Added missing template files for statical download definitions of .NET updates (Thanks to "rednaxela")
+- Fix: Added missing template files for static download definitions of .NET updates (Thanks to "rednaxela")
 - Fix: Obsolete MSXML patches kb925672, kb925673, kb927977, kb927978, kb933579, kb936021 and kb936181 were not excluded (Thanks to "rustam")
 - Fix: Obsolete .NET patches kb886903, kb928366, kb971108, kb979906, kb917283, kb922770, kb947746, kb947748, kb971110, kb971111 and kb974417 were not excluded (Thanks to "Denniss")
 - Fix: Numerous obsolete patches for all platforms were not excluded (Thanks to "Denniss")
@@ -637,3 +637,4 @@ Version 7.3.1 -- 13.04.12
 Version ?.? -- ??.??.12
 - Installation part will now disable the screensaver when running under WOUTempAdmin user account (Thanks to "harry")
 - Fix: Linux script DownloadUpdates.sh attempted invalid dos2unix calls (Thanks to "Spider-Mann")
+- Fix: Scripts contained typos in log messages (Thanks to "Extrinsic")
