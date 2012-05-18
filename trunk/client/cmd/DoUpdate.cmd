@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.3.1+ (r357)
+set WSUSOFFLINE_VERSION=7.3.1+ (r358)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log
 title %~n0 %*
@@ -180,6 +180,7 @@ rem echo Found Windows Media Player version: %WMP_VER_MAJOR%.%WMP_VER_MINOR%.%WM
 rem echo Found Terminal Services Client version: %TSC_VER_MAJOR%.%TSC_VER_MINOR%.%TSC_VER_REVIS%.%TSC_VER_BUILD%
 rem echo Found Microsoft .NET Framework 3.5 version: %DOTNET35_VER_MAJOR%.%DOTNET35_VER_MINOR%.%DOTNET35_VER_REVIS%.%DOTNET35_VER_BUILD%
 rem echo Found Microsoft .NET Framework 4 version: %DOTNET4_VER_MAJOR%.%DOTNET4_VER_MINOR%.%DOTNET4_VER_REVIS%
+rem echo Found Microsoft Security Essentials version: %MSSE_VER_MAJOR%.%MSSE_VER_MINOR%.%MSSE_VER_REVIS%.%MSSE_VER_BUILD%
 rem echo Found Microsoft Security Essentials definitions version: %MSSEDEFS_VER_MAJOR%.%MSSEDEFS_VER_MINOR%.%MSSEDEFS_VER_REVIS%.%MSSEDEFS_VER_BUILD%
 rem echo Found Windows Defender definitions version: %WDDEFS_VER_MAJOR%.%WDDEFS_VER_MINOR%.%WDDEFS_VER_REVIS%.%WDDEFS_VER_BUILD%
 rem echo Found Windows PowerShell version: %PSH_VER_MAJOR%.%PSH_VER_MINOR%
@@ -206,6 +207,7 @@ echo %DATE% %TIME% - Info: Found Windows Media Player version %WMP_VER_MAJOR%.%W
 echo %DATE% %TIME% - Info: Found Terminal Services Client version %TSC_VER_MAJOR%.%TSC_VER_MINOR%.%TSC_VER_REVIS%.%TSC_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 3.5 version %DOTNET35_VER_MAJOR%.%DOTNET35_VER_MINOR%.%DOTNET35_VER_REVIS%.%DOTNET35_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 4 version %DOTNET4_VER_MAJOR%.%DOTNET4_VER_MINOR%.%DOTNET4_VER_REVIS% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft Security Essentials version %MSSE_VER_MAJOR%.%MSSE_VER_MINOR%.%MSSE_VER_REVIS%.%MSSE_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft Security Essentials definitions version %MSSEDEFS_VER_MAJOR%.%MSSEDEFS_VER_MINOR%.%MSSEDEFS_VER_REVIS%.%MSSEDEFS_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows Defender definitions version %WDDEFS_VER_MAJOR%.%WDDEFS_VER_MINOR%.%WDDEFS_VER_REVIS%.%WDDEFS_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows PowerShell version %PSH_VER_MAJOR%.%PSH_VER_MINOR% >>%UPDATE_LOGFILE%
