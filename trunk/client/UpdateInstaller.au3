@@ -14,7 +14,7 @@ Dim Const $reg_key_ie                 = "HKEY_LOCAL_MACHINE\Software\Microsoft\I
 Dim Const $reg_key_dotnet35           = "HKEY_LOCAL_MACHINE\Software\Microsoft\NET Framework Setup\NDP\v3.5"
 Dim Const $reg_key_dotnet4            = "HKEY_LOCAL_MACHINE\Software\Microsoft\NET Framework Setup\NDP\v4\Full"
 Dim Const $reg_key_powershell         = "HKEY_LOCAL_MACHINE\Software\Microsoft\PowerShell\1\PowerShellEngine"
-Dim Const $reg_key_msev2              = "HKEY_LOCAL_MACHINE\Software\Microsoft\Microsoft Security Client"
+Dim Const $reg_key_msse               = "HKEY_LOCAL_MACHINE\Software\Microsoft\Microsoft Security Client"
 Dim Const $reg_key_wd                 = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Defender"
 Dim Const $reg_key_fontdpi            = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontDPI"
 Dim Const $reg_key_windowmetrics      = "HKEY_CURRENT_USER\Control Panel\Desktop\WindowMetrics"
@@ -199,7 +199,7 @@ EndFunc
 Func MSSEInstalled()
 Dim $dummy
 
-  $dummy = RegRead($reg_key_msev2, $reg_val_default)
+  $dummy = RegRead($reg_key_msse, $reg_val_default)
   Return (@error <= 0)
 EndFunc
 
@@ -552,12 +552,20 @@ EndIf
 ; Install Microsoft Security Essentials
 $txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
-  $msse = GUICtrlCreateCheckbox("Microsoft Security Essentials installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  If MSSEInstalled() Then
+    $msse = GUICtrlCreateCheckbox("Microsoft Security Essentials aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  Else
+    $msse = GUICtrlCreateCheckbox("Microsoft Security Essentials installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  EndIf
 Else
-  $msse = GUICtrlCreateCheckbox("Install Microsoft Security Essentials", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  If MSSEInstalled() Then
+    $msse = GUICtrlCreateCheckbox("Update Microsoft Security Essentials", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  Else
+    $msse = GUICtrlCreateCheckbox("Install Microsoft Security Essentials", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  EndIf
 EndIf
 If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_2008R2") _
-  OR MSSEInstalled() OR (NOT MSSEPresent($scriptdir)) ) Then
+  OR (NOT MSSEPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If IniRead($inifilename, $ini_section_installation, $ini_value_msse, $disabled) = $enabled Then

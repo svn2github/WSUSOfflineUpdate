@@ -1,1 +1,1 @@
-http://mse.dlservice.microsoft.com/download/F/C/6/FC69D96E-8A5A-4F9B-BB60-A26566D3ACFC/plPL/x86/mseinstall.exe,mseinstall-x86-plk.exe
+http://download.microsoft.com/download/F/C/6/FC69D96E-8A5A-4F9B-BB60-A26566D3ACFC/plPL/x86/mseinstall.exe,mseinstall-x86-plk.exe

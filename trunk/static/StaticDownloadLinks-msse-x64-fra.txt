@@ -1,1 +1,1 @@
-http://mse.dlservice.microsoft.com/download/F/3/9/F392321B-C03D-498A-BEBB-141E2F367E44/frfr/amd64/mseinstall.exe,mseinstall-x64-fra.exe
+http://download.microsoft.com/download/F/3/9/F392321B-C03D-498A-BEBB-141E2F367E44/frfr/amd64/mseinstall.exe,mseinstall-x64-fra.exe

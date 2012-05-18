@@ -9,13 +9,15 @@ Private Const strRegKeyDirectX                = "HKLM\Software\Microsoft\DirectX
 Private Const strRegKeyDotNet35               = "HKLM\Software\Microsoft\NET Framework Setup\NDP\v3.5\"
 Private Const strRegKeyDotNet4                = "HKLM\Software\Microsoft\NET Framework Setup\NDP\v4\Full\"
 Private Const strRegKeyPowerShell             = "HKLM\Software\Microsoft\PowerShell\1\PowerShellEngine\"
-Private Const strRegKeyMSEv2                  = "HKLM\Software\Microsoft\Microsoft Security Client\"
+Private Const strRegKeyMSSE                   = "HKLM\Software\Microsoft\Microsoft Security Client\"
+Private Const strRegKeyMSSEUninstall          = "HKLM\Software\Microsoft\Windows\CurrentVersion\Uninstall\Microsoft Security Client\"
 Private Const strRegKeyMSSEDefs               = "HKLM\Software\Microsoft\Microsoft Antimalware\Signature Updates\"
 Private Const strRegKeyWD                     = "HKLM\Software\Microsoft\Windows Defender\"
 Private Const strRegKeyWDDefs                 = "HKLM\Software\Microsoft\Windows Defender\Signature Updates\"
 Private Const strRegKeyRootCerts              = "HKLM\Software\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}\"
 Private Const strRegKeyPowerCfg               = "HKCU\Control Panel\PowerCfg\"
 Private Const strRegValVersion                = "Version"
+Private Const strRegValDisplayVersion         = "DisplayVersion"
 Private Const strRegValPShVersion             = "PowerShellVersion"
 Private Const strRegValAVSVersion             = "AVSignatureVersion"
 Private Const strRegValASSVersion             = "ASSignatureVersion"
@@ -474,11 +476,14 @@ WriteVersionToFile objCmdFile, "DOTNET4_VER", RegRead(wshShell, strRegKeyDotNet4
 WriteVersionToFile objCmdFile, "PSH_VER", RegRead(wshShell, strRegKeyPowerShell & strRegValPShVersion)
 
 ' Determine Microsoft Security Essentials installation state
-If RegExists(wshShell, strRegKeyMSEv2) Then
+If RegExists(wshShell, strRegKeyMSSE) Then
   objCmdFile.WriteLine("set MSSE_INSTALLED=1")
 Else
   objCmdFile.WriteLine("set MSSE_INSTALLED=0")
 End If
+
+' Determine Microsoft Security Essentials' version
+WriteVersionToFile objCmdFile, "MSSE_VER", RegRead(wshShell, strRegKeyMSSEUninstall & strRegValDisplayVersion)
 
 ' Determine Microsoft Antimalware signatures' version
 WriteVersionToFile objCmdFile, "MSSEDEFS_VER", RegRead(wshShell, strRegKeyMSSEDefs & strRegValAVSVersion)
@@ -611,10 +616,15 @@ If (cpp2010_x64_old) And (Not cpp2010_x64_new) Then objCmdFile.WriteLine("set CP
 ' Perform the following WMI queries last, since they might fail if WMI is damaged
 '
 
-' Determine state of automatic updates service
+' Determine state of Windows Update service
 For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_Service Where Name = 'wuauserv'")
   objCmdFile.WriteLine("set AU_SVC_STATE_INITIAL=" & objQueryItem.State)
   objCmdFile.WriteLine("set AU_SVC_START_MODE=" & objQueryItem.StartMode)
+Next
+
+' Determine state of Windows Defender service
+For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_Service Where Name = 'WinDefend'")
+  objCmdFile.WriteLine("set WD_SVC_START_MODE=" & objQueryItem.StartMode)
 Next
 
 ' Determine Windows activation state - not available on Windows 2000 and Vista systems

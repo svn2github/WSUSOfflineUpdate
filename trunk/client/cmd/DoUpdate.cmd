@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.3.1+ (r356)
+set WSUSOFFLINE_VERSION=7.3.1+ (r357)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log
 title %~n0 %*
@@ -866,18 +866,34 @@ set REBOOT_REQUIRED=1
 
 rem *** Install Microsoft Security Essentials ***
 echo Checking Microsoft Security Essentials installation state...
-if "%MSSE_INSTALLED%"=="1" goto CheckMSSEDefs
-if "%INSTALL_MSSE%" NEQ "/instmsse" goto SkipMSSEInst
-if %OS_DOMAIN_ROLE% GEQ 2 goto SkipMSSEInst
-:InstallMSSE
+if "%INSTALL_MSSE%" NEQ "/instmsse" (
+  if "%MSSE_INSTALLED%"=="1" (goto CheckMSSEDefs) else (goto SkipMSSEInst)
+)
+if %OS_DOMAIN_ROLE% GEQ 2 (
+  if "%MSSE_INSTALLED%"=="1" (goto CheckMSSEDefs) else (goto SkipMSSEInst)
+)
 set MSSE_FILENAME=..\msse\%OS_ARCH%-glb\mseinstall-%OS_ARCH%-%OS_LANG%.exe
 if not exist %MSSE_FILENAME% (
   echo Warning: Microsoft Security Essentials installation file ^(%MSSE_FILENAME%^) not found.
   echo %DATE% %TIME% - Warning: Microsoft Security Essentials installation file ^(%MSSE_FILENAME%^) not found >>%UPDATE_LOGFILE%
-  goto SkipMSSEInst
+  if "%MSSE_INSTALLED%"=="1" (goto CheckMSSEDefs) else (goto SkipMSSEInst)
 )
+rem *** Determine Microsoft Security Essentials installation file version ***
+echo Determining Microsoft Security Essentials installation file version...
+%CSCRIPT_PATH% //Nologo //B //E:vbs DetermineFileVersion.vbs %MSSE_FILENAME% MSSE_VER_TARGET
+if not exist "%TEMP%\SetFileVersion.cmd" goto CheckMSSEDefs
+call "%TEMP%\SetFileVersion.cmd"
+del "%TEMP%\SetFileVersion.cmd"
+if %MSSE_VER_MAJOR% LSS %MSSE_VER_TARGET_MAJOR% goto InstallMSSE
+if %MSSE_VER_MAJOR% GTR %MSSE_VER_TARGET_MAJOR% goto CheckMSSEDefs
+if %MSSE_VER_MINOR% LSS %MSSE_VER_TARGET_MINOR% goto InstallMSSE
+if %MSSE_VER_MINOR% GTR %MSSE_VER_TARGET_MINOR% goto CheckMSSEDefs
+if %MSSE_VER_REVIS% LSS %MSSE_VER_TARGET_REVIS% goto InstallMSSE
+if %MSSE_VER_REVIS% GTR %MSSE_VER_TARGET_REVIS% goto CheckMSSEDefs
+if %MSSE_VER_BUILD% GEQ %MSSE_VER_TARGET_BUILD% goto CheckMSSEDefs
+:InstallMSSE
 echo Installing Microsoft Security Essentials...
-for /F %%i in ('dir /B %MSSE_FILENAME%') do call InstallOSUpdate.cmd ..\msse\%OS_ARCH%-glb\%%i %VERIFY_MODE% /ignoreerrors /s /runwgacheck /o
+call InstallOSUpdate.cmd %MSSE_FILENAME% %VERIFY_MODE% /ignoreerrors /s /runwgacheck /o
 set MSSE_FILENAME=
 set REBOOT_REQUIRED=1
 :CheckMSSEDefs
@@ -906,7 +922,7 @@ if %MSSEDEFS_VER_REVIS% GTR %MSSEDEFS_VER_TARGET_REVIS% goto SkipMSSEInst
 if %MSSEDEFS_VER_BUILD% GEQ %MSSEDEFS_VER_TARGET_BUILD% goto SkipMSSEInst
 :InstallMSSEDefs
 echo Installing Microsoft Security Essentials definition file...
-for /F %%i in ('dir /B %MSSEDEFS_FILENAME%') do call InstallOSUpdate.cmd ..\msse\%OS_ARCH%-glb\%%i %VERIFY_MODE% /ignoreerrors -q
+call InstallOSUpdate.cmd %MSSEDEFS_FILENAME% %VERIFY_MODE% /ignoreerrors -q
 set MSSEDEFS_FILENAME=
 :SkipMSSEInst
 
@@ -928,16 +944,11 @@ if not exist %WD_FILENAME% (
   goto SkipWDInst
 )
 echo Installing Windows Defender...
-for /F %%i in ('dir /B %WD_FILENAME%') do (
-  if /i "%OS_ARCH%"=="x64" (
-    call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors
-  ) else (
-    call InstallOSUpdate.cmd ..\win\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors
-  )
-)
+call InstallOSUpdate.cmd %WD_FILENAME% %VERIFY_MODE% /ignoreerrors
 set WD_FILENAME=
 set REBOOT_REQUIRED=1
 :CheckWDDefs
+if /i "%WD_SVC_START_MODE%"=="Disabled" goto SkipWDInst
 if /i "%OS_ARCH%"=="x64" (
   set WDDEFS_FILENAME=..\wddefs\%OS_ARCH%-glb\mpas-feX64.exe
 ) else (
@@ -963,7 +974,7 @@ if %WDDEFS_VER_REVIS% GTR %WDDEFS_VER_TARGET_REVIS% goto SkipWDInst
 if %WDDEFS_VER_BUILD% GEQ %WDDEFS_VER_TARGET_BUILD% goto SkipWDInst
 :InstallWDDefs
 echo Installing Windows Defender definition file...
-for /F %%i in ('dir /B %WDDEFS_FILENAME%') do call InstallOSUpdate.cmd ..\wddefs\%OS_ARCH%-glb\%%i %VERIFY_MODE% /ignoreerrors -q
+call InstallOSUpdate.cmd %WDDEFS_FILENAME% %VERIFY_MODE% /ignoreerrors -q
 set WDDEFS_FILENAME=
 :SkipWDInst
 

@@ -1,1 +1,1 @@
-http://mse.dlservice.microsoft.com/download/9/F/D/9FDD1ABA-8A02-465A-A321-535388226BD7/nlnl/x86/mseinstall.exe,mseinstall-x86-nld.exe
+http://download.microsoft.com/download/9/F/D/9FDD1ABA-8A02-465A-A321-535388226BD7/nlnl/x86/mseinstall.exe,mseinstall-x86-nld.exe

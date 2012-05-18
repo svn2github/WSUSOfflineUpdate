@@ -636,5 +636,9 @@ Version 7.3.1 -- 13.04.12
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.12
 - Installation part will now disable the screensaver when running under WOUTempAdmin user account (Thanks to "harry")
+- Existing installations of Microsoft Security Essentials may now be updated to most recent version (Thanks to Th. Baisch)
 - Fix: Linux script DownloadUpdates.sh attempted invalid dos2unix calls (Thanks to "Spider-Mann")
 - Fix: Scripts contained typos in log messages (Thanks to "Extrinsic")
+- Fix: Download part missed Security Update kb2633171 for Windows Vista and 7 (x86)
+- Fix: Microsoft Security Essentials definition files wouldn't be updated on Windows Server systems (Thanks to "Denniss")
+- Fix: Windows Defender definition files were attempted to be updated even if Windows Defender service was disabled (Thanks to "Denniss")
