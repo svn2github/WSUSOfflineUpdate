@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.3.1+ (r358)
+set WSUSOFFLINE_VERSION=7.3.1+ (r359)
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log
 title %~n0 %*
@@ -950,7 +950,7 @@ call InstallOSUpdate.cmd %WD_FILENAME% %VERIFY_MODE% /ignoreerrors
 set WD_FILENAME=
 set REBOOT_REQUIRED=1
 :CheckWDDefs
-if /i "%WD_SVC_START_MODE%"=="Disabled" goto SkipWDInst
+if /i "%WD_DISABLED%"=="1" goto SkipWDInst
 if /i "%OS_ARCH%"=="x64" (
   set WDDEFS_FILENAME=..\wddefs\%OS_ARCH%-glb\mpas-feX64.exe
 ) else (

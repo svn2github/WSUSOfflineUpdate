@@ -21,6 +21,7 @@ Private Const strRegValDisplayVersion         = "DisplayVersion"
 Private Const strRegValPShVersion             = "PowerShellVersion"
 Private Const strRegValAVSVersion             = "AVSignatureVersion"
 Private Const strRegValASSVersion             = "ASSignatureVersion"
+Private Const strRegValDisableAntiSpyware     = "DisableAntiSpyware"
 Private Const strRegValCurrentPowerPolicy     = "CurrentPowerPolicy"
 Private Const strRegKeyOfficePrefix_Mx86      = "HKLM\Software\Microsoft\Office\"
 Private Const strRegKeyOfficePrefix_Mx64      = "HKLM\Software\Wow6432Node\Microsoft\Office\"
@@ -495,6 +496,9 @@ Else
   objCmdFile.WriteLine("set WD_INSTALLED=0")
 End If
 
+' Determine Windows Defender state
+objCmdFile.WriteLine("set WD_DISABLED=" & RegRead(wshShell, strRegKeyWD & strRegValDisableAntiSpyware))
+
 ' Determine Microsoft Antispyware signatures' version
 WriteVersionToFile objCmdFile, "WDDEFS_VER", RegRead(wshShell, strRegKeyWDDefs & strRegValASSVersion)
 
@@ -620,11 +624,6 @@ If (cpp2010_x64_old) And (Not cpp2010_x64_new) Then objCmdFile.WriteLine("set CP
 For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_Service Where Name = 'wuauserv'")
   objCmdFile.WriteLine("set AU_SVC_STATE_INITIAL=" & objQueryItem.State)
   objCmdFile.WriteLine("set AU_SVC_START_MODE=" & objQueryItem.StartMode)
-Next
-
-' Determine state of Windows Defender service
-For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_Service Where Name = 'WinDefend'")
-  objCmdFile.WriteLine("set WD_SVC_START_MODE=" & objQueryItem.StartMode)
 Next
 
 ' Determine Windows activation state - not available on Windows 2000 and Vista systems
