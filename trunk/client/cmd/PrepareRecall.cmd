@@ -56,7 +56,10 @@ if errorlevel 1 (
   echo %DATE% %TIME% - Info: WSUS Offline Update was started from a local drive ^(%~d0^) >>%UPDATE_LOGFILE%
 ) else (
   if exist %SystemRoot%\Temp\WOURecall\ReconnectNetDrive.cmd del %SystemRoot%\Temp\WOURecall\ReconnectNetDrive.cmd
-  for /F "tokens=1*" %%i in ('%SystemRoot%\system32\net.exe use %~d0') do echo @%SystemRoot%\system32\net.exe use %~d0 "%%j" | %SystemRoot%\system32\find.exe "\\">>%SystemRoot%\Temp\WOURecall\ReconnectNetDrive.cmd
+  for /F "tokens=2*" %%i in ('%SystemRoot%\system32\net.exe use %~d0') do (
+    echo @%SystemRoot%\system32\net.exe use %~d0 "%%i" | %SystemRoot%\system32\find.exe "\\">>%SystemRoot%\Temp\WOURecall\ReconnectNetDrive.cmd
+    echo @%SystemRoot%\system32\net.exe use %~d0 "%%j" | %SystemRoot%\system32\find.exe "\\">>%SystemRoot%\Temp\WOURecall\ReconnectNetDrive.cmd
+  )
   echo %DATE% %TIME% - Info: WSUS Offline Update was started from a network drive ^(%~d0^) >>%UPDATE_LOGFILE%
 )
 echo %DATE% %TIME% - Info: Prepared recall directory >>%UPDATE_LOGFILE%

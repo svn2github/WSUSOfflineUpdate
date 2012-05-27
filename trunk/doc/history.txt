@@ -642,3 +642,4 @@ Version ?.? -- ??.??.12
 - Fix: Download part missed Security Update kb2633171 for Windows Vista and 7 (x86)
 - Fix: Microsoft Security Essentials definition files wouldn't be updated on Windows Server systems (Thanks to "Denniss")
 - Fix: Windows Defender definition files were attempted to be updated even if Windows Defender service was disabled (Thanks to "Denniss" and "aker")
+- Fix: Network drive reconnection during recall failed on English systems (Thanks to J. Holland)
