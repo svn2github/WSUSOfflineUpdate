@@ -1,0 +1,5 @@
+http://download.microsoft.com/download/0/e/d/0eda9ae6-f5c9-44be-98c7-ccc3016a296a/ork.exe
+http://download.microsoft.com/download/0/8/B/08B02B55-655C-49FF-9170-7BC0C231B868/OFV.exe
+http://download.windowsupdate.com/msdownload/update/software/secu/2009/07/owc10_e64105426816ec8f097bd638cfc491b747e7df8e.cab
+http://download.windowsupdate.com/msdownload/update/software/secu/2009/07/owc11_dcdbd717493af2fe5ec952ad76f6b18a9794388b.cab
+http://download.microsoft.com/download/A/F/7/AF70BFC5-87F8-47EA-B204-5A18C386B685/office2010-kb2553065-fullfile-x86-glb.exe
