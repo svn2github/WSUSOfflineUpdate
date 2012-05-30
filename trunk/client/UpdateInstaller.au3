@@ -1,11 +1,11 @@
-; ***  WSUS Offline Update 7.3.1 - Installer  ***
+; ***  WSUS Offline Update 7.3.2 - Installer  ***
 ; ***       Author: T. Wittrock, Kiel         ***
 ; ***   Dialog scaling added by Th. Baisch    ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 
-Dim Const $caption                    = "WSUS Offline Update 7.3.1 - Installer"
+Dim Const $caption                    = "WSUS Offline Update 7.3.2 - Installer"
 
 ; Registry constants
 Dim Const $reg_key_wsh_hklm           = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings"
@@ -878,8 +878,8 @@ While 1
         Else
           If MsgBox(0x2134, "Warning", @ScriptName & " was started from a network share." _
                                & @LF & "The option 'Automatic reboot and recall'" _
-                               & @LF & "does only work without user intervention," _
-                               & @LF & "if that share permits anonymous access." _
+                               & @LF & "does only work without user interaction," _
+                               & @LF & "if this share permits anonymous access." _
                                & @LF & "Do you wish to proceed?") = 7 Then
             GUICtrlSetState($autoreboot, $GUI_UNCHECKED)
           EndIf
