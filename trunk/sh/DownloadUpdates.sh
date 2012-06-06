@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                      v. 7.3.2                      ###
+###                   v. 7.3.2+ (r363)                 ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -351,10 +351,16 @@ return $?
 
 checkconnection()
 {
-wget -q --connect-timeout=1 --tries=1 http://www.wsusoffline.net/index.html
-if [ !  -e "index.html" ]; then
-  rm -f index.html
-  printtimeout
+OUT=`wget --connect-timeout=1 --tries=1 http://www.wsusoffline.net/index.html 2>&1`
+if [ $? -ne 0 ]; then
+  printf "failed to download:\n"
+  printf -- "$OUT"
+  exit 2
+else
+  if [ !  -e "index.html" ]; then
+    rm -f index.html
+    printtimeout
+  fi
 fi
 rm -f index.html
 }
@@ -516,7 +522,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                      v. 7.3.2                      ***
+***                   v. 7.3.2+ (r363)                 ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***

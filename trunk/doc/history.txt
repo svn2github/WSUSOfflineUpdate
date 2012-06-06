@@ -644,3 +644,6 @@ Version 7.3.2 -- 30.05.12
 - Fix: Windows Defender definition files were attempted to be updated even if Windows Defender was disabled (Thanks to "Denniss" and "aker")
 - Fix: Network drive reconnection during recall failed on English systems (Thanks to J. Holland)
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- HashDeep utility updated to version 4.1.1
+- Fix: Linux script DownloadUpdates.sh threw misleading connection timeout errors (Thanks to J. Steffens)
