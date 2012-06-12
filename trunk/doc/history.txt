@@ -645,5 +645,5 @@ Version 7.3.2 -- 30.05.12
 - Fix: Network drive reconnection during recall failed on English systems (Thanks to J. Holland)
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
-- HashDeep utility updated to version 4.1.1
+- HashDeep utility updated to version 4.2
 - Fix: Linux script DownloadUpdates.sh threw misleading connection timeout errors (Thanks to J. Steffens)
