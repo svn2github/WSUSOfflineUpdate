@@ -9,12 +9,18 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.3.2+ (r364)
-set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
-if exist %SystemRoot%\ctupdate.log ren %SystemRoot%\ctupdate.log wsusofflineupdate.log
+set WSUSOFFLINE_VERSION=7.3.2+ (r365)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
-if exist %UPDATE_LOGFILE% echo. >>%UPDATE_LOGFILE%
+set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
+rem *** Execute custom initialization hook ***
+if exist .\custom\InitializationHook.cmd (
+  echo Executing custom initialization hook...
+  call .\custom\InitializationHook.cmd
+  echo %DATE% %TIME% - Info: Executed custom initialization hook ^(Errorlevel: %errorlevel%^) >>%UPDATE_LOGFILE%
+) else (
+  if exist %UPDATE_LOGFILE% echo. >>%UPDATE_LOGFILE%
+)
 echo %DATE% %TIME% - Info: Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) on %COMPUTERNAME% (user: %USERNAME%) >>%UPDATE_LOGFILE%
 
 :EvalParams
@@ -53,13 +59,6 @@ if "%TEMP%"=="" goto NoTemp
 pushd "%TEMP%"
 if errorlevel 1 goto NoTempDir
 popd
-
-rem *** Execute custom initialization hook ***
-if exist .\custom\InitializationHook.cmd (
-  echo Executing custom initialization hook...
-  call .\custom\InitializationHook.cmd
-  echo %DATE% %TIME% - Info: Executed custom initialization hook ^(Errorlevel: %errorlevel%^) >>%UPDATE_LOGFILE%
-)
 
 set CSCRIPT_PATH=%SystemRoot%\system32\cscript.exe
 if not exist %CSCRIPT_PATH% goto NoCScript

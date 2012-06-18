@@ -646,4 +646,5 @@ Version 7.3.2 -- 30.05.12
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
 - HashDeep utility updated to version 4.2
+- InitializationHook.cmd calls moved upwards in DownloadUpdates.cmd and DoUpdate.cmd scripts (Thanks to S. Struﬂ) 
 - Fix: Linux script DownloadUpdates.sh threw misleading connection timeout errors (Thanks to J. Steffens)

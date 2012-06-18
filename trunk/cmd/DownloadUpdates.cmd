@@ -9,14 +9,21 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.3.2+ (r364)
-set DOWNLOAD_LOGFILE=..\log\download.log
+set WSUSOFFLINE_VERSION=7.3.2+ (r365)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
-if exist %DOWNLOAD_LOGFILE% (
-  echo. >>%DOWNLOAD_LOGFILE%
-  echo -------------------------------------------------------------------------------- >>%DOWNLOAD_LOGFILE%
-  echo. >>%DOWNLOAD_LOGFILE%
+set DOWNLOAD_LOGFILE=..\log\download.log
+rem *** Execute custom initialization hook ***
+if exist .\custom\InitializationHook.cmd (
+  echo Executing custom initialization hook...
+  call .\custom\InitializationHook.cmd
+  echo %DATE% %TIME% - Info: Executed custom initialization hook ^(Errorlevel: %errorlevel%^) >>%DOWNLOAD_LOGFILE%
+) else (
+  if exist %DOWNLOAD_LOGFILE% (
+    echo. >>%DOWNLOAD_LOGFILE%
+    echo -------------------------------------------------------------------------------- >>%DOWNLOAD_LOGFILE%
+    echo. >>%DOWNLOAD_LOGFILE%
+  )
 )
 echo %DATE% %TIME% - Info: Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2 >>%DOWNLOAD_LOGFILE%
 
@@ -345,13 +352,6 @@ if exist ..\client\wxp\glb\rootsupd.exe (
   move /Y ..\client\wxp\glb\rootsupd.exe ..\client\win\glb >nul
   if exist ..\client\md\hashes-win-glb.txt del ..\client\md\hashes-win-glb.txt
   if exist ..\client\md\hashes-wxp-glb.txt del ..\client\md\hashes-wxp-glb.txt
-)
-
-rem *** Execute custom initialization hook ***
-if exist .\custom\InitializationHook.cmd (
-  echo Executing custom initialization hook...
-  call .\custom\InitializationHook.cmd
-  echo %DATE% %TIME% - Info: Executed custom initialization hook ^(Errorlevel: %errorlevel%^) >>%DOWNLOAD_LOGFILE%
 )
 
 rem *** Download Microsoft XSL processor frontend ***
