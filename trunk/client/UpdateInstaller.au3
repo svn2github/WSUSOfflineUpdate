@@ -11,6 +11,7 @@ Dim Const $caption                    = "WSUS Offline Update 7.3.2 - Installer"
 Dim Const $reg_key_wsh_hklm           = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings"
 Dim Const $reg_key_wsh_hkcu           = "HKEY_CURRENT_USER\Software\Microsoft\Windows Script Host\Settings"
 Dim Const $reg_key_ie                 = "HKEY_LOCAL_MACHINE\Software\Microsoft\Internet Explorer"
+Dim Const $reg_key_mssl               = "HKEY_LOCAL_MACHINE\Software\Microsoft\Silverlight"
 Dim Const $reg_key_dotnet35           = "HKEY_LOCAL_MACHINE\Software\Microsoft\NET Framework Setup\NDP\v3.5"
 Dim Const $reg_key_dotnet4            = "HKEY_LOCAL_MACHINE\Software\Microsoft\NET Framework Setup\NDP\v4\Full"
 Dim Const $reg_key_powershell         = "HKEY_LOCAL_MACHINE\Software\Microsoft\PowerShell\1\PowerShellEngine"
@@ -37,12 +38,13 @@ Dim Const $target_version_powershell  = "2.0"
 ; INI file constants
 Dim Const $ini_section_installation   = "Installation"
 Dim Const $ini_value_backup           = "backup"
+Dim Const $ini_value_rcerts           = "updatercerts"
 Dim Const $ini_value_ie7              = "instie7"
 Dim Const $ini_value_ie8              = "instie8"
 Dim Const $ini_value_ie9              = "instie9"
-Dim Const $ini_value_rcerts           = "updatercerts"
 Dim Const $ini_value_cpp              = "updatecpp"
 Dim Const $ini_value_dx               = "updatedx"
+Dim Const $ini_value_mssl             = "instmssl"
 Dim Const $ini_value_wmp              = "updatewmp"
 Dim Const $ini_value_tsc              = "updatetsc"
 Dim Const $ini_value_dotnet35         = "instdotnet35"
@@ -85,7 +87,7 @@ Dim Const $path_rel_instvalidation    = "\ofc\glb\OFV.exe"
 Dim Const $path_rel_msse_x86          = "\msse\x86-glb\mseinstall-x86-*.exe"
 Dim Const $path_rel_msse_x64          = "\msse\x64-glb\mseinstall-x64-*.exe"
 
-Dim $maindlg, $scriptdir, $mapped, $inifilename, $backup, $ie7, $ie8, $ie9, $rcerts, $cpp, $dx, $wmp, $tsc, $dotnet35, $dotnet4, $psh, $msse, $wd, $ofc, $ofv, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate
+Dim $maindlg, $scriptdir, $mapped, $inifilename, $backup, $rcerts, $ie7, $ie8, $ie9, $cpp, $dx, $mssl, $wmp, $tsc, $dotnet35, $dotnet4, $psh, $msse, $wd, $ofc, $ofv, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate
 Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
 
 Func ShowGUIInGerman()
@@ -196,6 +198,13 @@ Func PowerShellVersion()
   Return RegRead($reg_key_powershell, $reg_val_pshversion)
 EndFunc
 
+Func MSSLInstalled()
+Dim $dummy
+
+  $dummy = RegRead($reg_key_mssl, $reg_val_default)
+  Return (@error <= 0)
+EndFunc
+
 Func MSSEInstalled()
 Dim $dummy
 
@@ -256,7 +265,7 @@ Func CalcGUISize()
   If ($reg_val = "") Then
     $reg_val = $default_logpixels
   EndIf
-  $dlgheight = 325 * $reg_val / $default_logpixels
+  $dlgheight = 345 * $reg_val / $default_logpixels
   If ShowGUIInGerman() Then
     $txtwidth = 240 * $reg_val / $default_logpixels
   Else
@@ -305,7 +314,7 @@ EndIf
 ;  Installation group
 $txtxpos = $txtxoffset
 $txtypos = $txtyoffset + 1.5 * $txtheight
-GUICtrlCreateGroup("Installation", $txtxpos, $txtypos, $groupwidth, 9 * $txtheight)
+GUICtrlCreateGroup("Installation", $txtxpos, $txtypos, $groupwidth, 10 * $txtheight)
 
 ; Backup
 $txtxpos = 2 * $txtxoffset
@@ -325,8 +334,26 @@ Else
   EndIf
 EndIf
 
-; Install IE7
+; Update Root Certificates
 $txtxpos = $txtxoffset + $groupwidth / 2
+If ShowGUIInGerman() Then
+  $rcerts = GUICtrlCreateCheckbox("Stammzertifikate aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+Else
+  $rcerts = GUICtrlCreateCheckbox("Update Root Certificates", $txtxpos, $txtypos, $txtwidth, $txtheight)
+EndIf
+If WinGlbPresent($scriptdir) Then
+  If IniRead($inifilename, $ini_section_installation, $ini_value_rcerts, $enabled) = $enabled Then
+    GUICtrlSetState(-1, $GUI_CHECKED)
+  Else
+    GUICtrlSetState(-1, $GUI_UNCHECKED)
+  EndIf
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
+EndIf
+
+; Install IE7
+$txtxpos = 2 * $txtxoffset
+$txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
   $ie7 = GUICtrlCreateCheckbox("Internet Explorer 7 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -344,8 +371,7 @@ Else
 EndIf
 
 ; Install IE8
-$txtxpos = 2 * $txtxoffset
-$txtypos = $txtypos + $txtheight
+$txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
   $ie8 = GUICtrlCreateCheckbox("Internet Explorer 8 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -366,7 +392,8 @@ Else
 EndIf
 
 ; Install IE9
-$txtxpos = $txtxoffset + $groupwidth / 2
+$txtxpos = 2 * $txtxoffset
+$txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
   $ie9 = GUICtrlCreateCheckbox("Internet Explorer 9 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -387,26 +414,9 @@ Else
   EndIf
 EndIf
 
-; Update Root Certificates
+; Update C++ Runtime Libraries
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + $txtheight
-If ShowGUIInGerman() Then
-  $rcerts = GUICtrlCreateCheckbox("Stammzertifikate aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
-Else
-  $rcerts = GUICtrlCreateCheckbox("Update Root Certificates", $txtxpos, $txtypos, $txtwidth, $txtheight)
-EndIf
-If WinGlbPresent($scriptdir) Then
-  If IniRead($inifilename, $ini_section_installation, $ini_value_rcerts, $enabled) = $enabled Then
-    GUICtrlSetState(-1, $GUI_CHECKED)
-  Else
-    GUICtrlSetState(-1, $GUI_UNCHECKED)
-  EndIf
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
-EndIf
-
-; Update C++ Runtime Libraries
-$txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
   $cpp = GUICtrlCreateCheckbox("C++-Laufzeitbibliotheken aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -423,8 +433,7 @@ Else
 EndIf
 
 ; Update DirectX Runtime Libraries
-$txtxpos = 2 * $txtxoffset
-$txtypos = $txtypos + $txtheight
+$txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
   $dx = GUICtrlCreateCheckbox("DirectX-Laufzeitbibliotheken aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -438,6 +447,32 @@ If WinGlbPresent($scriptdir) Then
   EndIf
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
+EndIf
+
+; Install Microsoft Silverlight
+$txtxpos = 2 * $txtxoffset
+$txtypos = $txtypos + $txtheight
+If ShowGUIInGerman() Then
+  If MSSLInstalled() Then
+    $mssl = GUICtrlCreateCheckbox("Microsoft Silverlight aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  Else
+    $mssl = GUICtrlCreateCheckbox("Microsoft Silverlight installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  EndIf
+Else
+  If MSSLInstalled() Then
+    $mssl = GUICtrlCreateCheckbox("Update Microsoft Silverlight", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  Else
+    $mssl = GUICtrlCreateCheckbox("Install Microsoft Silverlight", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  EndIf
+EndIf
+If ( (@OSVersion = "WIN_2000") OR (NOT WinGlbPresent($scriptdir)) ) Then
+  GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
+Else
+  If IniRead($inifilename, $ini_section_installation, $ini_value_mssl, $disabled) = $enabled Then
+    GUICtrlSetState(-1, $GUI_CHECKED)
+  Else
+    GUICtrlSetState(-1, $GUI_UNCHECKED)
+  EndIf
 EndIf
 
 ; Update Windows Media Player
@@ -902,6 +937,9 @@ While 1
       If BitAND(GUICtrlRead($backup), $GUI_CHECKED) <> $GUI_CHECKED Then
         $options = $options & " /nobackup"
       EndIf
+      If BitAND(GUICtrlRead($rcerts), $GUI_CHECKED) = $GUI_CHECKED Then
+        $options = $options & " /updatercerts"
+      EndIf
       If BitAND(GUICtrlRead($ie7), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instie7"
       EndIf
@@ -911,14 +949,14 @@ While 1
       If BitAND(GUICtrlRead($ie9), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instie9"
       EndIf
-      If BitAND(GUICtrlRead($rcerts), $GUI_CHECKED) = $GUI_CHECKED Then
-        $options = $options & " /updatercerts"
-      EndIf
       If BitAND(GUICtrlRead($cpp), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /updatecpp"
       EndIf
       If BitAND(GUICtrlRead($dx), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /updatedx"
+      EndIf
+      If BitAND(GUICtrlRead($mssl), $GUI_CHECKED) = $GUI_CHECKED Then
+        $options = $options & " /instmssl"
       EndIf
       If BitAND(GUICtrlRead($wmp), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /updatewmp"

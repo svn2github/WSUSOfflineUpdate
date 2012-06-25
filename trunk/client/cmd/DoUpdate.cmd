@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.3.2+ (r366)
+set WSUSOFFLINE_VERSION=7.3.2+ (r367)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -25,17 +25,18 @@ echo %DATE% %TIME% - Info: Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/nobackup /verify /instie7 /instie8 /instie9 /updatercerts /updatecpp /updatedx /updatewmp /updatetsc /instdotnet35 /instdotnet4 /instpsh /instmsse /instwd /instofc /instofv /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
+for %%i in (/nobackup /verify /updatercerts /instie7 /instie8 /instie9 /updatecpp /updatedx /instmssl /updatewmp /updatetsc /instdotnet35 /instdotnet4 /instpsh /instmsse /instwd /instofc /instofv /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected >>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/nobackup" set BACKUP_MODE=/nobackup
 if /i "%1"=="/verify" set VERIFY_MODE=/verify
+if /i "%1"=="/updatercerts" set UPDATE_RCERTS=/updatercerts
 if /i "%1"=="/instie7" set INSTALL_IE=/instie7
 if /i "%1"=="/instie8" set INSTALL_IE=/instie8
 if /i "%1"=="/instie9" set INSTALL_IE=/instie9
-if /i "%1"=="/updatercerts" set UPDATE_RCERTS=/updatercerts
 if /i "%1"=="/updatecpp" set UPDATE_CPP=/updatecpp
 if /i "%1"=="/updatedx" set UPDATE_DX=/updatedx
+if /i "%1"=="/instmssl" set INSTALL_MSSL=/instmssl
 if /i "%1"=="/updatewmp" set UPDATE_WMP=/updatewmp
 if /i "%1"=="/updatetsc" set UPDATE_TSC=/updatetsc
 if /i "%1"=="/instdotnet35" set INSTALL_DOTNET35=/instdotnet35
@@ -677,6 +678,43 @@ for /F %%i in ('dir /B %DIRECTX_FILENAME%') do (
 set DIRECTX_FILENAME=
 :SkipDirectXInst
 
+rem *** Install Microsoft Silverlight ***
+if "%INSTALL_MSSL%" NEQ "/instmssl" goto SkipMSSLInst
+echo Checking Microsoft Silverlight version...
+if /i "%OS_ARCH%"=="x64" (
+  set MSSL_FILENAME=..\win\glb\Silverlight_x64.exe
+) else (
+  set MSSL_FILENAME=..\win\glb\Silverlight.exe
+)
+if not exist %MSSL_FILENAME% (
+  echo Warning: Microsoft Silverlight installation file ^(%MSSL_FILENAME%^) not found.
+  echo %DATE% %TIME% - Warning: Microsoft Silverlight installation file ^(%MSSL_FILENAME%^) not found >>%UPDATE_LOGFILE%
+  goto SkipMSSLInst
+)
+rem *** Determine Microsoft Silverlight installation file version ***
+echo Determining Microsoft Silverlight installation file version...
+%CSCRIPT_PATH% //Nologo //B //E:vbs DetermineFileVersion.vbs %MSSL_FILENAME% MSSL_VER_TARGET
+if not exist "%TEMP%\SetFileVersion.cmd" goto SkipMSSLInst
+call "%TEMP%\SetFileVersion.cmd"
+del "%TEMP%\SetFileVersion.cmd"
+if %MSSL_VER_MAJOR% LSS %MSSL_VER_TARGET_MAJOR% goto InstallMSSL
+if %MSSL_VER_MAJOR% GTR %MSSL_VER_TARGET_MAJOR% goto SkipMSSLInst
+if %MSSL_VER_MINOR% LSS %MSSL_VER_TARGET_MINOR% goto InstallMSSL
+if %MSSL_VER_MINOR% GTR %MSSL_VER_TARGET_MINOR% goto SkipMSSLInst
+if %MSSL_VER_REVIS% LSS %MSSL_VER_TARGET_REVIS% goto InstallMSSL
+if %MSSL_VER_REVIS% GTR %MSSL_VER_TARGET_REVIS% goto SkipMSSLInst
+if %MSSL_VER_BUILD% GEQ %MSSL_VER_TARGET_BUILD% goto SkipMSSLInst
+:InstallMSSL
+echo Installing Microsoft Silverlight...
+call InstallOSUpdate.cmd %MSSL_FILENAME% %VERIFY_MODE% /errorsaswarnings /q
+set MSSL_FILENAME=
+set REBOOT_REQUIRED=1
+:SkipMSSLInst
+set MSSL_VER_TARGET_MAJOR=
+set MSSL_VER_TARGET_MINOR=
+set MSSL_VER_TARGET_REVIS=
+set MSSL_VER_TARGET_BUILD=
+
 rem *** Install most recent Windows Media Player ***
 if "%OS_NAME%"=="w2k3" goto SkipWMPInst
 if %OS_DOMAIN_ROLE% GEQ 2 goto SkipWMPInst
@@ -898,6 +936,10 @@ call InstallOSUpdate.cmd %MSSE_FILENAME% %VERIFY_MODE% /ignoreerrors /s /runwgac
 set MSSE_FILENAME=
 set REBOOT_REQUIRED=1
 :CheckMSSEDefs
+set MSSE_VER_TARGET_MAJOR=
+set MSSE_VER_TARGET_MINOR=
+set MSSE_VER_TARGET_REVIS=
+set MSSE_VER_TARGET_BUILD=
 if /i "%OS_ARCH%"=="x64" (
   set MSSEDEFS_FILENAME=..\msse\%OS_ARCH%-glb\mpam-fex64.exe
 ) else (
@@ -926,6 +968,10 @@ echo Installing Microsoft Security Essentials definition file...
 call InstallOSUpdate.cmd %MSSEDEFS_FILENAME% %VERIFY_MODE% /ignoreerrors -q
 set MSSEDEFS_FILENAME=
 :SkipMSSEInst
+set MSSEDEFS_VER_TARGET_MAJOR=
+set MSSEDEFS_VER_TARGET_MINOR=
+set MSSEDEFS_VER_TARGET_REVIS=
+set MSSEDEFS_VER_TARGET_BUILD=
 
 rem *** Install Windows Defender ***
 echo Checking Windows Defender installation state...
@@ -978,6 +1024,10 @@ echo Installing Windows Defender definition file...
 call InstallOSUpdate.cmd %WDDEFS_FILENAME% %VERIFY_MODE% /ignoreerrors -q
 set WDDEFS_FILENAME=
 :SkipWDInst
+set WDDEFS_VER_TARGET_MAJOR=
+set WDDEFS_VER_TARGET_MINOR=
+set WDDEFS_VER_TARGET_REVIS=
+set WDDEFS_VER_TARGET_BUILD=
 
 if "%RECALL_REQUIRED%"=="1" goto Installed
 if "%OFC_NAME%"=="" goto CheckAUService
@@ -1180,7 +1230,7 @@ if "%RECALL_REQUIRED%"=="1" (
     )
     if "%USERNAME%" NEQ "WOUTempAdmin" (
       echo Preparing automatic recall...
-      call PrepareRecall.cmd "%~f0" %BACKUP_MODE% %VERIFY_MODE% %INSTALL_IE% %UPDATE_RCERTS% %UPDATE_CPP% %UPDATE_DX% %UPDATE_WMP% %UPDATE_TSC% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_MSSE% %INSTALL_WD% %INSTALL_OFC% %INSTALL_OFV% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES% %SKIP_DYNAMIC%
+      call PrepareRecall.cmd "%~f0" %BACKUP_MODE% %VERIFY_MODE% %UPDATE_RCERTS% %INSTALL_IE% %UPDATE_CPP% %UPDATE_DX% %INSTALL_MSSL% %UPDATE_WMP% %UPDATE_TSC% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_MSSE% %INSTALL_WD% %INSTALL_OFC% %INSTALL_OFV% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES% %SKIP_DYNAMIC%
     )
     if exist %SystemRoot%\system32\bcdedit.exe (
       echo Adjusting boot sequence for next reboot...

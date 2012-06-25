@@ -645,7 +645,9 @@ Version 7.3.2 -- 30.05.12
 - Fix: Network drive reconnection during recall failed on English systems (Thanks to J. Holland)
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
+- Optional installation/updating of Microsoft Silverlight
 - HashDeep utility updated to version 4.2
 - InitializationHook.cmd calls moved upwards in DownloadUpdates.cmd and DoUpdate.cmd scripts (Thanks to S. Struﬂ) 
 - Fix: For Windows XP (x86) systems, kb2686509 was downloaded twice (Thanks to Th. Baisch)
 - Fix: Linux script DownloadUpdates.sh threw misleading connection timeout errors (Thanks to J. Steffens)
+- Fix: Linux script DownloadUpdates.sh attempted invalid dos2unix calls II (Thanks to "Spider-Mann")

@@ -3,9 +3,11 @@
 Option Explicit
 
 Private Const strWOUTempAdminName             = "WOUTempAdmin"
+Private Const strRegKeyRootCerts              = "HKLM\Software\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}\"
 Private Const strRegKeyIE                     = "HKLM\Software\Microsoft\Internet Explorer\"
 Private Const strRegKeyMDAC                   = "HKLM\Software\Microsoft\DataAccess\"
 Private Const strRegKeyDirectX                = "HKLM\Software\Microsoft\DirectX\"
+Private Const strRegKeyMSSL                   = "HKLM\Software\Microsoft\Silverlight\"
 Private Const strRegKeyDotNet35               = "HKLM\Software\Microsoft\NET Framework Setup\NDP\v3.5\"
 Private Const strRegKeyDotNet4                = "HKLM\Software\Microsoft\NET Framework Setup\NDP\v4\Full\"
 Private Const strRegKeyPowerShell             = "HKLM\Software\Microsoft\PowerShell\1\PowerShellEngine\"
@@ -14,7 +16,6 @@ Private Const strRegKeyMSSEUninstall          = "HKLM\Software\Microsoft\Windows
 Private Const strRegKeyMSSEDefs               = "HKLM\Software\Microsoft\Microsoft Antimalware\Signature Updates\"
 Private Const strRegKeyWD                     = "HKLM\Software\Microsoft\Windows Defender\"
 Private Const strRegKeyWDDefs                 = "HKLM\Software\Microsoft\Windows Defender\Signature Updates\"
-Private Const strRegKeyRootCerts              = "HKLM\Software\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}\"
 Private Const strRegKeyPowerCfg               = "HKCU\Control Panel\PowerCfg\"
 Private Const strRegValVersion                = "Version"
 Private Const strRegValDisplayVersion         = "DisplayVersion"
@@ -468,6 +469,9 @@ WriteVersionToFile objCmdFile, "MDAC_VER", RegRead(wshShell, strRegKeyMDAC & str
 ' Determine Microsoft DirectX version
 WriteVersionToFile objCmdFile, "DX_CORE_VER", RegRead(wshShell, strRegKeyDirectX & strRegValVersion)
 WriteDXNameToFile objCmdFile, RegRead(wshShell, strRegKeyDirectX & strRegValVersion)
+
+' Determine Microsoft Silverlight version
+WriteVersionToFile objCmdFile, "MSSL_VER", RegRead(wshShell, strRegKeyMSSL & strRegValVersion)
 
 ' Determine Microsoft .NET Framework 3.5 SP1 installation state
 WriteVersionToFile objCmdFile, "DOTNET35_VER", RegRead(wshShell, strRegKeyDotNet35 & strRegValVersion)
