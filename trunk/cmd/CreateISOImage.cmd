@@ -44,6 +44,7 @@ if /i "%2"=="/excludesp" set EXC_SP=1
 if /i "%2"=="/includedotnet" set INC_DOTNET=1
 if /i "%2"=="/includemsse" set INC_MSSE=1
 if /i "%2"=="/includewddefs" set INC_WDDEFS=1
+if /i "%2"=="/skiphashes" set SKIP_HASHES=1
 if /i "%2"=="/outputpath" (
   if %3~==~ (goto InvalidParams) else (set OUTPUT_PATH=%~fs3)
   shift /2
@@ -57,6 +58,7 @@ if /i "%3"=="/excludesp" set EXC_SP=1
 if /i "%3"=="/includedotnet" set INC_DOTNET=1
 if /i "%3"=="/includemsse" set INC_MSSE=1
 if /i "%3"=="/includewddefs" set INC_WDDEFS=1
+if /i "%3"=="/skiphashes" set SKIP_HASHES=1
 if /i "%3"=="/outputpath" (
   if %4~==~ (goto InvalidParams) else (set OUTPUT_PATH=%~fs4)
   shift /3
@@ -159,6 +161,7 @@ if errorlevel 1 (
 )
 if exist %ISO_FILTER% del %ISO_FILTER%
 echo %DATE% %TIME% - Info: Created ISO image %OUTPUT_PATH%\%ISO_NAME%.iso >>%DOWNLOAD_LOGFILE%
+if "%SKIP_HASHES%"=="1" goto SkipHashes
 if exist ..\client\bin\%HASHDEEP_EXE% (
   echo Creating message digest file %OUTPUT_PATH%\%ISO_NAME%-hashes.txt...
   ..\client\bin\%HASHDEEP_EXE% -c md5,sha1,sha256 -b -j1 %OUTPUT_PATH%\%ISO_NAME%.iso >%OUTPUT_PATH%\%ISO_NAME%.mds
@@ -169,6 +172,7 @@ if exist ..\client\bin\%HASHDEEP_EXE% (
   echo Warning: Hash computing/auditing utility ..\client\bin\%HASHDEEP_EXE% not found.
   echo %DATE% %TIME% - Warning: Hash computing/auditing utility ..\client\bin\%HASHDEEP_EXE% not found >>%DOWNLOAD_LOGFILE%
 )
+:SkipHashes
 echo Done.
 goto EoF
 
@@ -181,8 +185,8 @@ exit /b 1
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %*
-echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| ofc} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/includedotnet] [/includemsse] [/includewddefs] [/outputpath ^<OutputPath^>]
-echo Usage2: %~n0 {all ^| all-x86 ^| all-x64 ^| wxp ^| w2k3 ^| w2k3-x64 ^| w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| ofc ^| enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/includedotnet] [/includemsse] [/includewddefs] [/outputpath ^<OutputPath^>]
+echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| ofc} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/includedotnet] [/includemsse] [/includewddefs] [/skiphashes] [/outputpath ^<OutputPath^>]
+echo Usage2: %~n0 {all ^| all-x86 ^| all-x64 ^| wxp ^| w2k3 ^| w2k3-x64 ^| w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| ofc ^| enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/includedotnet] [/includemsse] [/includewddefs] [/skiphashes] [/outputpath ^<OutputPath^>]
 echo %DATE% %TIME% - Error: Invalid parameter: %* >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error

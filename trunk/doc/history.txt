@@ -646,6 +646,7 @@ Version 7.3.2 -- 30.05.12
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
 - Optional installation/updating of Microsoft Silverlight
+- CreateISOImage.cmd script and UpdateGenerator.ini file now support "[/]skiphashes" switch to skip time-consuming hash computation of generated ISO files
 - HashDeep utility updated to version 4.2
 - InitializationHook.cmd calls moved upwards in DownloadUpdates.cmd and DoUpdate.cmd scripts (Thanks to S. Struﬂ) 
 - Fix: For Windows XP (x86) systems, kb2686509 was downloaded twice (Thanks to Th. Baisch)

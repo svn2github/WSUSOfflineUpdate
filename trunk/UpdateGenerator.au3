@@ -75,6 +75,7 @@ Dim Const $lang_token_nor           = "nor"
 Dim Const $lang_token_fin           = "fin"
 Dim Const $iso_token_cd             = "single"
 Dim Const $iso_token_dvd            = "cross-platform"
+Dim Const $iso_token_skiphashes     = "skiphashes"
 Dim Const $usb_token_copy           = "copy"
 Dim Const $usb_token_path           = "path"
 Dim Const $usb_token_cleanup        = "cleanup"
@@ -665,6 +666,9 @@ Dim $result = ""
   EndIf
   If IsCheckBoxChecked($chkbox_usbclean) Then
     $result = $result & " /cleanup"
+  EndIf
+  If IniRead($inifilename, $ini_section_iso, $iso_token_skiphashes, $disabled) = $enabled Then
+    $result = $result & " /skiphashes"
   EndIf
   Return $result
 EndFunc
