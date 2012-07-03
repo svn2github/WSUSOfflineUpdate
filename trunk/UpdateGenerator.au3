@@ -1548,9 +1548,9 @@ GUICtrlCreateGroup("Windows Vista / Server 2008", $txtxpos, $txtypos, $groupwidt
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
 If ShowGUIInGerman() Then
-  $w60_glb = GUICtrlCreateCheckbox("Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
+  $w60_glb = GUICtrlCreateCheckbox("x86 Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
 Else
-  $w60_glb = GUICtrlCreateCheckbox("Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
+  $w60_glb = GUICtrlCreateCheckbox("x86 Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
 EndIf
 If IniRead($inifilename, $ini_section_w60, $lang_token_glb, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
@@ -1578,9 +1578,9 @@ GUICtrlCreateGroup("Windows 7 / Server 2008 R2", $txtxpos, $txtypos, $groupwidth
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
 If ShowGUIInGerman() Then
-  $w61_glb = GUICtrlCreateCheckbox("Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
+  $w61_glb = GUICtrlCreateCheckbox("x86 Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
 Else
-  $w61_glb = GUICtrlCreateCheckbox("Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
+  $w61_glb = GUICtrlCreateCheckbox("x86 Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
 EndIf
 If IniRead($inifilename, $ini_section_w61, $lang_token_glb, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)

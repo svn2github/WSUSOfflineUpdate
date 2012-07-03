@@ -78,6 +78,7 @@ set WMP_TARGET_ID=wmp11-windowsxp-x86
 set TSC_VER_TARGET_MAJOR=6
 set TSC_VER_TARGET_MINOR=1
 set TSC_TARGET_ID=969084
+set WOU_ENDLESS=3
 goto SetOfficeName
 
 :Windows5.2
@@ -106,6 +107,7 @@ if /i "%OS_ARCH%"=="x64" (
   set TSC_VER_TARGET_MINOR=0
   set TSC_TARGET_ID=925876
 )
+set WOU_ENDLESS=3
 goto SetOfficeName
 
 :Windows6.0
@@ -127,6 +129,7 @@ if %OS_DOMAIN_ROLE% LEQ 1 (
   set TSC_VER_TARGET_MAJOR=6
   set TSC_VER_TARGET_MINOR=0
 )
+set WOU_ENDLESS=6
 goto Windows%OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_SP_VER_MAJOR%
 :Windows6.0.
 :Windows6.0.0
@@ -152,6 +155,7 @@ if /i "%1"=="/instie9" (set IE_VER_TARGET_MAJOR=9) else (set IE_VER_TARGET_MAJOR
 set WMP_VER_TARGET_MAJOR=12
 set TSC_VER_TARGET_MAJOR=6
 set TSC_VER_TARGET_MINOR=1
+set WOU_ENDLESS=4
 goto SetOfficeName
 
 :SetOfficeName

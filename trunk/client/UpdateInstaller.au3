@@ -779,19 +779,6 @@ If ( (StringRight(EnvGet("TEMP"), 1) = "\") OR (StringRight(EnvGet("TEMP"), 1) =
     Exit(1)
   EndIf
 EndIf
-If ( ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND (StringInStr(@OSServicePack, "Service Pack 2") = 0) ) _
-  OR ( ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) AND (StringInStr(@OSServicePack, "Service Pack 1") = 0) ) ) Then
-  If ShowGUIInGerman() Then
-    MsgBox(0x2040, "Information", "Unter Windows Vista / 7 / Server 2008(R2) müssen Sie" _
-                          & @LF & "die Installation der Updates" _
-                          & @LF & "nach der Installation des/der Service Packs" _
-                          & @LF & "und dem obligaten Neustart manuell wiederaufnehmen.")
-  Else
-    MsgBox(0x2040, "Information", "Under Windows Vista / 7 / Server 2008(R2), you have to" _
-                          & @LF & "manually resume the installation of updates" _
-                          & @LF & "after Service Pack installation and mandatory reboot.")
-  EndIf
-EndIf
 While 1
   Switch GUIGetMsg()
     Case $GUI_EVENT_CLOSE    ; Window closed

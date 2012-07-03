@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.3.2+ (r368)
+set WSUSOFFLINE_VERSION=7.3.2+ (r369)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -67,17 +67,6 @@ set REG_PATH=%SystemRoot%\system32\reg.exe
 if "%BOOT_MODE%"=="/autoreboot" (if not exist %REG_PATH% goto NoReg)
 if "%SHOW_LOG%"=="/showlog" (if not exist %REG_PATH% goto NoReg)
 
-rem *** Check number of automatic recalls ***
-if "%USERNAME%"=="WOUTempAdmin" (
-  if exist "%TEMP%\wsusadmin-recall.3" goto EndlessLoop
-  if exist "%TEMP%\wsusadmin-recall.2" ren "%TEMP%\wsusadmin-recall.2" wsusadmin-recall.3
-  if exist "%TEMP%\wsusadmin-recall.1" (
-    ren "%TEMP%\wsusadmin-recall.1" wsusadmin-recall.2
-  ) else (
-    echo recall>"%TEMP%\wsusadmin-recall.1"
-  )
-)
-
 rem *** Check user's privileges ***
 echo Checking user's privileges...
 if not exist ..\bin\IfAdmin.exe goto NoIfAdmin
@@ -130,6 +119,18 @@ rem *** Set target environment variables ***
 call SetTargetEnvVars.cmd %INSTALL_IE%
 if errorlevel 1 goto Cleanup
 
+rem *** Check number of automatic recalls ***
+if "%USERNAME%"=="WOUTempAdmin" (
+  echo Checking number of automatic recalls...
+  if exist "%TEMP%\wourecall.%WOU_ENDLESS%" goto EndlessLoop
+  if exist "%TEMP%\wourecall.5" ren "%TEMP%\wourecall.5" wourecall.6
+  if exist "%TEMP%\wourecall.4" ren "%TEMP%\wourecall.4" wourecall.5
+  if exist "%TEMP%\wourecall.3" ren "%TEMP%\wourecall.3" wourecall.4
+  if exist "%TEMP%\wourecall.2" ren "%TEMP%\wourecall.2" wourecall.3
+  if exist "%TEMP%\wourecall.1" ren "%TEMP%\wourecall.1" wourecall.2
+  if not exist "%TEMP%\wourecall.*" echo recall>"%TEMP%\wourecall.1"
+)
+
 rem *** Check Operating System ***
 if "%OS_NAME%"=="" goto UnsupOS
 if "%OS_NAME%"=="w2k" goto UnsupOS
@@ -139,7 +140,7 @@ goto UnsupArch
 
 rem *** Adjust power management settings ***
 if "%USERNAME%" NEQ "WOUTempAdmin" goto SkipPowerCfg
-if not exist "%TEMP%\wsusadmin-recall.1" goto SkipPowerCfg
+if not exist "%TEMP%\wourecall.1" goto SkipPowerCfg
 rem *** Disable Screensaver for WOUTempAdmin ***
 %REG_PATH% ADD "HKCU\Control Panel\Desktop" /v ScreenSaveActive /t REG_SZ /d 0 /f
 if "%PWR_POL_IDX%"=="" goto SkipPowerCfg
@@ -324,6 +325,12 @@ goto Installed
 
 :SPw60
 :SPw61
+if "%BOOT_MODE%" NEQ "/autoreboot" goto SPw6Now
+if "%USERNAME%"=="WOUTempAdmin" goto SPw6Now
+echo %DATE% %TIME% - Info: Preparing installation of most recent Service Pack for Windows Vista / 7 >>%UPDATE_LOGFILE%
+set RECALL_REQUIRED=1
+goto Installed
+:SPw6Now
 echo %DATE% %TIME% - Info: Installing most recent Service Pack for Windows Vista / 7 >>%UPDATE_LOGFILE%
 call InstallListedUpdates.cmd %VERIFY_MODE% /unattend /forcerestart
 if errorlevel 1 goto InstError
@@ -1248,7 +1255,7 @@ if "%RECALL_REQUIRED%"=="1" (
     if "%USERNAME%"=="WOUTempAdmin" (
       echo Cleaning up automatic recall...
       call CleanupRecall.cmd
-      del /Q "%TEMP%\wsusadmin-recall.*"
+      del /Q "%TEMP%\wourecall.*"
     )
     if "%FINISH_MODE%"=="/shutdown" (
       echo Shutting down...
@@ -1439,7 +1446,7 @@ if "%USERNAME%"=="WOUTempAdmin" (
   if "%SHOW_LOG%"=="/showlog" call PrepareShowLogFile.cmd
   echo Cleaning up automatic recall...
   call CleanupRecall.cmd
-  del /Q "%TEMP%\wsusadmin-recall.*"
+  del /Q "%TEMP%\wourecall.*"
   if exist %SystemRoot%\system32\bcdedit.exe (
     echo Adjusting boot sequence for next reboot...
     %SystemRoot%\system32\bcdedit.exe /bootsequence {current}
