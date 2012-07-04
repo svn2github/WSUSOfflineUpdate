@@ -647,6 +647,7 @@ Version 7.3.2 -- 30.05.12
 Version ?.? -- ??.??.??
 - Automatic recall feature enhanced to support Service Pack installations on Windows Vista, 7 and Server 2008(R2) systems
 - Optional installation/updating of Microsoft Silverlight
+- HTTP Proxy password storage to UpdateGenerator.ini file may now be avoided (Thanks to "Mortimer")
 - CreateISOImage.cmd script and UpdateGenerator.ini file now support "[/]skiphashes" switch to skip time-consuming hash computation of generated ISO files
 - HashDeep utility updated to version 4.2
 - InitializationHook.cmd calls moved upwards in DownloadUpdates.cmd and DoUpdate.cmd scripts (Thanks to S. Struﬂ) 
