@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 7.3.2
+WSUS Offline Update 7.4
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -644,7 +644,7 @@ Version 7.3.2 -- 30.05.12
 - Fix: Windows Defender definition files were attempted to be updated even if Windows Defender was disabled (Thanks to "Denniss" and "aker")
 - Fix: Network drive reconnection during recall failed on English systems (Thanks to J. Holland)
 --------------------------------------------------------------------------------
-Version ?.? -- ??.??.??
+Version 7.4 -- 05.07.12
 - Automatic recall feature enhanced to support Service Pack installations on Windows Vista, 7 and Server 2008(R2) systems
 - Optional installation/updating of Microsoft Silverlight
 - HTTP Proxy password storage to UpdateGenerator.ini file may now be avoided (Thanks to "Mortimer")
@@ -654,3 +654,4 @@ Version ?.? -- ??.??.??
 - Fix: For Windows XP (x86) systems, kb2686509 was downloaded twice (Thanks to Th. Baisch)
 - Fix: Linux script DownloadUpdates.sh threw misleading connection timeout errors (Thanks to J. Steffens)
 - Fix: Linux script DownloadUpdates.sh attempted invalid dos2unix calls II (Thanks to "Spider-Mann")
+--------------------------------------------------------------------------------
