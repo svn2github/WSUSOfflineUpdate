@@ -655,3 +655,5 @@ Version 7.4 -- 05.07.12
 - Fix: Linux script DownloadUpdates.sh threw misleading connection timeout errors (Thanks to J. Steffens)
 - Fix: Linux script DownloadUpdates.sh attempted invalid dos2unix calls II (Thanks to "Spider-Mann")
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- Fix: Linux script DownloadUpdates.sh contained invalid Windows (<CR><LF>) instead of Unix (<LF>) line feeds (Thanks to Ch. Grafe)
