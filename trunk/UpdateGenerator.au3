@@ -137,7 +137,7 @@ Dim $w60_glb, $w60_x64_glb                              ; Windows Vista / Window
 Dim $w61_glb, $w61_x64_glb                              ; Windows 7 / Windows Server 2008 R2 (global)
 Dim $ofc_glb                                            ; Office (global)
 
-Dim $dlgheight, $groupwidth, $groupheight, $txtwidth, $txtheight, $slimheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
+Dim $dlgheight, $groupwidth, $groupheight, $txtwidth, $txtheight, $slimheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos, $runany
 
 Func ShowGUIInGerman()
   If ($CmdLine[0] > 0) Then
@@ -678,6 +678,7 @@ Dim $result = ""
   If IsCheckBoxChecked($chkbox_usbclean) Then
     $result = $result & " /cleanup"
   EndIf
+  $result = $result & " /exitonerror"
   If IniRead($inifilename, $ini_section_iso, $iso_token_skiphashes, $disabled) = $enabled Then
     $result = $result & " /skiphashes"
   EndIf
@@ -752,6 +753,7 @@ Dim $result
     $result = @error
   EndIf
   If $result = 0 Then
+    $runany = True
     If ShowGUIInGerman() Then
       GUICtrlSetData($buildlbl, "Letzter Download: " & LastDownloadRun())
     Else
@@ -793,7 +795,9 @@ Dim $result
   If $result = 0 Then
     $result = @error
   EndIf
-  If $result <> 0 Then
+  If $result = 0 Then
+    $runany = True
+  Else
     WinSetState($maindlg, $maindlg, @SW_RESTORE)
     If ShowGUIInGerman() Then
       MsgBox(0x2010, "Fehler", "Fehler beim Erstellen des ISO-Images für " & $stroptions & ".")
@@ -823,7 +827,9 @@ Dim $result
   If $result = 0 Then
     $result = @error
   EndIf
-  If $result <> 0 Then
+  If $result = 0 Then
+    $runany = True
+  Else
     WinSetState($maindlg, $maindlg, @SW_RESTORE)
     If ShowGUIInGerman() Then
       MsgBox(0x2010, "Fehler", "Fehler beim Kopieren der Dateien für " & $stroptions & ".")
@@ -2469,6 +2475,9 @@ EndIf
 If IniRead($inifilename, $ini_section_misc, $misc_token_skipdownload, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_DISABLE)
 EndIf
+If NOT (IsCheckBoxChecked($cdiso) OR IsCheckBoxChecked($dvdiso) OR IsCheckBoxChecked($usbcopy)) Then
+  GUICtrlSetState(-1, $GUI_DISABLE)
+EndIf
 
 ;  Shutdown checkbox
 If ShowGUIInGerman() Then
@@ -2606,6 +2615,30 @@ While 1
         EndIf
       EndIf
 
+    Case $cdiso             ; CD ISO image button pressed
+      If (IsCheckBoxChecked($cdiso) OR IsCheckBoxChecked($dvdiso) OR IsCheckBoxChecked($usbcopy)) Then
+        GUICtrlSetState($imageonly, $GUI_ENABLE)
+      Else
+        GUICtrlSetState($imageonly, $GUI_UNCHECKED + $GUI_DISABLE)
+        If IniRead($inifilename, $ini_section_misc, $misc_token_skipdownload, $disabled) = $disabled Then
+          GUICtrlSetState($cleanupdownloads, $GUI_ENABLE)
+          GUICtrlSetState($verifydownloads, $GUI_ENABLE)
+          GUICtrlSetState($shutdown, $GUI_ENABLE)
+        EndIf
+      EndIf
+
+    Case $dvdiso            ; DVD ISO image button pressed
+      If (IsCheckBoxChecked($cdiso) OR IsCheckBoxChecked($dvdiso) OR IsCheckBoxChecked($usbcopy)) Then
+        GUICtrlSetState($imageonly, $GUI_ENABLE)
+      Else
+        GUICtrlSetState($imageonly, $GUI_UNCHECKED + $GUI_DISABLE)
+        If IniRead($inifilename, $ini_section_misc, $misc_token_skipdownload, $disabled) = $disabled Then
+          GUICtrlSetState($cleanupdownloads, $GUI_ENABLE)
+          GUICtrlSetState($verifydownloads, $GUI_ENABLE)
+          GUICtrlSetState($shutdown, $GUI_ENABLE)
+        EndIf
+      EndIf
+
     Case $usbcopy           ; USB copy button pressed
       If IsCheckBoxChecked($usbcopy) Then
         GUICtrlSetState($usbpath, $GUI_ENABLE)
@@ -2615,6 +2648,16 @@ While 1
         GUICtrlSetState($usbpath, $GUI_DISABLE)
         GUICtrlSetState($usbfsf, $GUI_DISABLE)
         GUICtrlSetState($usbclean, $GUI_DISABLE)
+      EndIf
+      If (IsCheckBoxChecked($cdiso) OR IsCheckBoxChecked($dvdiso) OR IsCheckBoxChecked($usbcopy)) Then
+        GUICtrlSetState($imageonly, $GUI_ENABLE)
+      Else
+        GUICtrlSetState($imageonly, $GUI_UNCHECKED + $GUI_DISABLE)
+        If IniRead($inifilename, $ini_section_misc, $misc_token_skipdownload, $disabled) = $disabled Then
+          GUICtrlSetState($cleanupdownloads, $GUI_ENABLE)
+          GUICtrlSetState($verifydownloads, $GUI_ENABLE)
+          GUICtrlSetState($shutdown, $GUI_ENABLE)
+        EndIf
       EndIf
 
     Case $usbfsf            ; FSF button pressed
@@ -2707,6 +2750,7 @@ While 1
       RunDonationSite()
 
     Case $btn_start         ; Start button pressed
+      $runany = False
       If NOT IsCheckBoxChecked($imageonly) Then
         If ( (StringInStr($proxy, ":@") > 0) AND ($proxypwd = "") ) Then
           If ShowGUIInGerman() Then
@@ -3679,27 +3723,35 @@ While 1
 
 ;  Restore window and show success dialog
       WinSetState($maindlg, $maindlg, @SW_RESTORE)
-      If IsCheckBoxChecked($imageonly) Then
-        If ShowGUIInGerman() Then
-          MsgBox(0x2040, "Info", "Image-Erstellung / Kopieren erfolgreich.")
+      If ($runany) Then
+        If IsCheckBoxChecked($imageonly) Then
+          If ShowGUIInGerman() Then
+            MsgBox(0x2040, "Info", "Image-Erstellung / Kopieren erfolgreich.")
+          Else
+            MsgBox(0x2040, "Info", "Image creation / copying successful.")
+          EndIf
         Else
-          MsgBox(0x2040, "Info", "Image creation / copying successful.")
+          If IsCheckBoxChecked($shutdown) Then
+            Run(@SystemDir & "\shutdown.exe /s /f /t 5", @SystemDir, @SW_HIDE)
+            ExitLoop
+          EndIf
+          If ShowGUIInGerman() Then
+            If MsgBox(0x2044, "Info", "Herunterladen / Image-Erstellung / Kopieren erfolgreich." _
+                      & @LF & "Möchten Sie nun die Protokolldatei auf mögliche Warnungen prüfen?") = $msgbox_btn_yes Then
+              ShowLogFile()
+            EndIf
+          Else
+            If MsgBox(0x2044, "Info", "Download / image creation / copying successful." _
+                      & @LF & "Would you like to check the log file for possible warnings now?") = $msgbox_btn_yes Then
+              ShowLogFile()
+            EndIf
+          EndIf
         EndIf
       Else
-        If IsCheckBoxChecked($shutdown) Then
-          Run(@SystemDir & "\shutdown.exe /s /f /t 5", @SystemDir, @SW_HIDE)
-          ExitLoop
-        EndIf
         If ShowGUIInGerman() Then
-          If MsgBox(0x2044, "Info", "Herunterladen / Image-Erstellung / Kopieren erfolgreich." _
-                    & @LF & "Möchten Sie nun die Protokolldatei auf mögliche Warnungen prüfen?") = $msgbox_btn_yes Then
-            ShowLogFile()
-          EndIf
+          MsgBox(0x2040, "Info", "Nichts zu tun!")
         Else
-          If MsgBox(0x2044, "Info", "Download / image creation / copying successful." _
-                    & @LF & "Would you like to check the log file for possible warnings now?") = $msgbox_btn_yes Then
-            ShowLogFile()
-          EndIf
+          MsgBox(0x2040, "Info", "Nothing to do!")
         EndIf
       EndIf
 

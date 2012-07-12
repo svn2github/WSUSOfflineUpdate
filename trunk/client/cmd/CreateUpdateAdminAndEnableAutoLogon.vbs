@@ -10,7 +10,7 @@ Private Const strKeyAutologon30     = "HKCU\Software\Sysinternals\A\"
 Private Const strKeyAutologon31     = "HKCU\Software\Sysinternals\Autologon\"
 Private Const strValAcceptEula      = "EulaAccepted"
 
-Dim wshShell, strComputerName, objComputer, objUser, strPassword, found
+Dim wshShell, strComputerName, objComputer, objUser, found
 
 Private Function CreateUpdateAdmin(objComp)
 Dim objWMIService, objWOUTempAdmin, objGroup, objItem, strResult
@@ -61,6 +61,5 @@ If found Then
   WScript.Echo("ERROR: User account '" & strWOUTempAdminName & "' already exists.")
   WScript.Quit(1)
 End If
-strPassword = CreateUpdateAdmin(objComputer)
-EnableAutoLogonAndDisableUAC wshShell, strWOUTempAdminName, strComputerName, strPassword
+EnableAutoLogonAndDisableUAC wshShell, strWOUTempAdminName, strComputerName, CreateUpdateAdmin(objComputer)
 WScript.Quit(0)

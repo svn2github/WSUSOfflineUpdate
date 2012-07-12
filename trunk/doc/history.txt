@@ -656,5 +656,7 @@ Version 7.4 -- 05.07.12
 - Fix: Linux script DownloadUpdates.sh attempted invalid dos2unix calls II (Thanks to "Spider-Mann")
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
+- UpdateGenerator GUI logic improved 
 - Fix: For Windows XP (x86) systems, an invalid version of kb2686509 was downloaded (Thanks to "Aldegundis", "mbathen", "aker" and "harry")
+- Fix: Error handling in CreateISOImage.cmd and CopyToTarget.cmd scripts corrected
 - Fix: Linux script DownloadUpdates.sh contained invalid Windows (<CR><LF>) instead of Unix (<LF>) line feeds (Thanks to Ch. Grafe)

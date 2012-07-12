@@ -44,6 +44,7 @@ if /i "%2"=="/excludesp" set EXC_SP=1
 if /i "%2"=="/includedotnet" set INC_DOTNET=1
 if /i "%2"=="/includemsse" set INC_MSSE=1
 if /i "%2"=="/includewddefs" set INC_WDDEFS=1
+if /i "%2"=="/exitonerror" set EXIT_ERR=1
 if /i "%2"=="/skiphashes" set SKIP_HASHES=1
 if /i "%2"=="/outputpath" (
   if %3~==~ (goto InvalidParams) else (set OUTPUT_PATH=%~fs3)
@@ -58,6 +59,7 @@ if /i "%3"=="/excludesp" set EXC_SP=1
 if /i "%3"=="/includedotnet" set INC_DOTNET=1
 if /i "%3"=="/includemsse" set INC_MSSE=1
 if /i "%3"=="/includewddefs" set INC_WDDEFS=1
+if /i "%3"=="/exitonerror" set EXIT_ERR=1
 if /i "%3"=="/skiphashes" set SKIP_HASHES=1
 if /i "%3"=="/outputpath" (
   if %4~==~ (goto InvalidParams) else (set OUTPUT_PATH=%~fs4)
@@ -213,10 +215,19 @@ echo.
 goto Error
 
 :Error
-set MKISO_ERROR=1
+if "%EXIT_ERR%"=="1" (
+  endlocal
+  pause
+  verify other 2>nul
+  exit
+) else (
+  title %ComSpec%
+  endlocal
+  verify other 2>nul
+  goto :eof
+)
 
 :EoF
 echo %DATE% %TIME% - Info: Ending ISO image creation for %1 %2 %3 %4 %5 %6 %7 %8 %9 >>%DOWNLOAD_LOGFILE%
 title %ComSpec%
-if "%MKISO_ERROR%"=="1" verify other 2>nul
 endlocal

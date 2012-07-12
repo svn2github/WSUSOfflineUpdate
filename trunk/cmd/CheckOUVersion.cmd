@@ -12,7 +12,7 @@ if not exist %WGET_PATH% goto NoWGet
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-if /i "%1"=="/exitonerror" set EXIT_ON_ERROR=1
+if /i "%1"=="/exitonerror" set EXIT_ERR=1
 if /i "%1"=="/proxy" (
   set http_proxy=%2
   shift /1
@@ -61,7 +61,7 @@ echo.
 goto Error
 
 :Error
-if "%EXIT_ON_ERROR%"=="1" (
+if "%EXIT_ERR%"=="1" (
   endlocal
   verify other 2>nul
   exit

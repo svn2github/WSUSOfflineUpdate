@@ -49,6 +49,7 @@ if /i "%2"=="/includedotnet" set INC_DOTNET=1
 if /i "%2"=="/includemsse" set INC_MSSE=1
 if /i "%2"=="/includewddefs" set INC_WDDEFS=1
 if /i "%2"=="/cleanup" set CLEANUP=1
+if /i "%2"=="/exitonerror" set EXIT_ERR=1
 shift /2
 goto V1EvalParams
 
@@ -63,6 +64,7 @@ if /i "%3"=="/includedotnet" set INC_DOTNET=1
 if /i "%3"=="/includemsse" set INC_MSSE=1
 if /i "%3"=="/includewddefs" set INC_WDDEFS=1
 if /i "%3"=="/cleanup" set CLEANUP=1
+if /i "%3"=="/exitonerror" set EXIT_ERR=1
 shift /3
 goto V2EvalParams
 
@@ -195,10 +197,19 @@ echo.
 goto Error
 
 :Error
-set COPY_ERROR=1
+if "%EXIT_ERR%"=="1" (
+  endlocal
+  pause
+  verify other 2>nul
+  exit
+) else (
+  title %ComSpec%
+  endlocal
+  verify other 2>nul
+  goto :eof
+)
 
 :EoF
 echo %DATE% %TIME% - Info: Ending copying for %1 %2 %3 %4 %5 %6 %7 %8 %9 >>%DOWNLOAD_LOGFILE%
 title %ComSpec%
-if "%COPY_ERROR%"=="1" verify other 2>nul
 endlocal
