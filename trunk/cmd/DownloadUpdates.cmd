@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.4+ (r375)
+set WSUSOFFLINE_VERSION=7.4+ (r376)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -964,8 +964,11 @@ if errorlevel 1 goto DownloadError
 %SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\SupersededFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\SupersededCabExeIdsAndLocations.txt"
 del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 del "%TEMP%\SupersededFileIdsUnique.txt"
-%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\SupersededCabExeIdsAndLocations.txt" ..\exclude\ExcludeList-superseded.txt /noids
+%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\SupersededCabExeIdsAndLocations.txt" "%TEMP%\ExcludeList-superseded-all.txt" /noids
 del "%TEMP%\SupersededCabExeIdsAndLocations.txt"
+%WGET_PATH% -N -P ..\exclude http://download.wsusoffline.net/ExcludeList-superseded-exclude.txt
+%SystemRoot%\system32\findstr.exe /L /I /V /G:..\exclude\ExcludeList-superseded-exclude.txt "%TEMP%\ExcludeList-superseded-all.txt" >..\exclude\ExcludeList-superseded.txt
+del "%TEMP%\ExcludeList-superseded-all.txt"
 %SystemRoot%\system32\attrib.exe -A ..\client\wsus\wsusscn2.cab
 echo %TIME% - Done.
 echo %DATE% %TIME% - Info: Determined superseded updates >>%DOWNLOAD_LOGFILE%
