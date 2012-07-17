@@ -3,12 +3,13 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                    v. 7.4+ (r376)                  ###
+###                    v. 7.4+ (r377)                  ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
 ###            Walter Schiessberg                      ###
 ###   modified by T. Wittrock                          ###
+###   Fixes: find, slackware by A. Klie                ###
 ##########################################################
 # Exit codes:
 # 0 - success
@@ -45,11 +46,11 @@ exit 1
 
 checkconfig()
 {
-C=`which cabextract 2> /dev/null`
-M=`which md5deep 2> /dev/null`
-S=`which xmlstarlet 2> /dev/null`
-T=`which xml 2> /dev/null`
-D=`which dos2unix 2> /dev/null`
+C=$(which cabextract 2> /dev/null)
+M=$(which md5deep 2> /dev/null)
+S=$(which xmlstarlet 2> /dev/null)
+T=$(which xml 2> /dev/null)
+D=$(which dos2unix 2> /dev/null)
 D2=$(which fromdos 2> /dev/null)
 xml=""
 
@@ -112,14 +113,10 @@ else
   fi
 fi
 
-if [ ! -x "$D" ] && [ ! -x "$D2" ]; then
 # neu, fuer Slackware
-test -s /etc/slackware-version && {
-  alias dos2unix='recode ibmpc..lat1'
-  return 0
-}
-# Ende Slackware-Einschub
-cat << END
+if [ ! -x "$D" ] && [ ! -x "$D2" ]; then
+  if [ ! -f "/etc/slackware-version" ]; then
+     cat << END
 
 Please install dos2unix.
 
@@ -133,11 +130,16 @@ Command in SuSE:
 zypper install dos2unix
 
 END
-  exit 1
+    exit 1
+  else
+    alias dos2unix=`recode ibmpc..lat1`
+    shopt -s expand_aliases
+  fi
 fi
+# Ende Slackware-Einschub
+
 # fromdos vorhanden --> alias anlegen
-if [[ "$D{2}" && ! -x "${D}" ]]
- then
+if [ "${D2}" ] && [! -x "${D}" ]; then
   alias dos2unix=$(which fromdos)
   # alias-Ausfuehrung in shell erlauben
   shopt -s expand_aliases
@@ -522,7 +524,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                    v. 7.4+ (r376)                  ***
+***                    v. 7.4+ (r377)                  ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
