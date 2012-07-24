@@ -16,18 +16,13 @@ if exist %SystemRoot%\woubak-winlogon.reg (
   echo Restoring Winlogon registry hive...
   %REG_PATH% DELETE "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /va /f >nul 2>&1
   %REG_PATH% IMPORT %SystemRoot%\woubak-winlogon.reg >nul 2>&1
-  if errorlevel 1 (
-    echo Warning: Restore of Winlogon registry hive failed.
-    echo %DATE% %TIME% - Warning: Restore of Winlogon registry hive failed >>%UPDATE_LOGFILE%
-  ) else (
-    del %SystemRoot%\woubak-winlogon.reg
-    echo %DATE% %TIME% - Info: Restored Winlogon registry hive >>%UPDATE_LOGFILE%
-  )
+  del %SystemRoot%\woubak-winlogon.reg
+  echo %DATE% %TIME% - Info: Restored Winlogon registry hive >>%UPDATE_LOGFILE%
 )
 
 if exist %SystemRoot%\woubak-system-policies.reg (
   echo Restoring System policies registry hive...
-  %REG_PATH% DELETE "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /va /f >nul 2>&1
+  %REG_PATH% DELETE "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /f >nul 2>&1
   %REG_PATH% IMPORT %SystemRoot%\woubak-system-policies.reg >nul 2>&1
   if errorlevel 1 (
     echo Warning: Restore of System policies registry hive failed.

@@ -656,7 +656,8 @@ Version 7.4 -- 05.07.12
 - Fix: Linux script DownloadUpdates.sh attempted invalid dos2unix calls II (Thanks to "Spider-Mann")
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
-- UpdateGenerator GUI logic improved 
+- UpdateGenerator GUI logic improved
+- Installation part will now suppress Winlogon Legal Notice during automatic recalls (Thanks to "Mortimer" and "aker") 
 - Fix: For Windows XP (x86) systems, an invalid version of kb2686509 was downloaded (Thanks to "Aldegundis", "mbathen", "aker" and "harry")
 - Fix: Download part missed Security Update kb2645640 for Windows Server 2003 (x86/x64)
 - Fix: Error handling in CreateISOImage.cmd and CopyToTarget.cmd scripts corrected

@@ -7,10 +7,8 @@ if "%OS_NAME%"=="" goto NoOSName
 if "%REG_PATH%"=="" goto NoRegPath
 if "%CSCRIPT_PATH%"=="" goto NoCScriptPath
 
-if "%OS_NAME%"=="w60" goto SkipWinlogon
-if "%OS_NAME%"=="w61" goto SkipWinlogon
 echo Saving Winlogon registry hive...
-%REG_PATH% EXPORT "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" %SystemRoot%\woubak-winlogon.reg >nul 2>&1
+%REG_PATH% EXPORT "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" %SystemRoot%\woubak-winlogon.reg /y >nul 2>&1
 if errorlevel 1 (
   echo ERROR: Saving of Winlogon registry hive failed.
   echo %DATE% %TIME% - Error: Saving of Winlogon registry hive failed >>%UPDATE_LOGFILE%
@@ -18,10 +16,20 @@ if errorlevel 1 (
 ) else (
   echo %DATE% %TIME% - Info: Saved Winlogon registry hive >>%UPDATE_LOGFILE%
 )
-:SkipWinlogon
+
+echo Suppressing Winlogon Legal Notice...
+%REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v LegalNoticeCaption /t REG_SZ /d "" /f >nul 2>&1
+%REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v LegalNoticeText /t REG_SZ /d "" /f >nul 2>&1
+if errorlevel 1 (
+  echo ERROR: Suppressing of Winlogon Legal Notice failed.
+  echo %DATE% %TIME% - Error: Suppressing of Winlogon Legal Notice failed >>%UPDATE_LOGFILE%
+  goto Error
+) else (
+  echo %DATE% %TIME% - Info: Suppressed Winlogon Legal Notice >>%UPDATE_LOGFILE%
+)
 
 echo Saving System policies registry hive...
-%REG_PATH% EXPORT "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" %SystemRoot%\woubak-system-policies.reg >nul 2>&1
+%REG_PATH% EXPORT "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" %SystemRoot%\woubak-system-policies.reg /y >nul 2>&1
 if errorlevel 1 (
   echo %DATE% %TIME% - Info: Saving of System policies registry hive failed >>%UPDATE_LOGFILE%
 ) else (
