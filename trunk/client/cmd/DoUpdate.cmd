@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.4+ (r378)
+set WSUSOFFLINE_VERSION=7.4+ (r379)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -820,7 +820,6 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
 set RECALL_REQUIRED=1
 set DOTNET35_FILENAME=
 set DOTNET35LP_FILENAME=
-goto Installed
 :SkipDotNet35Inst
 
 rem *** Install .NET Framework 4 ***
@@ -884,6 +883,7 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
   call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
 )
 :SkipDotNetCustomInst
+if "%RECALL_REQUIRED%"=="1" goto Installed
 
 rem *** Install Windows PowerShell 2.0 ***
 if "%INSTALL_PSH%" NEQ "/instpsh" goto SkipPShInst
