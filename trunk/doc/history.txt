@@ -658,6 +658,7 @@ Version 7.4 -- 05.07.12
 Version ?.? -- ??.??.??
 - UpdateGenerator GUI logic improved
 - Installation part will now suppress Winlogon Legal Notice during automatic recalls (Thanks to "Mortimer" and "aker") 
+- Fix: Microsoft removed the Command Line Transformation Utility (msxsl.exe) from their servers
 - Fix: For Windows XP (x86) systems, an invalid version of kb2686509 was downloaded (Thanks to "Aldegundis", "mbathen", "aker" and "harry")
 - Fix: Download part missed Security Update kb2645640 for Windows Server 2003 (x86/x64)
 - Fix: .NET 3.5 patches kb2657424 and kb2604111 could fail to install on Windows Vista systems (Thanks to R. Tolley)

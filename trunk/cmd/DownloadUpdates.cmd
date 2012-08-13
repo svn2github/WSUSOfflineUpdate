@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.4+ (r379)
+set WSUSOFFLINE_VERSION=7.4+ (r380)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -220,13 +220,14 @@ if exist DetermineAutoDaylightTimeSet.vbs del DetermineAutoDaylightTimeSet.vbs
 if exist ..\doc\faq.txt del ..\doc\faq.txt
 if exist ..\static\StaticDownloadLinks-mkisofs.txt del ..\static\StaticDownloadLinks-mkisofs.txt
 if exist ..\static\StaticDownloadLink-unzip.txt del ..\static\StaticDownloadLink-unzip.txt
+if exist ..\static\StaticDownloadLink-msxsl.txt del ..\static\StaticDownloadLink-msxsl.txt
 if exist ..\client\cmd\Reboot.vbs del ..\client\cmd\Reboot.vbs
 if exist ..\client\cmd\Shutdown.vbs del ..\client\cmd\Shutdown.vbs
 if exist ..\client\msi\nul rd /S /Q ..\client\msi
 if exist ..\client\static\StaticUpdateIds-ie9-w61.txt del ..\client\static\StaticUpdateIds-ie9-w61.txt
 
 rem *** Office 2000 stuff ***
-if exist ..\client\bin\msxsl.exe move /Y ..\client\bin\msxsl.exe ..\bin >nul
+if exist ..\client\bin\msxsl.exe del ..\client\bin\msxsl.exe
 if exist ..\client\xslt\nul rd /S /Q ..\client\xslt
 if exist ..\client\static\StaticUpdateIds-o2k.txt del ..\client\static\StaticUpdateIds-o2k.txt
 del /Q ..\exclude\ExcludeList*-o2k.txt >nul 2>&1
@@ -289,6 +290,7 @@ if exist ..\client\md\hashes-mssedefs.txt del ..\client\md\hashes-mssedefs.txt
 
 rem *** Obsolete external stuff ***
 if exist ..\bin\extract.exe del ..\bin\extract.exe
+if exist ..\bin\msxsl.exe del ..\bin\msxsl.exe
 if exist ..\sh\hashdeep del ..\sh\hashdeep
 if exist ..\static\StaticDownloadLink-extract.txt del ..\static\StaticDownloadLink-extract.txt
 if exist ..\static\StaticDownloadLink-sigcheck.txt del ..\static\StaticDownloadLink-sigcheck.txt
@@ -353,14 +355,6 @@ if exist ..\client\wxp\glb\rootsupd.exe (
   if exist ..\client\md\hashes-win-glb.txt del ..\client\md\hashes-win-glb.txt
   if exist ..\client\md\hashes-wxp-glb.txt del ..\client\md\hashes-wxp-glb.txt
 )
-
-rem *** Download Microsoft XSL processor frontend ***
-if exist ..\bin\msxsl.exe goto SkipMSXSL
-echo Downloading/validating Microsoft XSL processor frontend...
-%WGET_PATH% -N -i ..\static\StaticDownloadLink-msxsl.txt -P ..\bin
-if errorlevel 1 goto DownloadError
-echo %DATE% %TIME% - Info: Downloaded/validated Microsoft XSL processor frontend >>%DOWNLOAD_LOGFILE%
-:SkipMSXSL
 
 rem *** Download mkisofs tool ***
 if "%SKIP_DL%"=="1" goto SkipMkIsoFs
@@ -915,7 +909,6 @@ if "%4"=="/skipdynamic" (
   echo %DATE% %TIME% - Info: Skipped determination of dynamic update urls for %1 %2 on demand >>%DOWNLOAD_LOGFILE%
   goto DoDownload
 )
-if not exist ..\bin\msxsl.exe goto NoMSXSL
 rem *** Extract Microsoft's update catalog file package.xml ***
 echo Extracting Microsoft's update catalog file package.xml...
 if exist "%TEMP%\package.cab" del "%TEMP%\package.cab"
@@ -934,19 +927,19 @@ if exist ..\exclude\ExcludeList-superseded.txt (
   goto SkipSuperseded
 )
 echo %TIME% - Determining superseded updates (please be patient, this will take a while)...
-..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractUpdateRevisionIds.xsl -o "%TEMP%\ValidUpdateRevisionIds.txt"
+%CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractUpdateRevisionIds.xsl "%TEMP%\ValidUpdateRevisionIds.txt"
 if errorlevel 1 goto DownloadError
-..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractSupersedingRevisionIds.xsl -o "%TEMP%\SupersedingRevisionIds.txt"
+%CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractSupersedingRevisionIds.xsl "%TEMP%\SupersedingRevisionIds.txt"
 if errorlevel 1 goto DownloadError
 %SystemRoot%\system32\findstr.exe /L /G:"%TEMP%\SupersedingRevisionIds.txt" "%TEMP%\ValidUpdateRevisionIds.txt" >"%TEMP%\ValidSupersedingRevisionIds.txt"
 del "%TEMP%\ValidUpdateRevisionIds.txt"
 del "%TEMP%\SupersedingRevisionIds.txt"
-..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractSupersededUpdateRelations.xsl -o "%TEMP%\SupersededUpdateRelations.txt"
+%CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractSupersededUpdateRelations.xsl "%TEMP%\SupersededUpdateRelations.txt"
 if errorlevel 1 goto DownloadError
 %SystemRoot%\system32\findstr.exe /L /G:"%TEMP%\ValidSupersedingRevisionIds.txt" "%TEMP%\SupersededUpdateRelations.txt" >"%TEMP%\ValidSupersededUpdateRelations.txt"
 del "%TEMP%\SupersededUpdateRelations.txt"
 del "%TEMP%\ValidSupersedingRevisionIds.txt"
-..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractBundledUpdateRelationsAndFileIds.xsl -o "%TEMP%\BundledUpdateRelationsAndFileIds.txt"
+%CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractBundledUpdateRelationsAndFileIds.xsl "%TEMP%\BundledUpdateRelationsAndFileIds.txt"
 if errorlevel 1 goto DownloadError
 %CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\ValidSupersededUpdateRelations.txt" "%TEMP%\ValidSupersededRevisionIds.txt" /firstonly
 del "%TEMP%\ValidSupersededUpdateRelations.txt"
@@ -959,7 +952,7 @@ del "%TEMP%\SupersededRevisionAndFileIds.txt"
 del "%TEMP%\SupersededFileIds.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs ExtractUniqueFromSorted.vbs "%TEMP%\SupersededFileIdsSorted.txt" "%TEMP%\SupersededFileIdsUnique.txt"
 del "%TEMP%\SupersededFileIdsSorted.txt"
-..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractUpdateCabExeIdsAndLocations.xsl -o "%TEMP%\UpdateCabExeIdsAndLocations.txt"
+%CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractUpdateCabExeIdsAndLocations.xsl "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 if errorlevel 1 goto DownloadError
 %SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\SupersededFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\SupersededCabExeIdsAndLocations.txt"
 del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
@@ -982,11 +975,11 @@ goto DoDownload
 rem *** Determine dynamic update urls for %1 %2 ***
 echo %TIME% - Determining dynamic update urls for %1 %2...
 if exist ..\xslt\ExtractDownloadLinks-%1-%2.xsl (
-  ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractDownloadLinks-%1-%2.xsl -o "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
+  %CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractDownloadLinks-%1-%2.xsl "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
   if errorlevel 1 goto DownloadError
 )
 if exist ..\xslt\ExtractDownloadLinks-%1-%3-%2.xsl (
-  ..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractDownloadLinks-%1-%3-%2.xsl -o "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
+  %CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractDownloadLinks-%1-%3-%2.xsl "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
   if errorlevel 1 goto DownloadError
 )
 del "%TEMP%\package.xml"
@@ -1018,9 +1011,9 @@ goto DoDownload
 :DetermineOffice
 rem *** Determine dynamic update urls for %1 %2 ***
 echo %TIME% - Determining dynamic update urls for %1 %2 (please be patient, this will take a while)...
-..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractUpdateCategoriesAndFileIds.xsl -o "%TEMP%\UpdateCategoriesAndFileIds.txt"
+%CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractUpdateCategoriesAndFileIds.xsl "%TEMP%\UpdateCategoriesAndFileIds.txt"
 if errorlevel 1 goto DownloadError
-..\bin\msxsl.exe "%TEMP%\package.xml" ..\xslt\ExtractUpdateCabExeIdsAndLocations.xsl -o "%TEMP%\UpdateCabExeIdsAndLocations.txt"
+%CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractUpdateCabExeIdsAndLocations.xsl "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 if errorlevel 1 goto DownloadError
 del "%TEMP%\package.xml"
 
@@ -1389,13 +1382,6 @@ goto Error
 echo.
 echo ERROR: Utility ..\bin\unzip.exe not found.
 echo %DATE% %TIME% - Error: Utility ..\bin\unzip.exe not found >>%DOWNLOAD_LOGFILE%
-echo.
-goto Error
-
-:NoMSXSL
-echo.
-echo ERROR: Microsoft XSL processor frontend ..\bin\msxsl.exe not found.
-echo %DATE% %TIME% - Error: Microsoft XSL processor frontend ..\bin\msxsl.exe not found >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 

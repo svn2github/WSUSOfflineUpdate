@@ -1,7 +1,6 @@
 @echo off
 rem *** Author: T. Wittrock, Kiel ***
 
-if not exist "%TEMP%\msxsl.exe" .\bin\wget.exe -N -i .\static\StaticDownloadLink-msxsl.txt -P "%TEMP%"
 if not exist "%TEMP%\wsusscn2.cab" (
   .\bin\wget.exe -N -i .\static\StaticDownloadLinks-wsus.txt -P "%TEMP%"
   if exist "%TEMP%\wuredist.cab" del "%TEMP%\wuredist.cab"
@@ -14,11 +13,10 @@ if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
 %SystemRoot%\system32\expand.exe "%TEMP%\package.cab" "%TEMP%\package.xml"
 del "%TEMP%\package.cab"
 
-"%TEMP%\msxsl.exe" "%TEMP%\package.xml" .\xslt\ExtractUpdateFileIdsAndLocations.xsl -o "%TEMP%\DownloadLinks-all.txt"
+%SystemRoot%\system32\cscript.exe //Nologo //B //E:vbs .\cmd\XSLT.vbs "%TEMP%\package.xml" .\xslt\ExtractUpdateFileIdsAndLocations.xsl "%TEMP%\DownloadLinks-all.txt"
 goto EoF
 
 del "%TEMP%\package.xml"
 del "%TEMP%\wsusscn2.cab"
-del "%TEMP%\msxsl.exe"
 
 :EoF
