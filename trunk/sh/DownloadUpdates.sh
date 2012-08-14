@@ -3,7 +3,7 @@
 ##########################################################
 ###           WSUS Offline Update Downloader           ###
 ###                  for Linux systems                 ###
-###                    v. 7.4+ (r380)                  ###
+###                      v. 7.4.1                      ###
 ###                                                    ###
 ###   http://www.wsusoffline.net/                      ###
 ###   Authors: Tobias Breitling, Stefan Joehnke,       ###
@@ -524,7 +524,7 @@ cat << END
 **********************************************************
 ***           WSUS Offline Update Downloader           ***
 ***                  for Linux systems                 ***
-***                    v. 7.4+ (r380)                  ***
+***                      v. 7.4.1                      ***
 ***                                                    ***
 ***   http://www.wsusoffline.net/                      ***
 ***   Authors: Tobias Breitling, Stefan Joehnke,       ***
@@ -1109,11 +1109,14 @@ fi
 
 if [ "$dotnet" == "1" ]; then
   echo "Downloading .Net framework..."
+  mkdir -p ../client/dotnet
   doWget -i ../temp/StaticUrls-dotnet.txt -P ../client/dotnet
   if echo $sys | grep x64 > /dev/null 2>&1; then
-   doWget -i ../temp/Urls-dotnet-x64.txt -P ../client/dotnet/x64-glb
+    mkdir -p ../client/dotnet/x64-glb
+    doWget -i ../temp/Urls-dotnet-x64.txt -P ../client/dotnet/x64-glb
   else
-   doWget -i ../temp/Urls-dotnet-x86.txt -P ../client/dotnet/x86-glb
+    mkdir -p ../client/dotnet/x86-glb
+    doWget -i ../temp/Urls-dotnet-x86.txt -P ../client/dotnet/x86-glb
   fi
   echo "Downloading CPP files..."
   cppstring=`cat ../temp/StaticUrls-cpp-x86-glb.txt | grep ,`
@@ -1228,18 +1231,21 @@ fi
 
 if [ "$dotnet" == "1" ]; then
   echo "Validating .Net framework..."
+  mkdir -p ../client/dotnet
   doWget -i ../temp/StaticUrls-dotnet.txt -P ../client/dotnet
   echo "Creating integrity database for .Net ..."
   cd ../client/bin
   hashdeep -c md5,sha1,sha256 -l ../dotnet/*.exe | sed 's/\//\\/g' > ../md/hashes-dotnet.txt
   cd "$PATH_PWD"
   if echo $sys | grep x64 > /dev/null 2>&1; then
+    mkdir -p ../client/dotnet/x64-glb
     doWget -i ../temp/Urls-dotnet-x64.txt -P ../client/dotnet/x64-glb
     echo "Creating integrity database for .Net-x64-glb ..."
     cd ../client/bin
     hashdeep -c md5,sha1,sha256 -l -r ../dotnet/x64-glb | sed 's/\//\\/g' > ../md/hashes-dotnet-x64-glb.txt
     cd "$PATH_PWD"
   else
+    mkdir -p ../client/dotnet/x86-glb
     doWget -i ../temp/Urls-dotnet-x86.txt -P ../client/dotnet/x86-glb
     echo "Creating integrity database for .Net-x86-glb ..."
     cd ../client/bin

@@ -13,7 +13,7 @@ if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
 %SystemRoot%\system32\expand.exe "%TEMP%\package.cab" "%TEMP%\package.xml"
 del "%TEMP%\package.cab"
 
-%SystemRoot%\system32\cscript.exe //Nologo //B //E:vbs .\cmd\XSLT.vbs "%TEMP%\package.xml" .\xslt\ExtractUpdateFileIdsAndLocations.xsl "%TEMP%\DownloadLinks-all.txt"
+%SystemRoot%\system32\cscript.exe //Nologo //E:vbs .\cmd\XSLT.vbs "%TEMP%\package.xml" .\xslt\ExtractUpdateFileIdsAndLocations.xsl "%TEMP%\DownloadLinks-all.txt"
 goto EoF
 
 del "%TEMP%\package.xml"

@@ -31,8 +31,17 @@ If WScript.Arguments.Count = 3 Then
 Else
   strOutFileName = ""
 End If
-
-Set objXML = CreateObject("MSXML.DOMDocument")
+On Error Resume Next
+Set objXML = CreateObject("MSXML2.DOMDocument.6.0")
+If Err.Number = 0 Then
+  Set objXSL = CreateObject("MSXML2.DOMDocument.6.0")
+  WScript.Echo("XSLT uses MSXML 6.0")
+Else
+  Set objXML = CreateObject("MSXML.DOMDocument")
+  Set objXSL = CreateObject("MSXML.DOMDocument")
+  WScript.Echo("XSLT uses MSXML 3.0")
+End If
+On Error GoTo 0
 objXML.async = False
 objXML.validateOnParse = False
 objXML.Load strXMLFileName
@@ -40,7 +49,6 @@ If Err.Number <> 0 Then
   WScript.Echo("ERROR: Unable to load XML file '" & strXMLFileName & "'")
   WScript.Quit(1)
 End If
-Set objXSL = CreateObject("MSXML.DOMDocument")
 objXSL.async = False
 objXSL.validateOnParse = False
 objXSL.Load strXSLFileName
