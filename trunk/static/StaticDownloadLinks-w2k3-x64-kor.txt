@@ -1,3 +1,2 @@
 http://download.microsoft.com/download/2/E/2/2E22513E-3BAE-461C-ABEE-AB6EF93B4492/WindowsServer2003-KB968930-x64-KOR.exe
-http://download.microsoft.com/download/0/4/1/04126695-2f8d-4f83-b709-e2fe33af9987/WindowsDefenderX64.msi
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-ko-kr-kb2564958_e32d3f4a3f7ad638961343282484fbb3471b5ca8.exe

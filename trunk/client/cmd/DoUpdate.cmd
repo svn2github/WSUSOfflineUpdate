@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.4.1
+set WSUSOFFLINE_VERSION=7.4.2
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -25,7 +25,7 @@ echo %DATE% %TIME% - Info: Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/nobackup /verify /updatercerts /instie7 /instie8 /instie9 /updatecpp /updatedx /instmssl /updatewmp /updatetsc /instdotnet35 /instdotnet4 /instpsh /instmsse /instwd /instofc /instofv /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
+for %%i in (/nobackup /verify /updatercerts /instie7 /instie8 /instie9 /updatecpp /updatedx /instmssl /updatewmp /updatetsc /instdotnet35 /instdotnet4 /instpsh /instmsse /instofc /instofv /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected >>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/nobackup" set BACKUP_MODE=/nobackup
@@ -43,7 +43,6 @@ if /i "%1"=="/instdotnet35" set INSTALL_DOTNET35=/instdotnet35
 if /i "%1"=="/instdotnet4" set INSTALL_DOTNET4=/instdotnet4
 if /i "%1"=="/instpsh" set INSTALL_PSH=/instpsh
 if /i "%1"=="/instmsse" set INSTALL_MSSE=/instmsse
-if /i "%1"=="/instwd" set INSTALL_WD=/instwd
 if /i "%1"=="/instofc" set INSTALL_OFC=/instofc
 if /i "%1"=="/instofv" set INSTALL_OFV=/instofv
 if /i "%1"=="/autoreboot" set BOOT_MODE=/autoreboot
@@ -982,29 +981,10 @@ set MSSEDEFS_VER_TARGET_MINOR=
 set MSSEDEFS_VER_TARGET_REVIS=
 set MSSEDEFS_VER_TARGET_BUILD=
 
-rem *** Install Windows Defender ***
+rem *** Update Windows Defender definitions ***
 echo Checking Windows Defender installation state...
-if "%WD_INSTALLED%"=="1" goto CheckWDDefs
-if "%INSTALL_WD%" NEQ "/instwd" goto SkipWDInst
-if "%OS_NAME%"=="w60" goto SkipWDInst
-if "%OS_NAME%"=="w61" goto SkipWDInst
-:InstallWD
-if /i "%OS_ARCH%"=="x64" (
-  set WD_FILENAME=..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\WindowsDefenderX64.msi
-) else (
-  set WD_FILENAME=..\win\%OS_LANG%\WindowsDefender.msi
-)
-if not exist %WD_FILENAME% (
-  echo Warning: Windows Defender installation file ^(%WD_FILENAME%^) not found.
-  echo %DATE% %TIME% - Warning: Windows Defender installation file ^(%WD_FILENAME%^) not found >>%UPDATE_LOGFILE%
-  goto SkipWDInst
-)
-echo Installing Windows Defender...
-call InstallOSUpdate.cmd %WD_FILENAME% %VERIFY_MODE% /ignoreerrors
-set WD_FILENAME=
-set REBOOT_REQUIRED=1
-:CheckWDDefs
-if /i "%WD_DISABLED%"=="1" goto SkipWDInst
+if "%WD_INSTALLED%" NEQ "1" goto SkipWDInst
+if "%WD_DISABLED%"=="1" goto SkipWDInst
 if /i "%OS_ARCH%"=="x64" (
   set WDDEFS_FILENAME=..\wddefs\%OS_ARCH%-glb\mpas-feX64.exe
 ) else (
@@ -1074,23 +1054,6 @@ if "%INSTALL_OFC%" NEQ "/instofc" goto SkipOFCNV
 goto OFCNV%OFC_NAME%
 
 :OFCNVo2k3
-echo Checking installation state of Office File Converter Pack...
-if "%OFC_CONV_PACK%" NEQ "1" (
-  if exist ..\ofc\glb\ork.exe (
-    echo Installing Office File Converter Pack...
-    ..\ofc\glb\ork.exe /T:"%TEMP%\ork" /C /Q
-    %SystemRoot%\system32\expand.exe "%TEMP%\ork\ORK.CAB" -F:OCONVPCK.EXE "%TEMP%" >nul
-    call SafeRmDir.cmd "%TEMP%\ork"
-    "%TEMP%\OCONVPCK.EXE" /T:"%TEMP%\OCONVPCK" /C /Q
-    del "%TEMP%\OCONVPCK.EXE"
-    call InstallOSUpdate.cmd "%TEMP%\OCONVPCK\ocp11.msi"
-    call SafeRmDir.cmd "%TEMP%\OCONVPCK"
-    echo %DATE% %TIME% - Info: Installed Office File Converter Pack >>%UPDATE_LOGFILE%
-  ) else (
-    echo Warning: File ..\ofc\glb\ork.exe not found.
-    echo %DATE% %TIME% - Warning: File ..\ofc\glb\ork.exe not found >>%UPDATE_LOGFILE%
-  )
-)
 echo Checking installation state of Office Compatibility Pack...
 if "%OFC_COMP_PACK%" NEQ "1" (
   if exist ..\ofc\%OFC_LANG%\FileFormatConverters.exe (
@@ -1239,7 +1202,7 @@ if "%RECALL_REQUIRED%"=="1" (
     )
     if "%USERNAME%" NEQ "WOUTempAdmin" (
       echo Preparing automatic recall...
-      call PrepareRecall.cmd "%~f0" %BACKUP_MODE% %VERIFY_MODE% %UPDATE_RCERTS% %INSTALL_IE% %UPDATE_CPP% %UPDATE_DX% %INSTALL_MSSL% %UPDATE_WMP% %UPDATE_TSC% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_MSSE% %INSTALL_WD% %INSTALL_OFC% %INSTALL_OFV% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES% %SKIP_DYNAMIC%
+      call PrepareRecall.cmd "%~f0" %BACKUP_MODE% %VERIFY_MODE% %UPDATE_RCERTS% %INSTALL_IE% %UPDATE_CPP% %UPDATE_DX% %INSTALL_MSSL% %UPDATE_WMP% %UPDATE_TSC% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_MSSE% %INSTALL_OFC% %INSTALL_OFV% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES% %SKIP_DYNAMIC%
     )
     if exist %SystemRoot%\system32\bcdedit.exe (
       echo Adjusting boot sequence for next reboot...

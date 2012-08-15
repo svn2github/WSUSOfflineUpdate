@@ -1,6 +1,7 @@
 .svn\
 ico\
 Include\
+sh\
 Aut2Exe.exe
 AutoItSC.bin
 ExcludeList-ProductionTree.txt

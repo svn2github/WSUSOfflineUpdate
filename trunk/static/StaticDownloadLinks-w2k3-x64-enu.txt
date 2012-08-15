@@ -1,5 +1,3 @@
 http://download.microsoft.com/download/B/D/9/BD9BB1FF-6609-4B10-9334-6D0C58066AA7/WindowsServer2003-KB968930-x64-ENG.exe
-http://download.microsoft.com/download/5/c/0/5c04e12e-355f-461b-85e2-acadc21bb939/WindowsServer2003.WindowsXP-KB925876-v2-x64-ENU.exe
-http://download.microsoft.com/download/d/6/d/d6d8f548-69f2-4c5d-84be-a64fe41cc87a/WindowsDefenderX64.msi
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-en-us-kb2564958_3ef5ed7fddcdd17df35cc731db6576ff8715475e.exe
 http://download.microsoft.com/download/6/4/5/645fed5f-a6e7-44d9-9d10-fe83348796b0/wic_x64_enu.exe
