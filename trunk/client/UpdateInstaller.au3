@@ -14,7 +14,8 @@ Dim Const $reg_key_ie                 = "HKEY_LOCAL_MACHINE\Software\Microsoft\I
 Dim Const $reg_key_mssl               = "HKEY_LOCAL_MACHINE\Software\Microsoft\Silverlight"
 Dim Const $reg_key_dotnet35           = "HKEY_LOCAL_MACHINE\Software\Microsoft\NET Framework Setup\NDP\v3.5"
 Dim Const $reg_key_dotnet4            = "HKEY_LOCAL_MACHINE\Software\Microsoft\NET Framework Setup\NDP\v4\Full"
-Dim Const $reg_key_powershell         = "HKEY_LOCAL_MACHINE\Software\Microsoft\PowerShell\1\PowerShellEngine"
+Dim Const $reg_key_psh                = "HKEY_LOCAL_MACHINE\Software\Microsoft\PowerShell\1\PowerShellEngine"
+Dim Const $reg_key_wmf                = "HKEY_LOCAL_MACHINE\Software\Microsoft\PowerShell\3\PowerShellEngine"
 Dim Const $reg_key_msse               = "HKEY_LOCAL_MACHINE\Software\Microsoft\Microsoft Security Client"
 Dim Const $reg_key_fontdpi            = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontDPI"
 Dim Const $reg_key_windowmetrics      = "HKEY_CURRENT_USER\Control Panel\Desktop\WindowMetrics"
@@ -32,7 +33,8 @@ Dim Const $reg_val_wustatusserver     = "WUStatusServer"
 Dim Const $default_logpixels          = 96
 Dim Const $target_version_dotnet35    = "3.5.30729.01"
 Dim Const $target_version_dotnet4     = "4.0.30319"
-Dim Const $target_version_powershell  = "2.0"
+Dim Const $target_version_psh         = "2.0"
+Dim Const $target_version_wmf         = "3.0"
 
 ; INI file constants
 Dim Const $ini_section_installation   = "Installation"
@@ -45,11 +47,12 @@ Dim Const $ini_value_cpp              = "updatecpp"
 Dim Const $ini_value_dx               = "updatedx"
 Dim Const $ini_value_mssl             = "instmssl"
 Dim Const $ini_value_wmp              = "updatewmp"
-Dim Const $ini_value_tsc              = "updatetsc"
 Dim Const $ini_value_dotnet35         = "instdotnet35"
 Dim Const $ini_value_dotnet4          = "instdotnet4"
-Dim Const $ini_value_powershell       = "instpsh"
+Dim Const $ini_value_psh              = "instpsh"
+Dim Const $ini_value_wmf              = "instwmf"
 Dim Const $ini_value_msse             = "instmsse"
+Dim Const $ini_value_tsc              = "updatetsc"
 Dim Const $ini_value_ofc              = "instofc"
 Dim Const $ini_value_ofv              = "instofv"
 Dim Const $ini_value_all              = "all"
@@ -84,7 +87,7 @@ Dim Const $path_rel_ofc_glb           = "\ofc\glb\"
 Dim Const $path_rel_msse_x86          = "\msse\x86-glb\mseinstall-x86-*.exe"
 Dim Const $path_rel_msse_x64          = "\msse\x64-glb\mseinstall-x64-*.exe"
 
-Dim $maindlg, $scriptdir, $mapped, $inifilename, $backup, $rcerts, $ie7, $ie8, $ie9, $cpp, $dx, $mssl, $wmp, $tsc, $dotnet35, $dotnet4, $psh, $msse, $ofc, $ofv, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate
+Dim $maindlg, $scriptdir, $mapped, $inifilename, $backup, $rcerts, $ie7, $ie8, $ie9, $cpp, $dx, $mssl, $wmp, $dotnet35, $dotnet4, $psh, $wmf, $msse, $tsc, $ofc, $ofv, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate
 Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
 
 Func ShowGUIInGerman()
@@ -192,7 +195,11 @@ Func DotNet4Version()
 EndFunc
 
 Func PowerShellVersion()
-  Return RegRead($reg_key_powershell, $reg_val_pshversion)
+  Return RegRead($reg_key_psh, $reg_val_pshversion)
+EndFunc
+
+Func ManagementFrameworkVersion()
+  Return RegRead($reg_key_wmf, $reg_val_pshversion)
 EndFunc
 
 Func MSSLInstalled()
@@ -478,26 +485,9 @@ Else
   EndIf
 EndIf
 
-; Update Windows Terminal Services Client
+; Install .NET Framework 3.5 SP1
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + $txtheight
-If ShowGUIInGerman() Then
-  $tsc = GUICtrlCreateCheckbox("Terminal Services Client aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
-Else
-  $tsc = GUICtrlCreateCheckbox("Update Terminal Services Client", $txtxpos, $txtypos, $txtwidth, $txtheight)
-EndIf
-If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (NOT WinGlbPresent($scriptdir)) ) Then
-  GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
-Else
-  If IniRead($inifilename, $ini_section_installation, $ini_value_tsc, $enabled) = $enabled Then
-    GUICtrlSetState(-1, $GUI_CHECKED)
-  Else
-    GUICtrlSetState(-1, $GUI_UNCHECKED)
-  EndIf
-EndIf
-
-; Install .NET Framework 3.5 SP1
-$txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
   $dotnet35 = GUICtrlCreateCheckbox(".NET Framework 3.5 SP1 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -508,6 +498,25 @@ If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If IniRead($inifilename, $ini_section_installation, $ini_value_dotnet35, $disabled) = $enabled Then
+    GUICtrlSetState(-1, $GUI_CHECKED)
+  Else
+    GUICtrlSetState(-1, $GUI_UNCHECKED)
+  EndIf
+EndIf
+
+; Install Windows PowerShell 2.0
+$txtxpos = $txtxoffset + $groupwidth / 2
+If ShowGUIInGerman() Then
+  $psh = GUICtrlCreateCheckbox("PowerShell 2.0 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+Else
+  $psh = GUICtrlCreateCheckbox("Install PowerShell 2.0", $txtxpos, $txtypos, $txtwidth, $txtheight)
+EndIf
+If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
+  OR ( (DotNet35Version() <> $target_version_dotnet35) AND (BitAND(GUICtrlRead($dotnet35), $GUI_CHECKED) <> $GUI_CHECKED) ) _
+  OR (PowerShellVersion() = $target_version_psh) ) Then
+  GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
+Else
+  If IniRead($inifilename, $ini_section_installation, $ini_value_psh, $disabled) = $enabled Then
     GUICtrlSetState(-1, $GUI_CHECKED)
   Else
     GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -532,19 +541,19 @@ Else
   EndIf
 EndIf
 
-; Install Windows PowerShell 2.0
+; Install Windows Management Framework 3.0
 $txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
-  $psh = GUICtrlCreateCheckbox("PowerShell 2.0 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $wmf = GUICtrlCreateCheckbox("Management Framework 3.0 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $psh = GUICtrlCreateCheckbox("Install PowerShell 2.0", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $wmf = GUICtrlCreateCheckbox("Install Management Framework 3.0", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
-  OR ( (DotNet35Version() <> $target_version_dotnet35) AND (BitAND(GUICtrlRead($dotnet35), $GUI_CHECKED) <> $GUI_CHECKED) ) _
-  OR (PowerShellVersion() = $target_version_powershell) ) Then
+If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") _
+  OR ( (DotNet4Version() <> $target_version_dotnet4) AND (BitAND(GUICtrlRead($dotnet4), $GUI_CHECKED) <> $GUI_CHECKED) ) _
+  OR (ManagementFrameworkVersion() = $target_version_wmf) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
-  If IniRead($inifilename, $ini_section_installation, $ini_value_powershell, $disabled) = $enabled Then
+  If IniRead($inifilename, $ini_section_installation, $ini_value_wmf, $disabled) = $enabled Then
     GUICtrlSetState(-1, $GUI_CHECKED)
   Else
     GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -572,6 +581,23 @@ If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WI
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If IniRead($inifilename, $ini_section_installation, $ini_value_msse, $disabled) = $enabled Then
+    GUICtrlSetState(-1, $GUI_CHECKED)
+  Else
+    GUICtrlSetState(-1, $GUI_UNCHECKED)
+  EndIf
+EndIf
+
+; Update Windows Terminal Services Client
+$txtxpos = $txtxoffset + $groupwidth / 2
+If ShowGUIInGerman() Then
+  $tsc = GUICtrlCreateCheckbox("Terminal Services Client aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+Else
+  $tsc = GUICtrlCreateCheckbox("Update Terminal Services Client", $txtxpos, $txtypos, $txtwidth, $txtheight)
+EndIf
+If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (NOT WinGlbPresent($scriptdir)) ) Then
+  GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
+Else
+  If IniRead($inifilename, $ini_section_installation, $ini_value_tsc, $enabled) = $enabled Then
     GUICtrlSetState(-1, $GUI_CHECKED)
   Else
     GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -814,12 +840,23 @@ While 1
         EndIf
       EndIf
 
-    Case $dotnet35             ; .NET check box toggled
+    Case $dotnet35             ; .NET 3.5 check box toggled
       If ( (BitAND(GUICtrlRead($dotnet35), $GUI_CHECKED) = $GUI_CHECKED) _
-       AND (@OSVersion <> "WIN_7") AND (@OSVersion <> "WIN_2008R2") AND (PowerShellVersion() <> $target_version_powershell) ) Then
+       AND (@OSVersion <> "WIN_7") AND (@OSVersion <> "WIN_2008R2") _
+       AND (PowerShellVersion() <> $target_version_psh) ) Then
         GUICtrlSetState($psh, $GUI_ENABLE)
       Else
         GUICtrlSetState($psh, $GUI_UNCHECKED + $GUI_DISABLE)
+      EndIf
+
+    Case $dotnet4              ; .NET 4 check box toggled
+      If ( (BitAND(GUICtrlRead($dotnet4), $GUI_CHECKED) = $GUI_CHECKED) _
+       AND (@OSVersion <> "WIN_2000") AND (@OSVersion <> "WIN_XP") _
+       AND (@OSVersion <> "WIN_2003") AND (@OSVersion <> "WIN_VISTA") _
+       AND (ManagementFrameworkVersion() <> $target_version_wmf) ) Then
+        GUICtrlSetState($wmf, $GUI_ENABLE)
+      Else
+        GUICtrlSetState($wmf, $GUI_UNCHECKED + $GUI_DISABLE)
       EndIf
 
     Case $msse                 ; Microsoft Security Essentials check box toggled
@@ -916,9 +953,6 @@ While 1
       If BitAND(GUICtrlRead($wmp), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /updatewmp"
       EndIf
-      If BitAND(GUICtrlRead($tsc), $GUI_CHECKED) = $GUI_CHECKED Then
-        $options = $options & " /updatetsc"
-      EndIf
       If BitAND(GUICtrlRead($dotnet35), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instdotnet35"
       EndIf
@@ -928,8 +962,14 @@ While 1
       If BitAND(GUICtrlRead($psh), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instpsh"
       EndIf
+      If BitAND(GUICtrlRead($wmf), $GUI_CHECKED) = $GUI_CHECKED Then
+        $options = $options & " /instwmf"
+      EndIf
       If BitAND(GUICtrlRead($msse), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instmsse"
+      EndIf
+      If BitAND(GUICtrlRead($tsc), $GUI_CHECKED) = $GUI_CHECKED Then
+        $options = $options & " /updatetsc"
       EndIf
       If BitAND(GUICtrlRead($ofc), $GUI_CHECKED) = $GUI_CHECKED Then
         $options = $options & " /instofc"

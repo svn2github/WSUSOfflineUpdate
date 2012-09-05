@@ -11,6 +11,7 @@ Private Const strRegKeyMSSL                   = "HKLM\Software\Microsoft\Silverl
 Private Const strRegKeyDotNet35               = "HKLM\Software\Microsoft\NET Framework Setup\NDP\v3.5\"
 Private Const strRegKeyDotNet4                = "HKLM\Software\Microsoft\NET Framework Setup\NDP\v4\Full\"
 Private Const strRegKeyPowerShell             = "HKLM\Software\Microsoft\PowerShell\1\PowerShellEngine\"
+Private Const strRegKeyManagementFramework    = "HKLM\Software\Microsoft\PowerShell\3\PowerShellEngine\"
 Private Const strRegKeyMSSE                   = "HKLM\Software\Microsoft\Microsoft Security Client\"
 Private Const strRegKeyMSSEUninstall          = "HKLM\Software\Microsoft\Windows\CurrentVersion\Uninstall\Microsoft Security Client\"
 Private Const strRegKeyMSSEDefs               = "HKLM\Software\Microsoft\Microsoft Antimalware\Signature Updates\"
@@ -479,6 +480,9 @@ WriteVersionToFile objCmdFile, "DOTNET4_VER", RegRead(wshShell, strRegKeyDotNet4
 
 ' Determine Windows PowerShell version
 WriteVersionToFile objCmdFile, "PSH_VER", RegRead(wshShell, strRegKeyPowerShell & strRegValPShVersion)
+
+' Determine Windows Management Framework version
+WriteVersionToFile objCmdFile, "WMF_VER", RegRead(wshShell, strRegKeyManagementFramework & strRegValPShVersion)
 
 ' Determine Microsoft Security Essentials installation state
 If RegExists(wshShell, strRegKeyMSSE) Then

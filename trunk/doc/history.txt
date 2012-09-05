@@ -674,5 +674,6 @@ Version 7.4.2 -- 15.08.12
 - Fix: Microsoft removed the Office 2003 Resource Kit (ork.exe), containing the Office File Converter Pack (oconvpck.exe), from their servers (Thanks to "LigH" and "boco")
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
+- Optional installation of Windows Management Framework 3.0 on Windows 7 and Server 2008(R2) (x86/x64) systems (Thanks to "boco") 
 - Fix: Download part missed Security Update kb967723 for Windows Server 2003 (x86/x64)
 - Fix: ISO and USB filters for Windows XP and Server 2003 (x64) erroneously excluded kb923789

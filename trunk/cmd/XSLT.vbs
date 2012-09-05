@@ -44,14 +44,14 @@ End If
 On Error GoTo 0
 objXML.async = False
 objXML.validateOnParse = False
-objXML.Load strXMLFileName
+objXML.load strXMLFileName
 If Err.Number <> 0 Then
   WScript.Echo("ERROR: Unable to load XML file '" & strXMLFileName & "'")
   WScript.Quit(1)
 End If
 objXSL.async = False
 objXSL.validateOnParse = False
-objXSL.Load strXSLFileName
+objXSL.load strXSLFileName
 If Err.Number <> 0 Then
   WScript.Echo("ERROR: Unable to load XSL file '" & strXSLFileName & "'")
   WScript.Quit(1)
