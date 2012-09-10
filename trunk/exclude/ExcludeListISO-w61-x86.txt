@@ -10,5 +10,6 @@
 *w60\/*
 *x64-glb\/*
 *-x64*
+*dotnetfx40*
 *vcredist*_x64*
 *.au3

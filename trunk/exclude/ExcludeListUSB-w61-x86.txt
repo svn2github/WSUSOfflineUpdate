@@ -18,5 +18,6 @@ w2k3-x64\
 w60-x64\
 w61-x64\
 *-x64
-*vcredist*_x64
+dotnetfx40*
+vcredist*_x64
 .au3

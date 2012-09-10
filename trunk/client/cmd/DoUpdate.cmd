@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.4.2+ (r386)
+set WSUSOFFLINE_VERSION=7.4.2+ (r387)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -784,7 +784,7 @@ set REBOOT_REQUIRED=1
 
 rem *** Install .NET Framework 3.5 SP1 ***
 if "%INSTALL_DOTNET35%" NEQ "/instdotnet35" goto SkipDotNet35Inst
-echo Checking .NET Framework 3.5 installation state...
+echo Checking .NET Framework 3.5 SP1 installation state...
 if %DOTNET35_VER_MAJOR% LSS %DOTNET35_VER_TARGET_MAJOR% goto InstallDotNet35
 if %DOTNET35_VER_MAJOR% GTR %DOTNET35_VER_TARGET_MAJOR% goto SkipDotNet35Inst
 if %DOTNET35_VER_MINOR% LSS %DOTNET35_VER_TARGET_MINOR% goto InstallDotNet35
@@ -805,10 +805,10 @@ call InstallOSUpdate.cmd %DOTNET35_FILENAME% %VERIFY_MODE% /ignoreerrors /qb /no
 if "%OS_LANG%" NEQ "enu" (
   dir /B %DOTNET35LP_FILENAME% >nul 2>&1
   if errorlevel 1 (
-    echo Warning: .NET Framework 3.5 Language Pack installation file ^(%DOTNET35LP_FILENAME%^) not found.
-    echo %DATE% %TIME% - Warning: .NET Framework 3.5 Language Pack installation file ^(%DOTNET35LP_FILENAME%^) not found >>%UPDATE_LOGFILE%
+    echo Warning: .NET Framework 3.5 SP1 Language Pack installation file ^(%DOTNET35LP_FILENAME%^) not found.
+    echo %DATE% %TIME% - Warning: .NET Framework 3.5 SP1 Language Pack installation file ^(%DOTNET35LP_FILENAME%^) not found >>%UPDATE_LOGFILE%
   ) else (
-    echo Installing .NET Framework 3.5 Language Pack...
+    echo Installing .NET Framework 3.5 SP1 Language Pack...
     for /F %%i in ('dir /B %DOTNET35LP_FILENAME%') do call InstallOSUpdate.cmd ..\dotnet\%OS_ARCH%-glb\%%i %VERIFY_MODE% /ignoreerrors /qb /norestart /nopatch
   )
 )
@@ -847,8 +847,8 @@ if exist %DOTNET4_PREREQ% (
 )
 set DOTNET4_PREREQ=
 :SkipDotNet4Prereq
-set DOTNET4_FILENAME=..\dotnet\dotNetFx40_Full_x86_x64.exe
-set DOTNET4LP_FILENAME=..\dotnet\dotNetFx40LP_Full_x86_x64%OS_LANG_SHORT%*.exe
+set DOTNET4_FILENAME=..\dotnet\dotNetFx%DOTNET4_VER_TARGET_MAJOR%%DOTNET4_VER_TARGET_MINOR%_Full_x86_x64.exe
+set DOTNET4LP_FILENAME=..\dotnet\dotNetFx%DOTNET4_VER_TARGET_MAJOR%%DOTNET4_VER_TARGET_MINOR%LP_Full_x86_x64%OS_LANG_SHORT%*.exe
 if not exist %DOTNET4_FILENAME% (
   echo Warning: .NET Framework 4 installation file ^(%DOTNET4_FILENAME%^) not found.
   echo %DATE% %TIME% - Warning: .NET Framework 4 installation file ^(%DOTNET4_FILENAME%^) not found >>%UPDATE_LOGFILE%
@@ -866,7 +866,7 @@ if "%OS_LANG%" NEQ "enu" (
     for /F %%i in ('dir /B %DOTNET4LP_FILENAME%') do call InstallOSUpdate.cmd ..\dotnet\%%i %VERIFY_MODE% /errorsaswarnings /passive /norestart
   )
 )
-set REBOOT_REQUIRED=1
+set RECALL_REQUIRED=1
 set DOTNET4_FILENAME=
 set DOTNET4LP_FILENAME=
 :SkipDotNet4Inst
@@ -889,6 +889,11 @@ if "%RECALL_REQUIRED%"=="1" goto Installed
 
 rem *** Install Windows PowerShell 2.0 ***
 if "%INSTALL_PSH%" NEQ "/instpsh" goto SkipPShInst
+if %DOTNET35_VER_MAJOR% LSS %DOTNET35_VER_TARGET_MAJOR% (
+  echo Warning: Missing Windows PowerShell 2.0 prerequisite .NET Framework 3.5 SP1.
+  echo %DATE% %TIME% - Warning: Missing Windows PowerShell 2.0 prerequisite .NET Framework 3.5 SP1 >>%UPDATE_LOGFILE%
+  goto SkipPShInst
+)
 echo Checking Windows PowerShell 2.0 installation state...
 if %PSH_VER_MAJOR% LSS %PSH_VER_TARGET_MAJOR% goto InstallPSh
 if %PSH_VER_MAJOR% GTR %PSH_VER_TARGET_MAJOR% goto SkipPShInst
@@ -916,6 +921,11 @@ set REBOOT_REQUIRED=1
 
 rem *** Install Windows Management Framework 3.0 ***
 if "%INSTALL_WMF%" NEQ "/instwmf" goto SkipWMFInst
+if %DOTNET4_VER_MAJOR% LSS %DOTNET4_VER_TARGET_MAJOR% (
+  echo Warning: Missing Windows Management Framework 3.0 prerequisite .NET Framework 4.
+  echo %DATE% %TIME% - Warning: Missing Windows Management Framework 3.0 prerequisite .NET Framework 4 >>%UPDATE_LOGFILE%
+  goto SkipWMFInst
+)
 if "%OS_NAME%"=="w60" (
   if %OS_DOMAIN_ROLE% GEQ 2 goto CheckWMF
 )

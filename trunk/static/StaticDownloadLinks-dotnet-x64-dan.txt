@@ -1,2 +1,3 @@
-http://download.microsoft.com/download/E/D/E/EDEB86DF-96D8-47A4-BA2D-D227175C0A47/dotNetFx40LP_Full_x86_x64da.exe
 http://download.microsoft.com/download/8/2/0/820f6ddc-71c0-4cce-ab81-5d92ff9810e1/dotnetfx35langpack_x64da.exe
+http://download.microsoft.com/download/E/D/E/EDEB86DF-96D8-47A4-BA2D-D227175C0A47/dotNetFx40LP_Full_x86_x64da.exe
+http://download.microsoft.com/download/5/C/1/5C12046A-4B85-4EDD-91CF-261FA78247BD/dotNetFx45LP_Full_x86_x64da.exe

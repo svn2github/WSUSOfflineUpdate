@@ -6,4 +6,5 @@
 *w2k3\/*
 *w6*
 *x86-glb\/*
+*dotnetfx45*
 *.au3

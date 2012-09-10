@@ -32,7 +32,8 @@ Dim Const $reg_val_wustatusserver     = "WUStatusServer"
 ; Defaults
 Dim Const $default_logpixels          = 96
 Dim Const $target_version_dotnet35    = "3.5.30729.01"
-Dim Const $target_version_dotnet4     = "4.0.30319"
+Dim Const $target_version_dotnet40    = "4.0.30319"
+Dim Const $target_version_dotnet45    = "4.5.50709"
 Dim Const $target_version_psh         = "2.0"
 Dim Const $target_version_wmf         = "3.0"
 
@@ -192,6 +193,14 @@ EndFunc
 
 Func DotNet4Version()
   Return RegRead($reg_key_dotnet4, $reg_val_version)
+EndFunc
+
+Func DotNet4TargetVersion()
+  If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") ) Then
+    Return $target_version_dotnet40
+  Else
+    Return $target_version_dotnet45
+  EndIf
 EndFunc
 
 Func PowerShellVersion()
@@ -527,11 +536,11 @@ EndIf
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
-  $dotnet4 = GUICtrlCreateCheckbox(".NET Framework 4 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $dotnet4 = GUICtrlCreateCheckbox(".NET Framework 4.x installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $dotnet4 = GUICtrlCreateCheckbox("Install .NET Framework 4", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $dotnet4 = GUICtrlCreateCheckbox("Install .NET Framework 4.x", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (DotNet4Version() = $target_version_dotnet4) OR (NOT DotNet4InstPresent($scriptdir)) ) Then
+If ( (@OSVersion = "WIN_2000") OR (DotNet4Version() = DotNet4TargetVersion()) OR (NOT DotNet4InstPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If IniRead($inifilename, $ini_section_installation, $ini_value_dotnet4, $disabled) = $enabled Then
@@ -549,7 +558,7 @@ Else
   $wmf = GUICtrlCreateCheckbox("Install Management Framework 3.0", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") _
-  OR ( (DotNet4Version() <> $target_version_dotnet4) AND (BitAND(GUICtrlRead($dotnet4), $GUI_CHECKED) <> $GUI_CHECKED) ) _
+  OR ( (DotNet4Version() <> DotNet4TargetVersion()) AND (BitAND(GUICtrlRead($dotnet4), $GUI_CHECKED) <> $GUI_CHECKED) ) _
   OR (ManagementFrameworkVersion() = $target_version_wmf) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else

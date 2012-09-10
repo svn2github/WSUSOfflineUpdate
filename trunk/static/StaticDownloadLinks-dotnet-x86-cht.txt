@@ -1,2 +1,3 @@
-http://download.microsoft.com/download/1/F/E/1FE9194F-89B8-4354-8CCC-5429A0C2740A/dotNetFx40LP_Full_x86_x64zh-Hant.exe
 http://download.microsoft.com/download/6/3/2/632f43b6-fe1e-4dc6-9f17-00e37eea0463/dotnetfx35langpack_x86zh-cht.exe
+http://download.microsoft.com/download/1/F/E/1FE9194F-89B8-4354-8CCC-5429A0C2740A/dotNetFx40LP_Full_x86_x64zh-Hant.exe
+http://download.microsoft.com/download/6/5/1/65139B49-5DA5-43DA-9F75-7D580B73CDB7/dotNetFx45LP_Full_x86_x64zh-hant.exe

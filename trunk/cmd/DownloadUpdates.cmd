@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.4.2+ (r386)
+set WSUSOFFLINE_VERSION=7.4.2+ (r387)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -447,7 +447,7 @@ if "%VERIFY_DL%"=="1" (
   )
 )
 
-rem *** Download installation files for .NET Frameworks 3.5 SP1 and 4 ***
+rem *** Download installation files for .NET Frameworks 3.5 SP1 and 4.x ***
 if "%INC_DOTNET%" NEQ "1" goto SkipDotNet
 if "%SKIP_DL%"=="1" (
   call :DownloadCore dotnet %TARGET_ARCH%-glb %TARGET_ARCH% %SKIP_PARAM%
@@ -477,7 +477,7 @@ if not errorlevel 1 (
   echo %DATE% %TIME% - Info: Skipped download/validation of .NET Frameworks' installation files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
   goto VerifyDotNet
 )
-echo Downloading/validating installation files for .NET Frameworks 3.5 SP1 and 4...
+echo Downloading/validating installation files for .NET Frameworks 3.5 SP1 and 4.x...
 copy /Y ..\static\StaticDownloadLinks-dotnet.txt "%TEMP%\StaticDownloadLinks-dotnet.txt" >nul
 if exist ..\static\custom\StaticDownloadLinks-dotnet.txt (
   type ..\static\custom\StaticDownloadLinks-dotnet.txt >>"%TEMP%\StaticDownloadLinks-dotnet.txt"
@@ -487,14 +487,14 @@ if errorlevel 1 (
   del "%TEMP%\StaticDownloadLinks-dotnet.txt"
   goto DownloadError
 )
-echo %DATE% %TIME% - Info: Downloaded/validated installation files for .NET Frameworks 3.5 SP1 and 4 >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Downloaded/validated installation files for .NET Frameworks 3.5 SP1 and 4.x >>%DOWNLOAD_LOGFILE%
 call :DownloadCore dotnet %TARGET_ARCH%-glb %TARGET_ARCH% %SKIP_PARAM%
 if errorlevel 1 goto Error
 if "%CLEANUP_DL%"=="0" (
   del "%TEMP%\StaticDownloadLinks-dotnet.txt"
   goto VerifyDotNet
 )
-echo Cleaning up client directory for .NET Frameworks 3.5 SP1 and 4...
+echo Cleaning up client directory for .NET Frameworks 3.5 SP1 and 4.x...
 for /F %%i in ('dir ..\client\dotnet /A:-D /B') do (
   %SystemRoot%\system32\find.exe /I "%%i" "%TEMP%\StaticDownloadLinks-dotnet.txt" >nul 2>&1
   if errorlevel 1 (
@@ -503,7 +503,7 @@ for /F %%i in ('dir ..\client\dotnet /A:-D /B') do (
   )
 )
 del "%TEMP%\StaticDownloadLinks-dotnet.txt"
-echo %DATE% %TIME% - Info: Cleaned up client directory for .NET Frameworks 3.5 SP1 and 4 >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Cleaned up client directory for .NET Frameworks 3.5 SP1 and 4.x >>%DOWNLOAD_LOGFILE%
 :VerifyDotNet
 if "%VERIFY_DL%"=="1" (
   rem *** Verifying digital file signatures for .NET Frameworks' installation files ***

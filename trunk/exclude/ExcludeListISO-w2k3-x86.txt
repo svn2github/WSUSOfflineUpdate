@@ -7,5 +7,6 @@
 *x64-glb\/*
 *windowsxp*
 *-x64*
+*dotnetfx45*
 *vcredist*_x64*
 *.au3

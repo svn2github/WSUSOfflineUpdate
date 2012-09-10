@@ -675,5 +675,6 @@ Version 7.4.2 -- 15.08.12
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
 - Optional installation of Windows Management Framework 3.0 on Windows 7 and Server 2008(R2) (x86/x64) systems (Thanks to "boco") 
+- Optional installation of .NET Framework 4 will now install .NET Framework 4.5 instead of v. 4.0 on Windows Vista, 7 and Server 2008(R2) (x86/x64) systems (Thanks to "harry")
 - Fix: Download part missed Security Update kb967723 for Windows Server 2003 (x86/x64)
 - Fix: ISO and USB filters for Windows XP and Server 2003 (x64) erroneously excluded kb923789
