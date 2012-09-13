@@ -813,6 +813,15 @@ EndFunc
 Func RunUSBCreationScript($stroptions, $strswitches, $strpath)
 Dim $result
 
+  $result = 0
+  If NOT FileExists($strpath) Then
+    If ShowGUIInGerman() Then
+      MsgBox(0x2030, "Warnung", "Das Zielverzeichnis """ & $strpath & """ existiert nicht.")
+    Else
+      MsgBox(0x2030, "Warning", "The target directory """ & $strpath & """ does not exist.")
+    EndIf
+    Return $result
+  EndIf
   If ShowGUIInGerman() Then
     WinSetTitle($maindlg, $maindlg, $caption & " - Kopiere Dateien für " & $stroptions & "...")
   Else
