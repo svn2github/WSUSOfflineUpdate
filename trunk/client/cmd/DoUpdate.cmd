@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.4.2+ (r390)
+set WSUSOFFLINE_VERSION=7.4.2+ (r391)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1100,6 +1100,23 @@ if "%INSTALL_OFC%" NEQ "/instofc" goto SkipOFCNV
 goto OFCNV%OFC_NAME%
 
 :OFCNVo2k3
+echo Checking installation state of Office File Converter Pack...
+if "%OFC_CONV_PACK%" NEQ "1" (
+  if exist ..\ofc\glb\ork.exe (
+    echo Installing Office File Converter Pack...
+    ..\ofc\glb\ork.exe /T:"%TEMP%\ork" /C /Q
+    %SystemRoot%\system32\expand.exe "%TEMP%\ork\ORK.CAB" -F:OCONVPCK.EXE "%TEMP%" >nul
+    call SafeRmDir.cmd "%TEMP%\ork"
+    "%TEMP%\OCONVPCK.EXE" /T:"%TEMP%\OCONVPCK" /C /Q
+    del "%TEMP%\OCONVPCK.EXE"
+    call InstallOSUpdate.cmd "%TEMP%\OCONVPCK\ocp11.msi"
+    call SafeRmDir.cmd "%TEMP%\OCONVPCK"
+    echo %DATE% %TIME% - Info: Installed Office File Converter Pack >>%UPDATE_LOGFILE%
+  ) else (
+    echo Warning: File ..\ofc\glb\ork.exe not found.
+    echo %DATE% %TIME% - Warning: File ..\ofc\glb\ork.exe not found >>%UPDATE_LOGFILE%
+  )
+)
 echo Checking installation state of Office Compatibility Pack...
 if "%OFC_COMP_PACK%" NEQ "1" (
   if exist ..\ofc\%OFC_LANG%\FileFormatConverters.exe (

@@ -571,6 +571,8 @@ cpp2010_x64_new = False
 Set objInstaller = CreateObject("WindowsInstaller.Installer")
 For Each strProduct In objInstaller.Products
   Select Case UCase(strProduct)
+    Case "{6EECB283-E65F-40EF-86D3-D51BF02A8D43}"
+      objCmdFile.WriteLine("set OFC_CONV_PACK=1")
     Case "{90120000-0020-0407-0000-0000000FF1CE}"
       objCmdFile.WriteLine("set OFC_COMP_PACK=1")
     Case "{90140000-2005-0000-0000-0000000FF1CE}"
