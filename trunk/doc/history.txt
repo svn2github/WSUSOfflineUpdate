@@ -675,6 +675,7 @@ Version 7.4.2 -- 15.08.12
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
 - NOTE: If you customized your copy of WOU using the script AddCustomLanguageSupport.cmd {lng}, please call it again once (per language) to get the appropriate .NET 4.5 language pack(s) downloaded
+- Linux download scripts reintegrated (Thanks to H. Hullen)
 - Optional installation of Windows Management Framework 3.0 on Windows 7 and Server 2008(R2) (x86/x64) systems (Thanks to "boco")
 - Optional installation of .NET Framework 4 will now install .NET Framework 4.5 instead of v. 4.0 on Windows Vista, 7 and Server 2008(R2) (x86/x64) systems (Thanks to "harry")
 - Office 2003 Resource Kit (ork.exe) reintegrated, since Microsoft provides it again (Thanks to "harry" and "aker")

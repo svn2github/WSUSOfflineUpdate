@@ -1,16 +1,13 @@
 #!/bin/bash
 
-##########################################################
-###           WSUS Offline Update Downloader           ###
-###                  for Linux systems                 ###
-###                      v. 7.4.1                      ###
-###                                                    ###
-###   http://www.wsusoffline.net/                      ###
-###   Authors: Tobias Breitling, Stefan Joehnke,       ###
-###            Walter Schiessberg                      ###
-###   modified by T. Wittrock                          ###
-###   Fixes: find, slackware by A. Klie                ###
-##########################################################
+#########################################################################
+###         WSUS Offline Update Downloader for Linux systems          ###
+###                          v. 7.4.2+ (r393)                         ###
+###                                                                   ###
+###   http://www.wsusoffline.net/                                     ###
+###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
+###   maintained by H. Hullen                                         ###
+#########################################################################
 # Exit codes:
 # 0 - success
 # 1 - file error
@@ -50,8 +47,6 @@ C=$(which cabextract 2> /dev/null)
 M=$(which md5deep 2> /dev/null)
 S=$(which xmlstarlet 2> /dev/null)
 T=$(which xml 2> /dev/null)
-D=$(which dos2unix 2> /dev/null)
-D2=$(which fromdos 2> /dev/null)
 xml=""
 
 if [ ! -x "$C" ]; then
@@ -113,37 +108,6 @@ else
   fi
 fi
 
-# neu, fuer Slackware
-if [ ! -x "$D" ] && [ ! -x "$D2" ]; then
-  if [ ! -f "/etc/slackware-version" ]; then
-     cat << END
-
-Please install dos2unix.
-
-Command in Fedora:
-yum install dos2unix
-
-Command in Debian/Ubuntu:
-apt-get install tofrodos
-
-Command in SuSE:
-zypper install dos2unix
-
-END
-    exit 1
-  else
-    alias dos2unix=`recode ibmpc..lat1`
-    shopt -s expand_aliases
-  fi
-fi
-# Ende Slackware-Einschub
-
-# fromdos vorhanden --> alias anlegen
-if [ "${D2}" ] && [! -x "${D}" ]; then
-  alias dos2unix=$(which fromdos)
-  # alias-Ausfuehrung in shell erlauben
-  shopt -s expand_aliases
-fi
 # Ende alias
 }
 
@@ -521,15 +485,14 @@ printheader()
 {
 clear
 cat << END
-**********************************************************
-***           WSUS Offline Update Downloader           ***
-***                  for Linux systems                 ***
-***                      v. 7.4.1                      ***
-***                                                    ***
-***   http://www.wsusoffline.net/                      ***
-***   Authors: Tobias Breitling, Stefan Joehnke,       ***
-***            Walter Schiessberg                      ***
-**********************************************************
+*************************************************************************
+***         WSUS Offline Update Downloader for Linux systems          ***
+***                          v. 7.4.2+ (r393)                         ***
+***                                                                   ***
+***   http://www.wsusoffline.net/                                     ***
+***   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ***
+***   maintained by H. Hullen                                         ***
+*************************************************************************
 
 END
 }
@@ -579,9 +542,13 @@ mkdir -p ../temp
 rm -f ../temp/*
 
 #convert files to Linux format
-find ../exclude/ -type f -exec dos2unix "{}" 2>&1 \; || echo find has a problem with exclude
-find ../xslt/ -type f -exec dos2unix "{}" 2>&1 \; || echo find has a problem with xslt
-find ../static/ -type f -exec dos2unix "{}" 2>&1 \; || echo find has a problem with static
+
+for Datei in ../{exclude,static}/*.txt ../{exclude,static}/custom/*.txt \
+	../xslt/*.xsl
+  do
+    file -b $Datei | grep -q ASCII || continue
+    sed -i 's/\r//g' $Datei
+  done
 
 printheader
 

@@ -1,14 +1,13 @@
 #!/bin/bash
 
-##########################################################
-###           WSUS Offline Update ISO maker            ###
-###                  for Linux systems                 ###
-###                      v. 7.4.1                      ###
-###                                                    ###
-###   http://www.wsusoffline.net/                      ###
-###   Authors: Stefan Joehnke, Walter Schiessberg      ###
-###   modified by T. Wittrock                          ###
-##########################################################
+#########################################################################
+###          WSUS Offline Update ISO maker for Linux systems          ###
+###                           v. 7.4.2+ (r393)                        ###
+###                                                                   ###
+###   http://www.wsusoffline.net/                                     ###
+###   Authors: Stefan Joehnke, Walter Schiessberg                     ###
+###   maintained by H. Hullen                                         ###
+#########################################################################
 
 #set working directory
 cd "$( dirname "$(readlink -f "$0")" )"
@@ -44,14 +43,14 @@ printheader()
 {
 clear
 cat << END
-**********************************************************
-***           WSUS Offline Update ISO maker            ***
-***                  for Linux systems                 ***
-***                      v. 7.4.1                      ***
-***                                                    ***
-***   http://www.wsusoffline.net/                      ***
-***   Authors: Stefan Joehnke, Walter Schiessberg      ***
-**********************************************************
+*************************************************************************
+***          WSUS Offline Update ISO maker for Linux systems          ***
+***                           v. 7.4.2+ (r393)                        ***
+***                                                                   ***
+***   http://www.wsusoffline.net/                                     ***
+***   Authors: Stefan Joehnke, Walter Schiessberg                     ***
+***   maintained by H. Hullen                                         ***
+*************************************************************************
 
 END
 }
