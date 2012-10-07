@@ -31,9 +31,6 @@ if exist %SystemRoot%\woubak-system-policies.reg (
     del %SystemRoot%\woubak-system-policies.reg
     echo %DATE% %TIME% - Info: Restored System policies registry hive >>%UPDATE_LOGFILE%
   )
-) else (
-  %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v ConsentPromptBehaviorAdmin /t REG_DWORD /d 2 /f >nul 2>&1
-  %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v EnableLUA /t REG_DWORD /d 1 /f >nul 2>&1
 )
 
 if not exist %SystemRoot%\woubak-pwrscheme-act.txt goto SkipPowerCfg

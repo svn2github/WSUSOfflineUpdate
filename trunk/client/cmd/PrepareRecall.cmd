@@ -8,7 +8,8 @@ if "%REG_PATH%"=="" goto NoRegPath
 if "%CSCRIPT_PATH%"=="" goto NoCScriptPath
 
 echo Saving Winlogon registry hive...
-%REG_PATH% EXPORT "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" %SystemRoot%\woubak-winlogon.reg /y >nul 2>&1
+if exist %SystemRoot%\woubak-winlogon.reg del %SystemRoot%\woubak-winlogon.reg
+%REG_PATH% EXPORT "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" %SystemRoot%\woubak-winlogon.reg >nul 2>&1
 if errorlevel 1 (
   echo ERROR: Saving of Winlogon registry hive failed.
   echo %DATE% %TIME% - Error: Saving of Winlogon registry hive failed >>%UPDATE_LOGFILE%
@@ -21,17 +22,18 @@ echo Suppressing Winlogon Legal Notice...
 %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v LegalNoticeCaption /t REG_SZ /d "" /f >nul 2>&1
 %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v LegalNoticeText /t REG_SZ /d "" /f >nul 2>&1
 if errorlevel 1 (
-  echo ERROR: Suppressing of Winlogon Legal Notice failed.
-  echo %DATE% %TIME% - Error: Suppressing of Winlogon Legal Notice failed >>%UPDATE_LOGFILE%
-  goto Error
+  echo Warning: Suppressing of Winlogon Legal Notice failed.
+  echo %DATE% %TIME% - Warning: Suppressing of Winlogon Legal Notice failed >>%UPDATE_LOGFILE%
 ) else (
   echo %DATE% %TIME% - Info: Suppressed Winlogon Legal Notice >>%UPDATE_LOGFILE%
 )
 
 echo Saving System policies registry hive...
-%REG_PATH% EXPORT "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" %SystemRoot%\woubak-system-policies.reg /y >nul 2>&1
+if exist %SystemRoot%\woubak-system-policies.reg del %SystemRoot%\woubak-system-policies.reg
+%REG_PATH% EXPORT "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" %SystemRoot%\woubak-system-policies.reg >nul 2>&1
 if errorlevel 1 (
-  echo %DATE% %TIME% - Info: Saving of System policies registry hive failed >>%UPDATE_LOGFILE%
+  echo Warning: Saving of System policies registry hive failed.
+  echo %DATE% %TIME% - Warning: Saving of System policies registry hive failed >>%UPDATE_LOGFILE%
 ) else (
   echo %DATE% %TIME% - Info: Saved System policies registry hive >>%UPDATE_LOGFILE%
 )

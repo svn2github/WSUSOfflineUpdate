@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                          v. 7.4.2+ (r393)                         ###
+###                          v. 7.4.2+ (r394)                         ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -487,7 +487,7 @@ clear
 cat << END
 *************************************************************************
 ***         WSUS Offline Update Downloader for Linux systems          ***
-***                          v. 7.4.2+ (r393)                         ***
+***                          v. 7.4.2+ (r394)                         ***
 ***                                                                   ***
 ***   http://www.wsusoffline.net/                                     ***
 ***   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ***
