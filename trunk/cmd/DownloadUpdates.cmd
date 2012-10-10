@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.4.2+ (r394)
+set WSUSOFFLINE_VERSION=7.5
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -142,7 +142,7 @@ goto EvalParams
 
 :EvalParams
 if "%3"=="" goto NoMoreParams
-for %%i in (/excludesp /excludestatics /includedotnet /includemsse /includewddefs /nocleanup /verify /exitonerror /skipiso /skiptz /skipdownload /skipdynamic /proxy /wsus /wsusonly /wsusbyproxy) do (
+for %%i in (/excludesp /excludestatics /includedotnet /includemsse /includewddefs /nocleanup /verify /exitonerror /skiptz /skipdownload /skipdynamic /proxy /wsus /wsusonly /wsusbyproxy) do (
   if /i "%3"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected >>%DOWNLOAD_LOGFILE%
 )
 if /i "%3"=="/excludesp" set EXC_SP=1
@@ -153,7 +153,6 @@ if /i "%3"=="/includewddefs" set INC_WDDEFS=1
 if /i "%3"=="/nocleanup" set CLEANUP_DL=0
 if /i "%3"=="/verify" set VERIFY_DL=1
 if /i "%3"=="/exitonerror" set EXIT_ERR=1
-if /i "%3"=="/skipiso" set SKIP_ISO=1
 if /i "%3"=="/skiptz" set SKIP_TZ=1
 if /i "%3"=="/skipdownload" (
   set SKIP_DL=1
@@ -358,7 +357,6 @@ if exist ..\client\wxp\glb\rootsupd.exe (
 
 rem *** Download mkisofs tool ***
 if "%SKIP_DL%"=="1" goto SkipMkIsoFs
-if "%SKIP_ISO%"=="1" goto SkipMkIsoFs
 if exist ..\bin\mkisofs.exe goto SkipMkIsoFs
 echo Downloading mkisofs tool...
 %WGET_PATH% -N -i ..\static\StaticDownloadLink-mkisofs.txt -P ..\bin
