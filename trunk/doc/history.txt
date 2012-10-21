@@ -686,3 +686,5 @@ Version 7.5 -- 10.10.12
 - Fix: ISO and USB filters for Windows XP and Server 2003 (x64) erroneously excluded kb923789
 - Fix: UpdateGenerator script will now check for existence of USB target directory before attempting to copy to it (Thanks to "kara2004")
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- Fix: Linux script CreateISOImage.sh did not exit on missing iso creation tool (Thanks to S. Baur and H. Hullen)

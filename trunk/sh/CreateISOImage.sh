@@ -2,7 +2,7 @@
 
 #########################################################################
 ###          WSUS Offline Update ISO maker for Linux systems          ###
-###                               v. 7.5                              ###
+###                           v. 7.5+ (r397)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg                     ###
@@ -45,7 +45,7 @@ clear
 cat << END
 *************************************************************************
 ***          WSUS Offline Update ISO maker for Linux systems          ***
-***                               v. 7.5                              ***
+***                           v. 7.5+ (r397)                          ***
 ***                                                                   ***
 ***   http://www.wsusoffline.net/                                     ***
 ***   Authors: Stefan Joehnke, Walter Schiessberg                     ***
@@ -77,6 +77,7 @@ Command in SuSE:
 zypper install genisoimage
 
 END
+exit 1
 fi
 
 if [ -x "$X" ]; then
