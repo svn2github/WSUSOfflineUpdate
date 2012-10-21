@@ -2,7 +2,7 @@
 
 #########################################################################
 ###          WSUS Offline Update ISO maker for Linux systems          ###
-###                           v. 7.5+ (r397)                          ###
+###                           v. 7.5+ (r398)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg                     ###
@@ -45,7 +45,7 @@ clear
 cat << END
 *************************************************************************
 ***          WSUS Offline Update ISO maker for Linux systems          ***
-***                           v. 7.5+ (r397)                          ***
+***                           v. 7.5+ (r398)                          ***
 ***                                                                   ***
 ***   http://www.wsusoffline.net/                                     ***
 ***   Authors: Stefan Joehnke, Walter Schiessberg                     ***
