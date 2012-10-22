@@ -1110,7 +1110,7 @@ $tabitemfocused = GuiCtrlCreateTabItem("Windows")
 ;  Windows XP group
 $txtxpos = 2 * $txtxoffset
 $txtypos = 3.5 * $txtyoffset + $txtheight
-GUICtrlCreateGroup("Windows XP", $txtxpos, $txtypos, $groupwidth, $groupheight)
+GUICtrlCreateGroup("Windows XP (wxp)", $txtxpos, $txtypos, $groupwidth, $groupheight)
 ;  Windows XP English
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
@@ -1310,7 +1310,7 @@ EndIf
 ;  Windows Server 2003 group
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
-GUICtrlCreateGroup("Windows Server 2003", $txtxpos, $txtypos, $groupwidth, $groupheight)
+GUICtrlCreateGroup("Windows Server 2003 (w2k3)", $txtxpos, $txtypos, $groupwidth, $groupheight)
 ;  Windows Server 2003 English
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
@@ -1493,9 +1493,9 @@ GUICtrlSetState(-1, $GUI_DISABLE)
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
 If ShowGUIInGerman() Then
-  GUICtrlCreateGroup("Windows XP / Server 2003 x64-Editionen", $txtxpos, $txtypos, $groupwidth, $groupheight - 2 * $txtheight)
+  GUICtrlCreateGroup("Windows XP / Server 2003 x64-Editionen (w2k3-x64)", $txtxpos, $txtypos, $groupwidth, $groupheight - 2 * $txtheight)
 Else
-  GUICtrlCreateGroup("Windows XP / Server 2003 x64 editions", $txtxpos, $txtypos, $groupwidth, $groupheight - 2 * $txtheight)
+  GUICtrlCreateGroup("Windows XP / Server 2003 x64 editions (w2k3-x64)", $txtxpos, $txtypos, $groupwidth, $groupheight - 2 * $txtheight)
 EndIf
 ;  Windows Server 2003 x64 English
 $txtypos = $txtypos + 1.5 * $txtyoffset
@@ -1566,7 +1566,7 @@ EndIf
 ;  Windows Vista / Server 2008 group
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
-GUICtrlCreateGroup("Windows Vista / Server 2008", $txtxpos, $txtypos, $groupwidth, $groupheight - 2 * $txtheight)
+GUICtrlCreateGroup("Windows Vista / Server 2008 (w60)", $txtxpos, $txtypos, $groupwidth, $groupheight - 2 * $txtheight)
 ;  Windows Vista / Server 2008 global
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
@@ -1596,7 +1596,7 @@ EndIf
 ;  Windows 7 / Server 2008 R2 group
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
-GUICtrlCreateGroup("Windows 7 / Server 2008 R2", $txtxpos, $txtypos, $groupwidth, $groupheight - 2 * $txtheight)
+GUICtrlCreateGroup("Windows 7 / Server 2008 R2 (w61)", $txtxpos, $txtypos, $groupwidth, $groupheight - 2 * $txtheight)
 ;  Windows 7 global
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
@@ -1629,7 +1629,7 @@ GuiCtrlCreateTabItem("Office")
 ;  Office 2003 group
 $txtxpos = 2 * $txtxoffset
 $txtypos = 3.5 * $txtyoffset + $txtheight
-GUICtrlCreateGroup("Office 2003 SP3 + Statics", $txtxpos, $txtypos, $groupwidth, $groupheight)
+GUICtrlCreateGroup("Office 2003 SP3 + Statics (o2k3)", $txtxpos, $txtypos, $groupwidth, $groupheight)
 ;  Office 2003 English
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
@@ -1829,7 +1829,7 @@ EndIf
 ;  Office 2007 group
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
-GUICtrlCreateGroup("Office 2007 SP3 + Statics", $txtxpos, $txtypos, $groupwidth, $groupheight)
+GUICtrlCreateGroup("Office 2007 SP3 + Statics (o2k7)", $txtxpos, $txtypos, $groupwidth, $groupheight)
 ;  Office 2007 English
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
@@ -2029,7 +2029,7 @@ EndIf
 ;  Office 2010 group
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
-GUICtrlCreateGroup("Office 2010 SP1 + Statics", $txtxpos, $txtypos, $groupwidth, $groupheight)
+GUICtrlCreateGroup("Office 2010 SP1 + Statics (o2k10)", $txtxpos, $txtypos, $groupwidth, $groupheight)
 ;  Office 2010 English
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
@@ -2229,7 +2229,7 @@ EndIf
 ;  Office group
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
-GUICtrlCreateGroup("Office Updates 2003 - 2010", $txtxpos, $txtypos, $groupwidth, $groupheight - 2 * $txtheight)
+GUICtrlCreateGroup("Office Updates 2003 - 2010 (ofc)", $txtxpos, $txtypos, $groupwidth, $groupheight - 2 * $txtheight)
 ;  Office global
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset

@@ -9,9 +9,11 @@ wxp\
 w2k3\
 w60\
 w61\
+w62\
 x86-glb\
 o2k7-x64\
 w60-x64\
 w61-x64\
+w62-x64\
 dotnetfx45*
 .au3

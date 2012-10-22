@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.5+ (r398)
+set WSUSOFFLINE_VERSION=7.5+ (r399)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -134,7 +134,6 @@ if "%USERNAME%"=="WOUTempAdmin" (
 rem *** Check Operating System ***
 if "%OS_NAME%"=="" goto UnsupOS
 if "%OS_NAME%"=="w2k" goto UnsupOS
-if "%OS_NAME%"=="w62" goto UnsupOS
 for %%i in (x86 x64) do (if /i "%OS_ARCH%"=="%%i" goto ValidArch)
 goto UnsupArch
 :ValidArch
@@ -159,6 +158,7 @@ goto SkipPowerCfg
 
 :PWRw60
 :PWRw61
+:PWRw62
 for %%i in (monitor disk standby hibernate) do (
   for %%j in (ac dc) do %SystemRoot%\system32\powercfg.exe -X -%%i-timeout-%%j 0
 )
@@ -328,6 +328,7 @@ goto Installed
 
 :SPw60
 :SPw61
+:SPw62
 if "%BOOT_MODE%" NEQ "/autoreboot" goto SPw6Now
 if "%USERNAME%"=="WOUTempAdmin" goto SPw6Now
 echo %DATE% %TIME% - Info: Preparing installation of most recent Service Pack for Windows Vista / 7 >>%UPDATE_LOGFILE%
@@ -563,6 +564,7 @@ for /F %%i in ('dir /B %IE_FILENAME%') do (
 )
 goto IEInstalled
 
+:IEw62
 :IEInstalled
 set IE_FILENAME=
 if "%RECALL_REQUIRED%"=="1" goto Installed
@@ -931,6 +933,7 @@ if "%OS_NAME%"=="w60" (
   if %OS_DOMAIN_ROLE% GEQ 2 goto CheckWMF
 )
 if "%OS_NAME%"=="w61" goto CheckWMF
+if "%OS_NAME%"=="w62" goto CheckWMF
 goto SkipWMFInst
 :CheckWMF
 echo Checking Windows Management Framework 3.0 installation state...

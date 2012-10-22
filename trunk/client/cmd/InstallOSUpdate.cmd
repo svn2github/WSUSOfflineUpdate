@@ -86,6 +86,7 @@ echo %1 | %SystemRoot%\system32\find.exe /I ".msi" >nul 2>&1
 if not errorlevel 1 goto InstMsi
 if /i "%OS_NAME%" EQU "w60" goto FindCabMsu
 if /i "%OS_NAME%" EQU "w61" goto FindCabMsu
+if /i "%OS_NAME%" EQU "w62" goto FindCabMsu
 goto UnsupType
 
 :FindCabMsu

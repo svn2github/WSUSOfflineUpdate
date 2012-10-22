@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.5+ (r398)
+set WSUSOFFLINE_VERSION=7.5+ (r399)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -32,7 +32,7 @@ for %%i in (wxp w2k3 w2k3-x64) do (
     for %%j in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%2"=="%%j" goto EvalParams)
   )
 )
-for %%i in (w60 w60-x64 w61 w61-x64 ofc) do (
+for %%i in (w60 w60-x64 w61 w61-x64 w62 w62-x64 ofc) do (
   if /i "%1"=="%%i" (
     if /i "%2"=="glb" goto EvalParams
   )
@@ -811,7 +811,7 @@ if "%VERIFY_DL%"=="1" (
 :SkipWDDefs
 
 rem *** Download the platform specific patches ***
-for %%i in (wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64) do (
+for %%i in (wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-x64) do (
   if /i "%1"=="%%i" (
     %WGET_PATH% -N -P ..\static http://download.wsusoffline.net/StaticDownloadLinks-win-x86-glb.txt
     call :DownloadCore win glb x86 %SKIP_PARAM%
@@ -838,7 +838,7 @@ for %%i in (wxp w2k3 w2k3-x64 o2k3 o2k7 o2k10) do (
     if errorlevel 1 goto Error
   )
 )
-for %%i in (w60 w60-x64 w61 w61-x64 ofc) do (
+for %%i in (w60 w60-x64 w61 w61-x64 w62 w62-x64 ofc) do (
   if /i "%1"=="%%i" (
     call :DownloadCore %1 %2 %TARGET_ARCH% %SKIP_PARAM%
     if errorlevel 1 goto Error
@@ -964,7 +964,7 @@ del "%TEMP%\ExcludeList-superseded-all.txt"
 echo %TIME% - Done.
 echo %DATE% %TIME% - Info: Determined superseded updates >>%DOWNLOAD_LOGFILE%
 :SkipSuperseded
-for %%i in (dotnet win wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64) do (if /i "%1"=="%%i" goto DetermineWindows)
+for %%i in (dotnet win wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-x64) do (if /i "%1"=="%%i" goto DetermineWindows)
 for %%i in (ofc) do (if /i "%1"=="%%i" goto DetermineOffice)
 del "%TEMP%\package.xml"
 goto DoDownload
@@ -1315,7 +1315,7 @@ if exist ..\client\md\hashes-%1-%2.txt (
 if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" del "%TEMP%\ValidStaticLinks-%1-%2.txt"
 if exist "%TEMP%\ValidDynamicLinks-%1-%2.csv" del "%TEMP%\ValidDynamicLinks-%1-%2.csv"
 if "%4"=="/skipdownload" (
-  for %%i in (win wxp w2k3 w60 w61) do (
+  for %%i in (win wxp w2k3 w60 w61 w62) do (
     if /i "%1"=="%%i" (
       if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" move /Y "%TEMP%\ValidDynamicLinks-%1-%2.txt" ..\static\custom\StaticDownloadLinks-%1-%3-%2.txt >nul
     )
@@ -1343,7 +1343,7 @@ exit /b 1
 echo.
 echo ERROR: Invalid parameter: %*
 echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| o2k3 ^| o2k7 ^| o2k10} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
-echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| ofc} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
+echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| w62 ^| w62-x64 ^| ofc} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
 echo %DATE% %TIME% - Error: Invalid parameter: %* >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
