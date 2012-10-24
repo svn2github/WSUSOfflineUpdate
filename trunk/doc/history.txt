@@ -688,5 +688,6 @@ Version 7.5 -- 10.10.12
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
 - HashDeep utility updated to version 4.3
+- Support added for C++ 2012 Runtime Libraries (Thanks to B. Knapp)
 - Removed obsolete "trailing colon" restriction for environment variable TEMP from UpdateGenerator script (Thanks to "daos" and "boco")
 - Fix: Linux script CreateISOImage.sh did not exit on missing iso creation tool (Thanks to S. Baur and H. Hullen)

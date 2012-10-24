@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=7.5+ (r400)
+set WSUSOFFLINE_VERSION=7.5+ (r401)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -631,6 +631,15 @@ if "%CPP_2010_x64%"=="1" (
     echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2010_x64.exe not found >>%UPDATE_LOGFILE%
   )
 )
+if "%CPP_2012_x64%"=="1" (
+  if exist ..\cpp\vcredist2012_x64.exe (
+    echo Installing most recent C++ 2012 x64 Runtime Library...
+    call InstallOSUpdate.cmd ..\cpp\vcredist2012_x64.exe %VERIFY_MODE% /errorsaswarnings /q /norestart
+  ) else (
+    echo Warning: File ..\cpp\vcredist2012_x64.exe not found.
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2012_x64.exe not found >>%UPDATE_LOGFILE%
+  )
+)
 :CPPInstx86
 if "%CPP_2005_x86%"=="1" (
   if exist ..\cpp\vcredist2005_x86.exe (
@@ -657,6 +666,15 @@ if "%CPP_2010_x86%"=="1" (
   ) else (
     echo Warning: File ..\cpp\vcredist2010_x86.exe not found.
     echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2010_x86.exe not found >>%UPDATE_LOGFILE%
+  )
+)
+if "%CPP_2012_x86%"=="1" (
+  if exist ..\cpp\vcredist2012_x86.exe (
+    echo Installing most recent C++ 2012 x86 Runtime Library...
+    call InstallOSUpdate.cmd ..\cpp\vcredist2012_x86.exe %VERIFY_MODE% /errorsaswarnings /q /norestart
+  ) else (
+    echo Warning: File ..\cpp\vcredist2012_x86.exe not found.
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2012_x86.exe not found >>%UPDATE_LOGFILE%
   )
 )
 :SkipCPPInst
