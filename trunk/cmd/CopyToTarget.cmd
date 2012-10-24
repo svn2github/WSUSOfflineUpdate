@@ -17,6 +17,11 @@ if exist %DOWNLOAD_LOGFILE% (
 )
 echo %DATE% %TIME% - Info: Starting copying for %1 %2 %3 %4 %5 %6 %7 %8 %9 >>%DOWNLOAD_LOGFILE%
 
+if "%TEMP%"=="" goto NoTemp
+pushd "%TEMP%"
+if errorlevel 1 goto NoTempDir
+popd
+
 for %%i in (all all-x86 all-x64 enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%~1"=="%%i" goto V1EvalParams)
 for %%i in (wxp w2k3 w2k3-x64) do (
   if /i "%~1"=="%%i" (
@@ -172,6 +177,20 @@ echo.
 echo ERROR: No command extensions available.
 echo.
 exit /b 1
+
+:NoTemp
+echo.
+echo ERROR: Environment variable TEMP not set.
+echo %DATE% %TIME% - Error: Environment variable TEMP not set >>%DOWNLOAD_LOGFILE%
+echo.
+goto Error
+
+:NoTempDir
+echo.
+echo ERROR: Directory "%TEMP%" not found.
+echo %DATE% %TIME% - Error: Directory "%TEMP%" not found >>%DOWNLOAD_LOGFILE%
+echo.
+goto Error
 
 :InvalidParams
 echo.

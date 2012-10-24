@@ -361,7 +361,7 @@ Func CheckBoxStateToString($chkbox)
   EndIf
 EndFunc
 
-Func IsOlderOfficeChecked()
+Func IsLangOfficeChecked()
   Return (IsCheckBoxChecked($o2k3_enu) OR IsCheckBoxChecked($o2k7_enu) OR IsCheckBoxChecked($o2k10_enu) _
        OR IsCheckBoxChecked($o2k3_fra) OR IsCheckBoxChecked($o2k7_fra) OR IsCheckBoxChecked($o2k10_fra) _
        OR IsCheckBoxChecked($o2k3_esn) OR IsCheckBoxChecked($o2k7_esn) OR IsCheckBoxChecked($o2k10_esn) _
@@ -558,7 +558,7 @@ EndFunc
 Func EnableGUI()
 
   SwitchDownloadGUI($GUI_ENABLE)
-  If NOT IsOlderOfficeChecked() Then
+  If NOT IsLangOfficeChecked() Then
     GUICtrlSetState($ofc_glb, $GUI_ENABLE)
   EndIf
 
@@ -2238,7 +2238,7 @@ If ShowGUIInGerman() Then
 Else
   $ofc_glb = GUICtrlCreateCheckbox("Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
 EndIf
-If IsOlderOfficeChecked() Then
+If IsLangOfficeChecked() Then
   GUICtrlSetState($ofc_glb, $GUI_CHECKED + $GUI_DISABLE)
 Else
   If IniRead($inifilename, $ini_section_ofc, $lang_token_glb, $disabled) = $enabled Then
@@ -2554,12 +2554,12 @@ If NOT DirectoryStructureExists() Then
     Exit(1)
   EndIf
 EndIf
-If ( (StringRight(EnvGet("TEMP"), 1) = "\") OR (StringRight(EnvGet("TEMP"), 1) = ":") ) Then
+If (StringRight(EnvGet("TEMP"), 1) = "\") Then
   If ShowGUIInGerman() Then
-    MsgBox(0x2010, "Fehler", "Die Umgebungsvariable TEMP" & @LF & "enth‰lt einen abschlieﬂenden Backslash ('\')" & @LF & "oder einen abschlieﬂenden Doppelpunkt (':').")
+    MsgBox(0x2010, "Fehler", "Die Umgebungsvariable TEMP" & @LF & "enth‰lt einen abschlieﬂenden Backslash ('\').")
     Exit(1)
   Else
-    MsgBox(0x2010, "Error", "The environment variable TEMP" & @LF & "contains a trailing backslash ('\')" & @LF & "or a trailing colon (':').")
+    MsgBox(0x2010, "Error", "The environment variable TEMP" & @LF & "contains a trailing backslash ('\').")
     Exit(1)
   EndIf
 EndIf
@@ -2577,7 +2577,7 @@ While 1
          $o2k3_cht, $o2k7_cht, $o2k10_cht, $o2k3_plk, $o2k7_plk, $o2k10_plk, $o2k3_hun, $o2k7_hun, $o2k10_hun, $o2k3_csy, $o2k7_csy, $o2k10_csy, _
          $o2k3_sve, $o2k7_sve, $o2k10_sve, $o2k3_trk, $o2k7_trk, $o2k10_trk, $o2k3_ell, $o2k7_ell, $o2k10_ell, $o2k3_ara, $o2k7_ara, $o2k10_ara, _
          $o2k3_heb, $o2k7_heb, $o2k10_heb, $o2k3_dan, $o2k7_dan, $o2k10_dan, $o2k3_nor, $o2k7_nor, $o2k10_nor, $o2k3_fin, $o2k7_fin, $o2k10_fin
-      If IsOlderOfficeChecked() Then
+      If IsLangOfficeChecked() Then
         GUICtrlSetState($ofc_glb, $GUI_CHECKED + $GUI_DISABLE)
       Else
         GUICtrlSetState($ofc_glb, $GUI_ENABLE)
@@ -2812,7 +2812,7 @@ While 1
         EndIf
       EndIf
       If IsCheckBoxChecked($ofc_glb) Then
-        If IsOlderOfficeChecked() Then
+        If IsLangOfficeChecked() Then
           If RunScripts("ofc glb", IsCheckBoxChecked($imageonly), DetermineDownloadSwitches($includesp, $dotnet, $msse, $wddefs, $cleanupdownloads, $verifydownloads, AuthProxy($proxy, $proxypwd), $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse, $wddefs, $usbclean), False, GUICtrlRead($usbpath)) <> 0 Then
             ContinueLoop
           EndIf
