@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                           v. 7.5+ (r403)                          ###
+###                           v. 7.5+ (r404)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -1356,7 +1356,7 @@ if [ "$CLEANUP_DOWNLOADS" != "0" ]; then
     echo "Cleaning up client directory for win $lang"
     cat ../temp/StaticUrls-${lang}.txt > ../temp/ValidUrls-${lang}.txt
     cat ../temp/ValidUrls-win-x86-${lang}.txt >> ../temp/ValidUrls-${lang}.txt
-    cleanup "../temp/ValidUrl s-${lang}.txt" "../client/win/${lang}"
+    cleanup "../temp/ValidUrls-${lang}.txt" "../client/win/${lang}"
     echo "Cleaning up client directory for win glb"
     cat ../temp/StaticUrls-glb.txt > ../temp/ValidUrls-glb.txt
     cleanup "../temp/ValidUrls-glb.txt" "../client/win/glb"
