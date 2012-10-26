@@ -2,7 +2,7 @@
 
 #########################################################################
 ###          WSUS Offline Update ISO maker for Linux systems          ###
-###                           v. 7.5+ (r401)                          ###
+###                           v. 7.5+ (r402)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg                     ###
@@ -10,22 +10,24 @@
 #########################################################################
 
 #set working directory
-cd "$( dirname "$(readlink -f "$0")" )"
+cd $( dirname $(readlink -f "$0") )
 rm -f ../temp/ExcludeListISO*
+
+syslist="wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-64 o2k3 o2k7 o2k10 ofc all-x64 all-x86"
+langlist="enu deu nld esn fra ptg ptb ita rus plk ell csy dan nor sve fin jpn kor chs cht hun trk ara heb"
 
 printusage()
 {
-cat << END
-Invalid or missing parameter: "$@"
+cat <<END
+  Invalid or missing parameter: "$@"
 
 Usage: `basename $0` [system] [language] [parameter]
 
 Supported systems:
-wxp, w2k3, w2k3-x64, w60, w60-x64, w61, w61-x64, o2k3, o2k7, o2k10, ofc, all-x64, all-x86
+$syslist
 
 Supported languages:
-enu, deu, nld, esn, fra, ptg, ptb, ita, rus, plk, ell, csy
-dan, nor, sve, fin, jpn, kor, chs, cht, hun, trk, ara, heb
+$langlist
 
 Parameter:
 /excludesp - exclude servicepacks
@@ -39,27 +41,12 @@ END
 exit 1
 }
 
-printheader()
-{
 clear
-cat << END
-*************************************************************************
-***          WSUS Offline Update ISO maker for Linux systems          ***
-***                           v. 7.5+ (r401)                          ***
-***                                                                   ***
-***   http://www.wsusoffline.net/                                     ***
-***   Authors: Stefan Joehnke, Walter Schiessberg                     ***
-***   maintained by H. Hullen                                         ***
-*************************************************************************
-
-END
-}
-
-printheader
+head -20 $0 | grep '^###'
 
 #check config
-X=`which mkisofs`
-Y=`which genisoimage`
+X=`which mkisofs 2>/dev/null`
+Y=`which genisoimage 2>/dev/null`
 iso_tool=""
 if [ ! -x "$X" ] && [ ! -x "$Y" ]; then
   cat << END
@@ -77,7 +64,7 @@ Command in SuSE:
 zypper install genisoimage
 
 END
-exit 1
+  exit 1
 fi
 
 if [ -x "$X" ]; then
@@ -88,8 +75,6 @@ fi
 
 evaluateparams()
 {
-syslist=("wxp" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "o2k3" "o2k7" "o2k10" "ofc" "all-x64" "all-x86")
-langlist=("enu" "deu" "nld" "esn" "fra" "ptg" "ptb" "ita" "rus" "plk" "ell" "csy" "dan" "nor" "sve" "fin" "jpn" "kor" "chs" "cht" "hun" "trk" "ara" "heb")
 paramlist=("/excludesp" "/dotnet" "/msse" "/wddefs")
 EXCLUDE_SP="0"
 dotnet="0"
@@ -110,7 +95,8 @@ for i in ${langlist[@]}; do
   fi
 done
 
-if [ "$sys" == "w60" -o "$sys" == "w60-x64" -o "$sys" == "w61" -o "$sys" == "w61-x64" ]; then
+if [ "$sys" == "w60" -o "$sys" == "w60-x64" -o "$sys" == "w61" \
+    -o "$sys" == "w61-x64" -o $sys == w62 -o $sys == w62-x64 ]; then
   echo "Setting language to glb..."
   lang="glb"
 fi
@@ -144,6 +130,7 @@ for i in ${paramlist[@]}; do
 done
 }
 
+test "$1" || printusage
 evaluateparams $1 $2 $3 $4
 
 echo "Creating ISO filter..."
@@ -184,7 +171,6 @@ if [ "$wddefs" != "1" ]; then
 fi
 
 x=0
-langlist=("enu" "deu" "nld" "esn" "fra" "ptg" "ptb" "ita" "rus" "plk" "ell" "csy" "dan" "nor" "sve" "fin" "jpn" "kor" "chs" "cht" "hun" "trk" "ara" "heb")
 for i in ${langlist[@]}; do
   if [ "${langlist[x]}" == "enu" ]; then
     echo ${langlist[x]}* | grep -v $lang >> ../temp/ExcludeListISO-${sys}.txt
@@ -205,3 +191,13 @@ echo "done."
 exit 0
 
 # EOF
+
+# ============================================================================
+# $Id: CreateISOImage.sh,v 1.2 2012-10-25 13:33:00+02 HHullen Exp $
+# $Log: CreateISOImage.sh,v $
+# Revision 1.2  2012-10-25 13:33:00+02  HHullen
+# verschlankt; Windows 8 ergaenzt
+#
+# Revision 1.1  2012-09-20 15:10:43+02  HHullen
+# Initial revision
+#

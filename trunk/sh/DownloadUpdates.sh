@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                           v. 7.5+ (r401)                          ###
+###                           v. 7.5+ (r402)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -13,6 +13,9 @@
 # 1 - file error
 # 2 - connection error
 
+syslist="wxp wxp-x64 w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-x64 o2k3 o2k7 o2k10 ofc all-x86 all-x64"
+langlist="enu deu nld esn fra ptg ptb ita rus plk ell csy dan nor sve fin jpn kor chs cht hun trk ara heb"
+
 printusage()
 {
 cat << END
@@ -21,11 +24,10 @@ cat << END
 Usage: `basename $0` [system] [language] [parameter]
 
 Supported systems:
-wxp, wxp-x64, w2k3, w2k3-x64, w60, w60-x64, w61, w61-x64, o2k3, o2k7, o2k10, ofc, all-x64, all-x86
+$syslist
 
 Supported languages:
-enu, deu, nld, esn, fra, ptg, ptb, ita, rus, plk, ell, csy
-dan, nor, sve, fin, jpn, kor, chs, cht, hun, trk, ara, heb
+$langlist
 
 Parameters:
 /excludesp - do not download servicepacks
@@ -108,8 +110,7 @@ else
   fi
 fi
 
-# Ende alias
-}
+} # Ende "checkconfig"
 
 printtimeout()
 {
@@ -123,8 +124,6 @@ exit 2
 
 evaluateparams()
 {
-syslist=("wxp" "wxp-x64" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "o2k3" "o2k7" "o2k10" "ofc" "all-x86" "all-x64")
-langlist=("enu" "deu" "nld" "esn" "fra" "ptg" "ptb" "ita" "rus" "plk" "ell" "csy" "dan" "nor" "sve" "fin" "jpn" "kor" "chs" "cht" "hun" "trk" "ara" "heb")
 paramlist=("/excludesp" "/dotnet" "/msse" "/makeiso" "/nocleanup" "/proxy" "/wddefs")
 EXCLUDE_SP="0"
 EXCLUDE_STATICS="0"
@@ -145,6 +144,7 @@ param7=""
 for i in ${syslist[@]}; do
   if [ "$1" == "$i" ]; then
     sys="$1"
+    break
   fi
 done
 
@@ -152,10 +152,12 @@ done
 for i in ${langlist[@]}; do
   if [ "$2" == "$i" ]; then
     lang="$2"
+    break
   fi
 done
 
-if [ "$sys" == "w60" -o "$sys" == "w60-x64" -o "$sys" == "w61" -o "$sys" == "w61-x64" ]; then
+if [ "$sys" == "w60" -o "$sys" == "w60-x64" -o "$sys" == "w61" \
+    -o "$sys" == "w61-x64" -o $sys == w62 -o $sys == w62-x64 ]; then
   echo "Setting language to glb..."
   lang="glb"
 fi
@@ -241,27 +243,27 @@ esac
 
 #determining parameters
 for i in ${paramlist[@]}; do
-  if echo $@ | grep /makeiso > /dev/null 2>&1; then
+  if echo $@ | grep -q /makeiso ; then
     param1=/makeiso
     createiso="1"
   fi
-  if echo $@ | grep /dotnet > /dev/null 2>&1; then
+  if echo $@ | grep -q /dotnet ; then
     param2=/dotnet
     dotnet="1"
   fi
-  if echo $@ | grep /excludesp > /dev/null 2>&1; then
+  if echo $@ | grep -q /excludesp ; then
     param3=/excludesp
     EXCLUDE_SP="1"
   fi
-  if echo $@ | grep /nocleanup > /dev/null 2>&1; then
+  if echo $@ | grep -q /nocleanup ; then
     param4=/nocleanup
     CLEANUP_DOWNLOADS="0"
   fi
-  if echo $@ | grep /msse > /dev/null 2>&1; then
+  if echo $@ | grep -q /msse ; then
     param5=/msse
     msse="1"
   fi
-  if echo $@ | grep /wddefs > /dev/null 2>&1; then
+  if echo $@ | grep -q /wddefs ; then
     param7=/wddefs
     wddefs="1"
   fi
@@ -305,7 +307,7 @@ fi
 if [ "$sys" == "" -o "$lang" == "" ]; then
   printusage $@
 fi
-}
+} # Ende "evaluateparams"
 
 doWget()
 {
@@ -333,28 +335,34 @@ rm -f index.html
 
 getsystem()
 {
-syslist=("wxp" "wxp-x64" "w2k3" "w2k3-x64" "w60" "w60-x64" "w61" "w61-x64" "o2k3" "o2k7" "o2k10" "ofc" "all-x86" "all-x64")
 cat << END
 Please select your OS:
 [1] Windows XP                   [5] Windows Vista / Server 2008
 [2] Windowx XP 64 bit            [6] Windows Vista / Server 2008 64 bit
 [3] Windows Server 2003          [7] Windows 7
 [4] Windows Server 2003 64 bit   [8] Windows 7 / Server 2008 R2 64 bit
+                                 [9] Windows 8
+                                [10] Windows 8 64 bit
 
-[9] Office 2003                 [10] Office 2007
-[11] Office 2010                [12] Office updates only (2003 - 2010)
+[10] Office 2003                [11] Office 20072
+[12] Office 2010                [13] Office updates only (2003 - 2010)
 
-[13] All 32 bit                 [14] All 64 bit
+[14] All 32 bit                 [15] All 64 bit
 END
-read syschoice
-echo
+
+read -p "which number? " syschoice
+
 let syschoice=syschoice-1
+
+test "$syschoice" || exit 1
+test "$syschoice" -lt 1 && exit 1
+test "$syschoice" -gt 15 && exit 1
+
 sys_old=""
-for i in ${!syslist[@]}; do
-  if [ "$syschoice" == "$i" ]; then
-    sys=${syslist[i]}
-  fi
-done
+set -- $(echo $syslist)
+shift $syschoice
+sys=$1
+
 if [ "$sys" == "wxp-x64" ]; then
   sys="w2k3-x64"
 fi
@@ -367,12 +375,9 @@ fi
 
 getlanguage()
 {
-langlist=("enu" "deu" "nld" "esn" "fra" "ptg" "ptb" "ita" "rus" "plk" "ell" "csy" "dan" "nor" "sve" "fin" "jpn" "kor" "chs" "cht" "hun" "trk" "ara" "heb")
 langindex=("a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x")
 
-if [ "$sys" == "w60" -o "$sys" == "w60-x64" -o "$sys" == "w61" -o "$sys" == "w61-x64" ]; then
-  lang="glb"
-else
+if [ "$lang" != "glb" ] ; then
   cat << END
 Please select your OS language:
 
@@ -383,14 +388,18 @@ Please select your OS language:
 [q] jpn           [r] kor         [s] chs         [t] cht
 [u] hun           [v] trk         [w] ara         [x] heb
 END
-  read langchoice
+  read -p "which letter? " langchoice
   echo
   for i in ${!langindex[@]}; do
     if [ "$langchoice" == "${langindex[i]}" ]; then
       langnr=$i
-      lang=${langlist[i]}
+	break
     fi
   done
+
+    set -- $(echo $langlist)
+    shift $langnr
+    lang=$1
   if [ "$lang" == "" ]; then
     echo "Program aborted."
   exit 1
@@ -401,8 +410,7 @@ fi
 getservicepack()
 {
 EXCLUDE_SP="1"
-echo "Download Service Packs? [y/n]"
-read addsp
+read -p "Download Service Packs? [y/n] " addsp
 if [ "$addsp" == "y" ]; then
   EXCLUDE_SP="0"
 else
@@ -413,8 +421,7 @@ fi
 getdotnet()
 {
 dotnet="0"
-echo "Download .Net framework? [y/n]"
-read adddotnet
+read -p "Download .Net framework? [y/n] " adddotnet
 if [ "$adddotnet" == "y" ]; then
   dotnet="1"
   param2="/dotnet"
@@ -425,8 +432,7 @@ getmsse()
 {
 msse="0"
 if [ "$sys" != "w2k3" -o "$sys" != "w2k3-x64" ]; then
-  echo "Download Microsoft Security Essentials installation files? [y/n]"
-  read addmsse
+  read -p "Download Microsoft Security Essentials installation files? [y/n] " addmsse
   if [ "$addmsse" == "y" ]; then
     msse="1"
     param5="/msse"
@@ -437,8 +443,7 @@ fi
 getwddefs()
 {
 wddefs="0"
-echo "Download Microsoft Windows Defender definition files? [y/n]"
-read addwddefs
+read -p "Download Microsoft Windows Defender definition files? [y/n] " addwddefs
 if [ "$addwddefs" == "y" ]; then
   wddefs="1"
   param7="/wddefs"
@@ -447,17 +452,22 @@ fi
 
 getproxy()
 {
-echo
-echo "Please specify your proxy (default: none, http://[username:password@]<server>:<port>])"
-read http_proxy
+read -p "Please specify your proxy (default: none, http://[username:password@]<server>:<port>]) " http_proxy
+case $http_proxy in
+    http:*)
+    ;;
+    *)
+    echo wrong syntax for proxy server
+    exit 1
+    ;;
+esac
 }
 
 makeiso()
 {
 createiso="0"
-echo "Create ISO-Image after download? [y/n]"
-read addiso
-if [ "$addiso" == "y" ]; then
+read -p "Create ISO-Image after download? [y/n] " addiso
+if [ "$addiso" == "y" ]; then 
   createiso="1"
   param1="/makeiso"
 fi
@@ -481,27 +491,15 @@ rm -f `cat "$currentpath/../temp/cleanup.txt"`
 cd "$currentpath"
 }
 
-printheader()
-{
+printheader () {
 clear
-cat << END
-*************************************************************************
-***         WSUS Offline Update Downloader for Linux systems          ***
-***                           v. 7.5+ (r401)                          ***
-***                                                                   ***
-***   http://www.wsusoffline.net/                                     ***
-***   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ***
-***   maintained by H. Hullen                                         ***
-*************************************************************************
-
-END
-}
-
+head -20 "$0" | grep '^###'
+    }
 
 printheader
 
 #set working directory
-cd "$( dirname "$(readlink -f "$0")" )"
+cd $( dirname $(readlink -f "$0") )
 PATH_PWD="$( pwd )"
 
 #check for required packages
@@ -512,10 +510,8 @@ printheader
 if [ "$1" != "" ]; then
   externparam="1"
   evaluateparams $1 $2 $3 $4 $5 $6 $7 $8 $9
-fi
-
+else
 #get parameters
-if [ "$1" == "" ]; then
   getsystem
   getlanguage
   getservicepack
@@ -524,6 +520,7 @@ if [ "$1" == "" ]; then
   getwddefs
   getproxy
   makeiso
+    echo "thank you - now I start working!"
 fi
 
 #set proxy
@@ -562,8 +559,7 @@ END
 
 if [ "$externparam" != "1" ]; then
   echo
-  echo "Do you want to download now? [y/n]"
-  read response
+  read -p "Do you want to download now? [y/n] " response
 else
   response="y"
 fi
@@ -579,6 +575,7 @@ if [ "$sys" == "all-x64" ]; then
   /bin/bash DownloadUpdates.sh w2k3-x64 $lang $param2 $param3 $param4 $param5 $param6 $param7
   /bin/bash DownloadUpdates.sh w60-x64 $lang $param2 $param3 $param4 $param5 $param6 $param7
   /bin/bash DownloadUpdates.sh w61-x64 $lang $param2 $param3 $param4 $param5 $param6 $param7
+  /bin/bash DownloadUpdates.sh w62-x64 $lang $param2 $param3 $param4 $param5 $param6 $param7
   if [ "$param1" == "/makeiso" ]; then
     /bin/bash ./CreateISOImage.sh $sys $lang $param2 $param3
     rc=$?
@@ -591,6 +588,7 @@ if [ "$sys" == "all-x86" ]; then
   /bin/bash DownloadUpdates.sh w2k3 $lang $param2 $param3 $param4 $param5 $param6 $param7
   /bin/bash DownloadUpdates.sh w60 $lang $param2 $param3 $param4 $param5 $param6 $param7
   /bin/bash DownloadUpdates.sh w61 $lang $param2 $param3 $param4 $param5 $param6 $param7
+  /bin/bash DownloadUpdates.sh w62 $lang $param2 $param3 $param4 $param5 $param6 $param7
   if [ "$param1" == "/makeiso" ]; then
     /bin/bash ./CreateISOImage.sh $sys $lang $param2 $param3
     rc=$?
@@ -667,7 +665,7 @@ fi
 
 static3="../static/StaticDownloadLinks-win-x86-${lang}.txt"
 static4="../static/StaticDownloadLinks-win-x86-glb.txt"
-if [ "$sys" != "w60" ] && [ "$sys" != "$w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "$w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
+if [ $lang != glb ]; then
   if [ -f "$static3" ]; then
     cat $static3 > ../temp/StaticUrls-${lang}.txt
   fi
@@ -676,7 +674,7 @@ if [ "$sys" != "w60" ] && [ "$sys" != "$w60-x64" ] && [ "$sys" != "w61" ] && [ "
   fi
 fi
 
-if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ]; then
+if [ $lang != glb  ]; then
   static4="../static/StaticDownloadLinks-${sys}-x86-glb.txt"
   if [ -f "$static4" ]; then
     cat $static4 > ../temp/StaticUrls-${sys}-glb.txt
@@ -695,14 +693,14 @@ if [ "$dotnet" == "1" ]; then
 fi
 
 if [ "$msse" == "1" ]; then
-  if echo $sys | grep x64 > /dev/null 2>&1; then
+  if echo $sys | grep -q x64 ; then
     cp ../static/StaticDownloadLinks-msse-x64-glb.txt ../temp/StaticUrls-msse-x64-glb.txt
   else
     cp ../static/StaticDownloadLinks-msse-x86-glb.txt ../temp/StaticUrls-msse-x86-glb.txt
   fi
 fi
 if [ "$wddefs" == "1" ]; then
-  if echo $sys | grep x64 > /dev/null 2>&1; then
+  if echo $sys | grep -q x64 ; then
     cp ../static/StaticDownloadLink-wddefs-x64-glb.txt ../temp/StaticUrls-wddefs-x64-glb.txt
   else
     cp ../static/StaticDownloadLink-wddefs-x86-glb.txt ../temp/StaticUrls-wddefs-x86-glb.txt
@@ -716,7 +714,7 @@ fi
 if [ -f ../static/custom/StaticDownloadLinks-${sys}-${lang}.txt ]; then
    cat ../static/custom/StaticDownloadLinks-${sys}-${lang}.txt >> ../temp/StaticUrls-${sys}-${lang}.txt
 fi
-if [ "$sys" != "w60" ] && [ "$sys" != "$w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "$w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
+if [ $lang != glb ]; then
   if [ -f ../static/custom/StaticDownloadLinks-win-x86-${lang}.txt ]; then
     cat ../static/custom/StaticDownloadLinks-win-x86-${lang}.txt >> ../temp/StaticUrls-${lang}.txt
   fi
@@ -724,7 +722,7 @@ if [ "$sys" != "w60" ] && [ "$sys" != "$w60-x64" ] && [ "$sys" != "w61" ] && [ "
     cat ../static/custom/StaticDownloadLinks-win-x86-glb.txt >> ../temp/StaticUrls-glb.txt
   fi
 fi
-if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ]; then
+if [ $lang != glb ]; then
   if [ -f ../static/custom/StaticDownloadLinks-${sys}-x86-glb.txt ]; then
     cat ../static/custom/StaticDownloadLinks-${sys}-x86-glb.txt >> ../temp/StaticUrls-${sys}-glb.txt
   fi
@@ -922,7 +920,7 @@ if [ -f "$glb2" ] && [ "$lang" != "glb" ]; then
   grep -F -i -v -f ../temp/tmpExcludeList-${sys}.txt ../temp/tmpValidUrls-${sys}-glb.txt > ../temp/ValidUrls-${sys}-glb.txt
   rm ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
 fi
-if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ] && [ "$sys" != "ofc" ]; then
+if [ $lang != glb -a "$sys" != "ofc" ]; then
   echo "Determining update URLs for win ${lang}..."
   $xml tr ../xslt/ExtractDownloadLinks-win-x86-${lang}.xsl ../temp/package.xml > ../temp/Urls-win-x86-${lang}.txt
   cat ../exclude/ExcludeList-win-x86.txt > ../temp/tmpExcludeList-win-x86.txt
@@ -1027,9 +1025,10 @@ fi
 
 rm ../temp/package.xml
 
-touch ../temp/ValidDynamicLinks-${sys}-${lang}.txt ../temp/StaticUrls-${sys_old}-${lang}.txt ../temp/StaticUrls-${sys_old}-glb.txt ../temp/StaticUrls-${sys}-${lang}.txt ../temp/ValidUrls-${sys}-${lang}.txt ../temp/ValidUrls-${sys}-glb.txt ../temp/ValidUrls-win-x86-${lang}.txt ../temp/StaticUrls-ofc-glb.txt ../temp/StaticUrls-ofc-${lang}.txt ../temp/StaticUrls-${sys}-glb.txt ../temp/StaticUrls-${lang}.txt ../temp/StaticUrls-glb.txt ../temp/StaticUrls-dotnet.txt ../temp/StaticUrls-cpp-x86-glb.txt ../temp/StaticUrls-cpp-x64-glb.txt ../temp/StaticUrls-msse-x86-glb.txt ../temp/StaticUrls-msse-x64-glb.txt ../temp/StaticUrls-wddefs-x86-glb.txt ../temp/StaticUrls-wddefs-x64-glb.txt
+touch ../temp/ValidDynamicLinks-${sys}-${lang}.txt ../temp/StaticUrls-${sys_old}-${lang}.txt ../temp/StaticUrls-${sys_old}-glb.txt ../temp/StaticUrls-${sys}-${lang}.txt ../temp/StaticUrls-ie6-${lang}.txt ../temp/ValidUrls-${sys}-${lang}.txt ../temp/ValidUrls-${sys}-glb.txt ../temp/ValidUrls-win-x86-${lang}.txt ../temp/StaticUrls-ofc-glb.txt ../temp/StaticUrls-ofc-${lang}.txt ../temp/StaticUrls-${sys}-glb.txt ../temp/StaticUrls-${lang}.txt ../temp/StaticUrls-glb.txt ../temp/StaticUrls-dotnet.txt ../temp/StaticUrls-cpp-x86-glb.txt ../temp/StaticUrls-cpp-x64-glb.txt ../temp/StaticUrls-msse-x86-glb.txt ../temp/StaticUrls-msse-x64-glb.txt ../temp/StaticUrls-wddefs-x86-glb.txt ../temp/StaticUrls-wddefs-x64-glb.txt
 
 cat ../temp/StaticUrls-${sys}-${lang}.txt >> ../temp/urls.txt
+cat ../temp/StaticUrls-ie6-${lang}.txt >> ../temp/urls.txt
 cat ../temp/ValidUrls-${sys}-${lang}.txt >> ../temp/urls.txt
 cat ../temp/ValidUrls-${sys}-glb.txt >> ../temp/urls.txt
 cat ../temp/ValidUrls-win-x86-${lang}.txt >> ../temp/urls.txt
@@ -1101,7 +1100,7 @@ if [ "$dotnet" == "1" ]; then
       mv -f "../client/cpp/$tmpname" "../client/cpp/$newname"
     fi
   done
-  if echo $sys | grep x64 > /dev/null 2>&1; then
+  if echo $sys | grep -q x64 ; then
    cppstring=`cat ../temp/StaticUrls-cpp-x64-glb.txt | grep ,`
    arr=$(echo $cppstring | tr " " "\n")
    for x in $arr
@@ -1179,7 +1178,7 @@ printheader
 echo "Validating patches for ${sys}..."
 echo "Validating static patches..."
 doWget -i ../temp/StaticUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
-if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
+if [ $lang != glb ]; then
   doWget -i ../temp/StaticUrls-${lang}.txt -P ../client/win/${lang}
   doWget -i ../temp/StaticUrls-glb.txt -P ../client/win/glb
 fi
@@ -1203,7 +1202,7 @@ if [ "$dotnet" == "1" ]; then
   cd ../client/bin
   hashdeep -c md5,sha1,sha256 -l ../dotnet/*.exe | sed 's/\//\\/g' > ../md/hashes-dotnet.txt
   cd "$PATH_PWD"
-  if echo $sys | grep x64 > /dev/null 2>&1; then
+  if echo $sys | grep -q x64 ; then
     mkdir -p ../client/dotnet/x64-glb
     doWget -i ../temp/Urls-dotnet-x64.txt -P ../client/dotnet/x64-glb
     echo "Creating integrity database for .Net-x64-glb ..."
@@ -1303,7 +1302,7 @@ fi
 
 if [ "$wddefs" == "1" ]; then
   echo "Validating Windows Defender definition files..."
-  if echo $sys | grep x64 > /dev/null 2>&1; then
+  if echo $sys | grep -q x64 ; then
     mkdir -p ../client/wddefs/x64-glb
     doWget -i ../temp/StaticUrls-wddefs-x64-glb.txt -P ../client/wddefs/x64-glb
   else
@@ -1333,7 +1332,7 @@ if [ -d ../client/${sys}/glb ]; then
  hashdeep -c md5,sha1,sha256 -l -r ../${sys}/glb | sed 's/\//\\/g' > ../md/hashes-${sys}-glb.txt
  cd "$PATH_PWD"
 fi
-if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
+if [ $lang != glb ] ; then
   doWget -i ../temp/ValidUrls-win-x86-${lang}.txt -P ../client/win/${lang}
 fi
 if [ -d ../client/win/glb ]; then
@@ -1384,4 +1383,11 @@ fi
 
 exit 0
 
-# EOF
+# 
+
+# ========================================================================
+# $Id: DownloadUpdates.sh,v 1.3 2012-10-25 17:00:21+02 HHullen Exp $
+# $Log: DownloadUpdates.sh,v $
+# Revision 1.3  2012-10-25 17:00:21+02  HHullen
+# verschlankt; Windows 8 ergaenzt
+#
