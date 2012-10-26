@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                           v. 7.5+ (r402)                          ###
+###                           v. 7.5+ (r403)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -51,64 +51,52 @@ S=$(which xmlstarlet 2> /dev/null)
 T=$(which xml 2> /dev/null)
 xml=""
 
-if [ ! -x "$C" ]; then
+Missing=""
+
+for Datei in cabextract md5deep
+  do
+    Nomiss=$(which $Datei 2>/dev/null)
+    test -x $Nomiss && continue
   cat << END
 
-Please install cabextract.
+Please install $Datei
 
 Command in Fedora:
-yum install cabextract
+yum install $Datei
 
 Command in Debian:
-apt-get install cabextract
+apt-get install $Datei
 
 Command in SuSE:
-zypper install cabextract
+zypper install $Datei
 END
-  exit 1
-fi
+    Missing=1
+  done
 
-if [ ! -x "$M" ]; then
+test -x "$S" && xml="xmlstarlet"
+test -x "$T" && xml="xml"
+
+test "$xml" || {
+for Datei in xmlstarlet xml
+  do
   cat << END
 
-Please install md5deep.
+Please install $Datei
 
 Command in Fedora:
-yum install md5deep
-
-Command in Debian/Ubuntu:
-apt-get install md5deep
-
-Command in SuSE:
-zypper install md5deep
-END
-  exit 1
-fi
-
-if [ ! -x "$S" ] && [ ! -x "$T" ]; then
-  cat << END
-
-Please install xmlstarlet.
-
-Command in Fedora:
-yum install xmlstarlet
+yum install $Datei
 
 Command in Debian:
-apt-get install xmlstarlet
+apt-get install $Datei
 
 Command in SuSE:
-zypper install xmlstarlet
-
+zypper install $Datei
 END
-  exit 1
-else
-  if [ -x "$S" ]; then
-    xml="xmlstarlet"
-  fi
-  if [ -x "$T" ]; then
-    xml="xml"
-  fi
-fi
+    Missing=1
+  done
+}
+
+test $Missing -eq 1 && exit 1
 
 } # Ende "checkconfig"
 
@@ -352,11 +340,11 @@ END
 
 read -p "which number? " syschoice
 
-let syschoice=syschoice-1
-
 test "$syschoice" || exit 1
 test "$syschoice" -lt 1 && exit 1
 test "$syschoice" -gt 15 && exit 1
+
+let syschoice=syschoice-1
 
 sys_old=""
 set -- $(echo $syslist)
@@ -454,7 +442,7 @@ getproxy()
 {
 read -p "Please specify your proxy (default: none, http://[username:password@]<server>:<port>]) " http_proxy
 case $http_proxy in
-    http:*)
+    http:*|none)
     ;;
     *)
     echo wrong syntax for proxy server
@@ -491,7 +479,7 @@ rm -f `cat "$currentpath/../temp/cleanup.txt"`
 cd "$currentpath"
 }
 
-printheader () {
+printheader() {
 clear
 head -20 "$0" | grep '^###'
     }
@@ -520,7 +508,6 @@ else
   getwddefs
   getproxy
   makeiso
-    echo "thank you - now I start working!"
 fi
 
 #set proxy
@@ -537,15 +524,6 @@ mkdir -p ../client/bin
 mkdir -p ../client/wsus
 mkdir -p ../temp
 rm -f ../temp/*
-
-#convert files to Linux format
-
-for Datei in ../{exclude,static}/*.txt ../{exclude,static}/custom/*.txt \
-	../xslt/*.xsl
-  do
-    file -b $Datei | grep -q ASCII || continue
-    sed -i 's/\r//g' $Datei
-  done
 
 printheader
 
@@ -570,6 +548,18 @@ if [ "$response" != "y" ]; then
   echo
   exit 1
 fi
+
+echo "
+Thank you - now I start working!"
+
+#convert files to Linux format
+
+for Datei in ../{exclude,static}/*.txt ../{exclude,static}/custom/*.txt \
+	../xslt/*.xsl
+  do
+    file -b $Datei | grep -q ASCII || continue
+    sed -i 's/\r//g' $Datei
+  done
 
 if [ "$sys" == "all-x64" ]; then
   /bin/bash DownloadUpdates.sh w2k3-x64 $lang $param2 $param3 $param4 $param5 $param6 $param7
@@ -665,7 +655,7 @@ fi
 
 static3="../static/StaticDownloadLinks-win-x86-${lang}.txt"
 static4="../static/StaticDownloadLinks-win-x86-glb.txt"
-if [ $lang != glb ]; then
+if [ $lang != glb -a $sys != "w2k3-x64" ]; then
   if [ -f "$static3" ]; then
     cat $static3 > ../temp/StaticUrls-${lang}.txt
   fi
@@ -714,7 +704,7 @@ fi
 if [ -f ../static/custom/StaticDownloadLinks-${sys}-${lang}.txt ]; then
    cat ../static/custom/StaticDownloadLinks-${sys}-${lang}.txt >> ../temp/StaticUrls-${sys}-${lang}.txt
 fi
-if [ $lang != glb ]; then
+if [ $lang != glb -a $sys != "w2k3-x64" ]; then
   if [ -f ../static/custom/StaticDownloadLinks-win-x86-${lang}.txt ]; then
     cat ../static/custom/StaticDownloadLinks-win-x86-${lang}.txt >> ../temp/StaticUrls-${lang}.txt
   fi
@@ -867,7 +857,7 @@ if [ -f "$download2" ]; then
   $xml tr ../xslt/ExtractDownloadLinks-${sys}-x86-${lang}.xsl ../temp/package.xml > ../temp/Urls-${sys}-${lang}.txt
 fi
 if [ "$dotnet" == "1" ]; then
-  if echo $sys | grep x64 > /dev/null 2>&1; then
+  if echo $sys | grep -q x64 ; then
     $xml tr ../xslt/ExtractDownloadLinks-dotnet-x64-glb.xsl ../temp/package.xml > ../temp/Urls-dotnet-x64.txt
   else
     $xml tr ../xslt/ExtractDownloadLinks-dotnet-x86-glb.xsl ../temp/package.xml > ../temp/Urls-dotnet-x86.txt
@@ -920,7 +910,7 @@ if [ -f "$glb2" ] && [ "$lang" != "glb" ]; then
   grep -F -i -v -f ../temp/tmpExcludeList-${sys}.txt ../temp/tmpValidUrls-${sys}-glb.txt > ../temp/ValidUrls-${sys}-glb.txt
   rm ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
 fi
-if [ $lang != glb -a "$sys" != "ofc" ]; then
+if [ $lang != glb -a $sys != "w2k3-x64" -a "$sys" != "ofc" ]; then
   echo "Determining update URLs for win ${lang}..."
   $xml tr ../xslt/ExtractDownloadLinks-win-x86-${lang}.xsl ../temp/package.xml > ../temp/Urls-win-x86-${lang}.txt
   cat ../exclude/ExcludeList-win-x86.txt > ../temp/tmpExcludeList-win-x86.txt
@@ -992,12 +982,8 @@ fi
     done
 
   grep -F -f ../temp/OfficeFileIds.txt ../temp/UpdateCabExeIdsAndLocations.txt > ../temp/OfficeUpdateCabExeIdsAndLocations.txt
-  if [ ! -d "../client/ofc" ]; then
-    mkdir ../client/ofc
-  fi
-  if [ -f ../client/ofc/UpdateTable-${sys}-${lang}.csv ]; then
-    rm  ../client/ofc/UpdateTable-${sys}-${lang}.csv
-  fi
+  mkdir -p ../client/ofc
+  rm -f ../client/ofc/UpdateTable-${sys}-${lang}.csv
   linkstring=`cat ../temp/OfficeUpdateAndFileIds.txt`
   arr=$(echo $linkstring | tr " " "\n")
   for x in $arr
@@ -1055,13 +1041,13 @@ Found `grep -c http: ../temp/urls.txt` patches...
 END
 
 #create needed directories
-mkdir -p ../client/${sys}/ ../client/${sys}/glb ../client/${sys}/${lang} ../client/md
+mkdir -p ../client/${sys}/glb ../client/${sys}/${lang} ../client/md
 
 printheader
 echo "Downloading patches for ${sys}..."
 echo "Downloading static patches..."
 doWget -i ../temp/StaticUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
-if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
+if [ $lang != "glb" -a $sys != "w2k3-x64" ]; then
   doWget -i ../temp/StaticUrls-${lang}.txt -P ../client/win/${lang}
   doWget -i ../temp/StaticUrls-glb.txt -P ../client/win/glb
 fi
@@ -1076,7 +1062,7 @@ if [ "$dotnet" == "1" ]; then
   echo "Downloading .Net framework..."
   mkdir -p ../client/dotnet
   doWget -i ../temp/StaticUrls-dotnet.txt -P ../client/dotnet
-  if echo $sys | grep x64 > /dev/null 2>&1; then
+    if echo $sys | grep -q x64 ; then
     mkdir -p ../client/dotnet/x64-glb
     doWget -i ../temp/Urls-dotnet-x64.txt -P ../client/dotnet/x64-glb
   else
@@ -1120,7 +1106,7 @@ if [ "$dotnet" == "1" ]; then
 fi
 if [ "$msse" == "1" ]; then
   echo "Downloading MSSE files..."
-  if echo $sys | grep x64 > /dev/null 2>&1; then
+  if echo $sys | grep -q x64 ; then
    mssestring=`cat ../temp/StaticUrls-msse-x64-glb.txt`
    arr=$(echo $mssestring | tr " " "\n")
    for x in $arr
@@ -1158,7 +1144,7 @@ if [ "$msse" == "1" ]; then
 fi
 if [ "$wddefs" == "1" ]; then
   echo "Downloading Windows Defender definition files..."
-  if echo $sys | grep x64 > /dev/null 2>&1; then
+  if echo $sys | grep -q x64 ; then
     mkdir -p ../client/wddefs/x64-glb
     doWget -i ../temp/StaticUrls-wddefs-x64-glb.txt -P ../client/wddefs/x64-glb
   else
@@ -1178,7 +1164,7 @@ printheader
 echo "Validating patches for ${sys}..."
 echo "Validating static patches..."
 doWget -i ../temp/StaticUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
-if [ $lang != glb ]; then
+if [ $lang != glb -a $sys != "w2k3-x64" ]; then
   doWget -i ../temp/StaticUrls-${lang}.txt -P ../client/win/${lang}
   doWget -i ../temp/StaticUrls-glb.txt -P ../client/win/glb
 fi
@@ -1234,7 +1220,7 @@ if [ "$dotnet" == "1" ]; then
       mv -f "../client/cpp/$tmpname" "../client/cpp/$newname"
     fi
   done
-  if echo $sys | grep x64 > /dev/null 2>&1; then
+  if echo $sys | grep -q x64 ; then
    cppstring=`cat ../temp/StaticUrls-cpp-x64-glb.txt | grep ,`
    arr=$(echo $cppstring | tr " " "\n")
    for x in $arr
@@ -1259,7 +1245,7 @@ fi
 
 if [ "$msse" == "1" ]; then
   echo "Validating MSSE defs..."
-  if echo $sys | grep x64 > /dev/null 2>&1; then
+  if echo $sys | grep -q x64 ; then
    mssestring=`cat ../temp/StaticUrls-msse-x64-glb.txt`
    arr=$(echo $mssestring | tr " " "\n")
    for x in $arr
@@ -1332,7 +1318,7 @@ if [ -d ../client/${sys}/glb ]; then
  hashdeep -c md5,sha1,sha256 -l -r ../${sys}/glb | sed 's/\//\\/g' > ../md/hashes-${sys}-glb.txt
  cd "$PATH_PWD"
 fi
-if [ $lang != glb ] ; then
+if [ $lang != glb -a $sys != "w2k3-x64" ] ; then
   doWget -i ../temp/ValidUrls-win-x86-${lang}.txt -P ../client/win/${lang}
 fi
 if [ -d ../client/win/glb ]; then
@@ -1366,11 +1352,11 @@ if [ "$CLEANUP_DOWNLOADS" != "0" ]; then
   echo "Cleaning up client directory for $sys glb"
   cat ../temp/StaticUrls-${sys}-glb.txt >> ../temp/ValidUrls-${sys}-glb.txt
   cleanup "../temp/ValidUrls-${sys}-glb.txt" "../client/${sys}/glb"
-  if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
+  if [ $lang != glb -a "$sys" != "w2k3-x64" ]; then
     echo "Cleaning up client directory for win $lang"
     cat ../temp/StaticUrls-${lang}.txt > ../temp/ValidUrls-${lang}.txt
     cat ../temp/ValidUrls-win-x86-${lang}.txt >> ../temp/ValidUrls-${lang}.txt
-    cleanup "../temp/ValidUrls-${lang}.txt" "../client/win/${lang}"
+    cleanup "../temp/ValidUrl s-${lang}.txt" "../client/win/${lang}"
     echo "Cleaning up client directory for win glb"
     cat ../temp/StaticUrls-glb.txt > ../temp/ValidUrls-glb.txt
     cleanup "../temp/ValidUrls-glb.txt" "../client/win/glb"
@@ -1386,8 +1372,11 @@ exit 0
 # 
 
 # ========================================================================
-# $Id: DownloadUpdates.sh,v 1.3 2012-10-25 17:00:21+02 HHullen Exp $
+# $Id: DownloadUpdates.sh,v 1.4 2012-10-26 12:59:00+02 HHullen Exp $
 # $Log: DownloadUpdates.sh,v $
+# Revision 1.4  2012-10-26 12:59:00+02  HHullen
+# OS-Auswahl ueberarbeitet
+#
 # Revision 1.3  2012-10-25 17:00:21+02  HHullen
 # verschlankt; Windows 8 ergaenzt
 #
