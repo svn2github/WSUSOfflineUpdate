@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                           v. 7.5+ (r404)                          ###
+###                           v. 7.5+ (r405)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -13,7 +13,7 @@
 # 1 - file error
 # 2 - connection error
 
-syslist="wxp wxp-x64 w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-x64 o2k3 o2k7 o2k10 ofc all-x86 all-x64"
+syslist="wxp wxp-x64 w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-x64 all-x86 all-x64 o2k3 o2k7 o2k10 ofc"
 langlist="enu deu nld esn fra ptg ptb ita rus plk ell csy dan nor sve fin jpn kor chs cht hun trk ara heb"
 
 printusage()
@@ -51,7 +51,7 @@ S=$(which xmlstarlet 2> /dev/null)
 T=$(which xml 2> /dev/null)
 xml=""
 
-Missing=""
+Missing=0
 
 for Datei in cabextract md5deep
   do
@@ -96,7 +96,7 @@ END
   done
 }
 
-test $Missing -eq 1 && exit 1
+test $Missing -eq 0 || exit 1
 
 } # Ende "checkconfig"
 
@@ -129,31 +129,37 @@ param6=""
 param7=""
 
 #determining system
-for i in ${syslist[@]}; do
-  if [ "$1" == "$i" ]; then
-    sys="$1"
-    break
-  fi
-done
+echo $syslist | grep -q -w $1 && sys=$1
+test "$sys" || {
+    echo system $1 does not exist.
+    exit 1
+    }
 
-#determining language
-for i in ${langlist[@]}; do
-  if [ "$2" == "$i" ]; then
-    lang="$2"
-    break
-  fi
-done
+test "$2" || {
+    echo language is not set.
+    exit 1
+    }
+echo $langlist | grep -q -w $2 && lang=$2
+test "$lang" || {
+    echo language $2 does not exist.
+    exit 1
+    }
 
-if [ "$sys" == "w60" -o "$sys" == "w60-x64" -o "$sys" == "w61" \
-    -o "$sys" == "w61-x64" -o $sys == w62 -o $sys == w62-x64 ]; then
-  echo "Setting language to glb..."
-  lang="glb"
-fi
+case $sys in
+    w6[0-2]*)
+    echo "Setting language to glb..."
+    lang="glb"
+    ;;
+esac
+
 sys_old=""
-if [ "$sys" == "o2k3" -o "$sys" == "o2k7" -o "$sys" == "o2k10" ]; then
-  sys_old=$sys
-  sys="ofc"
-fi
+case $sys in
+    o2k*)
+    sys_old=$sys
+    sys="ofc"
+    ;;
+esac
+
 case "$lang" in
   enu)
     LANG_SHORT=en
@@ -325,46 +331,39 @@ getsystem()
 {
 cat << END
 Please select your OS:
-[1] Windows XP                   [5] Windows Vista / Server 2008
-[2] Windowx XP 64 bit            [6] Windows Vista / Server 2008 64 bit
-[3] Windows Server 2003          [7] Windows 7
-[4] Windows Server 2003 64 bit   [8] Windows 7 / Server 2008 R2 64 bit
-                                 [9] Windows 8
-                                [10] Windows 8 64 bit
+[1] Windows XP			[2] Windowx XP			    64 bit
+[3] Windows Server 2003		[4] Windows Server 2003		    64 bit
+[5] Windows Vista / Server 2008	[6] Windows Vista / Server 2008     64 bit
+[7] Windows 7			[8] Windows 7     / Server 2008 R2  64 bit
+[9] Windows 8			[10] Windows 8    / Server 2012     64 bit
 
-[10] Office 2003                [11] Office 20072
-[12] Office 2010                [13] Office updates only (2003 - 2010)
+[11] All 32 bit			[12] All 64 bit
 
-[14] All 32 bit                 [15] All 64 bit
+[13] Office 2003	[14] Office 2007	[15] Office 2010
+[16] All Office updates (2003 - 2010)
+
 END
-
 read -p "which number? " syschoice
-
-test "$syschoice" || exit 1
-test "$syschoice" -lt 1 && exit 1
-test "$syschoice" -gt 15 && exit 1
-
-let syschoice=syschoice-1
+    sysmax=$(echo $syslist | wc -w)
+    test "$syschoice" || exit 1
+    if [ $syschoice -lt 1 -o $syschoice -gt $sysmax ]; then
+      echo "Program aborted."
+      echo
+      exit 1
+    fi
 
 sys_old=""
 set -- $(echo $syslist)
-shift $syschoice
+shift $((syschoice -1))
 sys=$1
 
 if [ "$sys" == "wxp-x64" ]; then
   sys="w2k3-x64"
 fi
-if [ "$sys" == "" ]; then
-  echo "Program aborted."
-  echo
-  exit 1
-fi
 }
 
 getlanguage()
 {
-langindex=("a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x")
-
 if [ "$lang" != "glb" ] ; then
   cat << END
 Please select your OS language:
@@ -377,22 +376,22 @@ Please select your OS language:
 [u] hun           [v] trk         [w] ara         [x] heb
 END
   read -p "which letter? " langchoice
+    langmax=$(($(echo $langlist | wc -w) - 1 ))
+    test "$langchoice" || {
+	echo "Program aborted"
+	exit 1
+	}
   echo
-  for i in ${!langindex[@]}; do
-    if [ "$langchoice" == "${langindex[i]}" ]; then
-      langnr=$i
-	break
-    fi
-  done
-
+    langnr=$(($(printf '%d' "'$langchoice'") - 97))
+  if [ $langnr -lt 0 -o $langnr -gt $langmax ]; then
+    echo "Program aborted."
+    exit 1
+  fi
     set -- $(echo $langlist)
     shift $langnr
     lang=$1
-  if [ "$lang" == "" ]; then
-    echo "Program aborted."
-  exit 1
-  fi
 fi
+
 }
 
 getservicepack()
@@ -419,7 +418,7 @@ fi
 getmsse()
 {
 msse="0"
-if [ "$sys" != "w2k3" -o "$sys" != "w2k3-x64" ]; then
+if [ "$sys" != "w2k3" -a "$sys" != "w2k3-x64" ]; then
   read -p "Download Microsoft Security Essentials installation files? [y/n] " addmsse
   if [ "$addmsse" == "y" ]; then
     msse="1"
@@ -441,8 +440,9 @@ fi
 getproxy()
 {
 read -p "Please specify your proxy (default: none, http://[username:password@]<server>:<port>]) " http_proxy
-case $http_proxy in
-    http:*|none)
+test "$http_proxy" || http_proxy="none"
+case "$http_proxy" in
+    http:*|none|n)
     ;;
     *)
     echo wrong syntax for proxy server
@@ -522,6 +522,8 @@ checkconnection
 mkdir -p ../client
 mkdir -p ../client/bin
 mkdir -p ../client/wsus
+mkdir -p ../client/msse
+mkdir -p ../client/cpp
 mkdir -p ../temp
 rm -f ../temp/*
 
@@ -557,8 +559,7 @@ Thank you - now I start working!"
 for Datei in ../{exclude,static}/*.txt ../{exclude,static}/custom/*.txt \
 	../xslt/*.xsl
   do
-    file -b $Datei | grep -q ASCII || continue
-    sed -i 's/\r//g' $Datei
+    test -s $Datei && sed -i 's/\r//g' $Datei
   done
 
 if [ "$sys" == "all-x64" ]; then
@@ -607,8 +608,7 @@ if [ "$sys" == "ofc" ] && [ "$sys_old" != "" ]; then
   if [ -f "$static2" ]; then
     if [ "$EXCLUDE_SP" == "0" ]; then
       cat $static2 >> ../temp/StaticUrls-${sys_old}-${lang}.txt
-    fi
-    if [ "$EXCLUDE_SP" == "1" ]; then
+    else
       grep -i -v -f ../exclude/ExcludeList-SPs.txt $static2 > ../temp/StaticUrls-${sys_old}-${lang}.txt
     fi
   fi
@@ -616,8 +616,7 @@ if [ "$sys" == "ofc" ] && [ "$sys_old" != "" ]; then
   if [ -f "$static1" ]; then
      if [ "$EXCLUDE_SP" == "0" ]; then
       cat $static1 >> ../temp/StaticUrls-${sys_old}-glb.txt
-     fi
-    if [ "$EXCLUDE_SP" == "1" ]; then
+     else
      grep -i -v -f ../exclude/ExcludeList-SPs.txt $static1 > ../temp/StaticUrls-${sys_old}-glb.txt
     fi
   fi
@@ -626,8 +625,7 @@ if [ "$sys" == "ofc" ] && [ "$sys_old" != "" ]; then
   if [ -f "$static2" ]; then
     if [ "$EXCLUDE_SP" == "0" ]; then
       cat $static2 >> ../temp/StaticUrls-${sys_old}-glb.txt
-    fi
-    if [ "$EXCLUDE_SP" == "1" ]; then
+    else
       grep -i -v -f ../exclude/ExcludeList-SPs.txt $static2 > ../temp/StaticUrls-${sys_old}-glb.txt
     fi
   fi
@@ -637,8 +635,7 @@ static1="../static/StaticDownloadLinks-${sys}-x86-${lang}.txt"
 if [ -f "$static1" ]; then
   if [ "$EXCLUDE_SP" == "0" ]; then
     cat $static1 >> ../temp/StaticUrls-${sys}-${lang}.txt
-  fi
-  if [ "$EXCLUDE_SP" == "1" ]; then
+  else
    grep -i -v -f ../exclude/ExcludeList-SPs.txt $static1 > ../temp/StaticUrls-${sys}-${lang}.txt
   fi
 fi
@@ -647,8 +644,7 @@ static2="../static/StaticDownloadLinks-${sys}-${lang}.txt"
 if [ -f "$static2" ]; then
   if [ "$EXCLUDE_SP" == "0" ]; then
     cat $static2 >> ../temp/StaticUrls-${sys}-${lang}.txt
-  fi
-  if [ "$EXCLUDE_SP" == "1" ]; then
+  else
     grep -i -v -f ../exclude/ExcludeList-SPs.txt $static2 > ../temp/StaticUrls-${sys}-${lang}.txt
   fi
 fi
@@ -914,8 +910,8 @@ if [ $lang != glb -a $sys != "w2k3-x64" -a "$sys" != "ofc" ]; then
   echo "Determining update URLs for win ${lang}..."
   $xml tr ../xslt/ExtractDownloadLinks-win-x86-${lang}.xsl ../temp/package.xml > ../temp/Urls-win-x86-${lang}.txt
   cat ../exclude/ExcludeList-win-x86.txt > ../temp/tmpExcludeList-win-x86.txt
-  cat ../exclude/custom/ExcludeList-win-x86.txt >> ../temp/tmpExcludeList-win-x86.txt
-    cat ../exclude/ExcludeList-superseded.txt >> ../temp/tmpExcludeList-win-x86.txt
+  cat ../exclude/custom/ExcludeList-win-x86.txt >> ../temp/tmpExcludeList-win-x86.txt 2>/dev/null
+  cat ../exclude/ExcludeList-superseded.txt >> ../temp/tmpExcludeList-win-x86.txt
   grep -F -i -v -f ../temp/tmpExcludeList-win-x86.txt ../temp/Urls-win-x86-${lang}.txt > ../temp/ValidUrls-win-x86-${lang}.txt
   rm ../temp/Urls-win-x86-${lang}.txt
 fi
@@ -1175,8 +1171,8 @@ if [ "$sys" == "ofc" ] && [ "$sys_old" != "" ]; then
    doWget -i ../temp/StaticUrls-${sys_old}-glb.txt -P ../client/${sys_old}/glb
    echo "Creating integrity database for ${sys_old} ${lang}..."
    cd ../client/bin
-   hashdeep -c md5,sha1,sha256 -l -r ../${sys_old}/${lang} | sed 's/\//\\/g' > ../md/hashes-${sys_old}-${lang}.txt
-   hashdeep -c md5,sha1,sha256 -l -r ../${sys_old}/glb | sed 's/\//\\/g' > ../md/hashes-${sys_old}-glb.txt
+   hashdeep -c md5,sha1,sha256 -l -r ../${sys_old}/${lang} | tr '/' '\\' > ../md/hashes-${sys_old}-${lang}.txt
+   hashdeep -c md5,sha1,sha256 -l -r ../${sys_old}/glb | tr '/' '\\' > ../md/hashes-${sys_old}-glb.txt
    cd "$PATH_PWD"
 fi
 
@@ -1186,21 +1182,21 @@ if [ "$dotnet" == "1" ]; then
   doWget -i ../temp/StaticUrls-dotnet.txt -P ../client/dotnet
   echo "Creating integrity database for .Net ..."
   cd ../client/bin
-  hashdeep -c md5,sha1,sha256 -l ../dotnet/*.exe | sed 's/\//\\/g' > ../md/hashes-dotnet.txt
+  hashdeep -c md5,sha1,sha256 -l ../dotnet/*.exe | tr '/' '\\' > ../md/hashes-dotnet.txt
   cd "$PATH_PWD"
   if echo $sys | grep -q x64 ; then
     mkdir -p ../client/dotnet/x64-glb
     doWget -i ../temp/Urls-dotnet-x64.txt -P ../client/dotnet/x64-glb
     echo "Creating integrity database for .Net-x64-glb ..."
     cd ../client/bin
-    hashdeep -c md5,sha1,sha256 -l -r ../dotnet/x64-glb | sed 's/\//\\/g' > ../md/hashes-dotnet-x64-glb.txt
+    hashdeep -c md5,sha1,sha256 -l -r ../dotnet/x64-glb | tr '/' '\\' > ../md/hashes-dotnet-x64-glb.txt
     cd "$PATH_PWD"
   else
     mkdir -p ../client/dotnet/x86-glb
     doWget -i ../temp/Urls-dotnet-x86.txt -P ../client/dotnet/x86-glb
     echo "Creating integrity database for .Net-x86-glb ..."
     cd ../client/bin
-    hashdeep -c md5,sha1,sha256 -l -r ../dotnet/x86-glb | sed 's/\//\\/g' > ../md/hashes-dotnet-x86-glb.txt
+    hashdeep -c md5,sha1,sha256 -l -r ../dotnet/x86-glb | tr '/' '\\' > ../md/hashes-dotnet-x86-glb.txt
     cd "$PATH_PWD"
   fi
   echo "Validating CPP files..."
@@ -1239,7 +1235,7 @@ if [ "$dotnet" == "1" ]; then
   fi
   echo "Creating integrity database for CPP ..."
   cd ../client/bin
-  hashdeep -c md5,sha1,sha256 -l -r ../cpp | sed 's/\//\\/g' > ../md/hashes-cpp.txt
+  hashdeep -c md5,sha1,sha256 -l -r ../cpp | tr '/' '\\' > ../md/hashes-cpp.txt
   cd "$PATH_PWD"
 fi
 
@@ -1282,7 +1278,7 @@ if [ "$msse" == "1" ]; then
   fi
   echo "Creating integrity database for MSSE ..."
   cd ../client/bin
-  hashdeep -c md5,sha1,sha256 -l -r ../msse | sed 's/\//\\/g' > ../md/hashes-msse.txt
+  hashdeep -c md5,sha1,sha256 -l -r ../msse | tr '/' '\\' > ../md/hashes-msse.txt
   cd "$PATH_PWD"
 fi
 
@@ -1298,7 +1294,7 @@ if [ "$wddefs" == "1" ]; then
   if [ -d ../client/${sys}/glb ]; then
     echo "Creating integrity database for Windows Defender definition files ..."
     cd ../client/bin
-    hashdeep -c md5,sha1,sha256 -l -r ../wddefs | sed 's/\//\\/g' > ../md/hashes-wddefs.txt
+    hashdeep -c md5,sha1,sha256 -l -r ../wddefs | tr '/' '\\' > ../md/hashes-wddefs.txt
     cd "$PATH_PWD"
   fi
 fi
@@ -1308,14 +1304,14 @@ doWget -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
 if [ -d ../client/${sys}/${lang} ]; then
   echo "Creating integrity database for $sys-$lang ..."
   cd ../client/bin
- hashdeep -c md5,sha1,sha256 -l -r ../${sys}/${lang} | sed 's/\//\\/g' > ../md/hashes-${sys}-${lang}.txt
+ hashdeep -c md5,sha1,sha256 -l -r ../${sys}/${lang} | tr '/' '\\' > ../md/hashes-${sys}-${lang}.txt
  cd "$PATH_PWD"
 fi
 doWget -i ../temp/ValidUrls-${sys}-glb.txt -P ../client/${sys}/glb
 if [ -d ../client/${sys}/glb ]; then
   echo "Creating integrity database for $sys-glb ..."
   cd ../client/bin
- hashdeep -c md5,sha1,sha256 -l -r ../${sys}/glb | sed 's/\//\\/g' > ../md/hashes-${sys}-glb.txt
+ hashdeep -c md5,sha1,sha256 -l -r ../${sys}/glb | tr '/' '\\' > ../md/hashes-${sys}-glb.txt
  cd "$PATH_PWD"
 fi
 if [ $lang != glb -a $sys != "w2k3-x64" ] ; then
@@ -1324,19 +1320,19 @@ fi
 if [ -d ../client/win/glb ]; then
   echo "Creating integrity database for win-glb ..."
   cd ../client/bin
- hashdeep -c md5,sha1,sha256 -l -r ../win/glb | sed 's/\//\\/g' > ../md/hashes-win-glb.txt
+ hashdeep -c md5,sha1,sha256 -l -r ../win/glb | tr '/' '\\' > ../md/hashes-win-glb.txt
  cd "$PATH_PWD"
 fi
 if [ -d ../client/win/${lang} ]; then
   cd ../client/bin
   echo "Creating integrity database for win-$lang ..."
- hashdeep -c md5,sha1,sha256 -l -r ../win/${lang} | sed 's/\//\\/g' > ../md/hashes-win-${lang}.txt
+ hashdeep -c md5,sha1,sha256 -l -r ../win/${lang} | tr '/' '\\' > ../md/hashes-win-${lang}.txt
  cd "$PATH_PWD"
 fi
 if [ -d ../client/wsus ]; then
   cd ../client/bin
   echo "Creating integrity database for WSUS ..."
- hashdeep -c md5,sha1,sha256 -l -r ../wsus | sed 's/\//\\/g' > ../md/hashes-wsus.txt
+ hashdeep -c md5,sha1,sha256 -l -r ../wsus | tr '/' '\\' > ../md/hashes-wsus.txt
  cd "$PATH_PWD"
 fi
 
