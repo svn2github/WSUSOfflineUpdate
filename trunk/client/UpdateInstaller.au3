@@ -584,8 +584,7 @@ Else
     $msse = GUICtrlCreateCheckbox("Install Microsoft Security Essentials", $txtxpos, $txtypos, $txtwidth, $txtheight)
   EndIf
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_2008R2") _
-  OR (NOT MSSEPresent($scriptdir)) ) Then
+If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_2008R2") OR (NOT MSSEPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If IniRead($inifilename, $ini_section_installation, $ini_value_msse, $disabled) = $enabled Then
@@ -595,14 +594,14 @@ Else
   EndIf
 EndIf
 
-; Update Windows Terminal Services Client
+; Update Windows Remote Desktop Client
 $txtxpos = $txtxoffset + $groupwidth / 2
 If ShowGUIInGerman() Then
-  $tsc = GUICtrlCreateCheckbox("Terminal Services Client aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $tsc = GUICtrlCreateCheckbox("Remote Desktop Client aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $tsc = GUICtrlCreateCheckbox("Update Terminal Services Client", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $tsc = GUICtrlCreateCheckbox("Update Remote Desktop Client", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (NOT WinGlbPresent($scriptdir)) ) Then
+If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_2008") OR (NOT WinGlbPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If IniRead($inifilename, $ini_section_installation, $ini_value_tsc, $enabled) = $enabled Then
