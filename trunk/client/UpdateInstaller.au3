@@ -442,7 +442,7 @@ Else
   $dx = GUICtrlCreateCheckbox("Update DirectX Runtime Libraries", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If WinGlbPresent($scriptdir) Then
-  If IniRead($inifilename, $ini_section_installation, $ini_value_dx, $enabled) = $enabled Then
+  If IniRead($inifilename, $ini_section_installation, $ini_value_dx, $disabled) = $enabled Then
     GUICtrlSetState(-1, $GUI_CHECKED)
   Else
     GUICtrlSetState(-1, $GUI_UNCHECKED)
