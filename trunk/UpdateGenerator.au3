@@ -1853,11 +1853,11 @@ Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
 
-;  Legacy systems' Tab
+;  Legacy products' Tab
 If ShowGUIInGerman() Then
-  GuiCtrlCreateTabItem("Altsysteme")
+  GuiCtrlCreateTabItem("Altprodukte")
 Else
-  GuiCtrlCreateTabItem("Legacy systems")
+  GuiCtrlCreateTabItem("Legacy products")
 EndIf
 
 ;  Windows XP group
@@ -2258,6 +2258,23 @@ If IniRead($inifilename, $ini_section_o2k3, $lang_token_fin, $disabled) = $enabl
   GUICtrlSetState(-1, $GUI_CHECKED)
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+
+;  Product Lifecycle group
+$txtxpos = 2 * $txtxoffset
+$txtypos = $txtypos + 2.5 * $txtyoffset
+If ShowGUIInGerman() Then
+  GUICtrlCreateGroup("Produkt-Lebenszyklus-Informationen", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
+Else
+  GUICtrlCreateGroup("Product lifecycle information", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
+EndIf
+;  Product Lifecycle label
+$txtypos = $txtypos + 2 * $txtyoffset
+$txtxpos = $txtxpos + $txtxoffset
+If ShowGUIInGerman() Then
+  GUICtrlCreateLabel("Diese Produkte wurden von Microsoft zum 08. April 2014 abgekündigt.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
+Else
+  GUICtrlCreateLabel("Microsoft will discontinue support for these products on April 8th, 2014.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
 EndIf
 
 ;  End Tab item definition
