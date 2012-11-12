@@ -7,4 +7,5 @@
 *w6*
 *x86-glb\/*
 *dotnetfx45*
+*dotNetFx45*
 *.au3

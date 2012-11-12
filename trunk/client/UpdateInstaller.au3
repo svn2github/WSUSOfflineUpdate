@@ -196,7 +196,7 @@ Func DotNet4Version()
 EndFunc
 
 Func DotNet4TargetVersion()
-  If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") ) Then
+  If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") ) Then
     Return $target_version_dotnet40
   Else
     Return $target_version_dotnet45
@@ -326,7 +326,7 @@ If ShowGUIInGerman() Then
 Else
   $backup = GUICtrlCreateCheckbox("Back up existing system files", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
+If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") ) Then
   GUICtrlSetState(-1, $GUI_CHECKED + $GUI_DISABLE)
 Else
   If IniRead($inifilename, $ini_section_installation, $ini_value_backup, $disabled) = $enabled Then
@@ -361,7 +361,7 @@ If ShowGUIInGerman() Then
 Else
   $ie7 = GUICtrlCreateCheckbox("Install Internet Explorer 7", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
+If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
   OR (IEVersion() = "7") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (NOT WinGlbPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
@@ -379,7 +379,8 @@ If ShowGUIInGerman() Then
 Else
   $ie8 = GUICtrlCreateCheckbox("Install Internet Explorer 8", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (NOT WinGlbPresent($scriptdir)) ) Then
+If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
+  OR (IEVersion() = "8") OR (IEVersion() = "9") OR (NOT WinGlbPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If (IniRead($inifilename, $ini_section_installation, $ini_value_ie8, $enabled) = $enabled) Then
@@ -401,7 +402,8 @@ If ShowGUIInGerman() Then
 Else
   $ie9 = GUICtrlCreateCheckbox("Install Internet Explorer 9", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (IEVersion() = "9") OR (NOT WinGlbPresent($scriptdir)) ) Then
+If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
+  OR (IEVersion() = "9") OR (NOT WinGlbPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If (IniRead($inifilename, $ini_section_installation, $ini_value_ie9, $disabled) = $enabled) Then
@@ -467,7 +469,7 @@ Else
     $mssl = GUICtrlCreateCheckbox("Install Microsoft Silverlight", $txtxpos, $txtypos, $txtwidth, $txtheight)
   EndIf
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (NOT WinGlbPresent($scriptdir)) ) Then
+If ( (NOT WinGlbPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If IniRead($inifilename, $ini_section_installation, $ini_value_mssl, $disabled) = $enabled Then
@@ -484,7 +486,8 @@ If ShowGUIInGerman() Then
 Else
   $wmp = GUICtrlCreateCheckbox("Update Windows Media Player", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (NOT WinGlbPresent($scriptdir)) ) Then
+If ( (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
+  OR (NOT WinGlbPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If IniRead($inifilename, $ini_section_installation, $ini_value_wmp, $enabled) = $enabled Then
@@ -502,7 +505,7 @@ If ShowGUIInGerman() Then
 Else
   $dotnet35 = GUICtrlCreateCheckbox("Install .NET Framework 3.5 SP1", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (DotNet35Version() = $target_version_dotnet35) OR (NOT DotNet35InstPresent($scriptdir)) ) Then
+If ( (DotNet35Version() = $target_version_dotnet35) OR (NOT DotNet35InstPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If IniRead($inifilename, $ini_section_installation, $ini_value_dotnet35, $disabled) = $enabled Then
@@ -519,7 +522,7 @@ If ShowGUIInGerman() Then
 Else
   $psh = GUICtrlCreateCheckbox("Install PowerShell 2.0", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
+If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
   OR ( (DotNet35Version() <> $target_version_dotnet35) AND (BitAND(GUICtrlRead($dotnet35), $GUI_CHECKED) <> $GUI_CHECKED) ) _
   OR (PowerShellVersion() = $target_version_psh) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
@@ -539,7 +542,7 @@ If ShowGUIInGerman() Then
 Else
   $dotnet4 = GUICtrlCreateCheckbox("Install .NET Framework 4.x", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (DotNet4Version() = DotNet4TargetVersion()) OR (NOT DotNet4InstPresent($scriptdir)) ) Then
+If ( (DotNet4Version() = DotNet4TargetVersion()) OR (NOT DotNet4InstPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If IniRead($inifilename, $ini_section_installation, $ini_value_dotnet4, $disabled) = $enabled Then
@@ -556,7 +559,7 @@ If ShowGUIInGerman() Then
 Else
   $wmf = GUICtrlCreateCheckbox("Install Management Framework 3.0", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") _
+If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
   OR ( (DotNet4Version() <> DotNet4TargetVersion()) AND (BitAND(GUICtrlRead($dotnet4), $GUI_CHECKED) <> $GUI_CHECKED) ) _
   OR (ManagementFrameworkVersion() = $target_version_wmf) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
@@ -584,7 +587,8 @@ Else
     $msse = GUICtrlCreateCheckbox("Install Microsoft Security Essentials", $txtxpos, $txtypos, $txtwidth, $txtheight)
   EndIf
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_2008R2") OR (NOT MSSEPresent($scriptdir)) ) Then
+If ( (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_2012") _
+  OR (NOT MSSEPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If IniRead($inifilename, $ini_section_installation, $ini_value_msse, $disabled) = $enabled Then
@@ -601,7 +605,8 @@ If ShowGUIInGerman() Then
 Else
   $tsc = GUICtrlCreateCheckbox("Update Remote Desktop Client", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_2008") OR (NOT WinGlbPresent($scriptdir)) ) Then
+If ( (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
+  OR (NOT WinGlbPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If IniRead($inifilename, $ini_section_installation, $ini_value_tsc, $enabled) = $enabled Then
@@ -799,12 +804,12 @@ While 1
         GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
         GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
       Else
-        If ( (@OSVersion = "WIN_2000") OR (IEVersion() = "8") OR (IEVersion() = "9") ) Then
+        If ( (IEVersion() = "8") OR (IEVersion() = "9") ) Then
           GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
         Else
           GUICtrlSetState($ie8, $GUI_ENABLE)
         EndIf
-        If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (IEVersion() = "9") ) Then
+        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (IEVersion() = "9") ) Then
           GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
         Else
           GUICtrlSetState($ie9, $GUI_ENABLE)
@@ -816,13 +821,13 @@ While 1
         GUICtrlSetState($ie7, $GUI_UNCHECKED + $GUI_DISABLE)
         GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
       Else
-        If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
+        If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
           OR (IEVersion() = "7") OR (IEVersion() = "8") OR (IEVersion() = "9") ) Then
           GUICtrlSetState($ie7, $GUI_UNCHECKED + $GUI_DISABLE)
         Else
           GUICtrlSetState($ie7, $GUI_ENABLE)
         EndIf
-        If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (IEVersion() = "9") ) Then
+        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (IEVersion() = "9") ) Then
           GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
         Else
           GUICtrlSetState($ie9, $GUI_ENABLE)
@@ -834,13 +839,13 @@ While 1
         GUICtrlSetState($ie7, $GUI_UNCHECKED + $GUI_DISABLE)
         GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
       Else
-        If ( (@OSVersion = "WIN_2000") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
+        If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
           OR (IEVersion() = "7") OR (IEVersion() = "8") OR (IEVersion() = "9") ) Then
           GUICtrlSetState($ie7, $GUI_UNCHECKED + $GUI_DISABLE)
         Else
           GUICtrlSetState($ie7, $GUI_ENABLE)
         EndIf
-        If ( (@OSVersion = "WIN_2000") OR (IEVersion() = "8") OR (IEVersion() = "9") ) Then
+        If ( (IEVersion() = "8") OR (IEVersion() = "9") ) Then
           GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
         Else
           GUICtrlSetState($ie8, $GUI_ENABLE)
@@ -849,7 +854,7 @@ While 1
 
     Case $dotnet35             ; .NET 3.5 check box toggled
       If ( (BitAND(GUICtrlRead($dotnet35), $GUI_CHECKED) = $GUI_CHECKED) _
-       AND (@OSVersion <> "WIN_7") AND (@OSVersion <> "WIN_2008R2") _
+       AND (@OSVersion <> "WIN_7") AND (@OSVersion <> "WIN_2008R2") AND (@OSVersion <> "WIN_8") AND (@OSVersion <> "WIN_2012") _
        AND (PowerShellVersion() <> $target_version_psh) ) Then
         GUICtrlSetState($psh, $GUI_ENABLE)
       Else
@@ -858,8 +863,7 @@ While 1
 
     Case $dotnet4              ; .NET 4 check box toggled
       If ( (BitAND(GUICtrlRead($dotnet4), $GUI_CHECKED) = $GUI_CHECKED) _
-       AND (@OSVersion <> "WIN_2000") AND (@OSVersion <> "WIN_XP") _
-       AND (@OSVersion <> "WIN_2003") AND (@OSVersion <> "WIN_VISTA") _
+       AND (@OSVersion <> "WIN_XP") AND (@OSVersion <> "WIN_2003") AND (@OSVersion <> "WIN_VISTA") AND (@OSVersion <> "WIN_8") AND (@OSVersion <> "WIN_2012") _
        AND (ManagementFrameworkVersion() <> $target_version_wmf) ) Then
         GUICtrlSetState($wmf, $GUI_ENABLE)
       Else

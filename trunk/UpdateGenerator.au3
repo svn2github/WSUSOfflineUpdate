@@ -1363,7 +1363,7 @@ EndIf
 ;  Windows Vista / Server 2008 group
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
-GUICtrlCreateGroup("Windows Vista / Server 2008 (w60)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
+GUICtrlCreateGroup("Windows Vista / Server 2008 (w60 / w60-x64)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
 ;  Windows Vista / Server 2008 global
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
@@ -1393,7 +1393,7 @@ EndIf
 ;  Windows 7 / Server 2008 R2 group
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
-GUICtrlCreateGroup("Windows 7 / Server 2008 R2 (w61)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
+GUICtrlCreateGroup("Windows 7 / Server 2008 R2 (w61 / w61-x64)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
 ;  Windows 7 global
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset
@@ -1423,7 +1423,7 @@ EndIf
 ;  Windows 8 / Server 2012 group
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
-GUICtrlCreateGroup("Windows 8 / Server 2012 (w62)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
+GUICtrlCreateGroup("Windows 8 / Server 2012 (w62 / w62-x64)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
 ;  Windows 8 global
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = $txtxpos + $txtxoffset

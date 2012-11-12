@@ -7,6 +7,6 @@
 *w62\/*
 *x64-glb\/*
 *-x64*
-*dotnetfx40*
+*dotNetFx40*
 *vcredist*_x64*
 *.au3
