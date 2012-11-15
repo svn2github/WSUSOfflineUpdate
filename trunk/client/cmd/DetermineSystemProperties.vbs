@@ -416,7 +416,7 @@ For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_OperatingS
   objCmdFile.WriteLine("set OS_SP_VER_MAJOR=" & objQueryItem.ServicePackMajorVersion)
   objCmdFile.WriteLine("set OS_SP_VER_MINOR=" & objQueryItem.ServicePackMinorVersion)
   objCmdFile.WriteLine("set OS_LANG_CODE=0x" & Hex(objQueryItem.OSLanguage))
-  WriteLanguageToFile objCmdFile, "OS_LANG", objQueryItem.OSLanguage, True, False
+  WriteLanguageToFile objCmdFile, "OS_LANG", objQueryItem.OSLanguage, True, True
   If Left(strOSVersion, 1) = "6" Then
     If (objQueryItem.OperatingSystemSKU = 12) Or (objQueryItem.OperatingSystemSKU = 13) Or (objQueryItem.OperatingSystemSKU = 14) Then
       objCmdFile.WriteLine("set OS_CORE=1")
