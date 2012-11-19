@@ -9,4 +9,5 @@
 *x86-glb\/*
 *-x86*
 *dotNetFx40*
+*Silverlight_x64*
 *.au3

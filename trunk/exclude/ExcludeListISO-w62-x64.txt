@@ -12,4 +12,6 @@
 *x86-glb\/*
 *-x86*
 *dotNetFx40*
+*dotnetfx45*
+*dotNetFx45*
 *.au3

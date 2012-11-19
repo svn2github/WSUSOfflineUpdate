@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.0b (r414)
+set WSUSOFFLINE_VERSION=8.0b (r415)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -94,6 +94,7 @@ if /i "%OS_ARCH%"=="x64" (set HASHDEEP_PATH=..\bin\hashdeep64.exe) else (set HAS
 
 rem *** Determine DirectX main version ***
 if "%UPDATE_DX%" NEQ "/updatedx" goto NoDXDiag
+if "%OS_NAME%"=="w62" goto NoDXDiag
 if not exist %SystemRoot%\system32\dxdiag.exe goto NoDXDiag
 echo Determining DirectX main version...
 if /i "%OS_ARCH%"=="x64" (
@@ -177,7 +178,7 @@ rem echo Found Windows Script Host version: %WSH_VER_MAJOR%.%WSH_VER_MINOR%.%WSH
 rem echo Found Internet Explorer version: %IE_VER_MAJOR%.%IE_VER_MINOR%.%IE_VER_REVIS%.%IE_VER_BUILD%
 rem echo Found Root Certificates' version: %RCERTS_VER_MAJOR%.%RCERTS_VER_MINOR%.%RCERTS_VER_REVIS%.%RCERTS_VER_BUILD%
 rem echo Found Microsoft Data Access Components version: %MDAC_VER_MAJOR%.%MDAC_VER_MINOR%.%MDAC_VER_REVIS%.%MDAC_VER_BUILD%
-rem if "%UPDATE_DX%"=="/updatedx" echo Found Microsoft DirectX main version: %DX_MAIN_VER%
+rem if "%DX_MAIN_VER%" NEQ "" echo Found Microsoft DirectX main version: %DX_MAIN_VER%
 rem echo Found Microsoft DirectX core version: %DX_NAME% (%DX_CORE_VER_MAJOR%.%DX_CORE_VER_MINOR%.%DX_CORE_VER_REVIS%.%DX_CORE_VER_BUILD%)
 rem echo Found Microsoft Silverlight version: %MSSL_VER_MAJOR%.%MSSL_VER_MINOR%.%MSSL_VER_REVIS%.%MSSL_VER_BUILD%
 rem echo Found Windows Media Player version: %WMP_VER_MAJOR%.%WMP_VER_MINOR%.%WMP_VER_REVIS%.%WMP_VER_BUILD%
@@ -206,7 +207,7 @@ echo %DATE% %TIME% - Info: Found Windows Script Host version %WSH_VER_MAJOR%.%WS
 echo %DATE% %TIME% - Info: Found Internet Explorer version %IE_VER_MAJOR%.%IE_VER_MINOR%.%IE_VER_REVIS%.%IE_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Root Certificates' version %RCERTS_VER_MAJOR%.%RCERTS_VER_MINOR%.%RCERTS_VER_REVIS%.%RCERTS_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft Data Access Components version %MDAC_VER_MAJOR%.%MDAC_VER_MINOR%.%MDAC_VER_REVIS%.%MDAC_VER_BUILD% >>%UPDATE_LOGFILE%
-if "%UPDATE_DX%"=="/updatedx" echo %DATE% %TIME% - Info: Found Microsoft DirectX main version %DX_MAIN_VER% >>%UPDATE_LOGFILE%
+if "%DX_MAIN_VER%" NEQ "" echo %DATE% %TIME% - Info: Found Microsoft DirectX main version %DX_MAIN_VER% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft DirectX core version %DX_NAME% (%DX_CORE_VER_MAJOR%.%DX_CORE_VER_MINOR%.%DX_CORE_VER_REVIS%.%DX_CORE_VER_BUILD%) >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft Silverlight version %MSSL_VER_MAJOR%.%MSSL_VER_MINOR%.%MSSL_VER_REVIS%.%MSSL_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows Media Player version %WMP_VER_MAJOR%.%WMP_VER_MINOR%.%WMP_VER_REVIS%.%WMP_VER_BUILD% >>%UPDATE_LOGFILE%
@@ -710,6 +711,7 @@ if "%CPP_2012_x86%"=="1" (
 
 rem *** Install DirectX End-User Runtime ***
 if "%UPDATE_DX%" NEQ "/updatedx" goto SkipDirectXInst
+if "%OS_NAME%"=="w62" goto SkipDirectXInst
 echo Checking DirectX version...
 if %DX_CORE_VER_MAJOR% LSS %DX_CORE_VER_TARGET_MAJOR% goto InstallDirectX
 if %DX_CORE_VER_MAJOR% GTR %DX_CORE_VER_TARGET_MAJOR% goto SkipDirectXInst
@@ -742,11 +744,14 @@ set DIRECTX_FILENAME=
 rem *** Install Microsoft Silverlight ***
 if "%INSTALL_MSSL%" NEQ "/instmssl" goto SkipMSSLInst
 echo Checking Microsoft Silverlight version...
-if /i "%OS_ARCH%"=="x64" (
-  set MSSL_FILENAME=..\win\glb\Silverlight_x64.exe
-) else (
-  set MSSL_FILENAME=..\win\glb\Silverlight.exe
-)
+if "%OS_NAME%"=="w61" goto MSSL%OS_ARCH%
+if "%OS_NAME%"=="w62" goto MSSL%OS_ARCH%
+:MSSLx86
+set MSSL_FILENAME=..\win\glb\Silverlight.exe
+goto CheckMSSL
+:MSSLx64
+set MSSL_FILENAME=..\win\glb\Silverlight_x64.exe
+:CheckMSSL
 if not exist %MSSL_FILENAME% (
   echo Warning: Microsoft Silverlight installation file ^(%MSSL_FILENAME%^) not found.
   echo %DATE% %TIME% - Warning: Microsoft Silverlight installation file ^(%MSSL_FILENAME%^) not found >>%UPDATE_LOGFILE%

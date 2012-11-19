@@ -472,14 +472,15 @@ If ShowGUIInGerman() Then
 Else
   $dx = GUICtrlCreateCheckbox("Update DirectX Runtime Libraries", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If WinGlbPresent($scriptdir) Then
+If ( (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
+  OR (NOT WinGlbPresent($scriptdir)) ) Then
+  GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
+Else
   If IniRead($inifilename, $ini_section_installation, $ini_value_dx, $disabled) = $enabled Then
     GUICtrlSetState(-1, $GUI_CHECKED)
   Else
     GUICtrlSetState(-1, $GUI_UNCHECKED)
   EndIf
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 EndIf
 
 ; Install Microsoft Silverlight
