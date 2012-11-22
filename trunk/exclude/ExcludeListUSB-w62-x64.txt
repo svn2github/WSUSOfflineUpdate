@@ -18,6 +18,8 @@ o2k7-x64\
 w2k3-x64\
 w60-x64\
 w61-x64\
+wddefs\
 *-x86
 dotnetfx4*
+mseinstall*
 .au3

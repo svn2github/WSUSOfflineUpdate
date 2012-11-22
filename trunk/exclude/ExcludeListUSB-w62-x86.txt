@@ -18,7 +18,9 @@ w2k3-x64\
 w60-x64\
 w61-x64\
 w62-x64\
+wddefs\
 *-x64
 dotnetfx4*
 vcredist*_x64
+mseinstall*
 .au3

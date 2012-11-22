@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.0b (r415)
+set WSUSOFFLINE_VERSION=8.0b (r416)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -149,7 +149,10 @@ if /i "%3"=="/excludesp" set EXC_SP=1
 if /i "%3"=="/excludestatics" set EXC_STATICS=1
 if /i "%3"=="/includedotnet" set INC_DOTNET=1
 if /i "%3"=="/includemsse" set INC_MSSE=1
-if /i "%3"=="/includewddefs" set INC_WDDEFS=1
+if /i "%3"=="/includewddefs" (
+  echo %1 | %SystemRoot%\system32\find.exe /I "w62" >nul 2>&1
+  if errorlevel 1 (set INC_WDDEFS=1) else (set INC_MSSE=1)
+)
 if /i "%3"=="/nocleanup" set CLEANUP_DL=0
 if /i "%3"=="/verify" set VERIFY_DL=1
 if /i "%3"=="/exitonerror" set EXIT_ERR=1
@@ -645,7 +648,7 @@ if "%VERIFY_DL%" NEQ "1" goto DownloadMSSE
 if not exist ..\client\msse\nul goto DownloadMSSE
 if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
 if exist ..\client\md\hashes-msse.txt (
-  echo Verifying integrity of Microsoft Security Essentials installation files...
+  echo Verifying integrity of Microsoft Security Essentials files...
   pushd ..\client\md
   ..\bin\%HASHDEEP_EXE% -a -l -vv -k hashes-msse.txt -r ..\msse
   if errorlevel 1 (
@@ -653,7 +656,7 @@ if exist ..\client\md\hashes-msse.txt (
     goto IntegrityError
   )
   popd
-  echo %DATE% %TIME% - Info: Verified integrity of Microsoft Security Essentials installation files >>%DOWNLOAD_LOGFILE%
+  echo %DATE% %TIME% - Info: Verified integrity of Microsoft Security Essentials files >>%DOWNLOAD_LOGFILE%
 ) else (
   echo Warning: Integrity database ..\client\md\hashes-msse.txt not found.
   echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-msse.txt not found >>%DOWNLOAD_LOGFILE%
@@ -662,12 +665,12 @@ if exist ..\client\md\hashes-msse.txt (
 if exist ..\client\msse\%TARGET_ARCH%-glb\mpam*.exe (
   for %%i in (..\client\msse\%TARGET_ARCH%-glb\mpam*.exe) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
   if not errorlevel 1 (
-    echo Skipping download/validation of Microsoft Security Essentials installation files due to 'same day' rule.
-    echo %DATE% %TIME% - Info: Skipped download/validation of Microsoft Security Essentials installation files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
+    echo Skipping download/validation of Microsoft Security Essentials files due to 'same day' rule.
+    echo %DATE% %TIME% - Info: Skipped download/validation of Microsoft Security Essentials files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
     goto VerifyMSSE
   )
 )
-echo Downloading/validating Microsoft Security Essentials installation files...
+echo Downloading/validating Microsoft Security Essentials files...
 copy /Y ..\static\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt "%TEMP%\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt" >nul
 if exist ..\static\custom\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt (
   type ..\static\custom\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt >>"%TEMP%\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt"
@@ -694,7 +697,7 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\StaticDownloadLinks-msse-%
     )
   )
 )
-echo %DATE% %TIME% - Info: Downloaded/validated Microsoft Security Essentials installation files >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Downloaded/validated Microsoft Security Essentials files >>%DOWNLOAD_LOGFILE%
 if "%CLEANUP_DL%"=="0" (
   del "%TEMP%\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt"
   goto VerifyMSSE
@@ -711,9 +714,9 @@ del "%TEMP%\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt"
 echo %DATE% %TIME% - Info: Cleaned up client directory for Microsoft Security Essentials >>%DOWNLOAD_LOGFILE%
 :VerifyMSSE
 if "%VERIFY_DL%"=="1" (
-  rem *** Verifying digital file signatures for Microsoft Security Essentials installation files ***
+  rem *** Verifying digital file signatures for Microsoft Security Essentials files ***
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
-  echo Verifying digital file signatures for Microsoft Security Essentials installation files...
+  echo Verifying digital file signatures for Microsoft Security Essentials files...
   ..\bin\sigcheck.exe /accepteula -q -s -u -v ..\client\msse\%TARGET_ARCH%-glb >"%TEMP%\sigcheck-msse-%TARGET_ARCH%-glb.txt"
   for /F "usebackq skip=1 eol=N tokens=1 delims=," %%i in ("%TEMP%\sigcheck-msse-%TARGET_ARCH%-glb.txt") do (
     del %%i
@@ -721,9 +724,9 @@ if "%VERIFY_DL%"=="1" (
     echo %DATE% %TIME% - Warning: Deleted unsigned file %%i >>%DOWNLOAD_LOGFILE%
   )
   if exist "%TEMP%\sigcheck-msse-%TARGET_ARCH%-glb.txt" del "%TEMP%\sigcheck-msse-%TARGET_ARCH%-glb.txt"
-  echo %DATE% %TIME% - Info: Verified digital file signatures for Microsoft Security Essentials installation files >>%DOWNLOAD_LOGFILE%
+  echo %DATE% %TIME% - Info: Verified digital file signatures for Microsoft Security Essentials files >>%DOWNLOAD_LOGFILE%
   if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
-  echo Creating integrity database for Microsoft Security Essentials installation files...
+  echo Creating integrity database for Microsoft Security Essentials files...
   if not exist ..\client\md\nul md ..\client\md
   pushd ..\client\md
   ..\bin\%HASHDEEP_EXE% -c md5,sha1,sha256 -l -r ..\msse >hashes-msse.txt
@@ -733,12 +736,12 @@ if "%VERIFY_DL%"=="1" (
     echo %DATE% %TIME% - Warning: Error creating integrity database ..\client\md\hashes-msse.txt >>%DOWNLOAD_LOGFILE%
   ) else (
     popd
-    echo %DATE% %TIME% - Info: Created integrity database for Microsoft Security Essentials installation files >>%DOWNLOAD_LOGFILE%
+    echo %DATE% %TIME% - Info: Created integrity database for Microsoft Security Essentials files >>%DOWNLOAD_LOGFILE%
   )
 ) else (
   if exist ..\client\md\hashes-msse.txt (
     del ..\client\md\hashes-msse.txt
-    echo %DATE% %TIME% - Info: Deleted integrity database for Microsoft Security Essentials installation files >>%DOWNLOAD_LOGFILE%
+    echo %DATE% %TIME% - Info: Deleted integrity database for Microsoft Security Essentials files >>%DOWNLOAD_LOGFILE%
   )
 )
 :SkipMSSE

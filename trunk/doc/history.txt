@@ -688,7 +688,7 @@ Version 7.5 -- 10.10.12
 --------------------------------------------------------------------------------
 Version 8.0 -- ??.??.??
 - NOTE: If you customized your copy of WOU using the script AddCustomLanguageSupport.cmd {lng}, please call it again once (per language) to get the appropriate IE10 installation file(s) downloaded
-- Support added for Windows 8 and Server 2012
+- Support added for Windows 8 and Server 2012 (Thanks to "boco")
 - Optional installation of Internet Explorer 10 Release Preview on Windows 7 and Server 2008 R2 (x86/x64) systems
 - Support added for Remote Desktop Connection 8.0 client (kb2592687) on Windows 7 / Server 2008 R2 (x86/x64) systems
 - Support added for C++ 2012 Runtime Libraries (Thanks to B. Knapp)
@@ -699,4 +699,5 @@ Version 8.0 -- ??.??.??
 - Default changed for updating DirectX Runtime Libraries
 - Fix: Network drive reconnection failed during subsequent recalls if its default was 'persistent' (Thanks to J. Holland)
 - Fix: Microsoft Silverlight x64 version was erroneously attempted to be installed on Windows XP/Vista and Server 2003/2008 (x64) systems (Thanks to "friday123" and "Denniss") 
+- Fix: Update for Root Certificates (rootsupd.exe/kb931125) was not properly detected on x64 systems (Thanks to "boco")
 - Fix: Linux script CreateISOImage.sh did not exit on missing iso creation tool (Thanks to S. Baur and H. Hullen)

@@ -9,9 +9,11 @@
 *w60\/*
 *w61\/*
 *x64-glb\/*
+*wddefs*
 *-x64*
 *dotNetFx40*
 *dotnetfx45*
 *dotNetFx45*
 *vcredist*_x64*
+*mseinstall*
 *.au3

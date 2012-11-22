@@ -3,7 +3,8 @@
 Option Explicit
 
 Private Const strWOUTempAdminName             = "WOUTempAdmin"
-Private Const strRegKeyRootCerts              = "HKLM\Software\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}\"
+Private Const strRegKeyRootCerts_x86          = "HKLM\Software\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}\"
+Private Const strRegKeyRootCerts_x64          = "HKLM\Software\Wow6432Node\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}\"
 Private Const strRegKeyIE                     = "HKLM\Software\Microsoft\Internet Explorer\"
 Private Const strRegKeyMDAC                   = "HKLM\Software\Microsoft\DataAccess\"
 Private Const strRegKeyDirectX                = "HKLM\Software\Microsoft\DirectX\"
@@ -511,7 +512,11 @@ objCmdFile.WriteLine("set WD_DISABLED=" & RegRead(wshShell, strRegKeyWD & strReg
 WriteVersionToFile objCmdFile, "WDDEFS_VER", RegRead(wshShell, strRegKeyWDDefs & strRegValASSVersion)
 
 ' Determine Microsoft Root Certificates' version
-WriteVersionToFile objCmdFile, "RCERTS_VER", Replace(RegRead(wshShell, strRegKeyRootCerts & strRegValVersion), ",", ".")
+If RegExists(wshShell, strRegKeyRootCerts_x64) Then
+  WriteVersionToFile objCmdFile, "RCERTS_VER", Replace(RegRead(wshShell, strRegKeyRootCerts_x64 & strRegValVersion), ",", ".")
+Else
+  WriteVersionToFile objCmdFile, "RCERTS_VER", Replace(RegRead(wshShell, strRegKeyRootCerts_x86 & strRegValVersion), ",", ".")
+End If
 
 ' Determine Remote Desktop Connection (Terminal Services Client) version
 If objFileSystem.FileExists(strTSCFileName) Then

@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.0b (r415)
+set WSUSOFFLINE_VERSION=8.0b (r416)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -216,8 +216,10 @@ echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 3.5 version %DOTNET35_
 echo %DATE% %TIME% - Info: Found Windows PowerShell version %PSH_VER_MAJOR%.%PSH_VER_MINOR% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 4 version %DOTNET4_VER_MAJOR%.%DOTNET4_VER_MINOR%.%DOTNET4_VER_REVIS% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows Management Framework version %WMF_VER_MAJOR%.%WMF_VER_MINOR% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft Security Essentials version %MSSE_VER_MAJOR%.%MSSE_VER_MINOR%.%MSSE_VER_REVIS%.%MSSE_VER_BUILD% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft Security Essentials definitions version %MSSEDEFS_VER_MAJOR%.%MSSEDEFS_VER_MINOR%.%MSSEDEFS_VER_REVIS%.%MSSEDEFS_VER_BUILD% >>%UPDATE_LOGFILE%
+if "%OS_NAME%" NEQ "w62" (
+  echo %DATE% %TIME% - Info: Found Microsoft Security Essentials version %MSSE_VER_MAJOR%.%MSSE_VER_MINOR%.%MSSE_VER_REVIS%.%MSSE_VER_BUILD% >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Found Microsoft Security Essentials definitions version %MSSEDEFS_VER_MAJOR%.%MSSEDEFS_VER_MINOR%.%MSSEDEFS_VER_REVIS%.%MSSEDEFS_VER_BUILD% >>%UPDATE_LOGFILE%
+)
 echo %DATE% %TIME% - Info: Found Windows Defender definitions version %WDDEFS_VER_MAJOR%.%WDDEFS_VER_MINOR%.%WDDEFS_VER_REVIS%.%WDDEFS_VER_BUILD% >>%UPDATE_LOGFILE%
 if "%O2K3_VER_MAJOR%" NEQ "" (
   echo %DATE% %TIME% - Info: Found Microsoft Office 2003 %O2K3_VER_APP% version %O2K3_VER_MAJOR%.%O2K3_VER_MINOR%.%O2K3_VER_REVIS%.%O2K3_VER_BUILD% ^(o2k3 %O2K3_LANG% sp%O2K3_SP_VER%^) >>%UPDATE_LOGFILE%
@@ -1019,6 +1021,7 @@ set REBOOT_REQUIRED=1
 :SkipWMFInst
 
 rem *** Install Microsoft Security Essentials ***
+if "%OS_NAME%"=="w62" goto SkipMSSEInst
 echo Checking Microsoft Security Essentials installation state...
 if "%INSTALL_MSSE%" NEQ "/instmsse" (
   if "%MSSE_INSTALLED%"=="1" (goto CheckMSSEDefs) else (goto SkipMSSEInst)
@@ -1092,10 +1095,18 @@ rem *** Update Windows Defender definitions ***
 echo Checking Windows Defender installation state...
 if "%WD_INSTALLED%" NEQ "1" goto SkipWDInst
 if "%WD_DISABLED%"=="1" goto SkipWDInst
-if /i "%OS_ARCH%"=="x64" (
-  set WDDEFS_FILENAME=..\wddefs\%OS_ARCH%-glb\mpas-feX64.exe
+if "%OS_NAME%"=="w62" (
+  if /i "%OS_ARCH%"=="x64" (
+    set WDDEFS_FILENAME=..\msse\%OS_ARCH%-glb\mpam-fex64.exe
+  ) else (
+    set WDDEFS_FILENAME=..\msse\%OS_ARCH%-glb\mpam-fe.exe
+  )
 ) else (
-  set WDDEFS_FILENAME=..\wddefs\%OS_ARCH%-glb\mpas-fe.exe
+  if /i "%OS_ARCH%"=="x64" (
+    set WDDEFS_FILENAME=..\wddefs\%OS_ARCH%-glb\mpas-feX64.exe
+  ) else (
+    set WDDEFS_FILENAME=..\wddefs\%OS_ARCH%-glb\mpas-fe.exe
+  )
 )
 if not exist %WDDEFS_FILENAME% (
   echo Warning: Windows Defender definition file ^(%WDDEFS_FILENAME%^) not found.

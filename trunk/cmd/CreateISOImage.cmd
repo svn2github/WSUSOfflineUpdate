@@ -48,7 +48,10 @@ if "%2"=="" goto V1CreateFilter
 if /i "%2"=="/excludesp" set EXC_SP=1
 if /i "%2"=="/includedotnet" set INC_DOTNET=1
 if /i "%2"=="/includemsse" set INC_MSSE=1
-if /i "%2"=="/includewddefs" set INC_WDDEFS=1
+if /i "%2"=="/includewddefs" (
+  echo %1 | %SystemRoot%\system32\find.exe /I "w62" >nul 2>&1
+  if errorlevel 1 (set INC_WDDEFS=1) else (set INC_MSSE=1)
+)
 if /i "%2"=="/exitonerror" set EXIT_ERR=1
 if /i "%2"=="/skiphashes" set SKIP_HASHES=1
 if /i "%2"=="/outputpath" (
@@ -63,7 +66,10 @@ if "%3"=="" goto V2CreateFilter
 if /i "%3"=="/excludesp" set EXC_SP=1
 if /i "%3"=="/includedotnet" set INC_DOTNET=1
 if /i "%3"=="/includemsse" set INC_MSSE=1
-if /i "%3"=="/includewddefs" set INC_WDDEFS=1
+if /i "%3"=="/includewddefs" (
+  echo %1 | %SystemRoot%\system32\find.exe /I "w62" >nul 2>&1
+  if errorlevel 1 (set INC_WDDEFS=1) else (set INC_MSSE=1)
+)
 if /i "%3"=="/exitonerror" set EXIT_ERR=1
 if /i "%3"=="/skiphashes" set SKIP_HASHES=1
 if /i "%3"=="/outputpath" (
