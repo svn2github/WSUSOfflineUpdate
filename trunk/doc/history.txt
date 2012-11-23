@@ -701,3 +701,4 @@ Version 8.0 -- ??.??.??
 - Fix: Microsoft Silverlight x64 version was erroneously attempted to be installed on Windows XP/Vista and Server 2003/2008 (x64) systems (Thanks to "friday123" and "Denniss") 
 - Fix: Update for Root Certificates (rootsupd.exe/kb931125) was not properly detected on x64 systems (Thanks to "boco")
 - Fix: Linux script CreateISOImage.sh did not exit on missing iso creation tool (Thanks to S. Baur and H. Hullen)
+- Fix: 'x86-cross-product' ISO images exceeded 4.7 GB (max. capacity of DVD-5 media) and therefore won't contain Vista, but Server 2003 updates now
