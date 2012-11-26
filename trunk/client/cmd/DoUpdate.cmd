@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.0b (r417)
+set WSUSOFFLINE_VERSION=8.0b (r418)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1246,26 +1246,30 @@ if "%OFC_FILE_VALID%" NEQ "1" (
 :SkipOFVAL
 
 :CheckAUService
-rem *** Check state of service 'automatic updates' ***
+rem *** Check state of service 'Windows Update' ***
 if "%SKIP_DYNAMIC%"=="/skipdynamic" (
   echo Skipping determination of missing updates on demand...
   echo %DATE% %TIME% - Info: Skipped determination of missing updates on demand >>%UPDATE_LOGFILE%
   goto ListInstalledIds
 )
-echo Checking state of service 'automatic updates'...
-echo %DATE% %TIME% - Info: Detected state of service 'automatic updates': %AU_SVC_STATE_INITIAL% (start mode: %AU_SVC_START_MODE%) >>%UPDATE_LOGFILE%
-if /i "%AU_SVC_START_MODE%"=="Auto" (
+echo Checking state of service 'Windows Update'...
+%CSCRIPT_PATH% //Nologo //B //E:vbs DetermineServiceState.vbs wuauserv AUSVC
+if not exist "%TEMP%\SetServiceState.cmd" goto ListMissingIds
+call "%TEMP%\SetServiceState.cmd"
+del "%TEMP%\SetServiceState.cmd"
+echo %DATE% %TIME% - Info: Detected state of service 'Windows Update': %AUSVC_STATE% (start mode: %AUSVC_SMODE%) >>%UPDATE_LOGFILE%
+if /i "%AUSVC_SMODE%"=="Auto" (
   if "%USERNAME%"=="WOUTempAdmin" goto ListMissingIds
 )
-if /i "%AU_SVC_STATE_INITIAL%"=="" goto ListMissingIds
-if /i "%AU_SVC_STATE_INITIAL%"=="Unknown" goto ListMissingIds
-if /i "%AU_SVC_STATE_INITIAL%"=="Running" goto ListMissingIds
-if /i "%AU_SVC_START_MODE%"=="Disabled" goto AUSvcNotRunning
-echo Starting service 'automatic updates' (wuauserv)...
+if /i "%AUSVC_STATE%"=="" goto ListMissingIds
+if /i "%AUSVC_STATE%"=="Unknown" goto ListMissingIds
+if /i "%AUSVC_STATE%"=="Running" goto ListMissingIds
+if /i "%AUSVC_SMODE%"=="Disabled" goto AUSvcNotRunning
+echo Starting service 'Windows Update' (wuauserv)...
 %SystemRoot%\system32\net.exe start wuauserv >nul
 if errorlevel 1 goto AUSvcNotRunning
-set AU_SVC_STARTED=1
-echo %DATE% %TIME% - Info: Started service 'automatic updates' (wuauserv) >>%UPDATE_LOGFILE%
+set AUSVC_STARTED=1
+echo %DATE% %TIME% - Info: Started service 'Windows Update' (wuauserv) >>%UPDATE_LOGFILE%
 
 :ListMissingIds
 rem *** List ids of missing updates ***
@@ -1494,8 +1498,8 @@ goto Cleanup
 
 :AUSvcNotRunning
 echo.
-echo ERROR: Service 'automatic updates' (wuauserv) is not running and could not be started.
-echo %DATE% %TIME% - Error: Service 'automatic updates' (wuauserv) is not running and could not be started >>%UPDATE_LOGFILE%
+echo ERROR: Service 'Windows Update' (wuauserv) is not running and could not be started.
+echo %DATE% %TIME% - Error: Service 'Windows Update' (wuauserv) is not running and could not be started >>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
@@ -1553,13 +1557,13 @@ if "%USERNAME%"=="WOUTempAdmin" (
   echo Rebooting...
   %SystemRoot%\system32\shutdown.exe /r /f /t 3
 ) else (
-  if "%AU_SVC_STARTED%"=="1" (
-    echo Stopping service 'automatic updates' ^(wuauserv^)...
+  if "%AUSVC_STARTED%"=="1" (
+    echo Stopping service 'Windows Update' ^(wuauserv^)...
     %SystemRoot%\system32\net.exe stop wuauserv >nul
     if errorlevel 1 (
-      echo %DATE% %TIME% - Warning: Stopping of service 'automatic updates' ^(wuauserv^) failed >>%UPDATE_LOGFILE%
+      echo %DATE% %TIME% - Warning: Stopping of service 'Windows Update' ^(wuauserv^) failed >>%UPDATE_LOGFILE%
     ) else (
-      echo %DATE% %TIME% - Info: Stopped service 'automatic updates' ^(wuauserv^) >>%UPDATE_LOGFILE%
+      echo %DATE% %TIME% - Info: Stopped service 'Windows Update' ^(wuauserv^) >>%UPDATE_LOGFILE%
     )
   )
   if "%SHOW_LOG%"=="/showlog" start %SystemRoot%\system32\notepad.exe %UPDATE_LOGFILE%

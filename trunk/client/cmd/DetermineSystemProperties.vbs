@@ -642,14 +642,8 @@ If (cpp2012_x86_old) And (Not cpp2012_x86_new) Then objCmdFile.WriteLine("set CP
 If (cpp2012_x64_old) And (Not cpp2012_x64_new) Then objCmdFile.WriteLine("set CPP_2012_x64=1")
 
 '
-' Perform the following WMI queries last, since they might fail if WMI is damaged
+' Perform the following WMI query last, since it might fail if WMI is damaged
 '
-
-' Determine state of Windows Update service
-For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_Service Where Name = 'wuauserv'")
-  objCmdFile.WriteLine("set AU_SVC_STATE_INITIAL=" & objQueryItem.State)
-  objCmdFile.WriteLine("set AU_SVC_START_MODE=" & objQueryItem.StartMode)
-Next
 
 ' Determine Windows activation state - not available on Windows 2000 and Vista systems
 If (strOSVersion = "5.1") Or (strOSVersion = "5.2") Then
