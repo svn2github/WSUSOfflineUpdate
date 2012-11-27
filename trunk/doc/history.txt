@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 7.5
+WSUS Offline Update 8.0
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
