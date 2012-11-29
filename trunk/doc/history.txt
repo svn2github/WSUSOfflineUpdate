@@ -694,7 +694,7 @@ Version 8.0 -- ??.??.??
 - Support added for C++ 2012 Runtime Libraries (Thanks to B. Knapp)
 - Linux scripts reviewed and enhanced to support Windows 8 / Server 2012 targets (Thanks to H. Hullen)
 - HashDeep utility updated to version 4.3
-- ISO filters improved to mutually exclude .NET Framework 4.0/4.5 installation packages
+- ISO filters improved to mutually exclude .NET Framework 4.0/4.5 installation packages (Thanks to "boco")
 - Removed obsolete "trailing colon" restriction for environment variable TEMP from UpdateGenerator script (Thanks to "daos" and "boco")
 - Default changed for updating DirectX Runtime Libraries
 - Fix: Network drive reconnection failed during subsequent recalls if its default was 'persistent' (Thanks to J. Holland)
