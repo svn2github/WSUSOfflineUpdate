@@ -691,7 +691,7 @@ Version 8.0 -- ??.??.??
 - Support added for Windows 8 and Server 2012 (Thanks to "boco")
 - Optional installation of Internet Explorer 10 Release Preview on Windows 7 and Server 2008 R2 (x86/x64) systems
 - Support added for Remote Desktop Connection 8.0 client (kb2592687) on Windows 7 / Server 2008 R2 (x86/x64) systems
-- Support added for C++ 2012 Runtime Libraries (Thanks to B. Knapp)
+- Support added for C++ 2012 Runtime Libraries Update 1 (Thanks to B. Knapp and "harry")
 - Linux scripts reviewed and enhanced to support Windows 8 / Server 2012 targets (Thanks to H. Hullen)
 - HashDeep utility updated to version 4.3
 - ISO filters improved to mutually exclude .NET Framework 4.0/4.5 installation packages (Thanks to "boco")
