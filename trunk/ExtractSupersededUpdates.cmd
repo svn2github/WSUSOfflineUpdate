@@ -42,7 +42,12 @@ rem del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 rem del "%TEMP%\SupersededFileIdsUnique.txt"
 %SystemRoot%\system32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractIdsAndFileNames.vbs "%TEMP%\SupersededCabExeIdsAndLocations.txt" "%TEMP%\ExcludeList-superseded-all.txt" /noids
 rem del "%TEMP%\SupersededCabExeIdsAndLocations.txt"
-%SystemRoot%\system32\findstr.exe /L /I /V /G:.\exclude\ExcludeList-superseded-exclude.txt "%TEMP%\ExcludeList-superseded-all.txt" >"%TEMP%\ExcludeList-superseded.txt"
+if exist .\exclude\ExcludeList-superseded-exclude.txt copy /Y .\exclude\ExcludeList-superseded-exclude.txt "%TEMP%\ExcludeList-superseded-exclude.txt" >nul
+if exist .\exclude\custom\ExcludeList-superseded-exclude.txt (
+  type .\exclude\custom\ExcludeList-superseded-exclude.txt >>"%TEMP%\ExcludeList-superseded-exclude.txt"
+)
+%SystemRoot%\system32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-superseded-exclude.txt" "%TEMP%\ExcludeList-superseded-all.txt" >"%TEMP%\ExcludeList-superseded.txt"
+rem del "%TEMP%\ExcludeList-superseded-exclude.txt"
 rem del "%TEMP%\ExcludeList-superseded-all.txt"
 
 goto EoF

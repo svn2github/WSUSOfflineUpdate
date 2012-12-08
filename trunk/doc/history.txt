@@ -696,6 +696,7 @@ Version 8.0 -- ??.??.??
 - HashDeep utility updated to version 4.3
 - ISO filters improved to mutually exclude .NET Framework 4.0/4.5 installation packages (Thanks to "boco")
 - Removed obsolete "trailing colon" restriction for environment variable TEMP from UpdateGenerator script (Thanks to "daos" and "boco")
+- DownloadUpdates.cmd script now evaluates a custom ExcludeList-superseded-exclude.txt file (Thanks to "boco")
 - Default changed for updating DirectX Runtime Libraries
 - Fix: Network drive reconnection failed during subsequent recalls if its default was 'persistent' (Thanks to J. Holland)
 - Fix: Microsoft Silverlight x64 version was erroneously attempted to be installed on Windows XP/Vista and Server 2003/2008 (x64) systems (Thanks to "friday123" and "Denniss") 
