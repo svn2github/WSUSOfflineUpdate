@@ -31,7 +31,7 @@ Dim Const $reg_val_wustatusserver     = "WUStatusServer"
 
 ; Defaults
 Dim Const $default_logpixels          = 96
-Dim Const $target_version_dotnet35    = "3.5.30729.01"
+Dim Const $target_version_dotnet35    = "3.5.30729"
 Dim Const $target_version_dotnet40    = "4.0.30319"
 Dim Const $target_version_dotnet45    = "4.5.50709"
 Dim Const $target_version_psh         = "2.0"
@@ -93,7 +93,7 @@ Dim $maindlg, $scriptdir, $mapped, $inifilename, $backup, $rcerts, $ie7, $ie8, $
 Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
 
 Func ShowGUIInGerman()
-  If ($CmdLine[0] > 0) Then
+  If $CmdLine[0] > 0 Then
     Switch StringLower($CmdLine[1])
       Case "enu"
         Return False
@@ -185,7 +185,7 @@ Func IEVersion()
 Dim $reg_val
 
   $reg_val = RegRead($reg_key_ie, $reg_val_version)
-  If (StringInStr($reg_val, "9.10.") > 0) Then
+  If StringInStr($reg_val, "9.10.") > 0 Then
     Return "10"
   Else
     Return StringLeft($reg_val, StringInStr($reg_val, ".") - 1)
@@ -193,7 +193,10 @@ Dim $reg_val
 EndFunc
 
 Func DotNet35Version()
-  Return RegRead($reg_key_dotnet35, $reg_val_version)
+Dim $reg_val
+
+  $reg_val = RegRead($reg_key_dotnet35, $reg_val_version)
+  Return StringLeft($reg_val, StringInStr($reg_val, ".", 0, -1) - 1)
 EndFunc
 
 Func DotNet4Version()

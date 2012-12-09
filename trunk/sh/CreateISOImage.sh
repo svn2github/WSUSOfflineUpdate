@@ -2,7 +2,7 @@
 
 #########################################################################
 ###          WSUS Offline Update ISO maker for Linux systems          ###
-###                           v. 8.0b (r422)                          ###
+###                           v. 8.0b (r423)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg                     ###
@@ -112,20 +112,29 @@ fi
 
 #determining parameters
 for i in ${paramlist[@]}; do
-  if echo $@ | grep /dotnet > /dev/null 2>&1; then
+  if echo $@ | grep -q /dotnet ; then
     dotnet="1"
   fi
-  if echo $@ | grep /excludesp > /dev/null 2>&1; then
+  if echo $@ | grep -q /excludesp ; then
     EXCLUDE_SP="1"
   fi
-  if echo $@ | grep /nocleanup > /dev/null 2>&1; then
+  if echo $@ | grep -q /nocleanup ; then
     CLEANUP_DOWNLOADS="0"
   fi
-  if echo $@ | grep /msse > /dev/null 2>&1; then
+
+  if echo $@ | grep -q /msse > ; then
     msse="1"
   fi
-  if echo $@ | grep /wddefs > /dev/null 2>&1; then
-    wddefs="1"
+
+  if echo $@ | grep -q /wddefs ; then
+    case $sys in
+	w62*)
+	msse="1"
+	;;
+	*)
+	wddefs="1"
+	;
+    esac
   fi
 done
 }

@@ -704,3 +704,4 @@ Version 8.0 -- ??.??.??
 - Fix: Linux script CreateISOImage.sh did not exit on missing iso creation tool (Thanks to S. Baur and H. Hullen)
 - Fix: 'x86-cross-product' ISO images exceeded 4.7 GB (max. capacity of DVD-5 media) and therefore won't contain Vista, but Server 2003 updates now
 - Fix: State of service 'Windows Update' (wuauserv) might be determined incorrectly (Thanks to "boco")
+- Fix: UpdateInstaller script did not properly detect existing .NET Framework 3.5 SP1 installations under Windows 7 / Server 2008 R2 (Thanks to "boco")
