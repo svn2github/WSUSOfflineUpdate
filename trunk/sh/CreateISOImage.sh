@@ -2,7 +2,7 @@
 
 #########################################################################
 ###          WSUS Offline Update ISO maker for Linux systems          ###
-###                           v. 8.0b (r423)                          ###
+###                           v. 8.0b (r424)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg                     ###
@@ -122,7 +122,7 @@ for i in ${paramlist[@]}; do
     CLEANUP_DOWNLOADS="0"
   fi
 
-  if echo $@ | grep -q /msse > ; then
+  if echo $@ | grep -q /msse ; then
     msse="1"
   fi
 
@@ -202,8 +202,11 @@ exit 0
 # EOF
 
 # ============================================================================
-# $Id: CreateISOImage.sh,v 1.2 2012-10-25 13:33:00+02 HHullen Exp $
+# $Id: CreateISOImage.sh,v 1.4 2012-12-10 11:35:13+01 HHullen Exp $
 # $Log: CreateISOImage.sh,v $
+# Revision 1.4  2012-12-10 11:35:13+01  HHullen
+# msse/wddefs fuer Windows 8 erweitert
+#
 # Revision 1.2  2012-10-25 13:33:00+02  HHullen
 # verschlankt; Windows 8 ergaenzt
 #

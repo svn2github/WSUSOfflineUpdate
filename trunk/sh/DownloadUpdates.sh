@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                           v. 8.0b (r423)                          ###
+###                           v. 8.0b (r424)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -12,6 +12,23 @@
 # 0 - success
 # 1 - file error
 # 2 - connection error
+
+Sh=$_
+# muss der erste ausgefuehrte Befehl sein
+Prog=$(basename $0)
+
+case $Sh in
+    *$Prog|*bash)
+    ;;
+    *)
+    echo "
+Please start this program with
+
+        bash $Prog
+"
+        exit 1
+    ;;
+esac
 
 debug=0
 test $debug -eq 1 && set -x
@@ -374,7 +391,7 @@ getmsse()
 {
 msse="0"
 if [ "$sys" != "w2k3" -a "$sys" != "w2k3-x64" ]; then
-  read -p "Download Microsoft Security Essentials installation files? [y/n] " addmsse
+  read -p "Download Microsoft Security Essentials files? [y/n] " addmsse
   if [ "$addmsse" == "y" ]; then
     msse="1"
     param5="/msse"
@@ -538,8 +555,7 @@ mydate=`date +%Y%m%d`
 #convert files to Linux format
 for Datei in ../{exclude,static}/*.txt ../{exclude,static}/custom/*.txt
   do
-    grep -q -m1 
- "$Datei" && {
+    grep -q -m1 "$Datei" && {
     OrigDat=$(stat -c %y "$Datei")
     sed -i 's/\r//g' "$Datei"
     touch -d "$OrigDat" "$Datei"
@@ -555,14 +571,16 @@ esac
 test "$Liste" && {
   for OS in $Liste
     do
-    /bin/bash DownloadUpdates.sh $OS $lang $param2 $param3 $param4 $param5 $param6 $param7
+    bash DownloadUpdates.sh $OS $lang $param2 $param3 $param4 $param5 $param6 $param7
     done
     if [ "$param1" == "/makeiso" ]; then
-	/bin/bash ./CreateISOImage.sh $sys $lang $param2 $param3
+	bash ./CreateISOImage.sh $sys $lang $param2 $param3
 	rc=$?
     fi
     exit $rc
     }
+
+# ======================= wsus ======================================
 
 echo "Downloading most recent Windows Update Agent and catalog file..."
 doWget -i ../static/StaticDownloadLinks-wsus.txt -P ../client/wsus
@@ -654,6 +672,9 @@ if [ -f "$static5" ]; then
     cat $static5 > ../temp/StaticUrls-${sys}-glb.txt
 fi
 
+# ======================= dotnet etc ======================================
+
+
 if [ "$dotnet" == "1" ]; then
   cp ../static/StaticDownloadLinks-dotnet.txt ../temp/StaticUrls-dotnet.txt
   cp ../static/StaticDownloadLinks-cpp-x86-glb.txt ../temp/StaticUrls-cpp-x86-glb.txt
@@ -674,6 +695,8 @@ if [ "$wddefs" == "1" ]; then
     cp ../static/StaticDownloadLink-wddefs-x86-glb.txt ../temp/StaticUrls-wddefs-x86-glb.txt
   fi
 fi
+
+# ======================= custom ======================================
 
 echo "Adding Custom-Links..."
 if [ -f ../static/custom/StaticDownloadLinks-${sys}-x86-${lang}.txt ]; then
@@ -698,6 +721,9 @@ fi
 if [ -f ../static/custom/StaticDownloadLinks-${sys}-glb.txt ]; then
     cat ../static/custom/StaticDownloadLinks-${sys}-glb.txt >> ../temp/StaticUrls-${sys}-glb.txt
 fi
+
+# ======================= msse etc (2)  ======================================
+
 if [ "$dotnet" == "1" ]; then
   if [ -f ../static/custom/StaticDownloadLinks-dotnet.txt ]; then
     cat ../static/custom/StaticDownloadLinks-dotnet.txt >> ../temp/StaticUrls-dotnet.txt
@@ -726,6 +752,7 @@ if [ "$wddefs" == "1" ]; then
   fi
 fi
 
+# ======================= wsus (2) ======================================
 
 cd ../temp
 echo "Extracting Windows update catalogue file package.xml..."
@@ -888,6 +915,7 @@ if [ -f "$glb2" ] && [ "$lang" != "glb" ]; then
   grep -F -i -v -f ../temp/tmpExcludeList-${sys}.txt ../temp/tmpValidUrls-${sys}-glb.txt > ../temp/ValidUrls-${sys}-glb.txt
   rm ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
 fi
+
 if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ] && [ "$sys" != "ofc" ]; then
   echo "Determining update URLs for win ${lang}..."
   $xml tr ../xslt/ExtractDownloadLinks-win-x86-${lang}.xsl ../temp/package.xml > ../temp/Urls-win-x86-${lang}.txt
@@ -897,6 +925,8 @@ if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$
   grep -F -i -v -f ../temp/tmpExcludeList-win-x86.txt ../temp/Urls-win-x86-${lang}.txt > ../temp/ValidUrls-win-x86-${lang}.txt
   rm ../temp/Urls-win-x86-${lang}.txt
 fi
+
+# ======================= Office ======================================
 
 if [ "$sys" == "ofc" ]; then
 
@@ -990,6 +1020,9 @@ fi
 done
 lang=$oldlang
 fi
+# Ende ofc
+
+# ======================= sys ======================================
 
 rm ../temp/package.xml
 
@@ -1015,12 +1048,10 @@ cat ../temp/StaticUrls-wddefs-x64-glb.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-${sys_old}-${lang}.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-${sys_old}-glb.txt >> ../temp/urls.txt
 
-cat << END
-
+echo "
 ***************************************
-Found `grep -c http: ../temp/urls.txt` patches...
-
-END
+Found $(grep -c http: ../temp/urls.txt) patches...
+"
 
 #create needed directories
 mkdir -p ../client/${sys}/ ../client/${sys}/glb ../client/${sys}/${lang} ../client/md
@@ -1035,10 +1066,14 @@ if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$
 fi
 doWget -i ../temp/StaticUrls-${sys}-glb.txt -P ../client/${sys}/glb
 
+# ======================= ofc (3) ======================================
+
 if [ "$sys" == "ofc" ] && [ "$sys_old" != "" ]; then
    doWget -i ../temp/StaticUrls-${sys_old}-${lang}.txt -P ../client/${sys_old}/${lang}
    doWget -i ../temp/StaticUrls-${sys_old}-glb.txt -P ../client/${sys_old}/glb
 fi
+
+# ======================= msse etc (3) ======================================
 
 if [ "$dotnet" == "1" ]; then
   echo "Downloading .Net framework..."
@@ -1135,6 +1170,8 @@ if [ "$wddefs" == "1" ]; then
   fi
 fi
 
+# ======================= download ======================================
+
 echo "Downloading patches for $sys $lang"
 doWget -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
 doWget -i ../temp/ValidUrls-${sys}-glb.txt -P ../client/${sys}/glb
@@ -1152,6 +1189,8 @@ if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$
 fi
 doWget -i ../temp/StaticUrls-${sys}-glb.txt -P ../client/${sys}/glb
 
+# ======================= ofc (4) ======================================
+
 if [ "$sys" == "ofc" ] && [ "$sys_old" != "" ]; then
    doWget -i ../temp/StaticUrls-${sys_old}-${lang}.txt -P ../client/${sys_old}/${lang}
    doWget -i ../temp/StaticUrls-${sys_old}-glb.txt -P ../client/${sys_old}/glb
@@ -1161,6 +1200,8 @@ if [ "$sys" == "ofc" ] && [ "$sys_old" != "" ]; then
    hashdeep -c md5,sha1,sha256 -l -r ../${sys_old}/glb | sed 's/\//\\/g' > ../md/hashes-${sys_old}-glb.txt
    cd "$PATH_PWD"
 fi
+
+# ======================= msse etc (4) ======================================
 
 if [ "$dotnet" == "1" ]; then
   echo "Validating .Net framework..."
@@ -1225,6 +1266,8 @@ if [ "$dotnet" == "1" ]; then
   cd "$PATH_PWD"
 fi
 
+# ======================= msse etc (5) ======================================
+
 if [ "$msse" == "1" ]; then
   echo "Validating MSSE defs..."
   if echo $sys | grep x64 > /dev/null 2>&1; then
@@ -1285,6 +1328,8 @@ if [ "$wddefs" == "1" ]; then
   fi
 fi
 
+# ======================= sys (3) ======================================
+
 echo "Validating patches for $sys ${lang}..."
 doWget -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
 if [ -d ../client/${sys}/${lang} ]; then
@@ -1323,8 +1368,15 @@ if [ -d ../client/wsus ]; then
 fi
 
 
-echo "**************************************"
-echo "`grep -c http: ../temp/urls.txt` patches successfully downloaded."
+echo "
+**************************************
+$(grep -c http: ../temp/urls.txt) patches successfully downloaded.
+"
+
+# ======================= Reste ======================================
+
+# ======================= cleanup ======================================
+
 echo
 if [ "$CLEANUP_DOWNLOADS" != "0" ]; then
   echo "Cleaning up ..."
@@ -1346,9 +1398,17 @@ if [ "$CLEANUP_DOWNLOADS" != "0" ]; then
 fi
 
 if [ "$createiso" == "1" ]; then
-  /bin/bash ./CreateISOImage.sh $sys $lang $param2 $param3
+  bash ./CreateISOImage.sh $sys $lang $param2 $param3
 fi
 
 exit 0
 
 # EOF
+
+# ====================================================================
+
+# $Id: DownloadUpdates.sh,v 1.1 2012-12-10 11:37:54+01 HHullen Exp $
+# $Log: DownloadUpdates.sh,v $
+# Revision 1.1  2012-12-10 11:37:54+01  HHullen
+# msse/wddefs fuer Windows 8 erweitert; verschlankt
+#
