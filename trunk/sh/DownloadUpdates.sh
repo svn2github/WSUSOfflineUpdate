@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                           v. 8.0b (r424)                          ###
+###                           v. 8.0b (r425)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -54,7 +54,7 @@ Parameters:
 /excludesp - do not download servicepacks
 /makeiso   - create ISO image
 /dotnet    - download .NET framework
-/msse      - download Microsoft Security Essentials installation files
+/msse      - download Microsoft Security Essentials files
 /wddefs    - download Windows Defender definition files
 /nocleanup - do not cleanup client directory
 /proxy     - define proxy server (/proxy http://[username:password@]<server>:<port>)
@@ -555,7 +555,7 @@ mydate=`date +%Y%m%d`
 #convert files to Linux format
 for Datei in ../{exclude,static}/*.txt ../{exclude,static}/custom/*.txt
   do
-    grep -q -m1 "$Datei" && {
+    grep -q -m1  "$Datei" && {
     OrigDat=$(stat -c %y "$Datei")
     sed -i 's/\r//g' "$Datei"
     touch -d "$OrigDat" "$Datei"
@@ -833,10 +833,10 @@ fi
 echo "Determining update URLs for ${sys} ${lang}..."
 download1="../xslt/ExtractDownloadLinks-${sys}-${lang}.xsl"
 download2="../xslt/ExtractDownloadLinks-${sys}-x86-${lang}.xsl"
-valid1="../xslt/ExtractValidIds-${sys}.xsl"
-valid2="../xslt/ExtractValidIds-${sys}-x86.xsl"
-expired1="../xslt/ExtractExpiredIds-${sys}.xsl"
-expired2="../xslt/ExtractExpiredIds-${sys}-x86.xsl"
+# valid1="../xslt/ExtractValidIds-${sys}.xsl"
+# valid2="../xslt/ExtractValidIds-${sys}-x86.xsl"
+# expired1="../xslt/ExtractExpiredIds-${sys}.xsl"
+# expired2="../xslt/ExtractExpiredIds-${sys}-x86.xsl"
 exclude1="../temp/tmpExcludeList-${sys}.txt"
 exclude2="../temp/tmpExcludeList-${sys}-x86.txt"
 glb1="../xslt/ExtractDownloadLinks-${sys}-glb.xsl"
@@ -1012,9 +1012,9 @@ fi
           fi
     done
 
-    rm ../temp/OfficeFileIds.txt
-    rm ../temp/OfficeUpdateAndFileIds.txt
-    rm ../temp/OfficeUpdateCabExeIdsAndLocations.txt
+#    rm ../temp/OfficeFileIds.txt
+#    rm ../temp/OfficeUpdateAndFileIds.txt
+#    rm ../temp/OfficeUpdateCabExeIdsAndLocations.txt
     grep -F -i -v -f ../temp/ExcludeList-${sys}.txt ../temp/DynamicDownloadLinks-${sys}-${lang}.txt > ../temp/ValidDynamicLinks-${sys}-${lang}.txt
     cat ../temp/ValidDynamicLinks-${sys}-${lang}.txt >> ../temp/ValidUrls-${sys}-${lang}.txt
 done
@@ -1386,7 +1386,12 @@ if [ "$CLEANUP_DOWNLOADS" != "0" ]; then
   echo "Cleaning up client directory for $sys glb"
   cat ../temp/StaticUrls-${sys}-glb.txt >> ../temp/ValidUrls-${sys}-glb.txt
   cleanup "../temp/ValidUrls-${sys}-glb.txt" "../client/${sys}/glb"
-  if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
+#  if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
+
+  case $sys in
+    w6[0-2]*|w2k3-x64)
+    ;;
+    *)
     echo "Cleaning up client directory for win $lang"
     cat ../temp/StaticUrls-${lang}.txt > ../temp/ValidUrls-${lang}.txt
     cat ../temp/ValidUrls-win-x86-${lang}.txt >> ../temp/ValidUrls-${lang}.txt
@@ -1394,7 +1399,8 @@ if [ "$CLEANUP_DOWNLOADS" != "0" ]; then
     echo "Cleaning up client directory for win glb"
     cat ../temp/StaticUrls-glb.txt > ../temp/ValidUrls-glb.txt
     cleanup "../temp/ValidUrls-glb.txt" "../client/win/glb"
-  fi
+    ;;
+  esac
 fi
 
 if [ "$createiso" == "1" ]; then
