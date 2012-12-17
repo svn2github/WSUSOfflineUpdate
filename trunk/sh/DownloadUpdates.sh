@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                           v. 8.0b (r425)                          ###
+###                           v. 8.0b (r426)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -555,10 +555,10 @@ mydate=`date +%Y%m%d`
 #convert files to Linux format
 for Datei in ../{exclude,static}/*.txt ../{exclude,static}/custom/*.txt
   do
-    grep -q -m1  "$Datei" && {
-    OrigDat=$(stat -c %y "$Datei")
-    sed -i 's/\r//g' "$Datei"
-    touch -d "$OrigDat" "$Datei"
+    grep -q -m1 $'\r' "$Datei" && {
+      OrigDat=$(stat -c %y "$Datei")
+      sed -i 's/\r//g' "$Datei"
+      touch -d "$OrigDat" "$Datei"
     }
   done
 
