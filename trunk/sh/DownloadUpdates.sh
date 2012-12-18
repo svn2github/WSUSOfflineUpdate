@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                           v. 8.0b (r426)                          ###
+###                           v. 8.0b (r427)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -151,7 +151,7 @@ param6=""
 param7=""
 
 #determining system
-echo $syslist | grep -q -w $1 && sys=$1
+grep -q -w $1 <<< $syslist && sys=$1
 test "$sys" || {
     echo system $1 does not exist.
     exit 1
@@ -160,11 +160,9 @@ test "$sys" || {
 case $sys in
     *-x64)
 	OS_ARCH=x64
-	OS_kurz="-x64"
 	;;
     *)
 	OS_ARCH=x86
-	OS_kurz=""
 	;;
 esac
 
@@ -172,7 +170,7 @@ test "$2" || {
     echo language is not set.
     exit 1
     }
-echo $langlist | grep -q -w $2 && lang=$2
+grep -q -w $2 <<< $langlist && lang=$2
 test "$lang" || {
     echo language $2 does not exist.
     exit 1
@@ -221,27 +219,27 @@ case "$lang" in
 esac
 
 #determining parameters
-  if echo $Cmdline | grep -q /makeiso ; then
+  if grep -q /makeiso <<< $Cmdline ; then
     param1=/makeiso
     createiso="1"
   fi
-  if echo $Cmdline | grep -q /dotnet ; then
+  if grep -q /dotnet <<< $Cmdline ; then
     param2=/dotnet
     dotnet="1"
   fi
-  if echo $Cmdline | grep -q /excludesp ; then
+  if grep -q /excludesp <<< $Cmdline ; then
     param3=/excludesp
     EXCLUDE_SP="1"
   fi
-  if echo $Cmdline | grep -q /nocleanup ; then
+  if grep -q /nocleanup <<< $Cmdline ; then
     param4=/nocleanup
     CLEANUP_DOWNLOADS="0"
   fi
-  if echo $Cmdline | grep -q /msse ; then
+  if grep -q /msse <<< $Cmdline ; then
     param5=/msse
     msse="1"
   fi
-  if echo $Cmdline | grep -q /wddefs ; then
+  if grep -q /wddefs <<< $Cmdline ; then
     case $sys in
 	w62*)
 	param5=/msse
@@ -289,7 +287,8 @@ OUT=`wget --connect-timeout=1 --tries=1 http://www.wsusoffline.net/index.html 2>
 if [ $? -ne 0 ]; then
   printf "failed to download:\n"
   printf -- "$OUT"
-  exit 2
+#   exit 2
+  ping -c1 8.8.8.8 > /dev/null && return 0
 else
   if [ !  -e "index.html" ]; then
     rm -f index.html
@@ -316,7 +315,7 @@ Please select your OS:
 
 END
 read -p "which number? " syschoice
-    sysmax=$(echo $syslist | wc -w)
+    sysmax=$(wc -w <<< $syslist)
     test "$syschoice" || exit 1
     if [ $syschoice -lt 1 -o $syschoice -gt $sysmax ]; then
       echo "Program aborted."
@@ -348,7 +347,7 @@ Please select your OS language:
 [u] hun           [v] trk         [w] ara         [x] heb
 END
   read -p "which letter? " langchoice
-    langmax=$(($(echo $langlist | wc -w) - 1 ))
+    langmax=$(($(wc -w <<< $langlist) - 1 ))
     test "$langchoice" || {
 	echo "Program aborted"
 	exit 1
@@ -443,7 +442,6 @@ for i in $(ls "$path"); do
   test "$i" == "ie6setup" && continue
   grep "${i}" "${file}" || echo "$i" 
   echo rm -f ${path}/"$i"
-  # sonst wird zu viel gelöscht
 done > ../temp/cleanup.txt
     }
 
@@ -457,7 +455,7 @@ down_msse_cpp() {
    echo "Downloading $Txt files..."
    while read x
     do
-	echo "$x" | grep -q ',' || continue
+	grep -q ',' <<< "$x" || continue
       oldname=${x%,*}
       newname=${x#*,}
       test "$newname" || continue
@@ -550,15 +548,15 @@ fi
 echo "
 Thank you - now I start working!"
 
-mydate=`date +%Y%m%d`
+mydate=$(date +%Y%m%d)
 
 #convert files to Linux format
 for Datei in ../{exclude,static}/*.txt ../{exclude,static}/custom/*.txt
   do
     grep -q -m1 $'\r' "$Datei" && {
-      OrigDat=$(stat -c %y "$Datei")
-      sed -i 's/\r//g' "$Datei"
-      touch -d "$OrigDat" "$Datei"
+    OrigDat=$(stat -c %y "$Datei")
+    sed -i 's/\r//g' "$Datei"
+    touch -d "$OrigDat" "$Datei"
     }
   done
 
@@ -571,16 +569,14 @@ esac
 test "$Liste" && {
   for OS in $Liste
     do
-    bash DownloadUpdates.sh $OS $lang $param2 $param3 $param4 $param5 $param6 $param7
+    /bin/bash DownloadUpdates.sh $OS $lang $param2 $param3 $param4 $param5 $param6 $param7
     done
     if [ "$param1" == "/makeiso" ]; then
-	bash ./CreateISOImage.sh $sys $lang $param2 $param3
+	/bin/bash ./CreateISOImage.sh $sys $lang $param2 $param3
 	rc=$?
     fi
     exit $rc
     }
-
-# ======================= wsus ======================================
 
 echo "Downloading most recent Windows Update Agent and catalog file..."
 doWget -i ../static/StaticDownloadLinks-wsus.txt -P ../client/wsus
@@ -589,170 +585,75 @@ echo "Determining static URLs for ${sys} ${lang}..."
 
 if [ "$sys" == "ofc" ] && [ "$sys_old" != "" ]; then
   echo "Determining static URLs for ${sys_old} ${lang}..."
-   static1="../static/StaticDownloadLinks-${sys_old}-x86-${lang}.txt"
-  if [ -f "$static1" ]; then
+  for Lang in $lang glb; do
+  for static in "../static/StaticDownloadLinks-${sys_old}-${OS_ARCH}-${Lang}.txt" "../static/StaticDownloadLinks-${sys_old}-${Lang}.txt"
+  do 
+    test -f "$static" || continue
      if [ "$EXCLUDE_SP" == "0" ]; then
-      cat $static1 >> ../temp/StaticUrls-${sys_old}-${lang}.txt
+      cat $static >> ../temp/StaticUrls-${sys_old}-${Lang}.txt
      fi
     if [ "$EXCLUDE_SP" == "1" ]; then
-     grep -i -v -f ../exclude/ExcludeList-SPs.txt $static1 > ../temp/StaticUrls-${sys_old}-${lang}.txt
+     grep -i -v -f ../exclude/ExcludeList-SPs.txt $static > ../temp/StaticUrls-${sys_old}-${Lang}.txt
     fi
-  fi
+    done
+   done # Lang
+fi # Ende Office
 
-  static2="../static/StaticDownloadLinks-${sys_old}-${lang}.txt"
-  if [ -f "$static2" ]; then
-    if [ "$EXCLUDE_SP" == "0" ]; then
-      cat $static2 >> ../temp/StaticUrls-${sys_old}-${lang}.txt
-    fi
-    if [ "$EXCLUDE_SP" == "1" ]; then
-      grep -i -v -f ../exclude/ExcludeList-SPs.txt $static2 > ../temp/StaticUrls-${sys_old}-${lang}.txt
-    fi
-  fi
-     static1="../static/StaticDownloadLinks-${sys_old}-x86-glb.txt"
-  if [ -f "$static1" ]; then
-     if [ "$EXCLUDE_SP" == "0" ]; then
-      cat $static1 >> ../temp/StaticUrls-${sys_old}-glb.txt
-     fi
-    if [ "$EXCLUDE_SP" == "1" ]; then
-     grep -i -v -f ../exclude/ExcludeList-SPs.txt $static1 > ../temp/StaticUrls-${sys_old}-glb.txt
-    fi
-  fi
 
-  static2="../static/StaticDownloadLinks-${sys_old}-glb.txt"
-  if [ -f "$static2" ]; then
-    if [ "$EXCLUDE_SP" == "0" ]; then
-      cat $static2 >> ../temp/StaticUrls-${sys_old}-glb.txt
-    fi
-    if [ "$EXCLUDE_SP" == "1" ]; then
-      grep -i -v -f ../exclude/ExcludeList-SPs.txt $static2 > ../temp/StaticUrls-${sys_old}-glb.txt
-    fi
-  fi
-fi
-
-static1="../static/StaticDownloadLinks-${sys}-x86-${lang}.txt"
-if [ -f "$static1" ]; then
+for static in "../static/StaticDownloadLinks-${sys}-${OS_ARCH}-${lang}.txt" "../static/StaticDownloadLinks-${sys}-${lang}.txt"
+  do
+  test -f "$static" || continue
   if [ "$EXCLUDE_SP" == "0" ]; then
-    cat $static1 >> ../temp/StaticUrls-${sys}-${lang}.txt
+    cat $static >> ../temp/StaticUrls-${sys}-${lang}.txt
+  else
+   grep -i -v -f ../exclude/ExcludeList-SPs.txt $static > ../temp/StaticUrls-${sys}-${lang}.txt
   fi
-  if [ "$EXCLUDE_SP" == "1" ]; then
-   grep -i -v -f ../exclude/ExcludeList-SPs.txt $static1 > ../temp/StaticUrls-${sys}-${lang}.txt
-  fi
+  done
+
+if [ -f ../static/custom/StaticDownloadLinks-${sys}-${OS_ARCH}-${lang}.txt ]; then
+    cat ../static/custom/StaticDownloadLinks-${sys}-${OS_ARCH}-${lang}.txt >> ../temp/StaticUrls-${sys}-${lang}.txt
 fi
 
-static2="../static/StaticDownloadLinks-${sys}-${lang}.txt"
-if [ -f "$static2" ]; then
-  if [ "$EXCLUDE_SP" == "0" ]; then
-    cat $static2 >> ../temp/StaticUrls-${sys}-${lang}.txt
+for Pfad in static static/custom; do
+test "$lang" != glb -a "$sys" != "w2k3-x64" || continue
+  static="../$Pfad/StaticDownloadLinks-win-${OS_ARCH}-${lang}.txt"
+  if [ -f "$static" ]; then
+    cat $static > ../temp/StaticUrls-${lang}.txt
   fi
-  if [ "$EXCLUDE_SP" == "1" ]; then
-    grep -i -v -f ../exclude/ExcludeList-SPs.txt $static2 > ../temp/StaticUrls-${sys}-${lang}.txt
+  static="../$Pfad/StaticDownloadLinks-win-${OS_ARCH}-glb.txt"
+  if [ -f "$static" ]; then
+    cat $static > ../temp/StaticUrls-glb.txt
   fi
-fi
+done
 
-static3="../static/StaticDownloadLinks-win-x86-${lang}.txt"
-static4="../static/StaticDownloadLinks-win-x86-glb.txt"
-if [ "$sys" != "w60" ] && [ "$sys" != "$w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "$w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
-  if [ -f "$static3" ]; then
-    cat $static3 > ../temp/StaticUrls-${lang}.txt
-  fi
-  if [ -f "$static4" ]; then
-    cat $static4 > ../temp/StaticUrls-glb.txt
-  fi
-fi
-
-if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ]; then
-  static4="../static/StaticDownloadLinks-${sys}-x86-glb.txt"
-  if [ -f "$static4" ]; then
-    cat $static4 > ../temp/StaticUrls-${sys}-glb.txt
+for Pfad in static static/custom; do
+if [ $lang != glb  ]; then
+  static="../$Pfad/StaticDownloadLinks-${sys}-${OS_ARCH}-glb.txt"
+  if [ -f "$static" ]; then
+    cat $static > ../temp/StaticUrls-${sys}-glb.txt
   fi
 fi
-
-static5="../static/StaticDownloadLinks-${sys}-glb.txt"
-if [ -f "$static5" ]; then
-    cat $static5 > ../temp/StaticUrls-${sys}-glb.txt
+static="../$Pfad/StaticDownloadLinks-${sys}-glb.txt"
+if [ -f "$static" ]; then
+    cat $static > ../temp/StaticUrls-${sys}-glb.txt
 fi
+done
 
-# ======================= dotnet etc ======================================
-
-
+for Pfad in static static/custom; do
 if [ "$dotnet" == "1" ]; then
-  cp ../static/StaticDownloadLinks-dotnet.txt ../temp/StaticUrls-dotnet.txt
-  cp ../static/StaticDownloadLinks-cpp-x86-glb.txt ../temp/StaticUrls-cpp-x86-glb.txt
-  cp ../static/StaticDownloadLinks-cpp-x64-glb.txt ../temp/StaticUrls-cpp-x64-glb.txt
+  cp ../$Pfad/StaticDownloadLinks-dotnet.txt ../temp/StaticUrls-dotnet.txt
+  cp ../$Pfad/StaticDownloadLinks-cpp-${OS_ARCH}-glb.txt ../temp/StaticUrls-cpp-${OS_ARCH}-glb.txt
 fi
 
 if [ "$msse" == "1" ]; then
-  if echo $sys | grep x64 > /dev/null 2>&1; then
-    cp ../static/StaticDownloadLinks-msse-x64-glb.txt ../temp/StaticUrls-msse-x64-glb.txt
-  else
-    cp ../static/StaticDownloadLinks-msse-x86-glb.txt ../temp/StaticUrls-msse-x86-glb.txt
-  fi
+    cp ../$Pfad/StaticDownloadLinks-msse-${OS_ARCH}-glb.txt ../temp/StaticUrls-msse-${OS_ARCH}-glb.txt
 fi
 if [ "$wddefs" == "1" ]; then
-  if echo $sys | grep x64 > /dev/null 2>&1; then
-    cp ../static/StaticDownloadLink-wddefs-x64-glb.txt ../temp/StaticUrls-wddefs-x64-glb.txt
-  else
-    cp ../static/StaticDownloadLink-wddefs-x86-glb.txt ../temp/StaticUrls-wddefs-x86-glb.txt
-  fi
+    cp ../$Pfad/StaticDownloadLink-wddefs-${OS_ARCH}-glb.txt ../temp/StaticUrls-wddefs-${OS_ARCH}-glb.txt
 fi
+done # Pfad
 
-# ======================= custom ======================================
-
-echo "Adding Custom-Links..."
-if [ -f ../static/custom/StaticDownloadLinks-${sys}-x86-${lang}.txt ]; then
-    cat ../static/custom/StaticDownloadLinks-${sys}-x86-${lang}.txt >> ../temp/StaticUrls-${sys}-${lang}.txt
-fi
-if [ -f ../static/custom/StaticDownloadLinks-${sys}-${lang}.txt ]; then
-   cat ../static/custom/StaticDownloadLinks-${sys}-${lang}.txt >> ../temp/StaticUrls-${sys}-${lang}.txt
-fi
-if [ "$sys" != "w60" ] && [ "$sys" != "$w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "$w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
-  if [ -f ../static/custom/StaticDownloadLinks-win-x86-${lang}.txt ]; then
-    cat ../static/custom/StaticDownloadLinks-win-x86-${lang}.txt >> ../temp/StaticUrls-${lang}.txt
-  fi
-  if [ -f ../static/custom/StaticDownloadLinks-win-x86-glb.txt ]; then
-    cat ../static/custom/StaticDownloadLinks-win-x86-glb.txt >> ../temp/StaticUrls-glb.txt
-  fi
-fi
-if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ]; then
-  if [ -f ../static/custom/StaticDownloadLinks-${sys}-x86-glb.txt ]; then
-    cat ../static/custom/StaticDownloadLinks-${sys}-x86-glb.txt >> ../temp/StaticUrls-${sys}-glb.txt
-  fi
-fi
-if [ -f ../static/custom/StaticDownloadLinks-${sys}-glb.txt ]; then
-    cat ../static/custom/StaticDownloadLinks-${sys}-glb.txt >> ../temp/StaticUrls-${sys}-glb.txt
-fi
-
-# ======================= msse etc (2)  ======================================
-
-if [ "$dotnet" == "1" ]; then
-  if [ -f ../static/custom/StaticDownloadLinks-dotnet.txt ]; then
-    cat ../static/custom/StaticDownloadLinks-dotnet.txt >> ../temp/StaticUrls-dotnet.txt
-  fi
-  if [ -f ../static/custom/StaticDownloadLinks-cpp-x86-glb.txt ]; then
-    cat ../static/custom/StaticDownloadLinks-cpp-x86-glb.txt >> ../temp/StaticUrls-cpp-x86-glb.txt
-  fi
-  if [ -f ../static/custom/StaticDownloadLinks-cpp-x64-glb.txt ]; then
-    cat ../static/custom/StaticDownloadLinks-cpp-x64-glb.txt >> ../temp/StaticUrls-cpp-x64-glb.txt
-  fi
-fi
-if [ "$msse" == "1" ]; then
-  if [ -f ../static/custom/StaticDownloadLinks-msse-x64-glb.txt ]; then
-    cat ../static/custom/StaticDownloadLinks-msse-x64-glb.txt >> ../temp/StaticUrls-msse-x64-glb.txt
-  fi
-  if [ -f ../static/custom/StaticDownloadLinks-msse-x86-glb.txt ]; then
-    cat ../static/custom/StaticDownloadLinks-msse-x86-glb.txt >> ../temp/StaticUrls-msse-x86-glb.txt
-  fi
-fi
-if [ "$wddefs" == "1" ]; then
-  if [ -f ../static/custom/StaticDownloadLink-wddefs-x64-glb.txt ]; then
-    cat ../static/custom/StaticDownloadLink-wddefs-x64-glb.txt >> ../temp/StaticUrls-wddefs-x64-glb.txt
-  fi
-  if [ -f ../static/custom/StaticDownloadLink-wddefs-x86-glb.txt ]; then
-    cat ../static/custom/StaticDownloadLink-wddefs-x86-glb.txt >> ../temp/StaticUrls-wddefs-x86-glb.txt
-  fi
-fi
-
-# ======================= wsus (2) ======================================
+# echo "Adding Custom-Links..."
 
 cd ../temp
 echo "Extracting Windows update catalogue file package.xml..."
@@ -760,293 +661,247 @@ cp ../client/wsus/wsusscn2.cab ../client/wsus/wsusscn2_1.cab
 cabextract -q -F package.cab ../client/wsus/wsusscn2_1.cab
 cabextract -q -F package.xml package.cab
 rm package.cab
-rm ../client/wsus/wsusscn2_1.cab
+rm -f ../client/wsus/wsusscn2_1.cab
 cd ../sh
+
+# superseded
 
 supersed="0"
 if [ -f ../exclude/ExcludeList-superseded.txt ]; then
-  if [ "`stat -c %Y ../client/wsus/wsusscn2.cab`" -gt "`stat -c %Y ../exclude/ExcludeList-superseded.txt`" ]; then
+  if [ ../client/wsus/wsusscn2.cab -nt ../exclude/ExcludeList-superseded.txt ]; then
     supersed="1"
+    #  %WGET_PATH% -N -P ..\exclude http://download.wsusoffline.net/ExcludeList-superseded-exclude.txt
+    doWget http://download.wsusoffline.net/ExcludeList-superseded-exclude.txt -P ../exclude
+    Datei=../exclude/ExcludeList-superseded-exclude.txt
+    OrigDat=$(stat -c %y "$Datei")
+    sed -i 's/\r//g' "$Datei"
+    touch -d "$OrigDat" "$Datei"
+
   else
     echo "Found valid list of superseded updates..."
   fi
 else
   supersed="1"
 fi
-if [ "$supersed" == "1" ]; then
+
+test $debug -ne 0 && supersed="1"
+
+if
+ [ "$supersed" == "1" ]; then
 echo "Determining superseded updates (please be patient, this will take a while)..."
 $xml tr ../xslt/ExtractUpdateRevisionIds.xsl ../temp/package.xml > ../temp/ValidUpdateRevisionIds.txt
-$xml tr ../xslt/ExtractSupersedingRevisionIds.xsl ../temp/package.xml > ../temp/SupersedingRevisionIds.txt
-sort -u ../temp/SupersedingRevisionIds.txt -o ../temp/SupersedingRevisionIds.txt
+$xml tr ../xslt/ExtractSupersedingRevisionIds.xsl ../temp/package.xml | sort -u > ../temp/SupersedingRevisionIds.txt
 grep -F -f ../temp/SupersedingRevisionIds.txt ../temp/ValidUpdateRevisionIds.txt >> ../temp/ValidSupersedingRevisionIds.txt
-rm ../temp/ValidUpdateRevisionIds*.txt
-rm ../temp/SupersedingRevisionIds*.txt
+rm -f ../temp/ValidUpdateRevisionIds*.txt
+rm -f ../temp/SupersedingRevisionIds*.txt
 $xml tr ../xslt/ExtractSupersededUpdateRelations.xsl ../temp/package.xml > ../temp/SupersededUpdateRelations.txt
 grep -F -f ../temp/ValidSupersedingRevisionIds.txt ../temp/SupersededUpdateRelations.txt > ../temp/ValidSupersededUpdateRelations.txt
-rm ../temp/SupersededUpdateRelations.txt
-rm ../temp/ValidSupersedingRevisionIds.txt
+rm -f ../temp/SupersededUpdateRelations.txt
+rm -f ../temp/ValidSupersedingRevisionIds.txt
 $xml tr ../xslt/ExtractBundledUpdateRelationsAndFileIds.xsl ../temp/package.xml > ../temp/BundledUpdateRelationsAndFileIds.txt
-supersed=`cat ../temp/ValidSupersededUpdateRelations.txt`
-arr=$(echo $supersed | tr " " "\n")
-for x in $arr
+
+  while IFS=',' read ValidRevID Rest
   do
-  temp=(${x//,/ })
-  echo "${temp[0]}" >> ../temp/ValidSupersededRevisionIds.txt
-  done
+  echo "${ValidRevID}" >> ../temp/ValidSupersededRevisionIds.txt
+  done < ../temp/ValidSupersededUpdateRelations.txt
 grep -F -f ../temp/ValidSupersededRevisionIds.txt ../temp/BundledUpdateRelationsAndFileIds.txt > ../temp/SupersededRevisionAndFileIds.txt
-supersed=`cat ../temp/SupersededRevisionAndFileIds.txt`
-arr=$(echo $supersed | tr " " "\n")
-for x in $arr
+
+  while IFS=',' read Platz0 Platz1 Rest
   do
-  temp=(${x//,/ })
-  temp=(${temp[1]//;/ })
-   if [ "${temp[0]}" != "" ]; then
-    echo "${temp[0]}" >> ../temp/SupersededFileIds.txt
+    test "$Platz1" || continue
+    read temp0 Rest <<< ${Platz1//;/ }
+   if [ "${temp0}" != "" ]; then
+    echo "${temp0}" >> ../temp/SupersededFileIds.txt
   fi
-  done
-rm ../temp/SupersededRevisionAndFileIds.txt
-sort -u ../temp/SupersededFileIds.txt > ../temp/SupersededFileIdsSorted.txt
-rm ../temp/SupersededFileIds.txt
-grep -v '#' ../temp/SupersededFileIdsSorted.txt > ../temp/SupersededFileIdsUnique.txt
-rm ../temp/SupersededFileIdsSorted.txt
-$xml tr ../xslt/ExtractUpdateCabExeIdsAndLocations.xsl ../temp/package.xml > ../temp/UpdateCabExeIdsAndLocations.txt
-sort -u ../temp/UpdateCabExeIdsAndLocations.txt -o ../temp/UpdateCabExeIdsAndLocations.txt
+  done < ../temp/SupersededRevisionAndFileIds.txt
+
+test $debug -eq 0 && rm -f ../temp/SupersededRevisionAndFileIds.txt
+sort -u ../temp/SupersededFileIds.txt | grep -v '#' > ../temp/SupersededFileIdsUnique.txt
+test $debug -eq 0 && rm -f ../temp/SupersededFileIds.txt
+$xml tr ../xslt/ExtractUpdateCabExeIdsAndLocations.xsl ../temp/package.xml | sort -u > ../temp/UpdateCabExeIdsAndLocations.txt
 grep -F -f ../temp/SupersededFileIdsUnique.txt ../temp/UpdateCabExeIdsAndLocations.txt >> ../temp/SupersededCabExeIdsAndLocations.txt
-rm ../temp/SupersededFileIdsUnique.txt
-rm ../temp/UpdateCabExeIdsAndLocations.txt
-if [ -f ../exclude/ExcludeList-superseded.txt ]; then
-  rm ../exclude/ExcludeList-superseded.txt
-fi
-supersed=`cat ../temp/SupersededCabExeIdsAndLocations.txt`
-arr=$(echo $supersed | tr " " "\n")
-for x in $arr
+rm -f ../temp/SupersededFileIdsUnique.txt
+test $debug -eq 0 && rm -f ../temp/UpdateCabExeIdsAndLocations.txt
+rm -f ../exclude/ExcludeList-superseded.txt
+
+  while IFS=',' read dummy temp Rest
   do
-  temp=(${x//,/ })
-  temp=`basename ${temp[1]} .exe`
-  temp=`basename $temp .cab`
-  echo "$temp" >> ../exclude/ExcludeList-superseded.txt
-  done
+  temp=$(basename $temp .exe)
+  echo "${temp%\.cab}" >> ../exclude/ExcludeList-superseded.txt
+  done < ../temp/SupersededCabExeIdsAndLocations.txt
 echo "Done."
 fi
 
+# ------- Ende superseded
 
 echo "Determining update URLs for ${sys} ${lang}..."
-download1="../xslt/ExtractDownloadLinks-${sys}-${lang}.xsl"
-download2="../xslt/ExtractDownloadLinks-${sys}-x86-${lang}.xsl"
-# valid1="../xslt/ExtractValidIds-${sys}.xsl"
-# valid2="../xslt/ExtractValidIds-${sys}-x86.xsl"
-# expired1="../xslt/ExtractExpiredIds-${sys}.xsl"
-# expired2="../xslt/ExtractExpiredIds-${sys}-x86.xsl"
-exclude1="../temp/tmpExcludeList-${sys}.txt"
-exclude2="../temp/tmpExcludeList-${sys}-x86.txt"
-glb1="../xslt/ExtractDownloadLinks-${sys}-glb.xsl"
-glb2="../xslt/ExtractDownloadLinks-${sys}-x86-glb.xsl"
 verify="../temp/tmpUrls-${sys}-${lang}.txt"
 
-if [ -f "$valid1" ]; then
-  $xml tr ../xslt/ExtractValidIds-${sys}.xsl ../temp/package.xml > ../temp/Validid-${sys}.txt
-fi
-if [ -f "$valid2" ]; then
-  $xml tr ../xslt/ExtractValidIds-${sys}-x86.xsl ../temp/package.xml > ../temp/Validid-${sys}.txt
-fi
-if [ -f "$expired1" ]; then
-  $xml tr ../xslt/ExtractExpiredIds-${sys}.xsl ../temp/package.xml > ../temp/Expiredid-${sys}.txt
-fi
-if [ -f "$expired2" ]; then
-  $xml tr ../xslt/ExtractExpiredIds-${sys}-x86.xsl ../temp/package.xml > ../temp/Expiredid-${sys}.txt
-fi
-if [ -f "$download1" ]; then
-  $xml tr ../xslt/ExtractDownloadLinks-${sys}-${lang}.xsl ../temp/package.xml > ../temp/Urls-${sys}-${lang}.txt
-fi
-if [ -f "$download2" ]; then
-  $xml tr ../xslt/ExtractDownloadLinks-${sys}-x86-${lang}.xsl ../temp/package.xml > ../temp/Urls-${sys}-${lang}.txt
-fi
-if [ "$dotnet" == "1" ]; then
-  if echo $sys | grep x64 > /dev/null 2>&1; then
-    $xml tr ../xslt/ExtractDownloadLinks-dotnet-x64-glb.xsl ../temp/package.xml > ../temp/Urls-dotnet-x64.txt
-  else
-    $xml tr ../xslt/ExtractDownloadLinks-dotnet-x86-glb.xsl ../temp/package.xml > ../temp/Urls-dotnet-x86.txt
-  fi
-fi
+test -f ../xslt/ExtractDownloadLinks-${sys}-${OS_ARCH}-${lang}.xsl \
+    && $xml tr ../xslt/ExtractDownloadLinks-${sys}-${OS_ARCH}-${lang}.xsl ../temp/package.xml > ../temp/Urls-${sys}-${lang}.txt
+test "$dotnet" == "1" && $xml tr ../xslt/ExtractDownloadLinks-dotnet-${OS_ARCH}-glb.xsl ../temp/package.xml > ../temp/Urls-dotnet-${OS_ARCH}.txt
 
-if [ -f "$valid1" -o -f "$valid2" ] && [ -f "$expired1" -o -f "$expired2" ]; then
-  grep -F -i -v -f ../temp/Expiredid-${sys}.txt ../temp/Urls-${sys}-${lang}.txt > ../temp/tmpUrls-${sys}-${lang}.txt
-  grep -F -i -f ../temp/Validid-${sys}.txt ../temp/Urls-${sys}-${lang}.txt >> ../temp/tmpUrls-${sys}-${lang}.txt
-else
   touch ../temp/Urls-${sys}-${lang}.txt
   cp ../temp/Urls-${sys}-${lang}.txt ../temp/tmpUrls-${sys}-${lang}.txt
-fi
 
-if [ -f ../exclude/ExcludeList-${sys}.txt ]; then
-  cat ../exclude/ExcludeList-${sys}.txt > ../temp/tmpExcludeList-${sys}.txt
-fi
-if [ -f ../exclude/ExcludeList-${sys}-x86.txt ]; then
-  cat ../exclude/ExcludeList-${sys}-x86.txt > ../temp/tmpExcludeList-${sys}.txt
-fi
-if [ -f ../exclude/custom/ExcludeList-${sys}.txt ]; then
-  cat ../exclude/custom/ExcludeList-${sys}.txt >> ../temp/tmpExcludeList-${sys}.txt
-fi
-if [ -f ../exclude/custom/ExcludeList-${sys}-x86.txt ]; then
-  cat ../exclude/custom/ExcludeList-${sys}-x86.txt >> ../temp/tmpExcludeList-${sys}.txt
-fi
-  cat ../exclude/ExcludeList-superseded.txt >> ../temp/tmpExcludeList-${sys}.txt
-  grep -F -i -v -f ../temp/tmpExcludeList-${sys}.txt ../temp/tmpUrls-${sys}-${lang}.txt > ../temp/ValidUrls-${sys}-${lang}.txt
+> ../temp/tmpExcludeList-${sys}.txt
 
-if [ -f "$glb1" ] && [ "$lang" != "glb" ]; then
-  $xml tr ../xslt/ExtractDownloadLinks-${sys}-glb.xsl ../temp/package.xml > ../temp/Urls-${sys}-glb.txt
-  if [ -f "$valid1" -o -f "$valid2" ] && [ -f "$expired1" -o -f "$expired2" ]; then
-    grep -F -i -f ../temp/Validid-${sys}.txt ../temp/Urls-${sys}-glb.txt > ../temp/tmpValidUrls-${sys}-glb.txt
-    grep -F -i -v -f ../temp/Expiredid-${sys}.txt ../temp/Urls-${sys}-glb.txt >> ../temp/tmpValidUrls-${sys}-glb.txt
-  else
-    cp ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
-  fi
+for Pfad in exclude exclude/custom; do
+test -f ../$Pfad/ExcludeList-${sys}-${OS_ARCH}.txt && \
+    cat ../$Pfad/ExcludeList-${sys}-${OS_ARCH}.txt >> ../temp/tmpExcludeList-${sys}.txt
+  done
+for Pfad in exclude exclude/custom; do
+test -f ../$Pfad/ExcludeList-${sys}.txt && \
+    cat ../$Pfad/ExcludeList-${sys}.txt >> ../temp/tmpExcludeList-${sys}.txt
+  done
+
+test -f ../exclude/ExcludeList-superseded.txt && \
+    cat ../exclude/ExcludeList-superseded.txt >> ../temp/tmpExcludeList-${sys}.txt
+grep -F -i -v -f ../temp/tmpExcludeList-${sys}.txt ../temp/tmpUrls-${sys}-${lang}.txt > ../temp/ValidUrls-${sys}-${lang}.txt
+
+test $lang == glb || {
+  test -f ../xslt/ExtractDownloadLinks-${sys}-${OS_ARCH}-glb.xsl && \
+    $xml tr ../xslt/ExtractDownloadLinks-${sys}-${OS_ARCH}-glb.xsl ../temp/package.xml > ../temp/Urls-${sys}-glb.txt
+  test -f ../xslt/ExtractDownloadLinks-${sys}-glb.xsl && \
+    $xml tr ../xslt/ExtractDownloadLinks-${sys}-glb.xsl ../temp/package.xml > ../temp/Urls-${sys}-glb.txt
+  cp ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
   grep -F -i -v -f ../temp/tmpExcludeList-${sys}.txt ../temp/tmpValidUrls-${sys}-glb.txt > ../temp/ValidUrls-${sys}-glb.txt
-  rm ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
-fi
+  rm -f ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
+  }
 
-if [ -f "$glb2" ] && [ "$lang" != "glb" ]; then
-  $xml tr ../xslt/ExtractDownloadLinks-${sys}-x86-glb.xsl ../temp/package.xml > ../temp/Urls-${sys}-glb.txt
-  if [ -f "$valid1" -o -f "$valid2" ] && [ -f "$expired1" -o -f "$expired2" ]; then
-    grep -F -i -f ../temp/Validid-${sys}.txt ../temp/Urls-${sys}-glb.txt > ../temp/tmpValidUrls-${sys}-glb.txt
-    grep -F -i -v -f ../temp/Expiredid-${sys}.txt ../temp/Urls-${sys}-glb.txt >> ../temp/tmpValidUrls-${sys}-glb.txt
-  else
-    cp ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
-  fi
-  grep -F -i -v -f ../temp/tmpExcludeList-${sys}.txt ../temp/tmpValidUrls-${sys}-glb.txt > ../temp/ValidUrls-${sys}-glb.txt
-  rm ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
-fi
+> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
 
-if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ] && [ "$sys" != "ofc" ]; then
+if [ $lang != glb -a $sys != "w2k3-x64" -a "$sys" != "ofc" ]; then
   echo "Determining update URLs for win ${lang}..."
-  $xml tr ../xslt/ExtractDownloadLinks-win-x86-${lang}.xsl ../temp/package.xml > ../temp/Urls-win-x86-${lang}.txt
-  cat ../exclude/ExcludeList-win-x86.txt > ../temp/tmpExcludeList-win-x86.txt
-  cat ../exclude/custom/ExcludeList-win-x86.txt >> ../temp/tmpExcludeList-win-x86.txt
-    cat ../exclude/ExcludeList-superseded.txt >> ../temp/tmpExcludeList-win-x86.txt
-  grep -F -i -v -f ../temp/tmpExcludeList-win-x86.txt ../temp/Urls-win-x86-${lang}.txt > ../temp/ValidUrls-win-x86-${lang}.txt
-  rm ../temp/Urls-win-x86-${lang}.txt
+  $xml tr ../xslt/ExtractDownloadLinks-win-${OS_ARCH}-${lang}.xsl ../temp/package.xml > ../temp/Urls-win-${OS_ARCH}-${lang}.txt
+  cat ../exclude/ExcludeList-win-${OS_ARCH}.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
+  test -f ../exclude/custom/ExcludeList-win-${OS_ARCH}.txt && \
+    cat ../exclude/custom/ExcludeList-win-${OS_ARCH}.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
+  test -f ../exclude/ExcludeList-superseded.txt && \
+    cat ../exclude/ExcludeList-superseded.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
+  grep -F -i -v -f ../temp/tmpExcludeList-win-${OS_ARCH}.txt ../temp/Urls-win-${OS_ARCH}-${lang}.txt > ../temp/ValidUrls-win-${OS_ARCH}-${lang}.txt
+  rm -f ../temp/Urls-win-${OS_ARCH}-${lang}.txt
 fi
 
-# ======================= Office ======================================
+# ------------- Office -------------
 
 if [ "$sys" == "ofc" ]; then
-
 echo "Determining dynamic update urls for ${sys}..."
-if [ -f ../exclude/ExcludeList-${sys}.txt ]; then
-  cat ../exclude/ExcludeList-${sys}.txt >> ../temp/ExcludeList-${sys}.txt
-fi
-if [ -f ../exclude/custom/ExcludeList-${sys}.txt ]; then
-  cat ../exclude/custom/ExcludeList-${sys}.txt >> ../temp/ExcludeList-${sys}.txt
-fi
-cat ../exclude/ExcludeList-superseded.txt >> ../temp/ExcludeList-${sys}.txt
 
+for Datei in ExcludeList-${sys}.txt custom/ExcludeList-${sys}.txt ExcludeList-superseded.txt
+  do
+     test -f ../exclude/$Datei && cat ../exclude/$Datei
+  done | sort -u > ../temp/ExcludeList-${sys}.txt
 
 $xml tr ../xslt/ExtractUpdateCategoriesAndFileIds.xsl ../temp/package.xml > ../temp/UpdateCategoriesAndFileIds.txt
 $xml tr ../xslt/ExtractUpdateCabExeIdsAndLocations.xsl ../temp/package.xml > ../temp/UpdateCabExeIdsAndLocations.txt
 
 oldlang=$lang
-for (( c=0; c<2; c++ ))
+for lang in $oldlang glb
 do
-if [ $c == 1 ]; then
-  lang="glb"
-fi
   echo "Determining dynamic update urls for ${sys} ${lang} (please be patient, this will take a while)..."
   UPDATE_ID=""
   UPDATE_CATEGORY=""
   UPDATE_LANGUAGES=""
 
-  officestring=`cat ../temp/UpdateCategoriesAndFileIds.txt`
-  arr=$(echo $officestring  | tr " " "\n")
-  for x in $arr
+    while IFS=';' read Platz1 cate Rest
     do
-      temp=(${x//;/ })
-      pre_cat=${temp[0]}
-      pre_cat=(${pre_cat//,/ })
-      cate=${temp[1]}
+	read precat0 precat1 precat2 Rest <<<${Platz1//,/ }
+
       if [ "$cate" == "" ]; then
         if [ "$UPDATE_CATEGORY" == "477b856e-65c4-4473-b621-a8b230bb70d9" ]; then
-          if [ "${pre_cat[1]}" != "" ]; then
+          if [ "${precat1}" != "" ]; then
             if [ "$lang" == "glb" ]; then
-              if [ "${pre_cat[2]}" == "" ] && [ "$UPDATE_LANGUAGES" == "" ]; then
-                echo "$UPDATE_ID,${pre_cat[1]}" >> ../temp/OfficeUpdateAndFileIds.txt
-                echo "${pre_cat[1]}" >> ../temp/OfficeFileIds.txt
+              if [ "${precat2}" == "" ] && [ "$UPDATE_LANGUAGES" == "" ]; then
+                echo "$UPDATE_ID,${precat1}" >> ../temp/OfficeUpdateAndFileIds.txt
               fi
-              if [ "${pre_cat[2]}" == "en" ] && [ "$UPDATE_LANGUAGES" == "en" ]; then
-                echo "$UPDATE_ID,${pre_cat[1]}" >> ../temp/OfficeUpdateAndFileIds.txt
-                echo "${pre_cat[1]}" >> ../temp/OfficeFileIds.txt
+              if [ "${precat2}" == "en" ] && [ "$UPDATE_LANGUAGES" == "en" ]; then
+                echo "$UPDATE_ID,${precat1}" >> ../temp/OfficeUpdateAndFileIds.txt
               fi
             else
-              if [ "${pre_cat[2]}" == "$LANG_SHORT" ]; then
-                echo "$UPDATE_ID,${pre_cat[1]}" >> ../temp/OfficeUpdateAndFileIds.txt
-                echo "${pre_cat[1]}" >> ../temp/OfficeFileIds.txt
+              if [ "${precat2}" == "$LANG_SHORT" ]; then
+                echo "$UPDATE_ID,${precat1}" >> ../temp/OfficeUpdateAndFileIds.txt
               fi
             fi
           fi
         fi
       else
-          UPDATE_ID=${pre_cat[0]}
-          UPDATE_CATEGORY=`echo $cate | awk -F"," '{print $1}'`
-          UPDATE_LANGUAGES=`echo $cate | awk -F"," '{print $2}'`
+	UPDATE_ID=${precat0}
+	read UPDATE_CATEGORY UPDATE_LANGUAGES Rest <<< ${cate//,/ }
+	UPDATE_lang=$(cut -d',' -f2- <<< ${cate})
+	test "$UPDATE_LANGUAGES" && {
+	grep -w -q "en" <<< ${UPDATE_lang} && UPDATE_LANGUAGES=en
+	grep -w -q "$LANG_SHORT" <<< ${UPDATE_lang} && UPDATE_LANGUAGES=$LANG_SHORT
+	}
       fi
-    done
+    done < ../temp/UpdateCategoriesAndFileIds.txt
+
+  cut -d',' -f2 ../temp/OfficeUpdateAndFileIds.txt | sort -u > ../temp/OfficeFileIds.txt 
 
   grep -F -f ../temp/OfficeFileIds.txt ../temp/UpdateCabExeIdsAndLocations.txt > ../temp/OfficeUpdateCabExeIdsAndLocations.txt
-  if [ ! -d "../client/ofc" ]; then
-    mkdir ../client/ofc
-  fi
-  if [ -f ../client/ofc/UpdateTable-${sys}-${lang}.csv ]; then
-    rm  ../client/ofc/UpdateTable-${sys}-${lang}.csv
-  fi
-  linkstring=`cat ../temp/OfficeUpdateAndFileIds.txt`
-  arr=$(echo $linkstring | tr " " "\n")
-  for x in $arr
-    do
-      temp_linkid=`echo $x | awk -F"," '{print $2}'`
-      line=`grep $temp_linkid ../temp/OfficeUpdateCabExeIdsAndLocations.txt`
-      line=(${line//,/ })
-          if [ "${line[0]}" != "" ] && [ "${line[0]}" == "$temp_linkid" ]; then
-            echo "${line[1]}" >> ../temp/DynamicDownloadLinks-${sys}-${lang}.txt
-            filename=${line[1]}
-            filename=`basename $filename .exe`
-            filename=`basename $filename .cab`
-            echo "`echo $x | awk -F"," '{print $1}'`,$filename" >> ../client/ofc/UpdateTable-${sys}-${lang}.csv
-          fi
-    done
+  mkdir -p ../client/ofc
+  rm -f ../client/ofc/UpdateTable-${sys}-${lang}.csv
 
-#    rm ../temp/OfficeFileIds.txt
-#    rm ../temp/OfficeUpdateAndFileIds.txt
-#    rm ../temp/OfficeUpdateCabExeIdsAndLocations.txt
+   while IFS=',' read Platz1 temp_linkid Rest
+    do
+      test "${temp_linkid}" || continue
+	# Brechstange
+      Line=$(grep "^${temp_linkid}," ../temp/OfficeUpdateCabExeIdsAndLocations.txt)
+	test "$Line" || continue
+
+      Line=(${Line//,/ })
+          if [ "${Line[0]}" != "" -a "${Line[0]}" == "$temp_linkid" ]; then
+            echo "${Line[1]}" >> ../temp/DynamicDownloadLinks-${sys}-${lang}.txt
+            filename=${Line[1]%.exe}
+            echo "$Platz1,${filename%.cab}" >> ../client/ofc/UpdateTable-${sys}-${lang}.csv
+          fi
+    done < ../temp/OfficeUpdateAndFileIds.txt
+
+    test $debug -ne 0 && rm -f ../temp/OfficeFileIds.txt
+    test $debug -ne 0 && rm -f ../temp/OfficeUpdateAndFileIds.txt
+    test $debug -ne 0 && rm -f ../temp/OfficeUpdateCabExeIdsAndLocations.txt
     grep -F -i -v -f ../temp/ExcludeList-${sys}.txt ../temp/DynamicDownloadLinks-${sys}-${lang}.txt > ../temp/ValidDynamicLinks-${sys}-${lang}.txt
     cat ../temp/ValidDynamicLinks-${sys}-${lang}.txt >> ../temp/ValidUrls-${sys}-${lang}.txt
 done
+
 lang=$oldlang
-fi
-# Ende ofc
+ fi
 
-# ======================= sys ======================================
+# ---------- Ende Office -------------
 
-rm ../temp/package.xml
+test $debug -ne 0 && echo "Office ist fertig"
+# test $debug -ne 0 && read -p "supersed $LINENO " dummy
 
-touch ../temp/ValidDynamicLinks-${sys}-${lang}.txt ../temp/StaticUrls-${sys_old}-${lang}.txt ../temp/StaticUrls-${sys_old}-glb.txt ../temp/StaticUrls-${sys}-${lang}.txt ../temp/StaticUrls-ie6-${lang}.txt ../temp/ValidUrls-${sys}-${lang}.txt ../temp/ValidUrls-${sys}-glb.txt ../temp/ValidUrls-win-x86-${lang}.txt ../temp/StaticUrls-ofc-glb.txt ../temp/StaticUrls-ofc-${lang}.txt ../temp/StaticUrls-${sys}-glb.txt ../temp/StaticUrls-${lang}.txt ../temp/StaticUrls-glb.txt ../temp/StaticUrls-dotnet.txt ../temp/StaticUrls-cpp-x86-glb.txt ../temp/StaticUrls-cpp-x64-glb.txt ../temp/StaticUrls-msse-x86-glb.txt ../temp/StaticUrls-msse-x64-glb.txt ../temp/StaticUrls-wddefs-x86-glb.txt ../temp/StaticUrls-wddefs-x64-glb.txt
+rm -f ../temp/package.xml
+touch ../temp/ValidDynamicLinks-${sys}-${lang}.txt ../temp/StaticUrls-${sys}-${lang}.txt ../temp/StaticUrls-ie6-${lang}.txt ../temp/ValidUrls-${sys}-${lang}.txt ../temp/ValidUrls-${sys}-glb.txt ../temp/ValidUrls-win-${OS_ARCH}-${lang}.txt ../temp/StaticUrls-ofc-glb.txt ../temp/StaticUrls-ofc-${lang}.txt ../temp/StaticUrls-${sys}-glb.txt ../temp/StaticUrls-${lang}.txt ../temp/StaticUrls-glb.txt ../temp/StaticUrls-dotnet.txt ../temp/StaticUrls-cpp-${OS_ARCH}-glb.txt ../temp/StaticUrls-msse-${OS_ARCH}-glb.txt ../temp/StaticUrls-wddefs-${OS_ARCH}-glb.txt
 
-cat ../temp/StaticUrls-${sys}-${lang}.txt >> ../temp/urls.txt
+test "$sys_old" && {
+    touch ../temp/StaticUrls-${sys_old}-${lang}.txt ../temp/StaticUrls-${sys_old}-glb.txt
+    }
+
+rm -f ../temp/urls.txt
+
+test $lang != glb && {
+    cat ../temp/StaticUrls-${sys}-${lang}.txt >> ../temp/urls.txt
+    cat ../temp/ValidUrls-${sys}-${lang}.txt >> ../temp/urls.txt
+    cat ../temp/StaticUrls-ofc-${lang}.txt >> ../temp/urls.txt
+    cat ../temp/StaticUrls-${lang}.txt >> ../temp/urls.txt
+    }
+
 cat ../temp/StaticUrls-ie6-${lang}.txt >> ../temp/urls.txt
-cat ../temp/ValidUrls-${sys}-${lang}.txt >> ../temp/urls.txt
 cat ../temp/ValidUrls-${sys}-glb.txt >> ../temp/urls.txt
-cat ../temp/ValidUrls-win-x86-${lang}.txt >> ../temp/urls.txt
+cat ../temp/ValidUrls-win-${OS_ARCH}-${lang}.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-ofc-glb.txt >> ../temp/urls.txt
-cat ../temp/StaticUrls-ofc-${lang}.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-${sys}-glb.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-glb.txt >> ../temp/urls.txt
-cat ../temp/StaticUrls-${lang}.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-dotnet.txt >> ../temp/urls.txt
-cat ../temp/StaticUrls-cpp-x86-glb.txt >> ../temp/urls.txt
-cat ../temp/StaticUrls-cpp-x64-glb.txt >> ../temp/urls.txt
-cat ../temp/StaticUrls-msse-x86-glb.txt >> ../temp/urls.txt
-cat ../temp/StaticUrls-msse-x64-glb.txt >> ../temp/urls.txt
-cat ../temp/StaticUrls-wddefs-x86-glb.txt >> ../temp/urls.txt
-cat ../temp/StaticUrls-wddefs-x64-glb.txt >> ../temp/urls.txt
-cat ../temp/StaticUrls-${sys_old}-${lang}.txt >> ../temp/urls.txt
-cat ../temp/StaticUrls-${sys_old}-glb.txt >> ../temp/urls.txt
+cat ../temp/StaticUrls-cpp-${OS_ARCH}-glb.txt >> ../temp/urls.txt
+cat ../temp/StaticUrls-msse-${OS_ARCH}-glb.txt >> ../temp/urls.txt
+cat ../temp/StaticUrls-wddefs-${OS_ARCH}-glb.txt >> ../temp/urls.txt
+test "$sys_old" && {
+    cat ../temp/StaticUrls-${sys_old}-${lang}.txt >> ../temp/urls.txt
+    cat ../temp/StaticUrls-${sys_old}-glb.txt >> ../temp/urls.txt
+    }
 
 echo "
 ***************************************
@@ -1054,330 +909,146 @@ Found $(grep -c http: ../temp/urls.txt) patches...
 "
 
 #create needed directories
-mkdir -p ../client/${sys}/ ../client/${sys}/glb ../client/${sys}/${lang} ../client/md
+mkdir -p ../client/${sys}/glb ../client/${sys}/${lang} ../client/md
 
 printheader
+
 echo "Downloading patches for ${sys}..."
 echo "Downloading static patches..."
-doWget -i ../temp/StaticUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
-if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
+if [ $lang != "glb" -a $sys != "w2k3-x64" ]; then
+  doWget -i ../temp/StaticUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
   doWget -i ../temp/StaticUrls-${lang}.txt -P ../client/win/${lang}
-  doWget -i ../temp/StaticUrls-glb.txt -P ../client/win/glb
 fi
+doWget -i ../temp/StaticUrls-glb.txt -P ../client/win/glb
 doWget -i ../temp/StaticUrls-${sys}-glb.txt -P ../client/${sys}/glb
-
-# ======================= ofc (3) ======================================
 
 if [ "$sys" == "ofc" ] && [ "$sys_old" != "" ]; then
    doWget -i ../temp/StaticUrls-${sys_old}-${lang}.txt -P ../client/${sys_old}/${lang}
    doWget -i ../temp/StaticUrls-${sys_old}-glb.txt -P ../client/${sys_old}/glb
 fi
 
-# ======================= msse etc (3) ======================================
-
+# dotnet/cpp
 if [ "$dotnet" == "1" ]; then
   echo "Downloading .Net framework..."
   mkdir -p ../client/dotnet
   doWget -i ../temp/StaticUrls-dotnet.txt -P ../client/dotnet
-  if echo $sys | grep x64 > /dev/null 2>&1; then
-    mkdir -p ../client/dotnet/x64-glb
-    doWget -i ../temp/Urls-dotnet-x64.txt -P ../client/dotnet/x64-glb
-  else
-    mkdir -p ../client/dotnet/x86-glb
-    doWget -i ../temp/Urls-dotnet-x86.txt -P ../client/dotnet/x86-glb
-  fi
-  echo "Downloading CPP files..."
-  cppstring=`cat ../temp/StaticUrls-cpp-x86-glb.txt | grep ,`
-  arr=$(echo $cppstring | tr " " "\n")
-  for x in $arr
-  do
-    oldname=`echo $x | awk -F"," '{print $1}'`
-    newname=`echo $x | awk -F"," '{print $2}'`
-    tmpname=`basename $oldname`
-    mkdir -p ../client/cpp
-    if [ "$newname" != "" ] && [ -f "../client/cpp/$newname" ]; then
-      mv -f "../client/cpp/$newname" "../client/cpp/$tmpname"
-    fi
-    doWget $oldname -P ../client/cpp
-    if [ "$newname" != "" ] && [ -f "../client/cpp/$tmpname" ]; then
-      mv -f "../client/cpp/$tmpname" "../client/cpp/$newname"
-    fi
-  done
-  if echo $sys | grep x64 > /dev/null 2>&1; then
-   cppstring=`cat ../temp/StaticUrls-cpp-x64-glb.txt | grep ,`
-   arr=$(echo $cppstring | tr " " "\n")
-   for x in $arr
-    do
-      oldname=`echo $x | awk -F"," '{print $1}'`
-      newname=`echo $x | awk -F"," '{print $2}'`
-      tmpname=`basename $oldname`
-      if [ "$newname" != "" ] && [ -f "../client/cpp/$newname" ]; then
-        mv -f "../client/cpp/$newname" "../client/cpp/$tmpname"
-      fi
-      doWget $oldname -P ../client/cpp
-      if [ "$newname" != "" ] && [ -f "../client/cpp/$tmpname" ]; then
-        mv -f "../client/cpp/$tmpname" "../client/cpp/$newname"
-      fi
-    done
-  fi
+  mkdir -p ../client/dotnet/${OS_ARCH}-glb
+  doWget -i ../temp/Urls-dotnet-${OS_ARCH}.txt -P ../client/dotnet/${OS_ARCH}-glb
+
+  echo "Creating integrity database for .Net ..."
+  cd ../client/bin
+  hashdeep -c md5,sha1,sha256 -l ../dotnet/*.exe | tr '/' '\\' > ../md/hashes-dotnet.txt
+  cd "$PATH_PWD"
+
+  echo "Creating integrity database for .Net-${OS_ARCH}-glb ..."
+  cd ../client/bin
+  hashdeep -c md5,sha1,sha256 -l -r ../dotnet/${OS_ARCH}-glb | tr '/' '\\' > ../md/hashes-dotnet-${OS_ARCH}-glb.txt
+  cd "$PATH_PWD"
 fi
-if [ "$msse" == "1" ]; then
-  echo "Downloading MSSE files..."
-  if echo $sys | grep x64 > /dev/null 2>&1; then
-   mssestring=`cat ../temp/StaticUrls-msse-x64-glb.txt`
-   arr=$(echo $mssestring | tr " " "\n")
-   for x in $arr
-    do
-      oldname=`echo $x | awk -F"," '{print $1}'`
-      newname=`echo $x | awk -F"," '{print $2}'`
-      tmpname=`basename $oldname`
-      mkdir -p ../client/msse/x64-glb
-      if [ "$newname" != "" ] && [ -f "../client/msse/x64-glb/$newname" ]; then
-        mv -f "../client/msse/x64-glb/$newname" "../client/msse/x64-glb/$tmpname"
-      fi
-      doWget $oldname -P ../client/msse/x64-glb
-      if [ "$newname" != "" ] && [ -f "../client/msse/x64-glb/$tmpname" ]; then
-        mv -f "../client/msse/x64-glb/$tmpname" "../client/msse/x64-glb/$newname"
-      fi
-    done
-  else
-   mssestring=`cat ../temp/StaticUrls-msse-x86-glb.txt`
-   arr=$(echo $mssestring | tr " " "\n")
-   for x in $arr
-    do
-      oldname=`echo $x | awk -F"," '{print $1}'`
-      newname=`echo $x | awk -F"," '{print $2}'`
-      tmpname=`basename $oldname`
-      mkdir -p ../client/msse/x86-glb
-      if [ "$newname" != "" ] && [ -f "../client/msse/x86-glb/$newname" ]; then
-        mv -f "../client/msse/x86-glb/$newname" "../client/msse/x86-glb/$tmpname"
-      fi
-      doWget $oldname -P ../client/msse/x86-glb
-      if [ "$newname" != "" ] && [ -f "../client/msse/x86-glb/$tmpname" ]; then
-        mv -f "../client/msse/x86-glb/$tmpname" "../client/msse/x86-glb/$newname"
-      fi
-    done
-  fi
-fi
+
+# wddefs
 if [ "$wddefs" == "1" ]; then
-  echo "Downloading Windows Defender definition files..."
-  if echo $sys | grep x64 > /dev/null 2>&1; then
-    mkdir -p ../client/wddefs/x64-glb
-    doWget -i ../temp/StaticUrls-wddefs-x64-glb.txt -P ../client/wddefs/x64-glb
-  else
-    mkdir -p ../client/wddefs/x86-glb
-    doWget -i ../temp/StaticUrls-wddefs-x86-glb.txt -P ../client/wddefs/x86-glb
+    Vz=wddefs
+    Txt="Windows Defender definition files"
+  echo "Downloading $Txt ..."
+    mkdir -p ../client/$Vz/${OS_ARCH}-glb
+    doWget -i ../temp/StaticUrls-$Vz-${OS_ARCH}-glb.txt -P ../client/$Vz/${OS_ARCH}-glb
+
+  echo "Validating $Txt ..."
+  if [ -d ../client/${sys}/glb ]; then
+    echo "Creating integrity database for $Txt ..."
+    cd ../client/bin
+    hashdeep -c md5,sha1,sha256 -l -r ../$Vz | tr '/' '\\' > ../md/hashes-$Vz.txt
+    cd "$PATH_PWD"
   fi
 fi
 
-# ======================= download ======================================
+# cpp
+if [ "$dotnet" == "1" ]; then
+    Vz=cpp
+    Txt=CPP
+    down_msse_cpp
+fi
+
+# MSSE
+if [ "$msse" == "1" ]; then
+    Vz=msse
+    Txt=MSSE
+    down_msse_cpp
+fi
 
 echo "Downloading patches for $sys $lang"
-doWget -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
-doWget -i ../temp/ValidUrls-${sys}-glb.txt -P ../client/${sys}/glb
-if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
-  doWget -i ../temp/ValidUrls-win-x86-${lang}.txt -P ../client/win/${lang}
+if [ $lang != glb -a "$sys" != "w2k3-x64" ]; then
+  doWget -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
+  doWget -i ../temp/ValidUrls-win-${OS_ARCH}-${lang}.txt -P ../client/win/${lang}
 fi
+doWget -i ../temp/ValidUrls-${sys}-glb.txt -P ../client/${sys}/glb
 
 printheader
+
 echo "Validating patches for ${sys}..."
 echo "Validating static patches..."
-doWget -i ../temp/StaticUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
-if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
+
+if [ $lang != glb -a $sys != "w2k3-x64" ]; then
+  doWget -i ../temp/StaticUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
   doWget -i ../temp/StaticUrls-${lang}.txt -P ../client/win/${lang}
-  doWget -i ../temp/StaticUrls-glb.txt -P ../client/win/glb
 fi
 doWget -i ../temp/StaticUrls-${sys}-glb.txt -P ../client/${sys}/glb
-
-# ======================= ofc (4) ======================================
+doWget -i ../temp/StaticUrls-glb.txt -P ../client/win/glb
 
 if [ "$sys" == "ofc" ] && [ "$sys_old" != "" ]; then
    doWget -i ../temp/StaticUrls-${sys_old}-${lang}.txt -P ../client/${sys_old}/${lang}
    doWget -i ../temp/StaticUrls-${sys_old}-glb.txt -P ../client/${sys_old}/glb
    echo "Creating integrity database for ${sys_old} ${lang}..."
    cd ../client/bin
-   hashdeep -c md5,sha1,sha256 -l -r ../${sys_old}/${lang} | sed 's/\//\\/g' > ../md/hashes-${sys_old}-${lang}.txt
-   hashdeep -c md5,sha1,sha256 -l -r ../${sys_old}/glb | sed 's/\//\\/g' > ../md/hashes-${sys_old}-glb.txt
+   hashdeep -c md5,sha1,sha256 -l -r ../${sys_old}/${lang} | tr '/' '\\' > ../md/hashes-${sys_old}-${lang}.txt
+   hashdeep -c md5,sha1,sha256 -l -r ../${sys_old}/glb | tr '/' '\\' > ../md/hashes-${sys_old}-glb.txt
    cd "$PATH_PWD"
 fi
 
-# ======================= msse etc (4) ======================================
-
-if [ "$dotnet" == "1" ]; then
-  echo "Validating .Net framework..."
-  mkdir -p ../client/dotnet
-  doWget -i ../temp/StaticUrls-dotnet.txt -P ../client/dotnet
-  echo "Creating integrity database for .Net ..."
-  cd ../client/bin
-  hashdeep -c md5,sha1,sha256 -l ../dotnet/*.exe | sed 's/\//\\/g' > ../md/hashes-dotnet.txt
-  cd "$PATH_PWD"
-  if echo $sys | grep x64 > /dev/null 2>&1; then
-    mkdir -p ../client/dotnet/x64-glb
-    doWget -i ../temp/Urls-dotnet-x64.txt -P ../client/dotnet/x64-glb
-    echo "Creating integrity database for .Net-x64-glb ..."
-    cd ../client/bin
-    hashdeep -c md5,sha1,sha256 -l -r ../dotnet/x64-glb | sed 's/\//\\/g' > ../md/hashes-dotnet-x64-glb.txt
-    cd "$PATH_PWD"
-  else
-    mkdir -p ../client/dotnet/x86-glb
-    doWget -i ../temp/Urls-dotnet-x86.txt -P ../client/dotnet/x86-glb
-    echo "Creating integrity database for .Net-x86-glb ..."
-    cd ../client/bin
-    hashdeep -c md5,sha1,sha256 -l -r ../dotnet/x86-glb | sed 's/\//\\/g' > ../md/hashes-dotnet-x86-glb.txt
-    cd "$PATH_PWD"
-  fi
-  echo "Validating CPP files..."
-  cppstring=`cat ../temp/StaticUrls-cpp-x86-glb.txt | grep ,`
-  arr=$(echo $cppstring | tr " " "\n")
-  for x in $arr
-  do
-    oldname=`echo $x | awk -F"," '{print $1}'`
-    newname=`echo $x | awk -F"," '{print $2}'`
-    tmpname=`basename $oldname`
-    mkdir -p ../client/cpp
-    if [ "$newname" != "" ] && [ -f "../client/cpp/$newname" ]; then
-      mv -f "../client/cpp/$newname" "../client/cpp/$tmpname"
-    fi
-    doWget $oldname -P ../client/cpp
-    if [ "$newname" != "" ] && [ -f "../client/cpp/$tmpname" ]; then
-      mv -f "../client/cpp/$tmpname" "../client/cpp/$newname"
-    fi
-  done
-  if echo $sys | grep x64 > /dev/null 2>&1; then
-   cppstring=`cat ../temp/StaticUrls-cpp-x64-glb.txt | grep ,`
-   arr=$(echo $cppstring | tr " " "\n")
-   for x in $arr
-    do
-      oldname=`echo $x | awk -F"," '{print $1}'`
-      newname=`echo $x | awk -F"," '{print $2}'`
-      tmpname=`basename $oldname`
-      if [ "$newname" != "" ] && [ -f "../client/cpp/$newname" ]; then
-        mv -f "../client/cpp/$newname" "../client/cpp/$tmpname"
-      fi
-      doWget $oldname -P ../client/cpp
-      if [ "$newname" != "" ] && [ -f "../client/cpp/$tmpname" ]; then
-        mv -f "../client/cpp/$tmpname" "../client/cpp/$newname"
-      fi
-    done
-  fi
-  echo "Creating integrity database for CPP ..."
-  cd ../client/bin
-  hashdeep -c md5,sha1,sha256 -l -r ../cpp | sed 's/\//\\/g' > ../md/hashes-cpp.txt
-  cd "$PATH_PWD"
-fi
-
-# ======================= msse etc (5) ======================================
-
-if [ "$msse" == "1" ]; then
-  echo "Validating MSSE defs..."
-  if echo $sys | grep x64 > /dev/null 2>&1; then
-   mssestring=`cat ../temp/StaticUrls-msse-x64-glb.txt`
-   arr=$(echo $mssestring | tr " " "\n")
-   for x in $arr
-    do
-      oldname=`echo $x | awk -F"," '{print $1}'`
-      newname=`echo $x | awk -F"," '{print $2}'`
-      tmpname=`basename $oldname`
-      mkdir -p ../client/msse/x64-glb
-      if [ "$newname" != "" ] && [ -f "../client/msse/x64-glb/$newname" ]; then
-        mv -f "../client/msse/x64-glb/$newname" "../client/msse/x64-glb/$tmpname"
-      fi
-      doWget $oldname -P ../client/msse/x64-glb
-      if [ "$newname" != "" ] && [ -f "../client/msse/x64-glb/$tmpname" ]; then
-        mv -f "../client/msse/x64-glb/$tmpname" "../client/msse/x64-glb/$newname"
-      fi
-    done
-  else
-   mssestring=`cat ../temp/StaticUrls-msse-x86-glb.txt`
-   arr=$(echo $mssestring | tr " " "\n")
-   for x in $arr
-    do
-      oldname=`echo $x | awk -F"," '{print $1}'`
-      newname=`echo $x | awk -F"," '{print $2}'`
-      tmpname=`basename $oldname`
-      mkdir -p ../client/msse/x86-glb
-      if [ "$newname" != "" ] && [ -f "../client/msse/x86-glb/$newname" ]; then
-        mv -f "../client/msse/x86-glb/$newname" "../client/msse/x86-glb/$tmpname"
-      fi
-      doWget $oldname -P ../client/msse/x86-glb
-      if [ "$newname" != "" ] && [ -f "../client/msse/x86-glb/$tmpname" ]; then
-        mv -f "../client/msse/x86-glb/$tmpname" "../client/msse/x86-glb/$newname"
-      fi
-    done
-  fi
-  echo "Creating integrity database for MSSE ..."
-  cd ../client/bin
-  hashdeep -c md5,sha1,sha256 -l -r ../msse | sed 's/\//\\/g' > ../md/hashes-msse.txt
-  cd "$PATH_PWD"
-fi
-
-if [ "$wddefs" == "1" ]; then
-  echo "Validating Windows Defender definition files..."
-  if echo $sys | grep x64 > /dev/null 2>&1; then
-    mkdir -p ../client/wddefs/x64-glb
-    doWget -i ../temp/StaticUrls-wddefs-x64-glb.txt -P ../client/wddefs/x64-glb
-  else
-    mkdir -p ../client/wddefs/x86-glb
-    doWget -i ../temp/StaticUrls-wddefs-x86-glb.txt -P ../client/wddefs/x86-glb
-  fi
-  if [ -d ../client/${sys}/glb ]; then
-    echo "Creating integrity database for Windows Defender definition files ..."
-    cd ../client/bin
-    hashdeep -c md5,sha1,sha256 -l -r ../wddefs | sed 's/\//\\/g' > ../md/hashes-wddefs.txt
-    cd "$PATH_PWD"
-  fi
-fi
-
-# ======================= sys (3) ======================================
-
 echo "Validating patches for $sys ${lang}..."
-doWget -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
-if [ -d ../client/${sys}/${lang} ]; then
+if [ $lang != glb ]; then
+  doWget -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
   echo "Creating integrity database for $sys-$lang ..."
   cd ../client/bin
- hashdeep -c md5,sha1,sha256 -l -r ../${sys}/${lang} | sed 's/\//\\/g' > ../md/hashes-${sys}-${lang}.txt
- cd "$PATH_PWD"
+  hashdeep -c md5,sha1,sha256 -l -r ../${sys}/${lang} | tr '/' '\\' > ../md/hashes-${sys}-${lang}.txt
+  cd "$PATH_PWD"
 fi
 doWget -i ../temp/ValidUrls-${sys}-glb.txt -P ../client/${sys}/glb
 if [ -d ../client/${sys}/glb ]; then
   echo "Creating integrity database for $sys-glb ..."
   cd ../client/bin
- hashdeep -c md5,sha1,sha256 -l -r ../${sys}/glb | sed 's/\//\\/g' > ../md/hashes-${sys}-glb.txt
- cd "$PATH_PWD"
+  hashdeep -c md5,sha1,sha256 -l -r ../${sys}/glb | tr '/' '\\' > ../md/hashes-${sys}-glb.txt
+  cd "$PATH_PWD"
 fi
-if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
-  doWget -i ../temp/ValidUrls-win-x86-${lang}.txt -P ../client/win/${lang}
+
+if [ $lang != glb -a $sys != "w2k3-x64" ] ; then
+  doWget -i ../temp/ValidUrls-win-${OS_ARCH}-${lang}.txt -P ../client/win/${lang}
+fi
+if [ -d ../client/win/${lang} -a $lang != glb  ]; then
+  cd ../client/bin
+  echo "Creating integrity database for win-$lang ..."
+  hashdeep -c md5,sha1,sha256 -l -r ../win/${lang} | tr '/' '\\' > ../md/hashes-win-${lang}.txt
+  cd "$PATH_PWD"
 fi
 if [ -d ../client/win/glb ]; then
   echo "Creating integrity database for win-glb ..."
   cd ../client/bin
- hashdeep -c md5,sha1,sha256 -l -r ../win/glb | sed 's/\//\\/g' > ../md/hashes-win-glb.txt
- cd "$PATH_PWD"
+  hashdeep -c md5,sha1,sha256 -l -r ../win/glb | tr '/' '\\' > ../md/hashes-win-glb.txt
+  cd "$PATH_PWD"
 fi
-if [ -d ../client/win/${lang} ]; then
-  cd ../client/bin
-  echo "Creating integrity database for win-$lang ..."
- hashdeep -c md5,sha1,sha256 -l -r ../win/${lang} | sed 's/\//\\/g' > ../md/hashes-win-${lang}.txt
- cd "$PATH_PWD"
-fi
+
 if [ -d ../client/wsus ]; then
   cd ../client/bin
   echo "Creating integrity database for WSUS ..."
- hashdeep -c md5,sha1,sha256 -l -r ../wsus | sed 's/\//\\/g' > ../md/hashes-wsus.txt
- cd "$PATH_PWD"
+  hashdeep -c md5,sha1,sha256 -l -r ../wsus | tr '/' '\\' > ../md/hashes-wsus.txt
+  cd "$PATH_PWD"
 fi
 
-
-echo "
-**************************************
+echo "**************************************
 $(grep -c http: ../temp/urls.txt) patches successfully downloaded.
 "
 
-# ======================= Reste ======================================
-
-# ======================= cleanup ======================================
-
-echo
 if [ "$CLEANUP_DOWNLOADS" != "0" ]; then
   echo "Cleaning up ..."
   echo "Cleaning up client directory for $sys $lang"
@@ -1386,19 +1057,14 @@ if [ "$CLEANUP_DOWNLOADS" != "0" ]; then
   echo "Cleaning up client directory for $sys glb"
   cat ../temp/StaticUrls-${sys}-glb.txt >> ../temp/ValidUrls-${sys}-glb.txt
   cleanup "../temp/ValidUrls-${sys}-glb.txt" "../client/${sys}/glb"
-#  if [ "$sys" != "w60" ] && [ "$sys" != "w60-x64" ] && [ "$sys" != "w61" ] && [ "$sys" != "w61-x64" ] && [ "$sys" != "w2k3-x64" ]; then
-
   case $sys in
     w6[0-2]*|w2k3-x64)
     ;;
     *)
     echo "Cleaning up client directory for win $lang"
     cat ../temp/StaticUrls-${lang}.txt > ../temp/ValidUrls-${lang}.txt
-    cat ../temp/ValidUrls-win-x86-${lang}.txt >> ../temp/ValidUrls-${lang}.txt
+    cat ../temp/ValidUrls-win-${OS_ARCH}-${lang}.txt >> ../temp/ValidUrls-${lang}.txt
     cleanup "../temp/ValidUrls-${lang}.txt" "../client/win/${lang}"
-    echo "Cleaning up client directory for win glb"
-    cat ../temp/StaticUrls-glb.txt > ../temp/ValidUrls-glb.txt
-    cleanup "../temp/ValidUrls-glb.txt" "../client/win/glb"
     ;;
   esac
 fi
@@ -1409,12 +1075,29 @@ fi
 
 exit 0
 
-# EOF
+# 
 
-# ====================================================================
-
-# $Id: DownloadUpdates.sh,v 1.1 2012-12-10 11:37:54+01 HHullen Exp $
+# ========================================================================
+# $Id: DownloadUpdates.sh,v 1.4 2012-12-17 16:53:26+01 HHullen Exp $
 # $Log: DownloadUpdates.sh,v $
-# Revision 1.1  2012-12-10 11:37:54+01  HHullen
-# msse/wddefs fuer Windows 8 erweitert; verschlankt
+# Revision 1.4  2012-12-17 16:53:26+01  HHullen
+# UPDATE_LANGUAGES korrigiert
+#
+# Revision 1.3  2012-12-17 14:23:01+01  HHullen
+# array gekuerzt
+#
+# Revision 1.2  2012-12-17 13:34:27+01  HHullen
+# altes OfficeUpdate
+#
+# Revision 1.1  2012-12-14 12:34:46+01  HHullen
+# ofc ok
+#
+# Revision 1.5  2012-10-29 18:29:30+01  HHullen
+# verschlankt
+#
+# Revision 1.4  2012-10-26 12:59:00+02  HHullen
+# OS-Auswahl ueberarbeitet
+#
+# Revision 1.3  2012-10-25 17:00:21+02  HHullen
+# verschlankt; Windows 8 ergaenzt
 #
