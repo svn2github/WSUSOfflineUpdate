@@ -12,6 +12,7 @@
 *wddefs*
 *x86-glb\/*
 *-x86*
+*dotnetfx35*
 *dotNetFx40*
 *dotnetfx45*
 *dotNetFx45*

@@ -20,6 +20,6 @@ w60-x64\
 w61-x64\
 wddefs\
 *-x86
-dotnetfx4*
+dotnetfx*
 mseinstall*
 .au3

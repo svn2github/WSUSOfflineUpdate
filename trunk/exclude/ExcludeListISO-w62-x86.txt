@@ -11,6 +11,7 @@
 *x64-glb\/*
 *wddefs*
 *-x64*
+*dotnetfx35*
 *dotNetFx40*
 *dotnetfx45*
 *dotNetFx45*
