@@ -11,5 +11,6 @@
 *w62*
 *x86-glb\/*
 *-x86*
+*dotnetfx35*
 *dotNetFx40*
 *.au3
