@@ -5,7 +5,7 @@
 
 #include <GUIConstants.au3>
 
-Dim Const $caption                  = "WSUS Offline Update 8.0 beta"
+Dim Const $caption                  = "WSUS Offline Update 8.0"
 Dim Const $title                    = $caption & " - Generator"
 Dim Const $donationURL              = "http://www.wsusoffline.net/donate.html"
 Dim Const $downloadLogFile          = "download.log"

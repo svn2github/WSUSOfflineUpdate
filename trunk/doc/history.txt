@@ -686,7 +686,7 @@ Version 7.5 -- 10.10.12
 - Fix: ISO and USB filters for Windows XP and Server 2003 (x64) erroneously excluded kb923789
 - Fix: UpdateGenerator script will now check for existence of USB target directory before attempting to copy to it (Thanks to "kara2004")
 --------------------------------------------------------------------------------
-Version 8.0 -- ??.??.??
+Version 8.0 -- 02.01.13
 - NOTE: If you customized your copy of WOU using the script AddCustomLanguageSupport.cmd {lng}, please call it again once (per language) to get the appropriate IE10 installation file(s) downloaded
 - Support added for Windows 8 and Server 2012 (Thanks to "boco")
 - Optional installation of Internet Explorer 10 Release Preview on Windows 7 and Server 2008 R2 (x86/x64) systems
@@ -707,3 +707,4 @@ Version 8.0 -- ??.??.??
 - Fix: UpdateInstaller script offered .NET Framework 3.5 SP1 installation under Windows 7 / Server 2008 R2 (Thanks to Ch. Giesers)
 - Fix: UpdateInstaller script did not properly detect existing .NET Framework 3.5 SP1 installations under Windows 7 / Server 2008 R2 (Thanks to "boco")
 - Fix: Update Rollup 1.1 for Windows MultiPoint Server 2011 (kb2626067) was erroneously downloaded
+--------------------------------------------------------------------------------
