@@ -708,3 +708,6 @@ Version 8.0 -- 02.01.13
 - Fix: UpdateInstaller script did not properly detect existing .NET Framework 3.5 SP1 installations under Windows 7 / Server 2008 R2 (Thanks to "boco")
 - Fix: Update Rollup 1.1 for Windows MultiPoint Server 2011 (kb2626067) was erroneously downloaded
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- Update for untrusted/revoked Root Certificates (rvkroots.exe/kb2798897) included (Thanks to "rbr555")
+- Fix: Removed Windows activation determination code from DetermineSystemProperties.vbs script since it's not used any longer (Thanks to "aker" and "boco")

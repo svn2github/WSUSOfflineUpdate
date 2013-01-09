@@ -3,8 +3,10 @@
 Option Explicit
 
 Private Const strWOUTempAdminName             = "WOUTempAdmin"
-Private Const strRegKeyRootCerts_x86          = "HKLM\Software\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}\"
-Private Const strRegKeyRootCerts_x64          = "HKLM\Software\Wow6432Node\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}\"
+Private Const strRegKeyTrustedRCerts_x86      = "HKLM\Software\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}\"
+Private Const strRegKeyTrustedRCerts_x64      = "HKLM\Software\Wow6432Node\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}\"
+Private Const strRegKeyRevokedRCerts_x86      = "HKLM\Software\Microsoft\Active Setup\Installed Components\{C3C986D6-06B1-43BF-90DD-BE30756C00DE}\"
+Private Const strRegKeyRevokedRCerts_x64      = "HKLM\Software\Wow6432Node\Microsoft\Active Setup\Installed Components\{C3C986D6-06B1-43BF-90DD-BE30756C00DE}\"
 Private Const strRegKeyIE                     = "HKLM\Software\Microsoft\Internet Explorer\"
 Private Const strRegKeyMDAC                   = "HKLM\Software\Microsoft\DataAccess\"
 Private Const strRegKeyDirectX                = "HKLM\Software\Microsoft\DirectX\"
@@ -511,11 +513,18 @@ objCmdFile.WriteLine("set WD_DISABLED=" & RegRead(wshShell, strRegKeyWD & strReg
 ' Determine Microsoft Antispyware signatures' version
 WriteVersionToFile objCmdFile, "WDDEFS_VER", RegRead(wshShell, strRegKeyWDDefs & strRegValASSVersion)
 
-' Determine Microsoft Root Certificates' version
-If RegExists(wshShell, strRegKeyRootCerts_x64) Then
-  WriteVersionToFile objCmdFile, "RCERTS_VER", Replace(RegRead(wshShell, strRegKeyRootCerts_x64 & strRegValVersion), ",", ".")
+' Determine Microsoft Trusted Root Certificates' version
+If RegExists(wshShell, strRegKeyTrustedRCerts_x64) Then
+  WriteVersionToFile objCmdFile, "TRCERTS_VER", Replace(RegRead(wshShell, strRegKeyTrustedRCerts_x64 & strRegValVersion), ",", ".")
 Else
-  WriteVersionToFile objCmdFile, "RCERTS_VER", Replace(RegRead(wshShell, strRegKeyRootCerts_x86 & strRegValVersion), ",", ".")
+  WriteVersionToFile objCmdFile, "TRCERTS_VER", Replace(RegRead(wshShell, strRegKeyTrustedRCerts_x86 & strRegValVersion), ",", ".")
+End If
+
+' Determine Microsoft Revoked Root Certificates' version
+If RegExists(wshShell, strRegKeyRevokedRCerts_x64) Then
+  WriteVersionToFile objCmdFile, "RRCERTS_VER", Replace(RegRead(wshShell, strRegKeyRevokedRCerts_x64 & strRegValVersion), ",", ".")
+Else
+  WriteVersionToFile objCmdFile, "RRCERTS_VER", Replace(RegRead(wshShell, strRegKeyRevokedRCerts_x86 & strRegValVersion), ",", ".")
 End If
 
 ' Determine Remote Desktop Connection (Terminal Services Client) version
@@ -642,17 +651,6 @@ If (cpp2010_x86_old) And (Not cpp2010_x86_new) Then objCmdFile.WriteLine("set CP
 If (cpp2010_x64_old) And (Not cpp2010_x64_new) Then objCmdFile.WriteLine("set CPP_2010_x64=1")
 If (cpp2012_x86_old) And (Not cpp2012_x86_new) Then objCmdFile.WriteLine("set CPP_2012_x86=1")
 If (cpp2012_x64_old) And (Not cpp2012_x64_new) Then objCmdFile.WriteLine("set CPP_2012_x64=1")
-
-'
-' Perform the following WMI query last, since it might fail if WMI is damaged
-'
-
-' Determine Windows activation state - not available on Windows 2000 and Vista systems
-If (strOSVersion = "5.1") Or (strOSVersion = "5.2") Then
-  For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_WindowsProductActivation")
-    objCmdFile.WriteLine("set OS_ACTIVATION_REQUIRED=" & objQueryItem.ActivationRequired)
-  Next
-End If
 
 objCmdFile.Close
 WScript.Quit(0)

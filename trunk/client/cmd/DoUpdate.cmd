@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.0
+set WSUSOFFLINE_VERSION=8.0+ (r432)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -176,7 +176,8 @@ rem echo Found Windows Update Agent version: %WUA_VER_MAJOR%.%WUA_VER_MINOR%.%WU
 rem echo Found Windows Installer version: %MSI_VER_MAJOR%.%MSI_VER_MINOR%.%MSI_VER_REVIS%.%MSI_VER_BUILD%
 rem echo Found Windows Script Host version: %WSH_VER_MAJOR%.%WSH_VER_MINOR%.%WSH_VER_REVIS%.%WSH_VER_BUILD%
 rem echo Found Internet Explorer version: %IE_VER_MAJOR%.%IE_VER_MINOR%.%IE_VER_REVIS%.%IE_VER_BUILD%
-rem echo Found Root Certificates' version: %RCERTS_VER_MAJOR%.%RCERTS_VER_MINOR%.%RCERTS_VER_REVIS%.%RCERTS_VER_BUILD%
+rem echo Found Trusted Root Certificates' version: %TRCERTS_VER_MAJOR%.%TRCERTS_VER_MINOR%.%TRCERTS_VER_REVIS%.%TRCERTS_VER_BUILD%
+rem echo Found Revoked Root Certificates' version: %RRCERTS_VER_MAJOR%.%RRCERTS_VER_MINOR%.%RRCERTS_VER_REVIS%.%RRCERTS_VER_BUILD%
 rem echo Found Microsoft Data Access Components version: %MDAC_VER_MAJOR%.%MDAC_VER_MINOR%.%MDAC_VER_REVIS%.%MDAC_VER_BUILD%
 rem if "%DX_MAIN_VER%" NEQ "" echo Found Microsoft DirectX main version: %DX_MAIN_VER%
 rem echo Found Microsoft DirectX core version: %DX_NAME% (%DX_CORE_VER_MAJOR%.%DX_CORE_VER_MINOR%.%DX_CORE_VER_REVIS%.%DX_CORE_VER_BUILD%)
@@ -205,7 +206,8 @@ echo %DATE% %TIME% - Info: Found Windows Update Agent version %WUA_VER_MAJOR%.%W
 echo %DATE% %TIME% - Info: Found Windows Installer version %MSI_VER_MAJOR%.%MSI_VER_MINOR%.%MSI_VER_REVIS%.%MSI_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows Script Host version %WSH_VER_MAJOR%.%WSH_VER_MINOR%.%WSH_VER_REVIS%.%WSH_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Internet Explorer version %IE_VER_MAJOR%.%IE_VER_MINOR%.%IE_VER_REVIS%.%IE_VER_BUILD% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Root Certificates' version %RCERTS_VER_MAJOR%.%RCERTS_VER_MINOR%.%RCERTS_VER_REVIS%.%RCERTS_VER_BUILD% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Trusted Root Certificates' version %TRCERTS_VER_MAJOR%.%TRCERTS_VER_MINOR%.%TRCERTS_VER_REVIS%.%TRCERTS_VER_BUILD% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Revoked Root Certificates' version %RRCERTS_VER_MAJOR%.%RRCERTS_VER_MINOR%.%RRCERTS_VER_REVIS%.%RRCERTS_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft Data Access Components version %MDAC_VER_MAJOR%.%MDAC_VER_MINOR%.%MDAC_VER_REVIS%.%MDAC_VER_BUILD% >>%UPDATE_LOGFILE%
 if "%DX_MAIN_VER%" NEQ "" echo %DATE% %TIME% - Info: Found Microsoft DirectX main version %DX_MAIN_VER% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft DirectX core version %DX_NAME% (%DX_CORE_VER_MAJOR%.%DX_CORE_VER_MINOR%.%DX_CORE_VER_REVIS%.%DX_CORE_VER_BUILD%) >>%UPDATE_LOGFILE%
@@ -602,33 +604,61 @@ set IE_FILENAME=
 if "%RECALL_REQUIRED%"=="1" goto Installed
 :SkipIEInst
 
-rem *** Install Update for Root Certificates ***
-if "%UPDATE_RCERTS%" NEQ "/updatercerts" goto SkipRCertsInst
-echo Checking Root Certificates' version...
-set RCERTS_FILENAME=..\win\glb\rootsupd.exe
-if not exist %RCERTS_FILENAME% (
-  echo Warning: File %RCERTS_FILENAME% not found.
-  echo %DATE% %TIME% - Warning: File %RCERTS_FILENAME% not found >>%UPDATE_LOGFILE%
-  goto SkipRCertsInst
+rem *** Install Update for Trusted Root Certificates ***
+if "%UPDATE_RCERTS%" NEQ "/updatercerts" goto SkipTRCertsInst
+echo Checking Trusted Root Certificates' version...
+set TRCERTS_FILENAME=..\win\glb\rootsupd.exe
+if not exist %TRCERTS_FILENAME% (
+  echo Warning: File %TRCERTS_FILENAME% not found.
+  echo %DATE% %TIME% - Warning: File %TRCERTS_FILENAME% not found >>%UPDATE_LOGFILE%
+  goto SkipTRCertsInst
 )
-%RCERTS_FILENAME% /T:"%TEMP%\rootsupd" /C /Q
+%TRCERTS_FILENAME% /T:"%TEMP%\rootsupd" /C /Q
 for /F "tokens=2 delims== " %%i in ('%SystemRoot%\system32\findstr.exe /B /L /I "Version" "%TEMP%\rootsupd\rootsupd.inf"') do (
   call SafeRmDir.cmd "%TEMP%\rootsupd"
   for /F "tokens=1-4 delims=," %%j in (%%i) do (
-    if %RCERTS_VER_MAJOR% LSS %%j goto InstallRCerts
-    if %RCERTS_VER_MAJOR% GTR %%j goto SkipRCertsInst
-    if %RCERTS_VER_MINOR% LSS %%k goto InstallRCerts
-    if %RCERTS_VER_MINOR% GTR %%k goto SkipRCertsInst
-    if %RCERTS_VER_REVIS% LSS %%l goto InstallRCerts
-    if %RCERTS_VER_REVIS% GTR %%l goto SkipRCertsInst
-    if %RCERTS_VER_BUILD% GEQ %%m goto SkipRCertsInst
+    if %TRCERTS_VER_MAJOR% LSS %%j goto InstallTRCerts
+    if %TRCERTS_VER_MAJOR% GTR %%j goto SkipTRCertsInst
+    if %TRCERTS_VER_MINOR% LSS %%k goto InstallTRCerts
+    if %TRCERTS_VER_MINOR% GTR %%k goto SkipTRCertsInst
+    if %TRCERTS_VER_REVIS% LSS %%l goto InstallTRCerts
+    if %TRCERTS_VER_REVIS% GTR %%l goto SkipTRCertsInst
+    if %TRCERTS_VER_BUILD% GEQ %%m goto SkipTRCertsInst
   )
 )
-:InstallRCerts
-echo Installing most recent Update for Root Certificates...
-call InstallOSUpdate.cmd %RCERTS_FILENAME% %VERIFY_MODE% /errorsaswarnings /Q
-set RCERTS_FILENAME=
-:SkipRCertsInst
+:InstallTRCerts
+echo Installing most recent Update for Trusted Root Certificates...
+call InstallOSUpdate.cmd %TRCERTS_FILENAME% %VERIFY_MODE% /errorsaswarnings /Q
+set TRCERTS_FILENAME=
+:SkipTRCertsInst
+
+rem *** Install Update for Revoked Root Certificates ***
+if "%UPDATE_RCERTS%" NEQ "/updatercerts" goto SkipRRCertsInst
+echo Checking Revoked Root Certificates' version...
+set RRCERTS_FILENAME=..\win\glb\rvkroots.exe
+if not exist %RRCERTS_FILENAME% (
+  echo Warning: File %RRCERTS_FILENAME% not found.
+  echo %DATE% %TIME% - Warning: File %RRCERTS_FILENAME% not found >>%UPDATE_LOGFILE%
+  goto SkipRRCertsInst
+)
+%RRCERTS_FILENAME% /T:"%TEMP%\rvkroots" /C /Q
+for /F "tokens=2 delims== " %%i in ('%SystemRoot%\system32\findstr.exe /B /L /I "Version" "%TEMP%\rvkroots\rvkroots.inf"') do (
+  call SafeRmDir.cmd "%TEMP%\rvkroots"
+  for /F "tokens=1-4 delims=," %%j in (%%i) do (
+    if %RRCERTS_VER_MAJOR% LSS %%j goto InstallRRCerts
+    if %RRCERTS_VER_MAJOR% GTR %%j goto SkipRRCertsInst
+    if %RRCERTS_VER_MINOR% LSS %%k goto InstallRRCerts
+    if %RRCERTS_VER_MINOR% GTR %%k goto SkipRRCertsInst
+    if %RRCERTS_VER_REVIS% LSS %%l goto InstallRRCerts
+    if %RRCERTS_VER_REVIS% GTR %%l goto SkipRRCertsInst
+    if %RRCERTS_VER_BUILD% GEQ %%m goto SkipRRCertsInst
+  )
+)
+:InstallRRCerts
+echo Installing most recent Update for Revoked Root Certificates...
+call InstallOSUpdate.cmd %RRCERTS_FILENAME% %VERIFY_MODE% /errorsaswarnings /Q
+set RRCERTS_FILENAME=
+:SkipRRCertsInst
 
 rem *** Install C++ Runtime Libraries ***
 if "%UPDATE_CPP%" NEQ "/updatecpp" goto SkipCPPInst
