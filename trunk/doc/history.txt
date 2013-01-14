@@ -709,5 +709,6 @@ Version 8.0 -- 02.01.13
 - Fix: Update Rollup 1.1 for Windows MultiPoint Server 2011 (kb2626067) was erroneously downloaded
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
+- Detection and update capability added for Office 2013
 - Update for untrusted/revoked Root Certificates (rvkroots.exe/kb2798897) included (Thanks to "rbr555")
 - Fix: Removed Windows activation determination code from DetermineSystemProperties.vbs script since it's not used any longer (Thanks to "aker" and "boco")

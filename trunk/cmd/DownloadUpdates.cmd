@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.0+ (r432)
+set WSUSOFFLINE_VERSION=8.0+ (r433)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -816,7 +816,7 @@ if "%VERIFY_DL%"=="1" (
 rem *** Download the platform specific patches ***
 for %%i in (wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-x64) do (
   if /i "%1"=="%%i" (
-    %WGET_PATH% -N -P ..\static http://download.wsusoffline.net/StaticDownloadLinks-win-x86-glb.txt
+    %WGET_PATH% -N -P ..\static -a %DOWNLOAD_LOGFILE% http://download.wsusoffline.net/StaticDownloadLinks-win-x86-glb.txt
     call :DownloadCore win glb x86 %SKIP_PARAM%
     if errorlevel 1 goto Error
   )
@@ -960,7 +960,7 @@ del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 del "%TEMP%\SupersededFileIdsUnique.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\SupersededCabExeIdsAndLocations.txt" "%TEMP%\ExcludeList-superseded-all.txt" /noids
 del "%TEMP%\SupersededCabExeIdsAndLocations.txt"
-%WGET_PATH% -N -P ..\exclude http://download.wsusoffline.net/ExcludeList-superseded-exclude.txt
+%WGET_PATH% -N -P ..\exclude -a %DOWNLOAD_LOGFILE% http://download.wsusoffline.net/ExcludeList-superseded-exclude.txt
 if exist ..\exclude\ExcludeList-superseded-exclude.txt copy /Y ..\exclude\ExcludeList-superseded-exclude.txt "%TEMP%\ExcludeList-superseded-exclude.txt" >nul
 if exist ..\exclude\custom\ExcludeList-superseded-exclude.txt (
   type ..\exclude\custom\ExcludeList-superseded-exclude.txt >>"%TEMP%\ExcludeList-superseded-exclude.txt"

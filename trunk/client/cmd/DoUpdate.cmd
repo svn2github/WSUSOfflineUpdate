@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.0+ (r432)
+set WSUSOFFLINE_VERSION=8.0+ (r433)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -200,6 +200,9 @@ if "%O2K7_VER_MAJOR%" NEQ "" (
 if "%O2K10_VER_MAJOR%" NEQ "" (
   echo Found Microsoft Office 2010 %O2K10_VER_APP% version: %O2K10_VER_MAJOR%.%O2K10_VER_MINOR%.%O2K10_VER_REVIS%.%O2K10_VER_BUILD% ^(o2k10 %O2K10_ARCH% %O2K10_LANG% sp%O2K10_SP_VER%^)
 )
+if "%O2K13_VER_MAJOR%" NEQ "" (
+  echo Found Microsoft Office 2013 %O2K13_VER_APP% version: %O2K13_VER_MAJOR%.%O2K13_VER_MINOR%.%O2K13_VER_REVIS%.%O2K13_VER_BUILD% ^(o2k13 %O2K13_ARCH% %O2K13_LANG% sp%O2K13_SP_VER%^)
+)
 echo %DATE% %TIME% - Info: Found OS caption '%OS_CAPTION%' >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft Windows version %OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_VER_REVIS% (%OS_NAME% %OS_ARCH% %OS_LANG% sp%OS_SP_VER_MAJOR%) >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows Update Agent version %WUA_VER_MAJOR%.%WUA_VER_MINOR%.%WUA_VER_REVIS%.%WUA_VER_BUILD% >>%UPDATE_LOGFILE%
@@ -231,6 +234,9 @@ if "%O2K7_VER_MAJOR%" NEQ "" (
 )
 if "%O2K10_VER_MAJOR%" NEQ "" (
   echo %DATE% %TIME% - Info: Found Microsoft Office 2010 %O2K10_VER_APP% version %O2K10_VER_MAJOR%.%O2K10_VER_MINOR%.%O2K10_VER_REVIS%.%O2K10_VER_BUILD% ^(o2k10 %O2K10_ARCH% %O2K10_LANG% sp%O2K10_SP_VER%^) >>%UPDATE_LOGFILE%
+)
+if "%O2K13_VER_MAJOR%" NEQ "" (
+  echo %DATE% %TIME% - Info: Found Microsoft Office 2013 %O2K13_VER_APP% version %O2K13_VER_MAJOR%.%O2K13_VER_MINOR%.%O2K13_VER_REVIS%.%O2K13_VER_BUILD% ^(o2k13 %O2K13_ARCH% %O2K13_LANG% sp%O2K13_SP_VER%^) >>%UPDATE_LOGFILE%
 )
 
 rem *** Check medium content ***
@@ -604,7 +610,7 @@ set IE_FILENAME=
 if "%RECALL_REQUIRED%"=="1" goto Installed
 :SkipIEInst
 
-rem *** Install Update for Trusted Root Certificates ***
+rem *** Install update for Trusted Root Certificates ***
 if "%UPDATE_RCERTS%" NEQ "/updatercerts" goto SkipTRCertsInst
 echo Checking Trusted Root Certificates' version...
 set TRCERTS_FILENAME=..\win\glb\rootsupd.exe
@@ -627,12 +633,12 @@ for /F "tokens=2 delims== " %%i in ('%SystemRoot%\system32\findstr.exe /B /L /I 
   )
 )
 :InstallTRCerts
-echo Installing most recent Update for Trusted Root Certificates...
+echo Installing most recent update for Trusted Root Certificates...
 call InstallOSUpdate.cmd %TRCERTS_FILENAME% %VERIFY_MODE% /errorsaswarnings /Q
 set TRCERTS_FILENAME=
 :SkipTRCertsInst
 
-rem *** Install Update for Revoked Root Certificates ***
+rem *** Install update for Revoked Root Certificates ***
 if "%UPDATE_RCERTS%" NEQ "/updatercerts" goto SkipRRCertsInst
 echo Checking Revoked Root Certificates' version...
 set RRCERTS_FILENAME=..\win\glb\rvkroots.exe
@@ -655,7 +661,7 @@ for /F "tokens=2 delims== " %%i in ('%SystemRoot%\system32\findstr.exe /B /L /I 
   )
 )
 :InstallRRCerts
-echo Installing most recent Update for Revoked Root Certificates...
+echo Installing most recent update for Revoked Root Certificates...
 call InstallOSUpdate.cmd %RRCERTS_FILENAME% %VERIFY_MODE% /errorsaswarnings /Q
 set RRCERTS_FILENAME=
 :SkipRRCertsInst
@@ -1185,6 +1191,9 @@ if %O2K7_SP_VER% LSS %O2K7_SP_VER_TARGET% echo %O2K7_SP_TARGET_ID%>>"%TEMP%\Miss
 if "%O2K10_VER_MAJOR%"=="" goto SkipSPo2k10
 if %O2K10_SP_VER% LSS %O2K10_SP_VER_TARGET% echo %O2K10_SP_TARGET_ID%>>"%TEMP%\MissingUpdateIds.txt"
 :SkipSPo2k10
+if "%O2K13_VER_MAJOR%"=="" goto SkipSPo2k13
+if %O2K13_SP_VER% LSS %O2K13_SP_VER_TARGET% echo %O2K13_SP_TARGET_ID%>>"%TEMP%\MissingUpdateIds.txt"
+:SkipSPo2k13
 if not exist "%TEMP%\MissingUpdateIds.txt" goto SkipSPOfc
 call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
