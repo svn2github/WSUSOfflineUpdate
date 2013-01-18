@@ -9,6 +9,7 @@ Dim Const $caption                  = "WSUS Offline Update 8.0"
 Dim Const $title                    = $caption & " - Generator"
 Dim Const $donationURL              = "http://www.wsusoffline.net/donate.html"
 Dim Const $downloadLogFile          = "download.log"
+Dim Const $runAllFile               = "RunAll.cmd"
 
 ; Registry constants
 Dim Const $reg_key_fontdpi          = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontDPI"
@@ -98,6 +99,7 @@ Dim Const $misc_token_skipdownload  = "skipdownload"
 Dim Const $misc_token_skipdynamic   = "skipdynamic"
 Dim Const $misc_token_chkver        = "checkouversion"
 Dim Const $misc_token_minimize      = "minimizeondownload"
+Dim Const $misc_token_showshutdown  = "showshutdown"
 Dim Const $misc_token_showdonate    = "showdonate"
 Dim Const $misc_token_clt_wustat    = "WUStatusServer"
 
@@ -109,7 +111,7 @@ Dim Const $path_rel_builddate       = "\client\builddate.txt"
 Dim Const $path_rel_clientini       = "\client\UpdateInstaller.ini"
 
 Dim $maindlg, $inifilename, $tabitemfocused, $includesp, $dotnet, $msse, $wddefs, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $buildlbl
-Dim $usbcopy, $usbpath, $usbfsf, $usbclean, $imageonly, $shutdown, $btn_start, $btn_proxy, $btn_wsus, $btn_donate, $btn_exit, $proxy, $proxypwd, $wsus, $dummy
+Dim $usbcopy, $usbpath, $usbfsf, $usbclean, $imageonly, $scripting, $shutdown, $btn_start, $btn_proxy, $btn_wsus, $btn_donate, $btn_exit, $proxy, $proxypwd, $wsus, $dummy
 Dim $wxp_enu, $w2k3_enu, $w2k3_x64_enu, $o2k3_enu, $o2k7_enu, $o2k10_enu  ; English
 Dim $wxp_fra, $w2k3_fra, $w2k3_x64_fra, $o2k3_fra, $o2k7_fra, $o2k10_fra  ; French
 Dim $wxp_esn, $w2k3_esn, $w2k3_x64_esn, $o2k3_esn, $o2k7_esn, $o2k10_esn  ; Spanish
@@ -626,7 +628,9 @@ Dim $result = ""
   If IsCheckBoxChecked($chkbox_verifydownloads) Then
     $result = $result & " /verify"
   EndIf
-  $result = $result & " /exitonerror"
+  If NOT IsCheckBoxChecked($scripting) Then
+    $result = $result & " /exitonerror"
+  EndIf
   If IniRead($inifilename, $ini_section_misc, $misc_token_skiptz, $disabled) = $enabled Then
     $result = $result & " /skiptz"
   EndIf
@@ -670,19 +674,25 @@ Dim $result = ""
   If IsCheckBoxChecked($chkbox_usbclean) Then
     $result = $result & " /cleanup"
   EndIf
-  $result = $result & " /exitonerror"
+  If NOT IsCheckBoxChecked($scripting) Then
+    $result = $result & " /exitonerror"
+  EndIf
   If IniRead($inifilename, $ini_section_iso, $iso_token_skiphashes, $disabled) = $enabled Then
     $result = $result & " /skiphashes"
   EndIf
   Return $result
 EndFunc
 
-Func ShowLogFile()
-  Run(@ComSpec & " /D /C start " & $downloadLogFile, @ScriptDir & "\log")
-EndFunc
-
 Func RunDonationSite()
   Run(@ComSpec & " /D /C start " & $donationURL)
+EndFunc
+
+Func ShowLogFile()
+  Run("notepad.exe " & $downloadLogFile, @ScriptDir & "\log")
+EndFunc
+
+Func ShowRunAll()
+  Run("notepad.exe " & $runAllFile, @ScriptDir & "\cmd\custom")
 EndFunc
 
 Func RunVersionCheck($strproxy)
@@ -730,6 +740,26 @@ EndFunc
 Func RunDownloadScript($stroptions, $strswitches)
 Dim $result
 
+  If IsCheckBoxChecked($scripting) Then
+    If ($runany) Then
+      $result = FileOpen(@ScriptDir & "\cmd\custom\" & $runAllFile, 1)
+    Else
+      $result = FileOpen(@ScriptDir & "\cmd\custom\" & $runAllFile, 2)
+    EndIf
+    If $result = -1 Then
+      If ShowGUIInGerman() Then
+        MsgBox(0x2010, "Fehler", "Fehler beim Öffnen der Datei " & @ScriptDir & "\cmd\custom\" & $runAllFile)
+      Else
+        MsgBox(0x2010, "Error", "Error opening file " & @ScriptDir & "\cmd\custom\" & $runAllFile)
+      EndIf
+      Return $result
+    EndIf
+    FileWriteLine($result, "..\DownloadUpdates.cmd " & $stroptions & $strswitches)
+    FileClose($result)
+    $runany = True
+    Return 0
+  EndIf
+  
   If ShowGUIInGerman() Then
     WinSetTitle($maindlg, $maindlg, $caption & " - Lade Updates für " & $stroptions & "...")
   Else
@@ -773,6 +803,26 @@ EndFunc
 Func RunISOCreationScript($stroptions, $strswitches)
 Dim $result
 
+  If IsCheckBoxChecked($scripting) Then
+    If ($runany) Then
+      $result = FileOpen(@ScriptDir & "\cmd\custom\" & $runAllFile, 1)
+    Else
+      $result = FileOpen(@ScriptDir & "\cmd\custom\" & $runAllFile, 2)
+    EndIf
+    If $result = -1 Then
+      If ShowGUIInGerman() Then
+        MsgBox(0x2010, "Fehler", "Fehler beim Öffnen der Datei " & @ScriptDir & "\cmd\custom\" & $runAllFile)
+      Else
+        MsgBox(0x2010, "Error", "Error opening file " & @ScriptDir & "\cmd\custom\" & $runAllFile)
+      EndIf
+      Return $result
+    EndIf
+    FileWriteLine($result, "..\CreateISOImage.cmd " & $stroptions & $strswitches)
+    FileClose($result)
+    $runany = True
+    Return 0
+  EndIf
+  
   If ShowGUIInGerman() Then
     WinSetTitle($maindlg, $maindlg, $caption & " - Erstelle ISO-Image für " & $stroptions & "...")
   Else
@@ -805,6 +855,26 @@ EndFunc
 Func RunUSBCreationScript($stroptions, $strswitches, $strpath)
 Dim $result
 
+  If IsCheckBoxChecked($scripting) Then
+    If ($runany) Then
+      $result = FileOpen(@ScriptDir & "\cmd\custom\" & $runAllFile, 1)
+    Else
+      $result = FileOpen(@ScriptDir & "\cmd\custom\" & $runAllFile, 2)
+    EndIf
+    If $result = -1 Then
+      If ShowGUIInGerman() Then
+        MsgBox(0x2010, "Fehler", "Fehler beim Öffnen der Datei " & @ScriptDir & "\cmd\custom\" & $runAllFile)
+      Else
+        MsgBox(0x2010, "Error", "Error opening file " & @ScriptDir & "\cmd\custom\" & $runAllFile)
+      EndIf
+      Return $result
+    EndIf
+    FileWriteLine($result, "..\CopyToTarget.cmd " & $stroptions & " """ & $strpath & """" & $strswitches)
+    FileClose($result)
+    $runany = True
+    Return 0
+  EndIf
+  
   $result = 0
   If NOT FileExists($strpath) Then
     If ShowGUIInGerman() Then
@@ -2514,6 +2584,16 @@ If NOT (IsCheckBoxChecked($cdiso) OR IsCheckBoxChecked($dvdiso) OR IsCheckBoxChe
   GUICtrlSetState(-1, $GUI_DISABLE)
 EndIf
 
+;  Scripting checkbox
+If ShowGUIInGerman() Then
+  $scripting = GUICtrlCreateCheckbox("Nur Sammelskript erstellen", $txtxpos, $txtypos + $slimheight, 2 * $txtwidth, $slimheight)
+Else
+  $scripting = GUICtrlCreateCheckbox("Only create collection script", $txtxpos, $txtypos + $slimheight, 2 * $txtwidth, $slimheight)
+EndIf
+If IniRead($inifilename, $ini_section_misc, $misc_token_showshutdown, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_HIDE)
+EndIf
+
 ;  Shutdown checkbox
 If ShowGUIInGerman() Then
   $shutdown = GUICtrlCreateCheckbox("Herunterfahren nach Abschluss", $txtxpos, $txtypos + $slimheight, 2 * $txtwidth, $slimheight)
@@ -2522,6 +2602,9 @@ Else
 EndIf
 If IniRead($inifilename, $ini_section_misc, $misc_token_skipdownload, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_DISABLE)
+EndIf
+If IniRead($inifilename, $ini_section_misc, $misc_token_showshutdown, $disabled) = $disabled Then
+  GUICtrlSetState(-1, $GUI_HIDE)
 EndIf
 
 ;  Proxy button
@@ -3751,26 +3834,40 @@ While 1
 ;  Restore window and show success dialog
       WinSetState($maindlg, $maindlg, @SW_RESTORE)
       If ($runany) Then
-        If IsCheckBoxChecked($imageonly) Then
+        If IsCheckBoxChecked($scripting) Then
           If ShowGUIInGerman() Then
-            MsgBox(0x2040, "Info", "Image-Erstellung / Kopieren erfolgreich.")
+            If MsgBox(0x2044, "Info", "Sammelskript " & @ScriptDir & "\cmd\custom\RunAll.cmd erstellt." _
+                      & @LF & "Möchten Sie das Skript nun prüfen?") = $msgbox_btn_yes Then
+              ShowRunAll()
+            EndIf
           Else
-            MsgBox(0x2040, "Info", "Image creation / copying successful.")
+            If MsgBox(0x2044, "Info", "Collection script " & @ScriptDir & "\cmd\custom\RunAll.cmd created." _
+                      & @LF & "Would you like to check the script now?") = $msgbox_btn_yes Then
+              ShowRunAll()
+            EndIf
           EndIf
         Else
           If IsCheckBoxChecked($shutdown) Then
             Run(@SystemDir & "\shutdown.exe /s /f /t 5", @SystemDir, @SW_HIDE)
             ExitLoop
           EndIf
-          If ShowGUIInGerman() Then
-            If MsgBox(0x2044, "Info", "Herunterladen / Image-Erstellung / Kopieren erfolgreich." _
-                      & @LF & "Möchten Sie nun die Protokolldatei auf mögliche Warnungen prüfen?") = $msgbox_btn_yes Then
-              ShowLogFile()
+          If IsCheckBoxChecked($imageonly) Then
+            If ShowGUIInGerman() Then
+              MsgBox(0x2040, "Info", "Image-Erstellung / Kopieren erfolgreich.")
+            Else
+              MsgBox(0x2040, "Info", "Image creation / copying successful.")
             EndIf
           Else
-            If MsgBox(0x2044, "Info", "Download / image creation / copying successful." _
-                      & @LF & "Would you like to check the log file for possible warnings now?") = $msgbox_btn_yes Then
-              ShowLogFile()
+            If ShowGUIInGerman() Then
+              If MsgBox(0x2044, "Info", "Herunterladen / Image-Erstellung / Kopieren erfolgreich." _
+                        & @LF & "Möchten Sie nun die Protokolldatei auf mögliche Warnungen prüfen?") = $msgbox_btn_yes Then
+                ShowLogFile()
+              EndIf
+            Else
+              If MsgBox(0x2044, "Info", "Download / image creation / copying successful." _
+                        & @LF & "Would you like to check the log file for possible warnings now?") = $msgbox_btn_yes Then
+                ShowLogFile()
+              EndIf
             EndIf
           EndIf
         EndIf
