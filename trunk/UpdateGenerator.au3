@@ -754,7 +754,9 @@ Dim $result
       EndIf
       Return $result
     EndIf
-    FileWriteLine($result, "..\DownloadUpdates.cmd " & $stroptions & $strswitches)
+    FileWriteLine($result, "pushd ..")
+    FileWriteLine($result, "call .\DownloadUpdates.cmd " & $stroptions & $strswitches)
+    FileWriteLine($result, "popd")
     FileClose($result)
     $runany = True
     Return 0
@@ -817,7 +819,9 @@ Dim $result
       EndIf
       Return $result
     EndIf
-    FileWriteLine($result, "..\CreateISOImage.cmd " & $stroptions & $strswitches)
+    FileWriteLine($result, "pushd ..")
+    FileWriteLine($result, "call .\CreateISOImage.cmd " & $stroptions & $strswitches)
+    FileWriteLine($result, "popd")
     FileClose($result)
     $runany = True
     Return 0
@@ -869,7 +873,9 @@ Dim $result
       EndIf
       Return $result
     EndIf
-    FileWriteLine($result, "..\CopyToTarget.cmd " & $stroptions & " """ & $strpath & """" & $strswitches)
+    FileWriteLine($result, "pushd ..")
+    FileWriteLine($result, "call .\CopyToTarget.cmd " & $stroptions & " """ & $strpath & """" & $strswitches)
+    FileWriteLine($result, "popd")
     FileClose($result)
     $runany = True
     Return 0
