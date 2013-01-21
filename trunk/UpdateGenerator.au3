@@ -549,6 +549,7 @@ Func DisableGUI()
 
   GUICtrlSetState($btn_start, $GUI_DISABLE)
   GUICtrlSetState($imageonly, $GUI_DISABLE)
+  GUICtrlSetState($scripting, $GUI_DISABLE)
   GUICtrlSetState($shutdown, $GUI_DISABLE)
   GUICtrlSetState($btn_proxy, $GUI_DISABLE)
   GUICtrlSetState($btn_wsus, $GUI_DISABLE)
@@ -580,6 +581,7 @@ Func EnableGUI()
     EndIf
   EndIf
   GUICtrlSetState($btn_start, $GUI_ENABLE)
+  GUICtrlSetState($scripting, $GUI_ENABLE)
   If IniRead($inifilename, $ini_section_misc, $misc_token_skipdownload, $disabled) = $disabled Then
     GUICtrlSetState($imageonly, $GUI_ENABLE)
     If NOT IsCheckBoxChecked($imageonly) Then
@@ -754,9 +756,9 @@ Dim $result
       EndIf
       Return $result
     EndIf
-    FileWriteLine($result, "pushd ..")
+    FileWriteLine($result, "@pushd ..")
     FileWriteLine($result, "call .\DownloadUpdates.cmd " & $stroptions & $strswitches)
-    FileWriteLine($result, "popd")
+    FileWriteLine($result, "@popd")
     FileClose($result)
     $runany = True
     Return 0
@@ -819,9 +821,9 @@ Dim $result
       EndIf
       Return $result
     EndIf
-    FileWriteLine($result, "pushd ..")
+    FileWriteLine($result, "@pushd ..")
     FileWriteLine($result, "call .\CreateISOImage.cmd " & $stroptions & $strswitches)
-    FileWriteLine($result, "popd")
+    FileWriteLine($result, "@popd")
     FileClose($result)
     $runany = True
     Return 0
@@ -873,9 +875,9 @@ Dim $result
       EndIf
       Return $result
     EndIf
-    FileWriteLine($result, "pushd ..")
+    FileWriteLine($result, "@pushd ..")
     FileWriteLine($result, "call .\CopyToTarget.cmd " & $stroptions & " """ & $strpath & """" & $strswitches)
-    FileWriteLine($result, "popd")
+    FileWriteLine($result, "@popd")
     FileClose($result)
     $runany = True
     Return 0
