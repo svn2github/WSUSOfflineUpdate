@@ -712,4 +712,5 @@ Version ?.? -- ??.??.??
 - Detection and update capability added for Office 2013
 - Update for untrusted/revoked Root Certificates (rvkroots.exe/kb2798897) included (Thanks to "rbr555")
 - Optional creation of collection script ...\cmd\custom\RunAll.cmd (Thanks to "boco")
+- Fix: Check for new WOU versions failed if environment variable PATH did not contain %SystemRoot%\system32 (Thanks to "surfmaxx" and "aker")
 - Fix: Removed Windows activation determination code from DetermineSystemProperties.vbs script since it's not used any longer (Thanks to "aker" and "boco")
