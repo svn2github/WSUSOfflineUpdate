@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.0+ (r437)
+set WSUSOFFLINE_VERSION=8.0+ (r438)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -487,15 +487,15 @@ if "%INSTALL_IE%"=="/instie8" (echo Installing Internet Explorer 8...) else (ech
 for /F %%i in ('dir /B %IE_FILENAME%') do (
   if /i "%OS_ARCH%"=="x64" (
     if "%INSTALL_IE%"=="/instie8" (
-      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
+      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors /passive /update-no /no-default /norestart
     ) else (
-      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default %BACKUP_MODE% /norestart
+      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors /passive /update-no /no-default %BACKUP_MODE% /norestart
     )
   ) else (
     if "%INSTALL_IE%"=="/instie8" (
-      call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default /norestart
+      call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors /passive /update-no /no-default /norestart
     ) else (
-      call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors /quiet /update-no /no-default %BACKUP_MODE% /norestart
+      call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors /passive /update-no /no-default %BACKUP_MODE% /norestart
     )
   )
   if not errorlevel 1 set RECALL_REQUIRED=1
@@ -542,12 +542,21 @@ if "%INSTALL_IE%"=="/instie9" (
     )
   )
 )
-if "%INSTALL_IE%"=="/instie9" (echo Installing Internet Explorer 9...) else (echo Installing Internet Explorer 8...)
 for /F %%i in ('dir /B %IE_FILENAME%') do (
-  if /i "%OS_ARCH%"=="x64" (
-    call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\glb\%%i %VERIFY_MODE% /ignoreerrors /passive /update-no /closeprograms /no-default /norestart
+  if "%INSTALL_IE%"=="/instie9" (
+    echo Installing Internet Explorer 9...
+    if /i "%OS_ARCH%"=="x64" (
+      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\glb\%%i %VERIFY_MODE% /ignoreerrors /passive /update-no /closeprograms /no-default /norestart
+    ) else (
+      call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /ignoreerrors /passive /update-no /closeprograms /no-default /norestart
+    )
   ) else (
-    call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /ignoreerrors /passive /update-no /closeprograms /no-default /norestart
+    echo Installing Internet Explorer 8...
+    if /i "%OS_ARCH%"=="x64" (
+      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\glb\%%i %VERIFY_MODE% /ignoreerrors /passive /update-no /no-default /norestart
+    ) else (
+      call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /ignoreerrors /passive /update-no /no-default /norestart
+    )
   )
   if not errorlevel 1 set RECALL_REQUIRED=1
 )
