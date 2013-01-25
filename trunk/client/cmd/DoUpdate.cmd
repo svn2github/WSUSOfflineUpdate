@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.0+ (r438)
+set WSUSOFFLINE_VERSION=8.0+ (r439)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -190,6 +190,7 @@ rem echo Found Microsoft .NET Framework 4 version: %DOTNET4_VER_MAJOR%.%DOTNET4_
 rem echo Found Windows Management Framework version: %WMF_VER_MAJOR%.%WMF_VER_MINOR%
 rem echo Found Microsoft Security Essentials version: %MSSE_VER_MAJOR%.%MSSE_VER_MINOR%.%MSSE_VER_REVIS%.%MSSE_VER_BUILD%
 rem echo Found Microsoft Security Essentials definitions version: %MSSEDEFS_VER_MAJOR%.%MSSEDEFS_VER_MINOR%.%MSSEDEFS_VER_REVIS%.%MSSEDEFS_VER_BUILD%
+rem echo Found Network Inspection System definitions version: %NISDEFS_VER_MAJOR%.%NISDEFS_VER_MINOR%.%NISDEFS_VER_REVIS%.%NISDEFS_VER_BUILD%
 rem echo Found Windows Defender definitions version: %WDDEFS_VER_MAJOR%.%WDDEFS_VER_MINOR%.%WDDEFS_VER_REVIS%.%WDDEFS_VER_BUILD%
 if "%O2K3_VER_MAJOR%" NEQ "" (
   echo Found Microsoft Office 2003 %O2K3_VER_APP% version: %O2K3_VER_MAJOR%.%O2K3_VER_MINOR%.%O2K3_VER_REVIS%.%O2K3_VER_BUILD% ^(o2k3 %O2K3_LANG% sp%O2K3_SP_VER%^)
@@ -224,6 +225,7 @@ echo %DATE% %TIME% - Info: Found Windows Management Framework version %WMF_VER_M
 if "%OS_NAME%" NEQ "w62" (
   echo %DATE% %TIME% - Info: Found Microsoft Security Essentials version %MSSE_VER_MAJOR%.%MSSE_VER_MINOR%.%MSSE_VER_REVIS%.%MSSE_VER_BUILD% >>%UPDATE_LOGFILE%
   echo %DATE% %TIME% - Info: Found Microsoft Security Essentials definitions version %MSSEDEFS_VER_MAJOR%.%MSSEDEFS_VER_MINOR%.%MSSEDEFS_VER_REVIS%.%MSSEDEFS_VER_BUILD% >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Found Network Inspection System definitions version %NISDEFS_VER_MAJOR%.%NISDEFS_VER_MINOR%.%NISDEFS_VER_REVIS%.%NISDEFS_VER_BUILD% >>%UPDATE_LOGFILE%
 )
 echo %DATE% %TIME% - Info: Found Windows Defender definitions version %WDDEFS_VER_MAJOR%.%WDDEFS_VER_MINOR%.%WDDEFS_VER_REVIS%.%WDDEFS_VER_BUILD% >>%UPDATE_LOGFILE%
 if "%O2K3_VER_MAJOR%" NEQ "" (
@@ -1113,30 +1115,58 @@ if /i "%OS_ARCH%"=="x64" (
 if not exist %MSSEDEFS_FILENAME% (
   echo Warning: Microsoft Security Essentials definition file ^(%MSSEDEFS_FILENAME%^) not found.
   echo %DATE% %TIME% - Warning: Microsoft Security Essentials definition file ^(%MSSEDEFS_FILENAME%^) not found >>%UPDATE_LOGFILE%
-  goto SkipMSSEInst
+  goto CheckNISDefs
 )
 rem *** Determine Microsoft Security Essentials definition file version ***
 echo Determining Microsoft Security Essentials definition file version...
 %CSCRIPT_PATH% //Nologo //B //E:vbs DetermineFileVersion.vbs %MSSEDEFS_FILENAME% MSSEDEFS_VER_TARGET
-if not exist "%TEMP%\SetFileVersion.cmd" goto SkipMSSEInst
+if not exist "%TEMP%\SetFileVersion.cmd" goto CheckNISDefs
 call "%TEMP%\SetFileVersion.cmd"
 del "%TEMP%\SetFileVersion.cmd"
 if %MSSEDEFS_VER_MAJOR% LSS %MSSEDEFS_VER_TARGET_MAJOR% goto InstallMSSEDefs
-if %MSSEDEFS_VER_MAJOR% GTR %MSSEDEFS_VER_TARGET_MAJOR% goto SkipMSSEInst
+if %MSSEDEFS_VER_MAJOR% GTR %MSSEDEFS_VER_TARGET_MAJOR% goto CheckNISDefs
 if %MSSEDEFS_VER_MINOR% LSS %MSSEDEFS_VER_TARGET_MINOR% goto InstallMSSEDefs
-if %MSSEDEFS_VER_MINOR% GTR %MSSEDEFS_VER_TARGET_MINOR% goto SkipMSSEInst
+if %MSSEDEFS_VER_MINOR% GTR %MSSEDEFS_VER_TARGET_MINOR% goto CheckNISDefs
 if %MSSEDEFS_VER_REVIS% LSS %MSSEDEFS_VER_TARGET_REVIS% goto InstallMSSEDefs
-if %MSSEDEFS_VER_REVIS% GTR %MSSEDEFS_VER_TARGET_REVIS% goto SkipMSSEInst
-if %MSSEDEFS_VER_BUILD% GEQ %MSSEDEFS_VER_TARGET_BUILD% goto SkipMSSEInst
+if %MSSEDEFS_VER_REVIS% GTR %MSSEDEFS_VER_TARGET_REVIS% goto CheckNISDefs
+if %MSSEDEFS_VER_BUILD% GEQ %MSSEDEFS_VER_TARGET_BUILD% goto CheckNISDefs
 :InstallMSSEDefs
 echo Installing Microsoft Security Essentials definition file...
 call InstallOSUpdate.cmd %MSSEDEFS_FILENAME% %VERIFY_MODE% /ignoreerrors -q
 set MSSEDEFS_FILENAME=
-:SkipMSSEInst
+:CheckNISDefs
 set MSSEDEFS_VER_TARGET_MAJOR=
 set MSSEDEFS_VER_TARGET_MINOR=
 set MSSEDEFS_VER_TARGET_REVIS=
 set MSSEDEFS_VER_TARGET_BUILD=
+set NISDEFS_FILENAME=..\msse\%OS_ARCH%-glb\nis_full_%OS_ARCH%.exe
+if not exist %NISDEFS_FILENAME% (
+  echo Warning: Network Inspection System definition file ^(%NISDEFS_FILENAME%^) not found.
+  echo %DATE% %TIME% - Warning: Network Inspection System definition file ^(%NISDEFS_FILENAME%^) not found >>%UPDATE_LOGFILE%
+  goto SkipMSSEInst
+)
+rem *** Determine Network Inspection System definition file version ***
+echo Determining Network Inspection System definition file version...
+%CSCRIPT_PATH% //Nologo //B //E:vbs DetermineFileVersion.vbs %NISDEFS_FILENAME% NISDEFS_VER_TARGET
+if not exist "%TEMP%\SetFileVersion.cmd" goto SkipMSSEInst
+call "%TEMP%\SetFileVersion.cmd"
+del "%TEMP%\SetFileVersion.cmd"
+if %NISDEFS_VER_MAJOR% LSS %NISDEFS_VER_TARGET_MAJOR% goto InstallNISDefs
+if %NISDEFS_VER_MAJOR% GTR %NISDEFS_VER_TARGET_MAJOR% goto SkipMSSEInst
+if %NISDEFS_VER_MINOR% LSS %NISDEFS_VER_TARGET_MINOR% goto InstallNISDefs
+if %NISDEFS_VER_MINOR% GTR %NISDEFS_VER_TARGET_MINOR% goto SkipMSSEInst
+if %NISDEFS_VER_REVIS% LSS %NISDEFS_VER_TARGET_REVIS% goto InstallNISDefs
+if %NISDEFS_VER_REVIS% GTR %NISDEFS_VER_TARGET_REVIS% goto SkipMSSEInst
+if %NISDEFS_VER_BUILD% GEQ %NISDEFS_VER_TARGET_BUILD% goto SkipMSSEInst
+:InstallNISDefs
+echo Installing Network Inspection System definition file...
+call InstallOSUpdate.cmd %NISDEFS_FILENAME% %VERIFY_MODE% /ignoreerrors
+set NISDEFS_FILENAME=
+:SkipMSSEInst
+set NISDEFS_VER_TARGET_MAJOR=
+set NISDEFS_VER_TARGET_MINOR=
+set NISDEFS_VER_TARGET_REVIS=
+set NISDEFS_VER_TARGET_BUILD=
 
 rem *** Update Windows Defender definitions ***
 echo Checking Windows Defender installation state...

@@ -25,6 +25,7 @@ Private Const strRegValVersion                = "Version"
 Private Const strRegValDisplayVersion         = "DisplayVersion"
 Private Const strRegValPShVersion             = "PowerShellVersion"
 Private Const strRegValAVSVersion             = "AVSignatureVersion"
+Private Const strRegValNISSVersion            = "NISSignatureVersion"
 Private Const strRegValASSVersion             = "ASSignatureVersion"
 Private Const strRegValDisableAntiSpyware     = "DisableAntiSpyware"
 Private Const strRegValCurrentPowerPolicy     = "CurrentPowerPolicy"
@@ -502,6 +503,9 @@ WriteVersionToFile objCmdFile, "MSSE_VER", RegRead(wshShell, strRegKeyMSSEUninst
 
 ' Determine Microsoft Antimalware signatures' version
 WriteVersionToFile objCmdFile, "MSSEDEFS_VER", RegRead(wshShell, strRegKeyMSSEDefs & strRegValAVSVersion)
+
+' Determine Network Inspection System definitions' version
+WriteVersionToFile objCmdFile, "NISDEFS_VER", RegRead(wshShell, strRegKeyMSSEDefs & strRegValNISSVersion)
 
 ' Determine Windows Defender installation state
 If RegExists(wshShell, strRegKeyWD) Then
