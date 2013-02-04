@@ -715,4 +715,6 @@ Version ?.? -- ??.??.??
 - Optional creation of collection script ...\cmd\custom\RunAll.cmd (Thanks to "boco")
 - Fix: On Windows Vista / Server 2008 (x86/x64) systems, IE8 installation failed due to invalid parameter "/closeprograms" (Thanks to R. Tolley)
 - Fix: Check for new WOU versions failed if environment variable PATH did not contain %SystemRoot%\system32 (Thanks to "surfmaxx" and "aker")
+- Fix: Suboptimal sequence in DoUpdate.cmd script could lead to .NET installation failures
 - Fix: Removed Windows activation determination code from DetermineSystemProperties.vbs script since it's not used any longer (Thanks to "aker" and "boco")
+- Fix: Missing semicolon in Linux script CreateISOImage.sh lead to syntax error (Thanks to "falcon")

@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.0+ (r439)
+set WSUSOFFLINE_VERSION=8.0+ (r440)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -859,38 +859,6 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
 set REBOOT_REQUIRED=1
 :SkipWMPInst
 
-rem *** Install most recent Remote Desktop Client ***
-if "%UPDATE_TSC%" NEQ "/updatetsc" goto SkipTSCInst
-echo Checking Remote Desktop Client version...
-if %TSC_VER_MAJOR% LSS %TSC_VER_TARGET_MAJOR% goto InstallTSC
-if %TSC_VER_MAJOR% GTR %TSC_VER_TARGET_MAJOR% goto SkipTSCInst
-if %TSC_VER_MINOR% LSS %TSC_VER_TARGET_MINOR% goto InstallTSC
-if %TSC_VER_MINOR% GEQ %TSC_VER_TARGET_MINOR% goto SkipTSCInst
-:InstallTSC
-if "%TSC_TARGET_ID%"=="" (
-  echo Warning: Environment variable TSC_TARGET_ID not set.
-  echo %DATE% %TIME% - Warning: Environment variable TSC_TARGET_ID not set >>%UPDATE_LOGFILE%
-  goto SkipTSCInst
-)
-if "%TSC_PREREQ_ID%"=="" (
-  echo %TSC_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
-) else (
-  echo %TSC_PREREQ_ID%>"%TEMP%\MissingUpdateIds.txt"
-  echo %TSC_TARGET_ID%>>"%TEMP%\MissingUpdateIds.txt"
-)
-call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
-if errorlevel 1 goto ListError
-if exist "%TEMP%\UpdatesToInstall.txt" (
-  echo Installing most recent Remote Desktop Client...
-  call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /errorsaswarnings
-) else (
-  echo Warning: Remote Desktop Client installation file ^(kb%TSC_TARGET_ID%^) not found.
-  echo %DATE% %TIME% - Warning: Remote Desktop Client installation file ^(kb%TSC_TARGET_ID%^) not found >>%UPDATE_LOGFILE%
-  goto SkipTSCInst
-)
-set REBOOT_REQUIRED=1
-:SkipTSCInst
-
 rem *** Install .NET Framework 3.5 SP1 ***
 if "%INSTALL_DOTNET35%" NEQ "/instdotnet35" goto SkipDotNet35Inst
 if "%OS_NAME%"=="w61" goto SkipDotNet35Inst
@@ -1068,6 +1036,38 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
 )
 set REBOOT_REQUIRED=1
 :SkipWMFInst
+
+rem *** Install most recent Remote Desktop Client ***
+if "%UPDATE_TSC%" NEQ "/updatetsc" goto SkipTSCInst
+echo Checking Remote Desktop Client version...
+if %TSC_VER_MAJOR% LSS %TSC_VER_TARGET_MAJOR% goto InstallTSC
+if %TSC_VER_MAJOR% GTR %TSC_VER_TARGET_MAJOR% goto SkipTSCInst
+if %TSC_VER_MINOR% LSS %TSC_VER_TARGET_MINOR% goto InstallTSC
+if %TSC_VER_MINOR% GEQ %TSC_VER_TARGET_MINOR% goto SkipTSCInst
+:InstallTSC
+if "%TSC_TARGET_ID%"=="" (
+  echo Warning: Environment variable TSC_TARGET_ID not set.
+  echo %DATE% %TIME% - Warning: Environment variable TSC_TARGET_ID not set >>%UPDATE_LOGFILE%
+  goto SkipTSCInst
+)
+if "%TSC_PREREQ_ID%"=="" (
+  echo %TSC_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
+) else (
+  echo %TSC_PREREQ_ID%>"%TEMP%\MissingUpdateIds.txt"
+  echo %TSC_TARGET_ID%>>"%TEMP%\MissingUpdateIds.txt"
+)
+call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
+if errorlevel 1 goto ListError
+if exist "%TEMP%\UpdatesToInstall.txt" (
+  echo Installing most recent Remote Desktop Client...
+  call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /errorsaswarnings
+) else (
+  echo Warning: Remote Desktop Client installation file ^(kb%TSC_TARGET_ID%^) not found.
+  echo %DATE% %TIME% - Warning: Remote Desktop Client installation file ^(kb%TSC_TARGET_ID%^) not found >>%UPDATE_LOGFILE%
+  goto SkipTSCInst
+)
+set REBOOT_REQUIRED=1
+:SkipTSCInst
 
 rem *** Install Microsoft Security Essentials ***
 if "%OS_NAME%"=="w62" goto SkipMSSEInst

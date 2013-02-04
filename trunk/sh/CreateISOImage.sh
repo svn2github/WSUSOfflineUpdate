@@ -2,7 +2,7 @@
 
 #########################################################################
 ###          WSUS Offline Update ISO maker for Linux systems          ###
-###                           v. 8.0+ (r439)                          ###
+###                           v. 8.0+ (r440)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg                     ###
@@ -133,7 +133,7 @@ for i in ${paramlist[@]}; do
 	;;
 	*)
 	wddefs="1"
-	;
+	;;
     esac
   fi
 done
