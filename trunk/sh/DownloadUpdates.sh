@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                          v. 8.0+ (r440)                           ###
+###                          v. 8.0+ (r441)                           ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -34,7 +34,7 @@ debug=0
 test $debug -eq 1 && set -x
 export SHELLOPTS
 
-syslist="wxp wxp-x64 w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-x64 all-x86 all-x64 o2k3 o2k7 o2k10 ofc"
+syslist="wxp wxp-x64 w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-x64 all-x86 all-x64 o2k3 o2k7 o2k10 o2k13 ofc"
 langlist="enu deu nld esn fra ptg ptb ita rus plk ell csy dan nor sve fin jpn kor chs cht hun trk ara heb"
 
 printusage()
@@ -564,7 +564,7 @@ Liste=""
 case $sys in
     all-x64) Liste="w2k3-x64      w60-x64 w61-x64 w62-x64" ;;
     all-x86) Liste="w2k3     wxp  w60     w61     w62    " ;;
-    ofc) test "$sys_old" || Liste="o2k3 o2k7 o2k10" ;;
+    ofc) test "$sys_old" || Liste="o2k3 o2k7 o2k10 o2k13" ;;
 esac
 test "$Liste" && {
   for OS in $Liste

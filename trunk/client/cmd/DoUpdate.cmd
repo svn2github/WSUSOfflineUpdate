@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.0+ (r440)
+set WSUSOFFLINE_VERSION=8.0+ (r441)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1293,6 +1293,7 @@ if "%OFC_COMP_PACK%" NEQ "1" (
 )
 :OFCNVo2k7
 :OFCNVo2k10
+:OFCNVo2k13
 :SkipOFCNV
 
 rem *** Check installation state of Office File Validation ***
@@ -1323,6 +1324,7 @@ if "%OFC_FILE_VALID%" NEQ "1" (
   )
 )
 :OFVALo2k10
+:OFVALo2k13
 :SkipOFVAL
 
 :CheckAUService

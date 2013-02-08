@@ -2,7 +2,7 @@
 
 #########################################################################
 ###          WSUS Offline Update ISO maker for Linux systems          ###
-###                           v. 8.0+ (r440)                          ###
+###                           v. 8.0+ (r441)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg                     ###
@@ -13,7 +13,7 @@
 cd $( dirname $(readlink -f "$0") )
 rm -f ../temp/ExcludeListISO*
 
-syslist="wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-64 o2k3 o2k7 o2k10 ofc all-x64 all-x86"
+syslist="wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-64 o2k3 o2k7 o2k10 o2k13 ofc all-x64 all-x86"
 langlist="enu deu nld esn fra ptg ptb ita rus plk ell csy dan nor sve fin jpn kor chs cht hun trk ara heb"
 
 printusage()
@@ -102,7 +102,7 @@ if [ "$sys" == "w60" -o "$sys" == "w60-x64" -o "$sys" == "w61" \
 fi
 
 sys_old=""
-if [ "$sys" == "o2k3" -o "$sys" == "o2k7" -o "$sys" == "o2k10" ]; then
+if [ "$sys" == "o2k3" -o "$sys" == "o2k7" -o "$sys" == "o2k10" -o "$sys" == "o2k13" ]; then
   sys_old=$sys
   sys="ofc"
 fi

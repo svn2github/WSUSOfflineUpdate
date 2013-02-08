@@ -80,7 +80,7 @@ goto UnsupType
 
 :InstExe
 rem *** Check proper Office version ***
-for %%i in (ofc o2k3 o2k7 o2k10) do (
+for %%i in (ofc o2k3 o2k7 o2k10 o2k13) do (
   echo %1 | %SystemRoot%\system32\find.exe /I "\%%i\" >nul 2>&1
   if not errorlevel 1 goto %%i
 )
@@ -134,6 +134,7 @@ goto InstFailure
 
 :o2k7
 :o2k10
+:o2k13
 echo Installing %1...
 echo %1 | %SystemRoot%\system32\find.exe /I "sp" >nul 2>&1
 if errorlevel 1 (%1 /quiet /norestart) else (%1 /passive /norestart)
