@@ -1,11 +1,11 @@
-; ***   WSUS Offline Update 8.0 - Installer   ***
+; ***   WSUS Offline Update 8.1 - Installer   ***
 ; ***       Author: T. Wittrock, Kiel         ***
 ; ***   Dialog scaling added by Th. Baisch    ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 
-Dim Const $caption                    = "WSUS Offline Update 8.0 - Installer"
+Dim Const $caption                    = "WSUS Offline Update 8.1b - Installer"
 
 ; Registry constants
 Dim Const $reg_key_wsh_hklm           = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings"
@@ -30,6 +30,7 @@ Dim Const $reg_val_applieddpi         = "AppliedDPI"
 Dim Const $reg_val_wustatusserver     = "WUStatusServer"
 
 ; Defaults
+Dim Const $max_msi_packs              = 22
 Dim Const $default_logpixels          = 96
 Dim Const $target_version_dotnet35    = "3.5.30729"
 Dim Const $target_version_dotnet40    = "4.0.30319"
@@ -69,6 +70,8 @@ Dim Const $ini_value_shutdown         = "shutdown"
 Dim Const $ini_section_messaging      = "Messaging"
 Dim Const $ini_value_showlog          = "showlog"
 
+Dim Const $ini_section_msi            = "MSI"
+
 Dim Const $ini_section_misc           = "Miscellaneous"
 Dim Const $ini_value_wustatusserver   = "WUStatusServer"
 
@@ -88,9 +91,11 @@ Dim Const $path_rel_instdotnet4       = "\dotnet\dotnetfx4*.exe"
 Dim Const $path_rel_ofc_glb           = "\ofc\glb\"
 Dim Const $path_rel_msse_x86          = "\msse\x86-glb\mseinstall-x86-*.exe"
 Dim Const $path_rel_msse_x64          = "\msse\x64-glb\mseinstall-x64-*.exe"
+Dim Const $path_rel_msi_all           = "\wouallmsi.txt"
+Dim Const $path_rel_msi_selected      = "\Temp\wouselmsi.txt"
 
-Dim $maindlg, $scriptdir, $mapped, $inifilename, $backup, $rcerts, $ie7, $ie8, $ie9, $ie10, $cpp, $dx, $mssl, $wmp, $dotnet35, $dotnet4, $psh, $wmf, $msse, $tsc, $ofc, $ofv, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate
-Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos
+Dim $maindlg, $scriptdir, $mapped, $inifilename, $tabitemfocused, $backup, $rcerts, $ie7, $ie8, $ie9, $ie10, $cpp, $dx, $mssl, $wmp, $dotnet35, $dotnet4, $psh, $wmf, $msse, $tsc, $ofc, $ofv, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate
+Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos, $msiall, $msipacks[$max_msi_packs], $msicount, $line, $i, $msilistfile
 
 Func ShowGUIInGerman()
   If $CmdLine[0] > 0 Then
@@ -265,6 +270,16 @@ Func MSSEPresent($basepath)
   Return (FileExists($basepath & $path_rel_msse_x86) OR FileExists($basepath & $path_rel_msse_x64))
 EndFunc
 
+Func ListMSIPackages()
+Dim $result
+
+  $result = RunWait(@ComSpec & " /D /C TouchMSITree.cmd /listall", $scriptdir & "\cmd", @SW_HIDE)
+  If $result = 0 Then
+    $result = @error
+  EndIf
+  Return $result
+EndFunc
+
 Func CalcGUISize()
   Dim $reg_val
 
@@ -275,7 +290,7 @@ Func CalcGUISize()
   If ($reg_val = "") Then
     $reg_val = $default_logpixels
   EndIf
-  $dlgheight = 345 * $reg_val / $default_logpixels
+  $dlgheight = 380 * $reg_val / $default_logpixels
   If ShowGUIInGerman() Then
     $txtwidth = 240 * $reg_val / $default_logpixels
   Else
@@ -295,7 +310,7 @@ AutoItSetOption("TrayAutoPause", 0)
 AutoItSetOption("TrayIconHide", 1)
 CalcGUISize()
 $groupwidth = 2 * $txtwidth + 2 * $txtxoffset
-$maindlg = GUICreate($caption, $groupwidth + 2 * $txtxoffset, $dlgheight)
+$maindlg = GUICreate($caption, $groupwidth + 4 * $txtxoffset, $dlgheight)
 GUISetFont(8.5, 400, 0, "Sans Serif")
 
 $scriptdir = AssignScriptDirectory()
@@ -305,29 +320,45 @@ $inifilename = $scriptdir & "\" & StringLeft(@ScriptName, StringInStr(@ScriptNam
 $txtxpos = $txtxoffset
 $txtypos = $txtyoffset
 If ShowGUIInGerman() Then
-  GUICtrlCreateLabel("Wählen Sie die gewünschten Optionen und klicken Sie auf 'Start'," & @LF & "um die fehlenden Microsoft-Updates auf Ihrem System zu installieren.", $txtxpos, $txtypos, 3 * $groupwidth / 4, 2 * $txtheight)
+  GUICtrlCreateLabel("Wählen Sie die gewünschten Optionen und klicken Sie auf 'Start'," & @LF & "um die fehlenden Microsoft-Updates auf Ihrem System zu installieren.", $txtxpos, $txtypos, 3 * $groupwidth / 4, 1.5 * $txtheight)
 Else
-  GUICtrlCreateLabel("Select desired options and click 'Start'" & @LF & "to install missing Microsoft updates on your computer.", $txtxpos, $txtypos, 3 * $groupwidth / 4, 2 * $txtheight)
+  GUICtrlCreateLabel("Select desired options and click 'Start'" & @LF & "to install missing Microsoft updates on your computer.", $txtxpos, $txtypos, 3 * $groupwidth / 4, 1.5 * $txtheight)
 EndIf
 
 ;  Medium info group
 $builddate = MediumBuildDate($scriptdir)
 If ($builddate <> "") Then
-  $txtxpos = $txtxoffset + 3 * $groupwidth / 4
+  $txtxpos = 3 * $txtxoffset + 3 * $groupwidth / 4
   $txtypos = 0
-  GUICtrlCreateGroup("Medium info", $txtxpos, $txtypos, $groupwidth / 4, 2 * $txtheight)
+  If ShowGUIInGerman() Then
+    GUICtrlCreateGroup("Medium-Info", $txtxpos, $txtypos, $groupwidth / 4, 2 * $txtheight)
+  Else
+    GUICtrlCreateGroup("Medium info", $txtxpos, $txtypos, $groupwidth / 4, 2 * $txtheight)
+  EndIf
   $txtxpos = $txtxpos + $txtxoffset
   $txtypos = $txtypos + 1.5 * $txtyoffset + 2
   GUICtrlCreateLabel("Build: " & $builddate, $txtxpos, $txtypos, $groupwidth / 4 - 2 * $txtxoffset, $txtheight)
 EndIf
 
-;  Installation group
+;  Tab control
 $txtxpos = $txtxoffset
 $txtypos = $txtyoffset + 1.5 * $txtheight
+GuiCtrlCreateTab($txtxpos, $txtypos, $groupwidth + 2 * $txtxoffset, $dlgheight - $btnheight - 1.5 * $txtheight - 3 * $txtyoffset)
+
+;  Updating Tab
+If ShowGUIInGerman() Then
+  $tabitemfocused = GuiCtrlCreateTabItem("Aktualisierung")
+Else
+  $tabitemfocused = GuiCtrlCreateTabItem("Updating")
+EndIf
+
+;  Installation group
+$txtxpos = 2 * $txtxoffset
+$txtypos = 3.5 * $txtyoffset + 1.5 * $txtheight
 GUICtrlCreateGroup("Installation", $txtxpos, $txtypos, $groupwidth, 10 * $txtheight)
 
 ; Backup
-$txtxpos = 2 * $txtxoffset
+$txtxpos = 3 * $txtxoffset
 $txtypos = $txtypos + 1.5 * $txtyoffset
 If ShowGUIInGerman() Then
   $backup = GUICtrlCreateCheckbox("Existierende Systemdateien sichern", $txtxpos, $txtypos, $txtwidth, $txtheight)
@@ -345,7 +376,7 @@ Else
 EndIf
 
 ; Update Root Certificates
-$txtxpos = $txtxoffset + $groupwidth / 2
+$txtxpos = $txtxpos + $txtwidth
 If ShowGUIInGerman() Then
   $rcerts = GUICtrlCreateCheckbox("Stammzertifikate aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -362,7 +393,7 @@ Else
 EndIf
 
 ; Install IE7
-$txtxpos = 2 * $txtxoffset
+$txtxpos = 3 * $txtxoffset
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
   $ie7 = GUICtrlCreateCheckbox("Internet Explorer 7 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
@@ -381,7 +412,7 @@ Else
 EndIf
 
 ; Install IE8
-$txtxpos = $txtxoffset + $groupwidth / 2
+$txtxpos = $txtxpos + $txtwidth
 If ShowGUIInGerman() Then
   $ie8 = GUICtrlCreateCheckbox("Internet Explorer 8 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -403,7 +434,7 @@ Else
 EndIf
 
 ; Install IE9
-$txtxpos = 2 * $txtxoffset
+$txtxpos = 3 * $txtxoffset
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
   $ie9 = GUICtrlCreateCheckbox("Internet Explorer 9 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
@@ -427,7 +458,7 @@ Else
 EndIf
 
 ; Install IE10
-$txtxpos = $txtxoffset + $groupwidth / 2
+$txtxpos = $txtxpos + $txtwidth
 If ShowGUIInGerman() Then
   $ie10 = GUICtrlCreateCheckbox("Internet Explorer 10 Rel. Preview installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -451,7 +482,7 @@ Else
 EndIf
 
 ; Update C++ Runtime Libraries
-$txtxpos = 2 * $txtxoffset
+$txtxpos = 3 * $txtxoffset
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
   $cpp = GUICtrlCreateCheckbox("C++-Laufzeitbibliotheken aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
@@ -469,7 +500,7 @@ Else
 EndIf
 
 ; Update DirectX Runtime Libraries
-$txtxpos = $txtxoffset + $groupwidth / 2
+$txtxpos = $txtxpos + $txtwidth
 If ShowGUIInGerman() Then
   $dx = GUICtrlCreateCheckbox("DirectX-Laufzeitbibliotheken aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -487,7 +518,7 @@ Else
 EndIf
 
 ; Install Microsoft Silverlight
-$txtxpos = 2 * $txtxoffset
+$txtxpos = 3 * $txtxoffset
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
   If MSSLInstalled() Then
@@ -513,7 +544,7 @@ Else
 EndIf
 
 ; Update Windows Media Player
-$txtxpos = $txtxoffset + $groupwidth / 2
+$txtxpos = $txtxpos + $txtwidth
 If ShowGUIInGerman() Then
   $wmp = GUICtrlCreateCheckbox("Windows Media Player aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -531,7 +562,7 @@ Else
 EndIf
 
 ; Install .NET Framework 3.5 SP1
-$txtxpos = 2 * $txtxoffset
+$txtxpos = 3 * $txtxoffset
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
   $dotnet35 = GUICtrlCreateCheckbox(".NET Framework 3.5 SP1 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
@@ -550,7 +581,7 @@ Else
 EndIf
 
 ; Install Windows PowerShell 2.0
-$txtxpos = $txtxoffset + $groupwidth / 2
+$txtxpos = $txtxpos + $txtwidth
 If ShowGUIInGerman() Then
   $psh = GUICtrlCreateCheckbox("PowerShell 2.0 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -569,7 +600,7 @@ Else
 EndIf
 
 ; Install .NET Framework 4
-$txtxpos = 2 * $txtxoffset
+$txtxpos = 3 * $txtxoffset
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
   $dotnet4 = GUICtrlCreateCheckbox(".NET Framework 4.x installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
@@ -587,7 +618,7 @@ Else
 EndIf
 
 ; Install Windows Management Framework 3.0
-$txtxpos = $txtxoffset + $groupwidth / 2
+$txtxpos = $txtxpos + $txtwidth
 If ShowGUIInGerman() Then
   $wmf = GUICtrlCreateCheckbox("Management Framework 3.0 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -606,7 +637,7 @@ Else
 EndIf
 
 ; Install Microsoft Security Essentials
-$txtxpos = 2 * $txtxoffset
+$txtxpos = 3 * $txtxoffset
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
   If MSSEInstalled() Then
@@ -633,7 +664,7 @@ Else
 EndIf
 
 ; Update Windows Remote Desktop Client
-$txtxpos = $txtxoffset + $groupwidth / 2
+$txtxpos = $txtxpos + $txtwidth
 If ShowGUIInGerman() Then
   $tsc = GUICtrlCreateCheckbox("Remote Desktop Client aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -651,7 +682,7 @@ Else
 EndIf
 
 ; Install file format converters for Office
-$txtxpos = 2 * $txtxoffset
+$txtxpos = 3 * $txtxoffset
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
   $ofc = GUICtrlCreateCheckbox("Office-Dateikonverter installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
@@ -669,7 +700,7 @@ Else
 EndIf
 
 ; Install Office File Validation
-$txtxpos = $txtxoffset + $groupwidth / 2
+$txtxpos = $txtxpos + $txtwidth
 If ShowGUIInGerman() Then
   $ofv = GUICtrlCreateCheckbox("Office-Dateiüberprüfung installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -686,7 +717,7 @@ Else
 EndIf
 
 ;  Control group
-$txtxpos = $txtxoffset
+$txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
 If ShowGUIInGerman() Then
   GUICtrlCreateGroup("Steuerung", $txtxpos, $txtypos, $groupwidth, 3 * $txtheight)
@@ -695,7 +726,7 @@ Else
 EndIf
 
 ; Verify
-$txtxpos = 2 * $txtxoffset
+$txtxpos = 3 * $txtxoffset
 $txtypos = $txtypos + 1.5 * $txtyoffset
 If ShowGUIInGerman() Then
   $verify = GUICtrlCreateCheckbox("Installationspakete verifizieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
@@ -713,7 +744,7 @@ Else
 EndIf
 
 ;  Automatic reboot and recall
-$txtxpos = $txtxoffset + $groupwidth / 2
+$txtxpos = $txtxpos + $txtwidth
 If ShowGUIInGerman() Then
   $autoreboot = GUICtrlCreateCheckbox("Automatisch neu starten und fortsetzen", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -730,7 +761,7 @@ Else
 EndIf
 
 ;  Automatic shutdown
-$txtxpos = 2 * $txtxoffset
+$txtxpos = 3 * $txtxoffset
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
   $shutdown = GUICtrlCreateCheckbox("Nach Aktualisierung herunterfahren", $txtxpos, $txtypos, $txtwidth, $txtheight)
@@ -744,7 +775,7 @@ Else
 EndIf
 
 ; Show log file
-$txtxpos = $txtxoffset + $groupwidth / 2
+$txtxpos = $txtxpos + $txtwidth
 If ShowGUIInGerman() Then
   $showlog = GUICtrlCreateCheckbox("Protokolldatei anzeigen", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -760,16 +791,55 @@ Else
   EndIf
 EndIf
 
+;  Software Tab
+GuiCtrlCreateTabItem("Software")
+
+$msicount = 1
+ListMSIPackages()
+If FileExists(@TempDir & $path_rel_msi_all) Then
+  ; Select all
+  $txtxpos = 2 * $txtxoffset
+  $txtypos = 3.5 * $txtyoffset + 1.5 * $txtheight
+  If ShowGUIInGerman() Then
+    $msiall = GUICtrlCreateCheckbox("Alle auswählen", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  Else
+    $msiall = GUICtrlCreateCheckbox("Select all", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  EndIf
+  ;  MSI packages' group
+  $txtypos = $txtypos + $txtheight
+  If ShowGUIInGerman() Then
+    GUICtrlCreateGroup("MSI-Pakete", $txtxpos, $txtypos, $groupwidth, ($max_msi_packs / 2 + 1) * $txtheight)
+  Else
+    GUICtrlCreateGroup("MSI packages", $txtxpos, $txtypos, $groupwidth, ($max_msi_packs / 2 + 1) * $txtheight)
+  EndIf
+  $txtxpos = 3 * $txtxoffset
+  $txtypos = $txtypos + 1.5 * $txtyoffset
+  For $msicount = 0 To $max_msi_packs - 1
+    $line = FileReadLine(@TempDir & $path_rel_msi_all, $msicount + 1)
+    If @error <> 0 Then ExitLoop
+    $msipacks[$msicount] = GUICtrlCreateCheckbox(StringMid($line, StringInStr($line, "\", 2, -1) + 1, StringInStr($line, ".", 2, -1) - StringInStr($line, "\", 2, -1) - 1), $txtxpos + Mod($msicount, 2) * $txtwidth, $txtypos + BitShift($msicount, 1) * $txtheight, $txtwidth, $txtheight)
+    If IniRead($inifilename, $ini_section_msi, GUICtrlRead(-1, 1), $disabled) = $enabled Then
+      GUICtrlSetState(-1, $GUI_CHECKED)
+    EndIf
+  Next
+  FileDelete(@TempDir & $path_rel_msi_all)
+  If $msicount = 0 Then $msicount = 1
+EndIf
+
+;  End Tab item definition
+GuiCtrlCreateTabItem("")
+GUICtrlSetState($tabitemfocused, $GUI_SHOW)
+
 ;  Start button
-$txtypos = $txtypos + 3.5 * $txtyoffset
+$txtypos = $dlgheight - $btnheight - $txtyoffset
 $btn_start = GUICtrlCreateButton("Start", $txtxoffset, $txtypos, $btnwidth, $btnheight)
 GUICtrlSetResizing (-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM)
 
 ;  Exit button
 If ShowGUIInGerman() Then
-  $btn_exit = GUICtrlCreateButton("Ende", $groupwidth - $btnwidth + $txtxoffset, $txtypos, $btnwidth, $btnheight)
+  $btn_exit = GUICtrlCreateButton("Ende", $groupwidth - $btnwidth + 3 * $txtxoffset, $txtypos, $btnwidth, $btnheight)
 Else
-  $btn_exit = GUICtrlCreateButton("Exit", $groupwidth - $btnwidth + $txtxoffset, $txtypos, $btnwidth, $btnheight)
+  $btn_exit = GUICtrlCreateButton("Exit", $groupwidth - $btnwidth + 3 * $txtxoffset, $txtypos, $btnwidth, $btnheight)
 EndIf
 GUICtrlSetResizing (-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM)
 
@@ -1007,6 +1077,25 @@ While 1
         GUICtrlSetState($showlog, $GUI_ENABLE)
       EndIf
 
+    Case $msiall             ; Select all check box toggled
+      If (BitAND(GUICtrlRead($msiall), $GUI_CHECKED) = $GUI_CHECKED) Then
+        For $i = 0 To $msicount - 1
+          GUICtrlSetState($msipacks[$i], $GUI_CHECKED)
+        Next
+      Else
+        For $i = 0 To $msicount - 1
+          GUICtrlSetState($msipacks[$i], $GUI_UNCHECKED)
+        Next
+      EndIf
+
+    Case $msipacks[0] To $msipacks[$msicount - 1]
+      For $i = 0 To $msicount - 1
+        If (BitAND(GUICtrlRead($msipacks[$i]), $GUI_CHECKED) <> $GUI_CHECKED) Then
+          GUICtrlSetState($msiall, $GUI_UNCHECKED)
+          ExitLoop
+        EndIf
+      Next
+
     Case $btn_start          ; Start Button pressed
       $options = IniRead($inifilename, $ini_section_misc, $ini_value_wustatusserver, "")    ; Dummy use of $options
       If $options <> "" Then
@@ -1088,6 +1177,18 @@ While 1
       EndIf
       If IniRead($inifilename, $ini_section_installation, $ini_value_skipdynamic, $disabled) = $enabled Then
         $options = $options & " /skipdynamic"
+      EndIf
+      $msilistfile = FileOpen(@WindowsDir & $path_rel_msi_selected, 10)
+      If $msilistfile <> -1 Then
+        For $i = 0 To $msicount - 1
+          If (BitAND(GUICtrlRead($msipacks[$i]), $GUI_CHECKED) = $GUI_CHECKED) Then
+            FileWriteLine($msilistfile, GUICtrlRead($msipacks[$i], 1))
+          EndIf
+        Next
+        FileClose($msilistfile)
+      EndIf
+      If FileGetSize(@WindowsDir & $path_rel_msi_selected) = 0 Then
+        FileDelete(@WindowsDir & $path_rel_msi_selected)
       EndIf
       If (@OSArch <> "X86") Then
         DllCall("kernel32.dll", "int", "Wow64DisableWow64FsRedirection", "int", 1)

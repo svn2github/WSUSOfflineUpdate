@@ -9,14 +9,16 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.0+ (r441)
+set WSUSOFFLINE_VERSION=8.1b (r442)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
 rem *** Execute custom initialization hook ***
 if exist .\custom\InitializationHook.cmd (
   echo Executing custom initialization hook...
-  call .\custom\InitializationHook.cmd
+  pushd .\custom
+  call InitializationHook.cmd
+  popd
   echo %DATE% %TIME% - Info: Executed custom initialization hook ^(Errorlevel: %errorlevel%^) >>%DOWNLOAD_LOGFILE%
 ) else (
   if exist %DOWNLOAD_LOGFILE% (
@@ -210,6 +212,7 @@ if exist ..\exclude\custom\dummy.txt del ..\exclude\custom\dummy.txt
 if exist ..\static\custom\dummy.txt del ..\static\custom\dummy.txt
 if exist ..\client\exclude\custom\dummy.txt del ..\client\exclude\custom\dummy.txt
 if exist ..\client\static\custom\dummy.txt del ..\client\static\custom\dummy.txt
+if exist ..\client\software\msi\dummy.txt del ..\client\software\msi\dummy.txt
 if exist UpdateOU.new (
   if exist UpdateOU.cmd del UpdateOU.cmd
   ren UpdateOU.new UpdateOU.cmd
@@ -1443,7 +1446,9 @@ if "%EXIT_ERR%"=="1" (
 rem *** Execute custom finalization hook ***
 if exist .\custom\FinalizationHook.cmd (
   echo Executing custom finalization hook...
-  call .\custom\FinalizationHook.cmd
+  pushd .\custom
+  call FinalizationHook.cmd
+  popd
   echo %DATE% %TIME% - Info: Executed custom finalization hook ^(Errorlevel: %errorlevel%^) >>%DOWNLOAD_LOGFILE%
 )
 echo Done.

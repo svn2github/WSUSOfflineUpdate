@@ -9,14 +9,16 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.0+ (r441)
+set WSUSOFFLINE_VERSION=8.1b (r442)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 rem *** Execute custom initialization hook ***
 if exist .\custom\InitializationHook.cmd (
   echo Executing custom initialization hook...
-  call .\custom\InitializationHook.cmd
+  pushd .\custom
+  call InitializationHook.cmd
+  popd
   echo %DATE% %TIME% - Info: Executed custom initialization hook ^(Errorlevel: %errorlevel%^) >>%UPDATE_LOGFILE%
 ) else (
   if exist %UPDATE_LOGFILE% echo. >>%UPDATE_LOGFILE%
@@ -1214,9 +1216,9 @@ set WDDEFS_VER_TARGET_REVIS=
 set WDDEFS_VER_TARGET_BUILD=
 
 if "%RECALL_REQUIRED%"=="1" goto Installed
-if "%OFC_NAME%"=="" goto CheckAUService
+if "%OFC_NAME%"=="" goto InstSoftware
 if not exist ..\%OFC_NAME%\%OFC_LANG%\nul (
-  if not exist ..\%OFC_NAME%\glb\nul goto CheckAUService
+  if not exist ..\%OFC_NAME%\glb\nul goto InstSoftware
 )
 rem *** Check Office Service Pack versions ***
 echo Checking Office Service Pack versions...
@@ -1327,7 +1329,22 @@ if "%OFC_FILE_VALID%" NEQ "1" (
 :OFVALo2k13
 :SkipOFVAL
 
-:CheckAUService
+:InstSoftware
+rem *** Install MSI packages and custom software ***
+if exist ..\software\custom\InstallCustomSoftware.cmd (
+  echo Installing custom software...
+  pushd ..\software\custom
+  call InstallCustomSoftware.cmd
+  popd
+  echo %DATE% %TIME% - Info: Executed custom software installation hook ^(Errorlevel: %errorlevel%^) >>%UPDATE_LOGFILE%
+)
+if exist "%SystemRoot%\Temp\wouselmsi.txt" (
+  echo Installing selected MSI packages...
+  call TouchMSITree.cmd /instselected
+  echo %DATE% %TIME% - Info: Installed selected MSI packages >>%UPDATE_LOGFILE%
+  del "%SystemRoot%\Temp\wouselmsi.txt"
+)
+
 rem *** Check state of service 'Windows Update' ***
 if "%SKIP_DYNAMIC%"=="/skipdynamic" (
   echo Skipping determination of missing updates on demand...
@@ -1656,7 +1673,9 @@ goto EoF
 rem *** Execute custom finalization hook ***
 if exist .\custom\FinalizationHook.cmd (
   echo Executing custom finalization hook...
-  call .\custom\FinalizationHook.cmd
+  pushd .\custom
+  call FinalizationHook.cmd
+  popd
   echo %DATE% %TIME% - Info: Executed custom finalization hook ^(Errorlevel: %errorlevel%^) >>%UPDATE_LOGFILE%
 )
 cd ..
