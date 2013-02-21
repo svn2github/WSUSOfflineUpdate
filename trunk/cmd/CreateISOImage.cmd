@@ -46,6 +46,7 @@ goto InvalidParams
 :V1EvalParams
 if "%2"=="" goto V1CreateFilter
 if /i "%2"=="/excludesp" set EXC_SP=1
+if /i "%2"=="/excludesw" set EXC_SW=1
 if /i "%2"=="/includedotnet" set INC_DOTNET=1
 if /i "%2"=="/includemsse" set INC_MSSE=1
 if /i "%2"=="/includewddefs" (
@@ -64,6 +65,7 @@ goto V1EvalParams
 :V2EvalParams
 if "%3"=="" goto V2CreateFilter
 if /i "%3"=="/excludesp" set EXC_SP=1
+if /i "%3"=="/excludesw" set EXC_SW=1
 if /i "%3"=="/includedotnet" set INC_DOTNET=1
 if /i "%3"=="/includemsse" set INC_MSSE=1
 if /i "%3"=="/includewddefs" (
@@ -105,6 +107,9 @@ goto :eof
 :ExtendFilter
 if "%EXC_SP%"=="1" (
   for /F %%i in (..\exclude\ExcludeList-SPs.txt) do echo *%%i*>>%ISO_FILTER%
+)
+if "%EXC_SW%"=="1" (
+  for /F %%i in (..\exclude\ExcludeList-software.txt) do echo *%%i/*>>%ISO_FILTER%
 )
 for %%i in (ofc) do (
   if /i "%1"=="%%i" (

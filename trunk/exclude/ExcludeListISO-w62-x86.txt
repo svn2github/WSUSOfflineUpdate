@@ -16,5 +16,5 @@
 *dotnetfx45*
 *dotNetFx45*
 *vcredist*_x64*
-*mseinstall*
+*MSEInstall*
 *.au3

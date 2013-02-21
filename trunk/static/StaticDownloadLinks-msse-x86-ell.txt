@@ -1,1 +1,1 @@
-http://download.microsoft.com/download/1/7/0/170D6F32-61C8-4AFF-AD32-D793084A7ACD/elGR/x86/mseinstall.exe,mseinstall-x86-ell.exe
+http://download.microsoft.com/download/1/7/0/170D6F32-61C8-4AFF-AD32-D793084A7ACD/MSEInstall_x86_el_gr.exe

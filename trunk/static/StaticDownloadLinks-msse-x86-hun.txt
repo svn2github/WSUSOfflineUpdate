@@ -1,1 +1,1 @@
-http://download.microsoft.com/download/0/C/F/0CF12DC1-AE67-4C19-8434-EC07EB82BB8C/huHU/x86/mseinstall.exe,mseinstall-x86-hun.exe
+http://download.microsoft.com/download/0/C/F/0CF12DC1-AE67-4C19-8434-EC07EB82BB8C/MSEInstall_x86_hu_hu.exe

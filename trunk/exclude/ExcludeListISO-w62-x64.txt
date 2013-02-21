@@ -16,5 +16,5 @@
 *dotNetFx40*
 *dotnetfx45*
 *dotNetFx45*
-*mseinstall*
+*MSEInstall*
 *.au3

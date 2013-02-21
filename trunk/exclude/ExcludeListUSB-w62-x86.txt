@@ -23,5 +23,5 @@ wddefs\
 *-x64
 dotnetfx*
 vcredist*_x64
-mseinstall*
+MSEInstall*
 .au3

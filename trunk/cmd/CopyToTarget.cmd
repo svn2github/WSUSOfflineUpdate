@@ -50,6 +50,7 @@ if %OUTPUT_PATH%~==~ (
 )
 if "%2"=="" goto V1CreateFilter
 if /i "%2"=="/excludesp" set EXC_SP=1
+if /i "%2"=="/excludesw" set EXC_SW=1
 if /i "%2"=="/includedotnet" set INC_DOTNET=1
 if /i "%2"=="/includemsse" set INC_MSSE=1
 if /i "%2"=="/includewddefs" (
@@ -68,6 +69,7 @@ if %OUTPUT_PATH%~==~ (
 )
 if "%3"=="" goto V2CreateFilter
 if /i "%3"=="/excludesp" set EXC_SP=1
+if /i "%3"=="/excludesw" set EXC_SW=1
 if /i "%3"=="/includedotnet" set INC_DOTNET=1
 if /i "%3"=="/includemsse" set INC_MSSE=1
 if /i "%3"=="/includewddefs" (
@@ -105,6 +107,9 @@ goto :eof
 :ExtendFilter
 if "%EXC_SP%"=="1" (
   type ..\exclude\ExcludeList-SPs.txt >>%USB_FILTER%
+)
+if "%EXC_SW%"=="1" (
+  type ..\exclude\ExcludeList-software.txt >>%USB_FILTER%
 )
 if "%INC_DOTNET%" NEQ "1" (
   type ..\exclude\ExcludeListISO-dotnet.txt >>%USB_FILTER%

@@ -1,1 +1,1 @@
-http://download.microsoft.com/download/3/8/5/385C19C3-1107-4EE5-9C47-D3FAB986B06C/ZHTW/amd64/mseinstall.exe,mseinstall-x64-cht.exe
+http://download.microsoft.com/download/3/8/5/385C19C3-1107-4EE5-9C47-D3FAB986B06C/MSEInstall_x64_zh_tw.exe

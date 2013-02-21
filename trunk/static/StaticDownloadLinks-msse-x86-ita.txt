@@ -1,1 +1,1 @@
-http://download.microsoft.com/download/9/D/F/9DFBA9B6-FFA2-4762-ABFE-72133C338ED1/itit/x86/mseinstall.exe,mseinstall-x86-ita.exe
+http://download.microsoft.com/download/9/D/F/9DFBA9B6-FFA2-4762-ABFE-72133C338ED1/MSEInstall_x86_it_it.exe

@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 8.0
+WSUS Offline Update 8.1
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -708,14 +708,17 @@ Version 8.0 -- 02.01.13
 - Fix: UpdateInstaller script did not properly detect existing .NET Framework 3.5 SP1 installations under Windows 7 / Server 2008 R2 (Thanks to "boco")
 - Fix: Update Rollup 1.1 for Windows MultiPoint Server 2011 (kb2626067) was erroneously downloaded
 --------------------------------------------------------------------------------
-Version 8.1 -- ??.??.??
+Version 8.1 -- 21.02.13
+- NOTE: If you customized your copy of WOU using the script AddCustomLanguageSupport.cmd {lng}, please call it again once (per language) to get the appropriate MSE installation file(s) downloaded
 - Support added for MSI packages' and custom software installations
 - Download targets, detection and update capability added for Office 2013
 - Updating of Microsoft Security Essentials definition files will now include Network Inspection System definitions (Thanks to B. Schinkel-Momsen and "harry")
 - Update for untrusted/revoked Root Certificates (rvkroots.exe/kb2798897) included (Thanks to "rbr555")
 - Optional creation of collection script ...\cmd\custom\RunAll.cmd (Thanks to "boco")
+- Fix: Microsoft moved and renamed Microsoft Security Essentials installation files (Thanks to "harry", "boco" and "Denniss")
 - Fix: On Windows Vista / Server 2008 (x86/x64) systems, IE8 installation failed due to invalid parameter "/closeprograms" (Thanks to R. Tolley)
 - Fix: Check for new WOU versions failed if environment variable PATH did not contain %SystemRoot%\system32 (Thanks to "surfmaxx" and "aker")
 - Fix: Suboptimal sequence in DoUpdate.cmd script could lead to .NET installation failures
 - Fix: Removed Windows activation determination code from DetermineSystemProperties.vbs script since it's not used any longer (Thanks to "aker" and "boco")
 - Fix: Missing semicolon in Linux script CreateISOImage.sh lead to syntax error (Thanks to "falcon")
+--------------------------------------------------------------------------------

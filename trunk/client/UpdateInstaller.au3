@@ -5,7 +5,7 @@
 #include <GUIConstants.au3>
 #RequireAdmin
 
-Dim Const $caption                    = "WSUS Offline Update 8.1b - Installer"
+Dim Const $caption                    = "WSUS Offline Update 8.1 - Installer"
 
 ; Registry constants
 Dim Const $reg_key_wsh_hklm           = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings"
@@ -89,8 +89,8 @@ Dim Const $path_rel_cpp               = "\cpp\vcredist*.exe"
 Dim Const $path_rel_instdotnet35      = "\dotnet\dotnetfx35.exe"
 Dim Const $path_rel_instdotnet4       = "\dotnet\dotnetfx4*.exe"
 Dim Const $path_rel_ofc_glb           = "\ofc\glb\"
-Dim Const $path_rel_msse_x86          = "\msse\x86-glb\mseinstall-x86-*.exe"
-Dim Const $path_rel_msse_x64          = "\msse\x64-glb\mseinstall-x64-*.exe"
+Dim Const $path_rel_msse_x86          = "\msse\x86-glb\MSEInstall_x86_*.exe"
+Dim Const $path_rel_msse_x64          = "\msse\x64-glb\MSEInstall_x64_*.exe"
 Dim Const $path_rel_msi_all           = "\wouallmsi.txt"
 Dim Const $path_rel_msi_selected      = "\Temp\wouselmsi.txt"
 
@@ -764,9 +764,9 @@ EndIf
 $txtxpos = 3 * $txtxoffset
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
-  $shutdown = GUICtrlCreateCheckbox("Nach Aktualisierung herunterfahren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $shutdown = GUICtrlCreateCheckbox("Herunterfahren nach Abschluss", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $shutdown = GUICtrlCreateCheckbox("Shut down after updating", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $shutdown = GUICtrlCreateCheckbox("Shut down on completion", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If IniRead($inifilename, $ini_section_control, $ini_value_shutdown, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)

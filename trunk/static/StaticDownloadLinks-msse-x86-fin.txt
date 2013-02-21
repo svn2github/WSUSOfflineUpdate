@@ -1,1 +1,1 @@
-http://download.microsoft.com/download/B/E/A/BEAB92D8-4167-4A6E-A941-7049CAADD224/fiFI/x86/mseinstall.exe,mseinstall-x86-fin.exe
+http://download.microsoft.com/download/B/E/A/BEAB92D8-4167-4A6E-A941-7049CAADD224/MSEInstall_x86_fi_fi.exe
