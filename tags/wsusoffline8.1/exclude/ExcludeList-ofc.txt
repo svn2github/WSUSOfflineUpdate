@@ -1,0 +1,8 @@
+fullfile
+server
+srvapp
+srv
+sts
+wacwfe
+project
+visio
