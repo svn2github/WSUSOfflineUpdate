@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.1
+set WSUSOFFLINE_VERSION=8.1.1
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1080,7 +1080,7 @@ if "%INSTALL_MSSE%" NEQ "/instmsse" (
 if %OS_DOMAIN_ROLE% GEQ 2 (
   if "%MSSE_INSTALLED%"=="1" (goto CheckMSSEDefs) else (goto SkipMSSEInst)
 )
-set MSSE_FILENAME=..\msse\%OS_ARCH%-glb\MSEInstall_%OS_ARCH%_%OS_LANG_EXT:~,2%_%OS_LANG_EXT:~-2%.exe
+set MSSE_FILENAME=..\msse\%OS_ARCH%-glb\MSEInstall-%OS_ARCH%-%OS_LANG%.exe
 if not exist %MSSE_FILENAME% (
   echo Warning: Microsoft Security Essentials installation file ^(%MSSE_FILENAME%^) not found.
   echo %DATE% %TIME% - Warning: Microsoft Security Essentials installation file ^(%MSSE_FILENAME%^) not found >>%UPDATE_LOGFILE%

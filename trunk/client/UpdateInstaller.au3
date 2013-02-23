@@ -1,11 +1,11 @@
-; ***   WSUS Offline Update 8.1 - Installer   ***
+; ***  WSUS Offline Update 8.1.1 - Installer  ***
 ; ***       Author: T. Wittrock, Kiel         ***
 ; ***   Dialog scaling added by Th. Baisch    ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 
-Dim Const $caption                    = "WSUS Offline Update 8.1 - Installer"
+Dim Const $caption                    = "WSUS Offline Update 8.1.1 - Installer"
 
 ; Registry constants
 Dim Const $reg_key_wsh_hklm           = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings"
@@ -89,8 +89,8 @@ Dim Const $path_rel_cpp               = "\cpp\vcredist*.exe"
 Dim Const $path_rel_instdotnet35      = "\dotnet\dotnetfx35.exe"
 Dim Const $path_rel_instdotnet4       = "\dotnet\dotnetfx4*.exe"
 Dim Const $path_rel_ofc_glb           = "\ofc\glb\"
-Dim Const $path_rel_msse_x86          = "\msse\x86-glb\MSEInstall_x86_*.exe"
-Dim Const $path_rel_msse_x64          = "\msse\x64-glb\MSEInstall_x64_*.exe"
+Dim Const $path_rel_msse_x86          = "\msse\x86-glb\MSEInstall-x86-*.exe"
+Dim Const $path_rel_msse_x64          = "\msse\x64-glb\MSEInstall-x64-*.exe"
 Dim Const $path_rel_msi_all           = "\wouallmsi.txt"
 Dim Const $path_rel_msi_selected      = "\Temp\wouselmsi.txt"
 

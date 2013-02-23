@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 8.1
+WSUS Offline Update 8.1.1
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -721,4 +721,8 @@ Version 8.1 -- 21.02.13
 - Fix: Suboptimal sequence in DoUpdate.cmd script could lead to .NET installation failures
 - Fix: Removed Windows activation determination code from DetermineSystemProperties.vbs script since it's not used any longer (Thanks to "aker" and "boco")
 - Fix: Missing semicolon in Linux script CreateISOImage.sh lead to syntax error (Thanks to "falcon")
+--------------------------------------------------------------------------------
+Version 8.1.1 -- 23.02.13
+- NOTE: If you customized your copy of WOU using the script AddCustomLanguageSupport.cmd {lng}, please call it again once (per language) to get the appropriate MSE installation file(s) downloaded
+- Fix: Microsoft moved and renamed the Security Essentials installation files again (Thanks to "scharl", "boco" and "harry")
 --------------------------------------------------------------------------------
