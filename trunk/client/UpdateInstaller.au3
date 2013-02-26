@@ -1,11 +1,11 @@
-; ***  WSUS Offline Update 8.1.1 - Installer  ***
+; ***   WSUS Offline Update 8.2b - Installer  ***
 ; ***       Author: T. Wittrock, Kiel         ***
 ; ***   Dialog scaling added by Th. Baisch    ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 
-Dim Const $caption                    = "WSUS Offline Update 8.1.1 - Installer"
+Dim Const $caption                    = "WSUS Offline Update 8.2b - Installer"
 
 ; Registry constants
 Dim Const $reg_key_wsh_hklm           = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings"
@@ -460,9 +460,9 @@ EndIf
 ; Install IE10
 $txtxpos = $txtxpos + $txtwidth
 If ShowGUIInGerman() Then
-  $ie10 = GUICtrlCreateCheckbox("Internet Explorer 10 Rel. Preview installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $ie10 = GUICtrlCreateCheckbox("Internet Explorer 10 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $ie10 = GUICtrlCreateCheckbox("Install Internet Explorer 10 Rel. Preview", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $ie10 = GUICtrlCreateCheckbox("Install Internet Explorer 10", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
   OR (IEVersion() = "10") OR (NOT WinGlbPresent($scriptdir)) ) Then

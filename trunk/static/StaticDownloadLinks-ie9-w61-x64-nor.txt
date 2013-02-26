@@ -1,2 +1,2 @@
 http://download.microsoft.com/download/5/6/5/5654CF88-4405-4BD5-B5B5-4D977EFABC97/IE9-Windows7-x64-nor.exe
-http://download.microsoft.com/download/4/D/8/4D8344C0-E5C6-4095-A71D-2B6184AEAF62/IE10-Windows6.1-x64-nb-no.exe
+http://download.microsoft.com/download/4/C/4/4C4B80B3-4CD7-4FA7-9CC0-F69940B537E0/IE10-Windows6.1-x64-nb-no.exe

@@ -6,8 +6,9 @@ http://download.microsoft.com/download/A/D/4/AD4875AF-38B3-42C7-9915-16C7505C15D
 http://download.microsoft.com/download/1/E/2/1E2A08C9-B87B-4808-94A6-30BC9D65775E/Windows6.1-KB2592687-x86.msu
 http://download.microsoft.com/download/2/D/7/2D78D0DD-2802-41F5-88D6-DC1D559F206D/Windows6.1-KB2533623-x86.msu
 http://download.microsoft.com/download/3/1/D/31DB4F4F-207D-416E-9A07-FBD9E431F9FB/Windows6.1-KB2639308-x86.msu
+http://download.microsoft.com/download/F/4/3/F431C6D1-D581-459E-BB01-A6AEBBB779FC/Windows6.1-KB2670838-x86.msu
 http://download.microsoft.com/download/B/6/B/B6BF1D9B-2568-406B-88E8-E4A218DEA90A/Windows6.1-KB2729094-v2-x86.msu
 http://download.microsoft.com/download/A/0/B/A0BA0A59-1F11-4736-91C0-DFCB06224D99/Windows6.1-KB2731771-x86.msu
-http://download.microsoft.com/download/F/4/3/F431C6D1-D581-459E-BB01-A6AEBBB779FC/Windows6.1-KB2670838-x86.msu
-http://download.microsoft.com/download/0/4/9/049A037E-B6B4-4303-90BE-BA6CAE979674/IE10-Windows6.1-x86-en-us.exe
-http://download.microsoft.com/download/0/4/9/049A037E-B6B4-4303-90BE-BA6CAE979674/IE10-Windows6.1-x86-de-de.exe
+http://download.microsoft.com/download/4/8/1/481C640E-D3EE-4ADC-AA48-6D0ED2869D37/Windows6.1-KB2786081-x86.msu
+http://download.microsoft.com/download/8/A/C/8AC7C482-BC74-492E-B978-7ED04900CEDE/IE10-Windows6.1-x86-en-us.exe
+http://download.microsoft.com/download/7/0/C/70CCEF95-44AC-421C-87ED-4D30850130E8/IE10-Windows6.1-x86-de-de.exe

@@ -1,2 +1,2 @@
 http://download.microsoft.com/download/4/3/1/43168F77-CA3E-46DF-95BD-037D2156779F/IE9-Windows7-x64-trk.exe
-http://download.microsoft.com/download/4/D/8/4D8344C0-E5C6-4095-A71D-2B6184AEAF62/IE10-Windows6.1-x64-tr-tr.exe
+http://download.microsoft.com/download/9/9/C/99C0EC31-8E08-4415-A08A-173192FF94D2/IE10-Windows6.1-x64-tr-tr.exe

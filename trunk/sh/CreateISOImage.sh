@@ -2,7 +2,7 @@
 
 #########################################################################
 ###          WSUS Offline Update ISO maker for Linux systems          ###
-###                               v. 8.1.1                            ###
+###                            v. 8.2b (r447)                         ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg                     ###

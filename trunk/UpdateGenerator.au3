@@ -1,11 +1,11 @@
-; ***  WSUS Offline Update 8.1.1 - Generator  ***
+; ***   WSUS Offline Update 8.2b - Generator  ***
 ; ***       Author: T. Wittrock, Kiel         ***
 ; ***     USB-Option added by Ch. Riedel      ***
 ; ***   Dialog scaling added by Th. Baisch    ***
 
 #include <GUIConstants.au3>
 
-Dim Const $caption                  = "WSUS Offline Update 8.1.1"
+Dim Const $caption                  = "WSUS Offline Update 8.2b"
 Dim Const $title                    = $caption & " - Generator"
 Dim Const $donationURL              = "http://www.wsusoffline.net/donate.html"
 Dim Const $downloadLogFile          = "download.log"
@@ -94,6 +94,7 @@ Dim Const $misc_token_wsus          = "wsus"
 Dim Const $misc_token_wsus_only     = "wsusonly"
 Dim Const $misc_token_wsus_proxy    = "wsusbyproxy"
 Dim Const $misc_token_wsus_trans    = "transferwsus"
+Dim Const $misc_token_skipsdd       = "skipsdd"
 Dim Const $misc_token_skiptz        = "skiptz"
 Dim Const $misc_token_skipdownload  = "skipdownload"
 Dim Const $misc_token_skipdynamic   = "skipdynamic"
@@ -632,6 +633,9 @@ Dim $result = ""
   EndIf
   If NOT IsCheckBoxChecked($scripting) Then
     $result = $result & " /exitonerror"
+  EndIf
+  If IniRead($inifilename, $ini_section_misc, $misc_token_skipsdd, $disabled) = $enabled Then
+    $result = $result & " /skipsdd"
   EndIf
   If IniRead($inifilename, $ini_section_misc, $misc_token_skiptz, $disabled) = $enabled Then
     $result = $result & " /skiptz"

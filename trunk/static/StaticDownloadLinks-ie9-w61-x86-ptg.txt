@@ -1,2 +1,2 @@
 http://download.microsoft.com/download/0/8/4/08463F15-00E9-4251-98AC-60EFD9B10142/IE9-Windows7-x86-ptg.exe
-http://download.microsoft.com/download/0/4/9/049A037E-B6B4-4303-90BE-BA6CAE979674/IE10-Windows6.1-x86-pt-pt.exe
+http://download.microsoft.com/download/C/F/1/CF1A3C33-5DED-4C65-8794-884276DFC445/IE10-Windows6.1-x86-pt-pt.exe

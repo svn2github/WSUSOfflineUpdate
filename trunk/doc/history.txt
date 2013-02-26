@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 8.1.1
+WSUS Offline Update 8.2
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -726,3 +726,7 @@ Version 8.1.1 -- 23.02.13
 - NOTE: If you customized your copy of WOU using the script AddCustomLanguageSupport.cmd {lng}, please call it again once (per language) to get the appropriate MSE installation file(s) downloaded
 - Fix: Microsoft moved and renamed the Security Essentials installation files again (Thanks to "scharl", "boco" and "harry")
 --------------------------------------------------------------------------------
+Version 8.2 -- ??.??.13
+- Optional installation of Internet Explorer 10 on Windows 7 and Server 2008 R2 (x86/x64) systems (Thanks to "harry" and "boco")
+- Static download definitions may be updated while downloading (Thanks to "boco")
+ 

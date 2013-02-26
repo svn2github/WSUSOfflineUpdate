@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.1.1
+set WSUSOFFLINE_VERSION=8.2b (r447)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -144,7 +144,7 @@ goto EvalParams
 
 :EvalParams
 if "%3"=="" goto NoMoreParams
-for %%i in (/excludesp /excludestatics /includedotnet /includemsse /includewddefs /nocleanup /verify /exitonerror /skiptz /skipdownload /skipdynamic /proxy /wsus /wsusonly /wsusbyproxy) do (
+for %%i in (/excludesp /excludestatics /includedotnet /includemsse /includewddefs /nocleanup /verify /exitonerror /skipsdd /skiptz /skipdownload /skipdynamic /proxy /wsus /wsusonly /wsusbyproxy) do (
   if /i "%3"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected >>%DOWNLOAD_LOGFILE%
 )
 if /i "%3"=="/excludesp" set EXC_SP=1
@@ -158,6 +158,7 @@ if /i "%3"=="/includewddefs" (
 if /i "%3"=="/nocleanup" set CLEANUP_DL=0
 if /i "%3"=="/verify" set VERIFY_DL=1
 if /i "%3"=="/exitonerror" set EXIT_ERR=1
+if /i "%3"=="/skipsdd" set SKIP_SDD=1
 if /i "%3"=="/skiptz" set SKIP_TZ=1
 if /i "%3"=="/skipdownload" (
   set SKIP_DL=1
@@ -360,6 +361,14 @@ if exist ..\client\wxp\glb\rootsupd.exe (
   if exist ..\client\md\hashes-win-glb.txt del ..\client\md\hashes-win-glb.txt
   if exist ..\client\md\hashes-wxp-glb.txt del ..\client\md\hashes-wxp-glb.txt
 )
+
+rem *** Update static download definitions ***
+if "%SKIP_SDD%"=="1" goto SkipSDD
+echo Updating static download definitions...
+%WGET_PATH% -nv -N -P ..\static -a %DOWNLOAD_LOGFILE% http://download.wsusoffline.net/StaticDownloadFiles-modified.txt
+%WGET_PATH% -N -i ..\static\StaticDownloadFiles-modified.txt -P ..\static
+echo %DATE% %TIME% - Info: Updated static download definitions >>%DOWNLOAD_LOGFILE%
+:SkipSDD
 
 rem *** Download mkisofs tool ***
 if "%SKIP_DL%"=="1" goto SkipMkIsoFs
@@ -819,7 +828,6 @@ if "%VERIFY_DL%"=="1" (
 rem *** Download the platform specific patches ***
 for %%i in (wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-x64) do (
   if /i "%1"=="%%i" (
-    %WGET_PATH% -nv -N -P ..\static -a %DOWNLOAD_LOGFILE% http://download.wsusoffline.net/StaticDownloadLinks-win-x86-glb.txt
     call :DownloadCore win glb x86 %SKIP_PARAM%
     if errorlevel 1 goto Error
   )
