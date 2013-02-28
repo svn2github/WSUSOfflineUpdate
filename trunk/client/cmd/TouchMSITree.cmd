@@ -5,8 +5,6 @@ if "%UPDATE_LOGFILE%"=="" set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 
 for %%i in (listall install instselected) do (
   if /i "%1"=="/%%i" goto Proceed
-    for %%j in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%2"=="%%j" goto EvalParams)
-  )
 )
 goto InvalidParam
 

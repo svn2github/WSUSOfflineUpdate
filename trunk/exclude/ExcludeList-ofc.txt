@@ -5,4 +5,7 @@ srv
 sts
 wacwfe
 project
-visio
+visio20
+visiomui
+visiosp
+visioww

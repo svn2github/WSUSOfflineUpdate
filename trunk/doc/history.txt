@@ -726,7 +726,11 @@ Version 8.1.1 -- 23.02.13
 - NOTE: If you customized your copy of WOU using the script AddCustomLanguageSupport.cmd {lng}, please call it again once (per language) to get the appropriate MSE installation file(s) downloaded
 - Fix: Microsoft moved and renamed the Security Essentials installation files again (Thanks to "scharl", "boco" and "harry")
 --------------------------------------------------------------------------------
-Version 8.2 -- ??.??.13
+Version 8.2 -- 28.02.13
+- NOTE: If you customized your copy of WOU using the script AddCustomLanguageSupport.cmd {lng}, please call it again once (per language) to get the appropriate IE10 installation file(s) downloaded
 - Optional installation of Internet Explorer 10 on Windows 7 and Server 2008 R2 (x86/x64) systems (Thanks to "harry" and "boco")
 - Static download definitions may be updated while downloading (Thanks to "boco")
- 
+- Office update exclude list refined to include Visio updates (e.g. kb2687508) now (Thanks to "Gerby") 
+- Static download URLs updated for C++ 2005 and 2012 Runtime Libraries
+- Fix: Linux script CreateISOImage.sh did not support symbolic links (Thanks to "jpotto")
+--------------------------------------------------------------------------------
