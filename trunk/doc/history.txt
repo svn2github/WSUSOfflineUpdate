@@ -734,3 +734,5 @@ Version 8.2 -- 28.02.13
 - Static download URLs updated for C++ 2005 and 2012 Runtime Libraries
 - Fix: Linux script CreateISOImage.sh did not support symbolic links (Thanks to "jpotto")
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- Fix: Linux script DownloadUpdates.sh corrected (Thanks to St. Baur, J. Steffens and H. Hullen)

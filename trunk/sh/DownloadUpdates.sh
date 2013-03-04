@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                               v. 8.2                              ###
+###                          v. 8.2+ (r451)                           ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -13,12 +13,9 @@
 # 1 - file error
 # 2 - connection error
 
-Sh=$_
-# muss der erste ausgefuehrte Befehl sein
 Prog=$(basename $0)
-
-case $Sh in
-    *$Prog|*bash)
+case $BASH in
+    *bin/bash)
     ;;
     *)
     echo "
@@ -26,7 +23,7 @@ Please start this program with
 
         bash $Prog
 "
-        exit 1
+    exit 1
     ;;
 esac
 
@@ -310,8 +307,9 @@ Please select your OS:
 
 [11] All 32 bit			[12] All 64 bit
 
-[13] Office 2003	[14] Office 2007	[15] Office 2010
-[16] All Office updates (2003 - 2010)
+[13] Office 2003	[14] Office 2007
+[15] Office 2010	[16] Office 2013
+[17] All Office updates (2003 - 2013)
 
 END
 read -p "which number? " syschoice
@@ -331,6 +329,16 @@ sys=$1
 if [ "$sys" == "wxp-x64" ]; then
   sys="w2k3-x64"
 fi
+
+case $sys in
+    *-x64)
+	OS_ARCH=x64
+	;;
+    *)
+	OS_ARCH=x86
+	;;
+esac
+
 }
 
 getlanguage()
@@ -641,14 +649,18 @@ done
 
 for Pfad in static static/custom; do
 if [ "$dotnet" == "1" ]; then
+    test -f ../$Pfad/StaticDownloadLinks-dotnet.txt && \
   cp ../$Pfad/StaticDownloadLinks-dotnet.txt ../temp/StaticUrls-dotnet.txt
+    test -f ../$Pfad/StaticDownloadLinks-cpp-${OS_ARCH}-glb.txt && \
   cp ../$Pfad/StaticDownloadLinks-cpp-${OS_ARCH}-glb.txt ../temp/StaticUrls-cpp-${OS_ARCH}-glb.txt
 fi
 
 if [ "$msse" == "1" ]; then
+    test -f ../$Pfad/StaticDownloadLinks-msse-${OS_ARCH}-glb.txt && \
     cp ../$Pfad/StaticDownloadLinks-msse-${OS_ARCH}-glb.txt ../temp/StaticUrls-msse-${OS_ARCH}-glb.txt
 fi
 if [ "$wddefs" == "1" ]; then
+    test -f ../$Pfad/StaticDownloadLink-wddefs-${OS_ARCH}-glb.txt && \
     cp ../$Pfad/StaticDownloadLink-wddefs-${OS_ARCH}-glb.txt ../temp/StaticUrls-wddefs-${OS_ARCH}-glb.txt
 fi
 done # Pfad
@@ -741,7 +753,7 @@ test -f ../xslt/ExtractDownloadLinks-${sys}-${OS_ARCH}-${lang}.xsl \
     && $xml tr ../xslt/ExtractDownloadLinks-${sys}-${OS_ARCH}-${lang}.xsl ../temp/package.xml > ../temp/Urls-${sys}-${lang}.txt
 test "$dotnet" == "1" && $xml tr ../xslt/ExtractDownloadLinks-dotnet-${OS_ARCH}-glb.xsl ../temp/package.xml > ../temp/Urls-dotnet-${OS_ARCH}.txt
 
-  touch ../temp/Urls-${sys}-${lang}.txt
+test -f ../temp/Urls-${sys}-${lang}.txt && \
   cp ../temp/Urls-${sys}-${lang}.txt ../temp/tmpUrls-${sys}-${lang}.txt
 
 > ../temp/tmpExcludeList-${sys}.txt
@@ -757,15 +769,18 @@ test -f ../$Pfad/ExcludeList-${sys}.txt && \
 
 test -f ../exclude/ExcludeList-superseded.txt && \
     cat ../exclude/ExcludeList-superseded.txt >> ../temp/tmpExcludeList-${sys}.txt
-grep -F -i -v -f ../temp/tmpExcludeList-${sys}.txt ../temp/tmpUrls-${sys}-${lang}.txt > ../temp/ValidUrls-${sys}-${lang}.txt
+test -f ../temp/tmpUrls-${sys}-${lang}.txt && \
+    grep -F -i -v -f ../temp/tmpExcludeList-${sys}.txt ../temp/tmpUrls-${sys}-${lang}.txt > ../temp/ValidUrls-${sys}-${lang}.txt
 
 test $lang == glb || {
   test -f ../xslt/ExtractDownloadLinks-${sys}-${OS_ARCH}-glb.xsl && \
     $xml tr ../xslt/ExtractDownloadLinks-${sys}-${OS_ARCH}-glb.xsl ../temp/package.xml > ../temp/Urls-${sys}-glb.txt
   test -f ../xslt/ExtractDownloadLinks-${sys}-glb.xsl && \
     $xml tr ../xslt/ExtractDownloadLinks-${sys}-glb.xsl ../temp/package.xml > ../temp/Urls-${sys}-glb.txt
+  test -f ../temp/Urls-${sys}-glb.txt && {
   cp ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
   grep -F -i -v -f ../temp/tmpExcludeList-${sys}.txt ../temp/tmpValidUrls-${sys}-glb.txt > ../temp/ValidUrls-${sys}-glb.txt
+    }
   rm -f ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
   }
 
@@ -937,13 +952,31 @@ if [ "$dotnet" == "1" ]; then
 
   echo "Creating integrity database for .Net ..."
   cd ../client/bin
-  hashdeep -c md5,sha1,sha256 -l ../dotnet/*.exe | tr '/' '\\' > ../md/hashes-dotnet.txt
+    for Datei in ../dotnet/*.exe
+    do
+    test -s "$Datei" && \
+	hashdeep -c md5,sha1,sha256 -l "$Datei" | tr '/' '\\' > ../md/hashes-dotnet.txt
+    done
   cd "$PATH_PWD"
 
   echo "Creating integrity database for .Net-${OS_ARCH}-glb ..."
   cd ../client/bin
   hashdeep -c md5,sha1,sha256 -l -r ../dotnet/${OS_ARCH}-glb | tr '/' '\\' > ../md/hashes-dotnet-${OS_ARCH}-glb.txt
   cd "$PATH_PWD"
+fi
+
+# cpp
+if [ "$dotnet" == "1" ]; then
+    Vz=cpp
+    Txt=CPP
+    down_msse_cpp
+fi
+
+# MSSE
+if [ "$msse" == "1" ]; then
+    Vz=msse
+    Txt=MSSE
+    down_msse_cpp
 fi
 
 # wddefs
@@ -961,20 +994,6 @@ if [ "$wddefs" == "1" ]; then
     hashdeep -c md5,sha1,sha256 -l -r ../$Vz | tr '/' '\\' > ../md/hashes-$Vz.txt
     cd "$PATH_PWD"
   fi
-fi
-
-# cpp
-if [ "$dotnet" == "1" ]; then
-    Vz=cpp
-    Txt=CPP
-    down_msse_cpp
-fi
-
-# MSSE
-if [ "$msse" == "1" ]; then
-    Vz=msse
-    Txt=MSSE
-    down_msse_cpp
 fi
 
 echo "Downloading patches for $sys $lang"
