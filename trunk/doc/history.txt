@@ -735,4 +735,5 @@ Version 8.2 -- 28.02.13
 - Fix: Linux script CreateISOImage.sh did not support symbolic links (Thanks to "jpotto")
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
+- Fix: Internet Explorer 9 / 10 and prerequisites will now be attempted to be installed only once (Thanks to "soeftel" and "boco")
 - Fix: Linux script DownloadUpdates.sh corrected (Thanks to St. Baur, J. Steffens and H. Hullen)

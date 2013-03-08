@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.2+ (r451)
+set WSUSOFFLINE_VERSION=8.2+ (r452)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -19,15 +19,16 @@ if exist .\custom\InitializationHook.cmd (
   pushd .\custom
   call InitializationHook.cmd
   popd
-  echo %DATE% %TIME% - Info: Executed custom initialization hook ^(Errorlevel: %errorlevel%^) >>%DOWNLOAD_LOGFILE%
-) else (
-  if exist %DOWNLOAD_LOGFILE% (
-    echo. >>%DOWNLOAD_LOGFILE%
-    echo -------------------------------------------------------------------------------- >>%DOWNLOAD_LOGFILE%
-    echo. >>%DOWNLOAD_LOGFILE%
-  )
+)
+if exist %DOWNLOAD_LOGFILE% (
+  echo. >>%DOWNLOAD_LOGFILE%
+  echo -------------------------------------------------------------------------------- >>%DOWNLOAD_LOGFILE%
+  echo. >>%DOWNLOAD_LOGFILE%
 )
 echo %DATE% %TIME% - Info: Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2 >>%DOWNLOAD_LOGFILE%
+if exist .\custom\InitializationHook.cmd (
+  echo %DATE% %TIME% - Info: Executed custom initialization hook ^(Errorlevel: %errorlevel%^) >>%DOWNLOAD_LOGFILE%
+)
 
 for %%i in (wxp w2k3 w2k3-x64) do (
   if /i "%1"=="%%i" (

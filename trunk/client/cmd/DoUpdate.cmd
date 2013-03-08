@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.2+ (r451)
+set WSUSOFFLINE_VERSION=8.2+ (r452)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -133,7 +133,7 @@ if "%USERNAME%"=="WOUTempAdmin" (
   if exist "%TEMP%\wourecall.3" ren "%TEMP%\wourecall.3" wourecall.4
   if exist "%TEMP%\wourecall.2" ren "%TEMP%\wourecall.2" wourecall.3
   if exist "%TEMP%\wourecall.1" ren "%TEMP%\wourecall.1" wourecall.2
-  if not exist "%TEMP%\wourecall.*" echo recall>"%TEMP%\wourecall.1"
+  if not exist "%TEMP%\wourecall.*" echo. >"%TEMP%\wourecall.1"
 )
 
 rem *** Check Operating System ***
@@ -508,6 +508,7 @@ for /F %%i in ('dir /B %IE_FILENAME%') do (
 goto IEInstalled
 
 :IEw60
+if exist %SystemRoot%\Temp\wou_ie_tried.txt goto SkipIEInst
 if /i "%OS_ARCH%"=="x64" (
   if "%INSTALL_IE%"=="/instie9" (
     set IE_FILENAME=..\%OS_NAME%-%OS_ARCH%\glb\IE9-WindowsVista-%OS_ARCH%-%OS_LANG%*.exe
@@ -528,6 +529,7 @@ if errorlevel 1 (
   goto SkipIEInst
 )
 if "%INSTALL_IE%"=="/instie9" (
+  if exist %SystemRoot%\Temp\wou_iepre_tried.txt goto SkipIE9Pre
   echo Checking Internet Explorer 9 prerequisites...
   %CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
   if exist "%TEMP%\InstalledUpdateIds.txt" (
@@ -542,11 +544,14 @@ if "%INSTALL_IE%"=="/instie9" (
     echo Installing Internet Explorer 9 prerequisites...
     call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
     if not errorlevel 1 (
+      if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
+      echo. >%SystemRoot%\Temp\wou_iepre_tried.txt
       set RECALL_REQUIRED=1
       goto IEInstalled
     )
   )
 )
+:SkipIE9Pre
 for /F %%i in ('dir /B %IE_FILENAME%') do (
   if "%INSTALL_IE%"=="/instie9" (
     echo Installing Internet Explorer 9...
@@ -564,10 +569,13 @@ for /F %%i in ('dir /B %IE_FILENAME%') do (
     )
   )
   if not errorlevel 1 set RECALL_REQUIRED=1
+  if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
+  echo. >%SystemRoot%\Temp\wou_ie_tried.txt
 )
 goto IEInstalled
 
 :IEw61
+if exist %SystemRoot%\Temp\wou_ie_tried.txt goto SkipIEInst
 if /i "%OS_ARCH%"=="x64" (
   if "%INSTALL_IE%"=="/instie10" (
     set IE_FILENAME=..\%OS_NAME%-%OS_ARCH%\glb\IE10-Windows6.1-%OS_ARCH%-%OS_LANG_EXT%*.exe
@@ -588,6 +596,7 @@ if errorlevel 1 (
   goto SkipIEInst
 )
 if "%INSTALL_IE%"=="/instie10" (
+  if exist %SystemRoot%\Temp\wou_iepre_tried.txt goto SkipIE10Pre
   echo Checking Internet Explorer 10 prerequisites...
   %CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
   if exist "%TEMP%\InstalledUpdateIds.txt" (
@@ -602,11 +611,14 @@ if "%INSTALL_IE%"=="/instie10" (
     echo Installing Internet Explorer 10 prerequisites...
     call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
     if not errorlevel 1 (
+      if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
+      echo. >%SystemRoot%\Temp\wou_iepre_tried.txt
       set RECALL_REQUIRED=1
       goto IEInstalled
     )
   )
 )
+:SkipIE10Pre
 if "%INSTALL_IE%"=="/instie10" (echo Installing Internet Explorer 10...) else (echo Installing Internet Explorer 9...)
 for /F %%i in ('dir /B %IE_FILENAME%') do (
   if /i "%OS_ARCH%"=="x64" (
@@ -615,6 +627,8 @@ for /F %%i in ('dir /B %IE_FILENAME%') do (
     call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /ignoreerrors /passive /update-no /closeprograms /no-default /norestart
   )
   if not errorlevel 1 set RECALL_REQUIRED=1
+  if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
+  echo. >%SystemRoot%\Temp\wou_ie_tried.txt
 )
 goto IEInstalled
 
@@ -1340,11 +1354,11 @@ if exist ..\software\custom\InstallCustomSoftware.cmd (
   echo %DATE% %TIME% - Info: Executed custom software installation hook ^(Errorlevel: %errorlevel%^) >>%UPDATE_LOGFILE%
   set REBOOT_REQUIRED=1
 )
-if exist "%SystemRoot%\Temp\wouselmsi.txt" (
+if exist %SystemRoot%\Temp\wouselmsi.txt (
   echo Installing selected MSI packages...
   call TouchMSITree.cmd /instselected
   echo %DATE% %TIME% - Info: Installed selected MSI packages >>%UPDATE_LOGFILE%
-  del "%SystemRoot%\Temp\wouselmsi.txt"
+  del %SystemRoot%\Temp\wouselmsi.txt
   set REBOOT_REQUIRED=1
 )
 
@@ -1454,6 +1468,8 @@ if "%RECALL_REQUIRED%"=="1" (
     %SystemRoot%\system32\shutdown.exe /r /f /t 3
   ) else goto ManualRecall
 ) else (
+  if exist %SystemRoot%\Temp\wou_iepre_tried.txt del %SystemRoot%\Temp\wou_iepre_tried.txt
+  if exist %SystemRoot%\Temp\wou_ie_tried.txt del %SystemRoot%\Temp\wou_ie_tried.txt
   if "%SHOW_LOG%"=="/showlog" call PrepareShowLogFile.cmd
   if "%BOOT_MODE%"=="/autoreboot" (
     if "%USERNAME%"=="WOUTempAdmin" (
@@ -1646,6 +1662,8 @@ echo.
 goto Cleanup
 
 :Cleanup
+if exist %SystemRoot%\Temp\wou_iepre_tried.txt del %SystemRoot%\Temp\wou_iepre_tried.txt
+if exist %SystemRoot%\Temp\wou_ie_tried.txt del %SystemRoot%\Temp\wou_ie_tried.txt
 if "%USERNAME%"=="WOUTempAdmin" (
   if "%SHOW_LOG%"=="/showlog" call PrepareShowLogFile.cmd
   echo Cleaning up automatic recall...

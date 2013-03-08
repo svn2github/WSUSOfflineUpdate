@@ -28,7 +28,7 @@ if /i "%1"=="/listall" (
 ) else (
   for /R "%~dp0..\software\msi" %%i in (*.msi) do (
     if /i "%1"=="/instselected" (
-      %SystemRoot%\system32\find.exe /I "%%~ni" "%SystemRoot%\Temp\wouselmsi.txt" >nul 2>&1
+      %SystemRoot%\system32\find.exe /I "%%~ni" %SystemRoot%\Temp\wouselmsi.txt >nul 2>&1
       if not errorlevel 1 call :InstMSI "%%i"
     ) else (
       if /i "%1"=="/install" call :InstMSI "%%i"
