@@ -735,6 +735,7 @@ Version 8.2 -- 28.02.13
 - Fix: Linux script CreateISOImage.sh did not support symbolic links (Thanks to "jpotto")
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
+- Microsoft Silverlight updated to v. 5.1.20125.0 (Thanks to "harry")
 - Fix: Internet Explorer 9 / 10 and prerequisites will now be attempted to be installed only once (Thanks to "soeftel" and "boco")
 - Fix: Removed static download definition for obsolete Security Update kb2598039 for Office 2010 x86 (Thanks to "harry")
 - Fix: Linux script DownloadUpdates.sh corrected (Thanks to St. Baur, J. Steffens and H. Hullen)
