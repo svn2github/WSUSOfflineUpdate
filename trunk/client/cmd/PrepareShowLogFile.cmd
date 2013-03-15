@@ -6,7 +6,7 @@ if "%UPDATE_LOGFILE%"=="" set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if "%REG_PATH%"=="" goto NoRegPath
 
 echo Registering log file display...
-%REG_PATH% ADD HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce /v ShowOfflineUpdateLogFile /t REG_SZ /d "%SystemRoot%\system32\notepad.exe %UPDATE_LOGFILE%" >nul 2>&1
+%REG_PATH% ADD HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce /v ShowOfflineUpdateLogFile /t REG_SZ /d "%SystemRoot%\system32\notepad.exe %UPDATE_LOGFILE%" /f >nul 2>&1
 if errorlevel 1 goto RegError
 echo %DATE% %TIME% - Info: Registered log file display >>%UPDATE_LOGFILE%
 goto EoF

@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.2+ (r455)
+set WSUSOFFLINE_VERSION=8.2+ (r456)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -68,8 +68,7 @@ popd
 set CSCRIPT_PATH=%SystemRoot%\system32\cscript.exe
 if not exist %CSCRIPT_PATH% goto NoCScript
 set REG_PATH=%SystemRoot%\system32\reg.exe
-if "%BOOT_MODE%"=="/autoreboot" (if not exist %REG_PATH% goto NoReg)
-if "%SHOW_LOG%"=="/showlog" (if not exist %REG_PATH% goto NoReg)
+if not exist %REG_PATH% goto NoReg
 
 rem *** Check user's privileges ***
 echo Checking user's privileges...
@@ -322,7 +321,6 @@ goto SP%OS_NAME%
 
 :SPwxp
 if 0 EQU %OS_SP_VER_MAJOR% (
-  if not exist %REG_PATH% goto NoReg
   echo Faking Windows XP Service Pack 1...
   %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\Control\Windows /v CSDVersion /t REG_DWORD /d 0x100 /f >nul 2>&1
   if errorlevel 1 (

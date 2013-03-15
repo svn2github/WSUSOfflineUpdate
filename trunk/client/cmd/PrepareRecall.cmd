@@ -85,7 +85,7 @@ if errorlevel 1 (
 )
 
 echo Registering recall...
-%REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v WSUSOfflineUpdate /t REG_SZ /d "%SystemRoot%\Temp\WOURecall\RecallStub.cmd" >nul 2>&1
+%REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v WSUSOfflineUpdate /t REG_SZ /d "%SystemRoot%\Temp\WOURecall\RecallStub.cmd" /f >nul 2>&1
 if errorlevel 1 (
   echo Warning: Registration of recall failed.
   echo %DATE% %TIME% - Warning: Registration of recall failed >>%UPDATE_LOGFILE%

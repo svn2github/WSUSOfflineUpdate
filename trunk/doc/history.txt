@@ -738,4 +738,6 @@ Version ?.? -- ??.??.??
 - Microsoft Silverlight updated to v. 5.1.20125.0 (Thanks to "harry")
 - Fix: Internet Explorer 9 / 10 and prerequisites will now be attempted to be installed only once (Thanks to "soeftel" and "boco")
 - Fix: Removed static download definition for obsolete Security Update kb2598039 for Office 2010 x86 (Thanks to "harry")
+- Fix: Added static download definition for Update kb2687503 (may replace kb2597986) for Office 2010 x86 (Thanks to "harry")
+- Fix: Missing "/f" switch for reg.exe could cause PrepareRecall.cmd, PrepareShowLogFile.cmd and CleanupRecall.cmd to wait for user interaction (Thanks to "rbr555")
 - Fix: Linux script DownloadUpdates.sh corrected (Thanks to St. Baur, J. Steffens and H. Hullen)

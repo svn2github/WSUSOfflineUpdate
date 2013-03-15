@@ -84,9 +84,9 @@ if "%USERNAME%"=="WOUTempAdmin" (
       echo %DATE% %TIME% - Info: Deleted registry reference to WOUTempAdmin profile >>%UPDATE_LOGFILE%
     )
   )
-  %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v DeleteWOUTempAdminProfile /t REG_SZ /d "cmd /c rd /S /Q \"%USERPROFILE%\"" >nul 2>&1
+  %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v DeleteWOUTempAdminProfile /t REG_SZ /d "cmd /c rd /S /Q \"%USERPROFILE%\"" /f >nul 2>&1
   echo %DATE% %TIME% - Info: Registered deletion of WOUTempAdmin profile >>%UPDATE_LOGFILE%
-  %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v DeleteWOURecallDir /t REG_SZ /d "cmd /c rd /S /Q \"%SystemRoot%\Temp\WOURecall\"" >nul 2>&1
+  %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v DeleteWOURecallDir /t REG_SZ /d "cmd /c rd /S /Q \"%SystemRoot%\Temp\WOURecall\"" /f >nul 2>&1
   echo %DATE% %TIME% - Info: Registered deletion of recall directory >>%UPDATE_LOGFILE%
 ) else (
   echo %DATE% %TIME% - Warning: WOUTempAdmin is not logged on - skipped registration of profile and recall directory deletion >>%UPDATE_LOGFILE%
