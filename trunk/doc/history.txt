@@ -736,6 +736,7 @@ Version 8.2 -- 28.02.13
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
 - Microsoft Silverlight updated to v. 5.1.20125.0 (Thanks to "harry")
+- Support removed for .NET Frameworks 2.0 SP0/SP1 and 3.5 SP0 (Thanks to M. Trenkner)
 - Fix: Internet Explorer 9 / 10 and prerequisites will now be attempted to be installed only once (Thanks to "soeftel" and "boco")
 - Fix: Removed static download definition for obsolete Security Update kb2598039 for Office 2010 x86 (Thanks to "harry")
 - Fix: Added static download definition for Update kb2687503 (may replace kb2597986) for Office 2010 x86 (Thanks to "harry")
