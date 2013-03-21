@@ -1,0 +1,11 @@
+fullfile
+server
+srvapp
+srv
+sts
+wacwfe
+project
+visio20
+visiomui
+visiosp
+visioww
