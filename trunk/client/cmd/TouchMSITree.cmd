@@ -9,14 +9,24 @@ for %%i in (listall install instselected) do (
 goto InvalidParam
 
 :InstMSI
-echo Installing %1...
 if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
-@%SystemRoot%\system32\msiexec.exe /i %1 /passive /norestart /lic+ "%SystemRoot%\Temp\%~n1.log"
-if errorlevel 1 (
-  echo %DATE% %TIME% - Warning: Installation of %1 failed >>%UPDATE_LOGFILE%
+if exist %~dpn1.mst (
+  echo Installing %1 using %~dpn1.mst...
+  @%SystemRoot%\system32\msiexec.exe /i %1 TRANSFORMS=%~dpn1.mst /passive /norestart /log "%SystemRoot%\Temp\%~n1.log"
+  if errorlevel 1 (
+    echo %DATE% %TIME% - Warning: Installation of %1 using %~dpn1.mst failed >>%UPDATE_LOGFILE%
+  ) else (
+    echo %DATE% %TIME% - Info: Installed %1 using %~dpn1.mst >>%UPDATE_LOGFILE%
+  )  
 ) else (
-  echo %DATE% %TIME% - Info: Installed %1 >>%UPDATE_LOGFILE%
-)  
+  echo Installing %1...
+  @%SystemRoot%\system32\msiexec.exe /i %1 /passive /norestart /log "%SystemRoot%\Temp\%~n1.log"
+  if errorlevel 1 (
+    echo %DATE% %TIME% - Warning: Installation of %1 failed >>%UPDATE_LOGFILE%
+  ) else (
+    echo %DATE% %TIME% - Info: Installed %1 >>%UPDATE_LOGFILE%
+  )  
+)
 goto :eof
 
 :Proceed

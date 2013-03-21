@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 8.2
+WSUS Offline Update 8.3
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -734,11 +734,13 @@ Version 8.2 -- 28.02.13
 - Static download URLs updated for C++ 2005 and 2012 Runtime Libraries
 - Fix: Linux script CreateISOImage.sh did not support symbolic links (Thanks to "jpotto")
 --------------------------------------------------------------------------------
-Version ?.? -- ??.??.??
+Version 8.3 -- 21.03.13
 - Microsoft Silverlight updated to v. 5.1.20125.0 (Thanks to "harry")
+- MSI packages' installations support MST transformation files now (Thanks to "rbr555")
 - Support removed for .NET Frameworks 2.0 SP0/SP1 and 3.5 SP0 (Thanks to M. Trenkner)
 - Fix: Internet Explorer 9 / 10 and prerequisites will now be attempted to be installed only once (Thanks to "soeftel" and "boco")
 - Fix: Removed static download definition for obsolete Security Update kb2598039 for Office 2010 x86 (Thanks to "harry")
 - Fix: Added static download definition for Update kb2687503 (may replace kb2597986) for Office 2010 x86 (Thanks to "harry")
 - Fix: Missing "/f" switch for reg.exe could cause PrepareRecall.cmd, PrepareShowLogFile.cmd and CleanupRecall.cmd to wait for user interaction (Thanks to "rbr555")
 - Fix: Linux script DownloadUpdates.sh corrected (Thanks to St. Baur, J. Steffens and H. Hullen)
+--------------------------------------------------------------------------------
