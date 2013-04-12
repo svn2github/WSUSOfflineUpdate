@@ -79,7 +79,7 @@ Dim Const $enabled                    = "Enabled"
 Dim Const $disabled                   = "Disabled"
 
 ; Paths
-Dim Const $path_max_length            = 128
+Dim Const $path_max_length            = 192
 Dim Const $path_invalid_chars         = "!%&()^+,;="
 Dim Const $path_rel_builddate         = "\builddate.txt"
 Dim Const $path_rel_hashes            = "\md\"
@@ -144,16 +144,16 @@ Dim $result, $netdrives, $i
   Return $result
 EndFunc
 
-Func PathValid($basepath)
+Func PathValid($path)
 Dim $result, $arr_invalid, $i
 
-  If StringLen($basepath) > $path_max_length Then
+  If StringLen($path) > $path_max_length Then
     $result = False
   Else
     $result = True
     $arr_invalid = StringSplit($path_invalid_chars, "")
     For $i = 1 to $arr_invalid[0]
-      If StringInStr($basepath, $arr_invalid[$i]) > 0 Then
+      If StringInStr($path, $arr_invalid[$i]) > 0 Then
         $result = False
         ExitLoop
       EndIf
@@ -850,44 +850,52 @@ If NOT WSHAvailable() Then
     MsgBox(0x2010, "Fehler", "Der Windows Script Host ist deaktiviert. Bitte pr¸fen Sie die Registrierungswerte" _
                      & @LF & "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings\Enabled und" _
                      & @LF & "HKEY_CURRENT_USER\Software\Microsoft\Windows Script Host\Settings\Enabled")
-    Exit(1)
   Else
     MsgBox(0x2010, "Error", "Windows Script Host is disabled on this machine. Please check registry values" _
                     & @LF & "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings\Enabled and" _
                     & @LF & "HKEY_CURRENT_USER\Software\Microsoft\Windows Script Host\Settings\Enabled")
-    Exit(1)
   EndIf
+  Exit(1)
 EndIf
 If $scriptdir = "" Then
   If ShowGUIInGerman() Then
     MsgBox(0x2010, "Fehler", "Dem Skript-Pfad " & @ScriptDir _
                      & @LF & "konnte kein Laufwerksbuchstabe zugewiesen werden.")
-    Exit(1)
   Else
     MsgBox(0x2010, "Error", "Unable to assign a drive letter" _
                     & @LF & "to the script path " & @ScriptDir)
-    Exit(1)
   EndIf
+  Exit(1)
 EndIf
 If NOT PathValid($scriptdir) Then
   If ShowGUIInGerman() Then
     MsgBox(0x2010, "Fehler", "Der Skript-Pfad darf nicht mehr als " & $path_max_length & " Zeichen lang sein und" _
                      & @LF & "darf keines der folgenden Zeichen enthalten: " & $path_invalid_chars)
-    Exit(1)
   Else
-    MsgBox(0x2010, "Fehler", "The script path must not be more than " & $path_max_length & " characters long and" _
-                     & @LF & "must not contain any of the following characters: " & $path_invalid_chars)
-    Exit(1)
+    MsgBox(0x2010, "Error", "The script path must not be more than " & $path_max_length & " characters long and" _
+                    & @LF & "must not contain any of the following characters: " & $path_invalid_chars)
   EndIf
+  Exit(1)
 EndIf
-If ( (StringRight(EnvGet("TEMP"), 1) = "\") OR (StringRight(EnvGet("TEMP"), 1) = ":") ) Then
+If NOT PathValid(@TempDir) Then
   If ShowGUIInGerman() Then
-    MsgBox(0x2010, "Fehler", "Die Umgebungsvariable TEMP" & @LF & "enth‰lt einen abschlieﬂenden Backslash ('\')" & @LF & "oder einen abschlieﬂenden Doppelpunkt (':').")
-    Exit(1)
+    MsgBox(0x2010, "Fehler", "Der %TEMP%-Pfad darf nicht mehr als " & $path_max_length & " Zeichen lang sein und" _
+                     & @LF & "darf keines der folgenden Zeichen enthalten: " & $path_invalid_chars)
   Else
-    MsgBox(0x2010, "Error", "The environment variable TEMP" & @LF & "contains a trailing backslash ('\')" & @LF & "or a trailing colon (':').")
-    Exit(1)
+    MsgBox(0x2010, "Error", "The %TEMP% path must not be more than " & $path_max_length & " characters long and" _
+                    & @LF & "must not contain any of the following characters: " & $path_invalid_chars)
   EndIf
+  Exit(1)
+EndIf
+If ( (StringRight(@TempDir, 1) = "\") OR (StringRight(@TempDir, 1) = ":") ) Then
+  If ShowGUIInGerman() Then
+    MsgBox(0x2010, "Fehler", "Der %TEMP%-Pfad enth‰lt einen abschlieﬂenden Backslash ('\')" _
+                     & @LF & "oder einen abschlieﬂenden Doppelpunkt (':').")
+  Else
+    MsgBox(0x2010, "Error", "The %TEMP% path contains a trailing backslash ('\')" _
+                    & @LF & "or a trailing colon (':').")
+  EndIf
+  Exit(1)
 EndIf
 While 1
   Switch GUIGetMsg()

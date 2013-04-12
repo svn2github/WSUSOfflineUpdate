@@ -84,6 +84,7 @@ test "$lang" || {
     echo language $2 does not exist.
     exit 1
     }
+Origlang=$lang
 
 case $sys in
     w6[0-2]*)

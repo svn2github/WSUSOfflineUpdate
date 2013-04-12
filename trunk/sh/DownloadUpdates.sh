@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                               v. 8.3                              ###
+###                          v. 8.3+ (r460)                           ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -53,7 +53,7 @@ Missing=0
 for Datei in cabextract md5deep
   do
     Nomiss=$(which $Datei 2>/dev/null)
-    test -x $Nomiss && continue
+    test -x "$Nomiss" && continue
   cat << END
 
 Please install $Datei
@@ -198,6 +198,7 @@ END
     set -- $(echo $langlist)
     shift $langnr
     lang=$1
+    Origlang=$lang
 fi
 
 }
@@ -363,7 +364,7 @@ printheader
 cat << END
   Your choice
   System: $sys
-  Language: $lang
+  Language: $Origlang
   Parameter: $param1 $param2 $param3 $param4 $param5 $param7
   Proxy: $http_proxy
 END
@@ -406,10 +407,10 @@ esac
 test "$Liste" && {
   for OS in $Liste
     do
-    /bin/bash DownloadUpdates.sh $OS $lang $param2 $param3 $param4 $param5 $param6 $param7
+    /bin/bash DownloadUpdates.sh $OS $Origlang $param2 $param3 $param4 $param5 $param6 $param7
     done
     if [ "$param1" == "/makeiso" ]; then
-	/bin/bash ./CreateISOImage.sh $sys $lang $param2 $param3
+	/bin/bash ./CreateISOImage.sh $sys $Origlang $param2 $param3
 	rc=$?
     fi
     exit $rc
@@ -640,7 +641,7 @@ for Datei in ExcludeList-${sys}.txt custom/ExcludeList-${sys}.txt ExcludeList-su
 $xml tr ../xslt/ExtractUpdateCategoriesAndFileIds.xsl ../temp/package.xml > ../temp/UpdateCategoriesAndFileIds.txt
 $xml tr ../xslt/ExtractUpdateCabExeIdsAndLocations.xsl ../temp/package.xml > ../temp/UpdateCabExeIdsAndLocations.txt
 
-oldlang=$lang
+oldlang=$Origlang
 for lang in $oldlang glb
 do
   echo "Determining dynamic update urls for ${sys} ${lang} (please be patient, this will take a while)..."
@@ -825,7 +826,7 @@ if [ "$wddefs" == "1" ]; then
   fi
 fi
 
-echo "Downloading patches for $sys $lang"
+echo "Downloading patches for $sys $Origlang"
 if [ $lang != glb -a "$sys" != "w2k3-x64" ]; then
   doWget -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
   doWget -i ../temp/ValidUrls-win-${OS_ARCH}-${lang}.txt -P ../client/win/${lang}
@@ -909,7 +910,7 @@ if [ "$CLEANUP_DOWNLOADS" != "0" ]; then
     w6[0-2]*|w2k3-x64)
     ;;
     *)
-    echo "Cleaning up client directory for win $lang"
+    echo "Cleaning up client directory for win $Origlang"
     cat ../temp/StaticUrls-${lang}.txt > ../temp/ValidUrls-${lang}.txt
     cat ../temp/ValidUrls-win-${OS_ARCH}-${lang}.txt >> ../temp/ValidUrls-${lang}.txt
     cleanup "../temp/ValidUrls-${lang}.txt" "../client/win/${lang}"
@@ -918,7 +919,7 @@ if [ "$CLEANUP_DOWNLOADS" != "0" ]; then
 fi
 
 if [ "$createiso" == "1" ]; then
-  bash ./CreateISOImage.sh $sys $lang $param2 $param3
+  bash ./CreateISOImage.sh $sys $Origlang $param2 $param3
 fi
 
 exit 0
@@ -926,8 +927,11 @@ exit 0
 # 
 
 # ========================================================================
-# $Id: DownloadUpdates.sh,v 1.3 2013-03-10 15:27:16+01 HHullen Exp $
+# $Id: DownloadUpdates.sh,v 1.4 2013-04-11 11:21:19+02 HHullen Exp $
 # $Log: DownloadUpdates.sh,v $
+# Revision 1.4  2013-04-11 11:21:19+02  HHullen
+# Sprach-Meldung korrigiert
+#
 # Revision 1.3  2013-03-10 15:27:16+01  HHullen
 # verkuerzt
 #

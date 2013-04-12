@@ -2,7 +2,7 @@
 
 #########################################################################
 ###          WSUS Offline Update ISO maker for Linux systems          ###
-###                               v. 8.3                              ###
+###                           v. 8.3+ (r460)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg                     ###
@@ -111,7 +111,7 @@ fi
 for skip in $langlist
   do
     case $skip in
-	enu|$lang)
+	enu|$Origlang)
 	;;
 	*)
         echo "*${skip}*" 
@@ -120,11 +120,11 @@ for skip in $langlist
 
 cp ../temp/ExcludeListISO-${sys}.txt ../temp/ExcludeListISOtmp-${sys}.txt
 tr -d '\\' < ../temp/ExcludeListISOtmp-${sys}.txt > ../temp/ExcludeListISO-${sys}.txt
-# rm ../temp/ExcludeListISOtmp-${sys}.txt
+rm ../temp/ExcludeListISOtmp-${sys}.txt
 
-echo "Creating ISO image for $sys $lang..."
+echo "Creating ISO image for $sys $Origlang..."
 $iso_tool -iso-level 4 -joliet -joliet-long -rational-rock -exclude-list ../temp/ExcludeListISO-${sys}.txt \
-    -output ../iso/wsusoffline-${sys}-$lang.iso -volid wou_${sys}_${lang} ../client/
+    -quiet -output ../iso/wsusoffline-${sys}-$Origlang.iso -volid wou_${sys}_${lang} ../client/
 rm ../client/builddate.txt
 echo "done."
 

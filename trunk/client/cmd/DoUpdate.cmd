@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.3
+set WSUSOFFLINE_VERSION=8.3+ (r460)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -173,74 +173,74 @@ goto SkipPowerCfg
 
 rem *** Echo OS properties ***
 echo Found OS caption: %OS_CAPTION%
-echo Found Microsoft Windows version: %OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_VER_REVIS% (%OS_NAME% %OS_ARCH% %OS_LANG% sp%OS_SP_VER_MAJOR%)
-rem echo Found Windows Update Agent version: %WUA_VER_MAJOR%.%WUA_VER_MINOR%.%WUA_VER_REVIS%.%WUA_VER_BUILD%
-rem echo Found Windows Installer version: %MSI_VER_MAJOR%.%MSI_VER_MINOR%.%MSI_VER_REVIS%.%MSI_VER_BUILD%
-rem echo Found Windows Script Host version: %WSH_VER_MAJOR%.%WSH_VER_MINOR%.%WSH_VER_REVIS%.%WSH_VER_BUILD%
-rem echo Found Internet Explorer version: %IE_VER_MAJOR%.%IE_VER_MINOR%.%IE_VER_REVIS%.%IE_VER_BUILD%
-rem echo Found Trusted Root Certificates' version: %TRCERTS_VER_MAJOR%.%TRCERTS_VER_MINOR%.%TRCERTS_VER_REVIS%.%TRCERTS_VER_BUILD%
-rem echo Found Revoked Root Certificates' version: %RRCERTS_VER_MAJOR%.%RRCERTS_VER_MINOR%.%RRCERTS_VER_REVIS%.%RRCERTS_VER_BUILD%
-rem echo Found Microsoft Data Access Components version: %MDAC_VER_MAJOR%.%MDAC_VER_MINOR%.%MDAC_VER_REVIS%.%MDAC_VER_BUILD%
+echo Found Microsoft Windows version: %OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_VER_BUILD% (%OS_NAME% %OS_ARCH% %OS_LANG% sp%OS_SP_VER_MAJOR%)
+rem echo Found Windows Update Agent version: %WUA_VER_MAJOR%.%WUA_VER_MINOR%.%WUA_VER_BUILD%.%WUA_VER_REVIS%
+rem echo Found Windows Installer version: %MSI_VER_MAJOR%.%MSI_VER_MINOR%.%MSI_VER_BUILD%.%MSI_VER_REVIS%
+rem echo Found Windows Script Host version: %WSH_VER_MAJOR%.%WSH_VER_MINOR%.%WSH_VER_BUILD%.%WSH_VER_REVIS%
+rem echo Found Internet Explorer version: %IE_VER_MAJOR%.%IE_VER_MINOR%.%IE_VER_BUILD%.%IE_VER_REVIS%
+rem echo Found Trusted Root Certificates' version: %TRCERTS_VER_MAJOR%.%TRCERTS_VER_MINOR%.%TRCERTS_VER_BUILD%.%TRCERTS_VER_REVIS%
+rem echo Found Revoked Root Certificates' version: %RRCERTS_VER_MAJOR%.%RRCERTS_VER_MINOR%.%RRCERTS_VER_BUILD%.%RRCERTS_VER_REVIS%
+rem echo Found Microsoft Data Access Components version: %MDAC_VER_MAJOR%.%MDAC_VER_MINOR%.%MDAC_VER_BUILD%.%MDAC_VER_REVIS%
 rem if "%DX_MAIN_VER%" NEQ "" echo Found Microsoft DirectX main version: %DX_MAIN_VER%
-rem echo Found Microsoft DirectX core version: %DX_NAME% (%DX_CORE_VER_MAJOR%.%DX_CORE_VER_MINOR%.%DX_CORE_VER_REVIS%.%DX_CORE_VER_BUILD%)
-rem echo Found Microsoft Silverlight version: %MSSL_VER_MAJOR%.%MSSL_VER_MINOR%.%MSSL_VER_REVIS%.%MSSL_VER_BUILD%
-rem echo Found Windows Media Player version: %WMP_VER_MAJOR%.%WMP_VER_MINOR%.%WMP_VER_REVIS%.%WMP_VER_BUILD%
-rem echo Found Remote Desktop Client version: %TSC_VER_MAJOR%.%TSC_VER_MINOR%.%TSC_VER_REVIS%.%TSC_VER_BUILD%
-rem echo Found Microsoft .NET Framework 3.5 version: %DOTNET35_VER_MAJOR%.%DOTNET35_VER_MINOR%.%DOTNET35_VER_REVIS%.%DOTNET35_VER_BUILD%
+rem echo Found Microsoft DirectX core version: %DX_NAME% (%DX_CORE_VER_MAJOR%.%DX_CORE_VER_MINOR%.%DX_CORE_VER_BUILD%.%DX_CORE_VER_REVIS%)
+rem echo Found Microsoft Silverlight version: %MSSL_VER_MAJOR%.%MSSL_VER_MINOR%.%MSSL_VER_BUILD%.%MSSL_VER_REVIS%
+rem echo Found Windows Media Player version: %WMP_VER_MAJOR%.%WMP_VER_MINOR%.%WMP_VER_BUILD%.%WMP_VER_REVIS%
+rem echo Found Remote Desktop Client version: %TSC_VER_MAJOR%.%TSC_VER_MINOR%.%TSC_VER_BUILD%.%TSC_VER_REVIS%
+rem echo Found Microsoft .NET Framework 3.5 version: %DOTNET35_VER_MAJOR%.%DOTNET35_VER_MINOR%.%DOTNET35_VER_BUILD%.%DOTNET35_VER_REVIS%
 rem echo Found Windows PowerShell version: %PSH_VER_MAJOR%.%PSH_VER_MINOR%
-rem echo Found Microsoft .NET Framework 4 version: %DOTNET4_VER_MAJOR%.%DOTNET4_VER_MINOR%.%DOTNET4_VER_REVIS%
+rem echo Found Microsoft .NET Framework 4 version: %DOTNET4_VER_MAJOR%.%DOTNET4_VER_MINOR%.%DOTNET4_VER_BUILD%
 rem echo Found Windows Management Framework version: %WMF_VER_MAJOR%.%WMF_VER_MINOR%
-rem echo Found Microsoft Security Essentials version: %MSSE_VER_MAJOR%.%MSSE_VER_MINOR%.%MSSE_VER_REVIS%.%MSSE_VER_BUILD%
-rem echo Found Microsoft Security Essentials definitions version: %MSSEDEFS_VER_MAJOR%.%MSSEDEFS_VER_MINOR%.%MSSEDEFS_VER_REVIS%.%MSSEDEFS_VER_BUILD%
-rem echo Found Network Inspection System definitions version: %NISDEFS_VER_MAJOR%.%NISDEFS_VER_MINOR%.%NISDEFS_VER_REVIS%.%NISDEFS_VER_BUILD%
-rem echo Found Windows Defender definitions version: %WDDEFS_VER_MAJOR%.%WDDEFS_VER_MINOR%.%WDDEFS_VER_REVIS%.%WDDEFS_VER_BUILD%
+rem echo Found Microsoft Security Essentials version: %MSSE_VER_MAJOR%.%MSSE_VER_MINOR%.%MSSE_VER_BUILD%.%MSSE_VER_REVIS%
+rem echo Found Microsoft Security Essentials definitions version: %MSSEDEFS_VER_MAJOR%.%MSSEDEFS_VER_MINOR%.%MSSEDEFS_VER_BUILD%.%MSSEDEFS_VER_REVIS%
+rem echo Found Network Inspection System definitions version: %NISDEFS_VER_MAJOR%.%NISDEFS_VER_MINOR%.%NISDEFS_VER_BUILD%.%NISDEFS_VER_REVIS%
+rem echo Found Windows Defender definitions version: %WDDEFS_VER_MAJOR%.%WDDEFS_VER_MINOR%.%WDDEFS_VER_BUILD%.%WDDEFS_VER_REVIS%
 if "%O2K3_VER_MAJOR%" NEQ "" (
-  echo Found Microsoft Office 2003 %O2K3_VER_APP% version: %O2K3_VER_MAJOR%.%O2K3_VER_MINOR%.%O2K3_VER_REVIS%.%O2K3_VER_BUILD% ^(o2k3 %O2K3_LANG% sp%O2K3_SP_VER%^)
+  echo Found Microsoft Office 2003 %O2K3_VER_APP% version: %O2K3_VER_MAJOR%.%O2K3_VER_MINOR%.%O2K3_VER_BUILD%.%O2K3_VER_REVIS% ^(o2k3 %O2K3_LANG% sp%O2K3_SP_VER%^)
 )
 if "%O2K7_VER_MAJOR%" NEQ "" (
-  echo Found Microsoft Office 2007 %O2K7_VER_APP% version: %O2K7_VER_MAJOR%.%O2K7_VER_MINOR%.%O2K7_VER_REVIS%.%O2K7_VER_BUILD% ^(o2k7 %O2K7_LANG% sp%O2K7_SP_VER%^)
+  echo Found Microsoft Office 2007 %O2K7_VER_APP% version: %O2K7_VER_MAJOR%.%O2K7_VER_MINOR%.%O2K7_VER_BUILD%.%O2K7_VER_REVIS% ^(o2k7 %O2K7_LANG% sp%O2K7_SP_VER%^)
 )
 if "%O2K10_VER_MAJOR%" NEQ "" (
-  echo Found Microsoft Office 2010 %O2K10_VER_APP% version: %O2K10_VER_MAJOR%.%O2K10_VER_MINOR%.%O2K10_VER_REVIS%.%O2K10_VER_BUILD% ^(o2k10 %O2K10_ARCH% %O2K10_LANG% sp%O2K10_SP_VER%^)
+  echo Found Microsoft Office 2010 %O2K10_VER_APP% version: %O2K10_VER_MAJOR%.%O2K10_VER_MINOR%.%O2K10_VER_BUILD%.%O2K10_VER_REVIS% ^(o2k10 %O2K10_ARCH% %O2K10_LANG% sp%O2K10_SP_VER%^)
 )
 if "%O2K13_VER_MAJOR%" NEQ "" (
-  echo Found Microsoft Office 2013 %O2K13_VER_APP% version: %O2K13_VER_MAJOR%.%O2K13_VER_MINOR%.%O2K13_VER_REVIS%.%O2K13_VER_BUILD% ^(o2k13 %O2K13_ARCH% %O2K13_LANG% sp%O2K13_SP_VER%^)
+  echo Found Microsoft Office 2013 %O2K13_VER_APP% version: %O2K13_VER_MAJOR%.%O2K13_VER_MINOR%.%O2K13_VER_BUILD%.%O2K13_VER_REVIS% ^(o2k13 %O2K13_ARCH% %O2K13_LANG% sp%O2K13_SP_VER%^)
 )
 echo %DATE% %TIME% - Info: Found OS caption '%OS_CAPTION%' >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft Windows version %OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_VER_REVIS% (%OS_NAME% %OS_ARCH% %OS_LANG% sp%OS_SP_VER_MAJOR%) >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Windows Update Agent version %WUA_VER_MAJOR%.%WUA_VER_MINOR%.%WUA_VER_REVIS%.%WUA_VER_BUILD% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Windows Installer version %MSI_VER_MAJOR%.%MSI_VER_MINOR%.%MSI_VER_REVIS%.%MSI_VER_BUILD% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Windows Script Host version %WSH_VER_MAJOR%.%WSH_VER_MINOR%.%WSH_VER_REVIS%.%WSH_VER_BUILD% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Internet Explorer version %IE_VER_MAJOR%.%IE_VER_MINOR%.%IE_VER_REVIS%.%IE_VER_BUILD% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Trusted Root Certificates' version %TRCERTS_VER_MAJOR%.%TRCERTS_VER_MINOR%.%TRCERTS_VER_REVIS%.%TRCERTS_VER_BUILD% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Revoked Root Certificates' version %RRCERTS_VER_MAJOR%.%RRCERTS_VER_MINOR%.%RRCERTS_VER_REVIS%.%RRCERTS_VER_BUILD% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft Data Access Components version %MDAC_VER_MAJOR%.%MDAC_VER_MINOR%.%MDAC_VER_REVIS%.%MDAC_VER_BUILD% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft Windows version %OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_VER_BUILD% (%OS_NAME% %OS_ARCH% %OS_LANG% sp%OS_SP_VER_MAJOR%) >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Windows Update Agent version %WUA_VER_MAJOR%.%WUA_VER_MINOR%.%WUA_VER_BUILD%.%WUA_VER_REVIS% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Windows Installer version %MSI_VER_MAJOR%.%MSI_VER_MINOR%.%MSI_VER_BUILD%.%MSI_VER_REVIS% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Windows Script Host version %WSH_VER_MAJOR%.%WSH_VER_MINOR%.%WSH_VER_BUILD%.%WSH_VER_REVIS% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Internet Explorer version %IE_VER_MAJOR%.%IE_VER_MINOR%.%IE_VER_BUILD%.%IE_VER_REVIS% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Trusted Root Certificates' version %TRCERTS_VER_MAJOR%.%TRCERTS_VER_MINOR%.%TRCERTS_VER_BUILD%.%TRCERTS_VER_REVIS% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Revoked Root Certificates' version %RRCERTS_VER_MAJOR%.%RRCERTS_VER_MINOR%.%RRCERTS_VER_BUILD%.%RRCERTS_VER_REVIS% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft Data Access Components version %MDAC_VER_MAJOR%.%MDAC_VER_MINOR%.%MDAC_VER_BUILD%.%MDAC_VER_REVIS% >>%UPDATE_LOGFILE%
 if "%DX_MAIN_VER%" NEQ "" echo %DATE% %TIME% - Info: Found Microsoft DirectX main version %DX_MAIN_VER% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft DirectX core version %DX_NAME% (%DX_CORE_VER_MAJOR%.%DX_CORE_VER_MINOR%.%DX_CORE_VER_REVIS%.%DX_CORE_VER_BUILD%) >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft Silverlight version %MSSL_VER_MAJOR%.%MSSL_VER_MINOR%.%MSSL_VER_REVIS%.%MSSL_VER_BUILD% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Windows Media Player version %WMP_VER_MAJOR%.%WMP_VER_MINOR%.%WMP_VER_REVIS%.%WMP_VER_BUILD% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Remote Desktop Client version %TSC_VER_MAJOR%.%TSC_VER_MINOR%.%TSC_VER_REVIS%.%TSC_VER_BUILD% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 3.5 version %DOTNET35_VER_MAJOR%.%DOTNET35_VER_MINOR%.%DOTNET35_VER_REVIS%.%DOTNET35_VER_BUILD% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft DirectX core version %DX_NAME% (%DX_CORE_VER_MAJOR%.%DX_CORE_VER_MINOR%.%DX_CORE_VER_BUILD%.%DX_CORE_VER_REVIS%) >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft Silverlight version %MSSL_VER_MAJOR%.%MSSL_VER_MINOR%.%MSSL_VER_BUILD%.%MSSL_VER_REVIS% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Windows Media Player version %WMP_VER_MAJOR%.%WMP_VER_MINOR%.%WMP_VER_BUILD%.%WMP_VER_REVIS% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Remote Desktop Client version %TSC_VER_MAJOR%.%TSC_VER_MINOR%.%TSC_VER_BUILD%.%TSC_VER_REVIS% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 3.5 version %DOTNET35_VER_MAJOR%.%DOTNET35_VER_MINOR%.%DOTNET35_VER_BUILD%.%DOTNET35_VER_REVIS% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows PowerShell version %PSH_VER_MAJOR%.%PSH_VER_MINOR% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 4 version %DOTNET4_VER_MAJOR%.%DOTNET4_VER_MINOR%.%DOTNET4_VER_REVIS% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 4 version %DOTNET4_VER_MAJOR%.%DOTNET4_VER_MINOR%.%DOTNET4_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows Management Framework version %WMF_VER_MAJOR%.%WMF_VER_MINOR% >>%UPDATE_LOGFILE%
 if "%OS_NAME%" NEQ "w62" (
-  echo %DATE% %TIME% - Info: Found Microsoft Security Essentials version %MSSE_VER_MAJOR%.%MSSE_VER_MINOR%.%MSSE_VER_REVIS%.%MSSE_VER_BUILD% >>%UPDATE_LOGFILE%
-  echo %DATE% %TIME% - Info: Found Microsoft Security Essentials definitions version %MSSEDEFS_VER_MAJOR%.%MSSEDEFS_VER_MINOR%.%MSSEDEFS_VER_REVIS%.%MSSEDEFS_VER_BUILD% >>%UPDATE_LOGFILE%
-  echo %DATE% %TIME% - Info: Found Network Inspection System definitions version %NISDEFS_VER_MAJOR%.%NISDEFS_VER_MINOR%.%NISDEFS_VER_REVIS%.%NISDEFS_VER_BUILD% >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Found Microsoft Security Essentials version %MSSE_VER_MAJOR%.%MSSE_VER_MINOR%.%MSSE_VER_BUILD%.%MSSE_VER_REVIS% >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Found Microsoft Security Essentials definitions version %MSSEDEFS_VER_MAJOR%.%MSSEDEFS_VER_MINOR%.%MSSEDEFS_VER_BUILD%.%MSSEDEFS_VER_REVIS% >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Found Network Inspection System definitions version %NISDEFS_VER_MAJOR%.%NISDEFS_VER_MINOR%.%NISDEFS_VER_BUILD%.%NISDEFS_VER_REVIS% >>%UPDATE_LOGFILE%
 )
-echo %DATE% %TIME% - Info: Found Windows Defender definitions version %WDDEFS_VER_MAJOR%.%WDDEFS_VER_MINOR%.%WDDEFS_VER_REVIS%.%WDDEFS_VER_BUILD% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Windows Defender definitions version %WDDEFS_VER_MAJOR%.%WDDEFS_VER_MINOR%.%WDDEFS_VER_BUILD%.%WDDEFS_VER_REVIS% >>%UPDATE_LOGFILE%
 if "%O2K3_VER_MAJOR%" NEQ "" (
-  echo %DATE% %TIME% - Info: Found Microsoft Office 2003 %O2K3_VER_APP% version %O2K3_VER_MAJOR%.%O2K3_VER_MINOR%.%O2K3_VER_REVIS%.%O2K3_VER_BUILD% ^(o2k3 %O2K3_LANG% sp%O2K3_SP_VER%^) >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Found Microsoft Office 2003 %O2K3_VER_APP% version %O2K3_VER_MAJOR%.%O2K3_VER_MINOR%.%O2K3_VER_BUILD%.%O2K3_VER_REVIS% ^(o2k3 %O2K3_LANG% sp%O2K3_SP_VER%^) >>%UPDATE_LOGFILE%
 )
 if "%O2K7_VER_MAJOR%" NEQ "" (
-  echo %DATE% %TIME% - Info: Found Microsoft Office 2007 %O2K7_VER_APP% version %O2K7_VER_MAJOR%.%O2K7_VER_MINOR%.%O2K7_VER_REVIS%.%O2K7_VER_BUILD% ^(o2k7 %O2K7_LANG% sp%O2K7_SP_VER%^) >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Found Microsoft Office 2007 %O2K7_VER_APP% version %O2K7_VER_MAJOR%.%O2K7_VER_MINOR%.%O2K7_VER_BUILD%.%O2K7_VER_REVIS% ^(o2k7 %O2K7_LANG% sp%O2K7_SP_VER%^) >>%UPDATE_LOGFILE%
 )
 if "%O2K10_VER_MAJOR%" NEQ "" (
-  echo %DATE% %TIME% - Info: Found Microsoft Office 2010 %O2K10_VER_APP% version %O2K10_VER_MAJOR%.%O2K10_VER_MINOR%.%O2K10_VER_REVIS%.%O2K10_VER_BUILD% ^(o2k10 %O2K10_ARCH% %O2K10_LANG% sp%O2K10_SP_VER%^) >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Found Microsoft Office 2010 %O2K10_VER_APP% version %O2K10_VER_MAJOR%.%O2K10_VER_MINOR%.%O2K10_VER_BUILD%.%O2K10_VER_REVIS% ^(o2k10 %O2K10_ARCH% %O2K10_LANG% sp%O2K10_SP_VER%^) >>%UPDATE_LOGFILE%
 )
 if "%O2K13_VER_MAJOR%" NEQ "" (
-  echo %DATE% %TIME% - Info: Found Microsoft Office 2013 %O2K13_VER_APP% version %O2K13_VER_MAJOR%.%O2K13_VER_MINOR%.%O2K13_VER_REVIS%.%O2K13_VER_BUILD% ^(o2k13 %O2K13_ARCH% %O2K13_LANG% sp%O2K13_SP_VER%^) >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Found Microsoft Office 2013 %O2K13_VER_APP% version %O2K13_VER_MAJOR%.%O2K13_VER_MINOR%.%O2K13_VER_BUILD%.%O2K13_VER_REVIS% ^(o2k13 %O2K13_ARCH% %O2K13_LANG% sp%O2K13_SP_VER%^) >>%UPDATE_LOGFILE%
 )
 
 rem *** Check medium content ***
@@ -364,9 +364,9 @@ if %WUA_VER_MAJOR% LSS %WUA_VER_TARGET_MAJOR% goto InstallWUA
 if %WUA_VER_MAJOR% GTR %WUA_VER_TARGET_MAJOR% goto SkipWUAInst
 if %WUA_VER_MINOR% LSS %WUA_VER_TARGET_MINOR% goto InstallWUA
 if %WUA_VER_MINOR% GTR %WUA_VER_TARGET_MINOR% goto SkipWUAInst
-if %WUA_VER_REVIS% LSS %WUA_VER_TARGET_REVIS% goto InstallWUA
-if %WUA_VER_REVIS% GTR %WUA_VER_TARGET_REVIS% goto SkipWUAInst
-if %WUA_VER_BUILD% GEQ %WUA_VER_TARGET_BUILD% goto SkipWUAInst
+if %WUA_VER_BUILD% LSS %WUA_VER_TARGET_BUILD% goto InstallWUA
+if %WUA_VER_BUILD% GTR %WUA_VER_TARGET_BUILD% goto SkipWUAInst
+if %WUA_VER_REVIS% GEQ %WUA_VER_TARGET_REVIS% goto SkipWUAInst
 :InstallWUA
 set WUA_FILENAME=..\wsus\WindowsUpdateAgent*-%OS_ARCH%.exe
 dir /B %WUA_FILENAME% >nul 2>&1
@@ -386,9 +386,9 @@ if %MSI_VER_MAJOR% LSS %MSI_VER_TARGET_MAJOR% goto InstallMSI
 if %MSI_VER_MAJOR% GTR %MSI_VER_TARGET_MAJOR% goto SkipMSIInst
 if %MSI_VER_MINOR% LSS %MSI_VER_TARGET_MINOR% goto InstallMSI
 if %MSI_VER_MINOR% GTR %MSI_VER_TARGET_MINOR% goto SkipMSIInst
-if %MSI_VER_REVIS% LSS %MSI_VER_TARGET_REVIS% goto InstallMSI
-if %MSI_VER_REVIS% GTR %MSI_VER_TARGET_REVIS% goto SkipMSIInst
-if %MSI_VER_BUILD% GEQ %MSI_VER_TARGET_BUILD% goto SkipMSIInst
+if %MSI_VER_BUILD% LSS %MSI_VER_TARGET_BUILD% goto InstallMSI
+if %MSI_VER_BUILD% GTR %MSI_VER_TARGET_BUILD% goto SkipMSIInst
+if %MSI_VER_REVIS% GEQ %MSI_VER_TARGET_REVIS% goto SkipMSIInst
 :InstallMSI
 if "%MSI_TARGET_ID%"=="" (
   echo Warning: Environment variable MSI_TARGET_ID not set.
@@ -424,9 +424,9 @@ if %WSH_VER_MAJOR% LSS %WSH_VER_TARGET_MAJOR% goto InstallWSH
 if %WSH_VER_MAJOR% GTR %WSH_VER_TARGET_MAJOR% goto SkipWSHInst
 if %WSH_VER_MINOR% LSS %WSH_VER_TARGET_MINOR% goto InstallWSH
 if %WSH_VER_MINOR% GTR %WSH_VER_TARGET_MINOR% goto SkipWSHInst
-if %WSH_VER_REVIS% LSS %WSH_VER_TARGET_REVIS% goto InstallWSH
-if %WSH_VER_REVIS% GTR %WSH_VER_TARGET_REVIS% goto SkipWSHInst
-if %WSH_VER_BUILD% GEQ %WSH_VER_TARGET_BUILD% goto SkipWSHInst
+if %WSH_VER_BUILD% LSS %WSH_VER_TARGET_BUILD% goto InstallWSH
+if %WSH_VER_BUILD% GTR %WSH_VER_TARGET_BUILD% goto SkipWSHInst
+if %WSH_VER_REVIS% GEQ %WSH_VER_TARGET_REVIS% goto SkipWSHInst
 :InstallWSH
 set WSH_FILENAME=..\%OS_NAME%\glb\scripten.exe
 if not exist %WSH_FILENAME% (
@@ -449,9 +449,9 @@ if %IE_VER_MAJOR% LSS %IE_VER_TARGET_MAJOR% goto InstallIE
 if %IE_VER_MAJOR% GTR %IE_VER_TARGET_MAJOR% goto SkipIEInst
 if %IE_VER_MINOR% LSS %IE_VER_TARGET_MINOR% goto InstallIE
 if %IE_VER_MINOR% GTR %IE_VER_TARGET_MINOR% goto SkipIEInst
-if %IE_VER_REVIS% LSS %IE_VER_TARGET_REVIS% goto InstallIE
-if %IE_VER_REVIS% GTR %IE_VER_TARGET_REVIS% goto SkipIEInst
-if %IE_VER_BUILD% GEQ %IE_VER_TARGET_BUILD% goto SkipIEInst
+if %IE_VER_BUILD% LSS %IE_VER_TARGET_BUILD% goto InstallIE
+if %IE_VER_BUILD% GTR %IE_VER_TARGET_BUILD% goto SkipIEInst
+if %IE_VER_REVIS% GEQ %IE_VER_TARGET_REVIS% goto SkipIEInst
 :InstallIE
 goto IE%OS_NAME%
 
@@ -653,9 +653,9 @@ for /F "tokens=2 delims== " %%i in ('%SystemRoot%\system32\findstr.exe /B /L /I 
     if %TRCERTS_VER_MAJOR% GTR %%j goto SkipTRCertsInst
     if %TRCERTS_VER_MINOR% LSS %%k goto InstallTRCerts
     if %TRCERTS_VER_MINOR% GTR %%k goto SkipTRCertsInst
-    if %TRCERTS_VER_REVIS% LSS %%l goto InstallTRCerts
-    if %TRCERTS_VER_REVIS% GTR %%l goto SkipTRCertsInst
-    if %TRCERTS_VER_BUILD% GEQ %%m goto SkipTRCertsInst
+    if %TRCERTS_VER_BUILD% LSS %%l goto InstallTRCerts
+    if %TRCERTS_VER_BUILD% GTR %%l goto SkipTRCertsInst
+    if %TRCERTS_VER_REVIS% GEQ %%m goto SkipTRCertsInst
   )
 )
 :InstallTRCerts
@@ -681,9 +681,9 @@ for /F "tokens=2 delims== " %%i in ('%SystemRoot%\system32\findstr.exe /B /L /I 
     if %RRCERTS_VER_MAJOR% GTR %%j goto SkipRRCertsInst
     if %RRCERTS_VER_MINOR% LSS %%k goto InstallRRCerts
     if %RRCERTS_VER_MINOR% GTR %%k goto SkipRRCertsInst
-    if %RRCERTS_VER_REVIS% LSS %%l goto InstallRRCerts
-    if %RRCERTS_VER_REVIS% GTR %%l goto SkipRRCertsInst
-    if %RRCERTS_VER_BUILD% GEQ %%m goto SkipRRCertsInst
+    if %RRCERTS_VER_BUILD% LSS %%l goto InstallRRCerts
+    if %RRCERTS_VER_BUILD% GTR %%l goto SkipRRCertsInst
+    if %RRCERTS_VER_REVIS% GEQ %%m goto SkipRRCertsInst
   )
 )
 :InstallRRCerts
@@ -781,9 +781,9 @@ if %DX_CORE_VER_MAJOR% LSS %DX_CORE_VER_TARGET_MAJOR% goto InstallDirectX
 if %DX_CORE_VER_MAJOR% GTR %DX_CORE_VER_TARGET_MAJOR% goto SkipDirectXInst
 if %DX_CORE_VER_MINOR% LSS %DX_CORE_VER_TARGET_MINOR% goto InstallDirectX
 if %DX_CORE_VER_MINOR% GTR %DX_CORE_VER_TARGET_MINOR% goto SkipDirectXInst
-if %DX_CORE_VER_REVIS% LSS %DX_CORE_VER_TARGET_REVIS% goto InstallDirectX
-if %DX_CORE_VER_REVIS% GTR %DX_CORE_VER_TARGET_REVIS% goto SkipDirectXInst
 if %DX_CORE_VER_BUILD% LSS %DX_CORE_VER_TARGET_BUILD% goto InstallDirectX
+if %DX_CORE_VER_BUILD% GTR %DX_CORE_VER_TARGET_BUILD% goto SkipDirectXInst
+if %DX_CORE_VER_REVIS% LSS %DX_CORE_VER_TARGET_REVIS% goto InstallDirectX
 if exist %DX_DLL_LATEST% goto SkipDirectXInst
 :InstallDirectX
 set DIRECTX_FILENAME=..\win\glb\directx_*_redist.exe
@@ -831,9 +831,9 @@ if %MSSL_VER_MAJOR% LSS %MSSL_VER_TARGET_MAJOR% goto InstallMSSL
 if %MSSL_VER_MAJOR% GTR %MSSL_VER_TARGET_MAJOR% goto SkipMSSLInst
 if %MSSL_VER_MINOR% LSS %MSSL_VER_TARGET_MINOR% goto InstallMSSL
 if %MSSL_VER_MINOR% GTR %MSSL_VER_TARGET_MINOR% goto SkipMSSLInst
-if %MSSL_VER_REVIS% LSS %MSSL_VER_TARGET_REVIS% goto InstallMSSL
-if %MSSL_VER_REVIS% GTR %MSSL_VER_TARGET_REVIS% goto SkipMSSLInst
-if %MSSL_VER_BUILD% GEQ %MSSL_VER_TARGET_BUILD% goto SkipMSSLInst
+if %MSSL_VER_BUILD% LSS %MSSL_VER_TARGET_BUILD% goto InstallMSSL
+if %MSSL_VER_BUILD% GTR %MSSL_VER_TARGET_BUILD% goto SkipMSSLInst
+if %MSSL_VER_REVIS% GEQ %MSSL_VER_TARGET_REVIS% goto SkipMSSLInst
 :InstallMSSL
 echo Installing Microsoft Silverlight...
 call InstallOSUpdate.cmd %MSSL_FILENAME% %VERIFY_MODE% /errorsaswarnings /q
@@ -842,8 +842,8 @@ set REBOOT_REQUIRED=1
 :SkipMSSLInst
 set MSSL_VER_TARGET_MAJOR=
 set MSSL_VER_TARGET_MINOR=
-set MSSL_VER_TARGET_REVIS=
 set MSSL_VER_TARGET_BUILD=
+set MSSL_VER_TARGET_REVIS=
 
 rem *** Install most recent Windows Media Player ***
 if "%OS_NAME%"=="w2k3" goto SkipWMPInst
@@ -883,9 +883,9 @@ if %DOTNET35_VER_MAJOR% LSS %DOTNET35_VER_TARGET_MAJOR% goto InstallDotNet35
 if %DOTNET35_VER_MAJOR% GTR %DOTNET35_VER_TARGET_MAJOR% goto SkipDotNet35Inst
 if %DOTNET35_VER_MINOR% LSS %DOTNET35_VER_TARGET_MINOR% goto InstallDotNet35
 if %DOTNET35_VER_MINOR% GTR %DOTNET35_VER_TARGET_MINOR% goto SkipDotNet35Inst
-if %DOTNET35_VER_REVIS% LSS %DOTNET35_VER_TARGET_REVIS% goto InstallDotNet35
-if %DOTNET35_VER_REVIS% GTR %DOTNET35_VER_TARGET_REVIS% goto SkipDotNet35Inst
-if %DOTNET35_VER_BUILD% GEQ %DOTNET35_VER_TARGET_BUILD% goto SkipDotNet35Inst
+if %DOTNET35_VER_BUILD% LSS %DOTNET35_VER_TARGET_BUILD% goto InstallDotNet35
+if %DOTNET35_VER_BUILD% GTR %DOTNET35_VER_TARGET_BUILD% goto SkipDotNet35Inst
+if %DOTNET35_VER_REVIS% GEQ %DOTNET35_VER_TARGET_REVIS% goto SkipDotNet35Inst
 :InstallDotNet35
 set DOTNET35_FILENAME=..\dotnet\dotnetfx35.exe
 set DOTNET35LP_FILENAME=..\dotnet\%OS_ARCH%-glb\dotnetfx35langpack_%OS_ARCH%%OS_LANG_SHORT%*.exe
@@ -925,7 +925,7 @@ if %DOTNET4_VER_MAJOR% LSS %DOTNET4_VER_TARGET_MAJOR% goto InstallDotNet4
 if %DOTNET4_VER_MAJOR% GTR %DOTNET4_VER_TARGET_MAJOR% goto SkipDotNet4Inst
 if %DOTNET4_VER_MINOR% LSS %DOTNET4_VER_TARGET_MINOR% goto InstallDotNet4
 if %DOTNET4_VER_MINOR% GTR %DOTNET4_VER_TARGET_MINOR% goto SkipDotNet4Inst
-if %DOTNET4_VER_REVIS% GEQ %DOTNET4_VER_TARGET_REVIS% goto SkipDotNet4Inst
+if %DOTNET4_VER_BUILD% GEQ %DOTNET4_VER_TARGET_BUILD% goto SkipDotNet4Inst
 :InstallDotNet4
 if "%OS_NAME%" NEQ "w2k3" goto SkipDotNet4Prereq
 if /i "%OS_ARCH%"=="x64" (
@@ -1109,9 +1109,9 @@ if %MSSE_VER_MAJOR% LSS %MSSE_VER_TARGET_MAJOR% goto InstallMSSE
 if %MSSE_VER_MAJOR% GTR %MSSE_VER_TARGET_MAJOR% goto CheckMSSEDefs
 if %MSSE_VER_MINOR% LSS %MSSE_VER_TARGET_MINOR% goto InstallMSSE
 if %MSSE_VER_MINOR% GTR %MSSE_VER_TARGET_MINOR% goto CheckMSSEDefs
-if %MSSE_VER_REVIS% LSS %MSSE_VER_TARGET_REVIS% goto InstallMSSE
-if %MSSE_VER_REVIS% GTR %MSSE_VER_TARGET_REVIS% goto CheckMSSEDefs
-if %MSSE_VER_BUILD% GEQ %MSSE_VER_TARGET_BUILD% goto CheckMSSEDefs
+if %MSSE_VER_BUILD% LSS %MSSE_VER_TARGET_BUILD% goto InstallMSSE
+if %MSSE_VER_BUILD% GTR %MSSE_VER_TARGET_BUILD% goto CheckMSSEDefs
+if %MSSE_VER_REVIS% GEQ %MSSE_VER_TARGET_REVIS% goto CheckMSSEDefs
 :InstallMSSE
 echo Installing Microsoft Security Essentials...
 call InstallOSUpdate.cmd %MSSE_FILENAME% %VERIFY_MODE% /ignoreerrors /s /runwgacheck /o
@@ -1120,8 +1120,8 @@ set REBOOT_REQUIRED=1
 :CheckMSSEDefs
 set MSSE_VER_TARGET_MAJOR=
 set MSSE_VER_TARGET_MINOR=
-set MSSE_VER_TARGET_REVIS=
 set MSSE_VER_TARGET_BUILD=
+set MSSE_VER_TARGET_REVIS=
 if /i "%OS_ARCH%"=="x64" (
   set MSSEDEFS_FILENAME=..\msse\%OS_ARCH%-glb\mpam-fex64.exe
 ) else (
@@ -1142,9 +1142,9 @@ if %MSSEDEFS_VER_MAJOR% LSS %MSSEDEFS_VER_TARGET_MAJOR% goto InstallMSSEDefs
 if %MSSEDEFS_VER_MAJOR% GTR %MSSEDEFS_VER_TARGET_MAJOR% goto CheckNISDefs
 if %MSSEDEFS_VER_MINOR% LSS %MSSEDEFS_VER_TARGET_MINOR% goto InstallMSSEDefs
 if %MSSEDEFS_VER_MINOR% GTR %MSSEDEFS_VER_TARGET_MINOR% goto CheckNISDefs
-if %MSSEDEFS_VER_REVIS% LSS %MSSEDEFS_VER_TARGET_REVIS% goto InstallMSSEDefs
-if %MSSEDEFS_VER_REVIS% GTR %MSSEDEFS_VER_TARGET_REVIS% goto CheckNISDefs
-if %MSSEDEFS_VER_BUILD% GEQ %MSSEDEFS_VER_TARGET_BUILD% goto CheckNISDefs
+if %MSSEDEFS_VER_BUILD% LSS %MSSEDEFS_VER_TARGET_BUILD% goto InstallMSSEDefs
+if %MSSEDEFS_VER_BUILD% GTR %MSSEDEFS_VER_TARGET_BUILD% goto CheckNISDefs
+if %MSSEDEFS_VER_REVIS% GEQ %MSSEDEFS_VER_TARGET_REVIS% goto CheckNISDefs
 :InstallMSSEDefs
 echo Installing Microsoft Security Essentials definition file...
 call InstallOSUpdate.cmd %MSSEDEFS_FILENAME% %VERIFY_MODE% /ignoreerrors -q
@@ -1152,8 +1152,8 @@ set MSSEDEFS_FILENAME=
 :CheckNISDefs
 set MSSEDEFS_VER_TARGET_MAJOR=
 set MSSEDEFS_VER_TARGET_MINOR=
-set MSSEDEFS_VER_TARGET_REVIS=
 set MSSEDEFS_VER_TARGET_BUILD=
+set MSSEDEFS_VER_TARGET_REVIS=
 set NISDEFS_FILENAME=..\msse\%OS_ARCH%-glb\nis_full_%OS_ARCH%.exe
 if not exist %NISDEFS_FILENAME% (
   echo Warning: Network Inspection System definition file ^(%NISDEFS_FILENAME%^) not found.
@@ -1170,9 +1170,9 @@ if %NISDEFS_VER_MAJOR% LSS %NISDEFS_VER_TARGET_MAJOR% goto InstallNISDefs
 if %NISDEFS_VER_MAJOR% GTR %NISDEFS_VER_TARGET_MAJOR% goto SkipMSSEInst
 if %NISDEFS_VER_MINOR% LSS %NISDEFS_VER_TARGET_MINOR% goto InstallNISDefs
 if %NISDEFS_VER_MINOR% GTR %NISDEFS_VER_TARGET_MINOR% goto SkipMSSEInst
-if %NISDEFS_VER_REVIS% LSS %NISDEFS_VER_TARGET_REVIS% goto InstallNISDefs
-if %NISDEFS_VER_REVIS% GTR %NISDEFS_VER_TARGET_REVIS% goto SkipMSSEInst
-if %NISDEFS_VER_BUILD% GEQ %NISDEFS_VER_TARGET_BUILD% goto SkipMSSEInst
+if %NISDEFS_VER_BUILD% LSS %NISDEFS_VER_TARGET_BUILD% goto InstallNISDefs
+if %NISDEFS_VER_BUILD% GTR %NISDEFS_VER_TARGET_BUILD% goto SkipMSSEInst
+if %NISDEFS_VER_REVIS% GEQ %NISDEFS_VER_TARGET_REVIS% goto SkipMSSEInst
 :InstallNISDefs
 echo Installing Network Inspection System definition file...
 call InstallOSUpdate.cmd %NISDEFS_FILENAME% %VERIFY_MODE% /ignoreerrors
@@ -1180,8 +1180,8 @@ set NISDEFS_FILENAME=
 :SkipMSSEInst
 set NISDEFS_VER_TARGET_MAJOR=
 set NISDEFS_VER_TARGET_MINOR=
-set NISDEFS_VER_TARGET_REVIS=
 set NISDEFS_VER_TARGET_BUILD=
+set NISDEFS_VER_TARGET_REVIS=
 
 rem *** Update Windows Defender definitions ***
 echo Checking Windows Defender installation state...
@@ -1215,9 +1215,9 @@ if %WDDEFS_VER_MAJOR% LSS %WDDEFS_VER_TARGET_MAJOR% goto InstallWDDefs
 if %WDDEFS_VER_MAJOR% GTR %WDDEFS_VER_TARGET_MAJOR% goto SkipWDInst
 if %WDDEFS_VER_MINOR% LSS %WDDEFS_VER_TARGET_MINOR% goto InstallWDDefs
 if %WDDEFS_VER_MINOR% GTR %WDDEFS_VER_TARGET_MINOR% goto SkipWDInst
-if %WDDEFS_VER_REVIS% LSS %WDDEFS_VER_TARGET_REVIS% goto InstallWDDefs
-if %WDDEFS_VER_REVIS% GTR %WDDEFS_VER_TARGET_REVIS% goto SkipWDInst
-if %WDDEFS_VER_BUILD% GEQ %WDDEFS_VER_TARGET_BUILD% goto SkipWDInst
+if %WDDEFS_VER_BUILD% LSS %WDDEFS_VER_TARGET_BUILD% goto InstallWDDefs
+if %WDDEFS_VER_BUILD% GTR %WDDEFS_VER_TARGET_BUILD% goto SkipWDInst
+if %WDDEFS_VER_REVIS% GEQ %WDDEFS_VER_TARGET_REVIS% goto SkipWDInst
 :InstallWDDefs
 echo Installing Windows Defender definition file...
 call InstallOSUpdate.cmd %WDDEFS_FILENAME% %VERIFY_MODE% /ignoreerrors -q
@@ -1225,8 +1225,8 @@ set WDDEFS_FILENAME=
 :SkipWDInst
 set WDDEFS_VER_TARGET_MAJOR=
 set WDDEFS_VER_TARGET_MINOR=
-set WDDEFS_VER_TARGET_REVIS=
 set WDDEFS_VER_TARGET_BUILD=
+set WDDEFS_VER_TARGET_REVIS=
 
 if "%RECALL_REQUIRED%"=="1" goto Installed
 if "%OFC_NAME%"=="" goto InstSoftware

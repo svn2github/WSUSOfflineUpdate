@@ -105,11 +105,12 @@ Dim Const $misc_token_showdonate    = "showdonate"
 Dim Const $misc_token_clt_wustat    = "WUStatusServer"
 
 ; Paths
-Dim Const $path_max_length          = 128
+Dim Const $path_max_length          = 192
 Dim Const $path_invalid_chars       = "!%&()^+,;="
 Dim Const $paths_rel_structure      = "\bin\,\client\bin\,\client\cmd\,\client\exclude\,\client\opt\,\client\static\,\cmd\,\exclude\,\iso\,\log\,\static\,\xslt\"
 Dim Const $path_rel_builddate       = "\client\builddate.txt"
 Dim Const $path_rel_clientini       = "\client\UpdateInstaller.ini"
+Dim Const $path_rel_win_glb         = "\client\win\glb"
 
 Dim $maindlg, $inifilename, $tabitemfocused, $includesp, $dotnet, $msse, $wddefs, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $buildlbl
 Dim $usbcopy, $usbpath, $usbfsf, $usbclean, $imageonly, $scripting, $shutdown, $btn_start, $btn_proxy, $btn_wsus, $btn_donate, $btn_exit, $proxy, $proxypwd, $wsus, $dummy
@@ -155,16 +156,20 @@ Func ShowGUIInGerman()
   Return ( (@OSLang = "0007") OR (@OSLang = "0407") OR (@OSLang = "0807") OR (@OSLang = "0C07") OR (@OSLang = "1007") OR (@OSLang = "1407") )
 EndFunc
 
-Func PathValid()
+Func IsUNCPath($path)
+  Return StringInStr($path, "\\") > 0
+EndFunc
+
+Func PathValid($path)
 Dim $result, $arr_invalid, $i
 
-  If StringLen(@ScriptDir) > $path_max_length Then
+  If StringLen($path) > $path_max_length Then
     $result = False
   Else
     $result = True
     $arr_invalid = StringSplit($path_invalid_chars, "")
     For $i = 1 to $arr_invalid[0]
-      If StringInStr(@ScriptDir, $arr_invalid[$i]) > 0 Then
+      If StringInStr($path, $arr_invalid[$i]) > 0 Then
         $result = False
         ExitLoop
       EndIf
@@ -741,6 +746,47 @@ Func RunSelfUpdate($strproxy)
     Run(@ComSpec & " /D /C UpdateOU.cmd /restartgenerator /proxy " & $strproxy, @ScriptDir & "\cmd", @SW_SHOW)
   EndIf
   Return 0
+EndFunc
+
+Func RunTRCertsCheck($strproxy)
+Dim $result
+
+  $result = 0
+  If NOT IsCheckBoxChecked($verifydownloads) Then
+    Return $result
+  EndIf
+  If IsCheckBoxChecked($imageonly) Then
+    Return $result
+  EndIf
+  DisableGUI()
+  If $strproxy = "" Then
+    $result = RunWait(@ComSpec & " /D /C CheckTRCerts.cmd /exitonerror", @ScriptDir & "\cmd", @SW_SHOWMINNOACTIVE)
+  Else
+    $result = RunWait(@ComSpec & " /D /C CheckTRCerts.cmd /exitonerror /proxy " & $strproxy, @ScriptDir & "\cmd", @SW_SHOWMINNOACTIVE)
+  EndIf
+  If $result = 0 Then
+    $result = @error
+  EndIf
+  If $result <> 0 Then
+    If ShowGUIInGerman() Then
+      $result = MsgBox(0x2023, "Versionsprüfung", "Ihre Liste vertrauenswürdiger" _
+                       & @LF & "Stammzertifikate ist nicht aktuell." _
+                       & @LF & "Möchten Sie sie nun aktualisieren?")
+    Else
+      $result = MsgBox(0x2023, "Version check", "Your list of Trusted Root Certificates is outdated." _
+                       & @LF & "Would you like to update it now?")
+    EndIf
+    Switch $result
+      Case $msgbox_btn_yes
+        $result = -1
+      Case $msgbox_btn_no
+        $result = 0
+      Case Else
+        $result = 1
+    EndSwitch
+  EndIf
+  EnableGUI()
+  Return $result
 EndFunc
 
 Func RunDownloadScript($stroptions, $strswitches)
@@ -2671,34 +2717,53 @@ GUICtrlSetResizing(-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM)
 
 ; GUI message loop
 GUISetState()
-If NOT PathValid() Then
+If IsUNCPath(@ScriptDir) Then
+  If ShowGUIInGerman() Then
+    MsgBox(0x2010, "Fehler", "Das Skript wurde von einem UNC-Pfad gestartet." _
+                     & @LF & "Bitte weisen Sie der Netzwerkfreigabe einen Laufwerksbuchstaben zu.")
+  Else
+    MsgBox(0x2010, "Error", "The script was startet from a UNC path." _
+                    & @LF & "Please map a drive letter to the network share.")
+  EndIf
+  Exit(1)
+EndIf
+If NOT PathValid(@ScriptDir) Then
   If ShowGUIInGerman() Then
     MsgBox(0x2010, "Fehler", "Der Skript-Pfad darf nicht mehr als " & $path_max_length & " Zeichen lang sein und" _
                      & @LF & "darf keines der folgenden Zeichen enthalten: " & $path_invalid_chars)
-    Exit(1)
   Else
-    MsgBox(0x2010, "Fehler", "The script path must not be more than " & $path_max_length & " characters long and" _
-                     & @LF & "must not contain any of the following characters: " & $path_invalid_chars)
-    Exit(1)
+    MsgBox(0x2010, "Error", "The script path must not be more than " & $path_max_length & " characters long and" _
+                    & @LF & "must not contain any of the following characters: " & $path_invalid_chars)
   EndIf
+  Exit(1)
+EndIf
+If NOT PathValid(@TempDir) Then
+  If ShowGUIInGerman() Then
+    MsgBox(0x2010, "Fehler", "Der %TEMP%-Pfad darf nicht mehr als " & $path_max_length & " Zeichen lang sein und" _
+                     & @LF & "darf keines der folgenden Zeichen enthalten: " & $path_invalid_chars)
+  Else
+    MsgBox(0x2010, "Error", "The %TEMP% path must not be more than " & $path_max_length & " characters long and" _
+                    & @LF & "must not contain any of the following characters: " & $path_invalid_chars)
+  EndIf
+  Exit(1)
+EndIf
+If StringRight(@TempDir, 1) = "\" Then
+  If ShowGUIInGerman() Then
+    MsgBox(0x2010, "Fehler", "Der %TEMP%-Pfad enthält einen abschließenden Backslash ('\').")
+  Else
+    MsgBox(0x2010, "Error", "The %TEMP% path contains a trailing backslash ('\').")
+  EndIf
+  Exit(1)
 EndIf
 If NOT DirectoryStructureExists() Then
   If ShowGUIInGerman() Then
-    MsgBox(0x2010, "Fehler", "Die Verzeichnisstruktur ist unvollständig." & @LF & "Bitte behalten Sie diese beim Entpacken des Zip-Archivs bei.")
-    Exit(1)
+    MsgBox(0x2010, "Fehler", "Die Verzeichnisstruktur ist unvollständig." _
+                     & @LF & "Bitte behalten Sie diese beim Entpacken des Zip-Archivs bei.")
   Else
-    MsgBox(0x2010, "Error", "The directory structure is incomplete." & @LF & "Please keep this when you unpack the Zip archive.")
-    Exit(1)
+    MsgBox(0x2010, "Error", "The directory structure is incomplete." _
+                    & @LF & "Please keep it when you unpack the Zip archive.")
   EndIf
-EndIf
-If (StringRight(EnvGet("TEMP"), 1) = "\") Then
-  If ShowGUIInGerman() Then
-    MsgBox(0x2010, "Fehler", "Die Umgebungsvariable TEMP" & @LF & "enthält einen abschließenden Backslash ('\').")
-    Exit(1)
-  Else
-    MsgBox(0x2010, "Error", "The environment variable TEMP" & @LF & "contains a trailing backslash ('\').")
-    Exit(1)
-  EndIf
+  Exit(1)
 EndIf
 While 1
   Switch GUIGetMsg()
@@ -2902,7 +2967,12 @@ While 1
               ExitLoop
             Case 1  ; Cancel / Close
               ContinueLoop
-            Case Else
+          EndSwitch
+          Switch RunTRCertsCheck(AuthProxy($proxy, $proxypwd))
+            Case -1 ; Yes
+              RunWait(@ComSpec & " /D /C rootsupd.exe /Q", @ScriptDir & $path_rel_win_glb, @SW_SHOW)
+            Case 1  ; Cancel / Close
+              ContinueLoop
           EndSwitch
         EndIf
       EndIf

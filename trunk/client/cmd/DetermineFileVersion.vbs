@@ -2,7 +2,7 @@
 
 Option Explicit
 
-Private Const strVersionSuffixes  = "MAJOR,MINOR,REVIS,BUILD"
+Private Const strVersionSuffixes  = "MAJOR,MINOR,BUILD,REVIS"
 
 Dim wshShell, objFileSystem, objCmdFile
 Dim strFileName, strPrefix, strTempFolder, strCmdFileName

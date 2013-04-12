@@ -11,7 +11,7 @@ if "%HASHDEEP_PATH%"=="" (
   if /i "%OS_ARCH%"=="x64" (set HASHDEEP_PATH=..\bin\hashdeep64.exe) else (set HASHDEEP_PATH=..\bin\hashdeep.exe)
 )
 
-if "%1"=="" goto NoParam
+if '%1'=='' goto NoParam
 if not exist %1 goto InvalidParam
 
 if "%TEMP%"=="" goto NoTemp
