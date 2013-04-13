@@ -61,8 +61,11 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
   if errorlevel 1 (
     for %%k in (%OS_SEARCH_DIRS%) do (
       for %%l in (%OS_LANG% glb) do (
-        if 0%IE_VER_MAJOR%%IE_VER_MINOR% GEQ 910 call ListUpdateFile.cmd ie%IE_VER_MINOR%-*%%i ..\%%k\%%l
-        call ListUpdateFile.cmd ie%IE_VER_MAJOR%-*%%i ..\%%k\%%l
+        if %IE_VER_MAJOR%%IE_VER_MINOR%0 GEQ 9100 (
+          call ListUpdateFile.cmd ie%IE_VER_MINOR%-*%%i ..\%%k\%%l
+        ) else (
+          call ListUpdateFile.cmd ie%IE_VER_MAJOR%-*%%i ..\%%k\%%l
+        )
         call ListUpdateFile.cmd windowsmedia%WMP_VER_MAJOR%-*%%i ..\%%k\%%l
         call ListUpdateFile.cmd windowsmedia-*%%i ..\%%k\%%l
         call ListUpdateFile.cmd mdac%MDAC_VER_MAJOR%%MDAC_VER_MINOR%-*%%i ..\%%k\%%l
