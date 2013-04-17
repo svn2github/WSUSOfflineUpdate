@@ -751,3 +751,4 @@ Version ?.? -- ??.??.13
 - Fix: UpdateGenerator and UpdateInstaller scripts will now block invalid %TEMP% paths (Thanks to "e2020" and "aker")
 - Fix: Double-quoted parameter check could prevent installation of Office File Converter Pack (Thanks to "Rassilon")
 - Fix: Language messages and prerequisites' problem corrected in Linux scripts (Thanks to H. Hullen)
+- Fix: Invalid download paths for C++ Runtime Libraries in Linux script DownloadUpdates.sh (Thanks to H. Hullen)

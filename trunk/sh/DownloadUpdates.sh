@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                          v. 8.3+ (r461)                           ###
+###                          v. 8.3+ (r462)                           ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -289,7 +289,9 @@ head -20 "$0" | grep '^###'
     }
 
 down_msse_cpp() {
-   mkdir -p ../client/$Vz/${OS_ARCH}-glb
+    Zielverz=$Vz
+    test $Vz == "msse" && Zielverz=$Vz/${OS_ARCH}-glb
+   mkdir -p ../client/$Zielverz
    echo "Downloading $Txt files..."
    while read x
     do
@@ -299,12 +301,12 @@ down_msse_cpp() {
       test "$newname" || continue
       tmpname=${oldname##*/}
 
-      if [ -f "../client/$Vz/${OS_ARCH}-glb/$newname" ]; then
-        mv -f "../client/$Vz/${OS_ARCH}-glb/$newname" "../client/$Vz/${OS_ARCH}-glb/$tmpname"
+      if [ -f "../client/$Zielverz/$newname" ]; then
+        mv -f "../client/$Zielverz/$newname" "../client/$Zielverz/$tmpname"
       fi
-      doWget $oldname -P ../client/$Vz/${OS_ARCH}-glb
-      if [ -f "../client/$Vz/${OS_ARCH}-glb/$tmpname" ]; then
-        mv -f "../client/$Vz/${OS_ARCH}-glb/$tmpname" "../client/$Vz/${OS_ARCH}-glb/$newname"
+      doWget $oldname -P ../client/$Zielverz
+      if [ -f "../client/$Zielverz/$tmpname" ]; then
+        mv -f "../client/$Zielverz/$tmpname" "../client/$Zielverz/$newname"
       fi
     done < ../temp/StaticUrls-$Vz-${OS_ARCH}-glb.txt
 
