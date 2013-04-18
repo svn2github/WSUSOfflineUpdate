@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                          v. 8.3+ (r462)                           ###
+###                          v. 8.3+ (r463)                           ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -162,9 +162,11 @@ fi
 case $sys in
     *-x64)
 	OS_ARCH=x64
+	OS_sys=$sys
 	;;
     *)
 	OS_ARCH=x86
+	OS_sys=${sys}-x86
 	;;
 esac
 
@@ -284,17 +286,30 @@ done > ../temp/cleanup.txt
     }
 
 printheader() {
-clear
+echo " "
 head -20 "$0" | grep '^###'
     }
 
+# gilt auch für dotnet und wddefs
 down_msse_cpp() {
-    Zielverz=$Vz
-    test $Vz == "msse" && Zielverz=$Vz/${OS_ARCH}-glb
+    case $Vz in
+	cpp)
+	Zielverz=$Vz
+	Datei=$Vz-${OS_ARCH}-glb
+	;;
+	msse|wddefs)
+	Zielverz=$Vz/${OS_ARCH}-glb
+	Datei=$Vz-${OS_ARCH}-glb
+	# test $Vz = dotnet && Datei=$Vz
+	;;
+    esac
+
    mkdir -p ../client/$Zielverz
    echo "Downloading $Txt files..."
    while read x
     do
+    case $Vz in
+	cpp|msse)
 	grep -q ',' <<< "$x" || continue
       oldname=${x%,*}
       newname=${x#*,}
@@ -308,7 +323,12 @@ down_msse_cpp() {
       if [ -f "../client/$Zielverz/$tmpname" ]; then
         mv -f "../client/$Zielverz/$tmpname" "../client/$Zielverz/$newname"
       fi
-    done < ../temp/StaticUrls-$Vz-${OS_ARCH}-glb.txt
+	;;
+	wddefs)
+	doWget $x -P ../client/$Zielverz
+	;;
+    esac
+    done < ../temp/StaticUrls-${Datei}.txt
 
   echo "Creating integrity database for $Txt ..."
   cd ../client/bin
@@ -316,8 +336,14 @@ down_msse_cpp() {
   cd "$PATH_PWD"
     }
 
+stat_urls() {
+    test -f ../$Pfad/StaticDownloadLinks-$Vz-${OS_ARCH}-glb.txt && \
+    cp ../$Pfad/StaticDownloadLinks-$Vz-${OS_ARCH}-glb.txt ../temp/StaticUrls-$Vz-${OS_ARCH}-glb.txt
+    }
+
 # ------------- end of functions -------------
 
+clear
 printheader
 
 #set working directory
@@ -439,19 +465,20 @@ if [ "$sys" == "ofc" ] && [ "$sys_old" != "" ]; then
    done # Lang
 fi # Ende Office
 
+> ../temp/StaticUrls-${sys}-${lang}.txt
 
-for static in "../static/StaticDownloadLinks-${sys}-${OS_ARCH}-${lang}.txt" "../static/StaticDownloadLinks-${sys}-${lang}.txt"
+for static in "../static/StaticDownloadLinks-${OS_sys}-${lang}.txt" "../static/StaticDownloadLinks-${OS_sys}.txt"
   do
   test -f "$static" || continue
   if [ "$EXCLUDE_SP" == "0" ]; then
     cat $static >> ../temp/StaticUrls-${sys}-${lang}.txt
   else
-   grep -i -v -f ../exclude/ExcludeList-SPs.txt $static > ../temp/StaticUrls-${sys}-${lang}.txt
+   grep -i -v -f ../exclude/ExcludeList-SPs.txt $static >> ../temp/StaticUrls-${sys}-${lang}.txt
   fi
   done
 
-if [ -f ../static/custom/StaticDownloadLinks-${sys}-${OS_ARCH}-${lang}.txt ]; then
-    cat ../static/custom/StaticDownloadLinks-${sys}-${OS_ARCH}-${lang}.txt >> ../temp/StaticUrls-${sys}-${lang}.txt
+if [ -f ../static/custom/StaticDownloadLinks-${OS_sys}-${lang}.txt ]; then
+    cat ../static/custom/StaticDownloadLinks-${OS_sys}-${lang}.txt >> ../temp/StaticUrls-${sys}-${lang}.txt
 fi
 
 for Pfad in static static/custom; do
@@ -468,34 +495,51 @@ done
 
 for Pfad in static static/custom; do
 if [ $lang != glb  ]; then
-  static="../$Pfad/StaticDownloadLinks-${sys}-${OS_ARCH}-glb.txt"
+  static="../$Pfad/StaticDownloadLinks-${OS_sys}-glb.txt"
   if [ -f "$static" ]; then
     cat $static > ../temp/StaticUrls-${sys}-glb.txt
   fi
 fi
-static="../$Pfad/StaticDownloadLinks-${sys}-glb.txt"
-if [ -f "$static" ]; then
-    cat $static > ../temp/StaticUrls-${sys}-glb.txt
-fi
 done
 
+# Optionen
+
+cp ../static/StaticDownloadLinks-dotnet.txt ../temp/StaticUrls-dotnet.txt
+> ../temp/StaticUrls-dotnet-${OS_ARCH}-$lang.txt
+> ../temp/Urls-dotnet-${OS_ARCH}.txt
 for Pfad in static static/custom; do
 if [ "$dotnet" == "1" ]; then
-    test -f ../$Pfad/StaticDownloadLinks-dotnet.txt && \
-  cp ../$Pfad/StaticDownloadLinks-dotnet.txt ../temp/StaticUrls-dotnet.txt
-    test -f ../$Pfad/StaticDownloadLinks-cpp-${OS_ARCH}-glb.txt && \
-  cp ../$Pfad/StaticDownloadLinks-cpp-${OS_ARCH}-glb.txt ../temp/StaticUrls-cpp-${OS_ARCH}-glb.txt
+    test -f ../$Pfad/StaticDownloadLinks-dotnet-${OS_ARCH}-$lang.txt && {
+    grep -F -i -v -f ../exclude/ExcludeList-dotnet-${OS_ARCH}.txt ../$Pfad/StaticDownloadLinks-dotnet-${OS_ARCH}-$lang.txt \
+	>> ../temp/Urls-dotnet-${OS_ARCH}.txt
+    }
 fi
 
+
+if [ "$dotnet" == "1" ]; then
+    Vz=cpp
+#    stat_urls
+    test -f ../$Pfad/StaticDownloadLinks-$Vz-${OS_ARCH}-glb.txt && \
+    cp ../$Pfad/StaticDownloadLinks-$Vz-${OS_ARCH}-glb.txt ../temp/StaticUrls-$Vz-${OS_ARCH}-glb.txt
+
+fi
 if [ "$msse" == "1" ]; then
-    test -f ../$Pfad/StaticDownloadLinks-msse-${OS_ARCH}-glb.txt && \
-    cp ../$Pfad/StaticDownloadLinks-msse-${OS_ARCH}-glb.txt ../temp/StaticUrls-msse-${OS_ARCH}-glb.txt
+    Vz=msse
+#    stat_urls
+    test -f ../$Pfad/StaticDownloadLinks-$Vz-${OS_ARCH}-glb.txt && \
+    cp ../$Pfad/StaticDownloadLinks-$Vz-${OS_ARCH}-glb.txt ../temp/StaticUrls-$Vz-${OS_ARCH}-glb.txt
+
 fi
 if [ "$wddefs" == "1" ]; then
-    test -f ../$Pfad/StaticDownloadLink-wddefs-${OS_ARCH}-glb.txt && \
-    cp ../$Pfad/StaticDownloadLink-wddefs-${OS_ARCH}-glb.txt ../temp/StaticUrls-wddefs-${OS_ARCH}-glb.txt
+    Vz=wddefs
+#    stat_urls
+    test -f ../$Pfad/StaticDownloadLink-$Vz-${OS_ARCH}-glb.txt && \
+    cp ../$Pfad/StaticDownloadLink-$Vz-${OS_ARCH}-glb.txt ../temp/StaticUrls-$Vz-${OS_ARCH}-glb.txt
+# anderer Dateiname: ...Link
 fi
 done # Pfad
+
+test $debug -eq 0 && set +x
 
 # echo "Adding Custom-Links..."
 
@@ -530,8 +574,7 @@ fi
 
 test $debug -ne 0 && supersed="1"
 
-if
- [ "$supersed" == "1" ]; then
+if [ "$supersed" == "1" ]; then
 echo "Determining superseded updates (please be patient, this will take a while)..."
 $xml tr ../xslt/ExtractUpdateRevisionIds.xsl ../temp/package.xml > ../temp/ValidUpdateRevisionIds.txt
 $xml tr ../xslt/ExtractSupersedingRevisionIds.xsl ../temp/package.xml | sort -u > ../temp/SupersedingRevisionIds.txt
@@ -579,41 +622,40 @@ fi
 # ------- Ende superseded
 
 echo "Determining update URLs for ${sys} ${lang}..."
-verify="../temp/tmpUrls-${sys}-${lang}.txt"
+# verify="../temp/tmpUrls-${sys}-${lang}.txt"
 
-test -f ../xslt/ExtractDownloadLinks-${sys}-${OS_ARCH}-${lang}.xsl \
-    && $xml tr ../xslt/ExtractDownloadLinks-${sys}-${OS_ARCH}-${lang}.xsl ../temp/package.xml > ../temp/Urls-${sys}-${lang}.txt
-test "$dotnet" == "1" && $xml tr ../xslt/ExtractDownloadLinks-dotnet-${OS_ARCH}-glb.xsl ../temp/package.xml > ../temp/Urls-dotnet-${OS_ARCH}.txt
+mkdir -p ../client/win/glb ../client/win/glb ../client/$sys/$lang ../client/$sys/glb
 
-test -f ../temp/Urls-${sys}-${lang}.txt && \
-  cp ../temp/Urls-${sys}-${lang}.txt ../temp/tmpUrls-${sys}-${lang}.txt
+test -f ../xslt/ExtractDownloadLinks-${OS_sys}-${lang}.xsl \
+    && $xml tr ../xslt/ExtractDownloadLinks-${OS_sys}-${lang}.xsl ../temp/package.xml > ../temp/Urls-${OS_sys}-${lang}.txt
+
+test "$dotnet" == "1" && $xml tr ../xslt/ExtractDownloadLinks-dotnet-${OS_ARCH}-glb.xsl ../temp/package.xml >> ../temp/Urls-dotnet-${OS_ARCH}.txt
+
+test -f ../temp/Urls-${OS_sys}-${lang}.txt && \
+  cp ../temp/Urls-${OS_sys}-${lang}.txt ../temp/tmpUrls-${OS_sys}-${lang}.txt
 
 > ../temp/tmpExcludeList-${sys}.txt
 
 for Pfad in exclude exclude/custom; do
-test -f ../$Pfad/ExcludeList-${sys}-${OS_ARCH}.txt && \
-    cat ../$Pfad/ExcludeList-${sys}-${OS_ARCH}.txt >> ../temp/tmpExcludeList-${sys}.txt
-  done
-for Pfad in exclude exclude/custom; do
-test -f ../$Pfad/ExcludeList-${sys}.txt && \
-    cat ../$Pfad/ExcludeList-${sys}.txt >> ../temp/tmpExcludeList-${sys}.txt
+test -f ../$Pfad/ExcludeList-${OS_sys}.txt && \
+    cat ../$Pfad/ExcludeList-${OS_sys}.txt >> ../temp/tmpExcludeList-${sys}.txt
   done
 
 test -f ../exclude/ExcludeList-superseded.txt && \
     cat ../exclude/ExcludeList-superseded.txt >> ../temp/tmpExcludeList-${sys}.txt
-test -f ../temp/tmpUrls-${sys}-${lang}.txt && \
-    grep -F -i -v -f ../temp/tmpExcludeList-${sys}.txt ../temp/tmpUrls-${sys}-${lang}.txt > ../temp/ValidUrls-${sys}-${lang}.txt
+test -f ../temp/tmpUrls-${OS_sys}-${lang}.txt && \
+    grep -F -i -v -f ../temp/tmpExcludeList-${sys}.txt ../temp/tmpUrls-${OS_sys}-${lang}.txt > ../temp/ValidUrls-${sys}-${lang}.txt
 
 test $lang == glb || {
-  test -f ../xslt/ExtractDownloadLinks-${sys}-${OS_ARCH}-glb.xsl && \
-    $xml tr ../xslt/ExtractDownloadLinks-${sys}-${OS_ARCH}-glb.xsl ../temp/package.xml > ../temp/Urls-${sys}-glb.txt
-  test -f ../xslt/ExtractDownloadLinks-${sys}-glb.xsl && \
-    $xml tr ../xslt/ExtractDownloadLinks-${sys}-glb.xsl ../temp/package.xml > ../temp/Urls-${sys}-glb.txt
+  test -f ../xslt/ExtractDownloadLinks-${OS_sys}-glb.xsl && \
+    $xml tr ../xslt/ExtractDownloadLinks-${OS_sys}-glb.xsl ../temp/package.xml > ../temp/Urls-${sys}-glb.txt
+  test -f ../xslt/ExtractDownloadLinks-${OS_sys}-glb.xsl && \
+    $xml tr ../xslt/ExtractDownloadLinks-${OS_sys}-glb.xsl ../temp/package.xml > ../temp/Urls-${sys}-glb.txt
   test -f ../temp/Urls-${sys}-glb.txt && {
-  cp ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
-  grep -F -i -v -f ../temp/tmpExcludeList-${sys}.txt ../temp/tmpValidUrls-${sys}-glb.txt > ../temp/ValidUrls-${sys}-glb.txt
+    cp ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
+    grep -F -i -v -f ../temp/tmpExcludeList-${sys}.txt ../temp/tmpValidUrls-${sys}-glb.txt > ../temp/ValidUrls-${sys}-glb.txt
     }
-  rm -f ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
+#  rm -f ../temp/Urls-${sys}-glb.txt ../temp/tmpValidUrls-${sys}-glb.txt
   }
 
 > ../temp/tmpExcludeList-win-${OS_ARCH}.txt
@@ -627,7 +669,21 @@ if [ $lang != glb -a $sys != "w2k3-x64" -a "$sys" != "ofc" ]; then
   test -f ../exclude/ExcludeList-superseded.txt && \
     cat ../exclude/ExcludeList-superseded.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
   grep -F -i -v -f ../temp/tmpExcludeList-win-${OS_ARCH}.txt ../temp/Urls-win-${OS_ARCH}-${lang}.txt > ../temp/ValidUrls-win-${OS_ARCH}-${lang}.txt
-  rm -f ../temp/Urls-win-${OS_ARCH}-${lang}.txt
+#  rm -f ../temp/Urls-win-${OS_ARCH}-${lang}.txt
+fi
+
+if [ $lang == glb ]; then
+  echo "Determining update URLs for win ${lang}..."
+#  $xml tr ../xslt/ExtractDownloadLinks-win-${OS_ARCH}-${lang}.xsl ../temp/package.xml > ../temp/Urls-win-${OS_ARCH}-${lang}.txt
+  $xml tr ../xslt/ExtractDownloadLinks-win-x86-${lang}.xsl ../temp/package.xml > ../temp/Urls-win-${OS_ARCH}-${lang}.txt
+#  cat ../exclude/ExcludeList-win-${OS_ARCH}.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
+  cat ../exclude/ExcludeList-win-x86.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
+  test -f ../exclude/custom/ExcludeList-win-${OS_ARCH}.txt && \
+    cat ../exclude/custom/ExcludeList-win-${OS_ARCH}.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
+  test -f ../exclude/ExcludeList-superseded.txt && \
+    cat ../exclude/ExcludeList-superseded.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
+  grep -F -i -v -f ../temp/tmpExcludeList-win-${OS_ARCH}.txt ../temp/Urls-win-${OS_ARCH}-${lang}.txt > ../temp/ValidUrls-win-${OS_ARCH}-${lang}.txt
+#  rm -f ../temp/Urls-win-${OS_ARCH}-${lang}.txt
 fi
 
 # ------------- Office -------------
@@ -717,7 +773,6 @@ lang=$oldlang
 # ---------- Ende Office -------------
 
 test $debug -ne 0 && echo "Office ist fertig"
-# test $debug -ne 0 && read -p "supersed $LINENO " dummy
 
 rm -f ../temp/package.xml
 touch ../temp/ValidDynamicLinks-${sys}-${lang}.txt ../temp/StaticUrls-${sys}-${lang}.txt ../temp/StaticUrls-ie6-${lang}.txt ../temp/ValidUrls-${sys}-${lang}.txt ../temp/ValidUrls-${sys}-glb.txt ../temp/ValidUrls-win-${OS_ARCH}-${lang}.txt ../temp/StaticUrls-ofc-glb.txt ../temp/StaticUrls-ofc-${lang}.txt ../temp/StaticUrls-${sys}-glb.txt ../temp/StaticUrls-${lang}.txt ../temp/StaticUrls-glb.txt ../temp/StaticUrls-dotnet.txt ../temp/StaticUrls-cpp-${OS_ARCH}-glb.txt ../temp/StaticUrls-msse-${OS_ARCH}-glb.txt ../temp/StaticUrls-wddefs-${OS_ARCH}-glb.txt
@@ -742,6 +797,7 @@ cat ../temp/StaticUrls-ofc-glb.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-${sys}-glb.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-glb.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-dotnet.txt >> ../temp/urls.txt
+cat ../temp/StaticUrls-dotnet-${OS_ARCH}-${lang}.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-cpp-${OS_ARCH}-glb.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-msse-${OS_ARCH}-glb.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-wddefs-${OS_ARCH}-glb.txt >> ../temp/urls.txt
@@ -776,11 +832,15 @@ fi
 
 # dotnet/cpp
 if [ "$dotnet" == "1" ]; then
+#    Vz=dotnet
+#    Txt=".Net "
+#    down_msse_cpp
   echo "Downloading .Net framework..."
-  mkdir -p ../client/dotnet
+  mkdir -p ../client/dotnet/${OS_ARCH}-$lang
   doWget -i ../temp/StaticUrls-dotnet.txt -P ../client/dotnet
-  mkdir -p ../client/dotnet/${OS_ARCH}-glb
-  doWget -i ../temp/Urls-dotnet-${OS_ARCH}.txt -P ../client/dotnet/${OS_ARCH}-glb
+  mv ../temp/Urls-dotnet-${OS_ARCH}.txt ../temp/Urls-dotnet-${OS_ARCH}.tmp
+  grep -i -v -f ../exclude/ExcludeList-dotnet-${OS_ARCH}.txt ../temp/Urls-dotnet-${OS_ARCH}.tmp > ../temp/Urls-dotnet-${OS_ARCH}.txt
+  doWget -i ../temp/Urls-dotnet-${OS_ARCH}.txt -P ../client/dotnet/${OS_ARCH}-$lang
 
   echo "Creating integrity database for .Net ..."
   cd ../client/bin
@@ -795,14 +855,12 @@ if [ "$dotnet" == "1" ]; then
   cd ../client/bin
   hashdeep -c md5,sha1,sha256 -l -r ../dotnet/${OS_ARCH}-glb | tr '/' '\\' > ../md/hashes-dotnet-${OS_ARCH}-glb.txt
   cd "$PATH_PWD"
-fi
 
-# cpp
-if [ "$dotnet" == "1" ]; then
     Vz=cpp
     Txt=CPP
     down_msse_cpp
 fi
+
 
 # MSSE
 if [ "$msse" == "1" ]; then
@@ -814,18 +872,8 @@ fi
 # wddefs
 if [ "$wddefs" == "1" ]; then
     Vz=wddefs
-    Txt="Windows Defender definition files"
-  echo "Downloading $Txt ..."
-    mkdir -p ../client/$Vz/${OS_ARCH}-glb
-    doWget -i ../temp/StaticUrls-$Vz-${OS_ARCH}-glb.txt -P ../client/$Vz/${OS_ARCH}-glb
-
-  echo "Validating $Txt ..."
-  if [ -d ../client/${sys}/glb ]; then
-    echo "Creating integrity database for $Txt ..."
-    cd ../client/bin
-    hashdeep -c md5,sha1,sha256 -l -r ../$Vz | tr '/' '\\' > ../md/hashes-$Vz.txt
-    cd "$PATH_PWD"
-  fi
+    Txt="Windows Defender definition"
+    down_msse_cpp
 fi
 
 echo "Downloading patches for $sys $Origlang"
@@ -876,6 +924,10 @@ fi
 if [ $lang != glb -a $sys != "w2k3-x64" ] ; then
   doWget -i ../temp/ValidUrls-win-${OS_ARCH}-${lang}.txt -P ../client/win/${lang}
 fi
+if [ $lang == glb ] ; then
+  doWget -i ../temp/ValidUrls-win-${OS_ARCH}-${lang}.txt -P ../client/win/${lang}
+fi
+
 if [ -d ../client/win/${lang} -a $lang != glb  ]; then
   cd ../client/bin
   echo "Creating integrity database for win-$lang ..."
@@ -929,8 +981,11 @@ exit 0
 # 
 
 # ========================================================================
-# $Id: DownloadUpdates.sh,v 1.4 2013-04-11 11:21:19+02 HHullen Exp $
+# $Id: DownloadUpdates.sh,v 1.5 2013-04-18 15:06:07+02 HHullen Exp $
 # $Log: DownloadUpdates.sh,v $
+# Revision 1.5  2013-04-18 15:06:07+02  HHullen
+# Vergleichs-Liste von talou abgearbeitet
+#
 # Revision 1.4  2013-04-11 11:21:19+02  HHullen
 # Sprach-Meldung korrigiert
 #

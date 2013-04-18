@@ -752,3 +752,4 @@ Version ?.? -- ??.??.13
 - Fix: Double-quoted parameter check could prevent installation of Office File Converter Pack (Thanks to "Rassilon")
 - Fix: Language messages and prerequisites' problem corrected in Linux scripts (Thanks to H. Hullen)
 - Fix: Invalid download paths for C++ Runtime Libraries in Linux script DownloadUpdates.sh (Thanks to H. Hullen)
+- Fix: Differences between Linux and Windows download parts (Thanks to "talou" and H. Hullen)

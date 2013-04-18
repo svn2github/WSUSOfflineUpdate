@@ -69,9 +69,11 @@ test "$sys" || {
 case $sys in
     *-x64)
 	OS_ARCH=x64
+	OS_sys=$sys
 	;;
     *)
 	OS_ARCH=x86
+	OS_sys=${sys}-x86
 	;;
 esac
 
