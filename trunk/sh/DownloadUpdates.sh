@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                          v. 8.3+ (r463)                           ###
+###                          v. 8.3+ (r464)                           ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -662,14 +662,13 @@ test $lang == glb || {
 
 if [ $lang != glb -a $sys != "w2k3-x64" -a "$sys" != "ofc" ]; then
   echo "Determining update URLs for win ${lang}..."
-  $xml tr ../xslt/ExtractDownloadLinks-win-${OS_ARCH}-${lang}.xsl ../temp/package.xml > ../temp/Urls-win-${OS_ARCH}-${lang}.txt
-  cat ../exclude/ExcludeList-win-${OS_ARCH}.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
-  test -f ../exclude/custom/ExcludeList-win-${OS_ARCH}.txt && \
-    cat ../exclude/custom/ExcludeList-win-${OS_ARCH}.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
+  $xml tr ../xslt/ExtractDownloadLinks-win-x86-${lang}.xsl ../temp/package.xml > ../temp/Urls-win-${OS_ARCH}-${lang}.txt
+  cat ../exclude/ExcludeList-win-x86.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
+  test -f ../exclude/custom/ExcludeList-win-x86.txt && \
+    cat ../exclude/custom/ExcludeList-win-x86.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
   test -f ../exclude/ExcludeList-superseded.txt && \
     cat ../exclude/ExcludeList-superseded.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
   grep -F -i -v -f ../temp/tmpExcludeList-win-${OS_ARCH}.txt ../temp/Urls-win-${OS_ARCH}-${lang}.txt > ../temp/ValidUrls-win-${OS_ARCH}-${lang}.txt
-#  rm -f ../temp/Urls-win-${OS_ARCH}-${lang}.txt
 fi
 
 if [ $lang == glb ]; then
@@ -678,12 +677,11 @@ if [ $lang == glb ]; then
   $xml tr ../xslt/ExtractDownloadLinks-win-x86-${lang}.xsl ../temp/package.xml > ../temp/Urls-win-${OS_ARCH}-${lang}.txt
 #  cat ../exclude/ExcludeList-win-${OS_ARCH}.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
   cat ../exclude/ExcludeList-win-x86.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
-  test -f ../exclude/custom/ExcludeList-win-${OS_ARCH}.txt && \
-    cat ../exclude/custom/ExcludeList-win-${OS_ARCH}.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
+  test -f ../exclude/custom/ExcludeList-win-x86.txt && \
+    cat ../exclude/custom/ExcludeList-win-x86.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
   test -f ../exclude/ExcludeList-superseded.txt && \
     cat ../exclude/ExcludeList-superseded.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
   grep -F -i -v -f ../temp/tmpExcludeList-win-${OS_ARCH}.txt ../temp/Urls-win-${OS_ARCH}-${lang}.txt > ../temp/ValidUrls-win-${OS_ARCH}-${lang}.txt
-#  rm -f ../temp/Urls-win-${OS_ARCH}-${lang}.txt
 fi
 
 # ------------- Office -------------
