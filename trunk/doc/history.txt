@@ -745,6 +745,8 @@ Version 8.3 -- 21.03.13
 - Fix: Linux script DownloadUpdates.sh corrected (Thanks to St. Baur, J. Steffens and H. Hullen)
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.13
+- UpdateInstaller script will now remind user's presets inbetween manual recalls (Thanks to "paul1149")
+- DoUpdate.cmd script will now beep to request manual reboots (Thanks to "paul1149")
 - Fix: Installation part missed updates for Internet Explorer 10 (Thanks to "Gerby")
 - Fix: UpdateGenerator script will now check installation state of Trusted Root Certificates (Thanks to "boco")
 - Fix: UpdateGenerator script will now block UNC script paths (Thanks to "hereiam")

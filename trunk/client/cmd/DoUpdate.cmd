@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.3+ (r464)
+set WSUSOFFLINE_VERSION=8.3+ (r465)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1468,6 +1468,7 @@ if "%RECALL_REQUIRED%"=="1" (
 ) else (
   if exist %SystemRoot%\Temp\wou_iepre_tried.txt del %SystemRoot%\Temp\wou_iepre_tried.txt
   if exist %SystemRoot%\Temp\wou_ie_tried.txt del %SystemRoot%\Temp\wou_ie_tried.txt
+  if exist "%TEMP%\UpdateInstaller.ini" del "%TEMP%\UpdateInstaller.ini"
   if "%SHOW_LOG%"=="/showlog" call PrepareShowLogFile.cmd
   if "%BOOT_MODE%"=="/autoreboot" (
     if "%USERNAME%"=="WOUTempAdmin" (
@@ -1496,6 +1497,7 @@ if "%RECALL_REQUIRED%"=="1" (
       echo Installation successful. Please reboot your system now.
       echo %DATE% %TIME% - Info: Installation successful >>%UPDATE_LOGFILE%
       echo.
+      echo 
     )
   )
 )
@@ -1506,6 +1508,7 @@ echo.
 echo Installation successful. Please reboot your system now and recall Update afterwards.
 echo %DATE% %TIME% - Info: Installation successful (Updates pending) >>%UPDATE_LOGFILE%
 echo.
+echo 
 goto EoF
 
 :NoExtensions
@@ -1662,6 +1665,7 @@ goto Cleanup
 :Cleanup
 if exist %SystemRoot%\Temp\wou_iepre_tried.txt del %SystemRoot%\Temp\wou_iepre_tried.txt
 if exist %SystemRoot%\Temp\wou_ie_tried.txt del %SystemRoot%\Temp\wou_ie_tried.txt
+if exist "%TEMP%\UpdateInstaller.ini" del "%TEMP%\UpdateInstaller.ini"
 if "%USERNAME%"=="WOUTempAdmin" (
   if "%SHOW_LOG%"=="/showlog" call PrepareShowLogFile.cmd
   echo Cleaning up automatic recall...
