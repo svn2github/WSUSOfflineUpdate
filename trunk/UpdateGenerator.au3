@@ -1,11 +1,11 @@
-; ***   WSUS Offline Update 8.3 - Generator   ***
+; ***   WSUS Offline Update 8.4b - Generator   ***
 ; ***       Author: T. Wittrock, Kiel         ***
 ; ***     USB-Option added by Ch. Riedel      ***
 ; ***   Dialog scaling added by Th. Baisch    ***
 
 #include <GUIConstants.au3>
 
-Dim Const $caption                  = "WSUS Offline Update 8.3"
+Dim Const $caption                  = "WSUS Offline Update 8.4b"
 Dim Const $title                    = $caption & " - Generator"
 Dim Const $donationURL              = "http://www.wsusoffline.net/donate.html"
 Dim Const $downloadLogFile          = "download.log"
@@ -44,6 +44,7 @@ Dim Const $ini_section_w62_x64      = "Windows Server 2012"
 Dim Const $ini_section_o2k3         = "Office 2003"
 Dim Const $ini_section_o2k7         = "Office 2007"
 Dim Const $ini_section_o2k10        = "Office 2010"
+Dim Const $ini_section_o2k13        = "Office 2013"
 Dim Const $ini_section_iso          = "ISO Images"
 Dim Const $ini_section_usb          = "USB Images"
 Dim Const $ini_section_opts         = "Options"
@@ -111,6 +112,7 @@ Dim Const $paths_rel_structure      = "\bin\,\client\bin\,\client\cmd\,\client\e
 Dim Const $path_rel_builddate       = "\client\builddate.txt"
 Dim Const $path_rel_clientini       = "\client\UpdateInstaller.ini"
 Dim Const $path_rel_win_glb         = "\client\win\glb"
+Dim Const $path_rel_o2k13_statics   = "\static\custom\StaticDownloadLinks-o2k13-glb.txt"
 
 Dim $maindlg, $inifilename, $tabitemfocused, $includesp, $dotnet, $msse, $wddefs, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $buildlbl
 Dim $usbcopy, $usbpath, $usbfsf, $usbclean, $imageonly, $scripting, $shutdown, $btn_start, $btn_proxy, $btn_wsus, $btn_donate, $btn_exit, $proxy, $proxypwd, $wsus, $dummy
@@ -138,9 +140,10 @@ Dim $wxp_heb, $w2k3_heb, $o2k3_heb, $o2k7_heb, $o2k10_heb ; Hebrew
 Dim $wxp_dan, $w2k3_dan, $o2k3_dan, $o2k7_dan, $o2k10_dan ; Danish
 Dim $wxp_nor, $w2k3_nor, $o2k3_nor, $o2k7_nor, $o2k10_nor ; Norwegian
 Dim $wxp_fin, $w2k3_fin, $o2k3_fin, $o2k7_fin, $o2k10_fin ; Finnish
-Dim $w60_glb, $w60_x64_glb                              ; Windows Vista / Server 2008 (global)
-Dim $w61_glb, $w61_x64_glb                              ; Windows 7 / Server 2008 R2 (global)
-Dim $w62_glb, $w62_x64_glb                              ; Windows 8 / Server 2012 (global)
+Dim $w60_glb, $w60_x64_glb                                ; Windows Vista / Server 2008 (global)
+Dim $w61_glb, $w61_x64_glb                                ; Windows 7 / Server 2008 R2 (global)
+Dim $w62_glb, $w62_x64_glb                                ; Windows 8 / Server 2012 (global)
+Dim $o2k13_glb                                            ; Office 2013 (global)
 
 Dim $dlgheight, $groupwidth, $groupheight_lng, $groupheight_glb, $txtwidth, $txtheight, $slimheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos, $runany
 
@@ -533,6 +536,7 @@ Func SwitchDownloadTargets($state)
   GUICtrlSetState($o2k3_fin, $state)
   GUICtrlSetState($o2k7_fin, $state)
   GUICtrlSetState($o2k10_fin, $state)
+  GUICtrlSetState($o2k13_glb, $state)
   Return 0
 EndFunc
 
@@ -1141,6 +1145,9 @@ Func SaveSettings()
   IniWrite($inifilename, $ini_section_o2k10, $lang_token_dan, CheckBoxStateToString($o2k10_dan))
   IniWrite($inifilename, $ini_section_o2k10, $lang_token_nor, CheckBoxStateToString($o2k10_nor))
   IniWrite($inifilename, $ini_section_o2k10, $lang_token_fin, CheckBoxStateToString($o2k10_fin))
+
+;  Office 2013 group
+  IniWrite($inifilename, $ini_section_o2k13, $lang_token_glb, CheckBoxStateToString($o2k13_glb))
 
 ;  Image creation
   IniWrite($inifilename, $ini_section_iso, $iso_token_cd, CheckBoxStateToString($cdiso))
@@ -1981,17 +1988,46 @@ Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
 
-;  Office 2013 group
+;  Office 2003 - 2010 group
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
-GUICtrlCreateGroup("Office 2013 (o2k13)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
-;  Office 2013 label
+GUICtrlCreateGroup("Office Updates 2003 - 2010 (ofc)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
+;  Office 2003 - 2010 label
 $txtypos = $txtypos + 2 * $txtyoffset
 $txtxpos = 3 * $txtxoffset
 If ShowGUIInGerman() Then
-  GUICtrlCreateLabel("Wenn Sie ein anderes Office-Product auswählen, werden Updates für Office 2013 automatisch eingeschlossen.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
+  GUICtrlCreateLabel("Wenn Sie Office 2003, 2007 oder 2010 auswählen, werden dynamisch ermittelte Updates für Office 2003 - 2010 automatisch eingeschlossen.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
 Else
-  GUICtrlCreateLabel("If you select another Office product, Updates for Office 2013 will be included automatically.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
+  GUICtrlCreateLabel("If you select Office 2003, 2007 or 2010, dynamically determined Updates for Office 2003 - 2010 will be included automatically.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
+EndIf
+
+;  Office 2013 group
+$txtxpos = 2 * $txtxoffset
+$txtypos = $txtypos + 2 * $txtyoffset
+GUICtrlCreateGroup("Office 2013 (o2k13)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
+$txtxpos = 3 * $txtxoffset
+;  Office 2013 global
+$txtypos = $txtypos + 1.5 * $txtyoffset
+If ShowGUIInGerman() Then
+  $o2k13_glb = GUICtrlCreateCheckbox("Anwenderspezifische statische Definitionen", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
+Else
+  $o2k13_glb = GUICtrlCreateCheckbox("Custom static definitions", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
+EndIf
+If FileExists(@ScriptDir & $path_rel_o2k13_statics) Then
+  If IniRead($inifilename, $ini_section_o2k13, $lang_token_glb, $disabled) = $enabled Then
+    GUICtrlSetState(-1, $GUI_CHECKED)
+  Else
+    GUICtrlSetState(-1, $GUI_UNCHECKED)
+  EndIf
+Else
+  GUICtrlSetState(-1, $GUI_HIDE)
+  ;  Office 2013 label
+  $txtypos = $txtypos + 0.5 * $txtyoffset
+  If ShowGUIInGerman() Then
+    GUICtrlCreateLabel("Microsoft unterstützt die katalogbasierte, dynamische Ermittlung von Updates für Office 2013 nicht. Verwenden Sie eigene statische Definitionen.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
+  Else
+    GUICtrlCreateLabel("Microsoft does not support the catalog based, dynamic determination of Updates for Office 2013. Use custom static definitions.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
+  EndIf
 EndIf
 
 ;  Legacy products' Tab
@@ -3018,6 +3054,11 @@ While 1
       EndIf
       If IsLangOfficeChecked() Then
         If RunScripts("ofc glb", IsCheckBoxChecked($imageonly), DetermineDownloadSwitches($includesp, $dotnet, $msse, $wddefs, $cleanupdownloads, $verifydownloads, AuthProxy($proxy, $proxypwd), $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse, $wddefs, $usbclean), False, GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If IsCheckBoxChecked($o2k13_glb) Then
+        If RunScripts("o2k13 glb", IsCheckBoxChecked($imageonly), DetermineDownloadSwitches($includesp, $dotnet, $msse, $wddefs, $cleanupdownloads, $verifydownloads, AuthProxy($proxy, $proxypwd), $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse, $wddefs, $usbclean), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf

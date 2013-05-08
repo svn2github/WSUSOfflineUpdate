@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 8.3
+WSUS Offline Update 8.4
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -744,9 +744,10 @@ Version 8.3 -- 21.03.13
 - Fix: Missing "/f" switch for reg.exe could cause PrepareRecall.cmd, PrepareShowLogFile.cmd and CleanupRecall.cmd to wait for user interaction (Thanks to "rbr555")
 - Fix: Linux script DownloadUpdates.sh corrected (Thanks to St. Baur, J. Steffens and H. Hullen)
 --------------------------------------------------------------------------------
-Version ?.? -- ??.??.13
+Version 8.4 -- ??.05.13
 - UpdateInstaller script will now remind user's presets inbetween manual recalls (Thanks to "paul1149")
 - DoUpdate.cmd script will now beep to request manual reboots (Thanks to "paul1149")
+- Fix: Microsoft does not support dynamic determination of Updates for Office 2013 (Thanks to W. Wenzel)
 - Fix: Installation part missed updates for Internet Explorer 10 (Thanks to "Gerby")
 - Fix: UpdateGenerator script will now check installation state of Trusted Root Certificates (Thanks to "boco")
 - Fix: UpdateGenerator script will now block UNC script paths (Thanks to "hereiam")

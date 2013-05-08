@@ -6,7 +6,7 @@ Q: Can I exclude patches from download and/or installation?
 A: Yes, that's possible through customizing the download- and update scripts according to your requirements. You may add new patches or exclude existing ones. Please follow this guide:
 
 1. Exclude patches from download
-You have to differentiate between statically defined updates (like the latest service packs for Windows 2000 and XP, for example) and updates that are determined dynamically at runtime of the script.
+You have to differentiate between statically defined updates (like the latest Service Packs, for example) and updates that are determined dynamically at runtime of the script.
 
 a) Statically defined updates
 Should you desire to exclude all static updates from download, simply check the "Exclude statically defined updates" checkbox inside the Update Generator before downloading. Please be aware that updates you downloaded earlier, which are now excluded, will be deleted on the run.
@@ -90,8 +90,8 @@ Q: A patch is installed over and over again, in spite of being installed already
 A: This problem regularly occurs when doing kernel updates on OEM systems; it's a Microsoft issue.
 To solve the issue, install such updates manually and specify the "/o" (or "/overwriteoem") switch (as shown on http://support.microsoft.com/kb/262841).
 --------------------------------------------------------------------------------
-Q: When installing patches I receive a warning, that KB890830 has been skipped. Why is it not integrated?
-A:Patch KB890830 is not really an update, but the Malicious Software Removal Tool (MSRT). This tool (MRT.exe) scans the PC once after a reboot for possible malware infections, but it is inferior to commercial virus software in terms of detection rate and updating frequency (it's only updated once a moth on most PCs). Additionally, multiple versions are contained in WSUSSCN2.CAB (Microsoft's update catalog), so it's already filtered out on download. Please note that the latest trunk versions also blacklist KB976002 (Browser Choice).
+Q: When installing patches I receive a warning, that kb890830 and kb976002 have been skipped. Why aren't they integrated?
+A: Patch kb890830 is not really an update, but the Malicious Software Removal Tool (MSRT). This tool (MRT.exe) scans the PC once after a reboot for possible malware infections, but it is inferior to commercial virus software in terms of detection rate and updating frequency (it's only updated once a moth on most PCs). Additionally, multiple versions are contained in WSUSSCN2.CAB (Microsoft's update catalog), so it's already filtered out on download. Patch kb976002 is the Browser Choice update for European market.
 --------------------------------------------------------------------------------
 Q: On patch installation I receive warnings about further missing updates. What's up?
 A: WSUS Offline update by default downloads only patches contained in Microsoft's catalog WSUSSCN2.CAB. This includes at least all critical and security-related patches, but not every important, recommended or optional one. If you feel the need to include them, you are free to do so manually (see above).
@@ -114,11 +114,11 @@ A: This error occurs, if the file ".\client\wsus\wsusscn2.cab" is truncated/corr
 Q: My antivirus package reports the downloaded archive to be infected by a virus/trojan? Is that true?
 A: This is with very high probability a false positive! The archive contains compiled AutoIt3 scripts, which some antivirus programs generally detect as malware. You can verify the clean status of the scripts (*.au3) by compiling them yourself using the AutoIt3 compiler (http://www.autoitscript.com/autoit3/). Alternatively, upload the downloaded archive to a site like VirusTotal (http://virustotal.com) or Jotti (http://virusscan.jotti.org) and let it be scanned by a multitude of antivirus engines. Additionally, many antivirus suites have the possibility to send the presumed false positives to the author, either manually over a web form/email or automatically within the program. This will improve detection abilities of these products.
 --------------------------------------------------------------------------------
-Q: While downloading Office patches I'm receiving messages like "ERROR 404: Not Found.". Does the Offline Updater use invalid URLS?
-A: No, but Microsoft does. The URLs will be determined at runtime from Microsoft's catalog patchdata.xml, contained in the file invcif.exe. For unknown reasons, Microsoft has these invalid URLs in the file. There's nothing to worry, however. The invalid URLs have been replaced by correct static definitions in the files named "StaticDownloadLinks-*.txt"; so these updates are downloaded anyway. The error messages can be ignored in this case.
+Q: While downloading patches I'm receiving messages like "ERROR 404: Not Found.". Does the Offline Updater use invalid URLS?
+A: No, but Microsoft does. The URLs will be determined at runtime from Microsoft's catalog patchdata.xml, contained in the file wsusscn2.cab. For unknown reasons, Microsoft has these invalid URLs in the file.
 --------------------------------------------------------------------------------
 Q: I have selected creating an Office update medium in my specific language, e. g. Russian. But there are patches in English language downloaded, too. Why is this?
-A: Some patches in Microsoft's catalog invcif.exe (patchdata.xml) are language dependent, but others do only exist in English. The latter are patches for language-independent parts of Office and can be installed on non-English Office installation without any problems.
+A: Some patches in Microsoft's catalog wsusscn2.cab (patchdata.xml) are language dependent, but others do only exist in English. The latter are patches for language-independent parts of Office and can be installed on non-English Office installation without any problems.
 For that reason, there has been created an additional subdirectory named "glb" (global), besides the existing ones like "deu", "enu", "rus" etc. In the glb directory the dynamically determined patches are stored which only exist in English, no matter what language has been selected. In the case of Office 2003, the Service Packs for Project, Visio etc. which are in English will be filtered out when creating an update medium. This will save space.
 --------------------------------------------------------------------------------
 Q: I'm about to burn a 500MB ISO image using Nero, but receiving a message telling me the ISO being too big in size. Is the ISO corrupt?
@@ -128,7 +128,7 @@ Q: My ISO image is too big to fit on a CD. How can I record it using a DVD?
 A: There's no difference how recording software treats the CD or DVD ISO and media. That means, as long as your recording software supports the ISO format and DVDs, you can burn every ISO image on DVD, too. Note that in some cases when the ISO is smaller than 1GiB, the recording software will add padding data to the end to write at least 1 GiB. This is for compatibility reasons and will have no influence on the CD/DVD contents. 
 --------------------------------------------------------------------------------
 Q: When creating an ISO, I receive the warning: "ISO-9660 filenames longer than 31 may cause buffer overflows in the OS." Should I be alarmed?
-A: No. This is a generic warning which is displayed on every run for creating WSUS Offline Update ISOs. It is only a note that breaking the restrictions of the original ISO9660 filesystem (only short filenames like FILENAME.EXT) may haved undesired effects on older operating systems like MS-DOS, especially with filenames of 32 chars or longer. All platforms relevant for the Offline Updater (Win2000 or higher) handle this without problems, so no need to worry.
+A: No. This is a generic warning which is displayed on every run for creating WSUS Offline Update ISOs. It is only a note that breaking the restrictions of the original ISO9660 filesystem (only short filenames like FILENAME.EXT) may haved undesired effects on older operating systems like MS-DOS, especially with filenames of 32 chars or longer. All platforms relevant for the Offline Updater handle this without problems, so no need to worry.
 --------------------------------------------------------------------------------
 Q: Is it possible to integrate the downloaded patches from Offline Update into an OS installation disc via slipstreaming?
 A: Not all patches support slipstreaming. Besides, as new patches are released every month (and sometimes even more frequently), you would have to create a new disc every time. Therefore we recommend to slipstream only the latest Service Pack and install the rest of the patches after OS installation, using the Offline Updater.
@@ -138,9 +138,6 @@ A: It seems you have stored the Offline Updater files in a restricted area of yo
 --------------------------------------------------------------------------------
 Q: I have selected "Show log file", but after finishing the installation and rebooting, the log is not shown. What's the reason?
 A: Maybe the user account you're logging in with after the final reboot has no permission to access the registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce or the log file (%SystemRoot%\wsusofflineupdate.log). Please log in once with a sufficiently privileged account after finishing installation and reboot.
---------------------------------------------------------------------------------
-Q: In Windows Vista/Server 2008 or Windows 7/Server 2008 R2, the User account control (UAC) prevents execution of %TEMP%\extract\extract_s.exe. What can I do?
-A: The extract_s.exe serves only one purpose: Extracting the file extract.exe into .\bin, unless it's already there. This is the case on the first run only. Please do the first run of UpdateGenerator.exe or Update.cmd as Administrator. Subsequent runs should not require elevation anymore.
 --------------------------------------------------------------------------------
 Q: I enabled the "automatic reboot and recall" option, and now my PC automatically logs into the "WOUTempAdmin" account. How can I prevent that and revert to my previous account settings?
 A: That issue rarely happens. Please help improve the software by submitting a detailed error report, including the preconditions and how to reproduce the error, to the development team.
@@ -159,7 +156,7 @@ If it still won't work, follow this guide:
 - AutoAdminLogon: Delete value
 - ForceAutoLogon: Delete value
 - Delete the "WOUTempAdmin" account using the "User accounts" Control Panel item.
-- Delete the user profile files if they still exist (2000/XP: C:\Documents and Settings, Vista/7: C:\Users).
+- Delete the user profile files if they still exist (XP: C:\Documents and Settings, Vista/7: C:\Users).
 - Reboot.
 --------------------------------------------------------------------------------
 Q: During download, I receive a file integrity verification failure. What can I do to resolve this?

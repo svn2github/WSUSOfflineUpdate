@@ -6,7 +6,7 @@ F: Kann ich Updates vom Download und/oder der Installation ausschließen?
 A: Ja, Sie haben die Möglichkeit, das Verhalten der Download- und Update-Skripte Ihren Bedürfnissen entsprechend anzupassen, indem Sie Updates vom Download oder der Installation ausschließen oder hinzufügen. Zum Ausschluss von Updates gehen Sie bitte wie folgt vor:
 
 1. Ausschluss von Updates vom Download
-Beim Ausschluss von Updates vom Download muss prinzipiell zwischen statisch definierten Updates, z.B. den neuesten Service Packs für Windows 2000 und XP, und dynamisch ermittelten unterschieden werden.
+Beim Ausschluss von Updates vom Download muss prinzipiell zwischen statisch definierten Updates, z.B. den neuesten Service Packs, und dynamisch ermittelten unterschieden werden.
   a) Statisch definierte Updates
     Wollen Sie statisch definierte Updates vom Download ausschließen, so aktivieren Sie im "UpdateGenerator" vor dem Herunterladen die Option "Exclude statically defined updates". Bitte beachten Sie, dass beim folgenden Download entsprechende Dateien, die Sie bereits zu einem früheren Zeitpunkt heruntergeladen haben, gelöscht werden.
   b) Dynamische ermittelte Updates
@@ -84,8 +84,8 @@ F: Ein Update wird immer wieder installiert, obwohl es auf dem Zielsystem schon 
 A: Dieses Verhalten zeigt sich gelegentlich bei Kernel-Updates auf OEM-Systemen; die Ursache liegt also bei Microsoft.
 Sie können solche Updates manuell mit dem Parameter "/o" (alternativ "/overwriteoem", vgl. http://support.microsoft.com/kb/262841) installieren, um dieses Problem zu beheben.
 --------------------------------------------------------------------------------
-F: Bei der Installation der Updates erhalte ich eine Warnung, dass das Update KB890830 übersprungen wurde. Warum ist es nicht integriert?
-A: Beim Update KB890830 handelt es sich genau genommen nicht um ein Update, sondern um das "Malicious Software Removal Tool (MSRT)". Dieses prüft nach einem Neustart des Rechners diesen einmalig auf Schädlingsbefall, kann aber hinsichtlich Aktualität und Erkennungsrate nicht mit kommerziellen Virenscannern konkurrieren. Da es darüber hinaus in vielen Versionen in Microsofts Katalogdatei wsusscn2.cab aufgeführt ist, wird es schon beim Download der Updates herausgefiltert.
+F: Bei der Installation der Updates erhalte ich eine Warnung, dass die Updates kb890830 und kb976002 übersprungen wurden. Warum sind sie nicht integriert?
+A: Beim Update kb890830 handelt es sich genau genommen nicht um ein Update, sondern um das "Malicious Software Removal Tool (MSRT)". Dieses prüft nach einem Neustart des Rechners diesen einmalig auf Schädlingsbefall, kann aber hinsichtlich Aktualität und Erkennungsrate nicht mit kommerziellen Virenscannern konkurrieren. Da es darüber hinaus in vielen Versionen in Microsofts Katalogdatei wsusscn2.cab aufgeführt ist, wird es schon beim Download der Updates herausgefiltert. Das Update kb976002 ist der Browserauswahlbildschirm für den europäischen Markt.  
 --------------------------------------------------------------------------------
 F: Bei der Installation der Updates erhalte ich Warnungen, dass weitere Updates nicht gefunden werden konnten. Was hat es damit auf sich?
 A: Vom Offline Update werden standardmäßig nur Updates heruntergeladen, die in Microsofts Katalogdatei wsusscn2.cab aufgeführt sind. Dies sind mindestens alle kritischen und sicherheitsrelevanten Updates, jedoch nicht alle empfohlenen oder optionalen. Bei Bedarf können Sie die vermissten Updates manuell hinzufügen (s.o.).
@@ -111,11 +111,11 @@ A: Dies ist ein Fehlalarm! Das Archiv enthält kompilierte AutoIT-Skripte, die ma
    Sie können die Unbedenklichkeit der Skripte verifizieren, indem Sie die mitgelieferten Quelltextdateien (*.au3) mit AutoIT (http://www.autoitscript.com/autoit3/) selbst übersetzen oder indem Sie das heruntergeladene Archiv auf VirusTotal (http://www.virustotal.com/) von einer Vielzahl von Virenscannern überprüfen lassen.
    Weiterhin können Sie zur Verbesserung der Erkennung Ihres Anti-Viren-Produktes beitragen, indem Sie Ihrem Hersteller die "falsch positiv" erkannten Dateien zusenden.
 --------------------------------------------------------------------------------
-F: Beim Herunterladen der Office-Updates erhalte ich Meldungen der Form "ERROR 404: Not Found.". Verwendet das Offline Update hier fehlerhafte URLs?
-A: Nein. Die URLs der herunterzuladenden Updates werden aus Microsofts Katalogdatei patchdata.xml, die in der Datei invcif.exe enthalten ist, zur Laufzeit ermittelt. Die ungültigen URLs, die Microsoft hier aus nicht nachvollziehbaren Gründen eingetragen hat, wurden für das Offline Update durch korrekte statische Definitionen in den Dateien "StaticDownloadLinks-*.txt" ersetzt; die betreffenden Updates werden also dennoch heruntergeladen.
+F: Beim Herunterladen der Updates erhalte ich Meldungen der Form "ERROR 404: Not Found.". Verwendet das Offline Update hier fehlerhafte URLs?
+A: Nein. Die URLs der herunterzuladenden Updates werden aus Microsofts Katalogdatei package.xml, die in der Datei wsusscn2.cab enthalten ist, zur Laufzeit ermittelt.
 --------------------------------------------------------------------------------
 F: Ich habe die Erstellung eines Office-Update-Pakets auf Deutsch gewählt. Es werden jedoch auch englischsprachige Updates heruntergeladen. Warum?
-A: Einige Office-Updates werden in Microsoft-Katalogdatei invcif.exe (patchdata.xml) sprachabhängig aufgeführt, andere nur in der englischen Fassung. Bei letzteren handelt es sich offenbar um Aktualisierungen für sprachunabhängige Teile von Office; diese lassen sich z.B. auf einem deutschen Office klaglos installieren.
+A: Einige Office-Updates werden in Microsoft-Katalogdatei wsusscn2.cab (package.xml) sprachabhängig aufgeführt, andere nur in der englischen Fassung. Bei letzteren handelt es sich offenbar um Aktualisierungen für sprachunabhängige Teile von Office; diese lassen sich z.B. auf einem deutschen Office klaglos installieren.
 Daher wurde für die Office-Pakete neben den sprachabhängigen Unterverzeichnissen "deu", "enu" etc. ein weiteres namens "glb" eingeführt, in dem die dynamisch ermittelten englischsprachigen Office-Updates abgelegt werden, unabhängig davon, welche Sprachversion gewählt wurde.
 Im Falle von Office 2003 werden dann bei der Erzeugung des ISO-Images die in "glb" befindlichen englischsprachigen Service-Packs für Project, Visio etc. ausgeblendet, um Platz auf dem Datenträger zu sparen.
 --------------------------------------------------------------------------------
@@ -136,10 +136,6 @@ A: Offenbar haben Sie das Offline Update in einem Bereich Ihres Dateisystems abg
 --------------------------------------------------------------------------------
 F: Obwohl ich die Option gewählt habe, bekomme ich am Ende der Installation nach dem Neustart die Log-Datei nicht angezeigt. Warum?
 A: Wahrscheinlich hat der Benutzer, mit dem Sie sich nach Abschluss der Installation anmelden, keine Berechtigung, auf den Registrierungsschlüssel HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce oder auf die Log-Datei (%SystemRoot%\ctupdate.log) zuzugreifen. Bitte melden Sie sich nach dem letzten Neustart des Offline Updates einmalig mit dem Benutzerkonto an, mit dem Sie das Update gestartet haben.
---------------------------------------------------------------------------------
-F: Unter Windows Vista oder Server 2008 verhindert die Benutzerkontensteuerung (UAC), dass %TEMP%\extract\extract_s.exe ausgeführt wird. Was kann ich dagegen tun?
-A: Die Ausführung von extract_s.exe nur zum Entpacken des Programms extract.exe nach ...\bin, sofern extract.exe dort noch nicht vorhanden ist, also nur beim ersten Download.
-Bitte führen Sie daher UpdateGenerator.exe bzw. DownloadUpdates.cmd unter Windows Vista oder Server 2008 beim ersten Mal als Administrator aus.
 --------------------------------------------------------------------------------
 F: Ich habe die Option "automatic reboot and recall" verwendet; nun wird bei jedem Neustart und bei jeder Abmeldung der Benutzer "WOUTempAdmin" automatisch angemeldet. Wie kann ich das verhindern und den Originalzustand des Rechners wiederherstellen?
 A: Dieser Effekt tritt sehr selten auf. Bitte helfen Sie dabei, die Software zu verbessern, indem Sie dem Entwicklungsteam die Umstände so detailliert wie möglich schildern.
