@@ -744,7 +744,7 @@ Version 8.3 -- 21.03.13
 - Fix: Missing "/f" switch for reg.exe could cause PrepareRecall.cmd, PrepareShowLogFile.cmd and CleanupRecall.cmd to wait for user interaction (Thanks to "rbr555")
 - Fix: Linux script DownloadUpdates.sh corrected (Thanks to St. Baur, J. Steffens and H. Hullen)
 --------------------------------------------------------------------------------
-Version 8.4 -- ??.05.13
+Version 8.4 -- 27.05.13
 - UpdateInstaller script will now remind user's presets inbetween manual recalls (Thanks to "paul1149")
 - DoUpdate.cmd script will now beep to request manual reboots (Thanks to "paul1149")
 - Fix: Microsoft does not support dynamic determination of Updates for Office 2013 (Thanks to W. Wenzel)
@@ -753,6 +753,8 @@ Version 8.4 -- ??.05.13
 - Fix: UpdateGenerator script will now block UNC script paths (Thanks to "hereiam")
 - Fix: UpdateGenerator and UpdateInstaller scripts will now block invalid %TEMP% paths (Thanks to "e2020" and "aker")
 - Fix: Double-quoted parameter check could prevent installation of Office File Converter Pack (Thanks to "Rassilon")
+- Fix: Download part missed PowerPoint 2007 Security Update kb2596764 due to a bug in Microsoft's update catalog file wsusscn2.cab
 - Fix: Language messages and prerequisites' problem corrected in Linux scripts (Thanks to H. Hullen)
 - Fix: Invalid download paths for C++ Runtime Libraries in Linux script DownloadUpdates.sh (Thanks to H. Hullen)
 - Fix: Differences between Linux and Windows download parts (Thanks to "talou" and H. Hullen)
+--------------------------------------------------------------------------------
