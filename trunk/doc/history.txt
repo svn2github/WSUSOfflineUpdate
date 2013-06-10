@@ -758,3 +758,6 @@ Version 8.4 -- 27.05.13
 - Fix: Invalid download paths for C++ Runtime Libraries in Linux script DownloadUpdates.sh (Thanks to H. Hullen)
 - Fix: Differences between Linux and Windows download parts (Thanks to "talou" and H. Hullen)
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- HTTP Proxy password prompt will now encode special characters according to RFC1738 (Thanks to "Mortimer")
+- Fix: HTTP Proxy password prompt did not appear again after HTTP Proxy changes (Thanks to V. Bartheld)

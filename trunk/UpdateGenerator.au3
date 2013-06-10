@@ -608,6 +608,20 @@ Func EnableGUI()
   Return 0
 EndFunc
 
+Func RFC1738EncodedString($str)
+Dim $result, $i
+
+  $result = ""
+  For $i = 1 to StringLen($str)
+    If StringIsAlNum(StringMid($str, $i, 1)) Then
+      $result = $result & StringMid($str, $i, 1)
+    Else 
+      $result = $result & "%" & Hex(Asc(StringMid($str, $i, 1)), 2)
+    EndIf
+  Next
+  Return $result
+EndFunc
+
 Func AuthProxy($strproxy, $strproxypwd)
 Dim $result, $pos
   
@@ -2953,19 +2967,22 @@ While 1
     Case $btn_proxy         ; Proxy button pressed
       If ShowGUIInGerman() Then
         $dummy = InputBox("HTTP-Proxy-Einstellung", _
-                          "ACHTUNG: Um die Speicherung Ihres Passworts zu vermeiden," & @LF _
+                          "ACHTUNG: Sonderzeichen müssen hier gemäß RFC1738 codiert werden." & @LF _
+                        & "Um die Speicherung Ihres Passworts zu vermeiden," & @LF _
                         & "lassen Sie es hier bitte weg (http://Benutzername:@Server[:Port])." & @LF & @LF _
                         & "Bitte geben Sie Ihre HTTP-Proxy-URL ein" & @LF _
-                        & "(http://[Benutzername:[Passwort]@]Server[:Port]):", $proxy, "", 380, 170)
+                        & "(http://[Benutzername:[Passwort]@]Server[:Port]):", $proxy, "", 400, 180)
       Else
         $dummy = InputBox("HTTP Proxy setting", _
-                          "NOTE: To avoid storage of your password," & @LF _
-                        & "please omit it here (http://username:@server[:port])." & @LF & @LF _
+                          "NOTE: Special characters have to be encoded according to RFC1738 here." & @LF _
+                        & "To avoid storage of your password, please omit it here" & @LF _
+                        & "(http://username:@server[:port])." & @LF & @LF _
                         & "Please enter your HTTP Proxy URL" & @LF _
-                        & "(http://[username:[password]@]server[:port]):", $proxy, "", 320, 170)
+                        & "(http://[username:[password]@]server[:port]):", $proxy, "", 420, 180)
       EndIf
-      If @error = 0 Then
+      If ( (@error = 0) AND ($proxy <> $dummy) ) Then
         $proxy = $dummy
+        $proxypwd = ""
       EndIf
 
     Case $btn_wsus          ; WSUS button pressed
@@ -2986,12 +3003,18 @@ While 1
       If NOT IsCheckBoxChecked($imageonly) Then
         If ( (StringInStr($proxy, ":@") > 0) AND ($proxypwd = "") ) Then
           If ShowGUIInGerman() Then
-            $dummy = InputBox("HTTP-Proxy-Passwort", "Bitte geben Sie Ihr HTTP-Proxy-Passwort ein:", "", "*", 270, 110)
+            $dummy = InputBox("HTTP-Proxy-Passwort", _
+                              "ACHTUNG: Bitte codieren Sie Sonderzeichen hier nicht." & @LF _
+                            & "Dies geschieht automatisch." & @LF & @LF _
+                            & "Bitte geben Sie Ihr HTTP-Proxy-Passwort ein:", "", "*", 320, 150)
           Else
-            $dummy = InputBox("HTTP Proxy password", "Please enter your HTTP Proxy password:", "", "*", 250, 110)
+            $dummy = InputBox("HTTP Proxy password", _
+                              "NOTE: Please do not encode special characters here." & @LF _
+                            & "This will be done automatically." & @LF & @LF _
+                            & "Please enter your HTTP Proxy password:", "", "*", 300, 150)
           EndIf
           If @error = 0 Then
-            $proxypwd = $dummy
+            $proxypwd = RFC1738EncodedString($dummy)
           Else
             ContinueLoop
           EndIf
