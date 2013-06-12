@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.4+ (r469)
+set WSUSOFFLINE_VERSION=8.4+ (r470)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -260,6 +260,7 @@ if exist ..\client\w2k3-x64\glb\ndp*.* (
 )
 if exist ..\static\StaticDownloadLink-dotnet.txt del ..\static\StaticDownloadLink-dotnet.txt
 if exist ..\xslt\ExtractDownloadLinks-dotnet-glb.xsl del ..\xslt\ExtractDownloadLinks-dotnet-glb.xsl
+if exist ..\client\static\StaticUpdateIds-dotnet.txt del ..\client\static\StaticUpdateIds-dotnet.txt
 if exist ..\client\dotnet\glb\nul (
   if not exist ..\client\dotnet\x64-glb\nul md ..\client\dotnet\x64-glb
   move /Y ..\client\dotnet\glb\*-x64_*.* ..\client\dotnet\x64-glb >nul

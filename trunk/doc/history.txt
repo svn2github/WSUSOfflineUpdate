@@ -760,4 +760,5 @@ Version 8.4 -- 27.05.13
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
 - HTTP Proxy password prompt will now encode special characters according to RFC1738 (Thanks to "Mortimer")
+- Custom update definitions for .NET Frameworks 3.5 SP1 and 4 will be executed even if the Frameworks are already installed (Thanks to "DK3" and "aker")
 - Fix: HTTP Proxy password prompt did not appear again after HTTP Proxy changes (Thanks to V. Bartheld)
