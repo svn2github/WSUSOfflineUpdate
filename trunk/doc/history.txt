@@ -766,3 +766,4 @@ Version ?.? -- ??.??.??
 - Fix: HTTP Proxy password prompt did not appear again after HTTP Proxy changes (Thanks to V. Bartheld)
 - Fix: Download part missed kb2813170 for Windows XP, 7 and Server 2003 (x86) due to a bug in Microsoft's update catalog file wsusscn2.cab (Thanks to M. Trenkner)
 - Fix: Download part missed kb2425227 for Windows 7 and Server 2008 R2 (x86/x64) due to a bug in Microsoft's update catalog file wsusscn2.cab
+- Fix: Download part got updates for Lync (Thanks to "harry")

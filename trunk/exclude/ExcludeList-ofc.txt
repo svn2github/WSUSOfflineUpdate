@@ -4,8 +4,10 @@ srvapp
 srv
 sts
 wacwfe
+lync
 project
 visio20
 visiomui
 visiosp
 visioww
+                                                                          
