@@ -759,6 +759,7 @@ Version 8.4 -- 27.05.13
 - Fix: Differences between Linux and Windows download parts (Thanks to "talou" and H. Hullen)
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
+- Microsoft Silverlight updated to v. 5.1.20513.0 (Thanks to "harry")
 - Support added for C++ 2012 Runtime Libraries Update 3 (Thanks to "harry")
 - HTTP Proxy password prompt will now encode special characters according to RFC1738 (Thanks to "Mortimer")
 - Custom update definitions for .NET Frameworks 3.5 SP1 and 4 will be executed even if the Frameworks are already installed (Thanks to "DK3" and "aker")
