@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.4+ (r476)
+set WSUSOFFLINE_VERSION=8.4+ (r477)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -1081,10 +1081,12 @@ set UPDATE_CATEGORY=
 set UPDATE_LANGUAGES=
 del "%TEMP%\UpdateCategoriesAndFileIds.txt"
 
-%SystemRoot%\system32\sort.exe "%TEMP%\OfficeFileIds.txt" /O "%TEMP%\OfficeFileIdsSorted.txt"
+%SystemRoot%\system32\sort.exe /R "%TEMP%\OfficeFileIds.txt" /O "%TEMP%\OfficeFileIdsSorted.txt"
 del "%TEMP%\OfficeFileIds.txt"
-%SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIdsSorted.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
+%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractUniqueFromSorted.vbs "%TEMP%\OfficeFileIdsSorted.txt" "%TEMP%\OfficeFileIdsUnique.txt"
 del "%TEMP%\OfficeFileIdsSorted.txt"
+%SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
+del "%TEMP%\OfficeFileIdsUnique.txt"
 del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 
 if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"

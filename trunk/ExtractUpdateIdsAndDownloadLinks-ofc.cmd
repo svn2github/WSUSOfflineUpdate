@@ -63,10 +63,12 @@ set UPDATE_CATEGORY=
 set UPDATE_LANGUAGES=
 rem del "%TEMP%\UpdateCategoriesAndFileIds.txt"
 
-%SystemRoot%\system32\sort.exe "%TEMP%\OfficeFileIds.txt" /O "%TEMP%\OfficeFileIdsSorted.txt"
+%SystemRoot%\system32\sort.exe /R "%TEMP%\OfficeFileIds.txt" /O "%TEMP%\OfficeFileIdsSorted.txt"
 rem del "%TEMP%\OfficeFileIds.txt"
-%SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIdsSorted.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
+%SystemRoot%\system32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractUniqueFromSorted.vbs "%TEMP%\OfficeFileIdsSorted.txt" "%TEMP%\OfficeFileIdsUnique.txt"
 rem del "%TEMP%\OfficeFileIdsSorted.txt"
+%SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
+rem del "%TEMP%\OfficeFileIdsUnique.txt"
 rem del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 
 if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
