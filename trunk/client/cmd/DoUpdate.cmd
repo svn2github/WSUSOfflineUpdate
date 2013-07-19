@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.4+ (r477)
+set WSUSOFFLINE_VERSION=8.4+ (r478)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1244,9 +1244,7 @@ set WDDEFS_VER_TARGET_REVIS=
 
 if "%RECALL_REQUIRED%"=="1" goto Installed
 if "%OFC_NAME%"=="" goto InstSoftware
-if not exist ..\%OFC_NAME%\%OFC_LANG%\nul (
-  if not exist ..\%OFC_NAME%\glb\nul goto InstSoftware
-)
+
 rem *** Check Office Service Pack versions ***
 echo Checking Office Service Pack versions...
 if exist "%TEMP%\MissingUpdateIds.txt" del "%TEMP%\MissingUpdateIds.txt"
