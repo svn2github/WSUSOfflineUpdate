@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.4+ (r478)
+set WSUSOFFLINE_VERSION=8.4+ (r479)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -1088,16 +1088,15 @@ del "%TEMP%\OfficeFileIds.txt"
 del "%TEMP%\OfficeFileIdsSortedForward.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs ExtractUniqueFromSorted.vbs "%TEMP%\OfficeFileIdsSortedReverse.txt" "%TEMP%\OfficeFileIdsUniqueReverse.txt"
 del "%TEMP%\OfficeFileIdsSortedReverse.txt"
-%SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIdsUniqueForward.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocationsForward.txt"
+%SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIdsUniqueForward.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocationsDouble.txt"
 del "%TEMP%\OfficeFileIdsUniqueForward.txt"
-%SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIdsUniqueReverse.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocationsReverse.txt"
+%SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIdsUniqueReverse.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >>"%TEMP%\OfficeUpdateCabExeIdsAndLocationsDouble.txt"
 del "%TEMP%\OfficeFileIdsUniqueReverse.txt"
 del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
-%SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\OfficeUpdateCabExeIdsAndLocationsForward.txt" "%TEMP%\OfficeUpdateCabExeIdsAndLocationsReverse.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
-%SystemRoot%\system32\findstr.exe /B /L /V /G:"%TEMP%\OfficeUpdateCabExeIdsAndLocationsForward.txt" "%TEMP%\OfficeUpdateCabExeIdsAndLocationsReverse.txt" >>"%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
-%SystemRoot%\system32\findstr.exe /B /L /V /G:"%TEMP%\OfficeUpdateCabExeIdsAndLocationsReverse.txt" "%TEMP%\OfficeUpdateCabExeIdsAndLocationsForward.txt" >>"%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
-del "%TEMP%\OfficeUpdateCabExeIdsAndLocationsForward.txt"
-del "%TEMP%\OfficeUpdateCabExeIdsAndLocationsReverse.txt"
+%SystemRoot%\system32\sort.exe "%TEMP%\OfficeUpdateCabExeIdsAndLocationsDouble.txt" /O "%TEMP%\OfficeUpdateCabExeIdsAndLocationsSorted.txt"
+del "%TEMP%\OfficeUpdateCabExeIdsAndLocationsDouble.txt"
+%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractUniqueFromSorted.vbs "%TEMP%\OfficeUpdateCabExeIdsAndLocationsSorted.txt" "%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
+del "%TEMP%\OfficeUpdateCabExeIdsAndLocationsSorted.txt"
 
 if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
 if exist "%TEMP%\UpdateTableURL-%1-%2.csv" del "%TEMP%\UpdateTableURL-%1-%2.csv"
