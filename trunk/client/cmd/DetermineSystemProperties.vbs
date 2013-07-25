@@ -47,7 +47,7 @@ Private Const strOfficeAppNames               = "Word,Excel,Outlook,Powerpoint,A
 Private Const strOfficeExeNames               = "WINWORD.EXE,EXCEL.EXE,OUTLOOK.EXE,POWERPNT.EXE,MSACCESS.EXE,FRONTPG.EXE"
 Private Const strBuildNumbers_o2k3            = "5604,5612,5510,5529,5614,5516;6359,6355,6353,6361,6355,6356;6568,6560,6565,6564,6566,6552;8169,8169,8169,8169,8166,8164"
 Private Const strBuildNumbers_o2k7            = "4518,4518,4518,4518,4518,4518;6211,6214,6212,6211,6211,6211;6425,6425,6423,6425,6423,6423;6612,6611,6607,6600,6606,6600"
-Private Const strBuildNumbers_o2k10           = "4762,4756,4760,4754,4750,4750;6024,6024,6025,6009,6024,6024"
+Private Const strBuildNumbers_o2k10           = "4762,4756,4760,4754,4750,4750;6024,6024,6025,6009,6024,6024;7015,7015,7012,6009,7015,7015"
 Private Const strBuildNumbers_o2k13           = "4420,4420,4420,4420,4420,4420"
 Private Const idxBuild                        = 2
 

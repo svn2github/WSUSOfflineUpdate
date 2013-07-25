@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.4+ (r479)
+set WSUSOFFLINE_VERSION=8.4+ (r480)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -280,16 +280,6 @@ if "%OFC_NAME%"=="" goto InvalidMedium
 
 :CheckOfficeMedium
 if "%OFC_NAME%"=="" goto ProperMedium
-if exist ..\%OFC_NAME%\%OFC_LANG%\nul (
-  echo Medium supports Microsoft Office ^(%OFC_NAME% %OFC_LANG%^).
-  echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(%OFC_NAME% %OFC_LANG%^) >>%UPDATE_LOGFILE%
-  goto ProperMedium
-)
-if exist ..\%OFC_NAME%\glb\nul (
-  echo Medium supports Microsoft Office ^(%OFC_NAME% glb^).
-  echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(%OFC_NAME% glb^) >>%UPDATE_LOGFILE%
-  goto ProperMedium
-)
 if exist ..\ofc\%OFC_LANG%\nul (
   echo Medium supports Microsoft Office ^(ofc %OFC_LANG%^).
   echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(ofc %OFC_LANG%^) >>%UPDATE_LOGFILE%
@@ -300,8 +290,8 @@ if exist ..\ofc\glb\nul (
   echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(ofc glb^) >>%UPDATE_LOGFILE%
   goto ProperMedium
 )
-echo Medium does not support Microsoft Office (%OFC_NAME% %OFC_LANG%).
-echo %DATE% %TIME% - Info: Medium does not support Microsoft Office (%OFC_NAME% %OFC_LANG%) >>%UPDATE_LOGFILE%
+echo Medium does not support Microsoft Office (ofc glb).
+echo %DATE% %TIME% - Info: Medium does not support Microsoft Office (ofc glb) >>%UPDATE_LOGFILE%
 :ProperMedium
 
 rem *** Install Windows Service Pack ***

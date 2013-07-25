@@ -758,7 +758,8 @@ Version 8.4 -- 27.05.13
 - Fix: Invalid download paths for C++ Runtime Libraries in Linux script DownloadUpdates.sh (Thanks to H. Hullen)
 - Fix: Differences between Linux and Windows download parts (Thanks to "talou" and H. Hullen)
 --------------------------------------------------------------------------------
-Version ?.? -- ??.??.??
+Version 8.5 -- ??.??.??
+- Office 2010 Service Pack 2 integrated (Thanks to "harry" and "aker")
 - Microsoft Silverlight updated to v. 5.1.20513.0 (Thanks to "harry")
 - Support added for C++ 2012 Runtime Libraries Update 3 (Thanks to "harry")
 - HTTP Proxy password prompt will now encode special characters according to RFC1738 (Thanks to "Mortimer")
