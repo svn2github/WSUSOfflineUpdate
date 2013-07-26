@@ -137,7 +137,10 @@ goto InstFailure
 :o2k13
 echo Installing %1...
 echo %1 | %SystemRoot%\system32\find.exe /I "sp" >nul 2>&1
-if errorlevel 1 (%1 /quiet /norestart) else (%1 /passive /norestart)
+if errorlevel 1 (
+  echo %1 | %SystemRoot%\system32\find.exe /I "2687455" >nul 2>&1
+  if errorlevel 1 (%1 /quiet /norestart) else (%1 /passive /norestart)
+) else (%1 /passive /norestart)
 set ERR_LEVEL=%errorlevel%
 if "%IGNORE_ERRORS%"=="1" goto InstSuccess
 for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess

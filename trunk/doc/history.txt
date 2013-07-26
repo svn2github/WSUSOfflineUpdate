@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 8.4
+WSUS Offline Update 8.5
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -758,7 +758,8 @@ Version 8.4 -- 27.05.13
 - Fix: Invalid download paths for C++ Runtime Libraries in Linux script DownloadUpdates.sh (Thanks to H. Hullen)
 - Fix: Differences between Linux and Windows download parts (Thanks to "talou" and H. Hullen)
 --------------------------------------------------------------------------------
-Version 8.5 -- ??.??.??
+Version 8.5 -- 26.07.13
+- NOTE: If you customized your copy of WOU using the script AddOffice2010x64Support.cmd {lng}, please call it again once (per language) to get the appropriate Office 2010 SP2 installation file(s) downloaded
 - Office 2010 Service Pack 2 integrated (Thanks to "harry" and "aker")
 - Microsoft Silverlight updated to v. 5.1.20513.0 (Thanks to "harry")
 - Support added for C++ 2012 Runtime Libraries Update 3 (Thanks to "harry")
@@ -770,3 +771,4 @@ Version 8.5 -- ??.??.??
 - Fix: Download part missed kb2425227 for Windows 7 and Server 2008 R2 (x86/x64) due to a bug in Microsoft's update catalog file wsusscn2.cab
 - Fix: Download part missed updates kb2817480 for Office 2003 and kb2596764 for Office 2007 (Thanks to "harry")
 - Fix: Download part got updates for Lync (Thanks to "harry")
+--------------------------------------------------------------------------------
