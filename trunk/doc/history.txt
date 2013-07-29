@@ -772,3 +772,5 @@ Version 8.5 -- 26.07.13
 - Fix: Download part missed updates kb2817480 for Office 2003 and kb2596764 for Office 2007 (Thanks to "harry")
 - Fix: Download part got updates for Lync (Thanks to "harry")
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- Added missing URL for Turkish version of Service Pack 2 for Office 2010 x64 (Thanks to "harry")
