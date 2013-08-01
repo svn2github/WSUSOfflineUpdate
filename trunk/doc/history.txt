@@ -774,3 +774,4 @@ Version 8.5 -- 26.07.13
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
 - Added missing URL for Turkish version of Service Pack 2 for Office 2010 x64 (Thanks to "harry")
+- Fix: Download part missed kb2761465 for Windows 8 and Server 2012 (x86/x64)
