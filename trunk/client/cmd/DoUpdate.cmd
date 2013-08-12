@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.5+ (r484)
+set WSUSOFFLINE_VERSION=8.5+ (r485)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1266,9 +1266,10 @@ set REBOOT_REQUIRED=1
 
 rem *** Check installation state of Office File Converter Packs ***
 if "%INSTALL_OFC%" NEQ "/instofc" goto SkipOFCNV
-goto OFCNV%OFC_NAME%
+if "%O2K3_VER_MAJOR%" NEQ "" goto InstOFCNV
+goto SkipOFCNV
 
-:OFCNVo2k3
+:InstOFCNV
 echo Checking installation state of Office File Converter Pack...
 if "%OFC_CONV_PACK%" NEQ "1" (
   if exist ..\ofc\glb\ork.exe (
@@ -1308,17 +1309,15 @@ if "%OFC_COMP_PACK%" NEQ "1" (
     )
   )
 )
-:OFCNVo2k7
-:OFCNVo2k10
-:OFCNVo2k13
 :SkipOFCNV
 
 rem *** Check installation state of Office File Validation ***
 if "%INSTALL_OFV%" NEQ "/instofv" goto SkipOFVAL
-goto OFVAL%OFC_NAME%
+if "%O2K3_VER_MAJOR%" NEQ "" goto InstOFVAL
+if "%O2K7_VER_MAJOR%" NEQ "" goto InstOFVAL
+goto SkipOFVAL
 
-:OFVALo2k3
-:OFVALo2k7
+:InstOFVAL
 echo Checking installation state of Office File Validation Add-In...
 if "%OFC_FILE_VALID%" NEQ "1" (
   if exist ..\ofc\glb\OFV.exe (
@@ -1340,8 +1339,6 @@ if "%OFC_FILE_VALID%" NEQ "1" (
     )
   )
 )
-:OFVALo2k10
-:OFVALo2k13
 :SkipOFVAL
 
 :InstSoftware

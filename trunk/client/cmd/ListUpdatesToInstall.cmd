@@ -37,8 +37,22 @@ rem *** Add statically defined update ids ***
 if "%EXC_STATICS%"=="1" goto ListFiles
 if exist ..\static\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt call :EvalStatics ..\static\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt
 if exist ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt call :EvalStatics ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt
-if exist ..\static\StaticUpdateIds-%OFC_NAME%.txt call :EvalStatics ..\static\StaticUpdateIds-%OFC_NAME%.txt
-if exist ..\static\custom\StaticUpdateIds-%OFC_NAME%.txt call :EvalStatics ..\static\custom\StaticUpdateIds-%OFC_NAME%.txt
+if "%O2K3_VER_MAJOR%" NEQ "" (
+  if exist ..\static\StaticUpdateIds-o2k3.txt call :EvalStatics ..\static\StaticUpdateIds-o2k3.txt
+  if exist ..\static\custom\StaticUpdateIds-o2k3.txt call :EvalStatics ..\static\custom\StaticUpdateIds-o2k3.txt
+)
+if "%O2K7_VER_MAJOR%" NEQ "" (
+  if exist ..\static\StaticUpdateIds-o2k7.txt call :EvalStatics ..\static\StaticUpdateIds-o2k7.txt
+  if exist ..\static\custom\StaticUpdateIds-o2k7.txt call :EvalStatics ..\static\custom\StaticUpdateIds-o2k7.txt
+)
+if "%O2K10_VER_MAJOR%" NEQ "" (
+  if exist ..\static\StaticUpdateIds-o2k10.txt call :EvalStatics ..\static\StaticUpdateIds-o2k10.txt
+  if exist ..\static\custom\StaticUpdateIds-o2k10.txt call :EvalStatics ..\static\custom\StaticUpdateIds-o2k10.txt
+)
+if "%O2K13_VER_MAJOR%" NEQ "" (
+  if exist ..\static\StaticUpdateIds-o2k13.txt call :EvalStatics ..\static\StaticUpdateIds-o2k13.txt
+  if exist ..\static\custom\StaticUpdateIds-o2k13.txt call :EvalStatics ..\static\custom\StaticUpdateIds-o2k13.txt
+)
 
 :ListFiles
 rem *** List update files ***
