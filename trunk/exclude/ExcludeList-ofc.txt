@@ -4,7 +4,7 @@ srvapp
 srv
 sts
 wacwfe
-lync
+lync_
 project
 visio20
 visiomui

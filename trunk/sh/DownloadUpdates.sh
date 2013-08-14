@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                          v. 8.5+ (r485)                           ###
+###                          v. 8.5+ (r486)                           ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -546,7 +546,7 @@ test $debug -eq 0 && set +x
 cd ../temp
 echo "Extracting Windows update catalogue file package.xml..."
 cp ../client/wsus/wsusscn2.cab ../client/wsus/wsusscn2_1.cab
-cabextract -q -F package.cab ../client/wsus/wsusscn2_1.cab
+cabextract -q -F package.cab ../client/wsus/wsusscn2_1.cab 2>/dev/null
 cabextract -q -F package.xml package.cab
 rm package.cab
 rm -f ../client/wsus/wsusscn2_1.cab

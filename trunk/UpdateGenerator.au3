@@ -2002,22 +2002,9 @@ Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
 
-;  Office 2003 - 2010 group
-$txtxpos = 2 * $txtxoffset
-$txtypos = $txtypos + 2.5 * $txtyoffset
-GUICtrlCreateGroup("Office Updates 2003 - 2010 (ofc)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
-;  Office 2003 - 2010 label
-$txtypos = $txtypos + 2 * $txtyoffset
-$txtxpos = 3 * $txtxoffset
-If ShowGUIInGerman() Then
-  GUICtrlCreateLabel("Wenn Sie Office 2003, 2007 oder 2010 auswählen, werden dynamisch ermittelte Updates für Office 2003 - 2010 automatisch eingeschlossen.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
-Else
-  GUICtrlCreateLabel("If you select Office 2003, 2007 or 2010, dynamically determined Updates for Office 2003 - 2010 will be included automatically.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
-EndIf
-
 ;  Office 2013 group
 $txtxpos = 2 * $txtxoffset
-$txtypos = $txtypos + 2 * $txtyoffset
+$txtypos = $txtypos + 2.5 * $txtyoffset
 GUICtrlCreateGroup("Office 2013 (o2k13)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
 $txtxpos = 3 * $txtxoffset
 ;  Office 2013 global
@@ -2038,10 +2025,23 @@ Else
   ;  Office 2013 label
   $txtypos = $txtypos + 0.5 * $txtyoffset
   If ShowGUIInGerman() Then
-    GUICtrlCreateLabel("Microsoft unterstützt die katalogbasierte, dynamische Ermittlung von Updates für Office 2013 nicht. Verwenden Sie eigene statische Definitionen.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
+    GUICtrlCreateLabel("Wählbar bei eigenen statischen Definitionen.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
   Else
-    GUICtrlCreateLabel("Microsoft does not support the catalog based, dynamic determination of Updates for Office 2013. Use custom static definitions.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
+    GUICtrlCreateLabel("Selectable on custom static definitions.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
   EndIf
+EndIf
+
+;  Office 2003 - 2010 group
+$txtxpos = 2 * $txtxoffset
+$txtypos = $txtypos + 2 * $txtyoffset
+GUICtrlCreateGroup("Office Updates 2003 - 2010 (ofc)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
+;  Office 2003 - 2010 label
+$txtypos = $txtypos + 2 * $txtyoffset
+$txtxpos = 3 * $txtxoffset
+If ShowGUIInGerman() Then
+  GUICtrlCreateLabel("Wenn Sie Office 2003, 2007 oder 2010 auswählen, werden dynamisch ermittelte Updates für Office 2003 - 2010 automatisch eingeschlossen.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
+Else
+  GUICtrlCreateLabel("If you select Office 2003, 2007 or 2010, dynamically determined Updates for Office 2003 - 2010 will be included automatically.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
 EndIf
 
 ;  Legacy products' Tab
