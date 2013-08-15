@@ -112,7 +112,6 @@ Dim Const $paths_rel_structure      = "\bin\,\client\bin\,\client\cmd\,\client\e
 Dim Const $path_rel_builddate       = "\client\builddate.txt"
 Dim Const $path_rel_clientini       = "\client\UpdateInstaller.ini"
 Dim Const $path_rel_win_glb         = "\client\win\glb"
-Dim Const $path_rel_o2k13_statics   = "\static\custom\StaticDownloadLinks-o2k13-glb.txt"
 
 Dim $maindlg, $inifilename, $tabitemfocused, $includesp, $dotnet, $msse, $wddefs, $cleanupdownloads, $verifydownloads, $cdiso, $dvdiso, $buildlbl
 Dim $usbcopy, $usbpath, $usbfsf, $usbclean, $imageonly, $scripting, $shutdown, $btn_start, $btn_proxy, $btn_wsus, $btn_donate, $btn_exit, $proxy, $proxypwd, $wsus, $dummy
@@ -2010,38 +2009,27 @@ $txtxpos = 3 * $txtxoffset
 ;  Office 2013 global
 $txtypos = $txtypos + 1.5 * $txtyoffset
 If ShowGUIInGerman() Then
-  $o2k13_glb = GUICtrlCreateCheckbox("Anwenderspezifische statische Definitionen", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
+  $o2k13_glb = GUICtrlCreateCheckbox("Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
 Else
-  $o2k13_glb = GUICtrlCreateCheckbox("Custom static definitions", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
+  $o2k13_glb = GUICtrlCreateCheckbox("Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
 EndIf
-If FileExists(@ScriptDir & $path_rel_o2k13_statics) Then
-  If IniRead($inifilename, $ini_section_o2k13, $lang_token_glb, $disabled) = $enabled Then
-    GUICtrlSetState(-1, $GUI_CHECKED)
-  Else
-    GUICtrlSetState(-1, $GUI_UNCHECKED)
-  EndIf
+If IniRead($inifilename, $ini_section_o2k13, $lang_token_glb, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
 Else
-  GUICtrlSetState(-1, $GUI_HIDE)
-  ;  Office 2013 label
-  $txtypos = $txtypos + 0.5 * $txtyoffset
-  If ShowGUIInGerman() Then
-    GUICtrlCreateLabel("Wählbar bei eigenen statischen Definitionen.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
-  Else
-    GUICtrlCreateLabel("Selectable on custom static definitions.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
-  EndIf
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
 
 ;  Office 2003 - 2010 group
 $txtxpos = 2 * $txtxoffset
-$txtypos = $txtypos + 2 * $txtyoffset
+$txtypos = $txtypos + 2.5 * $txtyoffset
 GUICtrlCreateGroup("Office Updates 2003 - 2010 (ofc)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
 ;  Office 2003 - 2010 label
 $txtypos = $txtypos + 2 * $txtyoffset
 $txtxpos = 3 * $txtxoffset
 If ShowGUIInGerman() Then
-  GUICtrlCreateLabel("Wenn Sie Office 2003, 2007 oder 2010 auswählen, werden dynamisch ermittelte Updates für Office 2003 - 2010 automatisch eingeschlossen.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
+  GUICtrlCreateLabel("Wenn Sie oben ein Office-Produkt auswählen, werden dynamisch ermittelte Updates für Office 2003 - 2010 automatisch eingeschlossen.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
 Else
-  GUICtrlCreateLabel("If you select Office 2003, 2007 or 2010, dynamically determined Updates for Office 2003 - 2010 will be included automatically.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
+  GUICtrlCreateLabel("If you select an Office product above, dynamically determined Updates for Office 2003 - 2010 will be included automatically.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
 EndIf
 
 ;  Legacy products' Tab
@@ -3075,13 +3063,18 @@ While 1
           ContinueLoop
         EndIf
       EndIf
-      If IsLangOfficeChecked() Then
-        If RunScripts("ofc glb", IsCheckBoxChecked($imageonly), DetermineDownloadSwitches($includesp, $dotnet, $msse, $wddefs, $cleanupdownloads, $verifydownloads, AuthProxy($proxy, $proxypwd), $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse, $wddefs, $usbclean), False, GUICtrlRead($usbpath)) <> 0 Then
+      If IsCheckBoxChecked($o2k13_glb) Then
+        If RunScripts("o2k13 glb", IsCheckBoxChecked($imageonly), DetermineDownloadSwitches($includesp, $dotnet, $msse, $wddefs, $cleanupdownloads, $verifydownloads, AuthProxy($proxy, $proxypwd), $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse, $wddefs, $usbclean), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
+        If NOT IsLangOfficeChecked() Then
+          If RunScripts("ofc glb", IsCheckBoxChecked($imageonly), DetermineDownloadSwitches($includesp, $dotnet, $msse, $wddefs, $cleanupdownloads, $verifydownloads, AuthProxy($proxy, $proxypwd), $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse, $wddefs, $usbclean), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+            ContinueLoop
+          EndIf
+        EndIf
       EndIf
-      If IsCheckBoxChecked($o2k13_glb) Then
-        If RunScripts("o2k13 glb", IsCheckBoxChecked($imageonly), DetermineDownloadSwitches($includesp, $dotnet, $msse, $wddefs, $cleanupdownloads, $verifydownloads, AuthProxy($proxy, $proxypwd), $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse, $wddefs, $usbclean), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+      If IsLangOfficeChecked() Then
+        If RunScripts("ofc glb", IsCheckBoxChecked($imageonly), DetermineDownloadSwitches($includesp, $dotnet, $msse, $wddefs, $cleanupdownloads, $verifydownloads, AuthProxy($proxy, $proxypwd), $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse, $wddefs, $usbclean), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
