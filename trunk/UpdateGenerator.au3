@@ -999,7 +999,7 @@ Dim $result
   If ( ($result = 0) AND $runiso ) Then
     $result = RunISOCreationScript($stroptions, $strisoswitches)
   EndIf
-  If ( ($result = 0) AND $runusb ) Then
+  If ( ($result = 0) AND $runusb AND FileExists($strusbpath) ) Then
     $result = RunUSBCreationScript($stroptions, $strisoswitches, $strusbpath)
   EndIf
   Return $result
@@ -2638,7 +2638,8 @@ EndIf
 If IniRead($inifilename, $ini_section_misc, $misc_token_skipdownload, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
-  If IniRead($inifilename, $ini_section_usb, $usb_token_copy, $disabled) = $enabled Then
+  If ( (IniRead($inifilename, $ini_section_usb, $usb_token_copy, $disabled) = $enabled) _
+   AND (IniRead($inifilename, $ini_section_usb, $usb_token_path, "") <> "") ) Then
     GUICtrlSetState(-1, $GUI_CHECKED)
   Else
     GUICtrlSetState(-1, $GUI_UNCHECKED)
