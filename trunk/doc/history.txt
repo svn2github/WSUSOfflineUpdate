@@ -773,6 +773,7 @@ Version 8.5 -- 26.07.13
 - Fix: Download part got updates for Lync (Thanks to "harry")
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
+- CreateISOImage.cmd and CreateISOImage.sh scripts will now create UDF instead of Joliet formatted ISO images (Thanks to "tapek")
 - Added missing URL for Turkish version of Service Pack 2 for Office 2010 x64 (Thanks to "harry")
 - Fix: Static installation definitions for Office updates were not correctly evaluated on dual Office installations (Thanks to "aker")
 - Fix: Download part missed kb2761465 for Windows 8 and Server 2012 (x86/x64)

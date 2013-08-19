@@ -172,7 +172,7 @@ if /i "%PROCESSOR_ARCHITECTURE%"=="AMD64" (set HASHDEEP_EXE=hashdeep64.exe) else
 echo Creating ISO image %OUTPUT_PATH%\%ISO_NAME%.iso...
 if exist %OUTPUT_PATH%\%ISO_NAME%.iso del %OUTPUT_PATH%\%ISO_NAME%.iso
 if exist %OUTPUT_PATH%\%ISO_NAME%-hashes.txt del %OUTPUT_PATH%\%ISO_NAME%-hashes.txt
-..\bin\mkisofs.exe -iso-level 4 -joliet -joliet-long -rational-rock -exclude-list %ISO_FILTER% -output %OUTPUT_PATH%\%ISO_NAME%.iso -volid %ISO_VOLID% ..\client
+..\bin\mkisofs.exe -iso-level 4 -udf -exclude-list %ISO_FILTER% -output %OUTPUT_PATH%\%ISO_NAME%.iso -volid %ISO_VOLID% ..\client
 if errorlevel 1 (
   if exist %ISO_FILTER% del %ISO_FILTER%
   goto MkIsoError
