@@ -3,7 +3,7 @@
 *oxp*
 *w2k*
 *w6*
-*x64-glb\/*
+*/*/x64-glb/*
 *-x64*
 *dotnetfx45*
 *dotNetFx45*

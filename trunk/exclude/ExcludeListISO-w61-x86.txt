@@ -6,9 +6,9 @@
 *ofc*
 *w2k*
 *wxp*
-*w60\/*
-*w62\/*
-*x64-glb\/*
+*/w60/*
+*/w62/*
+*/*/x64-glb/*
 *-x64*
 *dotnetfx35*
 *dotNetFx40*

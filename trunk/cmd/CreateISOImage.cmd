@@ -99,7 +99,7 @@ goto :eof
 :LocaleFilter
 for %%i in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (
   if /i "%1" NEQ "%%i" (
-    if /i "%%i"=="enu" (echo *%%i\/*>>%ISO_FILTER%) else (echo *%%i*>>%ISO_FILTER%)
+    if /i "%%i"=="enu" (echo */*/%%i/*>>%ISO_FILTER%) else (echo *%%i*>>%ISO_FILTER%)
   )
 )
 goto :eof
@@ -109,22 +109,22 @@ if "%EXC_SP%"=="1" (
   for /F %%i in (..\exclude\ExcludeList-SPs.txt) do echo *%%i*>>%ISO_FILTER%
 )
 if "%EXC_SW%"=="1" (
-  for /F %%i in (..\exclude\ExcludeList-software.txt) do echo *%%i/*>>%ISO_FILTER%
+  for /F %%i in (..\exclude\ExcludeList-software.txt) do echo %%i/>>%ISO_FILTER%
 )
 for %%i in (ofc) do (
   if /i "%1"=="%%i" (
-    for /F %%j in (..\exclude\ExcludeListISO-dotnet.txt) do echo *%%j/*>>%ISO_FILTER%
-    for /F %%j in (..\exclude\ExcludeList-msse.txt) do echo *%%j/*>>%ISO_FILTER%
+    for /F %%j in (..\exclude\ExcludeListISO-dotnet.txt) do echo %%j/>>%ISO_FILTER%
+    for /F %%j in (..\exclude\ExcludeList-msse.txt) do echo %%j/>>%ISO_FILTER%
   )
 )
 if "%INC_DOTNET%" NEQ "1" (
-  for /F %%i in (..\exclude\ExcludeListISO-dotnet.txt) do echo *%%i/*>>%ISO_FILTER%
+  for /F %%i in (..\exclude\ExcludeListISO-dotnet.txt) do echo %%i/>>%ISO_FILTER%
 )
 if "%INC_MSSE%" NEQ "1" (
-  for /F %%i in (..\exclude\ExcludeList-msse.txt) do echo *%%i/*>>%ISO_FILTER%
+  for /F %%i in (..\exclude\ExcludeList-msse.txt) do echo %%i/>>%ISO_FILTER%
 )
 if "%INC_WDDEFS%" NEQ "1" (
-  for /F %%i in (..\exclude\ExcludeList-wddefs.txt) do echo *%%i/*>>%ISO_FILTER%
+  for /F %%i in (..\exclude\ExcludeList-wddefs.txt) do echo %%i/>>%ISO_FILTER%
 )
 goto :eof
 
@@ -174,12 +174,10 @@ if exist %OUTPUT_PATH%\%ISO_NAME%.iso del %OUTPUT_PATH%\%ISO_NAME%.iso
 if exist %OUTPUT_PATH%\%ISO_NAME%-hashes.txt del %OUTPUT_PATH%\%ISO_NAME%-hashes.txt
 if exist "%TEMP%\ExcludeListISO_2.txt" del "%TEMP%\ExcludeListISO_2.txt"
 ren %ISO_FILTER% ExcludeListISO_2.txt
-for /F "usebackq tokens=1* delims=\" %%i in ("%TEMP%\ExcludeListISO_2.txt") do (
-  if "%%j"=="" (echo %%i>>%ISO_FILTER%) else (
-    for /F "tokens=1 delims=*" %%k in ("%%i") do (
-      if "%%k"=="enu" (echo */*/%%k%%j>>%ISO_FILTER%) else (echo */%%k%%j>>%ISO_FILTER%)
-    )
-  )
+for /F "usebackq tokens=1,2* delims=\" %%i in ("%TEMP%\ExcludeListISO_2.txt") do (
+  if "%%k"=="" (
+    if "%%j"=="" (echo %%i>>%ISO_FILTER%) else (echo */%%i/*>>%ISO_FILTER%)
+  ) else (echo */%%i/%%j/*>>%ISO_FILTER%)
 )
 if exist "%TEMP%\ExcludeListISO_2.txt" del "%TEMP%\ExcludeListISO_2.txt"
 ..\bin\mkisofs.exe -iso-level 4 -udf -exclude-list %ISO_FILTER% -output %OUTPUT_PATH%\%ISO_NAME%.iso -volid %ISO_VOLID% ..\client

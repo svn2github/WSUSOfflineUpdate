@@ -7,9 +7,9 @@
 *w2k*
 *wxp*
 *w60*
-*w61\/*
+*/w61/*
 *w62*
-*x86-glb\/*
+*/*/x86-glb/*
 *-x86*
 *dotnetfx35*
 *dotNetFx40*

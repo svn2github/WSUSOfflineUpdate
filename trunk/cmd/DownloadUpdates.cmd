@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.5+ (r491)
+set WSUSOFFLINE_VERSION=8.5+ (r492)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -394,7 +394,7 @@ echo %DATE% %TIME% - Info: Downloaded Sysinternals' tools Autologon, Sigcheck an
 pushd ..\bin
 unzip.exe -o Autologon.zip Autologon.exe
 del Autologon.zip
-move /Y Autologon.exe ..\client\bin
+move /Y Autologon.exe ..\client\bin >nul
 unzip.exe -o Sigcheck.zip sigcheck.exe
 del Sigcheck.zip
 unzip.exe -o Streams.zip streams.exe
@@ -936,6 +936,13 @@ for %%i in (..\client\wsus\wsusscn2.cab) do echo %%~ai | %SystemRoot%\system32\f
 if not errorlevel 1 (
   if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
 )
+copy /Y ..\exclude\ExcludeList-superseded-exclude.txt ..\exclude\ExcludeList-superseded-exclude.ori >nul
+%WGET_PATH% -nv -N -P ..\exclude -a %DOWNLOAD_LOGFILE% http://download.wsusoffline.net/ExcludeList-superseded-exclude.txt
+echo n | %SystemRoot%\system32\comp.exe ..\exclude\ExcludeList-superseded-exclude.txt ..\exclude\ExcludeList-superseded-exclude.ori /a /l /c >nul 2>&1
+if errorlevel 1 (
+  if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
+)
+del ..\exclude\ExcludeList-superseded-exclude.ori
 if exist ..\exclude\ExcludeList-superseded.txt (
   echo Found valid list of superseded updates.
   echo %DATE% %TIME% - Info: Found valid list of superseded updates >>%DOWNLOAD_LOGFILE%
@@ -974,14 +981,22 @@ del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 del "%TEMP%\SupersededFileIdsUnique.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\SupersededCabExeIdsAndLocations.txt" "%TEMP%\ExcludeList-superseded-all.txt" /noids
 del "%TEMP%\SupersededCabExeIdsAndLocations.txt"
-%WGET_PATH% -nv -N -P ..\exclude -a %DOWNLOAD_LOGFILE% http://download.wsusoffline.net/ExcludeList-superseded-exclude.txt
 if exist ..\exclude\ExcludeList-superseded-exclude.txt copy /Y ..\exclude\ExcludeList-superseded-exclude.txt "%TEMP%\ExcludeList-superseded-exclude.txt" >nul
 if exist ..\exclude\custom\ExcludeList-superseded-exclude.txt (
   type ..\exclude\custom\ExcludeList-superseded-exclude.txt >>"%TEMP%\ExcludeList-superseded-exclude.txt"
 )
-%SystemRoot%\system32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-superseded-exclude.txt" "%TEMP%\ExcludeList-superseded-all.txt" >..\exclude\ExcludeList-superseded.txt
-del "%TEMP%\ExcludeList-superseded-exclude.txt"
-del "%TEMP%\ExcludeList-superseded-all.txt"
+if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
+  for %%i in ("%TEMP%\ExcludeList-superseded-exclude.txt") do (
+    if %%~zi==0 del %%i
+  )
+)
+if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
+  %SystemRoot%\system32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-superseded-exclude.txt" "%TEMP%\ExcludeList-superseded-all.txt" >..\exclude\ExcludeList-superseded.txt
+  del "%TEMP%\ExcludeList-superseded-all.txt"
+  del "%TEMP%\ExcludeList-superseded-exclude.txt"
+) else (
+  move /Y "%TEMP%\ExcludeList-superseded-all.txt" ..\exclude\ExcludeList-superseded.txt >nul
+)
 %SystemRoot%\system32\attrib.exe -A ..\client\wsus\wsusscn2.cab
 echo %TIME% - Done.
 echo %DATE% %TIME% - Info: Determined superseded updates >>%DOWNLOAD_LOGFILE%

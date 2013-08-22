@@ -3,9 +3,9 @@
 *oxp*
 *w2k*
 *wxp*
-*w61\/*
-*w62\/*
-*x64-glb\/*
+*/w61/*
+*/w62/*
+*/*/x64-glb/*
 *-x64*
 *dotNetFx40*
 *vcredist*_x64*

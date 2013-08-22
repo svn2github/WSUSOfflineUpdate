@@ -46,10 +46,19 @@ if exist .\exclude\ExcludeList-superseded-exclude.txt copy /Y .\exclude\ExcludeL
 if exist .\exclude\custom\ExcludeList-superseded-exclude.txt (
   type .\exclude\custom\ExcludeList-superseded-exclude.txt >>"%TEMP%\ExcludeList-superseded-exclude.txt"
 )
-%SystemRoot%\system32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-superseded-exclude.txt" "%TEMP%\ExcludeList-superseded-all.txt" >"%TEMP%\ExcludeList-superseded.txt"
-rem del "%TEMP%\ExcludeList-superseded-exclude.txt"
-rem del "%TEMP%\ExcludeList-superseded-all.txt"
-
+if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
+  for %%i in ("%TEMP%\ExcludeList-superseded-exclude.txt") do (
+    if %%~zi==0 del %%i
+  )
+)
+if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
+  %SystemRoot%\system32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-superseded-exclude.txt" "%TEMP%\ExcludeList-superseded-all.txt" >"%TEMP%\ExcludeList-superseded.txt"
+  rem del "%TEMP%\ExcludeList-superseded-all.txt"
+  rem del "%TEMP%\ExcludeList-superseded-exclude.txt"
+) else (
+  if exist "%TEMP%\ExcludeList-superseded.txt" del "%TEMP%\ExcludeList-superseded.txt"
+  ren "%TEMP%\ExcludeList-superseded-all.txt" ExcludeList-superseded.txt
+)
 goto EoF
 
 del "%TEMP%\package.xml"

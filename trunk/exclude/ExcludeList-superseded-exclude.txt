@@ -1,8 +1,3 @@
-windows6.0-kb2633171
-windows6.1-kb2633171
-windows6.1-kb2425227
-windows6.1-kb2644615
-windows8-rt-kb2761465
-kb2645640
 kb967723
-kb2813170
+kb2645640
+windows6.1-kb2644615

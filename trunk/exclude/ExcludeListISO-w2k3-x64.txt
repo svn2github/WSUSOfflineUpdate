@@ -1,11 +1,11 @@
 *ofc*
 *o2k*
 *oxp*
-*w2k\/*
+*/w2k/*
 *wxp*
-*w2k3\/*
+*/w2k3/*
 *w6*
-*x86-glb\/*
+*/*/x86-glb/*
 *dotnetfx45*
 *dotNetFx45*
 *Silverlight_x64*
