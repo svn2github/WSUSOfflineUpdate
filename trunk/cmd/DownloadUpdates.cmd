@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.5+ (r492)
+set WSUSOFFLINE_VERSION=8.5+ (r493)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -375,10 +375,14 @@ echo %DATE% %TIME% - Info: Updated static download definitions >>%DOWNLOAD_LOGFI
 
 rem *** Download mkisofs tool ***
 if "%SKIP_DL%"=="1" goto SkipMkIsoFs
-echo Downloading mkisofs tool...
+echo Downloading/validating mkisofs tool...
 %WGET_PATH% -N -i ..\static\StaticDownloadLink-mkisofs.txt -P ..\bin
-if errorlevel 1 goto DownloadError
-echo %DATE% %TIME% - Info: Downloaded mkisofs tool >>%DOWNLOAD_LOGFILE%
+if errorlevel 1 (
+  echo Warning: Download of mkisofs tool failed.
+  echo %DATE% %TIME% - Warning: Download of mkisofs tool failed >>%DOWNLOAD_LOGFILE%
+) else (
+  echo %DATE% %TIME% - Info: Downloaded/validated mkisofs tool >>%DOWNLOAD_LOGFILE%
+)
 :SkipMkIsoFs
 
 rem *** Download Sysinternals' tools Autologon, Sigcheck and Streams ***

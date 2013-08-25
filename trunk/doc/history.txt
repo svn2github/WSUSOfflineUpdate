@@ -783,4 +783,5 @@ Version ?.? -- ??.??.??
 - Fix: Download part missed kb2644615 for Windows 7 and Server 2008 R2 (x86/x64) due to a bug in Microsoft's update catalog file wsusscn2.cab
 - Fix: Download part missed kb2817465 for Office 2013
 - Fix: Cleaned up ExcludeList-superseded-exclude.txt (Thanks to M. Trenkner)
+- Fix: Download failures of mkisofs tool will now result in a warning instead of an error (Thanks to Th. Lohe)
 - Fix: Minor fix in Linux script DownloadUpdates.sh (Thanks to "Buster" and H. Hullen)
