@@ -773,13 +773,14 @@ Version 8.5 -- 26.07.13
 - Fix: Download part got updates for Lync (Thanks to "harry")
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
+- NOTE: If you like to use aria2 instead of wget for downloading, please call ActivateAria2Downloads.cmd once
+- Optional use of aria2 instead of wget to speed up downloading (Thanks to "qoole" and "brb8two")
 - CreateISOImage.cmd and CreateISOImage.sh scripts will now create UDF instead of Joliet formatted ISO images (Thanks to "tapek")
 - List of superseded updates will now be recalculated if ExcludeList-superseded-exclude.txt was modified 
 - DownloadUpdates.cmd script will now automatically update mkisofs tool
 - Added missing URL for Turkish version of Service Pack 2 for Office 2010 x64 (Thanks to "harry")
 - Fix: Static installation definitions for Office updates were not correctly evaluated on dual Office installations (Thanks to "aker")
 - Fix: UpdateGenerator script won't any longer try to copy to non-existent USB target paths (Thanks to "boco" and "aker")
-- Fix: Download part missed kb2761465 for Windows 8 and Server 2012 (x86/x64)
 - Fix: Download part missed kb2644615 for Windows 7 and Server 2008 R2 (x86/x64) due to a bug in Microsoft's update catalog file wsusscn2.cab
 - Fix: Download part missed kb2817465 for Office 2013
 - Fix: Cleaned up ExcludeList-superseded-exclude.txt (Thanks to M. Trenkner)

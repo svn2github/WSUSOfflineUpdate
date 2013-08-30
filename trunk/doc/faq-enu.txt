@@ -39,7 +39,7 @@ The following updates are already excluded:
 - kb976002 (Browser Choice)
 - kb923618 (Office 2003 Service Pack 3 (will be implicitly installed if required))
 - kb2526086 (Office 2007 Service Pack 3 (will be implicitly installed if required))
-- kb2460049 (Office 2010 Service Pack 1 (will be implicitly installed if required))
+- kb2687455 (Office 2010 Service Pack 2 (will be implicitly installed if required))
 - kb936929 (Windows XP Service Pack 3 (will be implicitly installed if required))
 - kb914961 (Windows Server 2003 Service Pack 2 (will be implicitly installed if required))
 - kb936330 (Windows Vista Service Pack 1 (will be implicitly installed if required))
@@ -53,11 +53,11 @@ A: Yes, you can adjust how the download and update scripts behave by excluding o
 
 1. Adding updates to download routines
 
-For adding an update to be downloaded, insert its download URL into the matching "StaticDownloadLinks-<platform>[-architecture>]-<language>.txt file, found in the ".\static" directory.
+For adding an update to be downloaded, insert its download URL into the matching "StaticDownloadLinks-<platform>[-architecture>]-<language>.txt file, found in the "...\static\custom" directory. Please don't forget a trailing <CR><LF>.
 
 2. Adding updates to installation routines
 
-Add an update to installation by inserting its knowledge base ID (KBxxxxxx or simply xxxxxx) into the matching "StaticUpdateIds-<platform>[-<architecture>].txt file (directory ".\client\static").
+Add an update to installation by inserting its knowledge base ID (KBxxxxxx or simply xxxxxx) into the matching "StaticUpdateIds-<platform>[-<architecture>].txt file (directory "...\client\static\custom"). Please don't forget a trailing <CR><LF>.
 --------------------------------------------------------------------------------
 Q: Can I skip the dynamic update determination during downloading/installation in order to use my static definitions only?
 A: Yes.

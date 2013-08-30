@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.5+ (r493)
+set WSUSOFFLINE_VERSION=8.5+ (r494)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -199,8 +199,15 @@ if errorlevel 1 goto NoTempDir
 popd
 set CSCRIPT_PATH=%SystemRoot%\system32\cscript.exe
 if not exist %CSCRIPT_PATH% goto NoCScript
-set WGET_PATH=..\bin\wget.exe
-if not exist %WGET_PATH% goto NoWGet
+if exist custom\SetAria2EnvVars.cmd (call custom\SetAria2EnvVars.cmd) else (
+  set DLDR_PATH=..\bin\wget.exe
+  set DLDR_COPT=-N
+  set DLDR_LOPT=-a %DOWNLOAD_LOGFILE%
+  set DLDR_IOPT=-i
+  set DLDR_POPT=-P
+  set DLDR_NVOPT=-nv
+)
+if not exist %DLDR_PATH% goto NoDLdr
 if not exist ..\bin\unzip.exe goto NoUnZip
 if /i "%PROCESSOR_ARCHITECTURE%"=="AMD64" (set HASHDEEP_EXE=hashdeep64.exe) else (
   if /i "%PROCESSOR_ARCHITEW6432%"=="AMD64" (set HASHDEEP_EXE=hashdeep64.exe) else (set HASHDEEP_EXE=hashdeep.exe)
@@ -368,15 +375,15 @@ if exist ..\client\wxp\glb\rootsupd.exe (
 rem *** Update static download definitions ***
 if "%SKIP_SDD%"=="1" goto SkipSDD
 echo Updating static download definitions...
-%WGET_PATH% -nv -N -P ..\static -a %DOWNLOAD_LOGFILE% http://download.wsusoffline.net/StaticDownloadFiles-modified.txt
-%WGET_PATH% -N -i ..\static\StaticDownloadFiles-modified.txt -P ..\static
+%DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\static %DLDR_LOPT% http://download.wsusoffline.net/StaticDownloadFiles-modified.txt
+%DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\static\StaticDownloadFiles-modified.txt %DLDR_POPT% ..\static
 echo %DATE% %TIME% - Info: Updated static download definitions >>%DOWNLOAD_LOGFILE%
 :SkipSDD
 
 rem *** Download mkisofs tool ***
 if "%SKIP_DL%"=="1" goto SkipMkIsoFs
 echo Downloading/validating mkisofs tool...
-%WGET_PATH% -N -i ..\static\StaticDownloadLink-mkisofs.txt -P ..\bin
+%DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\static\StaticDownloadLink-mkisofs.txt %DLDR_POPT% ..\bin
 if errorlevel 1 (
   echo Warning: Download of mkisofs tool failed.
   echo %DATE% %TIME% - Warning: Download of mkisofs tool failed >>%DOWNLOAD_LOGFILE%
@@ -392,7 +399,7 @@ if not exist ..\bin\streams.exe goto DownloadSysinternals
 goto SkipSysinternals
 :DownloadSysinternals
 echo Downloading Sysinternals' tools Autologon, Sigcheck and Streams...
-%WGET_PATH% -N -i ..\static\StaticDownloadLinks-sysinternals.txt -P ..\bin
+%DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\static\StaticDownloadLinks-sysinternals.txt %DLDR_POPT% ..\bin
 if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded Sysinternals' tools Autologon, Sigcheck and Streams >>%DOWNLOAD_LOGFILE%
 pushd ..\bin
@@ -426,7 +433,7 @@ if exist ..\client\md\hashes-wsus.txt (
 )
 :DownloadWSUS
 echo Downloading/validating most recent Windows Update Agent installation and catalog files...
-%WGET_PATH% -N -i ..\static\StaticDownloadLinks-wsus.txt -P ..\client\wsus
+%DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\static\StaticDownloadLinks-wsus.txt %DLDR_POPT% ..\client\wsus
 if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded/validated most recent Windows Update Agent installation and catalog files >>%DOWNLOAD_LOGFILE%
 if "%VERIFY_DL%"=="1" (
@@ -501,7 +508,7 @@ copy /Y ..\static\StaticDownloadLinks-dotnet.txt "%TEMP%\StaticDownloadLinks-dot
 if exist ..\static\custom\StaticDownloadLinks-dotnet.txt (
   type ..\static\custom\StaticDownloadLinks-dotnet.txt >>"%TEMP%\StaticDownloadLinks-dotnet.txt"
 )
-%WGET_PATH% -N -i "%TEMP%\StaticDownloadLinks-dotnet.txt" -P ..\client\dotnet
+%DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% "%TEMP%\StaticDownloadLinks-dotnet.txt" %DLDR_POPT% ..\client\dotnet
 if errorlevel 1 (
   del "%TEMP%\StaticDownloadLinks-dotnet.txt"
   goto DownloadError
@@ -594,7 +601,7 @@ for %%i in (x64 x86) do (
         echo %DATE% %TIME% - Info: Renamed file ..\client\cpp\%%k to %%~nxj >>%DOWNLOAD_LOGFILE%
       )
     )
-    %WGET_PATH% -N -P ..\client\cpp %%j
+    %DLDR_PATH% %DLDR_COPT% %DLDR_POPT% ..\client\cpp %%j
     if errorlevel 1 (
       if exist ..\client\cpp\%%~nxj del ..\client\cpp\%%~nxj
       echo Warning: Download of %%j failed.
@@ -701,7 +708,7 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\StaticDownloadLinks-msse-%
       echo %DATE% %TIME% - Info: Renamed file ..\client\msse\%TARGET_ARCH%-glb\%%j to %%~nxi >>%DOWNLOAD_LOGFILE%
     )
   )
-  %WGET_PATH% -N -P ..\client\msse\%TARGET_ARCH%-glb %%i
+  %DLDR_PATH% %DLDR_COPT% %DLDR_POPT% ..\client\msse\%TARGET_ARCH%-glb %%i
   if errorlevel 1 (
     if exist ..\client\msse\%TARGET_ARCH%-glb\%%~nxi del ..\client\msse\%TARGET_ARCH%-glb\%%~nxi
     echo Warning: Download of %%i failed.
@@ -794,7 +801,7 @@ if exist ..\client\wddefs\%TARGET_ARCH%-glb\mpas*.exe (
   )
 )
 echo Downloading/validating Windows Defender definition files...
-%WGET_PATH% -N -i ..\static\StaticDownloadLink-wddefs-%TARGET_ARCH%-glb.txt -P ..\client\wddefs\%TARGET_ARCH%-glb
+%DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\static\StaticDownloadLink-wddefs-%TARGET_ARCH%-glb.txt %DLDR_POPT% ..\client\wddefs\%TARGET_ARCH%-glb
 if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded/validated Windows Defender definition files >>%DOWNLOAD_LOGFILE%
 :VerifyWDDefs
@@ -941,7 +948,7 @@ if not errorlevel 1 (
   if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
 )
 copy /Y ..\exclude\ExcludeList-superseded-exclude.txt ..\exclude\ExcludeList-superseded-exclude.ori >nul
-%WGET_PATH% -nv -N -P ..\exclude -a %DOWNLOAD_LOGFILE% http://download.wsusoffline.net/ExcludeList-superseded-exclude.txt
+%DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\exclude %DLDR_LOPT% http://download.wsusoffline.net/ExcludeList-superseded-exclude.txt
 echo n | %SystemRoot%\system32\comp.exe ..\exclude\ExcludeList-superseded-exclude.txt ..\exclude\ExcludeList-superseded-exclude.ori /a /l /c >nul 2>&1
 if errorlevel 1 (
   if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
@@ -1169,7 +1176,7 @@ for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TE
         echo %DATE% %TIME% - Info: Renamed file ..\client\%1\%2\%%l to %%~nxk >>%DOWNLOAD_LOGFILE%
       )
     )
-    %WGET_PATH% -N -P ..\client\%1\%2 %%k
+    %DLDR_PATH% %DLDR_COPT% %DLDR_POPT% ..\client\%1\%2 %%k
     if errorlevel 1 (
       if exist ..\client\%1\%2\%%~nxk del ..\client\%1\%2\%%~nxk
       echo Warning: Download of %%k failed.
@@ -1194,7 +1201,7 @@ for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TE
 if "%WSUS_URL%"=="" (
   for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidDynamicLinks-%1-%2.txt"') do (
     echo Downloading/validating update %%i of %LINES_COUNT%...
-    %WGET_PATH% -nv -N -P ..\client\%1\%2 -a %DOWNLOAD_LOGFILE% %%j
+    %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\client\%1\%2 %DLDR_LOPT% %%j
     if errorlevel 1 (
       echo Warning: Download of %%j failed.
       echo %DATE% %TIME% - Warning: Download of %%j failed >>%DOWNLOAD_LOGFILE%
@@ -1209,7 +1216,7 @@ if "%WSUS_URL%"=="" (
     echo Downloading/validating update %%i of %LINES_COUNT%...
     for /F "tokens=1-3 delims=," %%k in ("%%j") do (
       if "%%m"=="" (
-        %WGET_PATH% -nv -N -P ..\client\%1\%2 -a %DOWNLOAD_LOGFILE% %%l
+        %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\client\%1\%2 %DLDR_LOPT% %%l
         if errorlevel 1 (
           echo Warning: Download of %%j failed.
           echo %DATE% %TIME% - Warning: Download of %%j failed >>%DOWNLOAD_LOGFILE%
@@ -1221,9 +1228,9 @@ if "%WSUS_URL%"=="" (
           echo %DATE% %TIME% - Info: Renamed file ..\client\%1\%2\%%k to %%~nxl >>%DOWNLOAD_LOGFILE%
         )
         if "%WSUS_BY_PROXY%"=="1" (
-          %WGET_PATH% -nv -N -P ..\client\%1\%2 -a %DOWNLOAD_LOGFILE% %%l
+          %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\client\%1\%2 %DLDR_LOPT% %%l
         ) else (
-          %WGET_PATH% -nv --no-proxy -N -P ..\client\%1\%2 -a %DOWNLOAD_LOGFILE% %%l
+          %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% --no-proxy ..\client\%1\%2 %DLDR_LOPT% %%l
         )
         if errorlevel 1 (
           if exist ..\client\%1\%2\%%~nxl (
@@ -1235,7 +1242,7 @@ if "%WSUS_URL%"=="" (
             echo Warning: Download of %%l ^(%%k^) failed.
             echo %DATE% %TIME% - Warning: Download of %%l ^(%%k^) failed >>%DOWNLOAD_LOGFILE%
           ) else (
-            %WGET_PATH% -nv -N -P ..\client\%1\%2 -a %DOWNLOAD_LOGFILE% %%m
+            %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\client\%1\%2 %DLDR_LOPT% %%m
             if errorlevel 1 (
               echo Warning: Download of %%m failed.
               echo %DATE% %TIME% - Warning: Download of %%m failed >>%DOWNLOAD_LOGFILE%
@@ -1421,10 +1428,10 @@ echo %DATE% %TIME% - Error: VBScript interpreter %CSCRIPT_PATH% not found >>%DOW
 echo.
 goto Error
 
-:NoWGet
+:NoDLdr
 echo.
-echo ERROR: Download utility %WGET_PATH% not found.
-echo %DATE% %TIME% - Error: Download utility %WGET_PATH% not found >>%DOWNLOAD_LOGFILE%
+echo ERROR: Download utility %DLDR_PATH% not found.
+echo %DATE% %TIME% - Error: Download utility %DLDR_PATH% not found >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 

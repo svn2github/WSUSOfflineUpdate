@@ -36,7 +36,7 @@ Beim Ausschluss von Updates von der Installation muss ebenfalls zwischen statisc
     - kb976002 (Browserauswahlbildschirm)
     - kb923618 (Office 2003 Service Pack 3 (wird ggf. implizit installiert))
     - kb2526086 (Office 2007 Service Pack 3 (wird ggf. implizit installiert))
-    - kb2460049 (Office 2010 Service Pack 1 (wird ggf. implizit installiert))
+    - kb2687455 (Office 2010 Service Pack 2 (wird ggf. implizit installiert))
     - kb936929 (Windows XP Service Pack 3 (wird ggf. implizit installiert))
     - kb914961 (Windows Server 2003 Service Pack 2 (wird ggf. implizit installiert))
     - kb936330 (Windows Vista Service Pack 1 (wird ggf. implizit installiert))
@@ -49,10 +49,10 @@ F: Kann ich Updates dem Download und/oder der Installation hinzufügen?
 A: Ja, Sie haben die Möglichkeit, das Verhalten der Download- und Update-Skripte Ihren Bedürfnissen entsprechend anzupassen, indem Sie Updates vom Download oder der Installation ausschließen oder hinzufügen. Zum Hinzufügen von Updates gehen Sie bitte wie folgt vor:
 
 1. Hinzufügen von Updates zum Download
-Möchten Sie dem Download ein Update hinzufügen, so tragen Sie dessen Download-URL in die entsprechende Datei StaticDownloadLinks-<Plattform>[-<Architektur>]-<Sprache>.txt im Verzeichnis "static" ein.
+Möchten Sie dem Download ein Update hinzufügen, so tragen Sie dessen Download-URL in die entsprechende Datei StaticDownloadLinks-<Plattform>[-<Architektur>]-<Sprache>.txt im Verzeichnis "...\static\custom" ein. Bitte vergessen Sie dabei nicht den abschließenden Zeilenumbruch (<CR><LF>).
   
 2. Hinzufügen von Updates zur Installation
-Möchten Sie ein Update zur Installation hinzufügen, so tragen Sie dessen "knowledge base id" (KBxxxxxx bzw. nur xxxxxx) in die entsprechende Datei StaticUpdateIds-<Plattform>[-<Architektur>].txt im Verzeichnis "client\static" ein.
+Möchten Sie ein Update zur Installation hinzufügen, so tragen Sie dessen "knowledge base id" (KBxxxxxx bzw. nur xxxxxx) in die entsprechende Datei StaticUpdateIds-<Plattform>[-<Architektur>].txt im Verzeichnis "...\client\static\custom" ein. Bitte vergessen Sie dabei nicht den abschließenden Zeilenumbruch (<CR><LF>).
 --------------------------------------------------------------------------------
 F: Kann ich die dynamische Update-Ermittlung während des Downloads / der Installation überspringen, um nur meine statischen Definitionen zu verwenden?
 A: Ja.
