@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.5+ (r494)
+set WSUSOFFLINE_VERSION=8.5+ (r495)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1088,105 +1088,6 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
 set REBOOT_REQUIRED=1
 :SkipTSCInst
 
-rem *** Install Microsoft Security Essentials ***
-if "%OS_NAME%"=="w62" goto SkipMSSEInst
-echo Checking Microsoft Security Essentials installation state...
-if "%INSTALL_MSSE%" NEQ "/instmsse" (
-  if "%MSSE_INSTALLED%"=="1" (goto CheckMSSEDefs) else (goto SkipMSSEInst)
-)
-if %OS_DOMAIN_ROLE% GEQ 2 (
-  if "%MSSE_INSTALLED%"=="1" (goto CheckMSSEDefs) else (goto SkipMSSEInst)
-)
-set MSSE_FILENAME=..\msse\%OS_ARCH%-glb\MSEInstall-%OS_ARCH%-%OS_LANG%.exe
-if not exist %MSSE_FILENAME% (
-  echo Warning: Microsoft Security Essentials installation file ^(%MSSE_FILENAME%^) not found.
-  echo %DATE% %TIME% - Warning: Microsoft Security Essentials installation file ^(%MSSE_FILENAME%^) not found >>%UPDATE_LOGFILE%
-  if "%MSSE_INSTALLED%"=="1" (goto CheckMSSEDefs) else (goto SkipMSSEInst)
-)
-rem *** Determine Microsoft Security Essentials installation file version ***
-echo Determining Microsoft Security Essentials installation file version...
-%CSCRIPT_PATH% //Nologo //B //E:vbs DetermineFileVersion.vbs %MSSE_FILENAME% MSSE_VER_TARGET
-if not exist "%TEMP%\SetFileVersion.cmd" goto CheckMSSEDefs
-call "%TEMP%\SetFileVersion.cmd"
-del "%TEMP%\SetFileVersion.cmd"
-if %MSSE_VER_MAJOR% LSS %MSSE_VER_TARGET_MAJOR% goto InstallMSSE
-if %MSSE_VER_MAJOR% GTR %MSSE_VER_TARGET_MAJOR% goto CheckMSSEDefs
-if %MSSE_VER_MINOR% LSS %MSSE_VER_TARGET_MINOR% goto InstallMSSE
-if %MSSE_VER_MINOR% GTR %MSSE_VER_TARGET_MINOR% goto CheckMSSEDefs
-if %MSSE_VER_BUILD% LSS %MSSE_VER_TARGET_BUILD% goto InstallMSSE
-if %MSSE_VER_BUILD% GTR %MSSE_VER_TARGET_BUILD% goto CheckMSSEDefs
-if %MSSE_VER_REVIS% GEQ %MSSE_VER_TARGET_REVIS% goto CheckMSSEDefs
-:InstallMSSE
-echo Installing Microsoft Security Essentials...
-call InstallOSUpdate.cmd %MSSE_FILENAME% %VERIFY_MODE% /ignoreerrors /s /runwgacheck /o
-set MSSE_FILENAME=
-set REBOOT_REQUIRED=1
-:CheckMSSEDefs
-set MSSE_VER_TARGET_MAJOR=
-set MSSE_VER_TARGET_MINOR=
-set MSSE_VER_TARGET_BUILD=
-set MSSE_VER_TARGET_REVIS=
-if /i "%OS_ARCH%"=="x64" (
-  set MSSEDEFS_FILENAME=..\msse\%OS_ARCH%-glb\mpam-fex64.exe
-) else (
-  set MSSEDEFS_FILENAME=..\msse\%OS_ARCH%-glb\mpam-fe.exe
-)
-if not exist %MSSEDEFS_FILENAME% (
-  echo Warning: Microsoft Security Essentials definition file ^(%MSSEDEFS_FILENAME%^) not found.
-  echo %DATE% %TIME% - Warning: Microsoft Security Essentials definition file ^(%MSSEDEFS_FILENAME%^) not found >>%UPDATE_LOGFILE%
-  goto CheckNISDefs
-)
-rem *** Determine Microsoft Security Essentials definition file version ***
-echo Determining Microsoft Security Essentials definition file version...
-%CSCRIPT_PATH% //Nologo //B //E:vbs DetermineFileVersion.vbs %MSSEDEFS_FILENAME% MSSEDEFS_VER_TARGET
-if not exist "%TEMP%\SetFileVersion.cmd" goto CheckNISDefs
-call "%TEMP%\SetFileVersion.cmd"
-del "%TEMP%\SetFileVersion.cmd"
-if %MSSEDEFS_VER_MAJOR% LSS %MSSEDEFS_VER_TARGET_MAJOR% goto InstallMSSEDefs
-if %MSSEDEFS_VER_MAJOR% GTR %MSSEDEFS_VER_TARGET_MAJOR% goto CheckNISDefs
-if %MSSEDEFS_VER_MINOR% LSS %MSSEDEFS_VER_TARGET_MINOR% goto InstallMSSEDefs
-if %MSSEDEFS_VER_MINOR% GTR %MSSEDEFS_VER_TARGET_MINOR% goto CheckNISDefs
-if %MSSEDEFS_VER_BUILD% LSS %MSSEDEFS_VER_TARGET_BUILD% goto InstallMSSEDefs
-if %MSSEDEFS_VER_BUILD% GTR %MSSEDEFS_VER_TARGET_BUILD% goto CheckNISDefs
-if %MSSEDEFS_VER_REVIS% GEQ %MSSEDEFS_VER_TARGET_REVIS% goto CheckNISDefs
-:InstallMSSEDefs
-echo Installing Microsoft Security Essentials definition file...
-call InstallOSUpdate.cmd %MSSEDEFS_FILENAME% %VERIFY_MODE% /ignoreerrors -q
-set MSSEDEFS_FILENAME=
-:CheckNISDefs
-set MSSEDEFS_VER_TARGET_MAJOR=
-set MSSEDEFS_VER_TARGET_MINOR=
-set MSSEDEFS_VER_TARGET_BUILD=
-set MSSEDEFS_VER_TARGET_REVIS=
-set NISDEFS_FILENAME=..\msse\%OS_ARCH%-glb\nis_full_%OS_ARCH%.exe
-if not exist %NISDEFS_FILENAME% (
-  echo Warning: Network Inspection System definition file ^(%NISDEFS_FILENAME%^) not found.
-  echo %DATE% %TIME% - Warning: Network Inspection System definition file ^(%NISDEFS_FILENAME%^) not found >>%UPDATE_LOGFILE%
-  goto SkipMSSEInst
-)
-rem *** Determine Network Inspection System definition file version ***
-echo Determining Network Inspection System definition file version...
-%CSCRIPT_PATH% //Nologo //B //E:vbs DetermineFileVersion.vbs %NISDEFS_FILENAME% NISDEFS_VER_TARGET
-if not exist "%TEMP%\SetFileVersion.cmd" goto SkipMSSEInst
-call "%TEMP%\SetFileVersion.cmd"
-del "%TEMP%\SetFileVersion.cmd"
-if %NISDEFS_VER_MAJOR% LSS %NISDEFS_VER_TARGET_MAJOR% goto InstallNISDefs
-if %NISDEFS_VER_MAJOR% GTR %NISDEFS_VER_TARGET_MAJOR% goto SkipMSSEInst
-if %NISDEFS_VER_MINOR% LSS %NISDEFS_VER_TARGET_MINOR% goto InstallNISDefs
-if %NISDEFS_VER_MINOR% GTR %NISDEFS_VER_TARGET_MINOR% goto SkipMSSEInst
-if %NISDEFS_VER_BUILD% LSS %NISDEFS_VER_TARGET_BUILD% goto InstallNISDefs
-if %NISDEFS_VER_BUILD% GTR %NISDEFS_VER_TARGET_BUILD% goto SkipMSSEInst
-if %NISDEFS_VER_REVIS% GEQ %NISDEFS_VER_TARGET_REVIS% goto SkipMSSEInst
-:InstallNISDefs
-echo Installing Network Inspection System definition file...
-call InstallOSUpdate.cmd %NISDEFS_FILENAME% %VERIFY_MODE% /ignoreerrors
-set NISDEFS_FILENAME=
-:SkipMSSEInst
-set NISDEFS_VER_TARGET_MAJOR=
-set NISDEFS_VER_TARGET_MINOR=
-set NISDEFS_VER_TARGET_BUILD=
-set NISDEFS_VER_TARGET_REVIS=
-
 rem *** Update Windows Defender definitions ***
 echo Checking Windows Defender installation state...
 if "%WD_INSTALLED%" NEQ "1" goto SkipWDInst
@@ -1233,7 +1134,7 @@ set WDDEFS_VER_TARGET_BUILD=
 set WDDEFS_VER_TARGET_REVIS=
 
 if "%RECALL_REQUIRED%"=="1" goto Installed
-if "%OFC_NAME%"=="" goto InstSoftware
+if "%OFC_NAME%"=="" goto InstUpdates
 
 rem *** Check Office Service Pack versions ***
 echo Checking Office Service Pack versions...
@@ -1341,24 +1242,7 @@ if "%OFC_FILE_VALID%" NEQ "1" (
 )
 :SkipOFVAL
 
-:InstSoftware
-rem *** Install MSI packages and custom software ***
-if exist ..\software\custom\InstallCustomSoftware.cmd (
-  echo Installing custom software...
-  pushd ..\software\custom
-  call InstallCustomSoftware.cmd
-  popd
-  echo %DATE% %TIME% - Info: Executed custom software installation hook ^(Errorlevel: %errorlevel%^) >>%UPDATE_LOGFILE%
-  set REBOOT_REQUIRED=1
-)
-if exist %SystemRoot%\Temp\wouselmsi.txt (
-  echo Installing selected MSI packages...
-  call TouchMSITree.cmd /instselected
-  echo %DATE% %TIME% - Info: Installed selected MSI packages >>%UPDATE_LOGFILE%
-  del %SystemRoot%\Temp\wouselmsi.txt
-  set REBOOT_REQUIRED=1
-)
-
+:InstUpdates
 rem *** Check state of service 'Windows Update' ***
 if "%SKIP_DYNAMIC%"=="/skipdynamic" (
   echo Skipping determination of missing updates on demand...
@@ -1386,27 +1270,27 @@ echo %DATE% %TIME% - Info: Started service 'Windows Update' (wuauserv) >>%UPDATE
 
 :ListMissingIds
 rem *** List ids of missing updates ***
-if not exist ..\wsus\wsusscn2.cab goto NoWSUSScan
-if "%VERIFY_MODE%" NEQ "/verify" goto SkipVerifyWSUSScan
+if not exist ..\wsus\wsusscn2.cab goto NoCatalog
+if "%VERIFY_MODE%" NEQ "/verify" goto SkipVerifyCatalog
 if not exist %HASHDEEP_PATH% (
   echo Warning: Hash computing/auditing utility %HASHDEEP_PATH% not found.
   echo %DATE% %TIME% - Warning: Hash computing/auditing utility %HASHDEEP_PATH% not found >>%UPDATE_LOGFILE%
-  goto SkipVerifyWSUSScan
+  goto SkipVerifyCatalog
 )
 if not exist ..\md\hashes-wsus.txt (
   echo Warning: Hash file hashes-wsus.txt not found.
   echo %DATE% %TIME% - Warning: Hash file hashes-wsus.txt not found >>%UPDATE_LOGFILE%
-  goto SkipVerifyWSUSScan
+  goto SkipVerifyCatalog
 )
 echo Verifying integrity of Windows Update catalog file...
 %SystemRoot%\system32\findstr.exe /L /C:%% /C:## /C:..\wsus\wsusscn2.cab ..\md\hashes-wsus.txt >"%TEMP%\hash-wsusscn2.txt"
 %HASHDEEP_PATH% -a -l -k "%TEMP%\hash-wsusscn2.txt" ..\wsus\wsusscn2.cab
 if errorlevel 1 (
   if exist "%TEMP%\hash-wsusscn2.txt" del "%TEMP%\hash-wsusscn2.txt"
-  goto WSUSScanIntegrityError
+  goto CatalogIntegrityError
 )
 if exist "%TEMP%\hash-wsusscn2.txt" del "%TEMP%\hash-wsusscn2.txt"
-:SkipVerifyWSUSScan
+:SkipVerifyCatalog
 echo %TIME% - Listing ids of missing updates (please be patient, this will take a while)...
 copy /Y ..\wsus\wsusscn2.cab "%TEMP%" >nul
 %CSCRIPT_PATH% //Nologo //B //E:vbs ListMissingUpdateIds.vbs %LIST_MODE_IDS%
@@ -1429,13 +1313,129 @@ if errorlevel 1 goto ListError
 
 :InstallUpdates
 rem *** Install updates ***
-if not exist "%TEMP%\UpdatesToInstall.txt" (
-  if "%REBOOT_REQUIRED%"=="1" (goto Installed) else (goto NoUpdates)
-)
+if not exist "%TEMP%\UpdatesToInstall.txt" goto SkipUpdates
 echo Installing updates...
 call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /errorsaswarnings
 if errorlevel 1 goto InstError
 set REBOOT_REQUIRED=1
+:SkipUpdates
+
+rem *** Install Microsoft Security Essentials ***
+if "%OS_NAME%"=="w62" goto SkipMSSEInst
+echo Checking Microsoft Security Essentials installation state...
+if "%INSTALL_MSSE%" NEQ "/instmsse" (
+  if "%MSSE_INSTALLED%"=="1" (goto CheckMSSEDefs) else (goto SkipMSSEInst)
+)
+if %OS_DOMAIN_ROLE% GEQ 2 (
+  if "%MSSE_INSTALLED%"=="1" (goto CheckMSSEDefs) else (goto SkipMSSEInst)
+)
+set MSSE_FILENAME=..\msse\%OS_ARCH%-glb\MSEInstall-%OS_ARCH%-%OS_LANG%.exe
+if not exist %MSSE_FILENAME% (
+  echo Warning: Microsoft Security Essentials installation file ^(%MSSE_FILENAME%^) not found.
+  echo %DATE% %TIME% - Warning: Microsoft Security Essentials installation file ^(%MSSE_FILENAME%^) not found >>%UPDATE_LOGFILE%
+  if "%MSSE_INSTALLED%"=="1" (goto CheckMSSEDefs) else (goto SkipMSSEInst)
+)
+rem *** Determine Microsoft Security Essentials installation file version ***
+echo Determining Microsoft Security Essentials installation file version...
+%CSCRIPT_PATH% //Nologo //B //E:vbs DetermineFileVersion.vbs %MSSE_FILENAME% MSSE_VER_TARGET
+if not exist "%TEMP%\SetFileVersion.cmd" goto CheckMSSEDefs
+call "%TEMP%\SetFileVersion.cmd"
+del "%TEMP%\SetFileVersion.cmd"
+if %MSSE_VER_MAJOR% LSS %MSSE_VER_TARGET_MAJOR% goto InstallMSSE
+if %MSSE_VER_MAJOR% GTR %MSSE_VER_TARGET_MAJOR% goto CheckMSSEDefs
+if %MSSE_VER_MINOR% LSS %MSSE_VER_TARGET_MINOR% goto InstallMSSE
+if %MSSE_VER_MINOR% GTR %MSSE_VER_TARGET_MINOR% goto CheckMSSEDefs
+if %MSSE_VER_BUILD% LSS %MSSE_VER_TARGET_BUILD% goto InstallMSSE
+if %MSSE_VER_BUILD% GTR %MSSE_VER_TARGET_BUILD% goto CheckMSSEDefs
+if %MSSE_VER_REVIS% GEQ %MSSE_VER_TARGET_REVIS% goto CheckMSSEDefs
+:InstallMSSE
+echo Installing Microsoft Security Essentials...
+call InstallOSUpdate.cmd %MSSE_FILENAME% %VERIFY_MODE% /ignoreerrors /s /runwgacheck /o
+set MSSE_FILENAME=
+set REBOOT_REQUIRED=1
+:CheckMSSEDefs
+set MSSE_VER_TARGET_MAJOR=
+set MSSE_VER_TARGET_MINOR=
+set MSSE_VER_TARGET_BUILD=
+set MSSE_VER_TARGET_REVIS=
+if /i "%OS_ARCH%"=="x64" (
+  set MSSEDEFS_FILENAME=..\msse\%OS_ARCH%-glb\mpam-fex64.exe
+) else (
+  set MSSEDEFS_FILENAME=..\msse\%OS_ARCH%-glb\mpam-fe.exe
+)
+if not exist %MSSEDEFS_FILENAME% (
+  echo Warning: Microsoft Security Essentials definition file ^(%MSSEDEFS_FILENAME%^) not found.
+  echo %DATE% %TIME% - Warning: Microsoft Security Essentials definition file ^(%MSSEDEFS_FILENAME%^) not found >>%UPDATE_LOGFILE%
+  goto CheckNISDefs
+)
+rem *** Determine Microsoft Security Essentials definition file version ***
+echo Determining Microsoft Security Essentials definition file version...
+%CSCRIPT_PATH% //Nologo //B //E:vbs DetermineFileVersion.vbs %MSSEDEFS_FILENAME% MSSEDEFS_VER_TARGET
+if not exist "%TEMP%\SetFileVersion.cmd" goto CheckNISDefs
+call "%TEMP%\SetFileVersion.cmd"
+del "%TEMP%\SetFileVersion.cmd"
+if %MSSEDEFS_VER_MAJOR% LSS %MSSEDEFS_VER_TARGET_MAJOR% goto InstallMSSEDefs
+if %MSSEDEFS_VER_MAJOR% GTR %MSSEDEFS_VER_TARGET_MAJOR% goto CheckNISDefs
+if %MSSEDEFS_VER_MINOR% LSS %MSSEDEFS_VER_TARGET_MINOR% goto InstallMSSEDefs
+if %MSSEDEFS_VER_MINOR% GTR %MSSEDEFS_VER_TARGET_MINOR% goto CheckNISDefs
+if %MSSEDEFS_VER_BUILD% LSS %MSSEDEFS_VER_TARGET_BUILD% goto InstallMSSEDefs
+if %MSSEDEFS_VER_BUILD% GTR %MSSEDEFS_VER_TARGET_BUILD% goto CheckNISDefs
+if %MSSEDEFS_VER_REVIS% GEQ %MSSEDEFS_VER_TARGET_REVIS% goto CheckNISDefs
+:InstallMSSEDefs
+echo Installing Microsoft Security Essentials definition file...
+call InstallOSUpdate.cmd %MSSEDEFS_FILENAME% %VERIFY_MODE% /ignoreerrors -q
+set MSSEDEFS_FILENAME=
+:CheckNISDefs
+set MSSEDEFS_VER_TARGET_MAJOR=
+set MSSEDEFS_VER_TARGET_MINOR=
+set MSSEDEFS_VER_TARGET_BUILD=
+set MSSEDEFS_VER_TARGET_REVIS=
+set NISDEFS_FILENAME=..\msse\%OS_ARCH%-glb\nis_full_%OS_ARCH%.exe
+if not exist %NISDEFS_FILENAME% (
+  echo Warning: Network Inspection System definition file ^(%NISDEFS_FILENAME%^) not found.
+  echo %DATE% %TIME% - Warning: Network Inspection System definition file ^(%NISDEFS_FILENAME%^) not found >>%UPDATE_LOGFILE%
+  goto SkipMSSEInst
+)
+rem *** Determine Network Inspection System definition file version ***
+echo Determining Network Inspection System definition file version...
+%CSCRIPT_PATH% //Nologo //B //E:vbs DetermineFileVersion.vbs %NISDEFS_FILENAME% NISDEFS_VER_TARGET
+if not exist "%TEMP%\SetFileVersion.cmd" goto SkipMSSEInst
+call "%TEMP%\SetFileVersion.cmd"
+del "%TEMP%\SetFileVersion.cmd"
+if %NISDEFS_VER_MAJOR% LSS %NISDEFS_VER_TARGET_MAJOR% goto InstallNISDefs
+if %NISDEFS_VER_MAJOR% GTR %NISDEFS_VER_TARGET_MAJOR% goto SkipMSSEInst
+if %NISDEFS_VER_MINOR% LSS %NISDEFS_VER_TARGET_MINOR% goto InstallNISDefs
+if %NISDEFS_VER_MINOR% GTR %NISDEFS_VER_TARGET_MINOR% goto SkipMSSEInst
+if %NISDEFS_VER_BUILD% LSS %NISDEFS_VER_TARGET_BUILD% goto InstallNISDefs
+if %NISDEFS_VER_BUILD% GTR %NISDEFS_VER_TARGET_BUILD% goto SkipMSSEInst
+if %NISDEFS_VER_REVIS% GEQ %NISDEFS_VER_TARGET_REVIS% goto SkipMSSEInst
+:InstallNISDefs
+echo Installing Network Inspection System definition file...
+call InstallOSUpdate.cmd %NISDEFS_FILENAME% %VERIFY_MODE% /ignoreerrors
+set NISDEFS_FILENAME=
+:SkipMSSEInst
+set NISDEFS_VER_TARGET_MAJOR=
+set NISDEFS_VER_TARGET_MINOR=
+set NISDEFS_VER_TARGET_BUILD=
+set NISDEFS_VER_TARGET_REVIS=
+
+rem *** Install MSI packages and custom software ***
+if exist ..\software\custom\InstallCustomSoftware.cmd (
+  echo Installing custom software...
+  pushd ..\software\custom
+  call InstallCustomSoftware.cmd
+  popd
+  echo %DATE% %TIME% - Info: Executed custom software installation hook ^(Errorlevel: %errorlevel%^) >>%UPDATE_LOGFILE%
+  set REBOOT_REQUIRED=1
+)
+if exist %SystemRoot%\Temp\wouselmsi.txt (
+  echo Installing selected MSI packages...
+  call TouchMSITree.cmd /instselected
+  echo %DATE% %TIME% - Info: Installed selected MSI packages >>%UPDATE_LOGFILE%
+  del %SystemRoot%\Temp\wouselmsi.txt
+  set REBOOT_REQUIRED=1
+)
+if "%REBOOT_REQUIRED%" NEQ "1" goto NoUpdates
 
 :Installed
 if "%RECALL_REQUIRED%"=="1" (
@@ -1621,14 +1621,14 @@ echo %DATE% %TIME% - Error: Service 'Windows Update' (wuauserv) is not running a
 echo.
 goto Cleanup
 
-:NoWSUSScan
+:NoCatalog
 echo.
 echo ERROR: File ..\wsus\wsusscn2.cab not found.
 echo %DATE% %TIME% - Error: File ..\wsus\wsusscn2.cab not found >>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
-:WSUSScanIntegrityError
+:CatalogIntegrityError
 echo.
 echo ERROR: File hash does not match stored value (file: ..\wsus\wsusscn2.cab).
 echo %DATE% %TIME% - Error: File hash does not match stored value (file: ..\wsus\wsusscn2.cab) >>%UPDATE_LOGFILE%
