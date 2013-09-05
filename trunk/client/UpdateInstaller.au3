@@ -253,9 +253,11 @@ Dim $reg_val
   $reg_val = RegRead($reg_key_ie, $reg_val_version)
   If StringInStr($reg_val, "9.10.") > 0 Then
     Return "10"
-  Else
-    Return StringLeft($reg_val, StringInStr($reg_val, ".") - 1)
   EndIf
+  If StringInStr($reg_val, "9.11.") > 0 Then
+    Return "11"
+  EndIf
+  Return StringLeft($reg_val, StringInStr($reg_val, ".") - 1)
 EndFunc
 
 Func DotNet35Version()
@@ -461,7 +463,7 @@ Else
   $ie7 = GUICtrlCreateCheckbox("Install Internet Explorer 7", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
-  OR (IEVersion() = "7") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (NOT WinGlbPresent($scriptdir)) ) Then
+  OR (IEVersion() = "7") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") OR (NOT WinGlbPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If MyIniRead($ini_section_installation, $ini_value_ie7, $disabled) = $enabled Then
@@ -479,7 +481,7 @@ Else
   $ie8 = GUICtrlCreateCheckbox("Install Internet Explorer 8", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
-  OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (NOT WinGlbPresent($scriptdir)) ) Then
+  OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") OR (NOT WinGlbPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If MyIniRead($ini_section_installation, $ini_value_ie8, $enabled) = $enabled Then
@@ -502,7 +504,7 @@ Else
   $ie9 = GUICtrlCreateCheckbox("Install Internet Explorer 9", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
-  OR (IEVersion() = "9") OR (IEVersion() = "10") OR (NOT WinGlbPresent($scriptdir)) ) Then
+  OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") OR (NOT WinGlbPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If MyIniRead($ini_section_installation, $ini_value_ie9, $disabled) = $enabled Then
@@ -525,7 +527,7 @@ Else
   $ie10 = GUICtrlCreateCheckbox("Install Internet Explorer 10", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
-  OR (IEVersion() = "10") OR (NOT WinGlbPresent($scriptdir)) ) Then
+  OR (IEVersion() = "10") OR (IEVersion() = "11") OR (NOT WinGlbPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If MyIniRead($ini_section_installation, $ini_value_ie10, $disabled) = $enabled Then
@@ -977,17 +979,17 @@ While 1
         GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
         GUICtrlSetState($ie10, $GUI_UNCHECKED + $GUI_DISABLE)
       Else
-        If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") ) Then
+        If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
           GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
         Else
           GUICtrlSetState($ie8, $GUI_ENABLE)
         EndIf
-        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (IEVersion() = "9") OR (IEVersion() = "10") ) Then
+        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
           GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
         Else
           GUICtrlSetState($ie9, $GUI_ENABLE)
         EndIf
-        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (IEVersion() = "10") ) Then
+        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
           GUICtrlSetState($ie10, $GUI_UNCHECKED + $GUI_DISABLE)
         Else
           GUICtrlSetState($ie10, $GUI_ENABLE)
@@ -1001,17 +1003,17 @@ While 1
         GUICtrlSetState($ie10, $GUI_UNCHECKED + $GUI_DISABLE)
       Else
         If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
-          OR (IEVersion() = "7") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") ) Then
+          OR (IEVersion() = "7") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
           GUICtrlSetState($ie7, $GUI_UNCHECKED + $GUI_DISABLE)
         Else
           GUICtrlSetState($ie7, $GUI_ENABLE)
         EndIf
-        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (IEVersion() = "9") OR (IEVersion() = "10") ) Then
+        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
           GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
         Else
           GUICtrlSetState($ie9, $GUI_ENABLE)
         EndIf
-        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (IEVersion() = "10") ) Then
+        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
           GUICtrlSetState($ie10, $GUI_UNCHECKED + $GUI_DISABLE)
         Else
           GUICtrlSetState($ie10, $GUI_ENABLE)
@@ -1025,17 +1027,17 @@ While 1
         GUICtrlSetState($ie10, $GUI_UNCHECKED + $GUI_DISABLE)
       Else
         If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
-          OR (IEVersion() = "7") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") ) Then
+          OR (IEVersion() = "7") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
           GUICtrlSetState($ie7, $GUI_UNCHECKED + $GUI_DISABLE)
         Else
           GUICtrlSetState($ie7, $GUI_ENABLE)
         EndIf
-        If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") ) Then
+        If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
           GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
         Else
           GUICtrlSetState($ie8, $GUI_ENABLE)
         EndIf
-        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (IEVersion() = "10") ) Then
+        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
           GUICtrlSetState($ie10, $GUI_UNCHECKED + $GUI_DISABLE)
         Else
           GUICtrlSetState($ie10, $GUI_ENABLE)
@@ -1049,17 +1051,17 @@ While 1
         GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
       Else
         If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
-          OR (IEVersion() = "7") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") ) Then
+          OR (IEVersion() = "7") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
           GUICtrlSetState($ie7, $GUI_UNCHECKED + $GUI_DISABLE)
         Else
           GUICtrlSetState($ie7, $GUI_ENABLE)
         EndIf
-        If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") ) Then
+        If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
           GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
         Else
           GUICtrlSetState($ie8, $GUI_ENABLE)
         EndIf
-        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (IEVersion() = "9") OR (IEVersion() = "10") ) Then
+        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
           GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
         Else
           GUICtrlSetState($ie9, $GUI_ENABLE)

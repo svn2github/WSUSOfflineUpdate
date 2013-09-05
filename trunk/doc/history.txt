@@ -774,6 +774,7 @@ Version 8.5 -- 26.07.13
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
 - NOTE: If you like to use aria2 instead of wget for downloading, please call ActivateAria2Downloads.cmd once
+- Detection capability added for Windows 8.1 / Server 2012 R2 and Internet Explorer 11 
 - Optional use of aria2 instead of wget to speed up downloading (Thanks to "qoole" and "brb8two")
 - List of superseded updates will now be recalculated if ExcludeList-superseded-exclude.txt was modified
 - Microsoft Security Essentials and MSI packages will now be installed last (Thanks to "paul1149") 
