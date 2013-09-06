@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.5+ (r496)
+set WSUSOFFLINE_VERSION=8.5+ (r497)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -97,6 +97,7 @@ if /i "%OS_ARCH%"=="x64" (set HASHDEEP_PATH=..\bin\hashdeep64.exe) else (set HAS
 rem *** Determine DirectX main version ***
 if "%UPDATE_DX%" NEQ "/updatedx" goto NoDXDiag
 if "%OS_NAME%"=="w62" goto NoDXDiag
+if "%OS_NAME%"=="w63" goto NoDXDiag
 if not exist %SystemRoot%\system32\dxdiag.exe goto NoDXDiag
 echo Determining DirectX main version...
 if /i "%OS_ARCH%"=="x64" (
@@ -163,6 +164,7 @@ goto SkipPowerCfg
 :PWRw60
 :PWRw61
 :PWRw62
+:PWRw63
 for %%i in (monitor disk standby hibernate) do (
   for %%j in (ac dc) do %SystemRoot%\system32\powercfg.exe -X -%%i-timeout-%%j 0
 )
@@ -224,11 +226,12 @@ echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 3.5 version %DOTNET35_
 echo %DATE% %TIME% - Info: Found Windows PowerShell version %PSH_VER_MAJOR%.%PSH_VER_MINOR% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 4 version %DOTNET4_VER_MAJOR%.%DOTNET4_VER_MINOR%.%DOTNET4_VER_BUILD% >>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows Management Framework version %WMF_VER_MAJOR%.%WMF_VER_MINOR% >>%UPDATE_LOGFILE%
-if "%OS_NAME%" NEQ "w62" (
-  echo %DATE% %TIME% - Info: Found Microsoft Security Essentials version %MSSE_VER_MAJOR%.%MSSE_VER_MINOR%.%MSSE_VER_BUILD%.%MSSE_VER_REVIS% >>%UPDATE_LOGFILE%
-  echo %DATE% %TIME% - Info: Found Microsoft Security Essentials definitions version %MSSEDEFS_VER_MAJOR%.%MSSEDEFS_VER_MINOR%.%MSSEDEFS_VER_BUILD%.%MSSEDEFS_VER_REVIS% >>%UPDATE_LOGFILE%
-  echo %DATE% %TIME% - Info: Found Network Inspection System definitions version %NISDEFS_VER_MAJOR%.%NISDEFS_VER_MINOR%.%NISDEFS_VER_BUILD%.%NISDEFS_VER_REVIS% >>%UPDATE_LOGFILE%
-)
+if "%OS_NAME%"=="w62" goto SkipLogMSSEVer
+if "%OS_NAME%"=="w63" goto SkipLogMSSEVer
+echo %DATE% %TIME% - Info: Found Microsoft Security Essentials version %MSSE_VER_MAJOR%.%MSSE_VER_MINOR%.%MSSE_VER_BUILD%.%MSSE_VER_REVIS% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft Security Essentials definitions version %MSSEDEFS_VER_MAJOR%.%MSSEDEFS_VER_MINOR%.%MSSEDEFS_VER_BUILD%.%MSSEDEFS_VER_REVIS% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Network Inspection System definitions version %NISDEFS_VER_MAJOR%.%NISDEFS_VER_MINOR%.%NISDEFS_VER_BUILD%.%NISDEFS_VER_REVIS% >>%UPDATE_LOGFILE%
+:SkipLogMSSEVer
 echo %DATE% %TIME% - Info: Found Windows Defender definitions version %WDDEFS_VER_MAJOR%.%WDDEFS_VER_MINOR%.%WDDEFS_VER_BUILD%.%WDDEFS_VER_REVIS% >>%UPDATE_LOGFILE%
 if "%O2K3_VER_MAJOR%" NEQ "" (
   echo %DATE% %TIME% - Info: Found Microsoft Office 2003 %O2K3_VER_APP% version %O2K3_VER_MAJOR%.%O2K3_VER_MINOR%.%O2K3_VER_BUILD%.%O2K3_VER_REVIS% ^(o2k3 %O2K3_LANG% sp%O2K3_SP_VER%^) >>%UPDATE_LOGFILE%
@@ -334,6 +337,7 @@ goto Installed
 :SPw60
 :SPw61
 :SPw62
+:SPw63
 if "%BOOT_MODE%" NEQ "/autoreboot" goto SPw6Now
 if "%USERNAME%"=="WOUTempAdmin" goto SPw6Now
 echo %DATE% %TIME% - Info: Preparing installation of most recent Service Pack for Windows Vista / 7 >>%UPDATE_LOGFILE%
@@ -621,6 +625,7 @@ for /F %%i in ('dir /B %IE_FILENAME%') do (
 goto IEInstalled
 
 :IEw62
+:IEw63
 :IEInstalled
 set IE_FILENAME=
 if "%RECALL_REQUIRED%"=="1" goto Installed
@@ -766,6 +771,7 @@ if "%CPP_2012_x86%"=="1" (
 rem *** Install DirectX End-User Runtime ***
 if "%UPDATE_DX%" NEQ "/updatedx" goto SkipDirectXInst
 if "%OS_NAME%"=="w62" goto SkipDirectXInst
+if "%OS_NAME%"=="w63" goto SkipDirectXInst
 echo Checking DirectX version...
 if %DX_CORE_VER_MAJOR% LSS %DX_CORE_VER_TARGET_MAJOR% goto InstallDirectX
 if %DX_CORE_VER_MAJOR% GTR %DX_CORE_VER_TARGET_MAJOR% goto SkipDirectXInst
@@ -800,6 +806,7 @@ if "%INSTALL_MSSL%" NEQ "/instmssl" goto SkipMSSLInst
 echo Checking Microsoft Silverlight version...
 if "%OS_NAME%"=="w61" goto MSSL%OS_ARCH%
 if "%OS_NAME%"=="w62" goto MSSL%OS_ARCH%
+if "%OS_NAME%"=="w63" goto MSSL%OS_ARCH%
 :MSSLx86
 set MSSL_FILENAME=..\win\glb\Silverlight.exe
 goto CheckMSSL
@@ -868,6 +875,7 @@ rem *** Install .NET Framework 3.5 SP1 ***
 if "%INSTALL_DOTNET35%" NEQ "/instdotnet35" goto SkipDotNet35Inst
 if "%OS_NAME%"=="w61" goto SkipDotNet35Inst
 if "%OS_NAME%"=="w62" goto SkipDotNet35Inst
+if "%OS_NAME%"=="w63" goto SkipDotNet35Inst
 echo Checking .NET Framework 3.5 SP1 installation state...
 if %DOTNET35_VER_MAJOR% LSS %DOTNET35_VER_TARGET_MAJOR% goto InstallDotNet35
 if %DOTNET35_VER_MAJOR% GTR %DOTNET35_VER_TARGET_MAJOR% goto SkipDotNet35Inst
@@ -1029,6 +1037,7 @@ if "%OS_NAME%"=="w60" (
 )
 if "%OS_NAME%"=="w61" goto CheckWMF
 if "%OS_NAME%"=="w62" goto CheckWMF
+if "%OS_NAME%"=="w63" goto CheckWMF
 goto SkipWMFInst
 :CheckWMF
 echo Checking Windows Management Framework 3.0 installation state...
@@ -1092,19 +1101,21 @@ rem *** Update Windows Defender definitions ***
 echo Checking Windows Defender installation state...
 if "%WD_INSTALLED%" NEQ "1" goto SkipWDInst
 if "%WD_DISABLED%"=="1" goto SkipWDInst
-if "%OS_NAME%"=="w62" (
-  if /i "%OS_ARCH%"=="x64" (
-    set WDDEFS_FILENAME=..\msse\%OS_ARCH%-glb\mpam-fex64.exe
-  ) else (
-    set WDDEFS_FILENAME=..\msse\%OS_ARCH%-glb\mpam-fe.exe
-  )
+if "%OS_NAME%"=="w62" goto WDmpam
+if "%OS_NAME%"=="w63" goto WDmpam
+if /i "%OS_ARCH%"=="x64" (
+  set WDDEFS_FILENAME=..\wddefs\%OS_ARCH%-glb\mpas-feX64.exe
 ) else (
-  if /i "%OS_ARCH%"=="x64" (
-    set WDDEFS_FILENAME=..\wddefs\%OS_ARCH%-glb\mpas-feX64.exe
-  ) else (
-    set WDDEFS_FILENAME=..\wddefs\%OS_ARCH%-glb\mpas-fe.exe
-  )
+  set WDDEFS_FILENAME=..\wddefs\%OS_ARCH%-glb\mpas-fe.exe
 )
+goto WDmpas
+:WDmpam
+if /i "%OS_ARCH%"=="x64" (
+  set WDDEFS_FILENAME=..\msse\%OS_ARCH%-glb\mpam-fex64.exe
+) else (
+  set WDDEFS_FILENAME=..\msse\%OS_ARCH%-glb\mpam-fe.exe
+)
+:WDmpas
 if not exist %WDDEFS_FILENAME% (
   echo Warning: Windows Defender definition file ^(%WDDEFS_FILENAME%^) not found.
   echo %DATE% %TIME% - Warning: Windows Defender definition file ^(%WDDEFS_FILENAME%^) not found >>%UPDATE_LOGFILE%
@@ -1322,6 +1333,7 @@ set REBOOT_REQUIRED=1
 
 rem *** Install Microsoft Security Essentials ***
 if "%OS_NAME%"=="w62" goto SkipMSSEInst
+if "%OS_NAME%"=="w63" goto SkipMSSEInst
 echo Checking Microsoft Security Essentials installation state...
 if "%INSTALL_MSSE%" NEQ "/instmsse" (
   if "%MSSE_INSTALLED%"=="1" (goto CheckMSSEDefs) else (goto SkipMSSEInst)

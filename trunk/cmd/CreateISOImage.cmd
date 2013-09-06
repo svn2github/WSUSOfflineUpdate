@@ -29,7 +29,7 @@ for %%i in (wxp w2k3 w2k3-x64) do (
     goto V1EvalParams
   )
 )
-for %%i in (w60 w60-x64 w61 w61-x64 w62 w62-x64) do (
+for %%i in (w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64) do (
   if /i "%1"=="%%i" (
     if /i "%2"=="glb" shift /2
     goto V1EvalParams
@@ -51,7 +51,10 @@ if /i "%2"=="/includedotnet" set INC_DOTNET=1
 if /i "%2"=="/includemsse" set INC_MSSE=1
 if /i "%2"=="/includewddefs" (
   echo %1 | %SystemRoot%\system32\find.exe /I "w62" >nul 2>&1
-  if errorlevel 1 (set INC_WDDEFS=1) else (set INC_MSSE=1)
+  if errorlevel 1 (
+    echo %1 | %SystemRoot%\system32\find.exe /I "w63" >nul 2>&1
+    if errorlevel 1 (set INC_WDDEFS=1) else (set INC_MSSE=1)
+  ) else (set INC_MSSE=1)
 )
 if /i "%2"=="/exitonerror" set EXIT_ERR=1
 if /i "%2"=="/skiphashes" set SKIP_HASHES=1
@@ -70,7 +73,10 @@ if /i "%3"=="/includedotnet" set INC_DOTNET=1
 if /i "%3"=="/includemsse" set INC_MSSE=1
 if /i "%3"=="/includewddefs" (
   echo %1 | %SystemRoot%\system32\find.exe /I "w62" >nul 2>&1
-  if errorlevel 1 (set INC_WDDEFS=1) else (set INC_MSSE=1)
+  if errorlevel 1 (
+    echo %1 | %SystemRoot%\system32\find.exe /I "w63" >nul 2>&1
+    if errorlevel 1 (set INC_WDDEFS=1) else (set INC_MSSE=1)
+  ) else (set INC_MSSE=1)
 )
 if /i "%3"=="/exitonerror" set EXIT_ERR=1
 if /i "%3"=="/skiphashes" set SKIP_HASHES=1
@@ -132,7 +138,7 @@ goto :eof
 rem *** Create ISO filter ***
 echo Creating ISO filter for %1...
 set ISO_FILTER="%TEMP%\ExcludeListISO-%1.txt"
-for %%i in (all all-x86 all-x64 wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-x64 ofc) do (if /i "%1"=="%%i" goto V1CopyFilter)
+for %%i in (all all-x86 all-x64 wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64 ofc) do (if /i "%1"=="%%i" goto V1CopyFilter)
 set ISO_NAME=wsusoffline-%1-x86
 set ISO_VOLID=wou_%1_x86
 copy /Y ..\exclude\ExcludeListISO-all-x86.txt %ISO_FILTER% >nul
@@ -226,7 +232,7 @@ goto Error
 echo.
 echo ERROR: Invalid parameter: %*
 echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| ofc} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/excludesw] [/includedotnet] [/includemsse] [/includewddefs] [/skiphashes] [/outputpath ^<OutputPath^>]
-echo Usage2: %~n0 {all ^| all-x86 ^| all-x64 ^| wxp ^| w2k3 ^| w2k3-x64 ^| w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| w62 ^| w62-x64 ^| ofc ^| enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/excludesw] [/includedotnet] [/includemsse] [/includewddefs] [/skiphashes] [/outputpath ^<OutputPath^>]
+echo Usage2: %~n0 {all ^| all-x86 ^| all-x64 ^| wxp ^| w2k3 ^| w2k3-x64 ^| w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| w62 ^| w62-x64 ^| w63 ^| w63-x64 ^| ofc ^| enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/excludesw] [/includedotnet] [/includemsse] [/includewddefs] [/skiphashes] [/outputpath ^<OutputPath^>]
 echo %DATE% %TIME% - Error: Invalid parameter: %* >>%DOWNLOAD_LOGFILE%
 echo.
 goto Error

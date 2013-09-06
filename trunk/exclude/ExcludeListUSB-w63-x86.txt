@@ -1,3 +1,6 @@
+ndp1
+ndp2
+ndp3
 ofc\
 o2k\
 oxp\
@@ -8,9 +11,9 @@ o2k13\
 w2k\
 wxp\
 w2k3\
+w60\
 w61\
 w62\
-w63\
 x64-glb\
 o2k7-x64\
 w2k3-x64\
@@ -18,7 +21,9 @@ w60-x64\
 w61-x64\
 w62-x64\
 w63-x64\
+wddefs\
 *-x64
-dotnetfx40*
+dotnetfx*
 vcredist*_x64
+MSEInstall*
 .au3

@@ -7,11 +7,15 @@
 *w2k*
 *wxp*
 */w60/*
+*/w61/*
 */w62/*
-*/w63/*
 */*/x64-glb/*
+*wddefs*
 *-x64*
 *dotnetfx35*
 *dotNetFx40*
+*dotnetfx45*
+*dotNetFx45*
 *vcredist*_x64*
+*MSEInstall*
 *.au3
