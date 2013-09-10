@@ -141,16 +141,24 @@ goto InstFailure
 
 :InstCab
 echo Installing %1...
+if exist %SystemRoot%\system32\Dism.exe goto InstDism
 set ERR_LEVEL=0
 if "%OS_ARCH%"=="x64" (set TOKEN_KB=3) else (set TOKEN_KB=2)
 for /F "tokens=%TOKEN_KB% delims=-" %%i in ("%1") do (
   call SafeRmDir.cmd "%TEMP%\%%i"
   md "%TEMP%\%%i"
   %SystemRoot%\system32\expand.exe %1 -F:* "%TEMP%\%%i" >nul
-  %SystemRoot%\system32\pkgmgr.exe /ip /m:"%TEMP%\%%i" /quiet /norestart
+  %SystemRoot%\system32\PkgMgr.exe /ip /m:"%TEMP%\%%i" /quiet /norestart
   set ERR_LEVEL=%errorlevel%
   call SafeRmDir.cmd "%TEMP%\%%i"
 )
+if "%IGNORE_ERRORS%"=="1" goto InstSuccess
+for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
+goto InstFailure
+
+:InstDism
+%SystemRoot%\system32\Dism.exe /Online /Quiet /NoRestart /Add-Package /PackagePath:%1 /IgnoreCheck
+set ERR_LEVEL=%errorlevel%
 if "%IGNORE_ERRORS%"=="1" goto InstSuccess
 for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
 goto InstFailure

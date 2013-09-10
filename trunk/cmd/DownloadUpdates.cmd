@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.5+ (r497)
+set WSUSOFFLINE_VERSION=8.5+ (r498)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -428,6 +428,7 @@ if exist ..\client\md\hashes-wsus.txt (
     popd
     goto IntegrityError
   )
+  del hashes-wsus.txt
   popd
   echo %DATE% %TIME% - Info: Verified integrity of Windows Update Agent installation and catalog files >>%DOWNLOAD_LOGFILE%
 ) else (
@@ -493,6 +494,7 @@ if exist ..\client\md\hashes-dotnet.txt (
     popd
     goto IntegrityError
   )
+  del hashes-dotnet.txt
   popd
   echo %DATE% %TIME% - Info: Verified integrity of .NET Frameworks' installation files >>%DOWNLOAD_LOGFILE%
 ) else (
@@ -581,6 +583,7 @@ if exist ..\client\md\hashes-cpp.txt (
     popd
     goto IntegrityError
   )
+  del hashes-cpp.txt
   popd
   echo %DATE% %TIME% - Info: Verified integrity of C++ Runtime Libraries' installation files >>%DOWNLOAD_LOGFILE%
 ) else (
@@ -683,6 +686,7 @@ if exist ..\client\md\hashes-msse.txt (
     popd
     goto IntegrityError
   )
+  del hashes-msse.txt
   popd
   echo %DATE% %TIME% - Info: Verified integrity of Microsoft Security Essentials files >>%DOWNLOAD_LOGFILE%
 ) else (
@@ -788,6 +792,7 @@ if exist ..\client\md\hashes-wddefs.txt (
     popd
     goto IntegrityError
   )
+  del hashes-wddefs.txt
   popd
   echo %DATE% %TIME% - Info: Verified integrity of Windows Defender definition files >>%DOWNLOAD_LOGFILE%
 ) else (
@@ -895,6 +900,7 @@ if exist ..\client\md\hashes-%1-%2.txt (
     popd
     goto IntegrityError
   )
+  del hashes-%1-%2.txt
   popd
   echo %DATE% %TIME% - Info: Verified integrity of existing updates for %1 %2 >>%DOWNLOAD_LOGFILE%
 ) else (
