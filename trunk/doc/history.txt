@@ -787,7 +787,7 @@ Version ?.? -- ??.??.??
 - Fix: Microsoft updated kb2574819 (DTLS, prerequisite for RDP 8.0) for Windows 7 and Server 2008 R2 (x86/x64) (Thanks to "cecinit" and "Matjes")
 - Fix: Download part missed kb2644615 for Windows 7 and Server 2008 R2 (x86/x64) due to a bug in Microsoft's update catalog file wsusscn2.cab
 - Fix: Download part missed kb956744 for Windows Server 2003 (x86) due to a bug in Microsoft's update catalog file wsusscn2.cab
-- Fix: Download part missed kb2817465 for Office 2013
+- Fix: Download part missed kb2817465 and kb2768017 for Office 2013
 - Fix: Cleaned up ExcludeList-superseded-exclude.txt (Thanks to M. Trenkner)
 - Fix: Download failures of mkisofs tool will now result in a warning instead of an error (Thanks to Th. Lohe)
 - Fix: Minor fix in Linux script DownloadUpdates.sh (Thanks to "Buster" and H. Hullen)
