@@ -10,3 +10,5 @@ visio20
 visiomui
 visiosp
 visioww
+excelintl
+wss
