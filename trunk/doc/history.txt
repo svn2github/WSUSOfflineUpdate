@@ -784,6 +784,7 @@ Version ?.? -- ??.??.??
 - Fix: Static installation definitions for Office updates were not correctly evaluated on dual Office installations (Thanks to "aker")
 - Fix: UpdateGenerator script won't any longer try to copy to non-existent USB target paths (Thanks to "boco" and "aker")
 - Fix: DownloadUpdates.cmd script will now avoid misleading file integrity verification failures after an incomplete or broken download run (Thanks to "boco")
+- Fix: DownloadUpdates.cmd script erroneously deleted StaticDownloadLinks-o2k13-x64-glb.txt (Thanks to "psj")
 - Fix: Microsoft updated kb2574819 (DTLS, prerequisite for RDP 8.0) for Windows 7 and Server 2008 R2 (x86/x64) (Thanks to "cecinit" and "Matjes")
 - Fix: Download part missed kb2644615 for Windows 7 and Server 2008 R2 (x86/x64) due to a bug in Microsoft's update catalog file wsusscn2.cab
 - Fix: Download part missed kb956744 for Windows Server 2003 (x86) due to a bug in Microsoft's update catalog file wsusscn2.cab

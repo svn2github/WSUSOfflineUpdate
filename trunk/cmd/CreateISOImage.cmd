@@ -105,7 +105,9 @@ goto :eof
 :LocaleFilter
 for %%i in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (
   if /i "%1" NEQ "%%i" (
-    if /i "%%i"=="enu" (echo */*/%%i/*>>%ISO_FILTER%) else (echo *%%i*>>%ISO_FILTER%)
+    if /i "%%i"=="enu" (echo */*/%%i/*>>%ISO_FILTER%) else (
+      if /i "%%i"=="ell" (echo */*/%%i/*>>%ISO_FILTER%) else (echo *%%i*>>%ISO_FILTER%)
+    )
   )
 )
 goto :eof

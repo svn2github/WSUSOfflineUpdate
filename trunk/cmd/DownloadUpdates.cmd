@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.5+ (r500)
+set WSUSOFFLINE_VERSION=8.5+ (r501)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -343,7 +343,6 @@ if exist ..\client\static\StaticUpdateIds-o2k7-x*.txt del ..\client\static\Stati
 if exist ..\ExtractDownloadLinks-oall.cmd del ..\ExtractDownloadLinks-oall.cmd
 if exist ..\ExtractDownloadLinks-wall.cmd del ..\ExtractDownloadLinks-wall.cmd
 if exist ..\static\StaticDownloadLinks-o2k7-x*.txt del ..\static\StaticDownloadLinks-o2k7-x*.txt
-if exist ..\static\StaticDownloadLinks-o2k13-x64-glb.txt del ..\static\StaticDownloadLinks-o2k13-x64-glb.txt
 if exist ..\xslt\ExtractDownloadLinks-oall-deu.xsl del ..\xslt\ExtractDownloadLinks-oall-deu.xsl
 if exist ..\xslt\ExtractDownloadLinks-oall-enu.xsl del ..\xslt\ExtractDownloadLinks-oall-enu.xsl
 if exist ..\xslt\ExtractDownloadLinks-oall-fra.xsl del ..\xslt\ExtractDownloadLinks-oall-fra.xsl
@@ -494,20 +493,23 @@ if exist ..\client\md\hashes-dotnet.txt (
     popd
     goto IntegrityError
   )
-  del hashes-dotnet.txt
   popd
   echo %DATE% %TIME% - Info: Verified integrity of .NET Frameworks' installation files >>%DOWNLOAD_LOGFILE%
+  if exist ..\client\md\hashes-dotnet-%TARGET_ARCH%-glb.txt (
+    for %%i in (..\client\md\hashes-dotnet-%TARGET_ARCH%-glb.txt) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
+    if not errorlevel 1 (
+      echo Skipping download/validation of .NET Frameworks' files ^(%TARGET_ARCH%^) due to 'same day' rule.
+      echo %DATE% %TIME% - Info: Skipped download/validation of .NET Frameworks' files ^(%TARGET_ARCH%^) due to 'same day' rule >>%DOWNLOAD_LOGFILE%
+      goto SkipDotNet
+    )
+  )
+  del ..\client\md\hashes-dotnet.txt
+  if exist ..\client\md\hashes-dotnet-%TARGET_ARCH%-glb.txt del ..\client\md\hashes-dotnet-%TARGET_ARCH%-glb.txt
 ) else (
   echo Warning: Integrity database ..\client\md\hashes-dotnet.txt not found.
   echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-dotnet.txt not found >>%DOWNLOAD_LOGFILE%
 )
 :DownloadDotNet
-for %%i in (..\client\md\hashes-dotnet-%TARGET_ARCH%-glb.txt) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
-if not errorlevel 1 (
-  echo Skipping download/validation of .NET Frameworks' installation files due to 'same day' rule.
-  echo %DATE% %TIME% - Info: Skipped download/validation of .NET Frameworks' installation files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
-  goto VerifyDotNet
-)
 echo Downloading/validating installation files for .NET Frameworks 3.5 SP1 and 4.x...
 copy /Y ..\static\StaticDownloadLinks-dotnet.txt "%TEMP%\StaticDownloadLinks-dotnet.txt" >nul
 if exist ..\static\custom\StaticDownloadLinks-dotnet.txt (
@@ -583,20 +585,20 @@ if exist ..\client\md\hashes-cpp.txt (
     popd
     goto IntegrityError
   )
-  del hashes-cpp.txt
   popd
   echo %DATE% %TIME% - Info: Verified integrity of C++ Runtime Libraries' installation files >>%DOWNLOAD_LOGFILE%
+  for %%i in (..\client\md\hashes-cpp.txt) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
+  if not errorlevel 1 (
+    echo Skipping download/validation of C++ Runtime Libraries' installation files due to 'same day' rule.
+    echo %DATE% %TIME% - Info: Skipped download/validation of C++ Runtime Libraries' installation files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
+    goto SkipCPP
+  )
+  del ..\client\md\hashes-cpp.txt
 ) else (
   echo Warning: Integrity database ..\client\md\hashes-cpp.txt not found.
   echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-cpp.txt not found >>%DOWNLOAD_LOGFILE%
 )
 :DownloadCPP
-for %%i in (..\client\md\hashes-cpp.txt) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
-if not errorlevel 1 (
-  echo Skipping download/validation of C++ Runtime Libraries' installation files due to 'same day' rule.
-  echo %DATE% %TIME% - Info: Skipped download/validation of C++ Runtime Libraries' installation files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
-  goto VerifyCPP
-)
 echo Downloading/validating installation files for C++ Runtime Libraries...
 for %%i in (x64 x86) do (
   for /F "tokens=1,2 delims=," %%j in (..\static\StaticDownloadLinks-cpp-%%i-glb.txt) do (
@@ -686,22 +688,22 @@ if exist ..\client\md\hashes-msse.txt (
     popd
     goto IntegrityError
   )
-  del hashes-msse.txt
   popd
   echo %DATE% %TIME% - Info: Verified integrity of Microsoft Security Essentials files >>%DOWNLOAD_LOGFILE%
+  if exist ..\client\msse\%TARGET_ARCH%-glb\mpam*.exe (
+    for %%i in (..\client\msse\%TARGET_ARCH%-glb\mpam*.exe) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
+    if not errorlevel 1 (
+      echo Skipping download/validation of Microsoft Security Essentials files ^(%TARGET_ARCH%^) due to 'same day' rule.
+      echo %DATE% %TIME% - Info: Skipped download/validation of Microsoft Security Essentials files ^(%TARGET_ARCH%^) due to 'same day' rule >>%DOWNLOAD_LOGFILE%
+      goto SkipMSSE
+    )
+  )
+  del ..\client\md\hashes-msse.txt
 ) else (
   echo Warning: Integrity database ..\client\md\hashes-msse.txt not found.
   echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-msse.txt not found >>%DOWNLOAD_LOGFILE%
 )
 :DownloadMSSE
-if exist ..\client\msse\%TARGET_ARCH%-glb\mpam*.exe (
-  for %%i in (..\client\msse\%TARGET_ARCH%-glb\mpam*.exe) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
-  if not errorlevel 1 (
-    echo Skipping download/validation of Microsoft Security Essentials files due to 'same day' rule.
-    echo %DATE% %TIME% - Info: Skipped download/validation of Microsoft Security Essentials files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
-    goto VerifyMSSE
-  )
-)
 echo Downloading/validating Microsoft Security Essentials files...
 copy /Y ..\static\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt "%TEMP%\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt" >nul
 if exist ..\static\custom\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt (
@@ -792,22 +794,22 @@ if exist ..\client\md\hashes-wddefs.txt (
     popd
     goto IntegrityError
   )
-  del hashes-wddefs.txt
   popd
   echo %DATE% %TIME% - Info: Verified integrity of Windows Defender definition files >>%DOWNLOAD_LOGFILE%
+  if exist ..\client\wddefs\%TARGET_ARCH%-glb\mpas*.exe (
+    for %%i in (..\client\wddefs\%TARGET_ARCH%-glb\mpas*.exe) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
+    if not errorlevel 1 (
+      echo Skipping download/validation of Windows Defender definition files ^(%TARGET_ARCH%^) due to 'same day' rule.
+      echo %DATE% %TIME% - Info: Skipped download/validation of Windows Defender definition files ^(%TARGET_ARCH%^) due to 'same day' rule >>%DOWNLOAD_LOGFILE%
+      goto SkipWDDefs
+    )
+  )
+  del ..\client\md\hashes-wddefs.txt
 ) else (
   echo Warning: Integrity database ..\client\md\hashes-wddefs.txt not found.
   echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-wddefs.txt not found >>%DOWNLOAD_LOGFILE%
 )
 :DownloadWDDefs
-if exist ..\client\wddefs\%TARGET_ARCH%-glb\mpas*.exe (
-  for %%i in (..\client\wddefs\%TARGET_ARCH%-glb\mpas*.exe) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
-  if not errorlevel 1 (
-    echo Skipping download/validation of Windows Defender definition files due to 'same day' rule.
-    echo %DATE% %TIME% - Info: Skipped download/validation of Windows Defender definition files due to 'same day' rule >>%DOWNLOAD_LOGFILE%
-    goto VerifyWDDefs
-  )
-)
 echo Downloading/validating Windows Defender definition files...
 %DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\static\StaticDownloadLink-wddefs-%TARGET_ARCH%-glb.txt %DLDR_POPT% ..\client\wddefs\%TARGET_ARCH%-glb
 if errorlevel 1 goto DownloadError
