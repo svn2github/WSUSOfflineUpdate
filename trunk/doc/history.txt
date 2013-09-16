@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 8.5
+WSUS Offline Update 8.6
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -772,7 +772,7 @@ Version 8.5 -- 26.07.13
 - Fix: Download part missed updates kb2817480 for Office 2003 and kb2596764 for Office 2007 (Thanks to "harry")
 - Fix: Download part got updates for Lync (Thanks to "harry")
 --------------------------------------------------------------------------------
-Version ?.? -- ??.??.??
+Version 8.6 -- 16.09.13
 - NOTE: If you like to use aria2 instead of wget for downloading, please call ActivateAria2Downloads.cmd once
 - Detection capability added for Windows 8.1 / Server 2012 R2 and Internet Explorer 11 
 - Optional use of aria2 instead of wget to speed up downloading (Thanks to "qoole" and "brb8two")
@@ -793,3 +793,4 @@ Version ?.? -- ??.??.??
 - Fix: Cleaned up ExcludeList-superseded-exclude.txt (Thanks to M. Trenkner)
 - Fix: Download failures of mkisofs tool will now result in a warning instead of an error (Thanks to Th. Lohe)
 - Fix: Minor fix in Linux script DownloadUpdates.sh (Thanks to "Buster" and H. Hullen)
+--------------------------------------------------------------------------------

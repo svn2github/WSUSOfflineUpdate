@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.5+ (r502)
+set WSUSOFFLINE_VERSION=8.6
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -225,6 +225,21 @@ if exist ..\static\custom\dummy.txt del ..\static\custom\dummy.txt
 if exist ..\client\exclude\custom\dummy.txt del ..\client\exclude\custom\dummy.txt
 if exist ..\client\static\custom\dummy.txt del ..\client\static\custom\dummy.txt
 if exist ..\client\software\msi\dummy.txt del ..\client\software\msi\dummy.txt
+if exist .\custom\InitializationHook.cmd (
+  if exist .\custom\InitializationHook.cmdt del .\custom\InitializationHook.cmdt
+)
+if exist .\custom\FinalizationHook.cmd (
+  if exist .\custom\FinalizationHook.cmdt del .\custom\FinalizationHook.cmdt
+)
+if exist ..\client\cmd\custom\InitializationHook.cmd (
+  if exist ..\client\cmd\custom\InitializationHook.cmdt del ..\client\cmd\custom\InitializationHook.cmdt
+)
+if exist ..\client\cmd\custom\FinalizationHook.cmd (
+  if exist ..\client\cmd\custom\FinalizationHook.cmdt del ..\client\cmd\custom\FinalizationHook.cmdt
+)
+if exist ..\client\software\custom\InstallCustomSoftware.cmd (
+  if exist ..\client\software\custom\InstallCustomSoftware.cmdt del ..\client\software\custom\InstallCustomSoftware.cmdt
+)
 if exist UpdateOU.new (
   if exist UpdateOU.cmd del UpdateOU.cmd
   ren UpdateOU.new UpdateOU.cmd
