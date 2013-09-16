@@ -1,0 +1,17 @@
+*ndp1*
+*ndp2*
+*ndp3*
+*o2k*
+*oxp*
+*ofc*
+*w2k*
+*wxp*
+*/w60/*
+*/w62/*
+*/w63/*
+*/*/x64-glb/*
+*-x64*
+*dotnetfx35*
+*dotNetFx40*
+*vcredist*_x64*
+*.au3
