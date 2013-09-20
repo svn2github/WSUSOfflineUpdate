@@ -1,2 +1,2 @@
-http://netcologne.dl.sourceforge.net/project/aria2/stable/aria2-1.17.1/aria2-1.17.1-win-32bit-build1.zip
-http://netcologne.dl.sourceforge.net/project/aria2/stable/aria2-1.17.1/aria2-1.17.1-win-64bit-build1.zip
+http://optimate.dl.sourceforge.net/project/aria2/stable/aria2-1.18.0/aria2-1.18.0-win-32bit-build1.zip
+http://optimate.dl.sourceforge.net/project/aria2/stable/aria2-1.18.0/aria2-1.18.0-win-64bit-build1.zip

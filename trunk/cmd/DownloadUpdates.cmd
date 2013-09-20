@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.6
+set WSUSOFFLINE_VERSION=8.6+ (r505)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -519,7 +519,6 @@ if exist ..\client\md\hashes-dotnet.txt (
     )
   )
   del ..\client\md\hashes-dotnet.txt
-  if exist ..\client\md\hashes-dotnet-%TARGET_ARCH%-glb.txt del ..\client\md\hashes-dotnet-%TARGET_ARCH%-glb.txt
 ) else (
   echo Warning: Integrity database ..\client\md\hashes-dotnet.txt not found.
   echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-dotnet.txt not found >>%DOWNLOAD_LOGFILE%

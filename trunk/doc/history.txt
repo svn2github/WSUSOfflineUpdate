@@ -794,3 +794,6 @@ Version 8.6 -- 16.09.13
 - Fix: Download failures of mkisofs tool will now result in a warning instead of an error (Thanks to Th. Lohe)
 - Fix: Minor fix in Linux script DownloadUpdates.sh (Thanks to "Buster" and H. Hullen)
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- Static download URLs for aria2 download utility updated to v. 1.18.0
+- Fix: DownloadUpdates.cmd threw misleading file integrity verification warnings for .NET updates (Thanks to "boco")
