@@ -51,7 +51,7 @@ if /i "%2"=="/ignoreerrors" (
 if "%VERIFY_FILES%" NEQ "1" goto SkipVerification
 if not exist %HASHDEEP_PATH% (
   echo Warning: Hash computing/auditing utility %HASHDEEP_PATH% not found.
-  echo %DATE% %TIME% - Warning: Hash computing/auditing utility %HASHDEEP_PATH% not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: Hash computing/auditing utility %HASHDEEP_PATH% not found>>%UPDATE_LOGFILE%
   goto SkipVerification
 )
 echo Verifying integrity of %1...
@@ -67,7 +67,7 @@ for /F "tokens=2,3 delims=\" %%i in ("%1") do (
     goto SkipVerification
   )
   echo Warning: Hash file ..\md\hashes-%%i-%%j.txt not found.
-  echo %DATE% %TIME% - Warning: Hash file ..\md\hashes-%%i-%%j.txt not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: Hash file ..\md\hashes-%%i-%%j.txt not found>>%UPDATE_LOGFILE%
 )
 :SkipVerification
 echo %1 | %SystemRoot%\system32\find.exe /I ".exe" >nul 2>&1
@@ -176,41 +176,41 @@ goto Error
 
 :NoParam
 echo ERROR: Invalid parameter. Usage: %~n0 ^<filename^> [/errorsaswarnings]
-echo %DATE% %TIME% - Error: Invalid parameter. Usage: %~n0 ^<filename^> [/errorsaswarnings] >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Invalid parameter. Usage: %~n0 ^<filename^> [/errorsaswarnings]>>%UPDATE_LOGFILE%
 goto Error
 
 :InvalidParam
 echo ERROR: File %1 not found.
-echo %DATE% %TIME% - Error: File %1 not found >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: File %1 not found>>%UPDATE_LOGFILE%
 goto Error
 
 :NoTemp
 echo ERROR: Environment variable TEMP not set.
-echo %DATE% %TIME% - Error: Environment variable TEMP not set >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Environment variable TEMP not set>>%UPDATE_LOGFILE%
 goto Error
 
 :NoTempDir
 echo ERROR: Directory "%TEMP%" not found.
-echo %DATE% %TIME% - Error: Directory "%TEMP%" not found >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Directory "%TEMP%" not found>>%UPDATE_LOGFILE%
 goto Error
 
 :UnsupVersion
 echo ERROR: Unsupported Office version.
-echo %DATE% %TIME% - Error: Unsupported Office version >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Unsupported Office version>>%UPDATE_LOGFILE%
 goto Error
 
 :UnsupType
 echo ERROR: Unsupported file type (file: %1).
-echo %DATE% %TIME% - Error: Unsupported file type (file: %1) >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Unsupported file type (file: %1)>>%UPDATE_LOGFILE%
 goto InstFailure
 
 :IntegrityError
 echo ERROR: File hash does not match stored value (file: %1).
-echo %DATE% %TIME% - Error: File hash does not match stored value (file: %1) >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: File hash does not match stored value (file: %1)>>%UPDATE_LOGFILE%
 goto InstFailure
 
 :InstSuccess
-echo %DATE% %TIME% - Info: Installed %1 >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Installed %1>>%UPDATE_LOGFILE%
 goto EoF
 
 :InstFailure
@@ -218,12 +218,12 @@ if "%ERRORS_AS_WARNINGS%"=="1" (goto InstWarning) else (goto InstError)
 
 :InstWarning
 echo Warning: Installation of %1 failed (errorlevel: %ERR_LEVEL%).
-echo %DATE% %TIME% - Warning: Installation of %1 failed (errorlevel: %ERR_LEVEL%) >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Warning: Installation of %1 failed (errorlevel: %ERR_LEVEL%)>>%UPDATE_LOGFILE%
 goto EoF
 
 :InstError
 echo ERROR: Installation of %1 failed (errorlevel: %ERR_LEVEL%).
-echo %DATE% %TIME% - Error: Installation of %1 failed (errorlevel: %ERR_LEVEL%) >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Installation of %1 failed (errorlevel: %ERR_LEVEL%)>>%UPDATE_LOGFILE%
 goto Error
 
 :Error

@@ -34,7 +34,7 @@ for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TE
     )
   )
 )
-echo %DATE% %TIME% - Info: Installed %LINES_COUNT% updates >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Installed %LINES_COUNT% updates>>%UPDATE_LOGFILE%
 del "%TEMP%\UpdatesToInstall.txt"
 goto EoF
 
@@ -44,22 +44,22 @@ goto Error
 
 :NoTemp
 echo ERROR: Environment variable TEMP not set.
-echo %DATE% %TIME% - Error: Environment variable TEMP not set >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Environment variable TEMP not set>>%UPDATE_LOGFILE%
 goto Error
 
 :NoTempDir
 echo ERROR: Directory "%TEMP%" not found.
-echo %DATE% %TIME% - Error: Directory "%TEMP%" not found >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Directory "%TEMP%" not found>>%UPDATE_LOGFILE%
 goto Error
 
 :NoOSName
 echo ERROR: Environment variable OS_NAME not set.
-echo %DATE% %TIME% - Error: Environment variable OS_NAME not set >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Environment variable OS_NAME not set>>%UPDATE_LOGFILE%
 goto Error
 
 :NoUpdates
 echo ERROR: File "%TEMP%\UpdatesToInstall.txt" not found.
-echo %DATE% %TIME% - Error: File "%TEMP%\UpdatesToInstall.txt" not found >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: File "%TEMP%\UpdatesToInstall.txt" not found>>%UPDATE_LOGFILE%
 goto Error
 
 :InstError

@@ -11,11 +11,11 @@ cd /D "%~dp0"
 
 set DOWNLOAD_LOGFILE=..\log\download.log
 if exist %DOWNLOAD_LOGFILE% (
-  echo. >>%DOWNLOAD_LOGFILE%
-  echo -------------------------------------------------------------------------------- >>%DOWNLOAD_LOGFILE%
-  echo. >>%DOWNLOAD_LOGFILE%
+  echo.>>%DOWNLOAD_LOGFILE%
+  echo -------------------------------------------------------------------------------->>%DOWNLOAD_LOGFILE%
+  echo.>>%DOWNLOAD_LOGFILE%
 )
-echo %DATE% %TIME% - Info: Activating Aria2 downloads >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Activating Aria2 downloads>>%DOWNLOAD_LOGFILE%
 
 set WGET_PATH=..\bin\wget.exe
 if not exist %WGET_PATH% goto NoWGet
@@ -45,9 +45,9 @@ for /F %%i in ('%SystemRoot%\system32\findstr.exe /I "64bit" ..\static\StaticDow
   echo %DATE% %TIME% - Info: Downloaded most recent version of Aria2 ^(x64^)>>%DOWNLOAD_LOGFILE%
   echo Unpacking aria2c.exe from ..\bin\%%~nxi to ..\bin\aria2c-x64.exe...
   ..\bin\unzip.exe -p ..\bin\%%~nxi */aria2c.exe >..\bin\aria2c-x64.exe
-  echo %DATE% %TIME% - Info: Unpacked aria2c.exe ..\bin\%%~nxi to ..\bin\aria2c-x64.exe >>%DOWNLOAD_LOGFILE%
+  echo %DATE% %TIME% - Info: Unpacked aria2c.exe ..\bin\%%~nxi to ..\bin\aria2c-x64.exe>>%DOWNLOAD_LOGFILE%
   del ..\bin\%%~nxi
-  echo %DATE% %TIME% - Info: Deleted %%~nxi >>%DOWNLOAD_LOGFILE%
+  echo %DATE% %TIME% - Info: Deleted %%~nxi>>%DOWNLOAD_LOGFILE%
 )
 :DLx86
 if exist ..\bin\aria2c-x86.exe goto Activate
@@ -58,9 +58,9 @@ for /F %%i in ('%SystemRoot%\system32\findstr.exe /I "32bit" ..\static\StaticDow
   echo %DATE% %TIME% - Info: Downloaded most recent version of Aria2 ^(x86^)>>%DOWNLOAD_LOGFILE%
   echo Unpacking aria2c.exe from ..\bin\%%~nxi to ..\bin\aria2c-x86.exe...
   ..\bin\unzip.exe -p ..\bin\%%~nxi */aria2c.exe >..\bin\aria2c-x86.exe
-  echo %DATE% %TIME% - Info: Unpacked aria2c.exe ..\bin\%%~nxi to ..\bin\aria2c-x86.exe >>%DOWNLOAD_LOGFILE%
+  echo %DATE% %TIME% - Info: Unpacked aria2c.exe ..\bin\%%~nxi to ..\bin\aria2c-x86.exe>>%DOWNLOAD_LOGFILE%
   del ..\bin\%%~nxi
-  echo %DATE% %TIME% - Info: Deleted %%~nxi >>%DOWNLOAD_LOGFILE%
+  echo %DATE% %TIME% - Info: Deleted %%~nxi>>%DOWNLOAD_LOGFILE%
 )
 :Activate
 echo if /i "%%PROCESSOR_ARCHITECTURE%%"=="AMD64" goto x64>custom\SetAria2EnvVars.cmd
@@ -91,25 +91,25 @@ exit
 :NoWGet
 echo.
 echo ERROR: Download utility %WGET_PATH% not found.
-echo %DATE% %TIME% - Error: Download utility %WGET_PATH% not found >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Error: Download utility %WGET_PATH% not found>>%DOWNLOAD_LOGFILE%
 echo.
 goto EoF
 
 :NoUnZip
 echo.
 echo ERROR: Utility ..\bin\unzip.exe not found.
-echo %DATE% %TIME% - Error: Utility ..\bin\unzip.exe not found >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Error: Utility ..\bin\unzip.exe not found>>%DOWNLOAD_LOGFILE%
 echo.
 goto EoF
 
 :DownloadError
 echo.
 echo ERROR: Download of most recent version of Aria2 failed.
-echo %DATE% %TIME% - Error: Download of most recent version of Aria2 failed >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Error: Download of most recent version of Aria2 failed>>%DOWNLOAD_LOGFILE%
 echo.
 goto EoF
 
 :EoF
-echo %DATE% %TIME% - Info: Activated Aria2 downloads >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Activated Aria2 downloads>>%DOWNLOAD_LOGFILE%
 title %ComSpec%
 endlocal

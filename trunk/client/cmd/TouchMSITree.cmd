@@ -14,17 +14,17 @@ if exist %~dpn1.mst (
   echo Installing %1 using %~dpn1.mst...
   @%SystemRoot%\system32\msiexec.exe /i %1 TRANSFORMS=%~dpn1.mst /passive /norestart /log "%SystemRoot%\Temp\%~n1.log"
   if errorlevel 1 (
-    echo %DATE% %TIME% - Warning: Installation of %1 using %~dpn1.mst failed >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Warning: Installation of %1 using %~dpn1.mst failed>>%UPDATE_LOGFILE%
   ) else (
-    echo %DATE% %TIME% - Info: Installed %1 using %~dpn1.mst >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Info: Installed %1 using %~dpn1.mst>>%UPDATE_LOGFILE%
   )  
 ) else (
   echo Installing %1...
   @%SystemRoot%\system32\msiexec.exe /i %1 /passive /norestart /log "%SystemRoot%\Temp\%~n1.log"
   if errorlevel 1 (
-    echo %DATE% %TIME% - Warning: Installation of %1 failed >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Warning: Installation of %1 failed>>%UPDATE_LOGFILE%
   ) else (
-    echo %DATE% %TIME% - Info: Installed %1 >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Info: Installed %1>>%UPDATE_LOGFILE%
   )  
 )
 goto :eof
@@ -51,7 +51,7 @@ goto EoF
 echo.
 echo ERROR: Invalid parameter: %1
 echo Usage: %~n0 {/listall ^| /install ^| /instselected}
-echo %DATE% %TIME% - Error: Invalid parameter: %1 >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Invalid parameter: %1>>%UPDATE_LOGFILE%
 echo.
 
 :EoF

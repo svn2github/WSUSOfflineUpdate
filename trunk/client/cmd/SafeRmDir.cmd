@@ -20,17 +20,17 @@ goto EoF
 
 :NoParam
 echo ERROR: Invalid parameter. Usage: %~n0 ^<directory^>
-echo %DATE% %TIME% - Error: Invalid parameter. Usage: %~n0 ^<directory^> >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Invalid parameter. Usage: %~n0 ^<directory^>>>%UPDATE_LOGFILE%
 goto Error
 
 :NoCScript
 echo ERROR: VBScript interpreter %CSCRIPT_PATH% not found.
-echo %DATE% %TIME% - Error: VBScript interpreter %CSCRIPT_PATH% not found >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: VBScript interpreter %CSCRIPT_PATH% not found>>%UPDATE_LOGFILE%
 goto Error
 
 :RmError
 echo Warning: Removal of temporary directory %1 failed.
-echo %DATE% %TIME% - Warning: Removal of temporary directory %1 failed >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Warning: Removal of temporary directory %1 failed>>%UPDATE_LOGFILE%
 goto Error
 
 :Error

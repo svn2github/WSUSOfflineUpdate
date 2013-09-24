@@ -32,7 +32,7 @@ goto Error
 
 :NoParam
 echo ERROR: Invalid parameter. Usage: %~n0 {kbid} {directory} [/searchleftmost]
-echo %DATE% %TIME% - Error: Invalid parameter. Usage: %~n0 {kbid} {directory} [/searchleftmost] >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Invalid parameter. Usage: %~n0 {kbid} {directory} [/searchleftmost]>>%UPDATE_LOGFILE%
 goto Error
 
 :Error

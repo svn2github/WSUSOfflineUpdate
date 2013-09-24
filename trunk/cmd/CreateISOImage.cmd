@@ -11,11 +11,11 @@ if "%DOWNLOAD_LOGFILE%"=="" set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting ISO image creation for %1 %2 %3 %4 %5 %6 %7 %8 %9...
 if exist %DOWNLOAD_LOGFILE% (
-  echo. >>%DOWNLOAD_LOGFILE%
-  echo -------------------------------------------------------------------------------- >>%DOWNLOAD_LOGFILE%
-  echo. >>%DOWNLOAD_LOGFILE%
+  echo.>>%DOWNLOAD_LOGFILE%
+  echo -------------------------------------------------------------------------------->>%DOWNLOAD_LOGFILE%
+  echo.>>%DOWNLOAD_LOGFILE%
 )
-echo %DATE% %TIME% - Info: Starting ISO image creation for %1 %2 %3 %4 %5 %6 %7 %8 %9 >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Starting ISO image creation for %1 %2 %3 %4 %5 %6 %7 %8 %9>>%DOWNLOAD_LOGFILE%
 
 if "%TEMP%"=="" goto NoTemp
 pushd "%TEMP%"
@@ -194,17 +194,17 @@ if errorlevel 1 (
   goto MkIsoError
 )
 if exist %ISO_FILTER% del %ISO_FILTER%
-echo %DATE% %TIME% - Info: Created ISO image %OUTPUT_PATH%\%ISO_NAME%.iso >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Created ISO image %OUTPUT_PATH%\%ISO_NAME%.iso>>%DOWNLOAD_LOGFILE%
 if "%SKIP_HASHES%"=="1" goto SkipHashes
 if exist ..\client\bin\%HASHDEEP_EXE% (
   echo Creating message digest file %OUTPUT_PATH%\%ISO_NAME%-hashes.txt...
   ..\client\bin\%HASHDEEP_EXE% -c md5,sha1,sha256 -b -j1 %OUTPUT_PATH%\%ISO_NAME%.iso >%OUTPUT_PATH%\%ISO_NAME%.mds
   %SystemRoot%\system32\findstr.exe /L /C:## /V %OUTPUT_PATH%\%ISO_NAME%.mds >%OUTPUT_PATH%\%ISO_NAME%-hashes.txt
   del %OUTPUT_PATH%\%ISO_NAME%.mds
-  echo %DATE% %TIME% - Info: Created message digest file %OUTPUT_PATH%\%ISO_NAME%-hashes.txt >>%DOWNLOAD_LOGFILE%
+  echo %DATE% %TIME% - Info: Created message digest file %OUTPUT_PATH%\%ISO_NAME%-hashes.txt>>%DOWNLOAD_LOGFILE%
 ) else (
   echo Warning: Hash computing/auditing utility ..\client\bin\%HASHDEEP_EXE% not found.
-  echo %DATE% %TIME% - Warning: Hash computing/auditing utility ..\client\bin\%HASHDEEP_EXE% not found >>%DOWNLOAD_LOGFILE%
+  echo %DATE% %TIME% - Warning: Hash computing/auditing utility ..\client\bin\%HASHDEEP_EXE% not found>>%DOWNLOAD_LOGFILE%
 )
 :SkipHashes
 echo Done.
@@ -219,14 +219,14 @@ exit /b 1
 :NoTemp
 echo.
 echo ERROR: Environment variable TEMP not set.
-echo %DATE% %TIME% - Error: Environment variable TEMP not set >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Error: Environment variable TEMP not set>>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 
 :NoTempDir
 echo.
 echo ERROR: Directory "%TEMP%" not found.
-echo %DATE% %TIME% - Error: Directory "%TEMP%" not found >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Error: Directory "%TEMP%" not found>>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 
@@ -235,28 +235,28 @@ echo.
 echo ERROR: Invalid parameter: %*
 echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| ofc} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/excludesw] [/includedotnet] [/includemsse] [/includewddefs] [/skiphashes] [/outputpath ^<OutputPath^>]
 echo Usage2: %~n0 {all ^| all-x86 ^| all-x64 ^| wxp ^| w2k3 ^| w2k3-x64 ^| w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| w62 ^| w62-x64 ^| w63 ^| w63-x64 ^| ofc ^| enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp] [/excludesw] [/includedotnet] [/includemsse] [/includewddefs] [/skiphashes] [/outputpath ^<OutputPath^>]
-echo %DATE% %TIME% - Error: Invalid parameter: %* >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Error: Invalid parameter: %*>>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 
 :NoOutputPath
 echo.
 echo ERROR: Output path %OUTPUT_PATH% not found.
-echo %DATE% %TIME% - Error: Output path %OUTPUT_PATH% not found >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Error: Output path %OUTPUT_PATH% not found>>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 
 :NoMkIsoFs
 echo.
 echo ERROR: Utility ..\bin\mkisofs.exe not found.
-echo %DATE% %TIME% - Error: Utility ..\bin\mkisofs.exe not found >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Error: Utility ..\bin\mkisofs.exe not found>>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 
 :MkIsoError
 echo.
 echo ERROR: Creation of ISO image failed.
-echo %DATE% %TIME% - Error: Creation of ISO image failed >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Error: Creation of ISO image failed>>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 
@@ -274,6 +274,6 @@ if "%EXIT_ERR%"=="1" (
 )
 
 :EoF
-echo %DATE% %TIME% - Info: Ending ISO image creation for %1 %2 %3 %4 %5 %6 %7 %8 %9 >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Ending ISO image creation for %1 %2 %3 %4 %5 %6 %7 %8 %9>>%DOWNLOAD_LOGFILE%
 title %ComSpec%
 endlocal

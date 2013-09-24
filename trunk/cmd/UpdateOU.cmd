@@ -11,11 +11,11 @@ cd /D "%~dp0"
 
 set DOWNLOAD_LOGFILE=..\log\download.log
 if exist %DOWNLOAD_LOGFILE% (
-  echo. >>%DOWNLOAD_LOGFILE%
-  echo -------------------------------------------------------------------------------- >>%DOWNLOAD_LOGFILE%
-  echo. >>%DOWNLOAD_LOGFILE%
+  echo.>>%DOWNLOAD_LOGFILE%
+  echo -------------------------------------------------------------------------------->>%DOWNLOAD_LOGFILE%
+  echo.>>%DOWNLOAD_LOGFILE%
 )
-echo %DATE% %TIME% - Info: Starting WSUS Offline Update self update >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Starting WSUS Offline Update self update>>%DOWNLOAD_LOGFILE%
 
 set WGET_PATH=..\bin\wget.exe
 if not exist %WGET_PATH% goto NoWGet
@@ -44,11 +44,11 @@ echo Downloading most recent released version of WSUS Offline Update...
 for /F %%i in (..\static\StaticDownloadLink-recent.txt) do (
   %WGET_PATH% -N -P .. %%i
   if errorlevel 1 goto DownloadError
-  echo %DATE% %TIME% - Info: Downloaded most recent released version of WSUS Offline Update >>%DOWNLOAD_LOGFILE%
+  echo %DATE% %TIME% - Info: Downloaded most recent released version of WSUS Offline Update>>%DOWNLOAD_LOGFILE%
   for /F "tokens=1-3 delims=/" %%j in ("%%i") do (
     %WGET_PATH% -N -P .. %%j//%%k/%%~nl_hashes.txt
     if errorlevel 1 goto DownloadError
-    echo %DATE% %TIME% - Info: Downloaded hash file of most recent WSUS Offline Update version >>%DOWNLOAD_LOGFILE%
+    echo %DATE% %TIME% - Info: Downloaded hash file of most recent WSUS Offline Update version>>%DOWNLOAD_LOGFILE%
   )
   pushd ..
   echo Verifying integrity of %%~nxi...
@@ -58,22 +58,22 @@ for /F %%i in (..\static\StaticDownloadLink-recent.txt) do (
     goto IntegrityError
   )
   popd
-  echo %DATE% %TIME% - Info: Verified integrity of %%~nxi >>%DOWNLOAD_LOGFILE%
+  echo %DATE% %TIME% - Info: Verified integrity of %%~nxi>>%DOWNLOAD_LOGFILE%
   echo Unpacking %%~nxi...
   if exist ..\wsusoffline\nul rd /S /Q ..\wsusoffline
   ..\bin\unzip.exe -uq ..\%%~nxi -d ..
-  echo %DATE% %TIME% - Info: Unpacked %%~nxi >>%DOWNLOAD_LOGFILE%
+  echo %DATE% %TIME% - Info: Unpacked %%~nxi>>%DOWNLOAD_LOGFILE%
   del ..\%%~nxi
-  echo %DATE% %TIME% - Info: Deleted %%~nxi >>%DOWNLOAD_LOGFILE%
+  echo %DATE% %TIME% - Info: Deleted %%~nxi>>%DOWNLOAD_LOGFILE%
   del ..\%%~ni_hashes.txt
-  echo %DATE% %TIME% - Info: Deleted %%~ni_hashes.txt >>%DOWNLOAD_LOGFILE%
+  echo %DATE% %TIME% - Info: Deleted %%~ni_hashes.txt>>%DOWNLOAD_LOGFILE%
 )
 echo Updating WSUS Offline Update...
 %SystemRoot%\system32\xcopy.exe ..\wsusoffline .. /S /Q /Y
 rd /S /Q ..\wsusoffline
-echo %DATE% %TIME% - Info: Updated WSUS Offline Update >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Updated WSUS Offline Update>>%DOWNLOAD_LOGFILE%
 if "%RESTART_GENERATOR%"=="1" (
-  echo %DATE% %TIME% - Info: Ending WSUS Offline Update self update >>%DOWNLOAD_LOGFILE%
+  echo %DATE% %TIME% - Info: Ending WSUS Offline Update self update>>%DOWNLOAD_LOGFILE%
   cd ..
   start UpdateGenerator.exe
   start http://www.wsusoffline.net/donate.html
@@ -90,46 +90,46 @@ exit
 :NoWGet
 echo.
 echo ERROR: Download utility %WGET_PATH% not found.
-echo %DATE% %TIME% - Error: Download utility %WGET_PATH% not found >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Error: Download utility %WGET_PATH% not found>>%DOWNLOAD_LOGFILE%
 echo.
 goto EoF
 
 :NoUnZip
 echo.
 echo ERROR: Utility ..\bin\unzip.exe not found.
-echo %DATE% %TIME% - Error: Utility ..\bin\unzip.exe not found >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Error: Utility ..\bin\unzip.exe not found>>%DOWNLOAD_LOGFILE%
 echo.
 goto EoF
 
 :NoHashDeep
 echo.
 echo ERROR: Hash computing/auditing utility ..\client\bin\%HASHDEEP_EXE% not found.
-echo %DATE% %TIME% - Error: Hash computing/auditing utility ..\client\bin\%HASHDEEP_EXE% not found >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Error: Hash computing/auditing utility ..\client\bin\%HASHDEEP_EXE% not found>>%DOWNLOAD_LOGFILE%
 echo.
 goto EoF
 
 :NoNewVersion
 echo.
 echo Info: No new version of WSUS Offline Update found.
-echo %DATE% %TIME% - Info: No new version of WSUS Offline Update found >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: No new version of WSUS Offline Update found>>%DOWNLOAD_LOGFILE%
 echo.
 goto EoF
 
 :DownloadError
 echo.
 echo ERROR: Download of most recent released version of WSUS Offline Update failed.
-echo %DATE% %TIME% - Error: Download of most recent released version of WSUS Offline Update failed >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Error: Download of most recent released version of WSUS Offline Update failed>>%DOWNLOAD_LOGFILE%
 echo.
 goto EoF
 
 :IntegrityError
 echo.
 echo ERROR: File integrity verification of most recent released version of WSUS Offline Update failed.
-echo %DATE% %TIME% - Error: File integrity verification of most recent released version of WSUS Offline Update failed >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Error: File integrity verification of most recent released version of WSUS Offline Update failed>>%DOWNLOAD_LOGFILE%
 echo.
 goto EoF
 
 :EoF
-echo %DATE% %TIME% - Info: Ending WSUS Offline Update self update >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Ending WSUS Offline Update self update>>%DOWNLOAD_LOGFILE%
 title %ComSpec%
 endlocal

@@ -795,5 +795,7 @@ Version 8.6 -- 16.09.13
 - Fix: Minor fix in Linux script DownloadUpdates.sh (Thanks to "Buster" and H. Hullen)
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
+- Installation part will now log Windows licensing info (Thanks to Bert Schinkel-Momsen)
 - Static download URLs for aria2 download utility updated to v. 1.18.0
+- Fix: Installation failed on Japanese Windows Vista systems due to special characters in Win32_OperatingSystem.Caption (Thanks to I. Wada)
 - Fix: DownloadUpdates.cmd threw misleading file integrity verification warnings for .NET updates (Thanks to "boco")

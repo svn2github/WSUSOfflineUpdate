@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.6+ (r505)
+set WSUSOFFLINE_VERSION=8.6+ (r506)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -19,17 +19,17 @@ if exist .\custom\InitializationHook.cmd (
   pushd .\custom
   call InitializationHook.cmd
   popd
-  echo %DATE% %TIME% - Info: Executed custom initialization hook ^(Errorlevel: %errorlevel%^) >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Executed custom initialization hook ^(Errorlevel: %errorlevel%^)>>%UPDATE_LOGFILE%
 ) else (
-  if exist %UPDATE_LOGFILE% echo. >>%UPDATE_LOGFILE%
+  if exist %UPDATE_LOGFILE% echo.>>%UPDATE_LOGFILE%
 )
-echo %DATE% %TIME% - Info: Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Used path "%~dp0" on %COMPUTERNAME% (user: %USERNAME%) >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%)>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Used path "%~dp0" on %COMPUTERNAME% (user: %USERNAME%)>>%UPDATE_LOGFILE%
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
 for %%i in (/nobackup /verify /updatercerts /instie7 /instie8 /instie9 /instie10 /updatecpp /updatedx /instmssl /updatewmp /instdotnet35 /instdotnet4 /instpsh /instwmf /instmsse /updatetsc /instofc /instofv /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
-  if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected >>%UPDATE_LOGFILE%
+  if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected>>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/nobackup" set BACKUP_MODE=/nobackup
 if /i "%1"=="/verify" set VERIFY_MODE=/verify
@@ -158,7 +158,7 @@ goto PWR%OS_NAME%
 for %%i in (monitor disk standby hibernate) do (
   for %%j in (ac dc) do %SystemRoot%\system32\powercfg.exe /X %PWR_POL_IDX% /N /%%i-timeout-%%j 0
 )
-echo %DATE% %TIME% - Info: Adjusted power management settings >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Adjusted power management settings>>%UPDATE_LOGFILE%
 goto SkipPowerCfg
 
 :PWRw60
@@ -168,14 +168,24 @@ goto SkipPowerCfg
 for %%i in (monitor disk standby hibernate) do (
   for %%j in (ac dc) do %SystemRoot%\system32\powercfg.exe -X -%%i-timeout-%%j 0
 )
-echo %DATE% %TIME% - Info: Adjusted power management settings >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Adjusted power management settings>>%UPDATE_LOGFILE%
 goto SkipPowerCfg
 
 :SkipPowerCfg
+rem *** Determine Windows licensing info ***
+if exist %SystemRoot%\system32\slmgr.vbs (
+  echo Determining Windows licensing info...
+  %CSCRIPT_PATH% //Nologo //E:vbs %SystemRoot%\system32\slmgr.vbs -dli >"%TEMP%\slmgr-dli.txt"
+  %SystemRoot%\system32\findstr.exe /N ":" "%TEMP%\slmgr-dli.txt" >"%TEMP%\wou_slmgr.txt"
+  del "%TEMP%\slmgr-dli.txt"
+)
 
 rem *** Echo OS properties ***
-echo Found OS caption: %OS_CAPTION%
 echo Found Microsoft Windows version: %OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_VER_BUILD% (%OS_NAME% %OS_ARCH% %OS_LANG% sp%OS_SP_VER_MAJOR%)
+if exist "%TEMP%\wou_slmgr.txt" (
+  echo Found Microsoft Windows Software Licensing Management Tool info...
+  for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /B /L "1: 2: 3: 4: 5: 6:" "%TEMP%\wou_slmgr.txt"') do echo %%j
+)
 rem echo Found Windows Update Agent version: %WUA_VER_MAJOR%.%WUA_VER_MINOR%.%WUA_VER_BUILD%.%WUA_VER_REVIS%
 rem echo Found Windows Installer version: %MSI_VER_MAJOR%.%MSI_VER_MINOR%.%MSI_VER_BUILD%.%MSI_VER_REVIS%
 rem echo Found Windows Script Host version: %WSH_VER_MAJOR%.%WSH_VER_MINOR%.%WSH_VER_BUILD%.%WSH_VER_REVIS%
@@ -208,42 +218,46 @@ if "%O2K10_VER_MAJOR%" NEQ "" (
 if "%O2K13_VER_MAJOR%" NEQ "" (
   echo Found Microsoft Office 2013 %O2K13_VER_APP% version: %O2K13_VER_MAJOR%.%O2K13_VER_MINOR%.%O2K13_VER_BUILD%.%O2K13_VER_REVIS% ^(o2k13 %O2K13_ARCH% %O2K13_LANG% sp%O2K13_SP_VER%^)
 )
-echo %DATE% %TIME% - Info: Found OS caption '%OS_CAPTION%' >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft Windows version %OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_VER_BUILD% (%OS_NAME% %OS_ARCH% %OS_LANG% sp%OS_SP_VER_MAJOR%) >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Windows Update Agent version %WUA_VER_MAJOR%.%WUA_VER_MINOR%.%WUA_VER_BUILD%.%WUA_VER_REVIS% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Windows Installer version %MSI_VER_MAJOR%.%MSI_VER_MINOR%.%MSI_VER_BUILD%.%MSI_VER_REVIS% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Windows Script Host version %WSH_VER_MAJOR%.%WSH_VER_MINOR%.%WSH_VER_BUILD%.%WSH_VER_REVIS% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Internet Explorer version %IE_VER_MAJOR%.%IE_VER_MINOR%.%IE_VER_BUILD%.%IE_VER_REVIS% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Trusted Root Certificates' version %TRCERTS_VER_MAJOR%.%TRCERTS_VER_MINOR%.%TRCERTS_VER_BUILD%.%TRCERTS_VER_REVIS% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Revoked Root Certificates' version %RRCERTS_VER_MAJOR%.%RRCERTS_VER_MINOR%.%RRCERTS_VER_BUILD%.%RRCERTS_VER_REVIS% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft Data Access Components version %MDAC_VER_MAJOR%.%MDAC_VER_MINOR%.%MDAC_VER_BUILD%.%MDAC_VER_REVIS% >>%UPDATE_LOGFILE%
-if "%DX_MAIN_VER%" NEQ "" echo %DATE% %TIME% - Info: Found Microsoft DirectX main version %DX_MAIN_VER% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft DirectX core version %DX_NAME% (%DX_CORE_VER_MAJOR%.%DX_CORE_VER_MINOR%.%DX_CORE_VER_BUILD%.%DX_CORE_VER_REVIS%) >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft Silverlight version %MSSL_VER_MAJOR%.%MSSL_VER_MINOR%.%MSSL_VER_BUILD%.%MSSL_VER_REVIS% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Windows Media Player version %WMP_VER_MAJOR%.%WMP_VER_MINOR%.%WMP_VER_BUILD%.%WMP_VER_REVIS% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Remote Desktop Client version %TSC_VER_MAJOR%.%TSC_VER_MINOR%.%TSC_VER_BUILD%.%TSC_VER_REVIS% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 3.5 version %DOTNET35_VER_MAJOR%.%DOTNET35_VER_MINOR%.%DOTNET35_VER_BUILD%.%DOTNET35_VER_REVIS% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Windows PowerShell version %PSH_VER_MAJOR%.%PSH_VER_MINOR% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 4 version %DOTNET4_VER_MAJOR%.%DOTNET4_VER_MINOR%.%DOTNET4_VER_BUILD% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Windows Management Framework version %WMF_VER_MAJOR%.%WMF_VER_MINOR% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft Windows version %OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_VER_BUILD% (%OS_NAME% %OS_ARCH% %OS_LANG% sp%OS_SP_VER_MAJOR%)>>%UPDATE_LOGFILE%
+if exist "%TEMP%\wou_slmgr.txt" (
+  echo %DATE% %TIME% - Info: Found Microsoft Windows Software Licensing Management Tool info...>>%UPDATE_LOGFILE%
+  for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /B /L "1: 2: 3: 4: 5: 6:" "%TEMP%\wou_slmgr.txt"') do echo %DATE% %TIME% - Info: %%j>>%UPDATE_LOGFILE%
+  del "%TEMP%\wou_slmgr.txt"
+)
+echo %DATE% %TIME% - Info: Found Windows Update Agent version %WUA_VER_MAJOR%.%WUA_VER_MINOR%.%WUA_VER_BUILD%.%WUA_VER_REVIS%>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Windows Installer version %MSI_VER_MAJOR%.%MSI_VER_MINOR%.%MSI_VER_BUILD%.%MSI_VER_REVIS%>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Windows Script Host version %WSH_VER_MAJOR%.%WSH_VER_MINOR%.%WSH_VER_BUILD%.%WSH_VER_REVIS%>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Internet Explorer version %IE_VER_MAJOR%.%IE_VER_MINOR%.%IE_VER_BUILD%.%IE_VER_REVIS%>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Trusted Root Certificates' version %TRCERTS_VER_MAJOR%.%TRCERTS_VER_MINOR%.%TRCERTS_VER_BUILD%.%TRCERTS_VER_REVIS%>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Revoked Root Certificates' version %RRCERTS_VER_MAJOR%.%RRCERTS_VER_MINOR%.%RRCERTS_VER_BUILD%.%RRCERTS_VER_REVIS%>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft Data Access Components version %MDAC_VER_MAJOR%.%MDAC_VER_MINOR%.%MDAC_VER_BUILD%.%MDAC_VER_REVIS%>>%UPDATE_LOGFILE%
+if "%DX_MAIN_VER%" NEQ "" echo %DATE% %TIME% - Info: Found Microsoft DirectX main version %DX_MAIN_VER%>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft DirectX core version %DX_NAME% (%DX_CORE_VER_MAJOR%.%DX_CORE_VER_MINOR%.%DX_CORE_VER_BUILD%.%DX_CORE_VER_REVIS%)>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft Silverlight version %MSSL_VER_MAJOR%.%MSSL_VER_MINOR%.%MSSL_VER_BUILD%.%MSSL_VER_REVIS%>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Windows Media Player version %WMP_VER_MAJOR%.%WMP_VER_MINOR%.%WMP_VER_BUILD%.%WMP_VER_REVIS%>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Remote Desktop Client version %TSC_VER_MAJOR%.%TSC_VER_MINOR%.%TSC_VER_BUILD%.%TSC_VER_REVIS%>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 3.5 version %DOTNET35_VER_MAJOR%.%DOTNET35_VER_MINOR%.%DOTNET35_VER_BUILD%.%DOTNET35_VER_REVIS%>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Windows PowerShell version %PSH_VER_MAJOR%.%PSH_VER_MINOR%>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 4 version %DOTNET4_VER_MAJOR%.%DOTNET4_VER_MINOR%.%DOTNET4_VER_BUILD%>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Windows Management Framework version %WMF_VER_MAJOR%.%WMF_VER_MINOR%>>%UPDATE_LOGFILE%
 if "%OS_NAME%"=="w62" goto SkipLogMSSEVer
 if "%OS_NAME%"=="w63" goto SkipLogMSSEVer
-echo %DATE% %TIME% - Info: Found Microsoft Security Essentials version %MSSE_VER_MAJOR%.%MSSE_VER_MINOR%.%MSSE_VER_BUILD%.%MSSE_VER_REVIS% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft Security Essentials definitions version %MSSEDEFS_VER_MAJOR%.%MSSEDEFS_VER_MINOR%.%MSSEDEFS_VER_BUILD%.%MSSEDEFS_VER_REVIS% >>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Network Inspection System definitions version %NISDEFS_VER_MAJOR%.%NISDEFS_VER_MINOR%.%NISDEFS_VER_BUILD%.%NISDEFS_VER_REVIS% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft Security Essentials version %MSSE_VER_MAJOR%.%MSSE_VER_MINOR%.%MSSE_VER_BUILD%.%MSSE_VER_REVIS%>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft Security Essentials definitions version %MSSEDEFS_VER_MAJOR%.%MSSEDEFS_VER_MINOR%.%MSSEDEFS_VER_BUILD%.%MSSEDEFS_VER_REVIS%>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Network Inspection System definitions version %NISDEFS_VER_MAJOR%.%NISDEFS_VER_MINOR%.%NISDEFS_VER_BUILD%.%NISDEFS_VER_REVIS%>>%UPDATE_LOGFILE%
 :SkipLogMSSEVer
-echo %DATE% %TIME% - Info: Found Windows Defender definitions version %WDDEFS_VER_MAJOR%.%WDDEFS_VER_MINOR%.%WDDEFS_VER_BUILD%.%WDDEFS_VER_REVIS% >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Windows Defender definitions version %WDDEFS_VER_MAJOR%.%WDDEFS_VER_MINOR%.%WDDEFS_VER_BUILD%.%WDDEFS_VER_REVIS%>>%UPDATE_LOGFILE%
 if "%O2K3_VER_MAJOR%" NEQ "" (
-  echo %DATE% %TIME% - Info: Found Microsoft Office 2003 %O2K3_VER_APP% version %O2K3_VER_MAJOR%.%O2K3_VER_MINOR%.%O2K3_VER_BUILD%.%O2K3_VER_REVIS% ^(o2k3 %O2K3_LANG% sp%O2K3_SP_VER%^) >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Found Microsoft Office 2003 %O2K3_VER_APP% version %O2K3_VER_MAJOR%.%O2K3_VER_MINOR%.%O2K3_VER_BUILD%.%O2K3_VER_REVIS% ^(o2k3 %O2K3_LANG% sp%O2K3_SP_VER%^)>>%UPDATE_LOGFILE%
 )
 if "%O2K7_VER_MAJOR%" NEQ "" (
-  echo %DATE% %TIME% - Info: Found Microsoft Office 2007 %O2K7_VER_APP% version %O2K7_VER_MAJOR%.%O2K7_VER_MINOR%.%O2K7_VER_BUILD%.%O2K7_VER_REVIS% ^(o2k7 %O2K7_LANG% sp%O2K7_SP_VER%^) >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Found Microsoft Office 2007 %O2K7_VER_APP% version %O2K7_VER_MAJOR%.%O2K7_VER_MINOR%.%O2K7_VER_BUILD%.%O2K7_VER_REVIS% ^(o2k7 %O2K7_LANG% sp%O2K7_SP_VER%^)>>%UPDATE_LOGFILE%
 )
 if "%O2K10_VER_MAJOR%" NEQ "" (
-  echo %DATE% %TIME% - Info: Found Microsoft Office 2010 %O2K10_VER_APP% version %O2K10_VER_MAJOR%.%O2K10_VER_MINOR%.%O2K10_VER_BUILD%.%O2K10_VER_REVIS% ^(o2k10 %O2K10_ARCH% %O2K10_LANG% sp%O2K10_SP_VER%^) >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Found Microsoft Office 2010 %O2K10_VER_APP% version %O2K10_VER_MAJOR%.%O2K10_VER_MINOR%.%O2K10_VER_BUILD%.%O2K10_VER_REVIS% ^(o2k10 %O2K10_ARCH% %O2K10_LANG% sp%O2K10_SP_VER%^)>>%UPDATE_LOGFILE%
 )
 if "%O2K13_VER_MAJOR%" NEQ "" (
-  echo %DATE% %TIME% - Info: Found Microsoft Office 2013 %O2K13_VER_APP% version %O2K13_VER_MAJOR%.%O2K13_VER_MINOR%.%O2K13_VER_BUILD%.%O2K13_VER_REVIS% ^(o2k13 %O2K13_ARCH% %O2K13_LANG% sp%O2K13_SP_VER%^) >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Found Microsoft Office 2013 %O2K13_VER_APP% version %O2K13_VER_MAJOR%.%O2K13_VER_MINOR%.%O2K13_VER_BUILD%.%O2K13_VER_REVIS% ^(o2k13 %O2K13_ARCH% %O2K13_LANG% sp%O2K13_SP_VER%^)>>%UPDATE_LOGFILE%
 )
 
 rem *** Check medium content ***
@@ -251,50 +265,50 @@ echo Checking medium content...
 if exist ..\builddate.txt (
   for /F %%i in ('type ..\builddate.txt') do (
     echo Medium build date: %%i
-    echo %DATE% %TIME% - Info: Medium build date: %%i >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Info: Medium build date: %%i>>%UPDATE_LOGFILE%
   )
 )
 if /i "%OS_ARCH%"=="x64" (
   if exist ..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\nul (
     echo Medium supports Microsoft Windows ^(%OS_NAME% %OS_ARCH% %OS_LANG%^).
-    echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME% %OS_ARCH% %OS_LANG%^) >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME% %OS_ARCH% %OS_LANG%^)>>%UPDATE_LOGFILE%
     goto CheckOfficeMedium
   )
   if exist ..\%OS_NAME%-%OS_ARCH%\glb\nul (
     echo Medium supports Microsoft Windows ^(%OS_NAME% %OS_ARCH% glb^).
-    echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME% %OS_ARCH% glb^) >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME% %OS_ARCH% glb^)>>%UPDATE_LOGFILE%
     goto CheckOfficeMedium
   )
 ) else (
   if exist ..\%OS_NAME%\%OS_LANG%\nul (
     echo Medium supports Microsoft Windows ^(%OS_NAME% %OS_ARCH% %OS_LANG%^).
-    echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME% %OS_ARCH% %OS_LANG%^) >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME% %OS_ARCH% %OS_LANG%^)>>%UPDATE_LOGFILE%
     goto CheckOfficeMedium
   )
   if exist ..\%OS_NAME%\glb\nul (
     echo Medium supports Microsoft Windows ^(%OS_NAME% %OS_ARCH% glb^).
-    echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME% %OS_ARCH% glb^) >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Info: Medium supports Microsoft Windows ^(%OS_NAME% %OS_ARCH% glb^)>>%UPDATE_LOGFILE%
     goto CheckOfficeMedium
   )
 )
 echo Medium does not support Microsoft Windows (%OS_NAME% %OS_ARCH% %OS_LANG%).
-echo %DATE% %TIME% - Info: Medium does not support Microsoft Windows (%OS_NAME% %OS_ARCH% %OS_LANG%) >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Medium does not support Microsoft Windows (%OS_NAME% %OS_ARCH% %OS_LANG%)>>%UPDATE_LOGFILE%
 if "%OFC_NAME%"=="" goto InvalidMedium
 
 :CheckOfficeMedium
 if "%OFC_NAME%"=="" goto ProperMedium
 if exist ..\ofc\%OFC_LANG%\nul (
   echo Medium supports Microsoft Office ^(ofc %OFC_LANG%^).
-  echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(ofc %OFC_LANG%^) >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(ofc %OFC_LANG%^)>>%UPDATE_LOGFILE%
   goto ProperMedium
 )
 if exist ..\ofc\glb\nul (
   echo Medium supports Microsoft Office ^(ofc glb^).
-  echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(ofc glb^) >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Medium supports Microsoft Office ^(ofc glb^)>>%UPDATE_LOGFILE%
   goto ProperMedium
 )
 echo Medium does not support Microsoft Office (ofc glb).
-echo %DATE% %TIME% - Info: Medium does not support Microsoft Office (ofc glb) >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Medium does not support Microsoft Office (ofc glb)>>%UPDATE_LOGFILE%
 :ProperMedium
 
 rem *** Install Windows Service Pack ***
@@ -306,7 +320,7 @@ call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if not exist "%TEMP%\UpdatesToInstall.txt" (
   echo Warning: Windows Service Pack installation file ^(kb%OS_SP_TARGET_ID%^) not found.
-  echo %DATE% %TIME% - Warning: Windows Service Pack installation file ^(kb%OS_SP_TARGET_ID%^) not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: Windows Service Pack installation file ^(kb%OS_SP_TARGET_ID%^) not found>>%UPDATE_LOGFILE%
   goto SkipSPInst
 )
 echo Installing most recent Windows Service Pack...
@@ -318,10 +332,10 @@ if 0 EQU %OS_SP_VER_MAJOR% (
   %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\Control\Windows /v CSDVersion /t REG_DWORD /d 0x100 /f >nul 2>&1
   if errorlevel 1 (
     echo Warning: Faking of Windows XP Service Pack 1 failed.
-    echo %DATE% %TIME% - Warning: Faking of Windows XP Service Pack 1 failed >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Warning: Faking of Windows XP Service Pack 1 failed>>%UPDATE_LOGFILE%
     goto SkipSPInst
   ) else (
-    echo %DATE% %TIME% - Info: Faked Windows XP Service Pack 1 >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Info: Faked Windows XP Service Pack 1>>%UPDATE_LOGFILE%
   )
 )
 :SPw2k3
@@ -340,11 +354,11 @@ goto Installed
 :SPw63
 if "%BOOT_MODE%" NEQ "/autoreboot" goto SPw6Now
 if "%USERNAME%"=="WOUTempAdmin" goto SPw6Now
-echo %DATE% %TIME% - Info: Preparing installation of most recent Service Pack for Windows Vista / 7 >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Preparing installation of most recent Service Pack for Windows Vista / 7>>%UPDATE_LOGFILE%
 set RECALL_REQUIRED=1
 goto Installed
 :SPw6Now
-echo %DATE% %TIME% - Info: Installing most recent Service Pack for Windows Vista / 7 >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Installing most recent Service Pack for Windows Vista / 7>>%UPDATE_LOGFILE%
 call InstallListedUpdates.cmd %VERIFY_MODE% /unattend /forcerestart
 if errorlevel 1 goto InstError
 set RECALL_REQUIRED=1
@@ -386,7 +400,7 @@ if %MSI_VER_REVIS% GEQ %MSI_VER_TARGET_REVIS% goto SkipMSIInst
 :InstallMSI
 if "%MSI_TARGET_ID%"=="" (
   echo Warning: Environment variable MSI_TARGET_ID not set.
-  echo %DATE% %TIME% - Warning: Environment variable MSI_TARGET_ID not set >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: Environment variable MSI_TARGET_ID not set>>%UPDATE_LOGFILE%
   goto SkipMSIInst
 )
 if /i "%OS_ARCH%"=="x64" (
@@ -397,7 +411,7 @@ if /i "%OS_ARCH%"=="x64" (
 dir /B %MSI_FILENAME% >nul 2>&1
 if errorlevel 1 (
   echo Warning: File %MSI_FILENAME% not found.
-  echo %DATE% %TIME% - Warning: File %MSI_FILENAME% not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: File %MSI_FILENAME% not found>>%UPDATE_LOGFILE%
   goto SkipMSIInst
 )
 echo Installing most recent Windows Installer...
@@ -425,7 +439,7 @@ if %WSH_VER_REVIS% GEQ %WSH_VER_TARGET_REVIS% goto SkipWSHInst
 set WSH_FILENAME=..\%OS_NAME%\glb\scripten.exe
 if not exist %WSH_FILENAME% (
   echo Warning: File %WSH_FILENAME% not found.
-  echo %DATE% %TIME% - Warning: File %WSH_FILENAME% not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: File %WSH_FILENAME% not found>>%UPDATE_LOGFILE%
   goto SkipWSHInst
 )
 echo Installing most recent Windows Script Host...
@@ -477,7 +491,7 @@ goto IEwxp2k3
 dir /B %IE_FILENAME% >nul 2>&1
 if errorlevel 1 (
   echo Warning: File %IE_FILENAME% not found.
-  echo %DATE% %TIME% - Warning: File %IE_FILENAME% not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: File %IE_FILENAME% not found>>%UPDATE_LOGFILE%
   goto SkipIEInst
 )
 if "%INSTALL_IE%"=="/instie8" (echo Installing Internet Explorer 8...) else (echo Installing Internet Explorer 7...)
@@ -517,7 +531,7 @@ if /i "%OS_ARCH%"=="x64" (
 dir /B %IE_FILENAME% >nul 2>&1
 if errorlevel 1 (
   echo Warning: File %IE_FILENAME% not found.
-  echo %DATE% %TIME% - Warning: File %IE_FILENAME% not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: File %IE_FILENAME% not found>>%UPDATE_LOGFILE%
   goto SkipIEInst
 )
 if "%INSTALL_IE%"=="/instie9" (
@@ -584,7 +598,7 @@ if /i "%OS_ARCH%"=="x64" (
 dir /B %IE_FILENAME% >nul 2>&1
 if errorlevel 1 (
   echo Warning: File %IE_FILENAME% not found.
-  echo %DATE% %TIME% - Warning: File %IE_FILENAME% not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: File %IE_FILENAME% not found>>%UPDATE_LOGFILE%
   goto SkipIEInst
 )
 if "%INSTALL_IE%"=="/instie10" (
@@ -637,7 +651,7 @@ echo Checking Trusted Root Certificates' version...
 set TRCERTS_FILENAME=..\win\glb\rootsupd.exe
 if not exist %TRCERTS_FILENAME% (
   echo Warning: File %TRCERTS_FILENAME% not found.
-  echo %DATE% %TIME% - Warning: File %TRCERTS_FILENAME% not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: File %TRCERTS_FILENAME% not found>>%UPDATE_LOGFILE%
   goto SkipTRCertsInst
 )
 %TRCERTS_FILENAME% /T:"%TEMP%\rootsupd" /C /Q
@@ -665,7 +679,7 @@ echo Checking Revoked Root Certificates' version...
 set RRCERTS_FILENAME=..\win\glb\rvkroots.exe
 if not exist %RRCERTS_FILENAME% (
   echo Warning: File %RRCERTS_FILENAME% not found.
-  echo %DATE% %TIME% - Warning: File %RRCERTS_FILENAME% not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: File %RRCERTS_FILENAME% not found>>%UPDATE_LOGFILE%
   goto SkipRRCertsInst
 )
 %RRCERTS_FILENAME% /T:"%TEMP%\rvkroots" /C /Q
@@ -699,7 +713,7 @@ if "%CPP_2005_x64%"=="1" (
     call InstallOSUpdate.cmd ..\cpp\vcredist2005_x64.exe %VERIFY_MODE% /errorsaswarnings /Q /r:n
   ) else (
     echo Warning: File ..\cpp\vcredist2005_x64.exe not found.
-    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2005_x64.exe not found >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2005_x64.exe not found>>%UPDATE_LOGFILE%
   )
 )
 if "%CPP_2008_x64%"=="1" (
@@ -708,7 +722,7 @@ if "%CPP_2008_x64%"=="1" (
     call InstallOSUpdate.cmd ..\cpp\vcredist2008_x64.exe %VERIFY_MODE% /errorsaswarnings /q /r:n
   ) else (
     echo Warning: File ..\cpp\vcredist2008_x64.exe not found.
-    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2008_x64.exe not found >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2008_x64.exe not found>>%UPDATE_LOGFILE%
   )
 )
 if "%CPP_2010_x64%"=="1" (
@@ -717,7 +731,7 @@ if "%CPP_2010_x64%"=="1" (
     call InstallOSUpdate.cmd ..\cpp\vcredist2010_x64.exe %VERIFY_MODE% /errorsaswarnings /q /norestart
   ) else (
     echo Warning: File ..\cpp\vcredist2010_x64.exe not found.
-    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2010_x64.exe not found >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2010_x64.exe not found>>%UPDATE_LOGFILE%
   )
 )
 if "%CPP_2012_x64%"=="1" (
@@ -726,7 +740,7 @@ if "%CPP_2012_x64%"=="1" (
     call InstallOSUpdate.cmd ..\cpp\vcredist2012_x64.exe %VERIFY_MODE% /errorsaswarnings /q /norestart
   ) else (
     echo Warning: File ..\cpp\vcredist2012_x64.exe not found.
-    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2012_x64.exe not found >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2012_x64.exe not found>>%UPDATE_LOGFILE%
   )
 )
 :CPPInstx86
@@ -736,7 +750,7 @@ if "%CPP_2005_x86%"=="1" (
     call InstallOSUpdate.cmd ..\cpp\vcredist2005_x86.exe %VERIFY_MODE% /errorsaswarnings /Q /r:n
   ) else (
     echo Warning: File ..\cpp\vcredist2005_x86.exe not found.
-    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2005_x86.exe not found >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2005_x86.exe not found>>%UPDATE_LOGFILE%
   )
 )
 if "%CPP_2008_x86%"=="1" (
@@ -745,7 +759,7 @@ if "%CPP_2008_x86%"=="1" (
     call InstallOSUpdate.cmd ..\cpp\vcredist2008_x86.exe %VERIFY_MODE% /errorsaswarnings /q /r:n
   ) else (
     echo Warning: File ..\cpp\vcredist2008_x86.exe not found.
-    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2008_x86.exe not found >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2008_x86.exe not found>>%UPDATE_LOGFILE%
   )
 )
 if "%CPP_2010_x86%"=="1" (
@@ -754,7 +768,7 @@ if "%CPP_2010_x86%"=="1" (
     call InstallOSUpdate.cmd ..\cpp\vcredist2010_x86.exe %VERIFY_MODE% /errorsaswarnings /q /norestart
   ) else (
     echo Warning: File ..\cpp\vcredist2010_x86.exe not found.
-    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2010_x86.exe not found >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2010_x86.exe not found>>%UPDATE_LOGFILE%
   )
 )
 if "%CPP_2012_x86%"=="1" (
@@ -763,7 +777,7 @@ if "%CPP_2012_x86%"=="1" (
     call InstallOSUpdate.cmd ..\cpp\vcredist2012_x86.exe %VERIFY_MODE% /errorsaswarnings /q /norestart
   ) else (
     echo Warning: File ..\cpp\vcredist2012_x86.exe not found.
-    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2012_x86.exe not found >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2012_x86.exe not found>>%UPDATE_LOGFILE%
   )
 )
 :SkipCPPInst
@@ -786,7 +800,7 @@ set DIRECTX_FILENAME=..\win\glb\directx_*_redist.exe
 dir /B %DIRECTX_FILENAME% >nul 2>&1
 if errorlevel 1 (
   echo Warning: File %DIRECTX_FILENAME% not found.
-  echo %DATE% %TIME% - Warning: File %DIRECTX_FILENAME% not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: File %DIRECTX_FILENAME% not found>>%UPDATE_LOGFILE%
   goto SkipDirectXInst
 )
 echo Installing most recent DirectX End-User Runtime...
@@ -795,7 +809,7 @@ for /F %%i in ('dir /B %DIRECTX_FILENAME%') do (
   ..\win\glb\%%i /T:"%TEMP%\directx" /C /Q
   "%TEMP%\directx\dxsetup.exe" /silent
   call SafeRmDir.cmd "%TEMP%\directx"
-  echo %DATE% %TIME% - Info: Installed ..\win\glb\%%i >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Installed ..\win\glb\%%i>>%UPDATE_LOGFILE%
   set REBOOT_REQUIRED=1
 )
 set DIRECTX_FILENAME=
@@ -815,7 +829,7 @@ set MSSL_FILENAME=..\win\glb\Silverlight_x64.exe
 :CheckMSSL
 if not exist %MSSL_FILENAME% (
   echo Warning: Microsoft Silverlight installation file ^(%MSSL_FILENAME%^) not found.
-  echo %DATE% %TIME% - Warning: Microsoft Silverlight installation file ^(%MSSL_FILENAME%^) not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: Microsoft Silverlight installation file ^(%MSSL_FILENAME%^) not found>>%UPDATE_LOGFILE%
   goto SkipMSSLInst
 )
 rem *** Determine Microsoft Silverlight installation file version ***
@@ -854,7 +868,7 @@ if %WMP_VER_MINOR% GEQ %WMP_VER_TARGET_MINOR% goto SkipWMPInst
 :InstallWMP
 if "%WMP_TARGET_ID%"=="" (
   echo Warning: Environment variable WMP_TARGET_ID not set.
-  echo %DATE% %TIME% - Warning: Environment variable WMP_TARGET_ID not set >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: Environment variable WMP_TARGET_ID not set>>%UPDATE_LOGFILE%
   goto SkipWMPInst
 )
 echo %WMP_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
@@ -865,7 +879,7 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
   call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /errorsaswarnings
 ) else (
   echo Warning: Windows Media Player installation file ^(kb%WMP_TARGET_ID%^) not found.
-  echo %DATE% %TIME% - Warning: Windows Media Player installation file ^(kb%WMP_TARGET_ID%^) not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: Windows Media Player installation file ^(kb%WMP_TARGET_ID%^) not found>>%UPDATE_LOGFILE%
   goto SkipWMPInst
 )
 set REBOOT_REQUIRED=1
@@ -889,7 +903,7 @@ set DOTNET35_FILENAME=..\dotnet\dotnetfx35.exe
 set DOTNET35LP_FILENAME=..\dotnet\%OS_ARCH%-glb\dotnetfx35langpack_%OS_ARCH%%OS_LANG_SHORT%*.exe
 if not exist %DOTNET35_FILENAME% (
   echo Warning: .NET Framework 3.5 SP1 installation file ^(%DOTNET35_FILENAME%^) not found.
-  echo %DATE% %TIME% - Warning: .NET Framework 3.5 SP1 installation file ^(%DOTNET35_FILENAME%^) not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: .NET Framework 3.5 SP1 installation file ^(%DOTNET35_FILENAME%^) not found>>%UPDATE_LOGFILE%
   goto SkipDotNet35Inst
 )
 echo Installing .NET Framework 3.5 SP1...
@@ -898,7 +912,7 @@ if "%OS_LANG%" NEQ "enu" (
   dir /B %DOTNET35LP_FILENAME% >nul 2>&1
   if errorlevel 1 (
     echo Warning: .NET Framework 3.5 SP1 Language Pack installation file ^(%DOTNET35LP_FILENAME%^) not found.
-    echo %DATE% %TIME% - Warning: .NET Framework 3.5 SP1 Language Pack installation file ^(%DOTNET35LP_FILENAME%^) not found >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Warning: .NET Framework 3.5 SP1 Language Pack installation file ^(%DOTNET35LP_FILENAME%^) not found>>%UPDATE_LOGFILE%
   ) else (
     echo Installing .NET Framework 3.5 SP1 Language Pack...
     for /F %%i in ('dir /B %DOTNET35LP_FILENAME%') do call InstallOSUpdate.cmd ..\dotnet\%OS_ARCH%-glb\%%i %VERIFY_MODE% /ignoreerrors /qb /norestart /nopatch
@@ -935,7 +949,7 @@ if exist %DOTNET4_PREREQ% (
   call InstallOSUpdate.cmd %DOTNET4_PREREQ% %VERIFY_MODE% /errorsaswarnings /quiet /norestart
 ) else (
   echo Warning: .NET Framework 4 prerequisite WIC installation file ^(%DOTNET4_PREREQ%^) not found.
-  echo %DATE% %TIME% - Warning: .NET Framework 4 prerequisite WIC installation file ^(%DOTNET4_PREREQ%^) not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: .NET Framework 4 prerequisite WIC installation file ^(%DOTNET4_PREREQ%^) not found>>%UPDATE_LOGFILE%
 )
 set DOTNET4_PREREQ=
 :SkipDotNet4Prereq
@@ -943,7 +957,7 @@ set DOTNET4_FILENAME=..\dotnet\dotNetFx%DOTNET4_VER_TARGET_MAJOR%%DOTNET4_VER_TA
 set DOTNET4LP_FILENAME=..\dotnet\dotNetFx%DOTNET4_VER_TARGET_MAJOR%%DOTNET4_VER_TARGET_MINOR%LP_Full_x86_x64%OS_LANG_SHORT%*.exe
 if not exist %DOTNET4_FILENAME% (
   echo Warning: .NET Framework 4 installation file ^(%DOTNET4_FILENAME%^) not found.
-  echo %DATE% %TIME% - Warning: .NET Framework 4 installation file ^(%DOTNET4_FILENAME%^) not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: .NET Framework 4 installation file ^(%DOTNET4_FILENAME%^) not found>>%UPDATE_LOGFILE%
   goto SkipDotNet4Inst
 )
 echo Installing .NET Framework 4...
@@ -952,7 +966,7 @@ if "%OS_LANG%" NEQ "enu" (
   dir /B %DOTNET4LP_FILENAME% >nul 2>&1
   if errorlevel 1 (
     echo Warning: .NET Framework 4 Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found.
-    echo %DATE% %TIME% - Warning: .NET Framework 4 Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Warning: .NET Framework 4 Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found>>%UPDATE_LOGFILE%
   ) else (
     echo Installing .NET Framework 4 Language Pack...
     for /F %%i in ('dir /B %DOTNET4LP_FILENAME%') do call InstallOSUpdate.cmd ..\dotnet\%%i %VERIFY_MODE% /errorsaswarnings /passive /norestart
@@ -997,7 +1011,7 @@ rem *** Install Windows PowerShell 2.0 ***
 if "%INSTALL_PSH%" NEQ "/instpsh" goto SkipPShInst
 if %DOTNET35_VER_MAJOR% LSS %DOTNET35_VER_TARGET_MAJOR% (
   echo Warning: Missing Windows PowerShell 2.0 prerequisite .NET Framework 3.5 SP1.
-  echo %DATE% %TIME% - Warning: Missing Windows PowerShell 2.0 prerequisite .NET Framework 3.5 SP1 >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: Missing Windows PowerShell 2.0 prerequisite .NET Framework 3.5 SP1>>%UPDATE_LOGFILE%
   goto SkipPShInst
 )
 echo Checking Windows PowerShell 2.0 installation state...
@@ -1008,7 +1022,7 @@ if %PSH_VER_MINOR% GEQ %PSH_VER_TARGET_MINOR% goto SkipPShInst
 :InstallPSh
 if "%PSH_TARGET_ID%"=="" (
   echo Warning: Environment variable PSH_TARGET_ID not set.
-  echo %DATE% %TIME% - Warning: Environment variable PSH_TARGET_ID not set >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: Environment variable PSH_TARGET_ID not set>>%UPDATE_LOGFILE%
   goto SkipPShInst
 )
 echo %PSH_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
@@ -1019,7 +1033,7 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
   call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /errorsaswarnings
 ) else (
   echo Warning: Windows PowerShell 2.0 installation file ^(kb%PSH_TARGET_ID%^) not found.
-  echo %DATE% %TIME% - Warning: Windows PowerShell 2.0 installation file ^(kb%PSH_TARGET_ID%^) not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: Windows PowerShell 2.0 installation file ^(kb%PSH_TARGET_ID%^) not found>>%UPDATE_LOGFILE%
   goto SkipPShInst
 )
 set REBOOT_REQUIRED=1
@@ -1029,7 +1043,7 @@ rem *** Install Windows Management Framework 3.0 ***
 if "%INSTALL_WMF%" NEQ "/instwmf" goto SkipWMFInst
 if %DOTNET4_VER_MAJOR% LSS %DOTNET4_VER_TARGET_MAJOR% (
   echo Warning: Missing Windows Management Framework 3.0 prerequisite .NET Framework 4.
-  echo %DATE% %TIME% - Warning: Missing Windows Management Framework 3.0 prerequisite .NET Framework 4 >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: Missing Windows Management Framework 3.0 prerequisite .NET Framework 4>>%UPDATE_LOGFILE%
   goto SkipWMFInst
 )
 if "%OS_NAME%"=="w60" (
@@ -1048,7 +1062,7 @@ if %WMF_VER_MINOR% GEQ %WMF_VER_TARGET_MINOR% goto SkipWMFInst
 :InstallWMF
 if "%WMF_TARGET_ID%"=="" (
   echo Warning: Environment variable WMF_TARGET_ID not set.
-  echo %DATE% %TIME% - Warning: Environment variable WMF_TARGET_ID not set >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: Environment variable WMF_TARGET_ID not set>>%UPDATE_LOGFILE%
   goto SkipWMFInst
 )
 echo %WMF_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
@@ -1059,7 +1073,7 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
   call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /errorsaswarnings
 ) else (
   echo Warning: Windows Management Framework 3.0 installation file ^(kb%WMF_TARGET_ID%^) not found.
-  echo %DATE% %TIME% - Warning: Windows Management Framework 3.0 installation file ^(kb%WMF_TARGET_ID%^) not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: Windows Management Framework 3.0 installation file ^(kb%WMF_TARGET_ID%^) not found>>%UPDATE_LOGFILE%
   goto SkipWMFInst
 )
 set REBOOT_REQUIRED=1
@@ -1075,7 +1089,7 @@ if %TSC_VER_MINOR% GEQ %TSC_VER_TARGET_MINOR% goto SkipTSCInst
 :InstallTSC
 if "%TSC_TARGET_ID%"=="" (
   echo Warning: Environment variable TSC_TARGET_ID not set.
-  echo %DATE% %TIME% - Warning: Environment variable TSC_TARGET_ID not set >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: Environment variable TSC_TARGET_ID not set>>%UPDATE_LOGFILE%
   goto SkipTSCInst
 )
 if "%TSC_PREREQ_ID%"=="" (
@@ -1091,7 +1105,7 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
   call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /errorsaswarnings
 ) else (
   echo Warning: Remote Desktop Client installation file ^(kb%TSC_TARGET_ID%^) not found.
-  echo %DATE% %TIME% - Warning: Remote Desktop Client installation file ^(kb%TSC_TARGET_ID%^) not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: Remote Desktop Client installation file ^(kb%TSC_TARGET_ID%^) not found>>%UPDATE_LOGFILE%
   goto SkipTSCInst
 )
 set REBOOT_REQUIRED=1
@@ -1118,7 +1132,7 @@ if /i "%OS_ARCH%"=="x64" (
 :WDmpas
 if not exist %WDDEFS_FILENAME% (
   echo Warning: Windows Defender definition file ^(%WDDEFS_FILENAME%^) not found.
-  echo %DATE% %TIME% - Warning: Windows Defender definition file ^(%WDDEFS_FILENAME%^) not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: Windows Defender definition file ^(%WDDEFS_FILENAME%^) not found>>%UPDATE_LOGFILE%
   goto SkipWDInst
 )
 rem *** Determine Windows Defender definition file version ***
@@ -1170,7 +1184,7 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
   call InstallListedUpdates.cmd %VERIFY_MODE% /errorsaswarnings
 ) else (
   echo Warning: Office Service Pack installation file^(s^) not found.
-  echo %DATE% %TIME% - Warning: Office Service Pack installation file^(s^) not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: Office Service Pack installation file^(s^) not found>>%UPDATE_LOGFILE%
   goto SkipSPOfc
 )
 set REBOOT_REQUIRED=1
@@ -1193,10 +1207,10 @@ if "%OFC_CONV_PACK%" NEQ "1" (
     del "%TEMP%\OCONVPCK.EXE"
     call InstallOSUpdate.cmd "%TEMP%\OCONVPCK\ocp11.msi"
     call SafeRmDir.cmd "%TEMP%\OCONVPCK"
-    echo %DATE% %TIME% - Info: Installed Office File Converter Pack >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Info: Installed Office File Converter Pack>>%UPDATE_LOGFILE%
   ) else (
     echo Warning: File ..\ofc\glb\ork.exe not found.
-    echo %DATE% %TIME% - Warning: File ..\ofc\glb\ork.exe not found >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Warning: File ..\ofc\glb\ork.exe not found>>%UPDATE_LOGFILE%
   )
 )
 echo Checking installation state of Office Compatibility Pack...
@@ -1204,20 +1218,20 @@ if "%OFC_COMP_PACK%" NEQ "1" (
   if exist ..\ofc\%OFC_LANG%\FileFormatConverters.exe (
     echo Installing Office Compatibility Pack...
     call InstallOfficeUpdate.cmd ..\ofc\%OFC_LANG%\FileFormatConverters.exe /selectoptions %VERIFY_MODE% /errorsaswarnings
-    echo %DATE% %TIME% - Info: Installed Office Compatibility Pack >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Info: Installed Office Compatibility Pack>>%UPDATE_LOGFILE%
   ) else (
     echo Warning: File ..\ofc\%OFC_LANG%\FileFormatConverters.exe not found.
-    echo %DATE% %TIME% - Warning: File ..\ofc\%OFC_LANG%\FileFormatConverters.exe not found >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Warning: File ..\ofc\%OFC_LANG%\FileFormatConverters.exe not found>>%UPDATE_LOGFILE%
   )
   dir /B ..\ofc\%OFC_LANG%\compatibilitypacksp*.exe >nul 2>&1
   if errorlevel 1 (
     echo Warning: File ..\ofc\%OFC_LANG%\compatibilitypacksp*.exe not found.
-    echo %DATE% %TIME% - Warning: File ..\ofc\%OFC_LANG%\compatibilitypacksp*.exe not found >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Warning: File ..\ofc\%OFC_LANG%\compatibilitypacksp*.exe not found>>%UPDATE_LOGFILE%
   ) else (
     for /F %%i in ('dir /B ..\ofc\%OFC_LANG%\compatibilitypacksp*.exe') do (
       echo Installing most recent Service Pack for Office Compatibility Pack...
       call InstallOfficeUpdate.cmd ..\ofc\%OFC_LANG%\%%i /selectoptions %VERIFY_MODE% /errorsaswarnings
-      echo %DATE% %TIME% - Info: Installed most recent Service Pack for Office Compatibility Pack >>%UPDATE_LOGFILE%
+      echo %DATE% %TIME% - Info: Installed most recent Service Pack for Office Compatibility Pack>>%UPDATE_LOGFILE%
     )
   )
 )
@@ -1235,15 +1249,15 @@ if "%OFC_FILE_VALID%" NEQ "1" (
   if exist ..\ofc\glb\OFV.exe (
     echo Installing Office File Validation Add-In...
     call InstallOfficeUpdate.cmd ..\ofc\glb\OFV.exe /selectoptions %VERIFY_MODE% /errorsaswarnings
-    echo %DATE% %TIME% - Info: Installed Office File Validation Add-In >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Info: Installed Office File Validation Add-In>>%UPDATE_LOGFILE%
   ) else (
     echo Warning: File ..\ofc\glb\OFV.exe not found.
-    echo %DATE% %TIME% - Warning: File ..\ofc\glb\OFV.exe not found >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Warning: File ..\ofc\glb\OFV.exe not found>>%UPDATE_LOGFILE%
   )
   dir /B ..\ofc\glb\*kb2553065*.exe >nul 2>&1
   if errorlevel 1 (
     echo Warning: File ..\ofc\glb\*kb2553065*.exe not found.
-    echo %DATE% %TIME% - Warning: File ..\ofc\glb\*kb2553065*.exe not found >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Warning: File ..\ofc\glb\*kb2553065*.exe not found>>%UPDATE_LOGFILE%
   ) else (
     for /F %%i in ('dir /B ..\ofc\glb\*kb2553065*.exe') do (
       echo Installing Office File Validation update...
@@ -1257,7 +1271,7 @@ if "%OFC_FILE_VALID%" NEQ "1" (
 rem *** Check state of service 'Windows Update' ***
 if "%SKIP_DYNAMIC%"=="/skipdynamic" (
   echo Skipping determination of missing updates on demand...
-  echo %DATE% %TIME% - Info: Skipped determination of missing updates on demand >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Skipped determination of missing updates on demand>>%UPDATE_LOGFILE%
   goto ListInstalledIds
 )
 echo Checking state of service 'Windows Update'...
@@ -1265,7 +1279,7 @@ echo Checking state of service 'Windows Update'...
 if not exist "%TEMP%\SetServiceState.cmd" goto ListMissingIds
 call "%TEMP%\SetServiceState.cmd"
 del "%TEMP%\SetServiceState.cmd"
-echo %DATE% %TIME% - Info: Detected state of service 'Windows Update': %AUSVC_STATE% (start mode: %AUSVC_SMODE%) >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Detected state of service 'Windows Update': %AUSVC_STATE% (start mode: %AUSVC_SMODE%)>>%UPDATE_LOGFILE%
 if /i "%AUSVC_SMODE%"=="Auto" (
   if "%USERNAME%"=="WOUTempAdmin" goto ListMissingIds
 )
@@ -1277,7 +1291,7 @@ echo Starting service 'Windows Update' (wuauserv)...
 %SystemRoot%\system32\net.exe start wuauserv >nul
 if errorlevel 1 goto AUSvcNotRunning
 set AUSVC_STARTED=1
-echo %DATE% %TIME% - Info: Started service 'Windows Update' (wuauserv) >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Started service 'Windows Update' (wuauserv)>>%UPDATE_LOGFILE%
 
 :ListMissingIds
 rem *** List ids of missing updates ***
@@ -1285,12 +1299,12 @@ if not exist ..\wsus\wsusscn2.cab goto NoCatalog
 if "%VERIFY_MODE%" NEQ "/verify" goto SkipVerifyCatalog
 if not exist %HASHDEEP_PATH% (
   echo Warning: Hash computing/auditing utility %HASHDEEP_PATH% not found.
-  echo %DATE% %TIME% - Warning: Hash computing/auditing utility %HASHDEEP_PATH% not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: Hash computing/auditing utility %HASHDEEP_PATH% not found>>%UPDATE_LOGFILE%
   goto SkipVerifyCatalog
 )
 if not exist ..\md\hashes-wsus.txt (
   echo Warning: Hash file hashes-wsus.txt not found.
-  echo %DATE% %TIME% - Warning: Hash file hashes-wsus.txt not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: Hash file hashes-wsus.txt not found>>%UPDATE_LOGFILE%
   goto SkipVerifyCatalog
 )
 echo Verifying integrity of Windows Update catalog file...
@@ -1344,7 +1358,7 @@ if %OS_DOMAIN_ROLE% GEQ 2 (
 set MSSE_FILENAME=..\msse\%OS_ARCH%-glb\MSEInstall-%OS_ARCH%-%OS_LANG%.exe
 if not exist %MSSE_FILENAME% (
   echo Warning: Microsoft Security Essentials installation file ^(%MSSE_FILENAME%^) not found.
-  echo %DATE% %TIME% - Warning: Microsoft Security Essentials installation file ^(%MSSE_FILENAME%^) not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: Microsoft Security Essentials installation file ^(%MSSE_FILENAME%^) not found>>%UPDATE_LOGFILE%
   if "%MSSE_INSTALLED%"=="1" (goto CheckMSSEDefs) else (goto SkipMSSEInst)
 )
 rem *** Determine Microsoft Security Essentials installation file version ***
@@ -1377,7 +1391,7 @@ if /i "%OS_ARCH%"=="x64" (
 )
 if not exist %MSSEDEFS_FILENAME% (
   echo Warning: Microsoft Security Essentials definition file ^(%MSSEDEFS_FILENAME%^) not found.
-  echo %DATE% %TIME% - Warning: Microsoft Security Essentials definition file ^(%MSSEDEFS_FILENAME%^) not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: Microsoft Security Essentials definition file ^(%MSSEDEFS_FILENAME%^) not found>>%UPDATE_LOGFILE%
   goto CheckNISDefs
 )
 rem *** Determine Microsoft Security Essentials definition file version ***
@@ -1405,7 +1419,7 @@ set MSSEDEFS_VER_TARGET_REVIS=
 set NISDEFS_FILENAME=..\msse\%OS_ARCH%-glb\nis_full_%OS_ARCH%.exe
 if not exist %NISDEFS_FILENAME% (
   echo Warning: Network Inspection System definition file ^(%NISDEFS_FILENAME%^) not found.
-  echo %DATE% %TIME% - Warning: Network Inspection System definition file ^(%NISDEFS_FILENAME%^) not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: Network Inspection System definition file ^(%NISDEFS_FILENAME%^) not found>>%UPDATE_LOGFILE%
   goto SkipMSSEInst
 )
 rem *** Determine Network Inspection System definition file version ***
@@ -1437,13 +1451,13 @@ if exist ..\software\custom\InstallCustomSoftware.cmd (
   pushd ..\software\custom
   call InstallCustomSoftware.cmd
   popd
-  echo %DATE% %TIME% - Info: Executed custom software installation hook ^(Errorlevel: %errorlevel%^) >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Executed custom software installation hook ^(Errorlevel: %errorlevel%^)>>%UPDATE_LOGFILE%
   set REBOOT_REQUIRED=1
 )
 if exist %SystemRoot%\Temp\wouselmsi.txt (
   echo Installing selected MSI packages...
   call TouchMSITree.cmd /instselected
-  echo %DATE% %TIME% - Info: Installed selected MSI packages >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Installed selected MSI packages>>%UPDATE_LOGFILE%
   del %SystemRoot%\Temp\wouselmsi.txt
   set REBOOT_REQUIRED=1
 )
@@ -1455,13 +1469,13 @@ if "%RECALL_REQUIRED%"=="1" (
     if %OS_DOMAIN_ROLE% GEQ 4 (
       echo.
       echo Automatic recall is not supported on domain controllers.
-      echo %DATE% %TIME% - Info: Automatic recall is not supported on domain controllers >>%UPDATE_LOGFILE%
+      echo %DATE% %TIME% - Info: Automatic recall is not supported on domain controllers>>%UPDATE_LOGFILE%
       goto ManualRecall
     )
     if not exist ..\bin\Autologon.exe (
       echo.
       echo Warning: Utility ..\bin\Autologon.exe not found. Automatic recall is unavailable.
-      echo %DATE% %TIME% - Warning: Utility ..\bin\Autologon.exe not found. Automatic recall is unavailable >>%UPDATE_LOGFILE%
+      echo %DATE% %TIME% - Warning: Utility ..\bin\Autologon.exe not found. Automatic recall is unavailable>>%UPDATE_LOGFILE%
       goto ManualRecall
     )
     if "%USERNAME%" NEQ "WOUTempAdmin" (
@@ -1471,7 +1485,7 @@ if "%RECALL_REQUIRED%"=="1" (
     if exist %SystemRoot%\system32\bcdedit.exe (
       echo Adjusting boot sequence for next reboot...
       %SystemRoot%\system32\bcdedit.exe /bootsequence {current}
-      echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot >>%UPDATE_LOGFILE%
+      echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot>>%UPDATE_LOGFILE%
     )
     echo Rebooting...
     %SystemRoot%\system32\shutdown.exe /r /f /t 3
@@ -1494,7 +1508,7 @@ if "%RECALL_REQUIRED%"=="1" (
       if exist %SystemRoot%\system32\bcdedit.exe (
         echo Adjusting boot sequence for next reboot...
         %SystemRoot%\system32\bcdedit.exe /bootsequence {current}
-        echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot >>%UPDATE_LOGFILE%
+        echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot>>%UPDATE_LOGFILE%
       )
       echo Rebooting...
       %SystemRoot%\system32\shutdown.exe /r /f /t 3
@@ -1506,7 +1520,7 @@ if "%RECALL_REQUIRED%"=="1" (
     ) else (
       echo.
       echo Installation successful. Please reboot your system now.
-      echo %DATE% %TIME% - Info: Installation successful >>%UPDATE_LOGFILE%
+      echo %DATE% %TIME% - Info: Installation successful>>%UPDATE_LOGFILE%
       echo.
       echo 
     )
@@ -1517,7 +1531,7 @@ goto EoF
 :ManualRecall
 echo.
 echo Installation successful. Please reboot your system now and recall Update afterwards.
-echo %DATE% %TIME% - Info: Installation successful (Updates pending) >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Installation successful (Updates pending)>>%UPDATE_LOGFILE%
 echo.
 echo 
 goto EoF
@@ -1531,119 +1545,119 @@ exit /b 1
 :NoTemp
 echo.
 echo ERROR: Environment variable TEMP not set.
-echo %DATE% %TIME% - Error: Environment variable TEMP not set >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Environment variable TEMP not set>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
 :NoTempDir
 echo.
 echo ERROR: Directory "%TEMP%" not found.
-echo %DATE% %TIME% - Error: Directory "%TEMP%" not found >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Directory "%TEMP%" not found>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
 :NoCScript
 echo.
 echo ERROR: VBScript interpreter %CSCRIPT_PATH% not found.
-echo %DATE% %TIME% - Error: VBScript interpreter %CSCRIPT_PATH% not found >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: VBScript interpreter %CSCRIPT_PATH% not found>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
 :NoReg
 echo.
 echo ERROR: Registry tool %REG_PATH% not found.
-echo %DATE% %TIME% - Error: Registry tool %REG_PATH% not found >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Registry tool %REG_PATH% not found>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
 :EndlessLoop
 echo.
 echo ERROR: Potentially endless reboot/recall loop detected.
-echo %DATE% %TIME% - Error: Potentially endless reboot/recall loop detected >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Potentially endless reboot/recall loop detected>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
 :NoIfAdmin
 echo.
 echo ERROR: File ..\bin\IfAdmin.exe not found.
-echo %DATE% %TIME% - Error: File ..\bin\IfAdmin.exe not found >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: File ..\bin\IfAdmin.exe not found>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
 :NoAdmin
 echo.
 echo ERROR: User %USERNAME% does not have administrative privileges.
-echo %DATE% %TIME% - Error: User %USERNAME% does not have administrative privileges >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: User %USERNAME% does not have administrative privileges>>%UPDATE_LOGFILE%
 echo.
 goto EoF
 
 :NoSysEnvVars
 echo.
 echo ERROR: Determination of OS properties failed.
-echo %DATE% %TIME% - Error: Determination of OS properties failed >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Determination of OS properties failed>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
 :UnsupLang
 echo.
 echo ERROR: Unsupported Operating System language.
-echo %DATE% %TIME% - Error: Unsupported Operating System language >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Unsupported Operating System language>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
 :UnsupOS
 echo.
 echo ERROR: Unsupported Operating System (%OS_NAME%).
-echo %DATE% %TIME% - Error: Unsupported Operating System (%OS_NAME%) >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Unsupported Operating System (%OS_NAME%)>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
 :UnsupArch
 echo.
 echo ERROR: Unsupported Operating System architecture (%OS_ARCH%).
-echo %DATE% %TIME% - Error: Unsupported Operating System architecture (%OS_ARCH%) >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Unsupported Operating System architecture (%OS_ARCH%)>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
 :InvalidMedium
 echo.
 echo ERROR: Medium neither supports your Windows nor your Office version.
-echo %DATE% %TIME% - Error: Medium neither supports your Windows nor your Office version >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Medium neither supports your Windows nor your Office version>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
 :NoWUAInst
 echo.
 echo ERROR: File %WUA_FILENAME% not found.
-echo %DATE% %TIME% - Error: File %WUA_FILENAME% not found >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: File %WUA_FILENAME% not found>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
 :NoSPTargetId
 echo.
 echo ERROR: Environment variable OS_SP_TARGET_ID not set.
-echo %DATE% %TIME% - Error: Environment variable OS_SP_TARGET_ID not set >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Environment variable OS_SP_TARGET_ID not set>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
 :AUSvcNotRunning
 echo.
 echo ERROR: Service 'Windows Update' (wuauserv) is not running and could not be started.
-echo %DATE% %TIME% - Error: Service 'Windows Update' (wuauserv) is not running and could not be started >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Service 'Windows Update' (wuauserv) is not running and could not be started>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
 :NoCatalog
 echo.
 echo ERROR: File ..\wsus\wsusscn2.cab not found.
-echo %DATE% %TIME% - Error: File ..\wsus\wsusscn2.cab not found >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: File ..\wsus\wsusscn2.cab not found>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
 :CatalogIntegrityError
 echo.
 echo ERROR: File hash does not match stored value (file: ..\wsus\wsusscn2.cab).
-echo %DATE% %TIME% - Error: File hash does not match stored value (file: ..\wsus\wsusscn2.cab) >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: File hash does not match stored value (file: ..\wsus\wsusscn2.cab)>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
@@ -1651,10 +1665,10 @@ goto Cleanup
 echo.
 if "%NO_MISSING_IDS%"=="1" (
   echo No missing update found. Nothing to do!
-  echo %DATE% %TIME% - Info: No missing update found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: No missing update found>>%UPDATE_LOGFILE%
 ) else (
   echo Any missing update was either black listed or not found.
-  echo %DATE% %TIME% - Info: Any missing update was either black listed or not found >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Any missing update was either black listed or not found>>%UPDATE_LOGFILE%
 )
 echo.
 goto Cleanup
@@ -1662,14 +1676,14 @@ goto Cleanup
 :ListError
 echo.
 echo ERROR: Listing of update files failed.
-echo %DATE% %TIME% - Error: Listing of update files failed >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Listing of update files failed>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
 :InstError
 echo.
 echo ERROR: Installation failed.
-echo %DATE% %TIME% - Error: Installation failed >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Installation failed>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
@@ -1685,7 +1699,7 @@ if "%USERNAME%"=="WOUTempAdmin" (
   if exist %SystemRoot%\system32\bcdedit.exe (
     echo Adjusting boot sequence for next reboot...
     %SystemRoot%\system32\bcdedit.exe /bootsequence {current}
-    echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot >>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot>>%UPDATE_LOGFILE%
   )
   echo Rebooting...
   %SystemRoot%\system32\shutdown.exe /r /f /t 3
@@ -1694,9 +1708,9 @@ if "%USERNAME%"=="WOUTempAdmin" (
     echo Stopping service 'Windows Update' ^(wuauserv^)...
     %SystemRoot%\system32\net.exe stop wuauserv >nul
     if errorlevel 1 (
-      echo %DATE% %TIME% - Warning: Stopping of service 'Windows Update' ^(wuauserv^) failed >>%UPDATE_LOGFILE%
+      echo %DATE% %TIME% - Warning: Stopping of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
     ) else (
-      echo %DATE% %TIME% - Info: Stopped service 'Windows Update' ^(wuauserv^) >>%UPDATE_LOGFILE%
+      echo %DATE% %TIME% - Info: Stopped service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
     )
   )
   if "%SHOW_LOG%"=="/showlog" start %SystemRoot%\system32\notepad.exe %UPDATE_LOGFILE%
@@ -1710,11 +1724,11 @@ if exist .\custom\FinalizationHook.cmd (
   pushd .\custom
   call FinalizationHook.cmd
   popd
-  echo %DATE% %TIME% - Info: Executed custom finalization hook ^(Errorlevel: %errorlevel%^) >>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Info: Executed custom finalization hook ^(Errorlevel: %errorlevel%^)>>%UPDATE_LOGFILE%
 )
 cd ..
 echo Ending WSUS Offline Update at %TIME%...
-echo %DATE% %TIME% - Info: Ending WSUS Offline Update >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Ending WSUS Offline Update>>%UPDATE_LOGFILE%
 title %ComSpec%
 if "%RECALL_REQUIRED%"=="1" (
   verify other 2>nul

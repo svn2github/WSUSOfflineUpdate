@@ -417,7 +417,6 @@ Set objNetwork = WScript.CreateObject("WScript.Network")
 Set objWMIService = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
 ' Documentation: http://msdn.microsoft.com/en-us/library/aa394239(VS.85).aspx
 For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_OperatingSystem")
-  objCmdFile.WriteLine("set OS_CAPTION=" & objQueryItem.Caption)
   WriteVersionToFile objCmdFile, "OS_VER", objQueryItem.Version
   strOSVersion = Left(objQueryItem.Version, 3) ' For determination of Windows activation state - see below
   objCmdFile.WriteLine("set OS_SP_VER_MAJOR=" & objQueryItem.ServicePackMajorVersion)

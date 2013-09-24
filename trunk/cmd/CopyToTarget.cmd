@@ -11,11 +11,11 @@ if "%DOWNLOAD_LOGFILE%"=="" set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting copying for %1 %2 %3 %4 %5 %6 %7 %8 %9...
 if exist %DOWNLOAD_LOGFILE% (
-  echo. >>%DOWNLOAD_LOGFILE%
-  echo -------------------------------------------------------------------------------- >>%DOWNLOAD_LOGFILE%
-  echo. >>%DOWNLOAD_LOGFILE%
+  echo.>>%DOWNLOAD_LOGFILE%
+  echo -------------------------------------------------------------------------------->>%DOWNLOAD_LOGFILE%
+  echo.>>%DOWNLOAD_LOGFILE%
 )
-echo %DATE% %TIME% - Info: Starting copying for %1 %2 %3 %4 %5 %6 %7 %8 %9 >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Starting copying for %1 %2 %3 %4 %5 %6 %7 %8 %9>>%DOWNLOAD_LOGFILE%
 
 if "%TEMP%"=="" goto NoTemp
 pushd "%TEMP%"
@@ -170,7 +170,7 @@ for %%i in (%USB_FILTER%) do (
 )
 popd
 if exist %USB_FILTER% del %USB_FILTER%
-echo %DATE% %TIME% - Info: Copied client tree for %1 %2 %3 %4 %5 %6 %7 %8 %9 >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Copied client tree for %1 %2 %3 %4 %5 %6 %7 %8 %9>>%DOWNLOAD_LOGFILE%
 
 rem *** Clean up target directory ***
 if "%CLEANUP%" NEQ "1" goto NoCleanup
@@ -180,11 +180,11 @@ for /F "tokens=*" %%i in ('dir %OUTPUT_PATH% /A:-D /B /S') do (
   %SystemRoot%\system32\find.exe /I "%%~nxi" "%TEMP%\ValidClientFiles.txt" >nul 2>&1
   if errorlevel 1 (
     del "%%i"
-    echo %DATE% %TIME% - Info: Deleted file "%%i" >>%DOWNLOAD_LOGFILE%
+    echo %DATE% %TIME% - Info: Deleted file "%%i">>%DOWNLOAD_LOGFILE%
   )
 )
 del "%TEMP%\ValidClientFiles.txt"
-echo %DATE% %TIME% - Info: Cleaned up target directory %OUTPUT_PATH% >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Cleaned up target directory %OUTPUT_PATH%>>%DOWNLOAD_LOGFILE%
 
 :NoCleanup
 goto EoF
@@ -198,14 +198,14 @@ exit /b 1
 :NoTemp
 echo.
 echo ERROR: Environment variable TEMP not set.
-echo %DATE% %TIME% - Error: Environment variable TEMP not set >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Error: Environment variable TEMP not set>>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 
 :NoTempDir
 echo.
 echo ERROR: Directory "%TEMP%" not found.
-echo %DATE% %TIME% - Error: Directory "%TEMP%" not found >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Error: Directory "%TEMP%" not found>>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 
@@ -214,21 +214,21 @@ echo.
 echo ERROR: Invalid parameter: %*
 echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| ofc} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} ^<OutputPath^> [/excludesp] [/excludesw] [/includedotnet] [/includemsse] [/includewddefs] [/cleanup]
 echo Usage2: %~n0 {all ^| all-x86 ^| all-x64 ^| wxp ^| w2k3 ^| w2k3-x64 ^| w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| w62 ^| w62-x64 ^| w63 ^| w63-x64 ^| ofc ^| enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} ^<OutputPath^> [/excludesp] [/excludesw] [/includedotnet] [/includemsse] [/includewddefs] [/cleanup]
-echo %DATE% %TIME% - Error: Invalid parameter: %* >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Error: Invalid parameter: %*>>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 
 :NoXCopy
 echo.
 echo ERROR: Utility %SystemRoot%\system32\xcopy.exe not found.
-echo %DATE% %TIME% - Error: Utility %SystemRoot%\system32\xcopy.exe not found >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Error: Utility %SystemRoot%\system32\xcopy.exe not found>>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 
 :XCopyError
 echo.
 echo ERROR: Copying failed.
-echo %DATE% %TIME% - Error: Copying failed >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Error: Copying failed>>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 
@@ -246,6 +246,6 @@ if "%EXIT_ERR%"=="1" (
 )
 
 :EoF
-echo %DATE% %TIME% - Info: Ending copying for %1 %2 %3 %4 %5 %6 %7 %8 %9 >>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Ending copying for %1 %2 %3 %4 %5 %6 %7 %8 %9>>%DOWNLOAD_LOGFILE%
 title %ComSpec%
 endlocal

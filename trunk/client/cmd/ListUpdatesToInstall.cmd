@@ -116,20 +116,20 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
     ) else (
       if "%%j"=="" (
         echo Warning: Update kb%%i not found.
-        echo %DATE% %TIME% - Warning: Update kb%%i not found >>%UPDATE_LOGFILE%
+        echo %DATE% %TIME% - Warning: Update kb%%i not found>>%UPDATE_LOGFILE%
       ) else (
         echo Warning: Update kb%%i ^(id: %%j^) not found.
-        echo %DATE% %TIME% - Warning: Update kb%%i ^(id: %%j^) not found >>%UPDATE_LOGFILE%
+        echo %DATE% %TIME% - Warning: Update kb%%i ^(id: %%j^) not found>>%UPDATE_LOGFILE%
       )
     )
   ) else (
     for /F "tokens=1* delims=,;" %%k in ('%SystemRoot%\system32\findstr.exe /I "%%i" "%TEMP%\ExcludeList.txt"') do (
       if "%%l"=="" (
         echo Info: Skipping update %%k due to matching black list entry.
-        echo %DATE% %TIME% - Info: Skipped update %%k due to matching black list entry >>%UPDATE_LOGFILE%
+        echo %DATE% %TIME% - Info: Skipped update %%k due to matching black list entry>>%UPDATE_LOGFILE%
       ) else (
         echo Info: Skipping update %%k ^(%%l^) due to matching black list entry.
-        echo %DATE% %TIME% - Info: Skipped update %%k ^(%%l^) due to matching black list entry >>%UPDATE_LOGFILE%
+        echo %DATE% %TIME% - Info: Skipped update %%k ^(%%l^) due to matching black list entry>>%UPDATE_LOGFILE%
       )
     )
   )
@@ -144,27 +144,27 @@ goto Error
 
 :NoTemp
 echo ERROR: Environment variable TEMP not set.
-echo %DATE% %TIME% - Error: Environment variable TEMP not set >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Environment variable TEMP not set>>%UPDATE_LOGFILE%
 goto Error
 
 :NoTempDir
 echo ERROR: Directory "%TEMP%" not found.
-echo %DATE% %TIME% - Error: Directory "%TEMP%" not found >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Directory "%TEMP%" not found>>%UPDATE_LOGFILE%
 goto Error
 
 :NoOSName
 echo ERROR: Environment variable OS_NAME not set.
-echo %DATE% %TIME% - Error: Environment variable OS_NAME not set >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Environment variable OS_NAME not set>>%UPDATE_LOGFILE%
 goto Error
 
 :NoOSLang
 echo ERROR: Environment variable OS_LANG not set.
-echo %DATE% %TIME% - Error: Environment variable OS_LANG not set >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Environment variable OS_LANG not set>>%UPDATE_LOGFILE%
 goto Error
 
 :NoOSArch
 echo ERROR: Environment variable OS_ARCH not set.
-echo %DATE% %TIME% - Error: Environment variable OS_ARCH not set >>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Error: Environment variable OS_ARCH not set>>%UPDATE_LOGFILE%
 goto Error
 
 :Error
