@@ -798,4 +798,5 @@ Version ?.? -- ??.??.??
 - Installation part will now log Windows licensing info (Thanks to Bert Schinkel-Momsen)
 - Static download URLs for aria2 download utility updated to v. 1.18.0
 - Fix: Installation failed on Japanese Windows Vista systems due to special characters in Win32_OperatingSystem.Caption (Thanks to I. Wada)
-- Fix: DownloadUpdates.cmd threw misleading file integrity verification warnings for .NET updates (Thanks to "boco")
+- Fix: DownloadUpdates.cmd script threw misleading file integrity verification warnings for .NET updates (Thanks to "boco")
+- Fix: DoUpdate.cmd script repeatedly installed custom static update definitions for .NET Frameworks 3.5 SP1 and 4 (Thanks to "Wes" and "aker")
