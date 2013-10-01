@@ -141,7 +141,12 @@ goto InstFailure
 
 :InstCab
 echo Installing %1...
-if exist %SystemRoot%\system32\Dism.exe goto InstDism
+if exist %SystemRoot%\system32\Dism.exe (
+  if /i "%PROCESSOR_ARCHITECTURE%"=="AMD64" goto InstDism
+  if /i "%PROCESSOR_ARCHITEW6432%"=="" goto InstDism
+  echo n | %SystemRoot%\system32\comp.exe %SystemRoot%\system32\Dism.exe %SystemRoot%\SysWOW64\Dism.exe /A >nul 2>&1
+  if errorlevel 1 goto InstDism
+)
 set ERR_LEVEL=0
 if "%OS_ARCH%"=="x64" (set TOKEN_KB=3) else (set TOKEN_KB=2)
 for /F "tokens=%TOKEN_KB% delims=-" %%i in ("%1") do (

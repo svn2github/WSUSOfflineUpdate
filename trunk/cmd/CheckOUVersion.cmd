@@ -31,7 +31,7 @@ if exist UpdateOU.new (
 %WGET_PATH% -N -P ..\static http://download.wsusoffline.net/StaticDownloadLink-recent.txt
 if errorlevel 1 goto DownloadError
 if exist ..\static\StaticDownloadLink-recent.txt (
-  echo n | %SystemRoot%\system32\comp.exe ..\static\StaticDownloadLink-this.txt ..\static\StaticDownloadLink-recent.txt /a /l /n=1 /c >nul 2>&1
+  echo n | %SystemRoot%\system32\comp.exe ..\static\StaticDownloadLink-this.txt ..\static\StaticDownloadLink-recent.txt /A /L /N=1 /C >nul 2>&1
   if errorlevel 1 goto CompError
 )
 goto EoF
