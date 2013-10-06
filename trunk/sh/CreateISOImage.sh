@@ -2,7 +2,7 @@
 
 #########################################################################
 ###          WSUS Offline Update ISO maker for Linux systems          ###
-###                           v. 8.6+ (r508)                          ###
+###                           v. 8.6+ (r509)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg                     ###
@@ -26,6 +26,7 @@ esac
 debug=0
 test $debug -eq 1 && set -x
 export SHELLOPTS
+export TERM=xterm
 
 source $(dirname $0)/commonparts.inc || {
     echo commonparts.sh fehlt

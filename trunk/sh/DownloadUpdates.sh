@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                          v. 8.6+ (r508)                           ###
+###                          v. 8.6+ (r509)                           ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -31,8 +31,7 @@ debug=0
 test $debug -eq 1 && set -x
 export SHELLOPTS
 
-# syslist="wxp wxp-x64 w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64 all-x86 all-x64 o2k3 o2k7 o2k10 o2k13 ofc"
-# langlist="enu deu nld esn fra ptg ptb ita rus plk ell csy dan nor sve fin jpn kor chs cht hun trk ara heb"
+export TERM=xterm
 
 source $(dirname $0)/commonparts.inc || {
     echo commonparts.sh fehlt
@@ -419,11 +418,11 @@ mydate=$(date +%Y%m%d)
 #convert files to Linux format
 for Datei in ../{exclude,static}/*.txt ../{exclude,static}/custom/*.txt
   do
-    grep -q -m1 $'\r' "$Datei" && {
+    test -f "$Datei" || continue
+    grep -q -m1 $'\r' "$Datei" || continue
     OrigDat=$(stat -c %y "$Datei")
     sed -i 's/\r//g' "$Datei"
     touch -d "$OrigDat" "$Datei"
-    }
   done
 
 Liste=""
@@ -979,8 +978,11 @@ exit 0
 # 
 
 # ========================================================================
-# $Id: DownloadUpdates.sh,v 1.5 2013-04-18 15:06:07+02 HHullen Exp $
+# $Id: DownloadUpdates.sh,v 1.6 2013-10-06 13:42:48+02 HHullen Exp $
 # $Log: DownloadUpdates.sh,v $
+# Revision 1.6  2013-10-06 13:42:48+02  HHullen
+# Prüfung, ob in custom Dateien liegen
+#
 # Revision 1.5  2013-04-18 15:06:07+02  HHullen
 # Vergleichs-Liste von talou abgearbeitet
 #

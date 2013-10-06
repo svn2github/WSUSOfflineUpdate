@@ -41,6 +41,8 @@ Dim Const $ini_section_w61          = "Windows 7"
 Dim Const $ini_section_w61_x64      = "Windows Server 2008 R2"
 Dim Const $ini_section_w62          = "Windows 8"
 Dim Const $ini_section_w62_x64      = "Windows Server 2012"
+Dim Const $ini_section_w63          = "Windows 8.1"
+Dim Const $ini_section_w63_x64      = "Windows Server 2012 R2"
 Dim Const $ini_section_o2k3         = "Office 2003"
 Dim Const $ini_section_o2k7         = "Office 2007"
 Dim Const $ini_section_o2k10        = "Office 2010"
@@ -142,6 +144,7 @@ Dim $wxp_fin, $w2k3_fin, $o2k3_fin, $o2k7_fin, $o2k10_fin ; Finnish
 Dim $w60_glb, $w60_x64_glb                                ; Windows Vista / Server 2008 (global)
 Dim $w61_glb, $w61_x64_glb                                ; Windows 7 / Server 2008 R2 (global)
 Dim $w62_glb, $w62_x64_glb                                ; Windows 8 / Server 2012 (global)
+Dim $w63_glb, $w63_x64_glb                                ; Windows 8.1 / Server 2012 R2 (global)
 Dim $o2k13_glb                                            ; Office 2013 (global)
 
 Dim $dlgheight, $groupwidth, $groupheight_lng, $groupheight_glb, $txtwidth, $txtheight, $slimheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos, $runany
@@ -462,6 +465,8 @@ Func SwitchDownloadTargets($state)
   GUICtrlSetState($w61_x64_glb, $state)
   GUICtrlSetState($w62_glb, $state)
   GUICtrlSetState($w62_x64_glb, $state)
+  GUICtrlSetState($w63_glb, $state)
+  GUICtrlSetState($w63_x64_glb, $state)
 
   GUICtrlSetState($o2k3_enu, $state)
   GUICtrlSetState($o2k7_enu, $state)
@@ -1081,6 +1086,10 @@ Func SaveSettings()
   IniWrite($inifilename, $ini_section_w62, $lang_token_glb, CheckBoxStateToString($w62_glb))
   IniWrite($inifilename, $ini_section_w62_x64, $lang_token_glb, CheckBoxStateToString($w62_x64_glb))
 
+;  Windows 8.1 / Server 2012 R2 group
+  IniWrite($inifilename, $ini_section_w63, $lang_token_glb, CheckBoxStateToString($w63_glb))
+  IniWrite($inifilename, $ini_section_w63_x64, $lang_token_glb, CheckBoxStateToString($w63_x64_glb))
+
 ;  Office 2003 group
   IniWrite($inifilename, $ini_section_o2k3, $lang_token_enu, CheckBoxStateToString($o2k3_enu))
   IniWrite($inifilename, $ini_section_o2k3, $lang_token_fra, CheckBoxStateToString($o2k3_fra))
@@ -1192,7 +1201,7 @@ Func CalcGUISize()
   If ($reg_val = "") Then
     $reg_val = $default_logpixels
   EndIf
-  $dlgheight = 520 * $reg_val / $default_logpixels
+  $dlgheight = 560 * $reg_val / $default_logpixels
   If ShowGUIInGerman() Then
     $txtwidth = 90 * $reg_val / $default_logpixels
   Else
@@ -1247,7 +1256,7 @@ EndIf
 ;  Tab control
 $txtxpos = $txtxoffset
 $txtypos = $txtyoffset + $txtheight
-GuiCtrlCreateTab($txtxpos, $txtypos, $groupwidth + 2 * $txtxoffset, $groupheight_lng + 4 * $groupheight_glb + 3.5 * $txtyoffset)
+GuiCtrlCreateTab($txtxpos, $txtypos, $groupwidth + 2 * $txtxoffset, $groupheight_lng + 5 * $groupheight_glb + 3.5 * $txtyoffset)
 
 ;  Operating Systems' Tab
 $tabitemfocused = GuiCtrlCreateTabItem("Windows")
@@ -1593,6 +1602,36 @@ Else
   $w62_x64_glb = GUICtrlCreateCheckbox("x64 Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
 EndIf
 If IniRead($inifilename, $ini_section_w62_x64, $lang_token_glb, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+
+;  Windows 8.1 / Server 2012 R2 group
+$txtxpos = 2 * $txtxoffset
+$txtypos = $txtypos + 2.5 * $txtyoffset
+GUICtrlCreateGroup("Windows 8.1 / Server 2012 R2 (w63 / w63-x64)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
+;  Windows 8.1 global
+$txtypos = $txtypos + 1.5 * $txtyoffset
+$txtxpos = 3 * $txtxoffset
+If ShowGUIInGerman() Then
+  $w63_glb = GUICtrlCreateCheckbox("x86 Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
+Else
+  $w63_glb = GUICtrlCreateCheckbox("x86 Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
+EndIf
+If IniRead($inifilename, $ini_section_w63, $lang_token_glb, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows 8.1 / Server 2012 R2 x64 global
+$txtxpos = $txtxpos + $groupwidth / 2 - $txtxoffset
+If ShowGUIInGerman() Then
+  $w63_x64_glb = GUICtrlCreateCheckbox("x64 Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
+Else
+  $w63_x64_glb = GUICtrlCreateCheckbox("x64 Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
+EndIf
+If IniRead($inifilename, $ini_section_w63_x64, $lang_token_glb, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -2462,7 +2501,7 @@ GUICtrlSetState($tabitemfocused, $GUI_SHOW)
 
 ;  Options group
 $txtxpos = $txtxoffset
-$txtypos = $groupheight_lng + 4 * $groupheight_glb + 7 * $txtyoffset 
+$txtypos = $groupheight_lng + 5 * $groupheight_glb + 7 * $txtyoffset 
 
 If ShowGUIInGerman() Then
   GUICtrlCreateGroup("Optionen", $txtxpos, $txtypos, $groupwidth + 2 * $txtxoffset,  $groupheight_lng)
@@ -3061,6 +3100,16 @@ While 1
       EndIf
       If IsCheckBoxChecked($w62_x64_glb) Then
         If RunScripts("w62-x64 glb", IsCheckBoxChecked($imageonly), DetermineDownloadSwitches($includesp, $dotnet, $msse, $wddefs, $cleanupdownloads, $verifydownloads, AuthProxy($proxy, $proxypwd), $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse, $wddefs, $usbclean), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If IsCheckBoxChecked($w63_glb) Then
+        If RunScripts("w63 glb", IsCheckBoxChecked($imageonly), DetermineDownloadSwitches($includesp, $dotnet, $msse, $wddefs, $cleanupdownloads, $verifydownloads, AuthProxy($proxy, $proxypwd), $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse, $wddefs, $usbclean), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+      If IsCheckBoxChecked($w63_x64_glb) Then
+        If RunScripts("w63-x64 glb", IsCheckBoxChecked($imageonly), DetermineDownloadSwitches($includesp, $dotnet, $msse, $wddefs, $cleanupdownloads, $verifydownloads, AuthProxy($proxy, $proxypwd), $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse, $wddefs, $usbclean), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
