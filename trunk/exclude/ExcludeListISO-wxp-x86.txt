@@ -5,7 +5,7 @@
 *w6*
 */*/x64-glb/*
 *-x64*
-*dotnetfx45*
-*dotNetFx45*
+*NDP451*
 *vcredist*_x64*
+*Silverlight_x64*
 *.au3

@@ -9,11 +9,11 @@ if not exist "%TEMP%\wsusscn2.cab" (
 )
 if exist "%TEMP%\package.cab" del "%TEMP%\package.cab"
 if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
-%SystemRoot%\system32\expand.exe "%TEMP%\wsusscn2.cab" -F:package.cab "%TEMP%"
-%SystemRoot%\system32\expand.exe "%TEMP%\package.cab" "%TEMP%\package.xml"
+%SystemRoot%\System32\expand.exe "%TEMP%\wsusscn2.cab" -F:package.cab "%TEMP%"
+%SystemRoot%\System32\expand.exe "%TEMP%\package.cab" "%TEMP%\package.xml"
 del "%TEMP%\package.cab"
 
-%SystemRoot%\system32\cscript.exe //Nologo //E:vbs .\cmd\XSLT.vbs "%TEMP%\package.xml" .\xslt\ExtractUpdateFileIdsAndLocations.xsl "%TEMP%\DownloadLinks-all.txt"
+%SystemRoot%\System32\cscript.exe //Nologo //E:vbs .\cmd\XSLT.vbs "%TEMP%\package.xml" .\xslt\ExtractUpdateFileIdsAndLocations.xsl "%TEMP%\DownloadLinks-all.txt"
 goto EoF
 
 del "%TEMP%\package.xml"

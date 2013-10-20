@@ -20,6 +20,7 @@ w62-x64\
 w63-x64\
 windowsxp
 *-x64
-dotnetfx45*
+NDP451*
 vcredist*_x64
+Silverlight_x64*
 .au3

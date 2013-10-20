@@ -16,12 +16,12 @@ call RemoveCustomLanguageSupport.cmd %1 /quiet
 rem *** Add support for %1 to .NET custom URL files ***
 echo Adding support for %1 to .NET custom URL files...
 for /F %%i in (..\static\StaticDownloadLinks-dotnet-x86-%1.txt) do (
-  echo %%i | %SystemRoot%\system32\find.exe /I "dotNetFx40LP_Full_">>..\static\custom\StaticDownloadLinks-dotnet.txt
-  echo %%i | %SystemRoot%\system32\find.exe /I "dotNetFx45LP_Full_">>..\static\custom\StaticDownloadLinks-dotnet.txt
-  echo %%i | %SystemRoot%\system32\find.exe /I "dotnetfx35langpack_x86">>..\static\custom\StaticDownloadLinks-dotnet-x86-glb.txt
+  echo %%i | %SystemRoot%\System32\find.exe /I "dotNetFx40LP_Full_">>..\static\custom\StaticDownloadLinks-dotnet.txt
+  echo %%i | %SystemRoot%\System32\find.exe /I "dotNetFx45LP_Full_">>..\static\custom\StaticDownloadLinks-dotnet.txt
+  echo %%i | %SystemRoot%\System32\find.exe /I "dotnetfx35langpack_x86">>..\static\custom\StaticDownloadLinks-dotnet-x86-glb.txt
 )
 for /F %%i in (..\static\StaticDownloadLinks-dotnet-x64-%1.txt) do (
-  echo %%i | %SystemRoot%\system32\find.exe /I "dotnetfx35langpack_x64">>..\static\custom\StaticDownloadLinks-dotnet-x64-glb.txt
+  echo %%i | %SystemRoot%\System32\find.exe /I "dotnetfx35langpack_x64">>..\static\custom\StaticDownloadLinks-dotnet-x64-glb.txt
 )
 rem *** Add support for %1 to IEx custom URL files ***
 echo Adding support for %1 to IEx custom URL files...

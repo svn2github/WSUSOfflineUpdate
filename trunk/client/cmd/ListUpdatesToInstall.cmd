@@ -25,7 +25,7 @@ goto EvalParams
 :EvalStatics
 if exist %1 (
   if exist "%TEMP%\InstalledUpdateIds.txt" (
-    %SystemRoot%\system32\findstr.exe /L /I /V /G:"%TEMP%\InstalledUpdateIds.txt" %1 >>"%TEMP%\MissingUpdateIds.txt"
+    %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\InstalledUpdateIds.txt" %1 >>"%TEMP%\MissingUpdateIds.txt"
   ) else (
     type %1 >>"%TEMP%\MissingUpdateIds.txt"
   )
@@ -71,7 +71,7 @@ if exist ..\exclude\custom\ExcludeList.txt (
 if "%OS_ARCH%"=="x64" (set OS_SEARCH_DIRS=%OS_NAME%-%OS_ARCH%) else (set OS_SEARCH_DIRS=%OS_NAME% win)
 for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do (
   if exist "%TEMP%\Update.txt" del "%TEMP%\Update.txt"
-  %SystemRoot%\system32\find.exe /I "%%i" "%TEMP%\ExcludeList.txt" >nul 2>&1
+  %SystemRoot%\System32\find.exe /I "%%i" "%TEMP%\ExcludeList.txt" >nul 2>&1
   if errorlevel 1 (
     for %%k in (%OS_SEARCH_DIRS%) do (
       for %%l in (%OS_LANG% glb) do (
@@ -123,7 +123,7 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
       )
     )
   ) else (
-    for /F "tokens=1* delims=,;" %%k in ('%SystemRoot%\system32\findstr.exe /I "%%i" "%TEMP%\ExcludeList.txt"') do (
+    for /F "tokens=1* delims=,;" %%k in ('%SystemRoot%\System32\findstr.exe /I "%%i" "%TEMP%\ExcludeList.txt"') do (
       if "%%l"=="" (
         echo Info: Skipping update %%k due to matching black list entry.
         echo %DATE% %TIME% - Info: Skipped update %%k due to matching black list entry>>%UPDATE_LOGFILE%

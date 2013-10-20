@@ -39,7 +39,7 @@ if /i "%PROCESSOR_ARCHITEW6432%"=="AMD64" goto DLx64
 goto DLx86
 :DLx64
 echo Downloading most recent version of Aria2 (x64)...
-for /F %%i in ('%SystemRoot%\system32\findstr.exe /I "64bit" ..\static\StaticDownloadLinks-aria2.txt') do (
+for /F %%i in ('%SystemRoot%\System32\findstr.exe /I "64bit" ..\static\StaticDownloadLinks-aria2.txt') do (
   %WGET_PATH% -N -P ..\bin %%i
   if errorlevel 1 goto DownloadError
   echo %DATE% %TIME% - Info: Downloaded most recent version of Aria2 ^(x64^)>>%DOWNLOAD_LOGFILE%
@@ -52,7 +52,7 @@ for /F %%i in ('%SystemRoot%\system32\findstr.exe /I "64bit" ..\static\StaticDow
 :DLx86
 if exist ..\bin\aria2c-x86.exe goto Activate
 echo Downloading most recent version of Aria2 (x86)...
-for /F %%i in ('%SystemRoot%\system32\findstr.exe /I "32bit" ..\static\StaticDownloadLinks-aria2.txt') do (
+for /F %%i in ('%SystemRoot%\System32\findstr.exe /I "32bit" ..\static\StaticDownloadLinks-aria2.txt') do (
   %WGET_PATH% -N -P ..\bin %%i
   if errorlevel 1 goto DownloadError
   echo %DATE% %TIME% - Info: Downloaded most recent version of Aria2 ^(x86^)>>%DOWNLOAD_LOGFILE%

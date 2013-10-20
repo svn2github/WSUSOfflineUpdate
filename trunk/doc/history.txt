@@ -796,10 +796,17 @@ Version 8.6 -- 16.09.13
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
 - Support added for Windows 8.1 and Server 2012 R2
+- .NET Framework 4.5 updated to v. 4.5.1 (Thanks to "boco" and "harry")
+- Microsoft Silverlight updated to v. 5.1.20913.0 (Thanks to "harry")
+- C++ 2013 Runtime Libraries integrated (Thanks to "harry")
 - Installation part will now log Windows licensing info (Thanks to Bert Schinkel-Momsen)
 - Static download URLs for aria2 download utility updated to v. 1.18.0
+- Static download definitions added for Disk Cleanup Wizard addon for Windows 7 SP1 (kb2852386) (Thanks to "David" and Th. Baisch)
 - Fix: Installation failed on Japanese Windows Vista systems due to special characters in Win32_OperatingSystem.Caption (Thanks to I. Wada)
-- Fix: DownloadUpdates.cmd script threw misleading file integrity verification warnings for .NET updates (Thanks to "boco")
 - Fix: DoUpdate.cmd script repeatedly installed custom static update definitions for .NET Frameworks 3.5 SP1 and 4 (Thanks to "Wes" and "aker")
-- Fix: Patch installation using Dism.exe failed when called by a custom x86 starter process (Thanks to "MacKeon" and "Baumix")
+- Fix: DownloadUpdates.cmd script threw misleading file integrity verification warnings for .NET updates (Thanks to "boco")
+- Fix: Patch installation using Dism.exe failed when called by a custom x86 starter process (Thanks to "MacKeon", "Baumix" and "boco")
+- Fix: Downloading from internal WSUS server failed (Thanks to P. Pacha)
+- Fix: Download part missed kb2835361 for Windows Vista, 7 and Server 2008(R2) (x86/x64) due to a bug in Microsoft's update catalog file wsusscn2.cab
+- Fix: Download part missed kb2827238 for Excel 2013
 - Fix: Minor fixes in Linux scripts (Thanks to "MacKeon" and H. Hullen)

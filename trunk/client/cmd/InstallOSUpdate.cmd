@@ -57,7 +57,7 @@ if not exist %HASHDEEP_PATH% (
 echo Verifying integrity of %1...
 for /F "tokens=2,3 delims=\" %%i in ("%1") do (
   if exist ..\md\hashes-%%i-%%j.txt (
-    %SystemRoot%\system32\findstr.exe /L /C:%% /C:## /C:%1 ..\md\hashes-%%i-%%j.txt >"%TEMP%\hash-%%i-%%j.txt"
+    %SystemRoot%\System32\findstr.exe /L /C:%% /C:## /C:%1 ..\md\hashes-%%i-%%j.txt >"%TEMP%\hash-%%i-%%j.txt"
     %HASHDEEP_PATH% -a -l -k "%TEMP%\hash-%%i-%%j.txt" %1
     if errorlevel 1 (
       if exist "%TEMP%\hash-%%i-%%j.txt" del "%TEMP%\hash-%%i-%%j.txt"
@@ -67,7 +67,7 @@ for /F "tokens=2,3 delims=\" %%i in ("%1") do (
     goto SkipVerification
   )
   if exist ..\md\hashes-%%i.txt (
-    %SystemRoot%\system32\findstr.exe /L /C:%% /C:## /C:%1 ..\md\hashes-%%i.txt >"%TEMP%\hash-%%i.txt"
+    %SystemRoot%\System32\findstr.exe /L /C:%% /C:## /C:%1 ..\md\hashes-%%i.txt >"%TEMP%\hash-%%i.txt"
     %HASHDEEP_PATH% -a -l -k "%TEMP%\hash-%%i.txt" %1
     if errorlevel 1 (
       if exist "%TEMP%\hash-%%i.txt" del "%TEMP%\hash-%%i.txt"
@@ -80,9 +80,9 @@ for /F "tokens=2,3 delims=\" %%i in ("%1") do (
   echo %DATE% %TIME% - Warning: Hash files ..\md\hashes-%%i-%%j.txt and ..\md\hashes-%%i.txt not found>>%UPDATE_LOGFILE%
 )
 :SkipVerification
-echo %1 | %SystemRoot%\system32\find.exe /I ".exe" >nul 2>&1
+echo %1 | %SystemRoot%\System32\find.exe /I ".exe" >nul 2>&1
 if not errorlevel 1 goto InstExe
-echo %1 | %SystemRoot%\system32\find.exe /I ".msi" >nul 2>&1
+echo %1 | %SystemRoot%\System32\find.exe /I ".msi" >nul 2>&1
 if not errorlevel 1 goto InstMsi
 if /i "%OS_NAME%" EQU "w60" goto FindCabMsu
 if /i "%OS_NAME%" EQU "w61" goto FindCabMsu
@@ -91,9 +91,9 @@ if /i "%OS_NAME%" EQU "w63" goto FindCabMsu
 goto UnsupType
 
 :FindCabMsu
-echo %1 | %SystemRoot%\system32\find.exe /I ".cab" >nul 2>&1
+echo %1 | %SystemRoot%\System32\find.exe /I ".cab" >nul 2>&1
 if not errorlevel 1 goto InstCab
-echo %1 | %SystemRoot%\system32\find.exe /I ".msu" >nul 2>&1
+echo %1 | %SystemRoot%\System32\find.exe /I ".msu" >nul 2>&1
 if not errorlevel 1 goto InstMsu
 goto UnsupType
 
@@ -101,13 +101,13 @@ goto UnsupType
 if "%SELECT_OPTIONS%" NEQ "1" set INSTALL_SWITCHES=%2 %3 %4 %5 %6 %7 %8 %9
 if "%INSTALL_SWITCHES%"=="" (
   for /F %%i in (..\opt\OptionList-Q.txt) do (
-    echo %1 | %SystemRoot%\system32\find.exe /I "%%i" >nul 2>&1
+    echo %1 | %SystemRoot%\System32\find.exe /I "%%i" >nul 2>&1
     if not errorlevel 1 set INSTALL_SWITCHES=/Q
   )
 )
 if "%INSTALL_SWITCHES%"=="" (
   for /F %%i in (..\opt\OptionList-qn.txt) do (
-    echo %1 | %SystemRoot%\system32\find.exe /I "%%i" >nul 2>&1
+    echo %1 | %SystemRoot%\System32\find.exe /I "%%i" >nul 2>&1
     if not errorlevel 1 set INSTALL_SWITCHES=/q /norestart
   )
 )
@@ -124,7 +124,7 @@ goto InstFailure
 :InstMsi
 echo Installing %1...
 pushd %~dp1
-%SystemRoot%\system32\msiexec.exe /i %~nx1 /qn /norestart
+%SystemRoot%\System32\msiexec.exe /i %~nx1 /qn /norestart
 set ERR_LEVEL=%errorlevel%
 popd
 if "%IGNORE_ERRORS%"=="1" goto InstSuccess
@@ -133,7 +133,7 @@ goto InstFailure
 
 :InstMsu
 echo Installing %1...
-%SystemRoot%\system32\wusa.exe %1 /quiet /norestart
+%SystemRoot%\System32\wusa.exe %1 /quiet /norestart
 set ERR_LEVEL=%errorlevel%
 if "%IGNORE_ERRORS%"=="1" goto InstSuccess
 for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
@@ -141,19 +141,14 @@ goto InstFailure
 
 :InstCab
 echo Installing %1...
-if exist %SystemRoot%\system32\Dism.exe (
-  if /i "%PROCESSOR_ARCHITECTURE%"=="AMD64" goto InstDism
-  if /i "%PROCESSOR_ARCHITEW6432%"=="" goto InstDism
-  echo n | %SystemRoot%\system32\comp.exe %SystemRoot%\system32\Dism.exe %SystemRoot%\SysWOW64\Dism.exe /A >nul 2>&1
-  if errorlevel 1 goto InstDism
-)
+if exist %SystemRoot%\System32\Dism.exe goto InstDism
 set ERR_LEVEL=0
 if "%OS_ARCH%"=="x64" (set TOKEN_KB=3) else (set TOKEN_KB=2)
 for /F "tokens=%TOKEN_KB% delims=-" %%i in ("%1") do (
   call SafeRmDir.cmd "%TEMP%\%%i"
   md "%TEMP%\%%i"
-  %SystemRoot%\system32\expand.exe %1 -F:* "%TEMP%\%%i" >nul
-  %SystemRoot%\system32\PkgMgr.exe /ip /m:"%TEMP%\%%i" /quiet /norestart
+  %SystemRoot%\System32\expand.exe %1 -F:* "%TEMP%\%%i" >nul
+  %SystemRoot%\System32\PkgMgr.exe /ip /m:"%TEMP%\%%i" /quiet /norestart
   set ERR_LEVEL=%errorlevel%
   call SafeRmDir.cmd "%TEMP%\%%i"
 )
@@ -162,7 +157,11 @@ for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
 goto InstFailure
 
 :InstDism
-%SystemRoot%\system32\Dism.exe /Online /Quiet /NoRestart /Add-Package /PackagePath:%1 /IgnoreCheck
+if exist %SystemRoot%\Sysnative\Dism.exe (
+  %SystemRoot%\Sysnative\Dism.exe /Online /Quiet /NoRestart /Add-Package /PackagePath:%1 /IgnoreCheck
+) else (
+  %SystemRoot%\System32\Dism.exe /Online /Quiet /NoRestart /Add-Package /PackagePath:%1 /IgnoreCheck
+)
 set ERR_LEVEL=%errorlevel%
 if "%IGNORE_ERRORS%"=="1" goto InstSuccess
 for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess

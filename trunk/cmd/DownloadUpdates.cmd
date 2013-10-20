@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.6+ (r509)
+set WSUSOFFLINE_VERSION=8.6+ (r510)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -153,9 +153,9 @@ if /i "%3"=="/excludestatics" set EXC_STATICS=1
 if /i "%3"=="/includedotnet" set INC_DOTNET=1
 if /i "%3"=="/includemsse" set INC_MSSE=1
 if /i "%3"=="/includewddefs" (
-  echo %1 | %SystemRoot%\system32\find.exe /I "w62" >nul 2>&1
+  echo %1 | %SystemRoot%\System32\find.exe /I "w62" >nul 2>&1
   if errorlevel 1 (
-    echo %1 | %SystemRoot%\system32\find.exe /I "w63" >nul 2>&1
+    echo %1 | %SystemRoot%\System32\find.exe /I "w63" >nul 2>&1
     if errorlevel 1 (set INC_WDDEFS=1) else (set INC_MSSE=1)
   ) else (set INC_MSSE=1)
 )
@@ -183,10 +183,10 @@ shift /3
 goto EvalParams
 
 :NoMoreParams
-echo %1 | %SystemRoot%\system32\find.exe /I "x64" >nul 2>&1
+echo %1 | %SystemRoot%\System32\find.exe /I "x64" >nul 2>&1
 if errorlevel 1 (set TARGET_ARCH=x86) else (set TARGET_ARCH=x64)
 if "%SKIP_TZ%"=="1" goto SkipTZ
-for /F "tokens=3" %%i in ('%SystemRoot%\system32\reg.exe QUERY HKLM\SYSTEM\CurrentControlSet\Control\TimeZoneInformation /v ActiveTimeBias ^| %SystemRoot%\system32\find.exe /I "ActiveTimeBias"') do set TZAB=%%i
+for /F "tokens=3" %%i in ('%SystemRoot%\System32\reg.exe QUERY HKLM\SYSTEM\CurrentControlSet\Control\TimeZoneInformation /v ActiveTimeBias ^| %SystemRoot%\System32\find.exe /I "ActiveTimeBias"') do set TZAB=%%i
 set TZAB=0000000!TZAB:~2!
 set TZAB=!TZAB:~-8!
 set /A TZ=(0x!TZAB:~0,4!^<^<16^|0x!TZAB:~-4!)/60, TZ_MIN=(0x!TZAB:~0,4!^<^<16^|0x!TZAB:~-4!)-(TZ*60)
@@ -200,7 +200,7 @@ if "%TEMP%"=="" goto NoTemp
 pushd "%TEMP%"
 if errorlevel 1 goto NoTempDir
 popd
-set CSCRIPT_PATH=%SystemRoot%\system32\cscript.exe
+set CSCRIPT_PATH=%SystemRoot%\System32\cscript.exe
 if not exist %CSCRIPT_PATH% goto NoCScript
 if exist custom\SetAria2EnvVars.cmd (call custom\SetAria2EnvVars.cmd) else (
   set DLDR_PATH=..\bin\wget.exe
@@ -244,6 +244,7 @@ if exist UpdateOU.new (
   if exist UpdateOU.cmd del UpdateOU.cmd
   ren UpdateOU.new UpdateOU.cmd
 )
+if exist .\--no-proxy\nul rd /S /Q .\--no-proxy
 
 rem *** Obsolete internal stuff ***
 if exist ActivateVistaAllLanguageServicePacks.cmd del ActivateVistaAllLanguageServicePacks.cmd
@@ -503,7 +504,7 @@ if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
 if exist ..\client\md\hashes-dotnet.txt (
   echo Verifying integrity of .NET Frameworks' installation files...
   pushd ..\client\md
-  ..\bin\%HASHDEEP_EXE% -a -l -vv -k hashes-dotnet.txt ..\dotnet\dotnetfx*.exe
+  ..\bin\%HASHDEEP_EXE% -a -l -vv -k hashes-dotnet.txt ..\dotnet\*.exe
   if errorlevel 1 (
     popd
     goto IntegrityError
@@ -511,7 +512,7 @@ if exist ..\client\md\hashes-dotnet.txt (
   popd
   echo %DATE% %TIME% - Info: Verified integrity of .NET Frameworks' installation files>>%DOWNLOAD_LOGFILE%
   if exist ..\client\md\hashes-dotnet-%TARGET_ARCH%-glb.txt (
-    for %%i in (..\client\md\hashes-dotnet-%TARGET_ARCH%-glb.txt) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
+    for %%i in (..\client\md\hashes-dotnet-%TARGET_ARCH%-glb.txt) do echo _%%~ti | %SystemRoot%\System32\find.exe "_%DATE:~-10%" >nul 2>&1
     if not errorlevel 1 (
       echo Skipping download/validation of .NET Frameworks' files ^(%TARGET_ARCH%^) due to 'same day' rule.
       echo %DATE% %TIME% - Info: Skipped download/validation of .NET Frameworks' files ^(%TARGET_ARCH%^) due to 'same day' rule>>%DOWNLOAD_LOGFILE%
@@ -543,7 +544,7 @@ if "%CLEANUP_DL%"=="0" (
 )
 echo Cleaning up client directory for .NET Frameworks 3.5 SP1 and 4.x...
 for /F %%i in ('dir ..\client\dotnet /A:-D /B') do (
-  %SystemRoot%\system32\find.exe /I "%%i" "%TEMP%\StaticDownloadLinks-dotnet.txt" >nul 2>&1
+  %SystemRoot%\System32\find.exe /I "%%i" "%TEMP%\StaticDownloadLinks-dotnet.txt" >nul 2>&1
   if errorlevel 1 (
     del ..\client\dotnet\%%i
     echo %DATE% %TIME% - Info: Deleted ..\client\dotnet\%%i>>%DOWNLOAD_LOGFILE%
@@ -568,7 +569,7 @@ if "%VERIFY_DL%"=="1" (
   echo Creating integrity database for .NET Frameworks' installation files...
   if not exist ..\client\md\nul md ..\client\md
   pushd ..\client\md
-  ..\bin\%HASHDEEP_EXE% -c md5,sha1,sha256 -l ..\dotnet\dotnetfx*.exe >hashes-dotnet.txt
+  ..\bin\%HASHDEEP_EXE% -c md5,sha1,sha256 -l ..\dotnet\*.exe >hashes-dotnet.txt
   if errorlevel 1 (
     popd
     echo Warning: Error creating integrity database ..\client\md\hashes-dotnet.txt.
@@ -601,7 +602,7 @@ if exist ..\client\md\hashes-cpp.txt (
   )
   popd
   echo %DATE% %TIME% - Info: Verified integrity of C++ Runtime Libraries' installation files>>%DOWNLOAD_LOGFILE%
-  for %%i in (..\client\md\hashes-cpp.txt) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
+  for %%i in (..\client\md\hashes-cpp.txt) do echo _%%~ti | %SystemRoot%\System32\find.exe "_%DATE:~-10%" >nul 2>&1
   if not errorlevel 1 (
     echo Skipping download/validation of C++ Runtime Libraries' installation files due to 'same day' rule.
     echo %DATE% %TIME% - Info: Skipped download/validation of C++ Runtime Libraries' installation files due to 'same day' rule>>%DOWNLOAD_LOGFILE%
@@ -642,9 +643,9 @@ echo %DATE% %TIME% - Info: Downloaded/validated installation files for C++ Runti
 if "%CLEANUP_DL%"=="0" goto VerifyCPP
 echo Cleaning up client directory for C++ Runtime Libraries...
 for /F %%i in ('dir ..\client\cpp /A:-D /B') do (
-  %SystemRoot%\system32\find.exe /I "%%i" ..\static\StaticDownloadLinks-cpp-x64-glb.txt >nul 2>&1
+  %SystemRoot%\System32\find.exe /I "%%i" ..\static\StaticDownloadLinks-cpp-x64-glb.txt >nul 2>&1
   if errorlevel 1 (
-    %SystemRoot%\system32\find.exe /I "%%i" ..\static\StaticDownloadLinks-cpp-x86-glb.txt >nul 2>&1
+    %SystemRoot%\System32\find.exe /I "%%i" ..\static\StaticDownloadLinks-cpp-x86-glb.txt >nul 2>&1
     if errorlevel 1 (
       del ..\client\cpp\%%i
       echo %DATE% %TIME% - Info: Deleted ..\client\cpp\%%i>>%DOWNLOAD_LOGFILE%
@@ -705,7 +706,7 @@ if exist ..\client\md\hashes-msse.txt (
   popd
   echo %DATE% %TIME% - Info: Verified integrity of Microsoft Security Essentials files>>%DOWNLOAD_LOGFILE%
   if exist ..\client\msse\%TARGET_ARCH%-glb\mpam*.exe (
-    for %%i in (..\client\msse\%TARGET_ARCH%-glb\mpam*.exe) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
+    for %%i in (..\client\msse\%TARGET_ARCH%-glb\mpam*.exe) do echo _%%~ti | %SystemRoot%\System32\find.exe "_%DATE:~-10%" >nul 2>&1
     if not errorlevel 1 (
       echo Skipping download/validation of Microsoft Security Essentials files ^(%TARGET_ARCH%^) due to 'same day' rule.
       echo %DATE% %TIME% - Info: Skipped download/validation of Microsoft Security Essentials files ^(%TARGET_ARCH%^) due to 'same day' rule>>%DOWNLOAD_LOGFILE%
@@ -752,7 +753,7 @@ if "%CLEANUP_DL%"=="0" (
 )
 echo Cleaning up client directory for Microsoft Security Essentials...
 for /F %%i in ('dir ..\client\msse\%TARGET_ARCH%-glb /A:-D /B') do (
-  %SystemRoot%\system32\find.exe /I "%%i" "%TEMP%\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt" >nul 2>&1
+  %SystemRoot%\System32\find.exe /I "%%i" "%TEMP%\StaticDownloadLinks-msse-%TARGET_ARCH%-glb.txt" >nul 2>&1
   if errorlevel 1 (
     del ..\client\msse\%TARGET_ARCH%-glb\%%i
     echo %DATE% %TIME% - Info: Deleted ..\client\msse\%TARGET_ARCH%-glb\%%i>>%DOWNLOAD_LOGFILE%
@@ -811,7 +812,7 @@ if exist ..\client\md\hashes-wddefs.txt (
   popd
   echo %DATE% %TIME% - Info: Verified integrity of Windows Defender definition files>>%DOWNLOAD_LOGFILE%
   if exist ..\client\wddefs\%TARGET_ARCH%-glb\mpas*.exe (
-    for %%i in (..\client\wddefs\%TARGET_ARCH%-glb\mpas*.exe) do echo _%%~ti | %SystemRoot%\system32\find.exe "_%DATE:~-10%" >nul 2>&1
+    for %%i in (..\client\wddefs\%TARGET_ARCH%-glb\mpas*.exe) do echo _%%~ti | %SystemRoot%\System32\find.exe "_%DATE:~-10%" >nul 2>&1
     if not errorlevel 1 (
       echo Skipping download/validation of Windows Defender definition files ^(%TARGET_ARCH%^) due to 'same day' rule.
       echo %DATE% %TIME% - Info: Skipped download/validation of Windows Defender definition files ^(%TARGET_ARCH%^) due to 'same day' rule>>%DOWNLOAD_LOGFILE%
@@ -942,7 +943,7 @@ if not exist "%TEMP%\StaticDownloadLinks-%1-%2.txt" goto SkipStatics
 
 :EvalStatics
 if "%EXC_SP%"=="1" (
-  %SystemRoot%\system32\findstr.exe /L /I /V /G:..\exclude\ExcludeList-SPs.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >"%TEMP%\ValidStaticLinks-%1-%2.txt"
+  %SystemRoot%\System32\findstr.exe /L /I /V /G:..\exclude\ExcludeList-SPs.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >"%TEMP%\ValidStaticLinks-%1-%2.txt"
   del "%TEMP%\StaticDownloadLinks-%1-%2.txt"
 ) else (
   ren "%TEMP%\StaticDownloadLinks-%1-%2.txt" ValidStaticLinks-%1-%2.txt
@@ -964,17 +965,17 @@ rem *** Extract Microsoft's update catalog file package.xml ***
 echo Extracting Microsoft's update catalog file package.xml...
 if exist "%TEMP%\package.cab" del "%TEMP%\package.cab"
 if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
-%SystemRoot%\system32\expand.exe ..\client\wsus\wsusscn2.cab -F:package.cab "%TEMP%" >nul
-%SystemRoot%\system32\expand.exe "%TEMP%\package.cab" "%TEMP%\package.xml" >nul
+%SystemRoot%\System32\expand.exe ..\client\wsus\wsusscn2.cab -F:package.cab "%TEMP%" >nul
+%SystemRoot%\System32\expand.exe "%TEMP%\package.cab" "%TEMP%\package.xml" >nul
 del "%TEMP%\package.cab"
 rem *** Determine superseded updates ***
-for %%i in (..\client\wsus\wsusscn2.cab) do echo %%~ai | %SystemRoot%\system32\find.exe /I "a" >nul 2>&1
+for %%i in (..\client\wsus\wsusscn2.cab) do echo %%~ai | %SystemRoot%\System32\find.exe /I "a" >nul 2>&1
 if not errorlevel 1 (
   if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
 )
 copy /Y ..\exclude\ExcludeList-superseded-exclude.txt ..\exclude\ExcludeList-superseded-exclude.ori >nul
 %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\exclude %DLDR_LOPT% http://download.wsusoffline.net/ExcludeList-superseded-exclude.txt
-echo n | %SystemRoot%\system32\comp.exe ..\exclude\ExcludeList-superseded-exclude.txt ..\exclude\ExcludeList-superseded-exclude.ori /A /L /C >nul 2>&1
+echo n | %SystemRoot%\System32\comp.exe ..\exclude\ExcludeList-superseded-exclude.txt ..\exclude\ExcludeList-superseded-exclude.ori /A /L /C >nul 2>&1
 if errorlevel 1 (
   if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
 )
@@ -989,30 +990,30 @@ echo %TIME% - Determining superseded updates (please be patient, this will take 
 if errorlevel 1 goto DownloadError
 %CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractSupersedingRevisionIds.xsl "%TEMP%\SupersedingRevisionIds.txt"
 if errorlevel 1 goto DownloadError
-%SystemRoot%\system32\findstr.exe /L /G:"%TEMP%\SupersedingRevisionIds.txt" "%TEMP%\ValidUpdateRevisionIds.txt" >"%TEMP%\ValidSupersedingRevisionIds.txt"
+%SystemRoot%\System32\findstr.exe /L /G:"%TEMP%\SupersedingRevisionIds.txt" "%TEMP%\ValidUpdateRevisionIds.txt" >"%TEMP%\ValidSupersedingRevisionIds.txt"
 del "%TEMP%\ValidUpdateRevisionIds.txt"
 del "%TEMP%\SupersedingRevisionIds.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractSupersededUpdateRelations.xsl "%TEMP%\SupersededUpdateRelations.txt"
 if errorlevel 1 goto DownloadError
-%SystemRoot%\system32\findstr.exe /L /G:"%TEMP%\ValidSupersedingRevisionIds.txt" "%TEMP%\SupersededUpdateRelations.txt" >"%TEMP%\ValidSupersededUpdateRelations.txt"
+%SystemRoot%\System32\findstr.exe /L /G:"%TEMP%\ValidSupersedingRevisionIds.txt" "%TEMP%\SupersededUpdateRelations.txt" >"%TEMP%\ValidSupersededUpdateRelations.txt"
 del "%TEMP%\SupersededUpdateRelations.txt"
 del "%TEMP%\ValidSupersedingRevisionIds.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractBundledUpdateRelationsAndFileIds.xsl "%TEMP%\BundledUpdateRelationsAndFileIds.txt"
 if errorlevel 1 goto DownloadError
 %CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\ValidSupersededUpdateRelations.txt" "%TEMP%\ValidSupersededRevisionIds.txt" /firstonly
 del "%TEMP%\ValidSupersededUpdateRelations.txt"
-%SystemRoot%\system32\findstr.exe /L /G:"%TEMP%\ValidSupersededRevisionIds.txt" "%TEMP%\BundledUpdateRelationsAndFileIds.txt" >"%TEMP%\SupersededRevisionAndFileIds.txt"
+%SystemRoot%\System32\findstr.exe /L /G:"%TEMP%\ValidSupersededRevisionIds.txt" "%TEMP%\BundledUpdateRelationsAndFileIds.txt" >"%TEMP%\SupersededRevisionAndFileIds.txt"
 del "%TEMP%\ValidSupersededRevisionIds.txt"
 del "%TEMP%\BundledUpdateRelationsAndFileIds.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\SupersededRevisionAndFileIds.txt" "%TEMP%\SupersededFileIds.txt" /secondonly
 del "%TEMP%\SupersededRevisionAndFileIds.txt"
-%SystemRoot%\system32\sort.exe "%TEMP%\SupersededFileIds.txt" /O "%TEMP%\SupersededFileIdsSorted.txt"
+%SystemRoot%\System32\sort.exe "%TEMP%\SupersededFileIds.txt" /O "%TEMP%\SupersededFileIdsSorted.txt"
 del "%TEMP%\SupersededFileIds.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs ExtractUniqueFromSorted.vbs "%TEMP%\SupersededFileIdsSorted.txt" "%TEMP%\SupersededFileIdsUnique.txt"
 del "%TEMP%\SupersededFileIdsSorted.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractUpdateCabExeIdsAndLocations.xsl "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 if errorlevel 1 goto DownloadError
-%SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\SupersededFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\SupersededCabExeIdsAndLocations.txt"
+%SystemRoot%\System32\findstr.exe /B /L /G:"%TEMP%\SupersededFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\SupersededCabExeIdsAndLocations.txt"
 del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 del "%TEMP%\SupersededFileIdsUnique.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\SupersededCabExeIdsAndLocations.txt" "%TEMP%\ExcludeList-superseded-all.txt" /noids
@@ -1027,13 +1028,13 @@ if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
   )
 )
 if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
-  %SystemRoot%\system32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-superseded-exclude.txt" "%TEMP%\ExcludeList-superseded-all.txt" >..\exclude\ExcludeList-superseded.txt
+  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-superseded-exclude.txt" "%TEMP%\ExcludeList-superseded-all.txt" >..\exclude\ExcludeList-superseded.txt
   del "%TEMP%\ExcludeList-superseded-all.txt"
   del "%TEMP%\ExcludeList-superseded-exclude.txt"
 ) else (
   move /Y "%TEMP%\ExcludeList-superseded-all.txt" ..\exclude\ExcludeList-superseded.txt >nul
 )
-%SystemRoot%\system32\attrib.exe -A ..\client\wsus\wsusscn2.cab
+%SystemRoot%\System32\attrib.exe -A ..\client\wsus\wsusscn2.cab
 echo %TIME% - Done.
 echo %DATE% %TIME% - Info: Determined superseded updates>>%DOWNLOAD_LOGFILE%
 :SkipSuperseded
@@ -1071,7 +1072,7 @@ if exist ..\exclude\custom\ExcludeList-%1-%3.txt (
 if exist ..\exclude\ExcludeList-superseded.txt (
   type ..\exclude\ExcludeList-superseded.txt >>"%TEMP%\ExcludeList-%1.txt"
 )
-%SystemRoot%\system32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DynamicDownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDynamicLinks-%1-%2.txt"
+%SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DynamicDownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDynamicLinks-%1-%2.txt"
 if not exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" ren "%TEMP%\DynamicDownloadLinks-%1-%2.txt" ValidDynamicLinks-%1-%2.txt
 if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
 if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
@@ -1131,19 +1132,19 @@ set UPDATE_CATEGORY=
 set UPDATE_LANGUAGES=
 del "%TEMP%\UpdateCategoriesAndFileIds.txt"
 
-%SystemRoot%\system32\sort.exe "%TEMP%\OfficeFileIds.txt" /O "%TEMP%\OfficeFileIdsSortedForward.txt"
-%SystemRoot%\system32\sort.exe /R "%TEMP%\OfficeFileIds.txt" /O "%TEMP%\OfficeFileIdsSortedReverse.txt"
+%SystemRoot%\System32\sort.exe "%TEMP%\OfficeFileIds.txt" /O "%TEMP%\OfficeFileIdsSortedForward.txt"
+%SystemRoot%\System32\sort.exe /R "%TEMP%\OfficeFileIds.txt" /O "%TEMP%\OfficeFileIdsSortedReverse.txt"
 del "%TEMP%\OfficeFileIds.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs ExtractUniqueFromSorted.vbs "%TEMP%\OfficeFileIdsSortedForward.txt" "%TEMP%\OfficeFileIdsUniqueForward.txt"
 del "%TEMP%\OfficeFileIdsSortedForward.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs ExtractUniqueFromSorted.vbs "%TEMP%\OfficeFileIdsSortedReverse.txt" "%TEMP%\OfficeFileIdsUniqueReverse.txt"
 del "%TEMP%\OfficeFileIdsSortedReverse.txt"
-%SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIdsUniqueForward.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocationsDouble.txt"
+%SystemRoot%\System32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIdsUniqueForward.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocationsDouble.txt"
 del "%TEMP%\OfficeFileIdsUniqueForward.txt"
-%SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIdsUniqueReverse.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >>"%TEMP%\OfficeUpdateCabExeIdsAndLocationsDouble.txt"
+%SystemRoot%\System32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIdsUniqueReverse.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >>"%TEMP%\OfficeUpdateCabExeIdsAndLocationsDouble.txt"
 del "%TEMP%\OfficeFileIdsUniqueReverse.txt"
 del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
-%SystemRoot%\system32\sort.exe "%TEMP%\OfficeUpdateCabExeIdsAndLocationsDouble.txt" /O "%TEMP%\OfficeUpdateCabExeIdsAndLocationsSorted.txt"
+%SystemRoot%\System32\sort.exe "%TEMP%\OfficeUpdateCabExeIdsAndLocationsDouble.txt" /O "%TEMP%\OfficeUpdateCabExeIdsAndLocationsSorted.txt"
 del "%TEMP%\OfficeUpdateCabExeIdsAndLocationsDouble.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs ExtractUniqueFromSorted.vbs "%TEMP%\OfficeUpdateCabExeIdsAndLocationsSorted.txt" "%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
 del "%TEMP%\OfficeUpdateCabExeIdsAndLocationsSorted.txt"
@@ -1173,7 +1174,7 @@ if exist ..\exclude\custom\ExcludeList-%1.txt (
 if exist ..\exclude\ExcludeList-superseded.txt (
   type ..\exclude\ExcludeList-superseded.txt >>"%TEMP%\ExcludeList-%1.txt"
 )
-%SystemRoot%\system32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DynamicDownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDynamicLinks-%1-%2.txt"
+%SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DynamicDownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDynamicLinks-%1-%2.txt"
 if not exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" ren "%TEMP%\DynamicDownloadLinks-%1-%2.txt" ValidDynamicLinks-%1-%2.txt
 if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
 if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
@@ -1190,8 +1191,8 @@ if "%4"=="/skipdownload" (
 if not exist "%TEMP%\ValidStaticLinks-%1-%2.txt" goto DownloadDynamicUpdates
 echo Downloading/validating statically defined updates for %1 %2...
 set LINES_COUNT=0
-for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidStaticLinks-%1-%2.txt"') do set LINES_COUNT=%%i
-for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidStaticLinks-%1-%2.txt"') do (
+for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /N $ "%TEMP%\ValidStaticLinks-%1-%2.txt"') do set LINES_COUNT=%%i
+for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /N $ "%TEMP%\ValidStaticLinks-%1-%2.txt"') do (
   echo Downloading/validating update %%i of %LINES_COUNT%...
   for /F "tokens=1,2 delims=," %%k in ("%%j") do (
     if "%%l" NEQ "" (
@@ -1222,9 +1223,9 @@ echo %DATE% %TIME% - Info: Downloaded/validated %LINES_COUNT% statically defined
 if not exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" goto CleanupDownload
 echo Downloading/validating dynamically determined updates for %1 %2...
 set LINES_COUNT=0
-for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidDynamicLinks-%1-%2.txt"') do set LINES_COUNT=%%i
+for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /N $ "%TEMP%\ValidDynamicLinks-%1-%2.txt"') do set LINES_COUNT=%%i
 if "%WSUS_URL%"=="" (
-  for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidDynamicLinks-%1-%2.txt"') do (
+  for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /N $ "%TEMP%\ValidDynamicLinks-%1-%2.txt"') do (
     echo Downloading/validating update %%i of %LINES_COUNT%...
     %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\client\%1\%2 %DLDR_LOPT% %%j
     if errorlevel 1 (
@@ -1237,7 +1238,7 @@ if "%WSUS_URL%"=="" (
   %CSCRIPT_PATH% //Nologo //B //E:vbs CreateDownloadTable.vbs "%TEMP%\ValidDynamicLinks-%1-%2.txt" %WSUS_URL%
   if errorlevel 1 goto DownloadError
   echo %DATE% %TIME% - Info: Created WSUS download table for %1 %2>>%DOWNLOAD_LOGFILE%
-  for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\ValidDynamicLinks-%1-%2.csv"') do (
+  for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /N $ "%TEMP%\ValidDynamicLinks-%1-%2.csv"') do (
     echo Downloading/validating update %%i of %LINES_COUNT%...
     for /F "tokens=1-3 delims=," %%k in ("%%j") do (
       if "%%m"=="" (
@@ -1255,7 +1256,7 @@ if "%WSUS_URL%"=="" (
         if "%WSUS_BY_PROXY%"=="1" (
           %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\client\%1\%2 %DLDR_LOPT% %%l
         ) else (
-          %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% --no-proxy ..\client\%1\%2 %DLDR_LOPT% %%l
+          %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% --no-proxy %DLDR_POPT% ..\client\%1\%2 %DLDR_LOPT% %%l
         )
         if errorlevel 1 (
           if exist ..\client\%1\%2\%%~nxl (
@@ -1300,7 +1301,7 @@ if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" (
 )
 for /F %%i in ('dir ..\client\%1\%2 /A:-D /B') do (
   if exist "%TEMP%\ValidLinks-%1-%2.txt" (
-    %SystemRoot%\system32\find.exe /I "%%i" "%TEMP%\ValidLinks-%1-%2.txt" >nul 2>&1
+    %SystemRoot%\System32\find.exe /I "%%i" "%TEMP%\ValidLinks-%1-%2.txt" >nul 2>&1
     if errorlevel 1 (
       del ..\client\%1\%2\%%i
       echo %DATE% %TIME% - Info: Deleted ..\client\%1\%2\%%i>>%DOWNLOAD_LOGFILE%
@@ -1370,7 +1371,7 @@ if errorlevel 1 (
   )
 )
 if not exist ..\client\md\hashes-%1-%2.txt goto EndDownload
-%SystemRoot%\system32\findstr.exe _[A-Fa-f0-9]*\.[A-Za-z0-9][A-Za-z0-9][A-Za-z0-9]$ ..\client\md\hashes-%1-%2.txt >"%TEMP%\sha1-%1-%2.txt"
+%SystemRoot%\System32\findstr.exe _[A-Fa-f0-9]*\.[A-Za-z0-9][A-Za-z0-9][A-Za-z0-9]$ ..\client\md\hashes-%1-%2.txt >"%TEMP%\sha1-%1-%2.txt"
 for /F "usebackq tokens=3,5 delims=," %%i in ("%TEMP%\sha1-%1-%2.txt") do (
   for /F "tokens=2 delims=_" %%k in ("%%j") do (
     for /F "tokens=1 delims=." %%l in ("%%k") do (
@@ -1378,7 +1379,7 @@ for /F "usebackq tokens=3,5 delims=," %%i in ("%TEMP%\sha1-%1-%2.txt") do (
         pushd ..\client\md
         del %%j
         ren hashes-%1-%2.txt hashes-%1-%2.bak
-        %SystemRoot%\system32\findstr.exe /L /I /V "%%j" hashes-%1-%2.bak >hashes-%1-%2.txt
+        %SystemRoot%\System32\findstr.exe /L /I /V "%%j" hashes-%1-%2.bak >hashes-%1-%2.txt
         del hashes-%1-%2.bak
         popd
         echo Warning: Deleted file %%j due to mismatching SHA-1 message digest ^(%%i^).

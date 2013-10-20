@@ -1,5 +1,5 @@
 http://www.download.windowsupdate.com/msdownload/update/v3/static/trustedr/en/rootsupd.exe
 http://download.microsoft.com/download/4/6/C/46C2EDE9-4CA4-4BED-9E2D-65934FA19407/rvkroots.exe
 http://download.microsoft.com/download/8/4/A/84A35BF1-DAFE-4AE8-82AF-AD2AE20B6B14/directx_Jun2010_redist.exe
-http://download.microsoft.com/download/B/3/C/B3CF6815-40B1-4E36-8746-C4A0381AD260/20513.00/runtime/Silverlight.exe
-http://download.microsoft.com/download/B/3/C/B3CF6815-40B1-4E36-8746-C4A0381AD260/20513.00/runtime/Silverlight_x64.exe
+http://download.microsoft.com/download/6/B/8/6B885B0B-73D4-4BCE-BFFF-154B4A402D22/20913.00/Silverlight.exe
+http://download.microsoft.com/download/6/B/8/6B885B0B-73D4-4BCE-BFFF-154B4A402D22/20913.00/Silverlight_x64.exe

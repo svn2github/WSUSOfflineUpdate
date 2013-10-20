@@ -15,10 +15,10 @@ popd
 if "%OS_NAME%"=="" goto NoOSName
 if not exist "%TEMP%\UpdatesToInstall.txt" goto NoUpdates
 
-for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\UpdatesToInstall.txt"') do set LINES_COUNT=%%i
-for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TEMP%\UpdatesToInstall.txt"') do (
+for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /N $ "%TEMP%\UpdatesToInstall.txt"') do set LINES_COUNT=%%i
+for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /N $ "%TEMP%\UpdatesToInstall.txt"') do (
   for %%k in (ofc o2k3 o2k7 o2k10 o2k13) do (
-    echo %%j | %SystemRoot%\system32\find.exe /I "\%%k\" >nul 2>&1
+    echo %%j | %SystemRoot%\System32\find.exe /I "\%%k\" >nul 2>&1
     if not errorlevel 1 (
       echo Installing update %%i of %LINES_COUNT%...
       call InstallOfficeUpdate.cmd %%j %*
@@ -26,7 +26,7 @@ for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /N $ "%TE
     )
   )
   for %%k in (dotnet %OS_NAME%-%OS_ARCH% %OS_NAME% win) do (
-    echo %%j | %SystemRoot%\system32\find.exe /I "\%%k\" >nul 2>&1
+    echo %%j | %SystemRoot%\System32\find.exe /I "\%%k\" >nul 2>&1
     if not errorlevel 1 (
       echo Installing update %%i of %LINES_COUNT%...
       call InstallOSUpdate.cmd %%j %*

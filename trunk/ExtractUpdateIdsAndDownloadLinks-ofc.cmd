@@ -11,12 +11,12 @@ if not exist "%TEMP%\wsusscn2.cab" (
 )
 if exist "%TEMP%\package.cab" del "%TEMP%\package.cab"
 if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
-%SystemRoot%\system32\expand.exe "%TEMP%\wsusscn2.cab" -F:package.cab "%TEMP%"
-%SystemRoot%\system32\expand.exe "%TEMP%\package.cab" "%TEMP%\package.xml"
+%SystemRoot%\System32\expand.exe "%TEMP%\wsusscn2.cab" -F:package.cab "%TEMP%"
+%SystemRoot%\System32\expand.exe "%TEMP%\package.cab" "%TEMP%\package.xml"
 del "%TEMP%\package.cab"
 
-%SystemRoot%\system32\cscript.exe //Nologo //B //E:vbs .\cmd\XSLT.vbs "%TEMP%\package.xml" .\xslt\ExtractUpdateCategoriesAndFileIds.xsl "%TEMP%\UpdateCategoriesAndFileIds.txt"
-%SystemRoot%\system32\cscript.exe //Nologo //B //E:vbs .\cmd\XSLT.vbs "%TEMP%\package.xml" .\xslt\ExtractUpdateCabExeIdsAndLocations.xsl "%TEMP%\UpdateCabExeIdsAndLocations.txt"
+%SystemRoot%\System32\cscript.exe //Nologo //B //E:vbs .\cmd\XSLT.vbs "%TEMP%\package.xml" .\xslt\ExtractUpdateCategoriesAndFileIds.xsl "%TEMP%\UpdateCategoriesAndFileIds.txt"
+%SystemRoot%\System32\cscript.exe //Nologo //B //E:vbs .\cmd\XSLT.vbs "%TEMP%\package.xml" .\xslt\ExtractUpdateCabExeIdsAndLocations.xsl "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 goto DoIt
 
 :Determine
@@ -63,21 +63,21 @@ set UPDATE_CATEGORY=
 set UPDATE_LANGUAGES=
 rem del "%TEMP%\UpdateCategoriesAndFileIds.txt"
 
-%SystemRoot%\system32\sort.exe "%TEMP%\OfficeFileIds.txt" /O "%TEMP%\OfficeFileIdsSortedForward.txt"
-%SystemRoot%\system32\sort.exe /R "%TEMP%\OfficeFileIds.txt" /O "%TEMP%\OfficeFileIdsSortedReverse.txt"
+%SystemRoot%\System32\sort.exe "%TEMP%\OfficeFileIds.txt" /O "%TEMP%\OfficeFileIdsSortedForward.txt"
+%SystemRoot%\System32\sort.exe /R "%TEMP%\OfficeFileIds.txt" /O "%TEMP%\OfficeFileIdsSortedReverse.txt"
 rem del "%TEMP%\OfficeFileIds.txt"
-%SystemRoot%\system32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractUniqueFromSorted.vbs "%TEMP%\OfficeFileIdsSortedForward.txt" "%TEMP%\OfficeFileIdsUniqueForward.txt"
+%SystemRoot%\System32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractUniqueFromSorted.vbs "%TEMP%\OfficeFileIdsSortedForward.txt" "%TEMP%\OfficeFileIdsUniqueForward.txt"
 rem del "%TEMP%\OfficeFileIdsSortedForward.txt"
-%SystemRoot%\system32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractUniqueFromSorted.vbs "%TEMP%\OfficeFileIdsSortedReverse.txt" "%TEMP%\OfficeFileIdsUniqueReverse.txt"
+%SystemRoot%\System32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractUniqueFromSorted.vbs "%TEMP%\OfficeFileIdsSortedReverse.txt" "%TEMP%\OfficeFileIdsUniqueReverse.txt"
 rem del "%TEMP%\OfficeFileIdsSortedReverse.txt"
-%SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIdsUniqueForward.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocationsDouble.txt"
+%SystemRoot%\System32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIdsUniqueForward.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocationsDouble.txt"
 rem del "%TEMP%\OfficeFileIdsUniqueForward.txt"
-%SystemRoot%\system32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIdsUniqueReverse.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >>"%TEMP%\OfficeUpdateCabExeIdsAndLocationsDouble.txt"
+%SystemRoot%\System32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIdsUniqueReverse.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >>"%TEMP%\OfficeUpdateCabExeIdsAndLocationsDouble.txt"
 rem del "%TEMP%\OfficeFileIdsUniqueReverse.txt"
 rem del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
-%SystemRoot%\system32\sort.exe "%TEMP%\OfficeUpdateCabExeIdsAndLocationsDouble.txt" /O "%TEMP%\OfficeUpdateCabExeIdsAndLocationsSorted.txt"
+%SystemRoot%\System32\sort.exe "%TEMP%\OfficeUpdateCabExeIdsAndLocationsDouble.txt" /O "%TEMP%\OfficeUpdateCabExeIdsAndLocationsSorted.txt"
 rem del "%TEMP%\OfficeUpdateCabExeIdsAndLocationsDouble.txt"
-%SystemRoot%\system32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractUniqueFromSorted.vbs "%TEMP%\OfficeUpdateCabExeIdsAndLocationsSorted.txt" "%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
+%SystemRoot%\System32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractUniqueFromSorted.vbs "%TEMP%\OfficeUpdateCabExeIdsAndLocationsSorted.txt" "%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
 rem del "%TEMP%\OfficeUpdateCabExeIdsAndLocationsSorted.txt"
 
 if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
@@ -92,7 +92,7 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\OfficeUpdateCabExeIdsAndLo
 )
 rem del "%TEMP%\OfficeUpdateAndFileIds.txt"
 rem del "%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
-%SystemRoot%\system32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractIdsAndFileNames.vbs "%TEMP%\UpdateTableURL-%1-%2.csv" "%TEMP%\UpdateTable-%1-%2.csv"
+%SystemRoot%\System32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractIdsAndFileNames.vbs "%TEMP%\UpdateTableURL-%1-%2.csv" "%TEMP%\UpdateTable-%1-%2.csv"
 rem del "%TEMP%\UpdateTableURL-%1-%2.csv"
 goto :EoF
 

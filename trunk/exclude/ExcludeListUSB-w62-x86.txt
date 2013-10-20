@@ -22,8 +22,8 @@ w61-x64\
 w62-x64\
 w63-x64\
 wddefs\
-*-x64
 dotnetfx*
 vcredist*_x64
 MSEInstall*
+Silverlight_x64*
 .au3

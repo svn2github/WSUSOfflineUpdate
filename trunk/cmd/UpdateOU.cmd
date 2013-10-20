@@ -69,7 +69,7 @@ for /F %%i in (..\static\StaticDownloadLink-recent.txt) do (
   echo %DATE% %TIME% - Info: Deleted %%~ni_hashes.txt>>%DOWNLOAD_LOGFILE%
 )
 echo Updating WSUS Offline Update...
-%SystemRoot%\system32\xcopy.exe ..\wsusoffline .. /S /Q /Y
+%SystemRoot%\System32\xcopy.exe ..\wsusoffline .. /S /Q /Y
 rd /S /Q ..\wsusoffline
 echo %DATE% %TIME% - Info: Updated WSUS Offline Update>>%DOWNLOAD_LOGFILE%
 if "%RESTART_GENERATOR%"=="1" (

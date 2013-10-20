@@ -8,14 +8,11 @@
 *wxp*
 *w60*
 *w61*
-*w63*
 */w62/*
+*w63*
 *wddefs*
 */*/x86-glb/*
-*-x86*
 *dotnetfx35*
 *dotNetFx40*
-*dotnetfx45*
-*dotNetFx45*
 *MSEInstall*
 *.au3

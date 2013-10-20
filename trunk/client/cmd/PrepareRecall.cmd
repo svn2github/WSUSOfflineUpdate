@@ -41,13 +41,13 @@ if errorlevel 1 (
 if "%OS_NAME%"=="wxp" goto SkipPowerCfg
 if "%OS_NAME%"=="w2k3" goto SkipPowerCfg
 echo Creating temporary power scheme...
-for /F "tokens=2 delims=:(" %%i in ('%SystemRoot%\system32\powercfg.exe -getactivescheme') do echo %%i>%SystemRoot%\woubak-pwrscheme-act.txt
+for /F "tokens=2 delims=:(" %%i in ('%SystemRoot%\System32\powercfg.exe -getactivescheme') do echo %%i>%SystemRoot%\woubak-pwrscheme-act.txt
 for /F %%i in (%SystemRoot%\woubak-pwrscheme-act.txt) do (
-  for /F "tokens=2 delims=:(" %%j in ('%SystemRoot%\system32\powercfg.exe -duplicatescheme %%i') do echo %%j>%SystemRoot%\woubak-pwrscheme-temp.txt
+  for /F "tokens=2 delims=:(" %%j in ('%SystemRoot%\System32\powercfg.exe -duplicatescheme %%i') do echo %%j>%SystemRoot%\woubak-pwrscheme-temp.txt
 )
 for /F %%i in (%SystemRoot%\woubak-pwrscheme-temp.txt) do (
-  %SystemRoot%\system32\powercfg.exe -changename %%i WOUTemp
-  %SystemRoot%\system32\powercfg.exe -setactive %%i
+  %SystemRoot%\System32\powercfg.exe -changename %%i WOUTemp
+  %SystemRoot%\System32\powercfg.exe -setactive %%i
 )
 if errorlevel 1 (
   echo Warning: Activation of temporary power scheme failed.
@@ -61,15 +61,15 @@ echo Preparing recall directory...
 if not exist %SystemRoot%\Temp\WOURecall\nul md %SystemRoot%\Temp\WOURecall
 for %%i in (CleanupRecall.cmd DeleteUpdateAdmin.vbs RecallStub.cmd ..\bin\Autologon.exe) do copy /Y %%i %SystemRoot%\Temp\WOURecall >nul
 echo @%*>%SystemRoot%\Temp\WOURecall\RecallUpdate.cmd
-%SystemRoot%\system32\net.exe use %~d0 >nul 2>&1
+%SystemRoot%\System32\net.exe use %~d0 >nul 2>&1
 if errorlevel 1 (
   echo %DATE% %TIME% - Info: WSUS Offline Update was started from a local drive ^(%~d0^)>>%UPDATE_LOGFILE%
 ) else (
   if exist %SystemRoot%\Temp\WOURecall\ReconnectNetDrive.cmd del %SystemRoot%\Temp\WOURecall\ReconnectNetDrive.cmd
-  for /F "tokens=2*" %%i in ('%SystemRoot%\system32\net.exe use %~d0') do echo @%SystemRoot%\system32\net.exe use %~d0 "%%j" /persistent:no | %SystemRoot%\system32\find.exe "\\">>%SystemRoot%\Temp\WOURecall\ReconnectNetDrive.cmd
+  for /F "tokens=2*" %%i in ('%SystemRoot%\System32\net.exe use %~d0') do echo @%SystemRoot%\System32\net.exe use %~d0 "%%j" /persistent:no | %SystemRoot%\System32\find.exe "\\">>%SystemRoot%\Temp\WOURecall\ReconnectNetDrive.cmd
   for %%i in (%SystemRoot%\Temp\WOURecall\ReconnectNetDrive.cmd) do if %%~zi==0 del %%i
   if not exist %SystemRoot%\Temp\WOURecall\ReconnectNetDrive.cmd (
-    for /F "tokens=1*" %%i in ('%SystemRoot%\system32\net.exe use %~d0') do echo @%SystemRoot%\system32\net.exe use %~d0 "%%j" /persistent:no | %SystemRoot%\system32\find.exe "\\">>%SystemRoot%\Temp\WOURecall\ReconnectNetDrive.cmd
+    for /F "tokens=1*" %%i in ('%SystemRoot%\System32\net.exe use %~d0') do echo @%SystemRoot%\System32\net.exe use %~d0 "%%j" /persistent:no | %SystemRoot%\System32\find.exe "\\">>%SystemRoot%\Temp\WOURecall\ReconnectNetDrive.cmd
   )
   echo %DATE% %TIME% - Info: WSUS Offline Update was started from a network drive ^(%~d0^)>>%UPDATE_LOGFILE%
 )

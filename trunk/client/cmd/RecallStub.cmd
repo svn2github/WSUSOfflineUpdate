@@ -30,13 +30,13 @@ goto EoF
 :Cleanup
 echo Cleaning up automatic recall...
 call CleanupRecall.cmd
-if exist %SystemRoot%\system32\bcdedit.exe (
+if exist %SystemRoot%\System32\bcdedit.exe (
   echo Adjusting boot sequence for next reboot...
-  %SystemRoot%\system32\bcdedit.exe /bootsequence {current}
+  %SystemRoot%\System32\bcdedit.exe /bootsequence {current}
   echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot>>%UPDATE_LOGFILE%
 )
 echo Rebooting...
-%SystemRoot%\system32\shutdown.exe /r /f /t 1
+%SystemRoot%\System32\shutdown.exe /r /f /t 1
 goto EoF
 
 :EoF

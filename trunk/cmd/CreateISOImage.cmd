@@ -50,9 +50,9 @@ if /i "%2"=="/excludesw" set EXC_SW=1
 if /i "%2"=="/includedotnet" set INC_DOTNET=1
 if /i "%2"=="/includemsse" set INC_MSSE=1
 if /i "%2"=="/includewddefs" (
-  echo %1 | %SystemRoot%\system32\find.exe /I "w62" >nul 2>&1
+  echo %1 | %SystemRoot%\System32\find.exe /I "w62" >nul 2>&1
   if errorlevel 1 (
-    echo %1 | %SystemRoot%\system32\find.exe /I "w63" >nul 2>&1
+    echo %1 | %SystemRoot%\System32\find.exe /I "w63" >nul 2>&1
     if errorlevel 1 (set INC_WDDEFS=1) else (set INC_MSSE=1)
   ) else (set INC_MSSE=1)
 )
@@ -72,9 +72,9 @@ if /i "%3"=="/excludesw" set EXC_SW=1
 if /i "%3"=="/includedotnet" set INC_DOTNET=1
 if /i "%3"=="/includemsse" set INC_MSSE=1
 if /i "%3"=="/includewddefs" (
-  echo %1 | %SystemRoot%\system32\find.exe /I "w62" >nul 2>&1
+  echo %1 | %SystemRoot%\System32\find.exe /I "w62" >nul 2>&1
   if errorlevel 1 (
-    echo %1 | %SystemRoot%\system32\find.exe /I "w63" >nul 2>&1
+    echo %1 | %SystemRoot%\System32\find.exe /I "w63" >nul 2>&1
     if errorlevel 1 (set INC_WDDEFS=1) else (set INC_MSSE=1)
   ) else (set INC_MSSE=1)
 )
@@ -199,7 +199,7 @@ if "%SKIP_HASHES%"=="1" goto SkipHashes
 if exist ..\client\bin\%HASHDEEP_EXE% (
   echo Creating message digest file %OUTPUT_PATH%\%ISO_NAME%-hashes.txt...
   ..\client\bin\%HASHDEEP_EXE% -c md5,sha1,sha256 -b -j1 %OUTPUT_PATH%\%ISO_NAME%.iso >%OUTPUT_PATH%\%ISO_NAME%.mds
-  %SystemRoot%\system32\findstr.exe /L /C:## /V %OUTPUT_PATH%\%ISO_NAME%.mds >%OUTPUT_PATH%\%ISO_NAME%-hashes.txt
+  %SystemRoot%\System32\findstr.exe /L /C:## /V %OUTPUT_PATH%\%ISO_NAME%.mds >%OUTPUT_PATH%\%ISO_NAME%-hashes.txt
   del %OUTPUT_PATH%\%ISO_NAME%.mds
   echo %DATE% %TIME% - Info: Created message digest file %OUTPUT_PATH%\%ISO_NAME%-hashes.txt>>%DOWNLOAD_LOGFILE%
 ) else (

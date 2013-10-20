@@ -23,9 +23,9 @@ goto EvalParams
 :NoMoreParams
 title Checking Trusted Root Certificates' version...
 echo Checking Trusted Root Certificates' version...
-%SystemRoot%\system32\reg.exe QUERY "HKLM\Software\Wow6432Node\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}" /v Version >nul 2>&1
+%SystemRoot%\System32\reg.exe QUERY "HKLM\Software\Wow6432Node\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}" /v Version >nul 2>&1
 if errorlevel 1 (
-  %SystemRoot%\system32\reg.exe QUERY "HKLM\Software\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}" /v Version >nul 2>&1
+  %SystemRoot%\System32\reg.exe QUERY "HKLM\Software\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}" /v Version >nul 2>&1
   if errorlevel 1 (
     for /F "tokens=1-4 delims=," %%j in ("0,0,0,0") do (
       set TRCERTS_VER_MAJOR=%%j
@@ -34,7 +34,7 @@ if errorlevel 1 (
       set TRCERTS_VER_REVIS=%%m
     )
   ) else (
-    for /F "tokens=3" %%i in ('%SystemRoot%\system32\reg.exe QUERY "HKLM\Software\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}" /v Version ^| %SystemRoot%\system32\find.exe /I "Version"') do (
+    for /F "tokens=3" %%i in ('%SystemRoot%\System32\reg.exe QUERY "HKLM\Software\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}" /v Version ^| %SystemRoot%\System32\find.exe /I "Version"') do (
       for /F "tokens=1-4 delims=," %%j in ("%%i") do (
         set TRCERTS_VER_MAJOR=%%j
         set TRCERTS_VER_MINOR=%%k
@@ -44,7 +44,7 @@ if errorlevel 1 (
     )
   )
 ) else (
-  for /F "tokens=3" %%i in ('%SystemRoot%\system32\reg.exe QUERY "HKLM\Software\Wow6432Node\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}" /v Version ^| %SystemRoot%\system32\find.exe /I "Version"') do (
+  for /F "tokens=3" %%i in ('%SystemRoot%\System32\reg.exe QUERY "HKLM\Software\Wow6432Node\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}" /v Version ^| %SystemRoot%\System32\find.exe /I "Version"') do (
     for /F "tokens=1-4 delims=," %%j in ("%%i") do (
       set TRCERTS_VER_MAJOR=%%j
       set TRCERTS_VER_MINOR=%%k
@@ -62,7 +62,7 @@ if not exist %TRCERTS_FILENAME% goto DownloadError
 goto UseStaticVersion 
 
 %TRCERTS_FILENAME% /T:"%TEMP%\rootsupd" /C /Q
-for /F "tokens=2 delims== " %%i in ('%SystemRoot%\system32\findstr.exe /B /L /I "Version" "%TEMP%\rootsupd\rootsupd.inf"') do (
+for /F "tokens=2 delims== " %%i in ('%SystemRoot%\System32\findstr.exe /B /L /I "Version" "%TEMP%\rootsupd\rootsupd.inf"') do (
   call ..\client\cmd\SafeRmDir.cmd "%TEMP%\rootsupd"
   for /F "tokens=1-4 delims=," %%j in (%%i) do (
     if %TRCERTS_VER_MAJOR% LSS %%j goto InstallTRCerts

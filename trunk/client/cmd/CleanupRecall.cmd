@@ -7,9 +7,9 @@ if "%UPDATE_LOGFILE%"=="" set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 
 cd /D "%~dp0"
 
-if "%REG_PATH%"=="" set REG_PATH=%SystemRoot%\system32\reg.exe
+if "%REG_PATH%"=="" set REG_PATH=%SystemRoot%\System32\reg.exe
 if not exist %REG_PATH% goto NoReg
-if "%CSCRIPT_PATH%"=="" set CSCRIPT_PATH=%SystemRoot%\system32\cscript.exe
+if "%CSCRIPT_PATH%"=="" set CSCRIPT_PATH=%SystemRoot%\System32\cscript.exe
 if not exist %CSCRIPT_PATH% goto NoCScript
 
 if exist %SystemRoot%\woubak-winlogon.reg (
@@ -36,7 +36,7 @@ if exist %SystemRoot%\woubak-system-policies.reg (
 if not exist %SystemRoot%\woubak-pwrscheme-act.txt goto SkipPowerCfg
 if not exist %SystemRoot%\woubak-pwrscheme-temp.txt goto SkipPowerCfg
 echo Deleting temporary power scheme...
-for /F %%i in (%SystemRoot%\woubak-pwrscheme-act.txt) do %SystemRoot%\system32\powercfg.exe -setactive %%i
+for /F %%i in (%SystemRoot%\woubak-pwrscheme-act.txt) do %SystemRoot%\System32\powercfg.exe -setactive %%i
 if errorlevel 1 (
   echo Warning: Activation of previous power scheme failed.
   echo %DATE% %TIME% - Warning: Activation of previous power scheme failed>>%UPDATE_LOGFILE%
@@ -44,7 +44,7 @@ if errorlevel 1 (
   del %SystemRoot%\woubak-pwrscheme-act.txt
   echo %DATE% %TIME% - Info: Activated previous power scheme>>%UPDATE_LOGFILE%
 )
-for /F %%i in (%SystemRoot%\woubak-pwrscheme-temp.txt) do %SystemRoot%\system32\powercfg.exe -delete %%i
+for /F %%i in (%SystemRoot%\woubak-pwrscheme-temp.txt) do %SystemRoot%\System32\powercfg.exe -delete %%i
 if errorlevel 1 (
   echo Warning: Deletion of temporary power scheme failed.
   echo %DATE% %TIME% - Warning: Deletion of temporary power scheme failed>>%UPDATE_LOGFILE%

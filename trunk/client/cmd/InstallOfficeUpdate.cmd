@@ -57,7 +57,7 @@ if not exist %HASHDEEP_PATH% (
 echo Verifying integrity of %1...
 for /F "tokens=2,3 delims=\" %%i in ("%1") do (
   if exist ..\md\hashes-%%i-%%j.txt (
-    %SystemRoot%\system32\findstr.exe /L /C:%% /C:## /C:%1 ..\md\hashes-%%i-%%j.txt >"%TEMP%\hash-%%i-%%j.txt"
+    %SystemRoot%\System32\findstr.exe /L /C:%% /C:## /C:%1 ..\md\hashes-%%i-%%j.txt >"%TEMP%\hash-%%i-%%j.txt"
     %HASHDEEP_PATH% -a -l -k "%TEMP%\hash-%%i-%%j.txt" %1
     if errorlevel 1 (
       if exist "%TEMP%\hash-%%i-%%j.txt" del "%TEMP%\hash-%%i-%%j.txt"
@@ -70,18 +70,18 @@ for /F "tokens=2,3 delims=\" %%i in ("%1") do (
   echo %DATE% %TIME% - Warning: Hash file ..\md\hashes-%%i-%%j.txt not found>>%UPDATE_LOGFILE%
 )
 :SkipVerification
-echo %1 | %SystemRoot%\system32\find.exe /I ".exe" >nul 2>&1
+echo %1 | %SystemRoot%\System32\find.exe /I ".exe" >nul 2>&1
 if not errorlevel 1 goto InstExe
-echo %1 | %SystemRoot%\system32\find.exe /I ".cab" >nul 2>&1
+echo %1 | %SystemRoot%\System32\find.exe /I ".cab" >nul 2>&1
 if not errorlevel 1 goto InstCab
-echo %1 | %SystemRoot%\system32\find.exe /I ".msp" >nul 2>&1
+echo %1 | %SystemRoot%\System32\find.exe /I ".msp" >nul 2>&1
 if not errorlevel 1 goto InstMsp
 goto UnsupType
 
 :InstExe
 rem *** Check proper Office version ***
 for %%i in (ofc o2k3 o2k7 o2k10 o2k13) do (
-  echo %1 | %SystemRoot%\system32\find.exe /I "\%%i\" >nul 2>&1
+  echo %1 | %SystemRoot%\System32\find.exe /I "\%%i\" >nul 2>&1
   if not errorlevel 1 goto %%i
 )
 goto UnsupVersion
@@ -90,7 +90,7 @@ goto UnsupVersion
 :o2k3
 if "%SELECT_OPTIONS%"=="1" (
   for /F %%i in (..\opt\OptionList-qn.txt) do (
-    echo %1 | %SystemRoot%\system32\find.exe /I "%%i" >nul 2>&1
+    echo %1 | %SystemRoot%\System32\find.exe /I "%%i" >nul 2>&1
     if not errorlevel 1 goto o2k7
   )
 )
@@ -136,9 +136,9 @@ goto InstFailure
 :o2k10
 :o2k13
 echo Installing %1...
-echo %1 | %SystemRoot%\system32\find.exe /I "sp" >nul 2>&1
+echo %1 | %SystemRoot%\System32\find.exe /I "sp" >nul 2>&1
 if errorlevel 1 (
-  echo %1 | %SystemRoot%\system32\find.exe /I "2687455" >nul 2>&1
+  echo %1 | %SystemRoot%\System32\find.exe /I "2687455" >nul 2>&1
   if errorlevel 1 (%1 /quiet /norestart) else (%1 /passive /norestart)
 ) else (%1 /passive /norestart)
 set ERR_LEVEL=%errorlevel%
@@ -152,8 +152,8 @@ set ERR_LEVEL=0
 for /F "tokens=3 delims=\." %%i in ("%1") do (
   call SafeRmDir.cmd "%TEMP%\%%i"
   md "%TEMP%\%%i"
-  %SystemRoot%\system32\expand.exe -R %1 -F:* "%TEMP%\%%i" >nul
-  for /F %%j in ('dir /A:-D /B "%TEMP%\%%i\*.msp"') do %SystemRoot%\system32\msiexec.exe /qn /norestart /update "%TEMP%\%%i\%%j"
+  %SystemRoot%\System32\expand.exe -R %1 -F:* "%TEMP%\%%i" >nul
+  for /F %%j in ('dir /A:-D /B "%TEMP%\%%i\*.msp"') do %SystemRoot%\System32\msiexec.exe /qn /norestart /update "%TEMP%\%%i\%%j"
   set ERR_LEVEL=%errorlevel%
   call SafeRmDir.cmd "%TEMP%\%%i"
 )
@@ -164,7 +164,7 @@ goto InstFailure
 :InstMsp
 echo Installing %1...
 set ERR_LEVEL=0
-%SystemRoot%\system32\msiexec.exe /qn /norestart /update %1
+%SystemRoot%\System32\msiexec.exe /qn /norestart /update %1
 set ERR_LEVEL=%errorlevel%
 if "%IGNORE_ERRORS%"=="1" goto InstSuccess
 for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess

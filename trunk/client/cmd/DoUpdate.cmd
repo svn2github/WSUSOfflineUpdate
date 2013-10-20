@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.6+ (r509)
+set WSUSOFFLINE_VERSION=8.6+ (r510)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -65,9 +65,9 @@ pushd "%TEMP%"
 if errorlevel 1 goto NoTempDir
 popd
 
-set CSCRIPT_PATH=%SystemRoot%\system32\cscript.exe
+set CSCRIPT_PATH=%SystemRoot%\System32\cscript.exe
 if not exist %CSCRIPT_PATH% goto NoCScript
-set REG_PATH=%SystemRoot%\system32\reg.exe
+set REG_PATH=%SystemRoot%\System32\reg.exe
 if not exist %REG_PATH% goto NoReg
 
 rem *** Check user's privileges ***
@@ -98,19 +98,19 @@ rem *** Determine DirectX main version ***
 if "%UPDATE_DX%" NEQ "/updatedx" goto NoDXDiag
 if "%OS_NAME%"=="w62" goto NoDXDiag
 if "%OS_NAME%"=="w63" goto NoDXDiag
-if not exist %SystemRoot%\system32\dxdiag.exe goto NoDXDiag
+if not exist %SystemRoot%\System32\dxdiag.exe goto NoDXDiag
 echo Determining DirectX main version...
 if /i "%OS_ARCH%"=="x64" (
-  %SystemRoot%\system32\dxdiag.exe /whql:off /64bit /t %TEMP%\dxdiag.txt
+  %SystemRoot%\System32\dxdiag.exe /whql:off /64bit /t %TEMP%\dxdiag.txt
 ) else (
-  %SystemRoot%\system32\dxdiag.exe /whql:off /t %TEMP%\dxdiag.txt
+  %SystemRoot%\System32\dxdiag.exe /whql:off /t %TEMP%\dxdiag.txt
 )
 for /L %%i in (1,1,10) do (
   if exist "%TEMP%\dxdiag.txt" (goto CheckDXDiag) else (%CSCRIPT_PATH% //Nologo //B //E:vbs Sleep.vbs 100)
 )
 :CheckDXDiag
 if not exist "%TEMP%\dxdiag.txt" goto NoDXDiag
-%SystemRoot%\system32\findstr.exe /L /C:"DirectX Version" "%TEMP%\dxdiag.txt" >"%TEMP%\dxver.txt"
+%SystemRoot%\System32\findstr.exe /L /C:"DirectX Version" "%TEMP%\dxdiag.txt" >"%TEMP%\dxver.txt"
 del "%TEMP%\dxdiag.txt"
 for /F "usebackq tokens=2 delims=:" %%i in ("%TEMP%\dxver.txt") do (
   for /F "tokens=1*" %%j in ("%%i") do echo set DX_MAIN_VER=%%k>"%TEMP%\SetDXVer.cmd"
@@ -149,14 +149,14 @@ if not exist "%TEMP%\wourecall.1" goto SkipPowerCfg
 rem *** Disable Screensaver for WOUTempAdmin ***
 %REG_PATH% ADD "HKCU\Control Panel\Desktop" /v ScreenSaveActive /t REG_SZ /d 0 /f
 if "%PWR_POL_IDX%"=="" goto SkipPowerCfg
-if not exist %SystemRoot%\system32\powercfg.exe goto SkipPowerCfg
+if not exist %SystemRoot%\System32\powercfg.exe goto SkipPowerCfg
 echo Adjusting power management settings...
 goto PWR%OS_NAME%
 
 :PWRwxp
 :PWRw2k3
 for %%i in (monitor disk standby hibernate) do (
-  for %%j in (ac dc) do %SystemRoot%\system32\powercfg.exe /X %PWR_POL_IDX% /N /%%i-timeout-%%j 0
+  for %%j in (ac dc) do %SystemRoot%\System32\powercfg.exe /X %PWR_POL_IDX% /N /%%i-timeout-%%j 0
 )
 echo %DATE% %TIME% - Info: Adjusted power management settings>>%UPDATE_LOGFILE%
 goto SkipPowerCfg
@@ -166,17 +166,17 @@ goto SkipPowerCfg
 :PWRw62
 :PWRw63
 for %%i in (monitor disk standby hibernate) do (
-  for %%j in (ac dc) do %SystemRoot%\system32\powercfg.exe -X -%%i-timeout-%%j 0
+  for %%j in (ac dc) do %SystemRoot%\System32\powercfg.exe -X -%%i-timeout-%%j 0
 )
 echo %DATE% %TIME% - Info: Adjusted power management settings>>%UPDATE_LOGFILE%
 goto SkipPowerCfg
 
 :SkipPowerCfg
 rem *** Determine Windows licensing info ***
-if exist %SystemRoot%\system32\slmgr.vbs (
+if exist %SystemRoot%\System32\slmgr.vbs (
   echo Determining Windows licensing info...
-  %CSCRIPT_PATH% //Nologo //E:vbs %SystemRoot%\system32\slmgr.vbs -dli >"%TEMP%\slmgr-dli.txt"
-  %SystemRoot%\system32\findstr.exe /N ":" "%TEMP%\slmgr-dli.txt" >"%TEMP%\wou_slmgr.txt"
+  %CSCRIPT_PATH% //Nologo //E:vbs %SystemRoot%\System32\slmgr.vbs -dli >"%TEMP%\slmgr-dli.txt"
+  %SystemRoot%\System32\findstr.exe /N ":" "%TEMP%\slmgr-dli.txt" >"%TEMP%\wou_slmgr.txt"
   del "%TEMP%\slmgr-dli.txt"
 )
 
@@ -184,7 +184,7 @@ rem *** Echo OS properties ***
 echo Found Microsoft Windows version: %OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_VER_BUILD% (%OS_NAME% %OS_ARCH% %OS_LANG% sp%OS_SP_VER_MAJOR%)
 if exist "%TEMP%\wou_slmgr.txt" (
   echo Found Microsoft Windows Software Licensing Management Tool info...
-  for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /B /L "1: 2: 3: 4: 5: 6:" "%TEMP%\wou_slmgr.txt"') do echo %%j
+  for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /B /L "1: 2: 3: 4: 5: 6:" "%TEMP%\wou_slmgr.txt"') do echo %%j
 )
 rem echo Found Windows Update Agent version: %WUA_VER_MAJOR%.%WUA_VER_MINOR%.%WUA_VER_BUILD%.%WUA_VER_REVIS%
 rem echo Found Windows Installer version: %MSI_VER_MAJOR%.%MSI_VER_MINOR%.%MSI_VER_BUILD%.%MSI_VER_REVIS%
@@ -221,7 +221,7 @@ if "%O2K13_VER_MAJOR%" NEQ "" (
 echo %DATE% %TIME% - Info: Found Microsoft Windows version %OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_VER_BUILD% (%OS_NAME% %OS_ARCH% %OS_LANG% sp%OS_SP_VER_MAJOR%)>>%UPDATE_LOGFILE%
 if exist "%TEMP%\wou_slmgr.txt" (
   echo %DATE% %TIME% - Info: Found Microsoft Windows Software Licensing Management Tool info...>>%UPDATE_LOGFILE%
-  for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\system32\findstr.exe /B /L "1: 2: 3: 4: 5: 6:" "%TEMP%\wou_slmgr.txt"') do echo %DATE% %TIME% - Info: %%j>>%UPDATE_LOGFILE%
+  for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /B /L "1: 2: 3: 4: 5: 6:" "%TEMP%\wou_slmgr.txt"') do echo %DATE% %TIME% - Info: %%j>>%UPDATE_LOGFILE%
   del "%TEMP%\wou_slmgr.txt"
 )
 echo %DATE% %TIME% - Info: Found Windows Update Agent version %WUA_VER_MAJOR%.%WUA_VER_MINOR%.%WUA_VER_BUILD%.%WUA_VER_REVIS%>>%UPDATE_LOGFILE%
@@ -539,7 +539,7 @@ if "%INSTALL_IE%"=="/instie9" (
   echo Checking Internet Explorer 9 prerequisites...
   %CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
   if exist "%TEMP%\InstalledUpdateIds.txt" (
-    %SystemRoot%\system32\findstr.exe /L /I /V /G:"%TEMP%\InstalledUpdateIds.txt" ..\static\StaticUpdateIds-ie9-w60.txt >"%TEMP%\MissingUpdateIds.txt"
+    %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\InstalledUpdateIds.txt" ..\static\StaticUpdateIds-ie9-w60.txt >"%TEMP%\MissingUpdateIds.txt"
     del "%TEMP%\InstalledUpdateIds.txt"
   ) else (
     copy /Y ..\static\StaticUpdateIds-ie9-w60.txt "%TEMP%\MissingUpdateIds.txt" >nul
@@ -606,7 +606,7 @@ if "%INSTALL_IE%"=="/instie10" (
   echo Checking Internet Explorer 10 prerequisites...
   %CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
   if exist "%TEMP%\InstalledUpdateIds.txt" (
-    %SystemRoot%\system32\findstr.exe /L /I /V /G:"%TEMP%\InstalledUpdateIds.txt" ..\static\StaticUpdateIds-ie10-w61.txt >"%TEMP%\MissingUpdateIds.txt"
+    %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\InstalledUpdateIds.txt" ..\static\StaticUpdateIds-ie10-w61.txt >"%TEMP%\MissingUpdateIds.txt"
     del "%TEMP%\InstalledUpdateIds.txt"
   ) else (
     copy /Y ..\static\StaticUpdateIds-ie10-w61.txt "%TEMP%\MissingUpdateIds.txt" >nul
@@ -655,7 +655,7 @@ if not exist %TRCERTS_FILENAME% (
   goto SkipTRCertsInst
 )
 %TRCERTS_FILENAME% /T:"%TEMP%\rootsupd" /C /Q
-for /F "tokens=2 delims== " %%i in ('%SystemRoot%\system32\findstr.exe /B /L /I "Version" "%TEMP%\rootsupd\rootsupd.inf"') do (
+for /F "tokens=2 delims== " %%i in ('%SystemRoot%\System32\findstr.exe /B /L /I "Version" "%TEMP%\rootsupd\rootsupd.inf"') do (
   call SafeRmDir.cmd "%TEMP%\rootsupd"
   for /F "tokens=1-4 delims=," %%j in (%%i) do (
     if %TRCERTS_VER_MAJOR% LSS %%j goto InstallTRCerts
@@ -683,7 +683,7 @@ if not exist %RRCERTS_FILENAME% (
   goto SkipRRCertsInst
 )
 %RRCERTS_FILENAME% /T:"%TEMP%\rvkroots" /C /Q
-for /F "tokens=2 delims== " %%i in ('%SystemRoot%\system32\findstr.exe /B /L /I "Version" "%TEMP%\rvkroots\rvkroots.inf"') do (
+for /F "tokens=2 delims== " %%i in ('%SystemRoot%\System32\findstr.exe /B /L /I "Version" "%TEMP%\rvkroots\rvkroots.inf"') do (
   call SafeRmDir.cmd "%TEMP%\rvkroots"
   for /F "tokens=1-4 delims=," %%j in (%%i) do (
     if %RRCERTS_VER_MAJOR% LSS %%j goto InstallRRCerts
@@ -953,8 +953,13 @@ if exist %DOTNET4_PREREQ% (
 )
 set DOTNET4_PREREQ=
 :SkipDotNet4Prereq
-set DOTNET4_FILENAME=..\dotnet\dotNetFx%DOTNET4_VER_TARGET_MAJOR%%DOTNET4_VER_TARGET_MINOR%_Full_x86_x64.exe
-set DOTNET4LP_FILENAME=..\dotnet\dotNetFx%DOTNET4_VER_TARGET_MAJOR%%DOTNET4_VER_TARGET_MINOR%LP_Full_x86_x64%OS_LANG_SHORT%*.exe
+if %DOTNET4_VER_TARGET_MINOR% EQU 0 (
+  set DOTNET4_FILENAME=..\dotnet\dotNetFx40_Full_x86_x64.exe
+  set DOTNET4LP_FILENAME=..\dotnet\dotNetFx40LP_Full_x86_x64%OS_LANG_SHORT%.exe
+) else (
+  set DOTNET4_FILENAME=..\dotnet\NDP451-KB2858728-x86-x64-AllOS-ENU.exe
+  set DOTNET4LP_FILENAME=..\dotnet\NDP451-KB2858728-x86-x64-AllOS-%OS_LANG%.exe
+)
 if not exist %DOTNET4_FILENAME% (
   echo Warning: .NET Framework 4 installation file ^(%DOTNET4_FILENAME%^) not found.
   echo %DATE% %TIME% - Warning: .NET Framework 4 installation file ^(%DOTNET4_FILENAME%^) not found>>%UPDATE_LOGFILE%
@@ -963,13 +968,12 @@ if not exist %DOTNET4_FILENAME% (
 echo Installing .NET Framework 4...
 for /F %%i in ('dir /B %DOTNET4_FILENAME%') do call InstallOSUpdate.cmd ..\dotnet\%%i %VERIFY_MODE% /errorsaswarnings /passive /norestart /lcid 1033
 if "%OS_LANG%" NEQ "enu" (
-  dir /B %DOTNET4LP_FILENAME% >nul 2>&1
-  if errorlevel 1 (
-    echo Warning: .NET Framework 4 Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found.
-    echo %DATE% %TIME% - Warning: .NET Framework 4 Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found>>%UPDATE_LOGFILE%
-  ) else (
+  if exist %DOTNET4LP_FILENAME% (
     echo Installing .NET Framework 4 Language Pack...
     for /F %%i in ('dir /B %DOTNET4LP_FILENAME%') do call InstallOSUpdate.cmd ..\dotnet\%%i %VERIFY_MODE% /errorsaswarnings /passive /norestart
+  ) else (
+    echo Warning: .NET Framework 4 Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found.
+    echo %DATE% %TIME% - Warning: .NET Framework 4 Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found>>%UPDATE_LOGFILE%
   )
 )
 set RECALL_REQUIRED=1
@@ -986,7 +990,7 @@ if not exist ..\static\custom\StaticUpdateIds-dotnet35.txt goto SkipDotNet35Cust
 echo Checking .NET Framework 3.5 custom updates...
 %CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
 if exist "%TEMP%\InstalledUpdateIds.txt" (
-  %SystemRoot%\system32\findstr.exe /L /I /V /G:"%TEMP%\InstalledUpdateIds.txt" ..\static\custom\StaticUpdateIds-dotnet35.txt >"%TEMP%\MissingUpdateIds.txt"
+  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\InstalledUpdateIds.txt" ..\static\custom\StaticUpdateIds-dotnet35.txt >"%TEMP%\MissingUpdateIds.txt"
   del "%TEMP%\InstalledUpdateIds.txt"
 ) else (
   copy /Y ..\static\custom\StaticUpdateIds-dotnet35.txt "%TEMP%\MissingUpdateIds.txt" >nul
@@ -1007,7 +1011,7 @@ if not exist ..\static\custom\StaticUpdateIds-dotnet4.txt goto SkipDotNet4Custom
 echo Checking .NET Framework 4 custom updates...
 %CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
 if exist "%TEMP%\InstalledUpdateIds.txt" (
-  %SystemRoot%\system32\findstr.exe /L /I /V /G:"%TEMP%\InstalledUpdateIds.txt" ..\static\custom\StaticUpdateIds-dotnet4.txt >"%TEMP%\MissingUpdateIds.txt"
+  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\InstalledUpdateIds.txt" ..\static\custom\StaticUpdateIds-dotnet4.txt >"%TEMP%\MissingUpdateIds.txt"
   del "%TEMP%\InstalledUpdateIds.txt"
 ) else (
   copy /Y ..\static\custom\StaticUpdateIds-dotnet4.txt "%TEMP%\MissingUpdateIds.txt" >nul
@@ -1215,7 +1219,7 @@ if "%OFC_CONV_PACK%" NEQ "1" (
   if exist ..\ofc\glb\ork.exe (
     echo Installing Office File Converter Pack...
     ..\ofc\glb\ork.exe /T:"%TEMP%\ork" /C /Q
-    %SystemRoot%\system32\expand.exe "%TEMP%\ork\ORK.CAB" -F:OCONVPCK.EXE "%TEMP%" >nul
+    %SystemRoot%\System32\expand.exe "%TEMP%\ork\ORK.CAB" -F:OCONVPCK.EXE "%TEMP%" >nul
     call SafeRmDir.cmd "%TEMP%\ork"
     "%TEMP%\OCONVPCK.EXE" /T:"%TEMP%\OCONVPCK" /C /Q
     del "%TEMP%\OCONVPCK.EXE"
@@ -1302,7 +1306,7 @@ if /i "%AUSVC_STATE%"=="Unknown" goto ListMissingIds
 if /i "%AUSVC_STATE%"=="Running" goto ListMissingIds
 if /i "%AUSVC_SMODE%"=="Disabled" goto AUSvcNotRunning
 echo Starting service 'Windows Update' (wuauserv)...
-%SystemRoot%\system32\net.exe start wuauserv >nul
+%SystemRoot%\System32\net.exe start wuauserv >nul
 if errorlevel 1 goto AUSvcNotRunning
 set AUSVC_STARTED=1
 echo %DATE% %TIME% - Info: Started service 'Windows Update' (wuauserv)>>%UPDATE_LOGFILE%
@@ -1322,7 +1326,7 @@ if not exist ..\md\hashes-wsus.txt (
   goto SkipVerifyCatalog
 )
 echo Verifying integrity of Windows Update catalog file...
-%SystemRoot%\system32\findstr.exe /L /C:%% /C:## /C:..\wsus\wsusscn2.cab ..\md\hashes-wsus.txt >"%TEMP%\hash-wsusscn2.txt"
+%SystemRoot%\System32\findstr.exe /L /C:%% /C:## /C:..\wsus\wsusscn2.cab ..\md\hashes-wsus.txt >"%TEMP%\hash-wsusscn2.txt"
 %HASHDEEP_PATH% -a -l -k "%TEMP%\hash-wsusscn2.txt" ..\wsus\wsusscn2.cab
 if errorlevel 1 (
   if exist "%TEMP%\hash-wsusscn2.txt" del "%TEMP%\hash-wsusscn2.txt"
@@ -1496,13 +1500,13 @@ if "%RECALL_REQUIRED%"=="1" (
       echo Preparing automatic recall...
       call PrepareRecall.cmd "%~f0" %BACKUP_MODE% %VERIFY_MODE% %UPDATE_RCERTS% %INSTALL_IE% %UPDATE_CPP% %UPDATE_DX% %INSTALL_MSSL% %UPDATE_WMP% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_WMF% %INSTALL_MSSE% %UPDATE_TSC% %INSTALL_OFC% %INSTALL_OFV% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES% %SKIP_DYNAMIC%
     )
-    if exist %SystemRoot%\system32\bcdedit.exe (
+    if exist %SystemRoot%\System32\bcdedit.exe (
       echo Adjusting boot sequence for next reboot...
-      %SystemRoot%\system32\bcdedit.exe /bootsequence {current}
+      %SystemRoot%\System32\bcdedit.exe /bootsequence {current}
       echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot>>%UPDATE_LOGFILE%
     )
     echo Rebooting...
-    %SystemRoot%\system32\shutdown.exe /r /f /t 3
+    %SystemRoot%\System32\shutdown.exe /r /f /t 3
   ) else goto ManualRecall
 ) else (
   if exist %SystemRoot%\Temp\wou_iepre_tried.txt del %SystemRoot%\Temp\wou_iepre_tried.txt
@@ -1517,20 +1521,20 @@ if "%RECALL_REQUIRED%"=="1" (
     )
     if "%FINISH_MODE%"=="/shutdown" (
       echo Shutting down...
-      %SystemRoot%\system32\shutdown.exe /s /f /t 3
+      %SystemRoot%\System32\shutdown.exe /s /f /t 3
     ) else (
-      if exist %SystemRoot%\system32\bcdedit.exe (
+      if exist %SystemRoot%\System32\bcdedit.exe (
         echo Adjusting boot sequence for next reboot...
-        %SystemRoot%\system32\bcdedit.exe /bootsequence {current}
+        %SystemRoot%\System32\bcdedit.exe /bootsequence {current}
         echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot>>%UPDATE_LOGFILE%
       )
       echo Rebooting...
-      %SystemRoot%\system32\shutdown.exe /r /f /t 3
+      %SystemRoot%\System32\shutdown.exe /r /f /t 3
     )
   ) else (
     if "%FINISH_MODE%"=="/shutdown" (
       echo Shutting down...
-      %SystemRoot%\system32\shutdown.exe /s /f /t 3
+      %SystemRoot%\System32\shutdown.exe /s /f /t 3
     ) else (
       echo.
       echo Installation successful. Please reboot your system now.
@@ -1710,24 +1714,24 @@ if "%USERNAME%"=="WOUTempAdmin" (
   echo Cleaning up automatic recall...
   call CleanupRecall.cmd
   del /Q "%TEMP%\wourecall.*"
-  if exist %SystemRoot%\system32\bcdedit.exe (
+  if exist %SystemRoot%\System32\bcdedit.exe (
     echo Adjusting boot sequence for next reboot...
-    %SystemRoot%\system32\bcdedit.exe /bootsequence {current}
+    %SystemRoot%\System32\bcdedit.exe /bootsequence {current}
     echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot>>%UPDATE_LOGFILE%
   )
   echo Rebooting...
-  %SystemRoot%\system32\shutdown.exe /r /f /t 3
+  %SystemRoot%\System32\shutdown.exe /r /f /t 3
 ) else (
   if "%AUSVC_STARTED%"=="1" (
     echo Stopping service 'Windows Update' ^(wuauserv^)...
-    %SystemRoot%\system32\net.exe stop wuauserv >nul
+    %SystemRoot%\System32\net.exe stop wuauserv >nul
     if errorlevel 1 (
       echo %DATE% %TIME% - Warning: Stopping of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
     ) else (
       echo %DATE% %TIME% - Info: Stopped service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
     )
   )
-  if "%SHOW_LOG%"=="/showlog" start %SystemRoot%\system32\notepad.exe %UPDATE_LOGFILE%
+  if "%SHOW_LOG%"=="/showlog" start %SystemRoot%\System32\notepad.exe %UPDATE_LOGFILE%
 )
 goto EoF
 

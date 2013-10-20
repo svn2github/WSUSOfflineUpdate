@@ -12,7 +12,7 @@ goto InvalidParam
 if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
 if exist %~dpn1.mst (
   echo Installing %1 using %~dpn1.mst...
-  @%SystemRoot%\system32\msiexec.exe /i %1 TRANSFORMS=%~dpn1.mst /passive /norestart /log "%SystemRoot%\Temp\%~n1.log"
+  @%SystemRoot%\System32\msiexec.exe /i %1 TRANSFORMS=%~dpn1.mst /passive /norestart /log "%SystemRoot%\Temp\%~n1.log"
   if errorlevel 1 (
     echo %DATE% %TIME% - Warning: Installation of %1 using %~dpn1.mst failed>>%UPDATE_LOGFILE%
   ) else (
@@ -20,7 +20,7 @@ if exist %~dpn1.mst (
   )  
 ) else (
   echo Installing %1...
-  @%SystemRoot%\system32\msiexec.exe /i %1 /passive /norestart /log "%SystemRoot%\Temp\%~n1.log"
+  @%SystemRoot%\System32\msiexec.exe /i %1 /passive /norestart /log "%SystemRoot%\Temp\%~n1.log"
   if errorlevel 1 (
     echo %DATE% %TIME% - Warning: Installation of %1 failed>>%UPDATE_LOGFILE%
   ) else (
@@ -38,7 +38,7 @@ if /i "%1"=="/listall" (
 ) else (
   for /R "%~dp0..\software\msi" %%i in (*.msi) do (
     if /i "%1"=="/instselected" (
-      %SystemRoot%\system32\find.exe /I "%%~ni" %SystemRoot%\Temp\wouselmsi.txt >nul 2>&1
+      %SystemRoot%\System32\find.exe /I "%%~ni" %SystemRoot%\Temp\wouselmsi.txt >nul 2>&1
       if not errorlevel 1 call :InstMSI "%%i"
     ) else (
       if /i "%1"=="/install" call :InstMSI "%%i"

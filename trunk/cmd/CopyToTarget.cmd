@@ -54,9 +54,9 @@ if /i "%2"=="/excludesw" set EXC_SW=1
 if /i "%2"=="/includedotnet" set INC_DOTNET=1
 if /i "%2"=="/includemsse" set INC_MSSE=1
 if /i "%2"=="/includewddefs" (
-  echo %1 | %SystemRoot%\system32\find.exe /I "w62" >nul 2>&1
+  echo %1 | %SystemRoot%\System32\find.exe /I "w62" >nul 2>&1
   if errorlevel 1 (
-    echo %1 | %SystemRoot%\system32\find.exe /I "w63" >nul 2>&1
+    echo %1 | %SystemRoot%\System32\find.exe /I "w63" >nul 2>&1
     if errorlevel 1 (set INC_WDDEFS=1) else (set INC_MSSE=1)
   ) else (set INC_MSSE=1)
 )
@@ -76,9 +76,9 @@ if /i "%3"=="/excludesw" set EXC_SW=1
 if /i "%3"=="/includedotnet" set INC_DOTNET=1
 if /i "%3"=="/includemsse" set INC_MSSE=1
 if /i "%3"=="/includewddefs" (
-  echo %1 | %SystemRoot%\system32\find.exe /I "w62" >nul 2>&1
+  echo %1 | %SystemRoot%\System32\find.exe /I "w62" >nul 2>&1
   if errorlevel 1 (
-    echo %1 | %SystemRoot%\system32\find.exe /I "w63" >nul 2>&1
+    echo %1 | %SystemRoot%\System32\find.exe /I "w63" >nul 2>&1
     if errorlevel 1 (set INC_WDDEFS=1) else (set INC_MSSE=1)
   ) else (set INC_MSSE=1)
 )
@@ -157,11 +157,11 @@ goto CreateImage
 
 :CreateImage
 rem *** Copy client tree ***
-if not exist %SystemRoot%\system32\xcopy.exe goto NoXCopy
+if not exist %SystemRoot%\System32\xcopy.exe goto NoXCopy
 echo Copying client tree for %1 %2 %3 %4 %5 %6 %7 %8 %9...
 for %%i in (%USB_FILTER%) do (
   pushd "%%~dpi"
-  %SystemRoot%\system32\xcopy.exe "%~dp0..\client\*.*" %OUTPUT_PATH% /D /E /I /Y /EXCLUDE:%%~nxi
+  %SystemRoot%\System32\xcopy.exe "%~dp0..\client\*.*" %OUTPUT_PATH% /D /E /I /Y /EXCLUDE:%%~nxi
   if errorlevel 1 (
     popd
     if exist %USB_FILTER% del %USB_FILTER%
@@ -177,7 +177,7 @@ if "%CLEANUP%" NEQ "1" goto NoCleanup
 echo Cleaning up target directory %OUTPUT_PATH%...
 dir ..\client /A:-D /B /S >"%TEMP%\ValidClientFiles.txt"
 for /F "tokens=*" %%i in ('dir %OUTPUT_PATH% /A:-D /B /S') do (
-  %SystemRoot%\system32\find.exe /I "%%~nxi" "%TEMP%\ValidClientFiles.txt" >nul 2>&1
+  %SystemRoot%\System32\find.exe /I "%%~nxi" "%TEMP%\ValidClientFiles.txt" >nul 2>&1
   if errorlevel 1 (
     del "%%i"
     echo %DATE% %TIME% - Info: Deleted file "%%i">>%DOWNLOAD_LOGFILE%
@@ -220,8 +220,8 @@ goto Error
 
 :NoXCopy
 echo.
-echo ERROR: Utility %SystemRoot%\system32\xcopy.exe not found.
-echo %DATE% %TIME% - Error: Utility %SystemRoot%\system32\xcopy.exe not found>>%DOWNLOAD_LOGFILE%
+echo ERROR: Utility %SystemRoot%\System32\xcopy.exe not found.
+echo %DATE% %TIME% - Error: Utility %SystemRoot%\System32\xcopy.exe not found>>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 

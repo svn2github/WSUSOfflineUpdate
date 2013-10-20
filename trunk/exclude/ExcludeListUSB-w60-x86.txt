@@ -18,7 +18,7 @@ w60-x64\
 w61-x64\
 w62-x64\
 w63-x64\
-*-x64
 dotnetfx40*
 vcredist*_x64
+Silverlight_x64*
 .au3
