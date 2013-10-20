@@ -795,6 +795,7 @@ Version 8.6 -- 16.09.13
 - Fix: Minor fix in Linux script DownloadUpdates.sh (Thanks to "Buster" and H. Hullen)
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
+- NOTE: If you customized your copy of WOU using the script AddCustomLanguageSupport.cmd {lng}, please call it again once (per language) to get the appropriate .NET 4.5.1 language pack(s) downloaded
 - Support added for Windows 8.1 and Server 2012 R2
 - .NET Framework 4.5 updated to v. 4.5.1 (Thanks to "boco" and "harry")
 - Microsoft Silverlight updated to v. 5.1.20913.0 (Thanks to "harry")
