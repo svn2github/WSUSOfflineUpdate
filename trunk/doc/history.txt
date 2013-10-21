@@ -801,7 +801,7 @@ Version ?.? -- ??.??.??
 - Microsoft Silverlight updated to v. 5.1.20913.0 (Thanks to "harry")
 - C++ 2013 Runtime Libraries integrated (Thanks to "harry")
 - Installation part will now log Windows licensing info (Thanks to Bert Schinkel-Momsen)
-- Static download URLs for aria2 download utility updated to v. 1.18.0
+- Static download URLs for aria2 download utility updated to v. 1.18.1
 - Static download definitions added for Disk Cleanup Wizard addon for Windows 7 SP1 (kb2852386) (Thanks to "David" and Th. Baisch)
 - Fix: Installation failed on Japanese Windows Vista systems due to special characters in Win32_OperatingSystem.Caption (Thanks to I. Wada)
 - Fix: DoUpdate.cmd script repeatedly installed custom static update definitions for .NET Frameworks 3.5 SP1 and 4 (Thanks to "Wes" and "aker")

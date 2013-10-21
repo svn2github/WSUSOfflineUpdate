@@ -53,7 +53,11 @@ Private Const idxBuild                        = 2
 
 Dim wshShell, objNetwork, objFileSystem, objCmdFile, objWMIService, objQueryItem, objInstaller, arrayOfficeNames, arrayOfficeVersions, arrayOfficeAppNames, arrayOfficeExeNames
 Dim strSystemFolder, strTempFolder, strWUAFileName, strMSIFileName, strWSHFileName, strTSCFileName, strWMPFileName, strCmdFileName, strOSVersion, strOfficeInstallPath, strOfficeExeVersion, strProduct, strPatch, languageCode, i, j
-Dim cpp2005_x86_old, cpp2005_x86_new, cpp2005_x64_old, cpp2005_x64_new, cpp2008_x86_old, cpp2008_x86_new, cpp2008_x64_old, cpp2008_x64_new, cpp2010_x86_old, cpp2010_x86_new, cpp2010_x64_old, cpp2010_x64_new, cpp2012_x86_old, cpp2012_x86_new, cpp2012_x64_old, cpp2012_x64_new
+Dim cpp2005_x86_old, cpp2005_x86_new, cpp2005_x64_old, cpp2005_x64_new
+Dim cpp2008_x86_old, cpp2008_x86_new, cpp2008_x64_old, cpp2008_x64_new
+Dim cpp2010_x86_old, cpp2010_x86_new, cpp2010_x64_old, cpp2010_x64_new
+Dim cpp2012_x86_old, cpp2012_x86_new, cpp2012_x64_old, cpp2012_x64_new
+Dim cpp2013_x86_old, cpp2013_x86_new, cpp2013_x64_old, cpp2013_x64_new
 
 Private Function RegExists(objShell, strName)
 Dim dummy
@@ -592,6 +596,10 @@ cpp2012_x86_old = False
 cpp2012_x86_new = False
 cpp2012_x64_old = False
 cpp2012_x64_new = False
+cpp2013_x86_old = False
+cpp2013_x86_new = False
+cpp2013_x64_old = False
+cpp2013_x64_new = False
 Set objInstaller = CreateObject("WindowsInstaller.Installer")
 For Each strProduct In objInstaller.Products
   Select Case UCase(strProduct)
@@ -648,6 +656,12 @@ For Each strProduct In objInstaller.Products
       cpp2012_x64_old = True
     Case "{2EDC2FA3-1F34-34E5-9085-588C9EFD1CC6}", "{764384C5-BCA9-307C-9AAC-FD443662686A}"
       cpp2012_x64_new = True
+    Case "{13A4EE12-23EA-3371-91EE-EFB36DDFFF3E}", "{F8CFEB22-A2E7-3971-9EDA-4B11EDEFC185}"
+      cpp2013_x86_old = True
+      cpp2013_x86_new = True
+    Case "{A749D8E6-B613-3BE3-8F5F-045C84EBA29B}", "{929FBD26-9020-399B-9A7A-751D61F0B942}"
+      cpp2013_x64_old = True
+      cpp2013_x64_new = True
   End Select
 Next
 
@@ -659,6 +673,8 @@ If (cpp2010_x86_old) And (Not cpp2010_x86_new) Then objCmdFile.WriteLine("set CP
 If (cpp2010_x64_old) And (Not cpp2010_x64_new) Then objCmdFile.WriteLine("set CPP_2010_x64=1")
 If (cpp2012_x86_old) And (Not cpp2012_x86_new) Then objCmdFile.WriteLine("set CPP_2012_x86=1")
 If (cpp2012_x64_old) And (Not cpp2012_x64_new) Then objCmdFile.WriteLine("set CPP_2012_x64=1")
+If (cpp2013_x86_old) And (Not cpp2013_x86_new) Then objCmdFile.WriteLine("set CPP_2013_x86=1")
+If (cpp2013_x64_old) And (Not cpp2013_x64_new) Then objCmdFile.WriteLine("set CPP_2013_x64=1")
 
 objCmdFile.Close
 WScript.Quit(0)
