@@ -14,3 +14,4 @@ http://download.microsoft.com/download/C/E/0/CE0AB8AE-E6B7-43F7-9290-F8EB0EA54FB
 http://download.microsoft.com/download/1/1/7/117ECBDB-3D83-43BA-9088-B9C3C7DD8F0E/IE10-Windows6.1-x64-de-de.exe
 http://download.microsoft.com/download/E/9/6/E96EA9AF-BF03-4762-95FA-B4F6950075F6/Windows6.1-KB2852386-x64.msu
 http://download.microsoft.com/download/8/7/6/876AF45C-5E61-443B-8E6E-F0C52A8A4852/Windows6.1-KB2862973-x64.msu
+http://download.microsoft.com/download/3/8/9/38960204-F89B-4035-B65E-6EA068050825/Windows6.1-KB2506014-x64.msu
