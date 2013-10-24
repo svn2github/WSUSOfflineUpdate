@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.6+ (r514)
+set WSUSOFFLINE_VERSION=8.7b (r515)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -430,6 +430,19 @@ unzip.exe -o Streams.zip streams.exe
 del Streams.zip
 popd
 :SkipSysinternals
+if not exist ..\bin\sigcheck.exe goto SkipSigChkOpts
+%CSCRIPT_PATH% //Nologo //B //E:vbs ..\client\cmd\DetermineFileVersion.vbs ..\bin\sigcheck.exe SIGCHK_VER
+if exist "%TEMP%\SetFileVersion.cmd" (
+  call "%TEMP%\SetFileVersion.cmd"
+  del "%TEMP%\SetFileVersion.cmd"
+) else (set SIGCHK_VER_MAJOR=1) 
+if %SIGCHK_VER_MAJOR% GEQ 2 (set SIGCHK_COPT=/accepteula -q -c) else (set SIGCHK_COPT=/accepteula -q -v)
+echo %DATE% %TIME% - Info: Found sigcheck.exe version %SIGCHK_VER_MAJOR%.%SIGCHK_VER_MINOR%.%SIGCHK_VER_BUILD%.%SIGCHK_VER_REVIS% ^(common options: %SIGCHK_COPT%^)>>%DOWNLOAD_LOGFILE%
+set SIGCHK_VER_MAJOR=
+set SIGCHK_VER_MINOR=
+set SIGCHK_VER_BUILD=
+set SIGCHK_VER_REVIS=
+:SkipSigChkOpts
 
 rem *** Download most recent Windows Update Agent installation and catalog files ***
 if "%VERIFY_DL%" NEQ "1" goto DownloadWSUS
@@ -458,8 +471,8 @@ echo %DATE% %TIME% - Info: Downloaded/validated most recent Windows Update Agent
 if "%VERIFY_DL%"=="1" (
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
   echo Verifying digital file signatures of Windows Update Agent installation and catalog files...
-  ..\bin\sigcheck.exe /accepteula -q -s -u -v ..\client\wsus >"%TEMP%\sigcheck-wsus.txt"
-  for /F "usebackq skip=1 eol=N tokens=1 delims=," %%i in ("%TEMP%\sigcheck-wsus.txt") do (
+  ..\bin\sigcheck.exe %SIGCHK_COPT% -s ..\client\wsus >"%TEMP%\sigcheck-wsus.txt"
+  for /F "tokens=1 delims=," %%i in ('%SystemRoot%\System32\findstr.exe /I "Unsigned" "%TEMP%\sigcheck-wsus.txt"') do (
     del %%i
     echo Warning: Deleted unsigned file %%i.
     echo %DATE% %TIME% - Warning: Deleted unsigned file %%i>>%DOWNLOAD_LOGFILE%
@@ -557,8 +570,8 @@ if "%VERIFY_DL%"=="1" (
   rem *** Verifying digital file signatures for .NET Frameworks' installation files ***
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
   echo Verifying digital file signatures for .NET Frameworks' installation files...
-  ..\bin\sigcheck.exe /accepteula -q -u -v ..\client\dotnet >"%TEMP%\sigcheck-dotnet.txt"
-  for /F "usebackq skip=1 eol=N tokens=1 delims=," %%i in ("%TEMP%\sigcheck-dotnet.txt") do (
+  ..\bin\sigcheck.exe %SIGCHK_COPT% ..\client\dotnet >"%TEMP%\sigcheck-dotnet.txt"
+  for /F "tokens=1 delims=," %%i in ('%SystemRoot%\System32\findstr.exe /I "Unsigned" "%TEMP%\sigcheck-dotnet.txt"') do (
     del %%i
     echo Warning: Deleted unsigned file %%i.
     echo %DATE% %TIME% - Warning: Deleted unsigned file %%i>>%DOWNLOAD_LOGFILE%
@@ -658,8 +671,8 @@ if "%VERIFY_DL%"=="1" (
   rem *** Verifying digital file signatures for C++ Runtime Libraries' installation files ***
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
   echo Verifying digital file signatures for C++ Runtime Libraries' installation files...
-  ..\bin\sigcheck.exe /accepteula -q -u -v ..\client\cpp >"%TEMP%\sigcheck-cpp.txt"
-  for /F "usebackq skip=1 eol=N tokens=1 delims=," %%i in ("%TEMP%\sigcheck-cpp.txt") do (
+  ..\bin\sigcheck.exe %SIGCHK_COPT% ..\client\cpp >"%TEMP%\sigcheck-cpp.txt"
+  for /F "tokens=1 delims=," %%i in ('%SystemRoot%\System32\findstr.exe /I "Unsigned" "%TEMP%\sigcheck-cpp.txt"') do (
     del %%i
     echo Warning: Deleted unsigned file %%i.
     echo %DATE% %TIME% - Warning: Deleted unsigned file %%i>>%DOWNLOAD_LOGFILE%
@@ -766,8 +779,8 @@ if "%VERIFY_DL%"=="1" (
   rem *** Verifying digital file signatures for Microsoft Security Essentials files ***
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
   echo Verifying digital file signatures for Microsoft Security Essentials files...
-  ..\bin\sigcheck.exe /accepteula -q -s -u -v ..\client\msse\%TARGET_ARCH%-glb >"%TEMP%\sigcheck-msse-%TARGET_ARCH%-glb.txt"
-  for /F "usebackq skip=1 eol=N tokens=1 delims=," %%i in ("%TEMP%\sigcheck-msse-%TARGET_ARCH%-glb.txt") do (
+  ..\bin\sigcheck.exe %SIGCHK_COPT% -s ..\client\msse\%TARGET_ARCH%-glb >"%TEMP%\sigcheck-msse-%TARGET_ARCH%-glb.txt"
+  for /F "tokens=1 delims=," %%i in ('%SystemRoot%\System32\findstr.exe /I "Unsigned" "%TEMP%\sigcheck-msse-%TARGET_ARCH%-glb.txt"') do (
     del %%i
     echo Warning: Deleted unsigned file %%i.
     echo %DATE% %TIME% - Warning: Deleted unsigned file %%i>>%DOWNLOAD_LOGFILE%
@@ -834,8 +847,8 @@ if "%VERIFY_DL%"=="1" (
   rem *** Verifying digital file signatures for Windows Defender definition files ***
   if not exist ..\bin\sigcheck.exe goto NoSigCheck
   echo Verifying digital file signatures for Windows Defender definition files...
-  ..\bin\sigcheck.exe /accepteula -q -s -u -v ..\client\wddefs\%TARGET_ARCH%-glb >"%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt"
-  for /F "usebackq skip=1 eol=N tokens=1 delims=," %%i in ("%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt") do (
+  ..\bin\sigcheck.exe %SIGCHK_COPT% -s ..\client\wddefs\%TARGET_ARCH%-glb >"%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt"
+  for /F "tokens=1 delims=," %%i in ('%SystemRoot%\System32\findstr.exe /I "Unsigned" "%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt"') do (
     del %%i
     echo Warning: Deleted unsigned file %%i.
     echo %DATE% %TIME% - Warning: Deleted unsigned file %%i>>%DOWNLOAD_LOGFILE%
@@ -1341,8 +1354,8 @@ if "%VERIFY_DL%" NEQ "1" goto RemoveHashes
 rem *** Verifying digital file signatures for %1 %2 ***
 if not exist ..\bin\sigcheck.exe goto NoSigCheck
 echo Verifying digital file signatures for %1 %2...
-..\bin\sigcheck.exe /accepteula -q -s -u -v ..\client\%1\%2 >"%TEMP%\sigcheck-%1-%2.txt"
-for /F "usebackq skip=1 eol=N tokens=1 delims=," %%i in ("%TEMP%\sigcheck-%1-%2.txt") do (
+..\bin\sigcheck.exe %SIGCHK_COPT% -s ..\client\%1\%2 >"%TEMP%\sigcheck-%1-%2.txt"
+for /F "tokens=1 delims=," %%i in ('%SystemRoot%\System32\findstr.exe /I "Unsigned" "%TEMP%\sigcheck-%1-%2.txt"') do (
   del %%i
   echo Warning: Deleted unsigned file %%i.
   echo %DATE% %TIME% - Warning: Deleted unsigned file %%i>>%DOWNLOAD_LOGFILE%
