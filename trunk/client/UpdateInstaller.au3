@@ -34,9 +34,8 @@ Dim Const $msimax                     = 22
 Dim Const $default_logpixels          = 96
 Dim Const $target_version_dotnet35    = "3.5.30729"
 Dim Const $target_version_dotnet40    = "4.0.30319"
-Dim Const $target_version_dotnet45    = "4.5.50938"
+Dim Const $target_version_dotnet45    = "4.5.50709"
 Dim Const $target_version_psh         = "2.0"
-Dim Const $target_version_wmf         = "3.0"
 
 ; INI file constants
 Dim Const $ini_section_installation   = "Installation"
@@ -286,6 +285,14 @@ EndFunc
 
 Func ManagementFrameworkVersion()
   Return RegRead($reg_key_wmf, $reg_val_pshversion)
+EndFunc
+
+Func WMFTargetVersion()
+  If (@OSVersion = "WIN_2008") OR ( (@OSVersion = "WIN_8") AND (@OSArch = "X86") ) Then
+    Return "3.0"
+  Else
+    Return "4.0"
+  EndIf
 EndFunc
 
 Func MSSLInstalled()
@@ -680,16 +687,16 @@ Else
   EndIf
 EndIf
 
-; Install Windows Management Framework 3.0
+; Install Windows Management Framework
 $txtxpos = $txtxpos + $txtwidth
 If ShowGUIInGerman() Then
-  $wmf = GUICtrlCreateCheckbox("Management Framework 3.0 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $wmf = GUICtrlCreateCheckbox("Management Framework " & WMFTargetVersion() & " installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $wmf = GUICtrlCreateCheckbox("Install Management Framework 3.0", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $wmf = GUICtrlCreateCheckbox("Install Management Framework " & WMFTargetVersion(), $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
+If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") _
   OR ( (DotNet4Version() <> DotNet4TargetVersion()) AND (NOT IsCheckBoxChecked($dotnet4)) ) _
-  OR (ManagementFrameworkVersion() = $target_version_wmf) ) Then
+  OR (ManagementFrameworkVersion() = WMFTargetVersion()) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If MyIniRead($ini_section_installation, $ini_value_wmf, $disabled) = $enabled Then
@@ -1081,7 +1088,7 @@ While 1
     Case $dotnet4              ; .NET 4 check box toggled
       If ( (IsCheckBoxChecked($dotnet4)) _
        AND (@OSVersion <> "WIN_XP") AND (@OSVersion <> "WIN_2003") AND (@OSVersion <> "WIN_VISTA") AND (@OSVersion <> "WIN_8") AND (@OSVersion <> "WIN_2012") _
-       AND (ManagementFrameworkVersion() <> $target_version_wmf) ) Then
+       AND (ManagementFrameworkVersion() <> WMFTargetVersion()) ) Then
         GUICtrlSetState($wmf, $GUI_ENABLE)
       Else
         GUICtrlSetState($wmf, $GUI_UNCHECKED + $GUI_DISABLE)

@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.7b (r515)
+set WSUSOFFLINE_VERSION=8.7
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1057,22 +1057,20 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
 set REBOOT_REQUIRED=1
 :SkipPShInst
 
-rem *** Install Windows Management Framework 3.0 ***
+rem *** Install Windows Management Framework ***
 if "%INSTALL_WMF%" NEQ "/instwmf" goto SkipWMFInst
 if %DOTNET4_VER_MAJOR% LSS %DOTNET4_VER_TARGET_MAJOR% (
-  echo Warning: Missing Windows Management Framework 3.0 prerequisite .NET Framework 4.
-  echo %DATE% %TIME% - Warning: Missing Windows Management Framework 3.0 prerequisite .NET Framework 4>>%UPDATE_LOGFILE%
+  echo Warning: Missing Windows Management Framework prerequisite .NET Framework 4.
+  echo %DATE% %TIME% - Warning: Missing Windows Management Framework prerequisite .NET Framework 4>>%UPDATE_LOGFILE%
   goto SkipWMFInst
 )
-if "%OS_NAME%"=="w60" (
-  if %OS_DOMAIN_ROLE% GEQ 2 goto CheckWMF
-)
+if "%OS_NAME%"=="w60" (if %OS_DOMAIN_ROLE% GEQ 2 goto CheckWMF)
 if "%OS_NAME%"=="w61" goto CheckWMF
-if "%OS_NAME%"=="w62" goto CheckWMF
+if "%OS_NAME%"=="w62" (if %OS_DOMAIN_ROLE% GEQ 2 goto CheckWMF)
 if "%OS_NAME%"=="w63" goto CheckWMF
 goto SkipWMFInst
 :CheckWMF
-echo Checking Windows Management Framework 3.0 installation state...
+echo Checking Windows Management Framework installation state...
 if %WMF_VER_MAJOR% LSS %WMF_VER_TARGET_MAJOR% goto InstallWMF
 if %WMF_VER_MAJOR% GTR %WMF_VER_TARGET_MAJOR% goto SkipWMFInst
 if %WMF_VER_MINOR% LSS %WMF_VER_TARGET_MINOR% goto InstallWMF
@@ -1087,11 +1085,11 @@ echo %WMF_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
-  echo Installing Windows Management Framework 3.0...
+  echo Installing Windows Management Framework...
   call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /errorsaswarnings
 ) else (
-  echo Warning: Windows Management Framework 3.0 installation file ^(kb%WMF_TARGET_ID%^) not found.
-  echo %DATE% %TIME% - Warning: Windows Management Framework 3.0 installation file ^(kb%WMF_TARGET_ID%^) not found>>%UPDATE_LOGFILE%
+  echo Warning: Windows Management Framework installation file ^(kb%WMF_TARGET_ID%^) not found.
+  echo %DATE% %TIME% - Warning: Windows Management Framework installation file ^(kb%WMF_TARGET_ID%^) not found>>%UPDATE_LOGFILE%
   goto SkipWMFInst
 )
 set REBOOT_REQUIRED=1
