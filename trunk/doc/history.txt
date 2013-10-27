@@ -797,7 +797,7 @@ Version 8.6 -- 16.09.13
 Version 8.7 -- 25.10.13
 - NOTE: If you customized your copy of WOU using the script AddCustomLanguageSupport.cmd {lng}, please call it again once (per language) to get the appropriate .NET 4.5.1 language pack(s) downloaded
 - Support added for Windows 8.1 and Server 2012 R2
-- Support added for Windows Management Framework 4.0 on Windows 7 and Server 2008(R2)/2012 (x86/x64) systems (Thanks to "zhaojie")
+- Support added for Windows Management Framework 4.0 on Windows 7 and Server 2008 R2 / 2012 (x86/x64) systems (Thanks to "zhaojie")
 - .NET Framework 4.5 updated to v. 4.5.1 (Thanks to "boco" and "harry")
 - Microsoft Silverlight updated to v. 5.1.20913.0 (Thanks to "harry")
 - C++ 2013 Runtime Libraries integrated (Thanks to "harry")
@@ -817,3 +817,5 @@ Version 8.7 -- 25.10.13
 - Fix: Download part missed kb2827238 for Excel 2013
 - Fix: Minor fixes in Linux scripts (Thanks to "MacKeon" and H. Hullen)
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- Fix: .NET Framework 4.5.1 wasn't offered for installation if v. 4.5 was already installed (Thanks to "DK3")

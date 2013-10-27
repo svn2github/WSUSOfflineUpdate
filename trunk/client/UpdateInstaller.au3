@@ -34,7 +34,7 @@ Dim Const $msimax                     = 22
 Dim Const $default_logpixels          = 96
 Dim Const $target_version_dotnet35    = "3.5.30729"
 Dim Const $target_version_dotnet40    = "4.0.30319"
-Dim Const $target_version_dotnet45    = "4.5.50709"
+Dim Const $target_version_dotnet45    = "4.5.50938"
 Dim Const $target_version_psh         = "2.0"
 
 ; INI file constants
