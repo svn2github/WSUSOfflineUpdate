@@ -1,0 +1,8 @@
+ndp1.1sp1-kb867460
+capicom
+kb913433
+rootsupd
+rvkroots
+kb923789
+vcredist
+wmp11
