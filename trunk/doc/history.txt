@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 8.7
+WSUS Offline Update 8.7.1
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -817,5 +817,6 @@ Version 8.7 -- 25.10.13
 - Fix: Download part missed kb2827238 for Excel 2013
 - Fix: Minor fixes in Linux scripts (Thanks to "MacKeon" and H. Hullen)
 --------------------------------------------------------------------------------
-Version ?.? -- ??.??.??
+Version 8.7.1 -- 28.10.13
 - Fix: .NET Framework 4.5.1 wasn't offered for installation if v. 4.5 was already installed (Thanks to "DK3")
+--------------------------------------------------------------------------------
