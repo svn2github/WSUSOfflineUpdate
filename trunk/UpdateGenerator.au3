@@ -2825,7 +2825,7 @@ If NOT PathValid(@TempDir) Then
   EndIf
   Exit(1)
 EndIf
-If StringRight(@TempDir, 1) = "\" Then
+If StringRight(EnvGet("TEMP"), 1) = "\" Then
   If ShowGUIInGerman() Then
     MsgBox(0x2010, "Fehler", "Der %TEMP%-Pfad enth‰lt einen abschlieﬂenden Backslash ('\').")
   Else

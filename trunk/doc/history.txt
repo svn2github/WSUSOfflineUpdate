@@ -820,3 +820,5 @@ Version 8.7 -- 25.10.13
 Version 8.7.1 -- 28.10.13
 - Fix: .NET Framework 4.5.1 wasn't offered for installation if v. 4.5 was already installed (Thanks to "DK3")
 --------------------------------------------------------------------------------
+Version ?.?.? -- ??.??.??
+- Fix: Check for trailing backslash in environment variable TEMP was broken in UpdateGenerator and UpdateInstaller scripts (Thanks to "chavv")
