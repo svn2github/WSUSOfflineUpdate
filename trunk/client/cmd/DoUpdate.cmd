@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.7.1+ (r521)
+set WSUSOFFLINE_VERSION=8.7.1+ (r522)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1299,9 +1299,10 @@ echo %DATE% %TIME% - Info: Detected state of service 'Windows Update': %AUSVC_ST
 if /i "%AUSVC_SMODE%"=="Auto" (
   if "%USERNAME%"=="WOUTempAdmin" goto ListMissingIds
 )
-if /i "%AUSVC_STATE%"=="" goto ListMissingIds
-if /i "%AUSVC_STATE%"=="Unknown" goto ListMissingIds
 if /i "%AUSVC_STATE%"=="Running" goto ListMissingIds
+if /i "%AUSVC_STATE%"=="Start Pending" goto ListMissingIds
+if /i "%AUSVC_STATE%"=="Unknown" goto ListMissingIds
+if /i "%AUSVC_STATE%"=="" goto ListMissingIds
 if /i "%AUSVC_SMODE%"=="Disabled" goto AUSvcNotRunning
 echo Starting service 'Windows Update' (wuauserv)...
 %SystemRoot%\System32\net.exe start wuauserv >nul
