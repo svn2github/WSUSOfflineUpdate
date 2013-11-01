@@ -1087,7 +1087,7 @@ While 1
 
     Case $dotnet4              ; .NET 4 check box toggled
       If ( (IsCheckBoxChecked($dotnet4)) _
-       AND (@OSVersion <> "WIN_XP") AND (@OSVersion <> "WIN_2003") AND (@OSVersion <> "WIN_VISTA") AND (@OSVersion <> "WIN_8") AND (@OSVersion <> "WIN_2012") _
+       AND (@OSVersion <> "WIN_XP") AND (@OSVersion <> "WIN_2003") AND (@OSVersion <> "WIN_VISTA") _
        AND (ManagementFrameworkVersion() <> WMFTargetVersion()) ) Then
         GUICtrlSetState($wmf, $GUI_ENABLE)
       Else

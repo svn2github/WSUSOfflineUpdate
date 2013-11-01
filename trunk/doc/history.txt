@@ -821,5 +821,6 @@ Version 8.7.1 -- 28.10.13
 - Fix: .NET Framework 4.5.1 wasn't offered for installation if v. 4.5 was already installed (Thanks to "DK3")
 --------------------------------------------------------------------------------
 Version ?.?.? -- ??.??.??
+- Fix: Windows Management Framework 4.0 wasn't offered for installation on Windows Server 2012 systems
 - Fix: DoUpdate.cmd script will now also try to determine missing updates if state of service 'Windows Update' (wuauserv) is "Start Pending" (Thanks to "friday123")
 - Fix: Check for trailing backslash in environment variable TEMP was broken in UpdateGenerator and UpdateInstaller scripts (Thanks to "chavv")
