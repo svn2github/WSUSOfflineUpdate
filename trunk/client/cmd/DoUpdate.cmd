@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.7.2
+set WSUSOFFLINE_VERSION=8.7.2+ (r526)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -28,7 +28,7 @@ echo %DATE% %TIME% - Info: Used path "%~dp0" on %COMPUTERNAME% (user: %USERNAME%
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/nobackup /verify /updatercerts /instie7 /instie8 /instie9 /instie10 /updatecpp /updatedx /instmssl /updatewmp /instdotnet35 /instdotnet4 /instpsh /instwmf /instmsse /updatetsc /instofc /instofv /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
+for %%i in (/nobackup /verify /updatercerts /instie7 /instie8 /instie9 /instie10 /instie11 /updatecpp /updatedx /instmssl /updatewmp /instdotnet35 /instdotnet4 /instpsh /instwmf /instmsse /updatetsc /instofc /instofv /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected>>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/nobackup" set BACKUP_MODE=/nobackup
@@ -38,6 +38,7 @@ if /i "%1"=="/instie7" set INSTALL_IE=/instie7
 if /i "%1"=="/instie8" set INSTALL_IE=/instie8
 if /i "%1"=="/instie9" set INSTALL_IE=/instie9
 if /i "%1"=="/instie10" set INSTALL_IE=/instie10
+if /i "%1"=="/instie11" set INSTALL_IE=/instie11
 if /i "%1"=="/updatecpp" set UPDATE_CPP=/updatecpp
 if /i "%1"=="/updatedx" set UPDATE_DX=/updatedx
 if /i "%1"=="/instmssl" set INSTALL_MSSL=/instmssl
@@ -583,16 +584,24 @@ goto IEInstalled
 :IEw61
 if exist %SystemRoot%\Temp\wou_ie_tried.txt goto SkipIEInst
 if /i "%OS_ARCH%"=="x64" (
-  if "%INSTALL_IE%"=="/instie10" (
-    set IE_FILENAME=..\%OS_NAME%-%OS_ARCH%\glb\IE10-Windows6.1-%OS_ARCH%-%OS_LANG_EXT%*.exe
+  if "%INSTALL_IE%"=="/instie11" (
+    set IE_FILENAME=..\%OS_NAME%-%OS_ARCH%\glb\IE11-Windows6.1-%OS_ARCH%-%OS_LANG_EXT%*.exe
   ) else (
-    set IE_FILENAME=..\%OS_NAME%-%OS_ARCH%\glb\IE9-Windows7-%OS_ARCH%-%OS_LANG%*.exe
+    if "%INSTALL_IE%"=="/instie10" (
+      set IE_FILENAME=..\%OS_NAME%-%OS_ARCH%\glb\IE10-Windows6.1-%OS_ARCH%-%OS_LANG_EXT%*.exe
+    ) else (
+      set IE_FILENAME=..\%OS_NAME%-%OS_ARCH%\glb\IE9-Windows7-%OS_ARCH%-%OS_LANG%*.exe
+    )
   )
 ) else (
-  if "%INSTALL_IE%"=="/instie10" (
-    set IE_FILENAME=..\%OS_NAME%\glb\IE10-Windows6.1-%OS_ARCH%-%OS_LANG_EXT%*.exe
+  if "%INSTALL_IE%"=="/instie11" (
+    set IE_FILENAME=..\%OS_NAME%\glb\IE11-Windows6.1-%OS_ARCH%-%OS_LANG_EXT%*.exe
   ) else (
-    set IE_FILENAME=..\%OS_NAME%\glb\IE9-Windows7-%OS_ARCH%-%OS_LANG%*.exe
+    if "%INSTALL_IE%"=="/instie10" (
+      set IE_FILENAME=..\%OS_NAME%\glb\IE10-Windows6.1-%OS_ARCH%-%OS_LANG_EXT%*.exe
+    ) else (
+      set IE_FILENAME=..\%OS_NAME%\glb\IE9-Windows7-%OS_ARCH%-%OS_LANG%*.exe
+    )
   )
 )
 dir /B %IE_FILENAME% >nul 2>&1
@@ -601,31 +610,32 @@ if errorlevel 1 (
   echo %DATE% %TIME% - Warning: File %IE_FILENAME% not found>>%UPDATE_LOGFILE%
   goto SkipIEInst
 )
-if "%INSTALL_IE%"=="/instie10" (
-  if exist %SystemRoot%\Temp\wou_iepre_tried.txt goto SkipIE10Pre
-  echo Checking Internet Explorer 10 prerequisites...
-  %CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
-  if exist "%TEMP%\InstalledUpdateIds.txt" (
-    %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\InstalledUpdateIds.txt" ..\static\StaticUpdateIds-ie10-w61.txt >"%TEMP%\MissingUpdateIds.txt"
-    del "%TEMP%\InstalledUpdateIds.txt"
-  ) else (
-    copy /Y ..\static\StaticUpdateIds-ie10-w61.txt "%TEMP%\MissingUpdateIds.txt" >nul
-  )
-  call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
-  if errorlevel 1 goto ListError
-  if exist "%TEMP%\UpdatesToInstall.txt" (
-    echo Installing Internet Explorer 10 prerequisites...
-    call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
-    if not errorlevel 1 (
-      if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
-      echo. >%SystemRoot%\Temp\wou_iepre_tried.txt
-      set RECALL_REQUIRED=1
-      goto IEInstalled
-    )
+if "%INSTALL_IE%"=="/instie9" goto SkipIE10Pre
+if exist %SystemRoot%\Temp\wou_iepre_tried.txt goto SkipIE10Pre
+echo Checking Internet Explorer 10/11 prerequisites...
+%CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
+if exist "%TEMP%\InstalledUpdateIds.txt" (
+  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\InstalledUpdateIds.txt" ..\static\StaticUpdateIds-ie10-w61.txt >"%TEMP%\MissingUpdateIds.txt"
+  del "%TEMP%\InstalledUpdateIds.txt"
+) else (
+  copy /Y ..\static\StaticUpdateIds-ie10-w61.txt "%TEMP%\MissingUpdateIds.txt" >nul
+)
+call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
+if errorlevel 1 goto ListError
+if exist "%TEMP%\UpdatesToInstall.txt" (
+  echo Installing Internet Explorer 10/11 prerequisites...
+  call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
+  if not errorlevel 1 (
+    if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
+    echo. >%SystemRoot%\Temp\wou_iepre_tried.txt
+    set RECALL_REQUIRED=1
+    goto IEInstalled
   )
 )
 :SkipIE10Pre
-if "%INSTALL_IE%"=="/instie10" (echo Installing Internet Explorer 10...) else (echo Installing Internet Explorer 9...)
+if "%INSTALL_IE%"=="/instie11" (echo Installing Internet Explorer 11...) else (
+  if "%INSTALL_IE%"=="/instie10" (echo Installing Internet Explorer 10...) else (echo Installing Internet Explorer 9...)
+)
 for /F %%i in ('dir /B %IE_FILENAME%') do (
   if /i "%OS_ARCH%"=="x64" (
     call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\glb\%%i %VERIFY_MODE% /ignoreerrors /passive /update-no /closeprograms /no-default /norestart

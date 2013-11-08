@@ -45,6 +45,7 @@ Dim Const $ini_value_ie7              = "instie7"
 Dim Const $ini_value_ie8              = "instie8"
 Dim Const $ini_value_ie9              = "instie9"
 Dim Const $ini_value_ie10             = "instie10"
+Dim Const $ini_value_ie11             = "instie11"
 Dim Const $ini_value_cpp              = "updatecpp"
 Dim Const $ini_value_dx               = "updatedx"
 Dim Const $ini_value_mssl             = "instmssl"
@@ -94,7 +95,7 @@ Dim Const $path_rel_msse_x64          = "\msse\x64-glb\MSEInstall-x64-*.exe"
 Dim Const $path_rel_msi_all           = "\wouallmsi.txt"
 Dim Const $path_rel_msi_selected      = "\Temp\wouselmsi.txt"
 
-Dim $maindlg, $scriptdir, $mapped, $tabitemfocused, $backup, $rcerts, $ie7, $ie8, $ie9, $ie10, $cpp, $dx, $mssl, $wmp, $dotnet35, $dotnet4, $psh, $wmf, $msse, $tsc, $ofc, $ofv, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate
+Dim $maindlg, $scriptdir, $mapped, $tabitemfocused, $backup, $rcerts, $ie7, $ie8, $ie9, $ie10, $ie11, $cpp, $dx, $mssl, $wmp, $dotnet35, $dotnet4, $psh, $wmf, $msse, $tsc, $ofc, $ofv, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate
 Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos, $msiall, $msipacks[$msimax], $msicount, $line, $i, $msilistfile
 
 Func ShowGUIInGerman()
@@ -180,6 +181,7 @@ Dim $ini_src, $ini_dest, $i
   IniWrite($ini_dest, $ini_section_installation, $ini_value_ie8, CheckBoxStateToString($ie8))
   IniWrite($ini_dest, $ini_section_installation, $ini_value_ie9, CheckBoxStateToString($ie9))
   IniWrite($ini_dest, $ini_section_installation, $ini_value_ie10, CheckBoxStateToString($ie10))
+  IniWrite($ini_dest, $ini_section_installation, $ini_value_ie11, CheckBoxStateToString($ie11))
   IniWrite($ini_dest, $ini_section_installation, $ini_value_cpp, CheckBoxStateToString($cpp))
   IniWrite($ini_dest, $ini_section_installation, $ini_value_dx, CheckBoxStateToString($dx))
   IniWrite($ini_dest, $ini_section_installation, $ini_value_mssl, CheckBoxStateToString($mssl))
@@ -361,7 +363,7 @@ Func CalcGUISize()
   If ($reg_val = "") Then
     $reg_val = $default_logpixels
   EndIf
-  $dlgheight = 380 * $reg_val / $default_logpixels
+  $dlgheight = 400 * $reg_val / $default_logpixels
   If ShowGUIInGerman() Then
     $txtwidth = 240 * $reg_val / $default_logpixels
   Else
@@ -425,7 +427,7 @@ EndIf
 ;  Installation group
 $txtxpos = 2 * $txtxoffset
 $txtypos = 3.5 * $txtyoffset + 1.5 * $txtheight
-GUICtrlCreateGroup("Installation", $txtxpos, $txtypos, $groupwidth, 10 * $txtheight)
+GUICtrlCreateGroup("Installation", $txtxpos, $txtypos, $groupwidth, 11 * $txtheight)
 
 ; Backup
 $txtxpos = 3 * $txtxoffset
@@ -546,6 +548,32 @@ Else
   Else
     GUICtrlSetState(-1, $GUI_UNCHECKED)
     If (IsCheckBoxChecked($ie7) OR IsCheckBoxChecked($ie8) OR IsCheckBoxChecked($ie9)) Then
+      GUICtrlSetState(-1, $GUI_DISABLE)
+    EndIf
+  EndIf
+EndIf
+
+; Install IE11
+$txtxpos = 3 * $txtxoffset
+$txtypos = $txtypos + $txtheight
+If ShowGUIInGerman() Then
+  $ie11 = GUICtrlCreateCheckbox("Internet Explorer 11 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+Else
+  $ie11 = GUICtrlCreateCheckbox("Install Internet Explorer 11", $txtxpos, $txtypos, $txtwidth, $txtheight)
+EndIf
+If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
+  OR (IEVersion() = "11") OR (NOT WinGlbPresent($scriptdir)) ) Then
+  GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
+Else
+  If MyIniRead($ini_section_installation, $ini_value_ie11, $disabled) = $enabled Then
+    GUICtrlSetState(-1, $GUI_CHECKED)
+    GUICtrlSetState($ie7, $GUI_UNCHECKED + $GUI_DISABLE)
+    GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
+    GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
+    GUICtrlSetState($ie10, $GUI_UNCHECKED + $GUI_DISABLE)
+  Else
+    GUICtrlSetState(-1, $GUI_UNCHECKED)
+    If (IsCheckBoxChecked($ie7) OR IsCheckBoxChecked($ie8) OR IsCheckBoxChecked($ie9) OR IsCheckBoxChecked($ie10)) Then
       GUICtrlSetState(-1, $GUI_DISABLE)
     EndIf
   EndIf
@@ -986,6 +1014,7 @@ While 1
         GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
         GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
         GUICtrlSetState($ie10, $GUI_UNCHECKED + $GUI_DISABLE)
+        GUICtrlSetState($ie11, $GUI_UNCHECKED + $GUI_DISABLE)
       Else
         If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
           GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
@@ -1001,6 +1030,11 @@ While 1
           GUICtrlSetState($ie10, $GUI_UNCHECKED + $GUI_DISABLE)
         Else
           GUICtrlSetState($ie10, $GUI_ENABLE)
+        EndIf
+        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (IEVersion() = "11") ) Then
+          GUICtrlSetState($ie11, $GUI_UNCHECKED + $GUI_DISABLE)
+        Else
+          GUICtrlSetState($ie11, $GUI_ENABLE)
         EndIf
       EndIf
 
@@ -1009,6 +1043,7 @@ While 1
         GUICtrlSetState($ie7, $GUI_UNCHECKED + $GUI_DISABLE)
         GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
         GUICtrlSetState($ie10, $GUI_UNCHECKED + $GUI_DISABLE)
+        GUICtrlSetState($ie11, $GUI_UNCHECKED + $GUI_DISABLE)
       Else
         If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
           OR (IEVersion() = "7") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
@@ -1026,12 +1061,78 @@ While 1
         Else
           GUICtrlSetState($ie10, $GUI_ENABLE)
         EndIf
+        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (IEVersion() = "11") ) Then
+          GUICtrlSetState($ie11, $GUI_UNCHECKED + $GUI_DISABLE)
+        Else
+          GUICtrlSetState($ie11, $GUI_ENABLE)
+        EndIf
       EndIf
 
     Case $ie9                ; IE9 check box toggled
       If IsCheckBoxChecked($ie9) Then
         GUICtrlSetState($ie7, $GUI_UNCHECKED + $GUI_DISABLE)
         GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
+        GUICtrlSetState($ie10, $GUI_UNCHECKED + $GUI_DISABLE)
+        GUICtrlSetState($ie11, $GUI_UNCHECKED + $GUI_DISABLE)
+      Else
+        If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
+          OR (IEVersion() = "7") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
+          GUICtrlSetState($ie7, $GUI_UNCHECKED + $GUI_DISABLE)
+        Else
+          GUICtrlSetState($ie7, $GUI_ENABLE)
+        EndIf
+        If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
+          GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
+        Else
+          GUICtrlSetState($ie8, $GUI_ENABLE)
+        EndIf
+        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
+          GUICtrlSetState($ie10, $GUI_UNCHECKED + $GUI_DISABLE)
+        Else
+          GUICtrlSetState($ie10, $GUI_ENABLE)
+        EndIf
+        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (IEVersion() = "11") ) Then
+          GUICtrlSetState($ie11, $GUI_UNCHECKED + $GUI_DISABLE)
+        Else
+          GUICtrlSetState($ie11, $GUI_ENABLE)
+        EndIf
+      EndIf
+
+    Case $ie10               ; IE10 check box toggled
+      If IsCheckBoxChecked($ie10) Then
+        GUICtrlSetState($ie7, $GUI_UNCHECKED + $GUI_DISABLE)
+        GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
+        GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
+        GUICtrlSetState($ie11, $GUI_UNCHECKED + $GUI_DISABLE)
+      Else
+        If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
+          OR (IEVersion() = "7") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
+          GUICtrlSetState($ie7, $GUI_UNCHECKED + $GUI_DISABLE)
+        Else
+          GUICtrlSetState($ie7, $GUI_ENABLE)
+        EndIf
+        If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
+          GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
+        Else
+          GUICtrlSetState($ie8, $GUI_ENABLE)
+        EndIf
+        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
+          GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
+        Else
+          GUICtrlSetState($ie9, $GUI_ENABLE)
+        EndIf
+        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (IEVersion() = "11") ) Then
+          GUICtrlSetState($ie11, $GUI_UNCHECKED + $GUI_DISABLE)
+        Else
+          GUICtrlSetState($ie11, $GUI_ENABLE)
+        EndIf
+      EndIf
+
+    Case $ie11               ; IE11 check box toggled
+      If IsCheckBoxChecked($ie11) Then
+        GUICtrlSetState($ie7, $GUI_UNCHECKED + $GUI_DISABLE)
+        GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
+        GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
         GUICtrlSetState($ie10, $GUI_UNCHECKED + $GUI_DISABLE)
       Else
         If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
@@ -1045,34 +1146,15 @@ While 1
         Else
           GUICtrlSetState($ie8, $GUI_ENABLE)
         EndIf
-        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
-          GUICtrlSetState($ie10, $GUI_UNCHECKED + $GUI_DISABLE)
-        Else
-          GUICtrlSetState($ie10, $GUI_ENABLE)
-        EndIf
-      EndIf
-
-    Case $ie10               ; IE10 check box toggled
-      If IsCheckBoxChecked($ie10) Then
-        GUICtrlSetState($ie7, $GUI_UNCHECKED + $GUI_DISABLE)
-        GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
-        GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
-      Else
-        If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
-          OR (IEVersion() = "7") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
-          GUICtrlSetState($ie7, $GUI_UNCHECKED + $GUI_DISABLE)
-        Else
-          GUICtrlSetState($ie7, $GUI_ENABLE)
-        EndIf
-        If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
-          GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
-        Else
-          GUICtrlSetState($ie8, $GUI_ENABLE)
-        EndIf
         If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
           GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
         Else
           GUICtrlSetState($ie9, $GUI_ENABLE)
+        EndIf
+        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
+          GUICtrlSetState($ie10, $GUI_UNCHECKED + $GUI_DISABLE)
+        Else
+          GUICtrlSetState($ie10, $GUI_ENABLE)
         EndIf
       EndIf
 
@@ -1197,6 +1279,9 @@ While 1
       EndIf
       If IsCheckBoxChecked($ie10) Then
         $options = $options & " /instie10"
+      EndIf
+      If IsCheckBoxChecked($ie11) Then
+        $options = $options & " /instie11"
       EndIf
       If IsCheckBoxChecked($cpp) Then
         $options = $options & " /updatecpp"

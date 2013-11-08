@@ -155,16 +155,21 @@ set MSI_VER_TARGET_MAJOR=5
 set MSI_VER_TARGET_MINOR=0
 set WSH_VER_TARGET_MAJOR=5
 set WSH_VER_TARGET_MINOR=8
-if /i "%1"=="/instie10" (
+if /i "%1"=="/instie11" (
   set IE_VER_TARGET_MAJOR=9
-  set IE_VER_TARGET_MINOR=10
+  set IE_VER_TARGET_MINOR=11
 ) else (
-  if /i "%1"=="/instie9" (
+  if /i "%1"=="/instie10" (
     set IE_VER_TARGET_MAJOR=9
-    set IE_VER_TARGET_MINOR=0
+    set IE_VER_TARGET_MINOR=10
   ) else (
-    set IE_VER_TARGET_MAJOR=8
-    set IE_VER_TARGET_MINOR=0
+    if /i "%1"=="/instie9" (
+      set IE_VER_TARGET_MAJOR=9
+      set IE_VER_TARGET_MINOR=0
+    ) else (
+      set IE_VER_TARGET_MAJOR=8
+      set IE_VER_TARGET_MINOR=0
+    )
   )
 )
 set DOTNET4_VER_TARGET_MINOR=5

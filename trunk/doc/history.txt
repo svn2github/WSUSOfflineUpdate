@@ -825,3 +825,6 @@ Version 8.7.2 -- 04.11.13
 - Fix: DoUpdate.cmd script will now also try to determine missing updates if state of service 'Windows Update' (wuauserv) is "Start Pending" (Thanks to "friday123")
 - Fix: Check for trailing backslash in environment variable TEMP was broken in UpdateGenerator and UpdateInstaller scripts (Thanks to "chavv")
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- NOTE: If you customized your copy of WOU using the script AddCustomLanguageSupport.cmd {lng}, please call it again once (per language) to get the appropriate IE11 installation file(s) downloaded
+- Optional installation of Internet Explorer 11 on Windows 7 and Server 2008 R2 (x86/x64) systems (Thanks to "boco")
