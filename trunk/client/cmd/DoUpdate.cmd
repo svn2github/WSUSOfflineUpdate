@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.7.2+ (r527)
+set WSUSOFFLINE_VERSION=8.7.2+ (r528)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -316,7 +316,12 @@ rem *** Install Windows Service Pack ***
 echo Checking Windows Service Pack version...
 if %OS_SP_VER_MAJOR% GEQ %OS_SP_VER_TARGET_MAJOR% goto SkipSPInst
 if "%OS_SP_TARGET_ID%"=="" goto NoSPTargetId
-echo %OS_SP_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
+if "%OS_SP_PREREQ_ID%"=="" (
+  echo %OS_SP_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
+) else (
+  echo %OS_SP_PREREQ_ID%>"%TEMP%\MissingUpdateIds.txt"
+  echo %OS_SP_TARGET_ID%>>"%TEMP%\MissingUpdateIds.txt"
+)
 call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if not exist "%TEMP%\UpdatesToInstall.txt" (

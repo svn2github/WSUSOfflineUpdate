@@ -828,3 +828,4 @@ Version 8.7.2 -- 04.11.13
 Version ?.? -- ??.??.??
 - NOTE: If you customized your copy of WOU using the script AddCustomLanguageSupport.cmd {lng}, please call it again once (per language) to get the appropriate IE11 installation file(s) downloaded
 - Optional installation of Internet Explorer 11 on Windows 7 and Server 2008 R2 (x86/x64) systems (Thanks to "boco")
+- On Windows XP (x86) systems without SP3, kb953356 will now be installed before SP3 (Thanks to "nlewis")
