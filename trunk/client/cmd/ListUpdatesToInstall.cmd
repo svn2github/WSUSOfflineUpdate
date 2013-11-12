@@ -91,7 +91,7 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
       )
     )
     call ListUpdateFile.cmd ndp*%%i*-%OS_ARCH% ..\dotnet\%OS_ARCH%-glb /searchleftmost
-    for %%k in (%OFC_LANG% glb) do (
+    for %%k in (%OFC_LANG% %OS_LANG% glb) do (
       if exist ..\ofc\UpdateTable-ofc-%%k.csv (
         if not exist "%TEMP%\Update.txt" (
           for /F "tokens=1,2 delims=," %%l in (..\ofc\UpdateTable-ofc-%%k.csv) do (
@@ -105,7 +105,7 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
     )
     if not exist "%TEMP%\Update.txt" (
       for %%k in (%OFC_NAME% ofc o2k3 o2k7 o2k10 o2k13) do (
-        for %%l in (%OFC_LANG% glb) do (
+        for %%l in (%OFC_LANG% %OS_LANG% glb) do (
           call ListUpdateFile.cmd %%i*%OFC_ARCH% ..\%%k\%%l
           call ListUpdateFile.cmd %%i ..\%%k\%%l
         )

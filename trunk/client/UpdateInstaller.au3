@@ -1,11 +1,11 @@
-; ***   WSUS Offline Update 8.7.2 - Installer   ***
+; ***   WSUS Offline Update 8.8b - Installer   ***
 ; ***       Author: T. Wittrock, Kiel         ***
 ; ***   Dialog scaling added by Th. Baisch    ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 
-Dim Const $caption                    = "WSUS Offline Update 8.7.2 - Installer"
+Dim Const $caption                    = "WSUS Offline Update 8.8b - Installer"
 
 ; Registry constants
 Dim Const $reg_key_wsh_hklm           = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings"

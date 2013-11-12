@@ -1,11 +1,11 @@
-; ***   WSUS Offline Update 8.7.2 - Generator   ***
+; ***   WSUS Offline Update 8.8b - Generator   ***
 ; ***       Author: T. Wittrock, Kiel         ***
 ; ***     USB-Option added by Ch. Riedel      ***
 ; ***   Dialog scaling added by Th. Baisch    ***
 
 #include <GUIConstants.au3>
 
-Dim Const $caption                  = "WSUS Offline Update 8.7.2"
+Dim Const $caption                  = "WSUS Offline Update 8.8b"
 Dim Const $title                    = $caption & " - Generator"
 Dim Const $donationURL              = "http://www.wsusoffline.net/donate.html"
 Dim Const $downloadLogFile          = "download.log"
@@ -2643,9 +2643,9 @@ EndIf
 ;  cross-platform DVD ISO image
 $txtxpos = $txtxpos + $groupwidth / 2
 If ShowGUIInGerman() Then
-  $dvdiso = GUICtrlCreateCheckbox("pro Sprache, x86-produktübergreifend (nur gebräuchlichste Produkte)", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
+  $dvdiso = GUICtrlCreateCheckbox("pro Sprache, x86-produktübergreifend (nur Desktop-Produkte)", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 Else
-  $dvdiso = GUICtrlCreateCheckbox("per selected language, 'x86-cross-product' (most common only)", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
+  $dvdiso = GUICtrlCreateCheckbox("per selected language, 'x86-cross-product' (desktop only)", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 EndIf
 If IniRead($inifilename, $ini_section_misc, $misc_token_skipdownload, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)

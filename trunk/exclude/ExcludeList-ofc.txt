@@ -6,9 +6,7 @@ sts
 wacwfe
 lync
 project
-visio20
-visiomui
-visiosp
-visioww
+visio
 excelintl
+snapview
 wss
