@@ -1,2 +1,4 @@
 http://download.microsoft.com/download/4/1/6/4167570D-4AA3-4EEC-A029-D9D865494C9E/lyncloc2013-kb2817465-fullfile-x86-glb.exe
 http://download.microsoft.com/download/5/E/8/5E8FA1F9-3876-4F25-BDE6-281A7720B677/excelloc2013-kb2827238-fullfile-x86-glb.exe
+http://download.microsoft.com/download/7/F/9/7F9CFE5A-13CB-4CDA-AA1E-11DC128A9E8A/convloc2013-kb2768005-fullfile-x86-glb.exe
+http://download.microsoft.com/download/5/C/D/5CD380F3-C823-4FA7-96A8-25E0E0ED3C26/outlookloc2013-kb2837618-fullfile-x86-glb.exe

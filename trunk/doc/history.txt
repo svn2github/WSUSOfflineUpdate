@@ -831,4 +831,6 @@ Version 8.8 -- ??.??.13
 - Service Pack support added for Microsoft Office Viewers (Word, Excel and PowerPoint) (Thanks to "banzeo" and "aker")
 - Excluded Update Rollups 1-3 (kb2781267, kb2824160 and kb2862551) for Windows Server 2012 Essentials
 - On Windows XP (x86) systems without SP3, kb953356 will now be installed before SP3 (Thanks to "nlewis")
+- Fix: Office multilingual updates' directory (ofc glb) was blown up (Thanks to M. Köhler and "Denniss") 
+- Fix: Download part missed Security Updates kb2768005 and kb2837618 for Office 2013
 - Fix: 'x86-cross-product' ISO images exceeded 4.7 GB (max. capacity of DVD-5 media) and therefore won't any more contain updates for Windows Server 2003
