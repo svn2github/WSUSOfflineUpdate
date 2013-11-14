@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.8b (r531)
+set WSUSOFFLINE_VERSION=8.8b (r532)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1305,12 +1305,22 @@ if "%SKIP_DYNAMIC%"=="/skipdynamic" (
   goto ListInstalledIds
 )
 if "%WUSCN_PREREQ_ID%"=="" goto CheckWUSvc
+echo Checking most recent Cumulative Security Update for Internet Explorer...
+%CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
+if exist "%TEMP%\InstalledUpdateIds.txt" (
+  %SystemRoot%\System32\find.exe /I "%WUSCN_PREREQ_ID%" "%TEMP%\InstalledUpdateIds.txt" >nul 2>&1
+  if not errorlevel 1 (
+    del "%TEMP%\InstalledUpdateIds.txt"
+    goto CheckWUSvc
+  )
+  del "%TEMP%\InstalledUpdateIds.txt"
+)
 echo %WUSCN_PREREQ_ID%>"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing most recent Cumulative Security Update for Internet Explorer...
-  call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /errorsaswarnings
+  call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
 ) else (
   echo Warning: Cumulative Security Update for Internet Explorer ^(kb%WUSCN_PREREQ_ID%^) not found.
   echo %DATE% %TIME% - Warning: Cumulative Security Update for Internet Explorer ^(kb%WUSCN_PREREQ_ID%^) not found>>%UPDATE_LOGFILE%
