@@ -74,6 +74,7 @@ set WMP_TARGET_ID=wmp11-windowsxp-x86
 set TSC_VER_TARGET_MAJOR=6
 set TSC_VER_TARGET_MINOR=1
 set TSC_TARGET_ID=969084
+set WUSCN_PREREQ_ID=2888505
 set WOU_ENDLESS=3
 goto SetOfficeName
 
@@ -106,6 +107,7 @@ if /i "%OS_ARCH%"=="x64" (
   set TSC_VER_TARGET_MINOR=0
   set TSC_TARGET_ID=925876
 )
+set WUSCN_PREREQ_ID=2888505
 set WOU_ENDLESS=3
 goto SetOfficeName
 

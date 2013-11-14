@@ -21,6 +21,16 @@ for /F %%i in (..\static\StaticDownloadLinks-o2k10-x64-%1.txt) do (
   )
 )
 for %%i in (..\static\custom\StaticDownloadLinks-o2k10-%1.txt) do if %%~zi==0 del %%i
+rem *** Remove x64 support from Office 2010 custom URL files for glb ***
+if /i "%2" NEQ "/quiet" echo Removing x64 support from Office 2010 custom URL files for glb...
+for /F %%i in (..\static\StaticDownloadLinks-o2k10-x64-glb.txt) do (
+  if exist ..\static\custom\StaticDownloadLinks-o2k10-glb.txt (
+    ren ..\static\custom\StaticDownloadLinks-o2k10-glb.txt StaticDownloadLinks-o2k10-glb.tmp
+    %SystemRoot%\System32\findstr.exe /L /I /V "%%~nxi" ..\static\custom\StaticDownloadLinks-o2k10-glb.tmp>..\static\custom\StaticDownloadLinks-o2k10-glb.txt
+    del ..\static\custom\StaticDownloadLinks-o2k10-glb.tmp
+  )
+)
+for %%i in (..\static\custom\StaticDownloadLinks-o2k10-glb.txt) do if %%~zi==0 del %%i
 rem *** Remove x64 support from Office 2013 custom URL files for glb ***
 if /i "%2" NEQ "/quiet" echo Removing x64 support from Office 2013 custom URL files for glb...
 for /F %%i in (..\static\StaticDownloadLinks-o2k13-x64-glb.txt) do (
