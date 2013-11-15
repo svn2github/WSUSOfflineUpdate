@@ -650,7 +650,7 @@ Version 7.4 -- 05.07.12
 - HTTP Proxy password storage to UpdateGenerator.ini file may now be avoided (Thanks to "Mortimer")
 - CreateISOImage.cmd script and UpdateGenerator.ini file now support "[/]skiphashes" switch to skip time-consuming hash computation of generated ISO files
 - HashDeep utility updated to version 4.2
-- InitializationHook.cmd calls moved upwards in DownloadUpdates.cmd and DoUpdate.cmd scripts (Thanks to S. Struß) 
+- InitializationHook.cmd calls moved upwards in DownloadUpdates.cmd and DoUpdate.cmd scripts (Thanks to S. Struß)
 - Fix: For Windows XP (x86) systems, kb2686509 was downloaded twice (Thanks to Th. Baisch)
 - Fix: Linux script DownloadUpdates.sh threw misleading connection timeout errors (Thanks to J. Steffens)
 - Fix: Linux script DownloadUpdates.sh attempted invalid dos2unix calls II (Thanks to "Spider-Mann")
@@ -658,7 +658,7 @@ Version 7.4 -- 05.07.12
 Version 7.4.1 -- 14.08.12
 - NOTE: This version is supposed to be the last one maintaining the Linux download scripts
 - UpdateGenerator GUI logic improved
-- Installation part will now suppress Winlogon Legal Notice during automatic recalls (Thanks to "Mortimer" and "aker") 
+- Installation part will now suppress Winlogon Legal Notice during automatic recalls (Thanks to "Mortimer" and "aker")
 - Fix: Microsoft removed the Command Line Transformation Utility (msxsl.exe) from their servers
 - Fix: For Windows XP (x86) systems, an invalid version of kb2686509 was downloaded (Thanks to "Aldegundis", "mbathen", "aker" and "harry")
 - Fix: Download part missed Security Update kb2645640 for Windows Server 2003 (x86/x64)
@@ -699,7 +699,7 @@ Version 8.0 -- 02.01.13
 - DownloadUpdates.cmd script now evaluates a custom ExcludeList-superseded-exclude.txt file (Thanks to "boco")
 - Default changed for updating DirectX Runtime Libraries
 - Fix: Network drive reconnection failed during subsequent recalls if its default was 'persistent' (Thanks to J. Holland)
-- Fix: Microsoft Silverlight x64 version was erroneously attempted to be installed on Windows XP/Vista and Server 2003/2008 (x64) systems (Thanks to "friday123" and "Denniss") 
+- Fix: Microsoft Silverlight x64 version was erroneously attempted to be installed on Windows XP/Vista and Server 2003/2008 (x64) systems (Thanks to "friday123" and "Denniss")
 - Fix: Update for Root Certificates (rootsupd.exe/kb931125) was not properly detected on x64 systems (Thanks to "boco")
 - Fix: Linux script CreateISOImage.sh did not exit on missing iso creation tool (Thanks to S. Baur and H. Hullen)
 - Fix: 'x86-cross-product' ISO images exceeded 4.7 GB (max. capacity of DVD-5 media) and therefore won't contain Vista, but Server 2003 updates now
@@ -730,7 +730,7 @@ Version 8.2 -- 28.02.13
 - NOTE: If you customized your copy of WOU using the script AddCustomLanguageSupport.cmd {lng}, please call it again once (per language) to get the appropriate IE10 installation file(s) downloaded
 - Optional installation of Internet Explorer 10 on Windows 7 and Server 2008 R2 (x86/x64) systems (Thanks to "harry" and "boco")
 - Static download definitions may be updated while downloading (Thanks to "boco")
-- Office update exclude list refined to include Visio updates (e.g. kb2687508) now (Thanks to "Gerby") 
+- Office update exclude list refined to include Visio updates (e.g. kb2687508) now (Thanks to "Gerby")
 - Static download URLs updated for C++ 2005 and 2012 Runtime Libraries
 - Fix: Linux script CreateISOImage.sh did not support symbolic links (Thanks to "jpotto")
 --------------------------------------------------------------------------------
@@ -774,10 +774,10 @@ Version 8.5 -- 26.07.13
 --------------------------------------------------------------------------------
 Version 8.6 -- 16.09.13
 - NOTE: If you like to use aria2 instead of wget for downloading, please call ActivateAria2Downloads.cmd once
-- Detection capability added for Windows 8.1 / Server 2012 R2 and Internet Explorer 11 
+- Detection capability added for Windows 8.1 / Server 2012 R2 and Internet Explorer 11
 - Optional use of aria2 instead of wget to speed up downloading (Thanks to "qoole" and "brb8two")
 - List of superseded updates will now be recalculated if ExcludeList-superseded-exclude.txt was modified
-- Microsoft Security Essentials and MSI packages will now be installed last (Thanks to "paul1149") 
+- Microsoft Security Essentials and MSI packages will now be installed last (Thanks to "paul1149")
 - CreateISOImage.cmd and CreateISOImage.sh scripts will now create UDF instead of Joliet formatted ISO images (Thanks to "tapek")
 - DownloadUpdates.cmd script will now automatically update mkisofs tool
 - Added missing URL for Turkish version of Service Pack 2 for Office 2010 x64 (Thanks to "harry")
@@ -802,7 +802,7 @@ Version 8.7 -- 25.10.13
 - Microsoft Silverlight updated to v. 5.1.20913.0 (Thanks to "harry")
 - C++ 2013 Runtime Libraries integrated (Thanks to "harry")
 - Installation part will now log Windows licensing info (Thanks to Bert Schinkel-Momsen)
-- Update for the Windows Operating System Loader (kb2506014) added for Windows Vista, 7 and Server 2008(R2) (x64) (Thanks to "friday123") 
+- Update for the Windows Operating System Loader (kb2506014) added for Windows Vista, 7 and Server 2008(R2) (x64) (Thanks to "friday123")
 - Static download definitions added for Disk Cleanup Wizard addon for Windows 7 SP1 (kb2852386) (Thanks to "David" and Th. Baisch)
 - Static download definitions added for Update for Deprecation of MD5 Hashing Algorithm for Microsoft Root Certificate Program (kb2862973) for Windows Vista, 7, 8 and Server 2008(R2)/2012 (x86/x64) (Thanks to "friday123")
 - Static download URLs for aria2 download utility updated to v. 1.18.1
@@ -825,15 +825,16 @@ Version 8.7.2 -- 04.11.13
 - Fix: DoUpdate.cmd script will now also try to determine missing updates if state of service 'Windows Update' (wuauserv) is "Start Pending" (Thanks to "friday123")
 - Fix: Check for trailing backslash in environment variable TEMP was broken in UpdateGenerator and UpdateInstaller scripts (Thanks to "chavv")
 --------------------------------------------------------------------------------
-Version 8.8 -- ??.??.13
+Version 8.8 -- ??.11.13
 - NOTE: If you customized your copy of WOU using the script AddCustomLanguageSupport.cmd {lng}, please call it again once (per language) to get the appropriate IE11 installation file(s) downloaded
+- NOTE: If you customized your copy of WOU using the script AddOffice2010x64Support.cmd {lng}, please call it again once (per language) to get the static multilingual x64 update files for Office 2010 downloaded
 - Optional installation of Internet Explorer 11 on Windows 7 and Server 2008 R2 (x86/x64) systems (Thanks to "boco")
 - Speeded up determination of missing updates on Windows XP, Vista and Server 2003/2008 (x86/x64) systems by installing kb2888505 as a prerequisite (Thanks to "boco", "Gerby" and the community)
 - Support added for C++ 2012 Runtime Libraries Update 4 (Thanks to "boco" and "flummie")
 - On Windows XP (x86) systems without SP3, kb953356 will now be installed before SP3 (Thanks to "nlewis")
 - Service Pack support added for Microsoft Office Viewers (Word, Excel and PowerPoint) (Thanks to "banzeo" and "aker")
 - Excluded Update Rollups 1-3 (kb2781267, kb2824160 and kb2862551) for Windows Server 2012 Essentials
-- Fix: Office multilingual updates' directory (ofc glb) was blown up (Thanks to M. Köhler, "Denniss" and "psj") 
+- Fix: Office multilingual updates' directory (ofc glb) was blown up (Thanks to M. Köhler, "Denniss" and "psj")
 - Fix: Download part missed Security Updates kb2768005 and kb2837618 for Office 2013
 - Fix: AddOffice2010x64Support.cmd script didn't consider StaticDownloadLinks-o2k10-x64-glb.txt (Thanks to "psj")
 - Fix: 'x86-cross-product' ISO images exceeded 4.7 GB (max. capacity of DVD-5 media) and therefore won't any more contain updates for Windows Server 2003

@@ -619,7 +619,7 @@ Dim $result, $i
   For $i = 1 to StringLen($str)
     If StringIsAlNum(StringMid($str, $i, 1)) Then
       $result = $result & StringMid($str, $i, 1)
-    Else 
+    Else
       $result = $result & "%" & Hex(Asc(StringMid($str, $i, 1)), 2)
     EndIf
   Next
@@ -628,7 +628,7 @@ EndFunc
 
 Func AuthProxy($strproxy, $strproxypwd)
 Dim $result, $pos
-  
+
   $result = $strproxy
   $pos = StringInStr($strproxy, ":@")
   If ( ($pos > 0) AND ($strproxypwd <> "") ) Then
@@ -835,7 +835,7 @@ Dim $result
     $runany = True
     Return 0
   EndIf
-  
+
   If ShowGUIInGerman() Then
     WinSetTitle($maindlg, $maindlg, $caption & " - Lade Updates für " & $stroptions & "...")
   Else
@@ -900,7 +900,7 @@ Dim $result
     $runany = True
     Return 0
   EndIf
-  
+
   If ShowGUIInGerman() Then
     WinSetTitle($maindlg, $maindlg, $caption & " - Erstelle ISO-Image für " & $stroptions & "...")
   Else
@@ -954,7 +954,7 @@ Dim $result
     $runany = True
     Return 0
   EndIf
-  
+
   $result = 0
   If NOT FileExists($strpath) Then
     If ShowGUIInGerman() Then
@@ -1214,7 +1214,7 @@ Func CalcGUISize()
   $txtxoffset = 10 * $reg_val / $default_logpixels
   $txtyoffset = 10 * $reg_val / $default_logpixels
   Return 0
-EndFunc	
+EndFunc
 
 ;  Main Dialog
 AutoItSetOption("GUICloseOnESC", 0)
@@ -1223,7 +1223,7 @@ AutoItSetOption("TrayIconHide", 1)
 CalcGUISize()
 $groupwidth = 8 * $txtwidth + 2 * $txtxoffset
 $groupheight_lng = 4 * $txtheight
-$groupheight_glb = 2 * $txtheight 
+$groupheight_glb = 2 * $txtheight
 $maindlg = GUICreate($title, $groupwidth + 4 * $txtxoffset, $dlgheight)
 GUISetFont(8.5, 400, 0, "Sans Serif")
 $inifilename = StringLeft(@ScriptFullPath, StringInStr(@ScriptFullPath, ".", 0, -1)) & "ini"
@@ -2501,7 +2501,7 @@ GUICtrlSetState($tabitemfocused, $GUI_SHOW)
 
 ;  Options group
 $txtxpos = $txtxoffset
-$txtypos = $groupheight_lng + 5 * $groupheight_glb + 7 * $txtyoffset 
+$txtypos = $groupheight_lng + 5 * $groupheight_glb + 7 * $txtyoffset
 
 If ShowGUIInGerman() Then
   GUICtrlCreateGroup("Optionen", $txtxpos, $txtypos, $groupwidth + 2 * $txtxoffset,  $groupheight_lng)

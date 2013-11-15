@@ -375,7 +375,7 @@ Func CalcGUISize()
   $txtxoffset = 10 * $reg_val / $default_logpixels
   $txtyoffset = 10 * $reg_val / $default_logpixels
   Return 0
-EndFunc	
+EndFunc
 
 ; Main Dialog
 AutoItSetOption("GUICloseOnESC", 0)

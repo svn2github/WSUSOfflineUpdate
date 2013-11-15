@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.8b (r532)
+set WSUSOFFLINE_VERSION=8.8b (r533)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1305,6 +1305,7 @@ if "%SKIP_DYNAMIC%"=="/skipdynamic" (
   goto ListInstalledIds
 )
 if "%WUSCN_PREREQ_ID%"=="" goto CheckWUSvc
+if exist %SystemRoot%\Temp\wou_wupre_tried.txt goto CheckWUSvc
 echo Checking most recent Cumulative Security Update for Internet Explorer...
 %CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
 if exist "%TEMP%\InstalledUpdateIds.txt" (
@@ -1321,11 +1322,16 @@ if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing most recent Cumulative Security Update for Internet Explorer...
   call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
+  if not errorlevel 1 (
+    if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
+    echo. >%SystemRoot%\Temp\wou_wupre_tried.txt
+    set RECALL_REQUIRED=1
+  )
 ) else (
   echo Warning: Cumulative Security Update for Internet Explorer ^(kb%WUSCN_PREREQ_ID%^) not found.
   echo %DATE% %TIME% - Warning: Cumulative Security Update for Internet Explorer ^(kb%WUSCN_PREREQ_ID%^) not found>>%UPDATE_LOGFILE%
 )
-set REBOOT_REQUIRED=1
+if "%RECALL_REQUIRED%"=="1" goto Installed
 :CheckWUSvc
 rem *** Check state of service 'Windows Update' ***
 echo Checking state of service 'Windows Update'...
@@ -1548,6 +1554,7 @@ if "%RECALL_REQUIRED%"=="1" (
 ) else (
   if exist %SystemRoot%\Temp\wou_iepre_tried.txt del %SystemRoot%\Temp\wou_iepre_tried.txt
   if exist %SystemRoot%\Temp\wou_ie_tried.txt del %SystemRoot%\Temp\wou_ie_tried.txt
+  if exist %SystemRoot%\Temp\wou_wupre_tried.txt del %SystemRoot%\Temp\wou_wupre_tried.txt
   if exist "%TEMP%\UpdateInstaller.ini" del "%TEMP%\UpdateInstaller.ini"
   if "%SHOW_LOG%"=="/showlog" call PrepareShowLogFile.cmd
   if "%BOOT_MODE%"=="/autoreboot" (
@@ -1745,6 +1752,7 @@ goto Cleanup
 :Cleanup
 if exist %SystemRoot%\Temp\wou_iepre_tried.txt del %SystemRoot%\Temp\wou_iepre_tried.txt
 if exist %SystemRoot%\Temp\wou_ie_tried.txt del %SystemRoot%\Temp\wou_ie_tried.txt
+if exist %SystemRoot%\Temp\wou_wupre_tried.txt del %SystemRoot%\Temp\wou_wupre_tried.txt
 if exist "%TEMP%\UpdateInstaller.ini" del "%TEMP%\UpdateInstaller.ini"
 if "%USERNAME%"=="WOUTempAdmin" (
   if "%SHOW_LOG%"=="/showlog" call PrepareShowLogFile.cmd
