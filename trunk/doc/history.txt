@@ -825,7 +825,7 @@ Version 8.7.2 -- 04.11.13
 - Fix: DoUpdate.cmd script will now also try to determine missing updates if state of service 'Windows Update' (wuauserv) is "Start Pending" (Thanks to "friday123")
 - Fix: Check for trailing backslash in environment variable TEMP was broken in UpdateGenerator and UpdateInstaller scripts (Thanks to "chavv")
 --------------------------------------------------------------------------------
-Version 8.8 -- ??.11.13
+Version 8.8 -- 18.11.13
 - NOTE: If you customized your copy of WOU using the script AddCustomLanguageSupport.cmd {lng}, please call it again once (per language) to get the appropriate IE11 installation file(s) downloaded
 - NOTE: If you customized your copy of WOU using the script AddOffice2010x64Support.cmd {lng}, please call it again once (per language) to get the static multilingual x64 update files for Office 2010 downloaded
 - Optional installation of Internet Explorer 11 on Windows 7 and Server 2008 R2 (x86/x64) systems (Thanks to "boco")
@@ -838,3 +838,4 @@ Version 8.8 -- ??.11.13
 - Fix: Download part missed Security Updates kb2768005 and kb2837618 for Office 2013
 - Fix: AddOffice2010x64Support.cmd script didn't consider StaticDownloadLinks-o2k10-x64-glb.txt (Thanks to "psj")
 - Fix: 'x86-cross-product' ISO images exceeded 4.7 GB (max. capacity of DVD-5 media) and therefore won't any more contain updates for Windows Server 2003
+--------------------------------------------------------------------------------
