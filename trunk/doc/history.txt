@@ -839,3 +839,5 @@ Version 8.8 -- 18.11.13
 - Fix: AddOffice2010x64Support.cmd script didn't consider StaticDownloadLinks-o2k10-x64-glb.txt (Thanks to "psj")
 - Fix: 'x86-cross-product' ISO images exceeded 4.7 GB (max. capacity of DVD-5 media) and therefore won't any more contain updates for Windows Server 2003
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- UpdateGenerator script now supports variable ini files given as a command line parameter (Thanks to "boco")

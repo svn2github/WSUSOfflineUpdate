@@ -1226,7 +1226,11 @@ $groupheight_lng = 4 * $txtheight
 $groupheight_glb = 2 * $txtheight
 $maindlg = GUICreate($title, $groupwidth + 4 * $txtxoffset, $dlgheight)
 GUISetFont(8.5, 400, 0, "Sans Serif")
-$inifilename = StringLeft(@ScriptFullPath, StringInStr(@ScriptFullPath, ".", 0, -1)) & "ini"
+If ($CmdLine[0] > 0) AND (StringRight($CmdLine[$CmdLine[0]], 4) = ".ini") Then
+  $inifilename = $CmdLine[$CmdLine[0]]
+Else
+  $inifilename = StringLeft(@ScriptFullPath, StringInStr(@ScriptFullPath, ".", 0, -1)) & "ini"
+EndIf
 
 ;  Label
 $txtxpos = $txtxoffset
