@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.8+ (r538)
+set WSUSOFFLINE_VERSION=8.8+ (r539)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -341,10 +341,11 @@ if 0 EQU %OS_SP_VER_MAJOR% (
     echo %DATE% %TIME% - Warning: Faking of Windows XP Service Pack 1 failed>>%UPDATE_LOGFILE%
     goto SkipSPInst
   ) else (
-    echo %DATE% %TIME% - Info: Faked Windows XP Service Pack 1>>%UPDATE_LOGFILE%
+    echo %DATE% %TIME% - Info: Faked Windows XP Service Pack ^1>>%UPDATE_LOGFILE%
   )
 )
 :SPw2k3
+echo %DATE% %TIME% - Info: Installing most recent Service Pack for Windows XP / Server 2003>>%UPDATE_LOGFILE%
 if "%BACKUP_MODE%"=="/nobackup" (
   call InstallListedUpdates.cmd %VERIFY_MODE% /u /z /n
 ) else (
@@ -360,11 +361,11 @@ goto Installed
 :SPw63
 if "%BOOT_MODE%" NEQ "/autoreboot" goto SPw6Now
 if "%USERNAME%"=="WOUTempAdmin" goto SPw6Now
-echo %DATE% %TIME% - Info: Preparing installation of most recent Service Pack for Windows Vista / 7>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Preparing installation of most recent Service Pack for Windows Vista / ^7>>%UPDATE_LOGFILE%
 set RECALL_REQUIRED=1
 goto Installed
 :SPw6Now
-echo %DATE% %TIME% - Info: Installing most recent Service Pack for Windows Vista / 7>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Installing most recent Service Pack for Windows Vista / ^7>>%UPDATE_LOGFILE%
 call InstallListedUpdates.cmd %VERIFY_MODE% /unattend /forcerestart
 if errorlevel 1 goto InstError
 set RECALL_REQUIRED=1
@@ -1076,7 +1077,7 @@ rem *** Install Windows Management Framework ***
 if "%INSTALL_WMF%" NEQ "/instwmf" goto SkipWMFInst
 if %DOTNET4_VER_MAJOR% LSS %DOTNET4_VER_TARGET_MAJOR% (
   echo Warning: Missing Windows Management Framework prerequisite .NET Framework 4.
-  echo %DATE% %TIME% - Warning: Missing Windows Management Framework prerequisite .NET Framework 4>>%UPDATE_LOGFILE%
+  echo %DATE% %TIME% - Warning: Missing Windows Management Framework prerequisite .NET Framework ^4>>%UPDATE_LOGFILE%
   goto SkipWMFInst
 )
 if "%OS_NAME%"=="w60" (if %OS_DOMAIN_ROLE% GEQ 2 goto CheckWMF)

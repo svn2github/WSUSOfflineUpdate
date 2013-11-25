@@ -842,3 +842,4 @@ Version 8.8 -- 18.11.13
 Version ?.? -- ??.??.??
 - UpdateGenerator script now supports variable ini files given as a command line parameter (Thanks to "boco")
 - Fix: Download URLs for C++ 2012 Runtime Libraries Update 4 adjusted to English versions (Thanks to "harry")
+- Fix: DoUpdate.cmd script missed escape characters for log file output (Thanks to "aker", "boco" and "Matjes")
