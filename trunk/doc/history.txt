@@ -843,3 +843,4 @@ Version ?.? -- ??.??.??
 - UpdateGenerator script now supports variable ini files given as a command line parameter (Thanks to "boco")
 - Fix: Download URLs for C++ 2012 Runtime Libraries Update 4 adjusted to English versions (Thanks to "harry")
 - Fix: DoUpdate.cmd script missed escape characters for log file output (Thanks to "aker", "boco" and "Matjes")
+- Fix: Linux download script DownloadUpdates.sh stored .NET installation files in invalid path (Thanks to "rogger", H. Buhrmester and H. Hullen)

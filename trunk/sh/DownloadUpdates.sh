@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                          v. 8.8+ (r539)                           ###
+###                          v. 8.8+ (r540)                           ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -833,19 +833,38 @@ if [ "$dotnet" == "1" ]; then
 #    Txt=".Net "
 #    down_msse_cpp
   echo "Downloading .Net framework..."
-  mkdir -p ../client/dotnet/${OS_ARCH}-$lang
+
+# combine ExcludeList-dotnet-${OS_ARCH}.txt and ExcludeList-superseded.txt
+  > ../temp/tmpExcludeList-dotnet-${OS_ARCH}.txt
+
+  test -f ../exclude/ExcludeList-dotnet-${OS_ARCH}.txt && \
+      cat ../exclude/ExcludeList-dotnet-${OS_ARCH}.txt >> \
+          ../temp/tmpExcludeList-dotnet-${OS_ARCH}.txt
+
+  test -f ../exclude/ExcludeList-superseded.txt && \
+      cat ../exclude/ExcludeList-superseded.txt >> \
+          ../temp/tmpExcludeList-dotnet-${OS_ARCH}.txt
+
+# substract tmpExcludeList-dotnet-${OS_ARCH}.txt from Urls-dotnet-${OS_ARCH}.txt
+  > ../temp/ValidUrls-dotnet-${OS_ARCH}.txt
+
+  test -f ../temp/Urls-dotnet-${OS_ARCH}.txt && \
+    grep -F -i -v -f ../temp/tmpExcludeList-dotnet-${OS_ARCH}.txt \
+    ../temp/Urls-dotnet-${OS_ARCH}.txt > \
+    ../temp/ValidUrls-dotnet-${OS_ARCH}.txt
+
+# create download directory and get downloads
+  mkdir -p ../client/dotnet/${OS_ARCH}-glb
   doWget -i ../temp/StaticUrls-dotnet.txt -P ../client/dotnet
-  mv ../temp/Urls-dotnet-${OS_ARCH}.txt ../temp/Urls-dotnet-${OS_ARCH}.tmp
-  grep -i -v -f ../exclude/ExcludeList-dotnet-${OS_ARCH}.txt ../temp/Urls-dotnet-${OS_ARCH}.tmp > ../temp/Urls-dotnet-${OS_ARCH}.txt
-  doWget -i ../temp/Urls-dotnet-${OS_ARCH}.txt -P ../client/dotnet/${OS_ARCH}-$lang
+  doWget -i ../temp/ValidUrls-dotnet-${OS_ARCH}.txt -P ../client/dotnet/${OS_ARCH}-glb
 
   echo "Creating integrity database for .Net ..."
   cd ../client/bin
     for Datei in ../dotnet/*.exe
     do
-    test -s "$Datei" && \
-	hashdeep -c md5,sha1,sha256 -l "$Datei" | tr '/' '\\' > ../md/hashes-dotnet.txt
+        test -s "$Datei" || rm "$Datei"
     done
+    hashdeep -c md5,sha1,sha256 -l ../dotnet/*.exe | tr '/' '\\' > ../md/hashes-dotnet.txt
   cd "$PATH_PWD"
 
   echo "Creating integrity database for .Net-${OS_ARCH}-glb ..."
@@ -978,8 +997,14 @@ exit 0
 # 
 
 # ========================================================================
-# $Id: DownloadUpdates.sh,v 1.6 2013-10-06 13:42:48+02 HHullen Exp $
+# $Id: DownloadUpdates.sh,v 1.8 2013-11-27 16:24:00+01 HHullen Exp $
 # $Log: DownloadUpdates.sh,v $
+# Revision 1.8  2013-11-27 16:24:00+01  HHullen
+# Burmeister-Patch
+#
+# Revision 1.7  2013-11-27 16:04:58+01  HHullen
+# Version 8.8
+#
 # Revision 1.6  2013-10-06 13:42:48+02  HHullen
 # Prüfung, ob in custom Dateien liegen
 #
