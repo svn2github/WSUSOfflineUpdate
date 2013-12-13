@@ -840,8 +840,10 @@ Version 8.8 -- 18.11.13
 - Fix: 'x86-cross-product' ISO images exceeded 4.7 GB (max. capacity of DVD-5 media) and therefore won't any more contain updates for Windows Server 2003
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
+- Updated static download URL for untrusted/revoked root certificates (rvkroots.exe/kb2917500) 
 - UpdateGenerator script now supports variable ini files given as a command line parameter (Thanks to "boco")
 - Replaced Windows XP/Vista scan prerequisite update kb2888505 by kb2898785
+- Fix: Download part missed Security Updates kb2850057 and kb2850064 for Office 2013
 - Fix: Download URLs for C++ 2012 Runtime Libraries Update 4 adjusted to English versions (Thanks to "harry")
 - Fix: DoUpdate.cmd script missed escape characters for log file output (Thanks to "aker", "boco" and "Matjes")
 - Fix: Linux download script DownloadUpdates.sh stored .NET installation files in invalid path (Thanks to "rogger", H. Buhrmester and H. Hullen)
