@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.8+ (r542)
+set WSUSOFFLINE_VERSION=8.8+ (r543)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -633,6 +633,7 @@ for %%i in (x64 x86) do (
     if "%%k" NEQ "" (
       if exist ..\client\cpp\%%k (
         echo Renaming file ..\client\cpp\%%k to %%~nxj...
+        if exist ..\client\cpp\%%~nxj del ..\client\cpp\%%~nxj
         ren ..\client\cpp\%%k %%~nxj
         echo %DATE% %TIME% - Info: Renamed file ..\client\cpp\%%k to %%~nxj>>%DOWNLOAD_LOGFILE%
       )
@@ -741,6 +742,7 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\StaticDownloadLinks-msse-%
   if "%%j" NEQ "" (
     if exist ..\client\msse\%TARGET_ARCH%-glb\%%j (
       echo Renaming file ..\client\msse\%TARGET_ARCH%-glb\%%j to %%~nxi...
+      if exist ..\client\msse\%TARGET_ARCH%-glb\%%~nxi del ..\client\msse\%TARGET_ARCH%-glb\%%~nxi
       ren ..\client\msse\%TARGET_ARCH%-glb\%%j %%~nxi
       echo %DATE% %TIME% - Info: Renamed file ..\client\msse\%TARGET_ARCH%-glb\%%j to %%~nxi>>%DOWNLOAD_LOGFILE%
     )
