@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                          v. 8.8+ (r543)                           ###
+###                          v. 8.8+ (r544)                           ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -132,12 +132,13 @@ Please select your OS:
 [5] Windows Vista / Server 2008	[6] Windows Vista / Server 2008     64 bit
 [7] Windows 7			[8] Windows 7     / Server 2008 R2  64 bit
 [9] Windows 8			[10] Windows 8    / Server 2012     64 bit
+[11] Windows 8.1		[12] Windows 8.1		    64 bit
 
-[11] All 32 bit			[12] All 64 bit
+[13] All 32 bit			[14] All 64 bit
 
-[13] Office 2003	[14] Office 2007
-[15] Office 2010	[16] Office 2013
-[17] All Office updates (2003 - 2013)
+[15] Office 2003	[16] Office 2007
+[17] Office 2010	[18] Office 2013
+[19] All Office updates (2003 - 2013)
 
 END
 read -p "which number? " syschoice
@@ -997,8 +998,11 @@ exit 0
 # 
 
 # ========================================================================
-# $Id: DownloadUpdates.sh,v 1.8 2013-11-27 16:24:00+01 HHullen Exp $
+# $Id: DownloadUpdates.sh,v 1.9 2013-12-27 17:25:29+01 HHullen Exp $
 # $Log: DownloadUpdates.sh,v $
+# Revision 1.9  2013-12-27 17:25:29+01  HHullen
+# Windows 8.1 (w63) ergänzt
+#
 # Revision 1.8  2013-11-27 16:24:00+01  HHullen
 # Burmeister-Patch
 #
