@@ -840,7 +840,7 @@ Version 8.8 -- 18.11.13
 - Fix: 'x86-cross-product' ISO images exceeded 4.7 GB (max. capacity of DVD-5 media) and therefore won't any more contain updates for Windows Server 2003
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
-- AutoIt script compiler updated to version 3.3.10.1
+- AutoIt script compiler updated to version 3.3.10.2
 - Updated static download URL for untrusted/revoked root certificates (rvkroots.exe/kb2917500) 
 - UpdateGenerator script now supports variable ini files given as a command line parameter (Thanks to "boco")
 - Linux download script DownloadUpdates.sh now also supports Windows 8.1 and Server 2012 R2 (Thanks to H. Hullen)

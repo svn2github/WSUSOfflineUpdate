@@ -202,8 +202,6 @@ Func _ArrayDisplay(Const ByRef $avArray, $sTitle = Default, $sArray_Range = Defa
 	If $iAlt_Color = Default Then $iAlt_Color = 0
 	If $hUser_Func = Default Then $hUser_Func = 0
 
-	ConsoleWrite($hUser_Func & " - " & IsFunc($hUser_Func) & @CRLF)
-
 	; Check for transpose, column align and verbosity
 	Local $iTranspose = BitAND($iFlags, 1)
 	Local $iColAlign = BitAND($iFlags, 6) ; 0 = Left (default); 2 = Right; 4 = CenterLocal $iVerbose = BitAnd($iFlags, 8)
