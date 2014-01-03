@@ -74,7 +74,25 @@ set WMP_TARGET_ID=wmp11-windowsxp-x86
 set TSC_VER_TARGET_MAJOR=6
 set TSC_VER_TARGET_MINOR=1
 set TSC_TARGET_ID=969084
-set WUSCN_PREREQ_ID=2898785
+if exist "%TEMP%\wou_ie_kbids.txt" del "%TEMP%\wou_ie_kbids.txt"
+for /F %%i in ('dir /B ..\ie*-*kb*.exe /s') do (
+  for /F "tokens=3 delims=-" %%j in ("%%~ni") do echo %%j>>"%TEMP%\wou_ie_kbids.txt"
+)
+if exist "%TEMP%\wou_ie_kbids.txt" (
+  for %%i in ("%TEMP%\wou_ie_kbids.txt") do (
+    if %%~zi==0 del %%i
+  )
+)
+if exist "%TEMP%\wou_ie_kbids.txt" (
+  %SystemRoot%\System32\sort.exe "%TEMP%\wou_ie_kbids.txt" /O "%TEMP%\wou_ie_kbids_sorted.txt"
+  del "%TEMP%\wou_ie_kbids.txt"
+  for /F "usebackq" %%i in ("%TEMP%\wou_ie_kbids_sorted.txt") do (
+    set WUSCN_PREREQ_ID=%%i
+  )
+  del "%TEMP%\wou_ie_kbids_sorted.txt"
+) else (
+  set WUSCN_PREREQ_ID=kb2898785
+)
 set WOU_ENDLESS=4
 goto SetOfficeName
 
@@ -102,13 +120,32 @@ set WMP_VER_TARGET_MAJOR=0
 if /i "%OS_ARCH%"=="x64" (
   set TSC_VER_TARGET_MAJOR=5
   set TSC_VER_TARGET_MINOR=2
+  set WOU_ENDLESS=3
 ) else (
   set TSC_VER_TARGET_MAJOR=6
   set TSC_VER_TARGET_MINOR=0
   set TSC_TARGET_ID=925876
+  if exist "%TEMP%\wou_ie_kbids.txt" del "%TEMP%\wou_ie_kbids.txt"
+  for /F %%i in ('dir /B ..\ie*-*kb*.exe /s') do (
+    for /F "tokens=3 delims=-" %%j in ("%%~ni") do echo %%j>>"%TEMP%\wou_ie_kbids.txt"
+  )
+  if exist "%TEMP%\wou_ie_kbids.txt" (
+    for %%i in ("%TEMP%\wou_ie_kbids.txt") do (
+      if %%~zi==0 del %%i
+    )
+  )
+  if exist "%TEMP%\wou_ie_kbids.txt" (
+    %SystemRoot%\System32\sort.exe "%TEMP%\wou_ie_kbids.txt" /O "%TEMP%\wou_ie_kbids_sorted.txt"
+    del "%TEMP%\wou_ie_kbids.txt"
+    for /F "usebackq" %%i in ("%TEMP%\wou_ie_kbids_sorted.txt") do (
+      set WUSCN_PREREQ_ID=%%i
+    )
+    del "%TEMP%\wou_ie_kbids_sorted.txt"
+  ) else (
+    set WUSCN_PREREQ_ID=kb2898785
+  )
+  set WOU_ENDLESS=4
 )
-set WUSCN_PREREQ_ID=2898785
-set WOU_ENDLESS=4
 goto SetOfficeName
 
 :Windows6.0
@@ -136,8 +173,7 @@ if %OS_DOMAIN_ROLE% LEQ 1 (
 set WMF_VER_TARGET_MAJOR=3
 set WMF_VER_TARGET_MINOR=0
 set WMF_TARGET_ID=2506146
-set WUSCN_PREREQ_ID=2898785
-set WOU_ENDLESS=7
+set WOU_ENDLESS=6
 goto Windows%OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_SP_VER_MAJOR%
 :Windows6.0.
 :Windows6.0.0
