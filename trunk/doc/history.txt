@@ -841,11 +841,12 @@ Version 8.8 -- 18.11.13
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
 - AutoIt script compiler updated to version 3.3.10.2
-- Static download URLs for aria2 download utility updated to v. 1.18.2
-- Updated static download URL for untrusted/revoked root certificates (rvkroots.exe/kb2917500) 
-- UpdateGenerator script now supports variable ini files given as a command line parameter (Thanks to "boco")
-- Linux download script DownloadUpdates.sh now also supports Windows 8.1 and Server 2012 R2 (Thanks to H. Hullen)
+- Static download URLs for aria2 download utility updated to v. 1.18.3 (Thanks to M. Köhler)
+- Updated static download URL for untrusted/revoked root certificates (rvkroots.exe/kb2917500)
 - Update scan prerequisite for Windows XP and Server 2003 (x86) systems (latest IEx cumulative security update) will now be dynamically determined (Thanks to "harry" and "aker")
+- UpdateGenerator script now supports variable ini files given as a command line parameter (Thanks to "boco")
+- MSI packages and custom software will now be installed before Microsoft's updates (Thanks to "d4vr0s")
+- Linux download script DownloadUpdates.sh now also supports Windows 8.1 and Server 2012 R2 (Thanks to H. Hullen)
 - Fix: Download part missed Security Updates kb2850057 and kb2850064 for Office 2013
 - Fix: Update scan prerequisite installation restricted to Windows XP and Server 2003 (x86) systems (Thanks to "boco" and "Denniss")
 - Fix: Downloading of updated CPP and MSE installation packages could fail after an incomplete previous run (Thanks to Th. Baisch)

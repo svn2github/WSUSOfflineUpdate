@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.9b (r548)
+set WSUSOFFLINE_VERSION=8.9b (r549)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1191,7 +1191,7 @@ set WDDEFS_VER_TARGET_BUILD=
 set WDDEFS_VER_TARGET_REVIS=
 
 if "%RECALL_REQUIRED%"=="1" goto Installed
-if "%OFC_NAME%"=="" goto InstUpdates
+if "%OFC_NAME%"=="" goto SkipOffice
 
 rem *** Check Office Service Pack versions ***
 echo Checking Office Service Pack versions...
@@ -1298,8 +1298,26 @@ if "%OFC_FILE_VALID%" NEQ "1" (
   )
 )
 :SkipOFVAL
+:SkipOffice
 
-:InstUpdates
+rem *** Install MSI packages and custom software ***
+if exist ..\software\custom\InstallCustomSoftware.cmd (
+  echo Installing custom software...
+  pushd ..\software\custom
+  call InstallCustomSoftware.cmd
+  popd
+  echo %DATE% %TIME% - Info: Executed custom software installation hook ^(Errorlevel: %errorlevel%^)>>%UPDATE_LOGFILE%
+  set REBOOT_REQUIRED=1
+)
+if exist %SystemRoot%\Temp\wouselmsi.txt (
+  echo Installing selected MSI packages...
+  call TouchMSITree.cmd /instselected
+  echo %DATE% %TIME% - Info: Installed selected MSI packages>>%UPDATE_LOGFILE%
+  del %SystemRoot%\Temp\wouselmsi.txt
+  set REBOOT_REQUIRED=1
+)
+
+rem *** Determine and install missing Microsoft updates ***
 if "%SKIP_DYNAMIC%"=="/skipdynamic" (
   echo Skipping determination of missing updates on demand...
   echo %DATE% %TIME% - Info: Skipped determination of missing updates on demand>>%UPDATE_LOGFILE%
@@ -1507,22 +1525,6 @@ set NISDEFS_VER_TARGET_MINOR=
 set NISDEFS_VER_TARGET_BUILD=
 set NISDEFS_VER_TARGET_REVIS=
 
-rem *** Install MSI packages and custom software ***
-if exist ..\software\custom\InstallCustomSoftware.cmd (
-  echo Installing custom software...
-  pushd ..\software\custom
-  call InstallCustomSoftware.cmd
-  popd
-  echo %DATE% %TIME% - Info: Executed custom software installation hook ^(Errorlevel: %errorlevel%^)>>%UPDATE_LOGFILE%
-  set REBOOT_REQUIRED=1
-)
-if exist %SystemRoot%\Temp\wouselmsi.txt (
-  echo Installing selected MSI packages...
-  call TouchMSITree.cmd /instselected
-  echo %DATE% %TIME% - Info: Installed selected MSI packages>>%UPDATE_LOGFILE%
-  del %SystemRoot%\Temp\wouselmsi.txt
-  set REBOOT_REQUIRED=1
-)
 if "%REBOOT_REQUIRED%" NEQ "1" goto NoUpdates
 
 :Installed
