@@ -849,6 +849,7 @@ Version ?.? -- ??.??.??
 - Linux download script DownloadUpdates.sh now also supports Windows 8.1 and Server 2012 R2 (Thanks to H. Hullen)
 - Fix: Download part missed Security Updates kb2850057 and kb2850064 for Office 2013
 - Fix: Update scan prerequisite installation restricted to Windows XP and Server 2003 (x86) systems (Thanks to "boco" and "Denniss")
+- Fix: Windows XP (x86) SP3 prerequisite update for non-Intel processors (kb953356) was erroneously attempted to be installed on systems without SP2 (Thanks to A. Pfohl)
 - Fix: Downloading of updated CPP and MSE installation packages could fail after an incomplete previous run (Thanks to Th. Baisch)
 - Fix: Download URLs for C++ 2012 Runtime Libraries Update 4 adjusted to English versions (Thanks to "harry")
 - Fix: DoUpdate.cmd script missed escape characters for log file output (Thanks to "aker", "boco" and "Matjes")
