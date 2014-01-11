@@ -93,6 +93,7 @@ if exist "%TEMP%\wou_ie_kbids.txt" (
 ) else (
   set WUSCN_PREREQ_ID=kb2898785
 )
+if "%WUSCN_PREREQ_ID%" NEQ "" set WUSCN_PREREQ_ID=%WUSCN_PREREQ_ID:~2%
 set WOU_ENDLESS=4
 goto SetOfficeName
 
@@ -146,6 +147,7 @@ if /i "%OS_ARCH%"=="x64" (
   )
   set WOU_ENDLESS=4
 )
+if "%WUSCN_PREREQ_ID%" NEQ "" set WUSCN_PREREQ_ID=%WUSCN_PREREQ_ID:~2%
 goto SetOfficeName
 
 :Windows6.0
