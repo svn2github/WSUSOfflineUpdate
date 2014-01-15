@@ -839,7 +839,7 @@ Version 8.8 -- 18.11.13
 - Fix: AddOffice2010x64Support.cmd script didn't consider StaticDownloadLinks-o2k10-x64-glb.txt (Thanks to "psj")
 - Fix: 'x86-cross-product' ISO images exceeded 4.7 GB (max. capacity of DVD-5 media) and therefore won't any more contain updates for Windows Server 2003
 --------------------------------------------------------------------------------
-Version ?.? -- ??.??.??
+Version 8.9 -- 15.01.14
 - AutoIt script compiler updated to version 3.3.10.2
 - Static download URLs for aria2 download utility updated to v. 1.18.3 (Thanks to M. Köhler)
 - Updated static download URL for untrusted/revoked root certificates (rvkroots.exe/kb2917500)
@@ -855,3 +855,4 @@ Version ?.? -- ??.??.??
 - Fix: DoUpdate.cmd script missed escape characters for log file output (Thanks to "aker", "boco" and "Matjes")
 - Fix: Excluded obsolete/superseded cumulative security updates for Internet Explorer under Windows Vista and Server 2003/2008 (x86/x64) (Thanks to "harry")
 - Fix: Linux download script DownloadUpdates.sh stored .NET installation files in invalid path (Thanks to "rogger", H. Buhrmester and H. Hullen)
+--------------------------------------------------------------------------------

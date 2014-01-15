@@ -75,7 +75,7 @@ set TSC_VER_TARGET_MAJOR=6
 set TSC_VER_TARGET_MINOR=1
 set TSC_TARGET_ID=969084
 if exist "%TEMP%\wou_ie_kbids.txt" del "%TEMP%\wou_ie_kbids.txt"
-for /F %%i in ('dir /B ..\ie*-*kb*.exe /s') do (
+for /F %%i in ('dir /B /S ..\ie*-kb???????-*.exe') do (
   for /F "tokens=3 delims=-" %%j in ("%%~ni") do echo %%j>>"%TEMP%\wou_ie_kbids.txt"
 )
 if exist "%TEMP%\wou_ie_kbids.txt" (
@@ -127,7 +127,7 @@ if /i "%OS_ARCH%"=="x64" (
   set TSC_VER_TARGET_MINOR=0
   set TSC_TARGET_ID=925876
   if exist "%TEMP%\wou_ie_kbids.txt" del "%TEMP%\wou_ie_kbids.txt"
-  for /F %%i in ('dir /B ..\ie*-*kb*.exe /s') do (
+  for /F %%i in ('dir /B /S ..\ie*-kb???????-*.exe') do (
     for /F "tokens=3 delims=-" %%j in ("%%~ni") do echo %%j>>"%TEMP%\wou_ie_kbids.txt"
   )
   if exist "%TEMP%\wou_ie_kbids.txt" (
