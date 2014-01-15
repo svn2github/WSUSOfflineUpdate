@@ -1,0 +1,4 @@
+http://download.microsoft.com/download/0/8/c/08ca462c-3b03-4cf4-a3ad-bbeaedb7dea8/Office2003SP3-KB923618-FullFile-TRK.exe
+http://download.microsoft.com/download/a/2/4/a24fc073-d51e-40ff-b604-caaff58328a7/WordViewer2003SP3-KB934736-FullFile-TRK.exe
+http://download.microsoft.com/download/7/5/7/7570E7D9-4D68-4446-82E2-9FA38A8BA444/office2003-KB975051-FullFile-TRK.exe
+http://download.microsoft.com/download/1/7/C/17CF110D-F99C-45BF-BC70-BE40285BEFAB/office2003-KB2760494-FullFile-TRK.exe

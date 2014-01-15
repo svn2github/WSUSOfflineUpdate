@@ -1,0 +1,3 @@
+http://download.windowsupdate.com/windowsupdate/redist/standalone/7.4.7600.226/WindowsUpdateAgent30-x86.exe
+http://download.windowsupdate.com/windowsupdate/redist/standalone/7.4.7600.226/WindowsUpdateAgent30-x64.exe
+http://download.windowsupdate.com/microsoftupdate/v6/wsusscan/wsusscn2.cab
