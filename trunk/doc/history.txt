@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 8.8
+WSUS Offline Update 8.9
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -856,3 +856,5 @@ Version 8.9 -- 15.01.14
 - Fix: Excluded obsolete/superseded cumulative security updates for Internet Explorer under Windows Vista and Server 2003/2008 (x86/x64) (Thanks to "harry")
 - Fix: Linux download script DownloadUpdates.sh stored .NET installation files in invalid path (Thanks to "rogger", H. Buhrmester and H. Hullen)
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- Fix: Excluded obsolete/superseded cumulative security updates for Internet Explorer under Windows XP/Server 2003 (x64) and 7/Server 2008 R2 (x64) (Thanks to "harry")
