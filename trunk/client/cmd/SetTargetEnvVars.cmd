@@ -74,27 +74,7 @@ set WMP_TARGET_ID=wmp11-windowsxp-x86
 set TSC_VER_TARGET_MAJOR=6
 set TSC_VER_TARGET_MINOR=1
 set TSC_TARGET_ID=969084
-if exist "%TEMP%\wou_ie_kbids.txt" del "%TEMP%\wou_ie_kbids.txt"
-for /F %%i in ('dir /B /S ..\ie*-kb???????-*.exe') do (
-  for /F "tokens=3 delims=-" %%j in ("%%~ni") do echo %%j>>"%TEMP%\wou_ie_kbids.txt"
-)
-if exist "%TEMP%\wou_ie_kbids.txt" (
-  for %%i in ("%TEMP%\wou_ie_kbids.txt") do (
-    if %%~zi==0 del %%i
-  )
-)
-if exist "%TEMP%\wou_ie_kbids.txt" (
-  %SystemRoot%\System32\sort.exe "%TEMP%\wou_ie_kbids.txt" /O "%TEMP%\wou_ie_kbids_sorted.txt"
-  del "%TEMP%\wou_ie_kbids.txt"
-  for /F "usebackq" %%i in ("%TEMP%\wou_ie_kbids_sorted.txt") do (
-    set WUSCN_PREREQ_ID=%%i
-  )
-  del "%TEMP%\wou_ie_kbids_sorted.txt"
-) else (
-  set WUSCN_PREREQ_ID=kb2898785
-)
-if "%WUSCN_PREREQ_ID%" NEQ "" set WUSCN_PREREQ_ID=%WUSCN_PREREQ_ID:~2%
-set WOU_ENDLESS=4
+set WOU_ENDLESS=3
 goto SetOfficeName
 
 :Windows5.2

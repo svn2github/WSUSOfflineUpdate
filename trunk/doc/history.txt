@@ -857,5 +857,6 @@ Version 8.9 -- 15.01.14
 - Fix: Linux download script DownloadUpdates.sh stored .NET installation files in invalid path (Thanks to "rogger", H. Buhrmester and H. Hullen)
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
+- Removed obsolete update scan prerequisite installation for Windows XP (x86) systems (Thanks to "Denniss", "psycx", "Manfred" and the community)
 - Fix: CompileAutoItScripts.cmd script won't any longer use compression for compilation in order to avoid false positive alerts from AV scanners (Thanks to "boco")
 - Fix: Excluded obsolete/superseded cumulative security updates for Internet Explorer under Windows XP/Server 2003 (x64) and 7/Server 2008 R2 (x64) (Thanks to "harry")
