@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=8.9+ (r556)
+set WSUSOFFLINE_VERSION=8.9+ (r557)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -28,7 +28,7 @@ echo %DATE% %TIME% - Info: Used path "%~dp0" on %COMPUTERNAME% (user: %USERNAME%
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/nobackup /verify /updatercerts /instie7 /instie8 /instie9 /instie10 /instie11 /updatecpp /updatedx /instmssl /updatewmp /instdotnet35 /instdotnet4 /instpsh /instwmf /instmsse /updatetsc /instofc /instofv /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
+for %%i in (/nobackup /verify /updatercerts /instie7 /instie8 /instie9 /instie10 /instie11 /instielatest /updatecpp /updatedx /instmssl /updatewmp /instdotnet35 /instdotnet4 /instpsh /instwmf /instmsse /updatetsc /instofc /instofv /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected>>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/nobackup" set BACKUP_MODE=/nobackup
@@ -39,6 +39,7 @@ if /i "%1"=="/instie8" set INSTALL_IE=/instie8
 if /i "%1"=="/instie9" set INSTALL_IE=/instie9
 if /i "%1"=="/instie10" set INSTALL_IE=/instie10
 if /i "%1"=="/instie11" set INSTALL_IE=/instie11
+if /i "%1"=="/instielatest" set INSTALL_IE=/instielatest
 if /i "%1"=="/updatecpp" set UPDATE_CPP=/updatecpp
 if /i "%1"=="/updatedx" set UPDATE_DX=/updatedx
 if /i "%1"=="/instmssl" set INSTALL_MSSL=/instmssl
@@ -122,7 +123,7 @@ del "%TEMP%\SetDXVer.cmd"
 :NoDXDiag
 
 rem *** Set target environment variables ***
-call SetTargetEnvVars.cmd %INSTALL_IE%
+call SetTargetEnvVars.cmd
 if errorlevel 1 goto Cleanup
 
 rem *** Check number of automatic recalls ***

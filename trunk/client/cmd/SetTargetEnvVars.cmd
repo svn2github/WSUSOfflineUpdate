@@ -63,8 +63,9 @@ set MSI_VER_TARGET_MINOR=5
 set MSI_TARGET_ID=942288
 set WSH_VER_TARGET_MAJOR=5
 set WSH_VER_TARGET_MINOR=7
-if /i "%1"=="/instie8" (set IE_VER_TARGET_MAJOR=8) else (
-  if /i "%1"=="/instie7" (set IE_VER_TARGET_MAJOR=7) else (set IE_VER_TARGET_MAJOR=6)
+if /i "%INSTALL_IE%"=="/instielatest" set INSTALL_IE=/instie8
+if /i "%INSTALL_IE%"=="/instie8" (set IE_VER_TARGET_MAJOR=8) else (
+  if /i "%INSTALL_IE%"=="/instie7" (set IE_VER_TARGET_MAJOR=7) else (set IE_VER_TARGET_MAJOR=6)
 )
 set IE_VER_TARGET_MINOR=0
 set DOTNET4_VER_TARGET_MINOR=0
@@ -91,8 +92,9 @@ if /i "%OS_ARCH%"=="x64" (
 ) else (
   set WSH_VER_TARGET_MINOR=7
 )
-if /i "%1"=="/instie8" (set IE_VER_TARGET_MAJOR=8) else (
-  if /i "%1"=="/instie7" (set IE_VER_TARGET_MAJOR=7) else (set IE_VER_TARGET_MAJOR=6)
+if /i "%INSTALL_IE%"=="/instielatest" set INSTALL_IE=/instie8
+if /i "%INSTALL_IE%"=="/instie8" (set IE_VER_TARGET_MAJOR=8) else (
+  if /i "%INSTALL_IE%"=="/instie7" (set IE_VER_TARGET_MAJOR=7) else (set IE_VER_TARGET_MAJOR=6)
 )
 set IE_VER_TARGET_MINOR=0
 set DOTNET4_VER_TARGET_MINOR=0
@@ -137,8 +139,9 @@ set MSI_VER_TARGET_MAJOR=4
 set MSI_VER_TARGET_MINOR=5
 set WSH_VER_TARGET_MAJOR=5
 set WSH_VER_TARGET_MINOR=7
-if /i "%1"=="/instie9" (set IE_VER_TARGET_MAJOR=9) else (
-  if /i "%1"=="/instie8" (set IE_VER_TARGET_MAJOR=8) else (set IE_VER_TARGET_MAJOR=7)
+if /i "%INSTALL_IE%"=="/instielatest" set INSTALL_IE=/instie9
+if /i "%INSTALL_IE%"=="/instie9" (set IE_VER_TARGET_MAJOR=9) else (
+  if /i "%INSTALL_IE%"=="/instie8" (set IE_VER_TARGET_MAJOR=8) else (set IE_VER_TARGET_MAJOR=7)
 )
 set IE_VER_TARGET_MINOR=0
 set DOTNET4_VER_TARGET_MINOR=5
@@ -177,15 +180,16 @@ set MSI_VER_TARGET_MAJOR=5
 set MSI_VER_TARGET_MINOR=0
 set WSH_VER_TARGET_MAJOR=5
 set WSH_VER_TARGET_MINOR=8
-if /i "%1"=="/instie11" (
+if /i "%INSTALL_IE%"=="/instielatest" set INSTALL_IE=/instie11
+if /i "%INSTALL_IE%"=="/instie11" (
   set IE_VER_TARGET_MAJOR=9
   set IE_VER_TARGET_MINOR=11
 ) else (
-  if /i "%1"=="/instie10" (
+  if /i "%INSTALL_IE%"=="/instie10" (
     set IE_VER_TARGET_MAJOR=9
     set IE_VER_TARGET_MINOR=10
   ) else (
-    if /i "%1"=="/instie9" (
+    if /i "%INSTALL_IE%"=="/instie9" (
       set IE_VER_TARGET_MAJOR=9
       set IE_VER_TARGET_MINOR=0
     ) else (
