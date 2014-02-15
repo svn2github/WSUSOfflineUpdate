@@ -1,3 +1,2 @@
 http://download.microsoft.com/download/5/5/4/554460AC-68BF-4879-A48E-21AE3F73A60E/Windows8-RT-KB2769165-x64.msu
-http://download.microsoft.com/download/6/D/A/6DA50759-B2DA-4783-AE12-46BCB6DA9D6B/Windows8-RT-KB2862973-x64.msu
 http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows8-RT-KB2799888-x64.msu
