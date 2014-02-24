@@ -862,4 +862,5 @@ Version ?.? -- ??.??.??
 - Removed obsolete update scan prerequisite installation for Windows XP (x86) systems (Thanks to "Denniss", "psycx", "Manfred" and the community)
 - Fix: CompileAutoItScripts.cmd script won't any longer use compression for compilation in order to avoid false positive alerts from AV scanners (Thanks to "boco")
 - Fix: Excluded obsolete/superseded cumulative security updates for Internet Explorer under Windows XP/Server 2003 (x64) and 7/Server 2008 R2 (x64) (Thanks to "harry")
+- Fix: Excluded obsolete initial revision of security update for USB drivers (kb2862330) for Windows 7 and Server 2008 R2 (x86/x64) systems (Thanks to M. Köhler)
 - Fix: Removed obsolete static download definitions for kb2862973 (Update for Deprecation of MD5 Hashing Algorithm for Microsoft Root Certificate Program) (Thanks to "boco" and "harry")

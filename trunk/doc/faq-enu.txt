@@ -36,6 +36,7 @@ The following updates are already excluded:
 - kb944036 (Internet Explorer 8 (will be explicitly installed if selected))
 - kb982861 (Internet Explorer 9 (will be explicitly installed if selected))
 - kb2718695 (Internet Explorer 10 (will be explicitly installed if selected))
+- kb2841134 (Internet Explorer 11 (will be explicitly installed if selected))
 - kb976002 (Browser Choice)
 - kb923618 (Office 2003 Service Pack 3 (will be implicitly installed if required))
 - kb2526086 (Office 2007 Service Pack 3 (will be implicitly installed if required))
