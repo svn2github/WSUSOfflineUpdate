@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 8.9
+WSUS Offline Update 9.0
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -856,7 +856,10 @@ Version 8.9 -- 15.01.14
 - Fix: Excluded obsolete/superseded cumulative security updates for Internet Explorer under Windows Vista and Server 2003/2008 (x86/x64) (Thanks to "harry")
 - Fix: Linux download script DownloadUpdates.sh stored .NET installation files in invalid path (Thanks to "rogger", H. Buhrmester and H. Hullen)
 --------------------------------------------------------------------------------
-Version ?.? -- ??.??.??
+Version 9.0 -- ??.??.14
+- INSTALLATION HINT: If you customized your copy of WOU using the script AddOffice2010x64Support.cmd {lng}, please call it again once (per language) to get the appropriate Office 2013 SP1 installation file(s) downloaded
+- NOTE: This version is supposed to be the last one supporting Windows XP and Office 2003 (see http://support.microsoft.com/lifecycle/?p1=3223 and http://support.microsoft.com/lifecycle/?p1=2488)
+- Office 2013 Service Pack 1 integrated (Thanks to "Gerby")
 - DoUpdate.cmd script now supports "/instielatest" parameter for platform independent custom scripting (Thanks to "hdneuenfeldt" and "aker")
 - RemoveGermanLanguageSupport.cmd script added for non-german users' convenience (Thanks to "Progman" and "sao")
 - Removed obsolete update scan prerequisite installation for Windows XP (x86) systems (Thanks to "Denniss", "psycx", "Manfred" and the community)

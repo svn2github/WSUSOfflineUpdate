@@ -2,6 +2,7 @@ compatibilitypacksp
 2003SP
 2007sp
 sp2010
+sp2013
 KB936929
 KB914961
 KB936330
