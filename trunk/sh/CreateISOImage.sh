@@ -2,7 +2,7 @@
 
 #########################################################################
 ###          WSUS Offline Update ISO maker for Linux systems          ###
-###                           v. 9.0b (r561)                          ###
+###                                v. 9.0                             ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg                     ###
@@ -77,9 +77,6 @@ evaluateparams $@
 # $1 = sys, $2 = lang; $3 = /dotnet; $4 = /excludesp (o.ä.)
 
 echo "Creating ISO filter..."
-echo "Writing builddate.txt..."
-date +%d.%m.%Y > ../client/builddate.txt
-
 if [ "$sys" == "ofc" ]; then
     for Datei in ../exclude/ExcludeListISO-${sys_old}*.txt
       do
@@ -126,7 +123,6 @@ rm ../temp/ExcludeListISOtmp-${sys}.txt
 echo "Creating ISO image for $sys $Origlang..."
 $iso_tool -iso-level 4 -udf -exclude-list ../temp/ExcludeListISO-${sys}.txt \
     -quiet -output ../iso/wsusoffline-${sys}-$Origlang.iso -volid wou_${sys}_${lang} ../client/
-rm ../client/builddate.txt
 echo "done."
 
 exit 0
@@ -136,6 +132,9 @@ exit 0
 # ============================================================================
 # $Id: CreateISOImage.sh,v 1.6 2013-03-11 13:17:24+01 HHullen Exp $
 # $Log: CreateISOImage.sh,v $
+# Revision 1.7  2013-03-05 09:52:00+01  twittrock
+# builddate.txt-Erzeugung entfernt
+#
 # Revision 1.6  2013-03-11 13:17:24+01  HHullen
 # exclude-Erzeugung korrigiert
 #

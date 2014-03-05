@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                          v. 9.0b (r561)                           ###
+###                               v. 9.0                              ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -989,6 +989,9 @@ if [ "$CLEANUP_DOWNLOADS" != "0" ]; then
   esac
 fi
 
+echo "Writing builddate.txt file..."
+date +%d.%m.%Y > ../client/builddate.txt
+
 if [ "$createiso" == "1" ]; then
   bash ./CreateISOImage.sh $sys $Origlang $param2 $param3
 fi
@@ -1000,6 +1003,9 @@ exit 0
 # ========================================================================
 # $Id: DownloadUpdates.sh,v 1.9 2013-12-27 17:25:29+01 HHullen Exp $
 # $Log: DownloadUpdates.sh,v $
+# Revision 2.0  2013-03-05 09:52:00+01  twittrock
+# builddate.txt-Erzeugung eingefügt
+#
 # Revision 1.9  2013-12-27 17:25:29+01  HHullen
 # Windows 8.1 (w63) ergänzt
 #

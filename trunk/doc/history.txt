@@ -856,7 +856,7 @@ Version 8.9 -- 15.01.14
 - Fix: Excluded obsolete/superseded cumulative security updates for Internet Explorer under Windows Vista and Server 2003/2008 (x86/x64) (Thanks to "harry")
 - Fix: Linux download script DownloadUpdates.sh stored .NET installation files in invalid path (Thanks to "rogger", H. Buhrmester and H. Hullen)
 --------------------------------------------------------------------------------
-Version 9.0 -- ??.??.14
+Version 9.0 -- 05.03.14
 - INSTALLATION HINT: If you customized your copy of WOU using the script AddOffice2010x64Support.cmd {lng}, please call it again once (per language) to get the appropriate Office 2013 SP1 installation file(s) downloaded
 - NOTE: This version is supposed to be the last one supporting Windows XP and Office 2003 (see http://support.microsoft.com/lifecycle/?p1=3223 and http://support.microsoft.com/lifecycle/?p1=2488)
 - Office 2013 Service Pack 1 integrated (Thanks to "Gerby")
@@ -867,3 +867,5 @@ Version 9.0 -- ??.??.14
 - Fix: Excluded obsolete/superseded cumulative security updates for Internet Explorer under Windows XP/Server 2003 (x64) and 7/Server 2008 R2 (x64) (Thanks to "harry")
 - Fix: Excluded obsolete initial revision of security update for USB drivers (kb2862330) for Windows 7 and Server 2008 R2 (x86/x64) systems (Thanks to M. Köhler)
 - Fix: Removed obsolete static download definitions for kb2862973 (Update for Deprecation of MD5 Hashing Algorithm for Microsoft Root Certificate Program) (Thanks to "boco" and "harry")
+- Fix: Linux download script DownloadUpdates.sh didn't write builddate.txt file (Thanks to "Spider-Mann")
+--------------------------------------------------------------------------------
