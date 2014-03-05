@@ -1,0 +1,4 @@
+http://download.microsoft.com/download/a/b/d/abd76d1e-37a0-47fd-ae92-03883d8cfaf1/Office2003SP3-KB923618-FullFile-ARA.exe
+http://download.microsoft.com/download/e/3/8/e389cb78-d3c3-452c-8cb9-705369210d45/WordViewer2003SP3-KB934736-FullFile-ARA.exe
+http://download.microsoft.com/download/3/1/A/31A4A002-BA31-4B8D-9725-5FA8E690E65D/office2003-KB975051-FullFile-ARA.exe
+http://download.microsoft.com/download/1/8/5/185A306E-6EE2-4A63-A26E-7077529FFD32/office2003-KB2760494-FullFile-ARA.exe

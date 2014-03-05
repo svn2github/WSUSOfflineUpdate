@@ -1,0 +1,15 @@
+fullfile
+server
+srvapp
+srv
+sts
+wacwfe
+lync
+project
+visio
+snapview
+wss
+intl-
+/conv-
+/proof-
+/msconv_
