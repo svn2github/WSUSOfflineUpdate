@@ -869,3 +869,5 @@ Version 9.0 -- 05.03.14
 - Fix: Removed obsolete static download definitions for kb2862973 (Update for Deprecation of MD5 Hashing Algorithm for Microsoft Root Certificate Program) (Thanks to "boco" and "harry")
 - Fix: Linux download script DownloadUpdates.sh didn't write builddate.txt file (Thanks to "Spider-Mann")
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- Fix: RemoveGermanLanguageSupport.cmd script didn't consider StaticDownloadLinks-dotnet.txt (Thanks to "rubasik")

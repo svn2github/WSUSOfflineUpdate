@@ -38,6 +38,14 @@ for %%i in (dotnet msse w60 w61) do (
     )
   )
 )
+if exist StaticDownloadLinks-dotnet.txt (
+  echo Processing file ..\static\StaticDownloadLinks-dotnet.txt
+  if exist StaticDownloadLinks-dotnet.ori del StaticDownloadLinks-dotnet.ori
+  ren StaticDownloadLinks-dotnet.txt StaticDownloadLinks-dotnet.ori  
+  %SystemRoot%\System32\findstr.exe /L /I /V "deu. de." StaticDownloadLinks-dotnet.ori>StaticDownloadLinks-dotnet.txt
+  del StaticDownloadLinks-dotnet.ori
+  for %%k in (StaticDownloadLinks-dotnet.txt) do if %%~zk==0 del %%k
+)
 popd
 goto EoF
 
