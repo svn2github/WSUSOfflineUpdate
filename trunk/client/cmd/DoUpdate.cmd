@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.0+ (r566)
+set WSUSOFFLINE_VERSION=9.0+ (r567)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1121,15 +1121,22 @@ if %TSC_VER_MINOR% LSS %TSC_VER_TARGET_MINOR% goto InstallTSC
 if %TSC_VER_MINOR% GEQ %TSC_VER_TARGET_MINOR% goto SkipTSCInst
 :InstallTSC
 if "%TSC_TARGET_ID%"=="" (
-  echo Warning: Environment variable TSC_TARGET_ID not set.
-  echo %DATE% %TIME% - Warning: Environment variable TSC_TARGET_ID not set>>%UPDATE_LOGFILE%
-  goto SkipTSCInst
-)
-if "%TSC_PREREQ_ID%"=="" (
-  echo %TSC_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
+  if "%TSC_TARGET_ID_FILE%"=="" (
+    echo Warning: Environment variables TSC_TARGET_ID and TSC_TARGET_ID_FILE not set.
+    echo %DATE% %TIME% - Warning: Environment variables TSC_TARGET_ID and TSC_TARGET_ID_FILE not set>>%UPDATE_LOGFILE%
+    goto SkipTSCInst
+  ) else (
+    echo Checking Remote Desktop Client components...
+    %CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
+    if exist "%TEMP%\InstalledUpdateIds.txt" (
+      %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\InstalledUpdateIds.txt" %TSC_TARGET_ID_FILE% >"%TEMP%\MissingUpdateIds.txt"
+      del "%TEMP%\InstalledUpdateIds.txt"
+    ) else (
+      copy /Y %TSC_TARGET_ID_FILE% "%TEMP%\MissingUpdateIds.txt" >nul
+    )
+  )
 ) else (
-  echo %TSC_PREREQ_ID%>"%TEMP%\MissingUpdateIds.txt"
-  echo %TSC_TARGET_ID%>>"%TEMP%\MissingUpdateIds.txt"
+  echo %TSC_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
 )
 call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
@@ -1137,8 +1144,8 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing most recent Remote Desktop Client...
   call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /errorsaswarnings
 ) else (
-  echo Warning: Remote Desktop Client installation file ^(kb%TSC_TARGET_ID%^) not found.
-  echo %DATE% %TIME% - Warning: Remote Desktop Client installation file ^(kb%TSC_TARGET_ID%^) not found>>%UPDATE_LOGFILE%
+  echo Warning: Remote Desktop Client installation file^(s^) not found.
+  echo %DATE% %TIME% - Warning: Remote Desktop Client installation file^(s^) not found>>%UPDATE_LOGFILE%
   goto SkipTSCInst
 )
 set REBOOT_REQUIRED=1

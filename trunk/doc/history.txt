@@ -870,6 +870,7 @@ Version 9.0 -- 05.03.14
 - Fix: Linux download script DownloadUpdates.sh didn't write builddate.txt file (Thanks to "Spider-Mann")
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
+- Support added for Remote Desktop Connection 8.1 client (kb2830477) on Windows 7 / Server 2008 R2 (x86/x64) systems (Thanks to K. Olbrich)
 - Microsoft Silverlight updated to v. 5.1.30214.0 (Thanks to "harry")
 - Fix: 'x86-cross-product' ISO images exceeded 4.7 GB (max. capacity of DVD-5 media) and therefore won't any longer contain updates for Windows XP and Office 2003 / 2007 and installation files for .NET 3.5 SP1 / 4.0
 - Fix: RemoveGermanLanguageSupport.cmd script didn't consider StaticDownloadLinks-dotnet.txt (Thanks to "rubasik")
