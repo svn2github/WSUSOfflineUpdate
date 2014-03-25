@@ -6,6 +6,8 @@
 #RequireAdmin
 
 Dim Const $caption                    = "WSUS Offline Update 9.0 - Installer"
+Dim Const $wou_hostname               = "www.wsusoffline.net"
+Dim Const $donationURL                = "http://www.wsusoffline.net/donate.html"
 
 ; Registry constants
 Dim Const $reg_key_wsh_hklm           = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings"
@@ -73,6 +75,7 @@ Dim Const $ini_value_showlog          = "showlog"
 Dim Const $ini_section_msi            = "MSI"
 
 Dim Const $ini_section_misc           = "Miscellaneous"
+Dim Const $ini_value_showdonate       = "showdonate"
 Dim Const $ini_value_wustatusserver   = "WUStatusServer"
 
 Dim Const $enabled                    = "Enabled"
@@ -95,7 +98,7 @@ Dim Const $path_rel_msse_x64          = "\msse\x64-glb\MSEInstall-x64-*.exe"
 Dim Const $path_rel_msi_all           = "\wouallmsi.txt"
 Dim Const $path_rel_msi_selected      = "\Temp\wouselmsi.txt"
 
-Dim $maindlg, $scriptdir, $mapped, $tabitemfocused, $backup, $rcerts, $ie7, $ie8, $ie9, $ie10, $ie11, $cpp, $dx, $mssl, $wmp, $dotnet35, $dotnet4, $psh, $wmf, $msse, $tsc, $ofc, $ofv, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_exit, $options, $builddate
+Dim $maindlg, $scriptdir, $mapped, $tabitemfocused, $backup, $rcerts, $ie7, $ie8, $ie9, $ie10, $ie11, $cpp, $dx, $mssl, $wmp, $dotnet35, $dotnet4, $psh, $wmf, $msse, $tsc, $ofc, $ofv, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_donate, $btn_exit, $options, $builddate
 Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos, $msiall, $msipacks[$msimax], $msicount, $line, $i, $msilistfile
 
 Func ShowGUIInGerman()
@@ -940,6 +943,17 @@ $txtypos = $dlgheight - $btnheight - $txtyoffset
 $btn_start = GUICtrlCreateButton("Start", $txtxoffset, $txtypos, $btnwidth, $btnheight)
 GUICtrlSetResizing (-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM)
 
+;  Donate button
+If ShowGUIInGerman() Then
+  $btn_donate = GUICtrlCreateButton("Spenden...", ($groupwidth - $btnwidth) / 2 + 2 * $txtxoffset, $txtypos, $btnwidth, $btnheight)
+Else
+  $btn_donate = GUICtrlCreateButton("Donate...", ($groupwidth - $btnwidth) / 2 + 2 * $txtxoffset, $txtypos, $btnwidth, $btnheight)
+EndIf
+GUICtrlSetResizing(-1, $GUI_DOCKBOTTOM)
+If (MyIniRead($ini_section_misc, $ini_value_showdonate, $enabled) = $disabled) OR (Ping($wou_hostname) = 0) Then
+  GUICtrlSetState(-1, $GUI_HIDE)
+EndIf
+
 ;  Exit button
 If ShowGUIInGerman() Then
   $btn_exit = GUICtrlCreateButton("Ende", $groupwidth - $btnwidth + 3 * $txtxoffset, $txtypos, $btnwidth, $btnheight)
@@ -1015,6 +1029,9 @@ While 1
         DriveMapDel($scriptdir)
       EndIf
       ExitLoop
+
+    Case $btn_donate         ; Donate button pressed
+      Run(@ComSpec & " /D /C start " & $donationURL)
 
     Case $ie7                ; IE7 check box toggled
       If IsCheckBoxChecked($ie7) Then

@@ -738,10 +738,6 @@ Dim $result = ""
   Return $result
 EndFunc
 
-Func RunDonationSite()
-  Run(@ComSpec & " /D /C start " & $donationURL)
-EndFunc
-
 Func ShowLogFile()
   Run("notepad.exe " & $downloadLogFile, @ScriptDir & "\log")
 EndFunc
@@ -3255,7 +3251,7 @@ While 1
       EndIf
 
     Case $btn_donate        ; Donate button pressed
-      RunDonationSite()
+      Run(@ComSpec & " /D /C start " & $donationURL)
 
     Case $btn_start         ; Start button pressed
       $runany = False
