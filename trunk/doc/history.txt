@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 9.0
+WSUS Offline Update 9.1
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -869,9 +869,12 @@ Version 9.0 -- 05.03.14
 - Fix: Removed obsolete static download definitions for kb2862973 (Update for Deprecation of MD5 Hashing Algorithm for Microsoft Root Certificate Program) (Thanks to "boco" and "harry")
 - Fix: Linux download script DownloadUpdates.sh didn't write builddate.txt file (Thanks to "Spider-Mann")
 --------------------------------------------------------------------------------
-Version ?.? -- ??.??.??
+Version 9.1 -- 04.04.14
+- NOTE: This version will be the last one supporting Windows XP and Office 2003 (see http://support.microsoft.com/lifecycle/?p1=3223 and http://support.microsoft.com/lifecycle/?p1=2488)
 - Support added for Remote Desktop Connection 8.1 client (kb2830477) on Windows 7 / Server 2008 R2 (x86/x64) systems (Thanks to K. Olbrich)
-- Microsoft Silverlight updated to v. 5.1.30214.0 (Thanks to "harry")
-- Static download URLs for aria2 download utility updated to v. 1.18.4
+- Static download URLs for Microsoft Silverlight updated to v. 5.1.30214.0 (Thanks to "harry")
+- Static download URLs for aria2 download utility updated to v. 1.18.5 (Thanks to M. Köhler)
 - Fix: 'x86-cross-product' ISO images exceeded 4.7 GB (max. capacity of DVD-5 media) and therefore won't any longer contain updates for Windows XP and Office 2003 / 2007 and installation files for .NET 3.5 SP1 / 4.0
 - Fix: RemoveGermanLanguageSupport.cmd script didn't consider StaticDownloadLinks-dotnet.txt (Thanks to "rubasik")
+- Fix: Version determination of Sysinternals' Sigcheck tool will now default to v. 2.x (Thanks to "aker")
+--------------------------------------------------------------------------------
