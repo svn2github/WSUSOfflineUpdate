@@ -1,0 +1,4 @@
+http://download.microsoft.com/download/6/2/c/62cb65b9-b860-4227-ab3b-1bd174881701/Office2003SP3-KB923618-FullFile-PTB.exe
+http://download.microsoft.com/download/0/0/1/001af34c-fb2e-4f81-b05f-c90fcc67c0a4/WordViewer2003SP3-KB934736-FullFile-PTB.exe
+http://download.microsoft.com/download/7/A/D/7ADF3A6B-353C-42D0-A9A9-45F6C232317F/office2003-KB975051-FullFile-PTB.exe
+http://download.microsoft.com/download/1/A/1/1A1F5BCE-173E-47A9-9930-C22D1A18E50A/office2003-KB2760494-FullFile-PTB.exe
