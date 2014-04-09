@@ -878,3 +878,5 @@ Version 9.1 -- 04.04.14
 - Fix: RemoveGermanLanguageSupport.cmd script didn't consider StaticDownloadLinks-dotnet.txt (Thanks to "rubasik")
 - Fix: Version determination of Sysinternals' Sigcheck tool will now default to v. 2.x (Thanks to "aker")
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- Fix: Excluded download of kb2927581 (Update Rollup 1.2 for Windows MultiPoint Server 2011 on Windows Server 2008 R2 systems)
