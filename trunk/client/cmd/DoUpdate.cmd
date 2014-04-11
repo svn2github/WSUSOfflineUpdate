@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.1+ (r571)
+set WSUSOFFLINE_VERSION=9.2b (r572)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -183,7 +183,7 @@ if exist %SystemRoot%\System32\slmgr.vbs (
 )
 
 rem *** Echo OS properties ***
-echo Found Microsoft Windows version: %OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_VER_BUILD% (%OS_NAME% %OS_ARCH% %OS_LANG% sp%OS_SP_VER_MAJOR%)
+echo Found Microsoft Windows version: %OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_VER_BUILD%.%OS_VER_REVIS% (%OS_NAME% %OS_ARCH% %OS_LANG% sp%OS_SP_VER_MAJOR%)
 if exist "%TEMP%\wou_slmgr.txt" (
   echo Found Microsoft Windows Software Licensing Management Tool info...
   for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /B /L "1: 2: 3: 4: 5: 6:" "%TEMP%\wou_slmgr.txt"') do echo %%j
@@ -220,7 +220,7 @@ if "%O2K10_VER_MAJOR%" NEQ "" (
 if "%O2K13_VER_MAJOR%" NEQ "" (
   echo Found Microsoft Office 2013 %O2K13_VER_APP% version: %O2K13_VER_MAJOR%.%O2K13_VER_MINOR%.%O2K13_VER_BUILD%.%O2K13_VER_REVIS% ^(o2k13 %O2K13_ARCH% %O2K13_LANG% sp%O2K13_SP_VER%^)
 )
-echo %DATE% %TIME% - Info: Found Microsoft Windows version %OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_VER_BUILD% (%OS_NAME% %OS_ARCH% %OS_LANG% sp%OS_SP_VER_MAJOR%)>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Microsoft Windows version %OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_VER_BUILD%.%OS_VER_REVIS% (%OS_NAME% %OS_ARCH% %OS_LANG% sp%OS_SP_VER_MAJOR%)>>%UPDATE_LOGFILE%
 if exist "%TEMP%\wou_slmgr.txt" (
   echo %DATE% %TIME% - Info: Found Microsoft Windows Software Licensing Management Tool info...>>%UPDATE_LOGFILE%
   for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /B /L "1: 2: 3: 4: 5: 6:" "%TEMP%\wou_slmgr.txt"') do echo %DATE% %TIME% - Info: %%j>>%UPDATE_LOGFILE%
@@ -314,6 +314,7 @@ echo %DATE% %TIME% - Info: Medium does not support Microsoft Office (ofc glb)>>%
 :ProperMedium
 
 rem *** Install Windows Service Pack ***
+if "%OS_NAME%"=="w63" goto SPw63
 echo Checking Windows Service Pack version...
 if %OS_SP_VER_MAJOR% GEQ %OS_SP_VER_TARGET_MAJOR% goto SkipSPInst
 if "%OS_SP_TARGET_ID%"=="" goto NoSPTargetId
@@ -359,7 +360,6 @@ goto Installed
 :SPw60
 :SPw61
 :SPw62
-:SPw63
 if "%BOOT_MODE%" NEQ "/autoreboot" goto SPw6Now
 if "%USERNAME%"=="WOUTempAdmin" goto SPw6Now
 echo %DATE% %TIME% - Info: Preparing installation of most recent Service Pack for Windows Vista / ^7>>%UPDATE_LOGFILE%
@@ -372,6 +372,37 @@ if errorlevel 1 goto InstError
 set RECALL_REQUIRED=1
 goto Installed
 
+:SPw63
+if exist %SystemRoot%\Temp\wou_w63upd_tried.txt goto SkipSPInst
+echo Checking Windows 8.1 Update 1 installation state...
+%CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
+if exist "%TEMP%\InstalledUpdateIds.txt" (
+  %SystemRoot%\System32\find.exe /I "%OS_SP_TARGET_ID%" "%TEMP%\InstalledUpdateIds.txt" >nul 2>&1
+  if not errorlevel 1 (
+    del "%TEMP%\InstalledUpdateIds.txt"
+    goto SkipSPInst
+  )
+  del "%TEMP%\InstalledUpdateIds.txt"
+)
+copy /Y ..\static\StaticUpdateIds-w63-upd1.txt "%TEMP%\MissingUpdateIds.txt" >nul
+call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
+if errorlevel 1 goto ListError
+if exist "%TEMP%\UpdatesToInstall.txt" (
+  echo Installing Windows 8.1 Update 1...
+  echo %DATE% %TIME% - Info: Installing Windows 8.1 Update ^1>>%UPDATE_LOGFILE%
+  call InstallListedUpdates.cmd %VERIFY_MODE% /errorsaswarnings
+  if not errorlevel 1 (
+    if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
+    echo. >%SystemRoot%\Temp\wou_w63upd_tried.txt
+    set RECALL_REQUIRED=1
+    goto Installed
+  )
+) else (
+  echo Warning: Windows 8.1 Update 1 installation files not found.
+  echo %DATE% %TIME% - Warning: Windows 8.1 Update 1 installation files not found>>%UPDATE_LOGFILE%
+  if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
+  echo. >%SystemRoot%\Temp\wou_w63upd_tried.txt
+)
 :SkipSPInst
 
 rem *** Install Windows Update Agent ***
@@ -1563,6 +1594,7 @@ if "%RECALL_REQUIRED%"=="1" (
     %SystemRoot%\System32\shutdown.exe /r /f /t 3
   ) else goto ManualRecall
 ) else (
+  if exist %SystemRoot%\Temp\wou_w63upd_tried.txt del %SystemRoot%\Temp\wou_w63upd_tried.txt
   if exist %SystemRoot%\Temp\wou_iepre_tried.txt del %SystemRoot%\Temp\wou_iepre_tried.txt
   if exist %SystemRoot%\Temp\wou_ie_tried.txt del %SystemRoot%\Temp\wou_ie_tried.txt
   if exist %SystemRoot%\Temp\wou_wupre_tried.txt del %SystemRoot%\Temp\wou_wupre_tried.txt
@@ -1761,6 +1793,7 @@ echo.
 goto Cleanup
 
 :Cleanup
+if exist %SystemRoot%\Temp\wou_w63upd_tried.txt del %SystemRoot%\Temp\wou_w63upd_tried.txt
 if exist %SystemRoot%\Temp\wou_iepre_tried.txt del %SystemRoot%\Temp\wou_iepre_tried.txt
 if exist %SystemRoot%\Temp\wou_ie_tried.txt del %SystemRoot%\Temp\wou_ie_tried.txt
 if exist %SystemRoot%\Temp\wou_wupre_tried.txt del %SystemRoot%\Temp\wou_wupre_tried.txt

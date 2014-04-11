@@ -3,6 +3,7 @@
 Option Explicit
 
 Private Const strWOUTempAdminName             = "WOUTempAdmin"
+Private Const strRegKeyWindowsVersion         = "HKLM\Software\Microsoft\Windows NT\CurrentVersion\"
 Private Const strRegKeyTrustedRCerts_x86      = "HKLM\Software\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}\"
 Private Const strRegKeyTrustedRCerts_x64      = "HKLM\Software\Wow6432Node\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}\"
 Private Const strRegKeyRevokedRCerts_x86      = "HKLM\Software\Microsoft\Active Setup\Installed Components\{C3C986D6-06B1-43BF-90DD-BE30756C00DE}\"
@@ -23,6 +24,7 @@ Private Const strRegKeyWDDefs                 = "HKLM\Software\Microsoft\Windows
 Private Const strRegKeyPowerCfg               = "HKCU\Control Panel\PowerCfg\"
 Private Const strRegValVersion                = "Version"
 Private Const strRegValDisplayVersion         = "DisplayVersion"
+Private Const strRegValBuildLabEx             = "BuildLabEx"
 Private Const strRegValPShVersion             = "PowerShellVersion"
 Private Const strRegValAVSVersion             = "AVSignatureVersion"
 Private Const strRegValNISSVersion            = "NISSignatureVersion"
@@ -52,7 +54,7 @@ Private Const strBuildNumbers_o2k13           = "4420,4420,4420,4420,4420,4420;4
 Private Const idxBuild                        = 2
 
 Dim wshShell, objNetwork, objFileSystem, objCmdFile, objWMIService, objQueryItem, objInstaller, arrayOfficeNames, arrayOfficeVersions, arrayOfficeAppNames, arrayOfficeExeNames
-Dim strSystemFolder, strTempFolder, strWUAFileName, strMSIFileName, strWSHFileName, strTSCFileName, strWMPFileName, strCmdFileName, strOSVersion, strOfficeInstallPath, strOfficeExeVersion, strProduct, strPatch, languageCode, i, j
+Dim strSystemFolder, strTempFolder, strWUAFileName, strMSIFileName, strWSHFileName, strTSCFileName, strWMPFileName, strCmdFileName, strBuildLabEx, strOfficeInstallPath, strOfficeExeVersion, strProduct, strPatch, languageCode, i, j
 Dim cpp2005_x86_old, cpp2005_x86_new, cpp2005_x64_old, cpp2005_x64_new
 Dim cpp2008_x86_old, cpp2008_x86_new, cpp2008_x64_old, cpp2008_x64_new
 Dim cpp2010_x86_old, cpp2010_x86_new, cpp2010_x64_old, cpp2010_x64_new
@@ -421,13 +423,13 @@ Set objNetwork = WScript.CreateObject("WScript.Network")
 Set objWMIService = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
 ' Documentation: http://msdn.microsoft.com/en-us/library/aa394239(VS.85).aspx
 For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_OperatingSystem")
-  WriteVersionToFile objCmdFile, "OS_VER", objQueryItem.Version
-  strOSVersion = Left(objQueryItem.Version, 3) ' For determination of Windows activation state - see below
+  strBuildLabEx = RegRead(wshShell, strRegKeyWindowsVersion & strRegValBuildLabEx)
+  WriteVersionToFile objCmdFile, "OS_VER", objQueryItem.Version & Mid(strBuildLabEx, InStr(strBuildLabEx, "."), InStr(InStr(strBuildLabEx, ".") + 1, strBuildLabEx, ".") - InStr(strBuildLabEx, "."))
   objCmdFile.WriteLine("set OS_SP_VER_MAJOR=" & objQueryItem.ServicePackMajorVersion)
   objCmdFile.WriteLine("set OS_SP_VER_MINOR=" & objQueryItem.ServicePackMinorVersion)
   objCmdFile.WriteLine("set OS_LANG_CODE=0x" & Hex(objQueryItem.OSLanguage))
   WriteLanguageToFile objCmdFile, "OS_LANG", objQueryItem.OSLanguage, True, True
-  If Left(strOSVersion, 1) = "6" Then
+  If Left(objQueryItem.Version, 1) = "6" Then
     If (objQueryItem.OperatingSystemSKU = 12) Or (objQueryItem.OperatingSystemSKU = 13) Or (objQueryItem.OperatingSystemSKU = 14) Then
       objCmdFile.WriteLine("set OS_CORE=1")
     End If
