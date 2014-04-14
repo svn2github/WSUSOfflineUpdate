@@ -1,0 +1,3 @@
+http://download.microsoft.com/download/9/9/7/99775BB8-1759-4B21-8CF0-247DAEC127B4/mscomctlocx2010-kb2687503-fullfile-x86-glb.exe
+http://download.microsoft.com/download/4/C/5/4C5B6992-015F-49A2-99EA-82CDC1A9F90E/convloc2010-kb2553284-fullfile-x86-glb.exe
+http://download.microsoft.com/download/B/D/8/BD8C8637-1E07-4519-B501-FAAF28CFD7A3/proofloc2010-kb2760781-fullfile-x86-glb.exe
