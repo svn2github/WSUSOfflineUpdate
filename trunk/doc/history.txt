@@ -886,3 +886,5 @@ Version 9.2 -- 14.04.14
 - Fix: Excluded download of kb2927581 (Update Rollup 1.2 for Windows MultiPoint Server 2011 on Windows Server 2008 R2 systems)
 - Fix: Linux script CreateISOImage.sh wildcard processing (Thanks to H. Hullen)
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- Fix: Microsoft corrected Windows 8.1 Update 1 (kb2919355) by adding kb2959977 (Thanks to "harry")
