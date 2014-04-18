@@ -888,3 +888,4 @@ Version 9.2 -- 14.04.14
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
 - Fix: Microsoft corrected Windows 8.1 Update 1 (kb2919355) by adding kb2959977 (Thanks to "harry")
+- Fix: Microsoft now delivers Windows 8.1 Update 1 installation files through catalog file wsusscn2.cab (Thanks to "psj")
