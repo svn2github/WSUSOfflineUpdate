@@ -1,0 +1,4 @@
+http://download.microsoft.com/download/8/7/1/871b3beb-826b-493c-984d-1a4f22dd9760/Office2003SP3-KB923618-FullFile-JPN.exe
+http://download.microsoft.com/download/6/e/1/6e1389d9-94ee-43d1-9b6d-59cb25dfdc07/WordViewer2003SP3-KB934736-FullFile-JPN.exe
+http://download.microsoft.com/download/2/6/8/268A0040-7CEE-4579-9BD8-C1AD3983B955/office2003-KB975051-FullFile-JPN.exe
+http://download.microsoft.com/download/5/0/C/50CB3210-B200-4AE7-81C6-7D3C45A794E7/office2003-KB2760494-FullFile-JPN.exe

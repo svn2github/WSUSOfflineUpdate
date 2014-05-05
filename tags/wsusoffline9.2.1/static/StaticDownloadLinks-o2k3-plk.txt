@@ -1,0 +1,4 @@
+http://download.microsoft.com/download/6/d/d/6ddd6b02-599f-45ae-9cab-6ef265ff6109/Office2003SP3-KB923618-FullFile-PLK.exe
+http://download.microsoft.com/download/6/3/9/63945113-b96d-4d39-afcd-212f263dff44/WordViewer2003SP3-KB934736-FullFile-PLK.exe
+http://download.microsoft.com/download/8/5/8/85835AA6-04A3-4B3B-864E-69781CD611E4/office2003-KB975051-FullFile-PLK.exe
+http://download.microsoft.com/download/5/5/B/55BC94AF-EF21-4D62-9356-D3F51F770C37/office2003-KB2760494-FullFile-PLK.exe
