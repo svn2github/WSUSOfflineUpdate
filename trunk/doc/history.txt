@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 9.2
+WSUS Offline Update 9.2.1
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -886,6 +886,10 @@ Version 9.2 -- 14.04.14
 - Fix: Excluded download of kb2927581 (Update Rollup 1.2 for Windows MultiPoint Server 2011 on Windows Server 2008 R2 systems)
 - Fix: Linux script CreateISOImage.sh wildcard processing (Thanks to H. Hullen)
 --------------------------------------------------------------------------------
-Version ?.? -- ??.??.??
+Version 9.2.1 -- 05.05.14
+- NOTE: This version will be the very very last one supporting Windows XP and Office 2003 (see http://support.microsoft.com/lifecycle/?p1=3223 and http://support.microsoft.com/lifecycle/?p1=2488)
+- Fix: Download filters missed kb2964358 (MS14-021) for IE6 under Windows XP (Thanks to "harry")
 - Fix: Microsoft corrected Windows 8.1 Update 1 (kb2919355) by adding kb2959977 (Thanks to "harry")
 - Fix: Microsoft now delivers Windows 8.1 Update 1 installation files through catalog file wsusscn2.cab (Thanks to "psj")
+- Fix: DetermineSystemProperties.vbs script did not detect Microsoft Silverlight x86 installations under x64 Operating Systems (Thanks to "rbr555")
+--------------------------------------------------------------------------------

@@ -9,9 +9,10 @@ Private Const strRegKeyTrustedRCerts_x64      = "HKLM\Software\Wow6432Node\Micro
 Private Const strRegKeyRevokedRCerts_x86      = "HKLM\Software\Microsoft\Active Setup\Installed Components\{C3C986D6-06B1-43BF-90DD-BE30756C00DE}\"
 Private Const strRegKeyRevokedRCerts_x64      = "HKLM\Software\Wow6432Node\Microsoft\Active Setup\Installed Components\{C3C986D6-06B1-43BF-90DD-BE30756C00DE}\"
 Private Const strRegKeyIE                     = "HKLM\Software\Microsoft\Internet Explorer\"
+Private Const strRegKeyMSSL_x86               = "HKLM\Software\Microsoft\Silverlight\"
+Private Const strRegKeyMSSL_x64               = "HKLM\Software\Wow6432Node\Microsoft\Silverlight\"
 Private Const strRegKeyMDAC                   = "HKLM\Software\Microsoft\DataAccess\"
 Private Const strRegKeyDirectX                = "HKLM\Software\Microsoft\DirectX\"
-Private Const strRegKeyMSSL                   = "HKLM\Software\Microsoft\Silverlight\"
 Private Const strRegKeyDotNet35               = "HKLM\Software\Microsoft\NET Framework Setup\NDP\v3.5\"
 Private Const strRegKeyDotNet4                = "HKLM\Software\Microsoft\NET Framework Setup\NDP\v4\Full\"
 Private Const strRegKeyPowerShell             = "HKLM\Software\Microsoft\PowerShell\1\PowerShellEngine\"
@@ -488,7 +489,11 @@ WriteVersionToFile objCmdFile, "DX_CORE_VER", RegRead(wshShell, strRegKeyDirectX
 WriteDXNameToFile objCmdFile, RegRead(wshShell, strRegKeyDirectX & strRegValVersion)
 
 ' Determine Microsoft Silverlight version
-WriteVersionToFile objCmdFile, "MSSL_VER", RegRead(wshShell, strRegKeyMSSL & strRegValVersion)
+If RegExists(wshShell, strRegKeyMSSL_x64) Then
+  WriteVersionToFile objCmdFile, "MSSL_VER", RegRead(wshShell, strRegKeyMSSL_x64 & strRegValVersion)
+Else
+  WriteVersionToFile objCmdFile, "MSSL_VER", RegRead(wshShell, strRegKeyMSSL_x86 & strRegValVersion)
+End If
 
 ' Determine Microsoft .NET Framework 3.5 SP1 installation state
 WriteVersionToFile objCmdFile, "DOTNET35_VER", RegRead(wshShell, strRegKeyDotNet35 & strRegValVersion)
