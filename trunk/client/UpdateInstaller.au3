@@ -36,7 +36,7 @@ Dim Const $msimax                     = 22
 Dim Const $default_logpixels          = 96
 Dim Const $target_version_dotnet35    = "3.5.30729"
 Dim Const $target_version_dotnet40    = "4.0.30319"
-Dim Const $target_version_dotnet45    = "4.5.50938"
+Dim Const $target_version_dotnet45    = "4.5.51209"
 Dim Const $target_version_psh         = "2.0"
 
 ; INI file constants
@@ -91,7 +91,7 @@ Dim Const $path_rel_win_glb           = "\win\glb\"
 Dim Const $path_rel_cpp               = "\cpp\vcredist*.exe"
 Dim Const $path_rel_instdotnet35      = "\dotnet\dotnetfx35.exe"
 Dim Const $path_rel_instdotnet40      = "\dotnet\dotNetFx40*.exe"
-Dim Const $path_rel_instdotnet45      = "\dotnet\NDP451-KB2858728-x86-x64-AllOS*.exe"
+Dim Const $path_rel_instdotnet45      = "\dotnet\NDP452-KB2901907-x86-x64-AllOS*.exe"
 Dim Const $path_rel_ofc_glb           = "\ofc\glb\"
 Dim Const $path_rel_msse_x86          = "\msse\x86-glb\MSEInstall-x86-*.exe"
 Dim Const $path_rel_msse_x64          = "\msse\x64-glb\MSEInstall-x64-*.exe"

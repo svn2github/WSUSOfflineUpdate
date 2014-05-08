@@ -17,7 +17,7 @@ rem *** Add support for %1 to .NET custom URL files ***
 echo Adding support for %1 to .NET custom URL files...
 for /F %%i in (..\static\StaticDownloadLinks-dotnet-x86-%1.txt) do (
   echo %%i | %SystemRoot%\System32\find.exe /I "dotNetFx40LP_Full_">>..\static\custom\StaticDownloadLinks-dotnet.txt
-  echo %%i | %SystemRoot%\System32\find.exe /I "NDP451-KB2858728-">>..\static\custom\StaticDownloadLinks-dotnet.txt
+  echo %%i | %SystemRoot%\System32\find.exe /I "NDP452-KB2901907-">>..\static\custom\StaticDownloadLinks-dotnet.txt
   echo %%i | %SystemRoot%\System32\find.exe /I "dotnetfx35langpack_x86">>..\static\custom\StaticDownloadLinks-dotnet-x86-glb.txt
 )
 for /F %%i in (..\static\StaticDownloadLinks-dotnet-x64-%1.txt) do (

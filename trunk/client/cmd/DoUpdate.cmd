@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.2.1
+set WSUSOFFLINE_VERSION=9.2.1+ (r580)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1005,8 +1005,8 @@ if %DOTNET4_VER_TARGET_MINOR% EQU 0 (
   set DOTNET4_FILENAME=..\dotnet\dotNetFx40_Full_x86_x64.exe
   set DOTNET4LP_FILENAME=..\dotnet\dotNetFx40LP_Full_x86_x64%OS_LANG_SHORT%.exe
 ) else (
-  set DOTNET4_FILENAME=..\dotnet\NDP451-KB2858728-x86-x64-AllOS-ENU.exe
-  set DOTNET4LP_FILENAME=..\dotnet\NDP451-KB2858728-x86-x64-AllOS-%OS_LANG%.exe
+  set DOTNET4_FILENAME=..\dotnet\NDP452-KB2901907-x86-x64-AllOS-ENU.exe
+  set DOTNET4LP_FILENAME=..\dotnet\NDP452-KB2901907-x86-x64-AllOS-%OS_LANG%.exe
 )
 if not exist %DOTNET4_FILENAME% (
   echo Warning: .NET Framework 4 installation file ^(%DOTNET4_FILENAME%^) not found.

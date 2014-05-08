@@ -893,3 +893,6 @@ Version 9.2.1 -- 05.05.14
 - Fix: Microsoft now delivers Windows 8.1 Update 1 installation files through catalog file wsusscn2.cab (Thanks to "psj")
 - Fix: DetermineSystemProperties.vbs script did not detect Microsoft Silverlight x86 installations under x64 Operating Systems (Thanks to "rbr555")
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- NOTE: If you customized your copy of WOU using the script AddCustomLanguageSupport.cmd {lng}, please call it again once (per language) to get the appropriate .NET 4.5.2 language pack(s) downloaded
+- .NET Framework 4.5 updated to v. 4.5.2 (Thanks to "harry")
