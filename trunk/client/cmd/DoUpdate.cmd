@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.2.1+ (r580)
+set WSUSOFFLINE_VERSION=9.2.1+ (r581)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -28,7 +28,7 @@ echo %DATE% %TIME% - Info: Used path "%~dp0" on %COMPUTERNAME% (user: %USERNAME%
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/nobackup /verify /updatercerts /instie7 /instie8 /instie9 /instie10 /instie11 /instielatest /updatecpp /updatedx /instmssl /updatewmp /instdotnet35 /instdotnet4 /instpsh /instwmf /instmsse /updatetsc /instofc /instofv /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
+for %%i in (/nobackup /verify /updatercerts /instie7 /instie8 /instie9 /instie10 /instie11 /instielatest /updatecpp /updatedx /instmssl /updatewmp /instdotnet35 /instdotnet4 /instpsh /instwmf /instmsse /updatetsc /instofv /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected>>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/nobackup" set BACKUP_MODE=/nobackup
@@ -50,7 +50,6 @@ if /i "%1"=="/instpsh" set INSTALL_PSH=/instpsh
 if /i "%1"=="/instwmf" set INSTALL_WMF=/instwmf
 if /i "%1"=="/instmsse" set INSTALL_MSSE=/instmsse
 if /i "%1"=="/updatetsc" set UPDATE_TSC=/updatetsc
-if /i "%1"=="/instofc" set INSTALL_OFC=/instofc
 if /i "%1"=="/instofv" set INSTALL_OFV=/instofv
 if /i "%1"=="/autoreboot" set BOOT_MODE=/autoreboot
 if /i "%1"=="/shutdown" set FINISH_MODE=/shutdown
@@ -208,9 +207,6 @@ rem echo Found Microsoft Security Essentials version: %MSSE_VER_MAJOR%.%MSSE_VER
 rem echo Found Microsoft Security Essentials definitions version: %MSSEDEFS_VER_MAJOR%.%MSSEDEFS_VER_MINOR%.%MSSEDEFS_VER_BUILD%.%MSSEDEFS_VER_REVIS%
 rem echo Found Network Inspection System definitions version: %NISDEFS_VER_MAJOR%.%NISDEFS_VER_MINOR%.%NISDEFS_VER_BUILD%.%NISDEFS_VER_REVIS%
 rem echo Found Windows Defender definitions version: %WDDEFS_VER_MAJOR%.%WDDEFS_VER_MINOR%.%WDDEFS_VER_BUILD%.%WDDEFS_VER_REVIS%
-if "%O2K3_VER_MAJOR%" NEQ "" (
-  echo Found Microsoft Office 2003 %O2K3_VER_APP% version: %O2K3_VER_MAJOR%.%O2K3_VER_MINOR%.%O2K3_VER_BUILD%.%O2K3_VER_REVIS% ^(o2k3 %O2K3_LANG% sp%O2K3_SP_VER%^)
-)
 if "%O2K7_VER_MAJOR%" NEQ "" (
   echo Found Microsoft Office 2007 %O2K7_VER_APP% version: %O2K7_VER_MAJOR%.%O2K7_VER_MINOR%.%O2K7_VER_BUILD%.%O2K7_VER_REVIS% ^(o2k7 %O2K7_LANG% sp%O2K7_SP_VER%^)
 )
@@ -249,9 +245,6 @@ echo %DATE% %TIME% - Info: Found Microsoft Security Essentials definitions versi
 echo %DATE% %TIME% - Info: Found Network Inspection System definitions version %NISDEFS_VER_MAJOR%.%NISDEFS_VER_MINOR%.%NISDEFS_VER_BUILD%.%NISDEFS_VER_REVIS%>>%UPDATE_LOGFILE%
 :SkipLogMSSEVer
 echo %DATE% %TIME% - Info: Found Windows Defender definitions version %WDDEFS_VER_MAJOR%.%WDDEFS_VER_MINOR%.%WDDEFS_VER_BUILD%.%WDDEFS_VER_REVIS%>>%UPDATE_LOGFILE%
-if "%O2K3_VER_MAJOR%" NEQ "" (
-  echo %DATE% %TIME% - Info: Found Microsoft Office 2003 %O2K3_VER_APP% version %O2K3_VER_MAJOR%.%O2K3_VER_MINOR%.%O2K3_VER_BUILD%.%O2K3_VER_REVIS% ^(o2k3 %O2K3_LANG% sp%O2K3_SP_VER%^)>>%UPDATE_LOGFILE%
-)
 if "%O2K7_VER_MAJOR%" NEQ "" (
   echo %DATE% %TIME% - Info: Found Microsoft Office 2007 %O2K7_VER_APP% version %O2K7_VER_MAJOR%.%O2K7_VER_MINOR%.%O2K7_VER_BUILD%.%O2K7_VER_REVIS% ^(o2k7 %O2K7_LANG% sp%O2K7_SP_VER%^)>>%UPDATE_LOGFILE%
 )
@@ -1235,9 +1228,6 @@ if "%OFC_NAME%"=="" goto SkipOffice
 rem *** Check Office Service Pack versions ***
 echo Checking Office Service Pack versions...
 if exist "%TEMP%\MissingUpdateIds.txt" del "%TEMP%\MissingUpdateIds.txt"
-if "%O2K3_VER_MAJOR%"=="" goto SkipSPo2k3
-if %O2K3_SP_VER% LSS %O2K3_SP_VER_TARGET% echo %O2K3_SP_TARGET_ID%>>"%TEMP%\MissingUpdateIds.txt"
-:SkipSPo2k3
 if "%O2K7_VER_MAJOR%"=="" goto SkipSPo2k7
 if %O2K7_SP_VER% LSS %O2K7_SP_VER_TARGET% echo %O2K7_SP_TARGET_ID%>>"%TEMP%\MissingUpdateIds.txt"
 :SkipSPo2k7
@@ -1261,56 +1251,8 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
 set REBOOT_REQUIRED=1
 :SkipSPOfc
 
-rem *** Check installation state of Office File Converter Packs ***
-if "%INSTALL_OFC%" NEQ "/instofc" goto SkipOFCNV
-if "%O2K3_VER_MAJOR%" NEQ "" goto InstOFCNV
-goto SkipOFCNV
-
-:InstOFCNV
-echo Checking installation state of Office File Converter Pack...
-if "%OFC_CONV_PACK%" NEQ "1" (
-  if exist ..\ofc\glb\ork.exe (
-    echo Installing Office File Converter Pack...
-    ..\ofc\glb\ork.exe /T:"%TEMP%\ork" /C /Q
-    %SystemRoot%\System32\expand.exe "%TEMP%\ork\ORK.CAB" -F:OCONVPCK.EXE "%TEMP%" >nul
-    call SafeRmDir.cmd "%TEMP%\ork"
-    "%TEMP%\OCONVPCK.EXE" /T:"%TEMP%\OCONVPCK" /C /Q
-    del "%TEMP%\OCONVPCK.EXE"
-    call InstallOSUpdate.cmd "%TEMP%\OCONVPCK\ocp11.msi"
-    call SafeRmDir.cmd "%TEMP%\OCONVPCK"
-    echo %DATE% %TIME% - Info: Installed Office File Converter Pack>>%UPDATE_LOGFILE%
-  ) else (
-    echo Warning: File ..\ofc\glb\ork.exe not found.
-    echo %DATE% %TIME% - Warning: File ..\ofc\glb\ork.exe not found>>%UPDATE_LOGFILE%
-  )
-)
-echo Checking installation state of Office Compatibility Pack...
-if "%OFC_COMP_PACK%" NEQ "1" (
-  if exist ..\ofc\%OFC_LANG%\FileFormatConverters.exe (
-    echo Installing Office Compatibility Pack...
-    call InstallOfficeUpdate.cmd ..\ofc\%OFC_LANG%\FileFormatConverters.exe /selectoptions %VERIFY_MODE% /errorsaswarnings
-    echo %DATE% %TIME% - Info: Installed Office Compatibility Pack>>%UPDATE_LOGFILE%
-  ) else (
-    echo Warning: File ..\ofc\%OFC_LANG%\FileFormatConverters.exe not found.
-    echo %DATE% %TIME% - Warning: File ..\ofc\%OFC_LANG%\FileFormatConverters.exe not found>>%UPDATE_LOGFILE%
-  )
-  dir /B ..\ofc\%OFC_LANG%\compatibilitypacksp*.exe >nul 2>&1
-  if errorlevel 1 (
-    echo Warning: File ..\ofc\%OFC_LANG%\compatibilitypacksp*.exe not found.
-    echo %DATE% %TIME% - Warning: File ..\ofc\%OFC_LANG%\compatibilitypacksp*.exe not found>>%UPDATE_LOGFILE%
-  ) else (
-    for /F %%i in ('dir /B ..\ofc\%OFC_LANG%\compatibilitypacksp*.exe') do (
-      echo Installing most recent Service Pack for Office Compatibility Pack...
-      call InstallOfficeUpdate.cmd ..\ofc\%OFC_LANG%\%%i /selectoptions %VERIFY_MODE% /errorsaswarnings
-      echo %DATE% %TIME% - Info: Installed most recent Service Pack for Office Compatibility Pack>>%UPDATE_LOGFILE%
-    )
-  )
-)
-:SkipOFCNV
-
 rem *** Check installation state of Office File Validation ***
 if "%INSTALL_OFV%" NEQ "/instofv" goto SkipOFVAL
-if "%O2K3_VER_MAJOR%" NEQ "" goto InstOFVAL
 if "%O2K7_VER_MAJOR%" NEQ "" goto InstOFVAL
 goto SkipOFVAL
 

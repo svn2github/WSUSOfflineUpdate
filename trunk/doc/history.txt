@@ -896,3 +896,4 @@ Version 9.2.1 -- 05.05.14
 Version ?.? -- ??.??.??
 - NOTE: If you customized your copy of WOU using the script AddCustomLanguageSupport.cmd {lng}, please call it again once (per language) to get the appropriate .NET 4.5.2 language pack(s) downloaded
 - .NET Framework 4.5 updated to v. 4.5.2 (Thanks to "harry")
+- Support removed for Office 2003 since Microsoft discontinued support for it on April 8th, 2014 (see http://support.microsoft.com/lifecycle/?p1=2488)

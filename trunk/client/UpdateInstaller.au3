@@ -58,7 +58,6 @@ Dim Const $ini_value_psh              = "instpsh"
 Dim Const $ini_value_wmf              = "instwmf"
 Dim Const $ini_value_msse             = "instmsse"
 Dim Const $ini_value_tsc              = "updatetsc"
-Dim Const $ini_value_ofc              = "instofc"
 Dim Const $ini_value_ofv              = "instofv"
 Dim Const $ini_value_all              = "all"
 Dim Const $ini_value_excludestatics   = "excludestatics"
@@ -98,7 +97,7 @@ Dim Const $path_rel_msse_x64          = "\msse\x64-glb\MSEInstall-x64-*.exe"
 Dim Const $path_rel_msi_all           = "\wouallmsi.txt"
 Dim Const $path_rel_msi_selected      = "\Temp\wouselmsi.txt"
 
-Dim $maindlg, $scriptdir, $mapped, $tabitemfocused, $backup, $rcerts, $ie7, $ie8, $ie9, $ie10, $ie11, $cpp, $dx, $mssl, $wmp, $dotnet35, $dotnet4, $psh, $wmf, $msse, $tsc, $ofc, $ofv, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_donate, $btn_exit, $options, $builddate
+Dim $maindlg, $scriptdir, $mapped, $tabitemfocused, $backup, $rcerts, $ie7, $ie8, $ie9, $ie10, $ie11, $cpp, $dx, $mssl, $wmp, $dotnet35, $dotnet4, $psh, $wmf, $msse, $tsc, $ofv, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_donate, $btn_exit, $options, $builddate
 Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos, $msiall, $msipacks[$msimax], $msicount, $line, $i, $msilistfile
 
 Func ShowGUIInGerman()
@@ -195,7 +194,6 @@ Dim $ini_src, $ini_dest, $i
   IniWrite($ini_dest, $ini_section_installation, $ini_value_wmf, CheckBoxStateToString($wmf))
   IniWrite($ini_dest, $ini_section_installation, $ini_value_msse, CheckBoxStateToString($msse))
   IniWrite($ini_dest, $ini_section_installation, $ini_value_tsc, CheckBoxStateToString($tsc))
-  IniWrite($ini_dest, $ini_section_installation, $ini_value_ofc, CheckBoxStateToString($ofc))
   IniWrite($ini_dest, $ini_section_installation, $ini_value_ofv, CheckBoxStateToString($ofv))
 
   IniWrite($ini_dest, $ini_section_control, $ini_value_verify, CheckBoxStateToString($verify))
@@ -789,26 +787,9 @@ Else
   EndIf
 EndIf
 
-; Install file format converters for Office
+; Install Office File Validation
 $txtxpos = 3 * $txtxoffset
 $txtypos = $txtypos + $txtheight
-If ShowGUIInGerman() Then
-  $ofc = GUICtrlCreateCheckbox("Office-Dateikonverter installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
-Else
-  $ofc = GUICtrlCreateCheckbox("Install Office File Converters", $txtxpos, $txtypos, $txtwidth, $txtheight)
-EndIf
-If OfcGlbPresent($scriptdir) Then
-  If MyIniRead($ini_section_installation, $ini_value_ofc, $disabled) = $enabled Then
-    GUICtrlSetState(-1, $GUI_CHECKED)
-  Else
-    GUICtrlSetState(-1, $GUI_UNCHECKED)
-  EndIf
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
-EndIf
-
-; Install Office File Validation
-$txtxpos = $txtxpos + $txtwidth
 If ShowGUIInGerman() Then
   $ofv = GUICtrlCreateCheckbox("Office-Dateiüberprüfung installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -1364,9 +1345,6 @@ While 1
       EndIf
       If IsCheckBoxChecked($tsc) Then
         $options = $options & " /updatetsc"
-      EndIf
-      If IsCheckBoxChecked($ofc) Then
-        $options = $options & " /instofc"
       EndIf
       If IsCheckBoxChecked($ofv) Then
         $options = $options & " /instofv"

@@ -253,14 +253,6 @@ set WOU_ENDLESS=2
 goto SetOfficeName
 
 :SetOfficeName
-if "%O2K3_VER_MAJOR%"=="" goto NoO2k3
-rem *** Office 2003 ***
-set OFC_NAME=o2k3
-set OFC_ARCH=%O2K3_ARCH%
-set OFC_LANG=%O2K3_LANG%
-set O2K3_SP_VER_TARGET=3
-set O2K3_SP_TARGET_ID=923618
-:NoO2k3
 if "%O2K7_VER_MAJOR%"=="" goto NoO2k7
 rem *** Office 2007 ***
 set OFC_NAME=o2k7

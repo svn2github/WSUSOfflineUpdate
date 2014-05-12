@@ -80,14 +80,13 @@ goto UnsupType
 
 :InstExe
 rem *** Check proper Office version ***
-for %%i in (ofc o2k3 o2k7 o2k10 o2k13) do (
+for %%i in (ofc o2k7 o2k10 o2k13) do (
   echo %1 | %SystemRoot%\System32\find.exe /I "\%%i\" >nul 2>&1
   if not errorlevel 1 goto %%i
 )
 goto UnsupVersion
 
 :ofc
-:o2k3
 if "%SELECT_OPTIONS%"=="1" (
   for /F %%i in (..\opt\OptionList-qn.txt) do (
     echo %1 | %SystemRoot%\System32\find.exe /I "%%i" >nul 2>&1
@@ -137,10 +136,7 @@ goto InstFailure
 :o2k13
 echo Installing %1...
 echo %1 | %SystemRoot%\System32\find.exe /I "sp" >nul 2>&1
-if errorlevel 1 (
-  echo %1 | %SystemRoot%\System32\find.exe /I "2687455" >nul 2>&1
-  if errorlevel 1 (%1 /quiet /norestart) else (%1 /passive /norestart)
-) else (%1 /passive /norestart)
+if errorlevel 1 (%1 /quiet /norestart) else (%1 /passive /norestart)
 set ERR_LEVEL=%errorlevel%
 if "%IGNORE_ERRORS%"=="1" goto InstSuccess
 for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess

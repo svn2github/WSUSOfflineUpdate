@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                          v. 9.2.1+ (r580)                         ###
+###                          v. 9.2.1+ (r581)                         ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -430,7 +430,7 @@ Liste=""
 case $sys in
     all-x64) Liste="w2k3-x64      w60-x64 w61-x64 w62-x64 w63-x64" ;;
     all-x86) Liste="w2k3     wxp  w60     w61     w62     w63" ;;
-    ofc) test "$sys_old" || Liste="o2k3 o2k7 o2k10 o2k13" ;;
+    ofc) test "$sys_old" || Liste="o2k7 o2k10 o2k13" ;;
 esac
 test "$Liste" && {
   for OS in $Liste
