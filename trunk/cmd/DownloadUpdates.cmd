@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.2.1+ (r581)
+set WSUSOFFLINE_VERSION=9.2.1+ (r582)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -30,7 +30,7 @@ if exist .\custom\InitializationHook.cmd (
   echo %DATE% %TIME% - Info: Executed custom initialization hook ^(Errorlevel: %errorlevel%^)>>%DOWNLOAD_LOGFILE%
 )
 
-for %%i in (wxp w2k3 w2k3-x64) do (
+for %%i in (w2k3 w2k3-x64) do (
   if /i "%1"=="%%i" (
     for %%j in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%2"=="%%j" goto EvalParams)
   )
@@ -251,87 +251,26 @@ if exist ActivateVistaAllLanguageServicePacks.cmd del ActivateVistaAllLanguageSe
 if exist ActivateVistaFiveLanguageServicePacks.cmd del ActivateVistaFiveLanguageServicePacks.cmd
 if exist DetermineAutoDaylightTimeSet.vbs del DetermineAutoDaylightTimeSet.vbs
 if exist ..\doc\faq.txt del ..\doc\faq.txt
-if exist ..\static\StaticDownloadLinks-mkisofs.txt del ..\static\StaticDownloadLinks-mkisofs.txt
-if exist ..\static\StaticDownloadLink-unzip.txt del ..\static\StaticDownloadLink-unzip.txt
-if exist ..\static\StaticDownloadLink-msxsl.txt del ..\static\StaticDownloadLink-msxsl.txt
 if exist ..\client\cmd\Reboot.vbs del ..\client\cmd\Reboot.vbs
 if exist ..\client\cmd\Shutdown.vbs del ..\client\cmd\Shutdown.vbs
 if exist ..\client\msi\nul rd /S /Q ..\client\msi
 if exist ..\client\static\StaticUpdateIds-ie9-w61.txt del ..\client\static\StaticUpdateIds-ie9-w61.txt
 
-rem *** Office 2000 stuff ***
-if exist ..\client\bin\msxsl.exe del ..\client\bin\msxsl.exe
-if exist ..\client\xslt\nul rd /S /Q ..\client\xslt
-if exist ..\client\static\StaticUpdateIds-o2k.txt del ..\client\static\StaticUpdateIds-o2k.txt
-del /Q ..\exclude\ExcludeList*-o2k.txt >nul 2>&1
-del /Q ..\static\*o2k-*.* >nul 2>&1
-del /Q ..\xslt\*o2k-*.* >nul 2>&1
-if exist ..\xslt\ExtractExpiredIds-o2k.xsl del ..\xslt\ExtractExpiredIds-o2k.xsl
-if exist ..\xslt\ExtractValidIds-o2k.xsl del ..\xslt\ExtractValidIds-o2k.xsl
-
-rem *** Office XP stuff ***
-if exist ..\client\static\StaticUpdateIds-oxp.txt del ..\client\static\StaticUpdateIds-oxp.txt
-del /Q ..\static\*oxp-*.* >nul 2>&1
-
-rem *** Office 2003 stuff ***
-if exist ..\client\static\StaticUpdateIds-o2k3.txt del ..\client\static\StaticUpdateIds-o2k3.txt
-del /Q ..\static\*o2k3-*.* >nul 2>&1
-
-rem *** .NET restructuring stuff ***
-if exist ..\exclude\ExcludeList-dotnet.txt del ..\exclude\ExcludeList-dotnet.txt
-if exist ..\client\win\glb\ndp*.* (
-  if not exist ..\client\dotnet\x86-glb\nul md ..\client\dotnet\x86-glb
-  move /Y ..\client\win\glb\ndp*.* ..\client\dotnet\x86-glb >nul
-)
-if exist ..\client\w2k3-x64\glb\ndp*.* (
-  if not exist ..\client\dotnet\x64-glb\nul md ..\client\dotnet\x64-glb
-  move /Y ..\client\w2k3-x64\glb\ndp*.* ..\client\dotnet\x64-glb >nul
-)
-if exist ..\static\StaticDownloadLink-dotnet.txt del ..\static\StaticDownloadLink-dotnet.txt
-if exist ..\xslt\ExtractDownloadLinks-dotnet-glb.xsl del ..\xslt\ExtractDownloadLinks-dotnet-glb.xsl
-if exist ..\client\static\StaticUpdateIds-dotnet.txt del ..\client\static\StaticUpdateIds-dotnet.txt
-if exist ..\client\dotnet\glb\nul (
-  if not exist ..\client\dotnet\x64-glb\nul md ..\client\dotnet\x64-glb
-  move /Y ..\client\dotnet\glb\*-x64_*.* ..\client\dotnet\x64-glb >nul
-  if not exist ..\client\dotnet\x86-glb\nul md ..\client\dotnet\x86-glb
-  move /Y ..\client\dotnet\glb\*-x86_*.* ..\client\dotnet\x86-glb >nul
-  rd /S /Q ..\client\dotnet\glb
-)
-
-rem *** FCIV stuff ***
-if exist ..\bin\fciv.exe del ..\bin\fciv.exe
-if exist ..\fciv\nul rd /S /Q ..\fciv
-if exist ..\static\StaticDownloadLink-fciv.txt del ..\static\StaticDownloadLink-fciv.txt
-
-rem *** WUA stuff - now statically defined ***
-if exist ..\xslt\ExtractDownloadLinks-wua-x86.xsl del ..\xslt\ExtractDownloadLinks-wua-x86.xsl
-if exist ..\xslt\ExtractDownloadLinks-wua-x64.xsl del ..\xslt\ExtractDownloadLinks-wua-x64.xsl
-
-rem *** Microsoft Security Essentials stuff ***
-if exist ..\static\StaticDownloadLink-mssedefs-x64.txt del ..\static\StaticDownloadLink-mssedefs-x64.txt
-if exist ..\static\StaticDownloadLink-mssedefs-x86.txt del ..\static\StaticDownloadLink-mssedefs-x86.txt
-if exist ..\static\StaticDownloadLink-mssedefs-x64-glb.txt del ..\static\StaticDownloadLink-mssedefs-x64-glb.txt
-if exist ..\static\StaticDownloadLink-mssedefs-x86-glb.txt del ..\static\StaticDownloadLink-mssedefs-x86-glb.txt
-if exist ..\client\mssedefs\x64\nul (
-  if not exist ..\client\mssedefs\x64-glb\nul md ..\client\mssedefs\x64-glb
-  move /Y ..\client\mssedefs\x64\*.* ..\client\mssedefs\x64-glb >nul
-  rd /S /Q ..\client\mssedefs\x64
-)
-if exist ..\client\mssedefs\x86\nul (
-  if not exist ..\client\mssedefs\x86-glb\nul md ..\client\mssedefs\x86-glb
-  move /Y ..\client\mssedefs\x86\*.* ..\client\mssedefs\x86-glb >nul
-  rd /S /Q ..\client\mssedefs\x86
-)
-if exist ..\client\mssedefs\nul move /Y ..\client\mssedefs msse >nul
-if exist ..\client\md\hashes-mssedefs.txt del ..\client\md\hashes-mssedefs.txt
-
 rem *** Obsolete external stuff ***
 if exist ..\bin\extract.exe del ..\bin\extract.exe
+if exist ..\bin\fciv.exe del ..\bin\fciv.exe
 if exist ..\bin\msxsl.exe del ..\bin\msxsl.exe
 if exist ..\sh\hashdeep del ..\sh\hashdeep
+if exist ..\fciv\nul rd /S /Q ..\fciv
 if exist ..\static\StaticDownloadLink-extract.txt del ..\static\StaticDownloadLink-extract.txt
+if exist ..\static\StaticDownloadLink-fciv.txt del ..\static\StaticDownloadLink-fciv.txt
+if exist ..\static\StaticDownloadLink-msxsl.txt del ..\static\StaticDownloadLink-msxsl.txt
 if exist ..\static\StaticDownloadLink-sigcheck.txt del ..\static\StaticDownloadLink-sigcheck.txt
 if exist ..\static\StaticDownloadLink-streams.txt del ..\static\StaticDownloadLink-streams.txt
+if exist ..\static\StaticDownloadLinks-mkisofs.txt del ..\static\StaticDownloadLinks-mkisofs.txt
+if exist ..\static\StaticDownloadLink-unzip.txt del ..\static\StaticDownloadLink-unzip.txt
+if exist ..\xslt\ExtractDownloadLinks-wua-x86.xsl del ..\xslt\ExtractDownloadLinks-wua-x86.xsl
+if exist ..\xslt\ExtractDownloadLinks-wua-x64.xsl del ..\xslt\ExtractDownloadLinks-wua-x64.xsl
 
 rem *** Windows 2000 stuff ***
 if exist ..\client\bin\reg.exe del ..\client\bin\reg.exe
@@ -347,6 +286,14 @@ if exist ..\sh\FIXIE6SetupDir.sh del ..\sh\FIXIE6SetupDir.sh
 del /Q ..\static\*ie6-*.* >nul 2>&1
 del /Q ..\static\*w2k-*.* >nul 2>&1
 del /Q ..\xslt\*w2k-*.* >nul 2>&1
+
+rem *** Windows XP stuff ***
+if exist ..\client\static\StaticUpdateIds-wxp-x86.txt del ..\client\static\StaticUpdateIds-wxp-x86.txt
+if exist ..\exclude\ExcludeList-wxp-x86.txt del ..\exclude\ExcludeList-wxp-x86.txt
+if exist ..\exclude\ExcludeListISO-wxp-x86.txt del ..\exclude\ExcludeListISO-wxp-x86.txt
+if exist ..\exclude\ExcludeListUSB-wxp-x86.txt del ..\exclude\ExcludeListUSB-wxp-x86.txt
+del /Q ..\static\*-wxp-x86-*.* >nul 2>&1
+del /Q ..\xslt\*-wxp-x86-*.* >nul 2>&1
 
 rem *** Office and invcif.exe stuff ***
 if exist ..\static\StaticDownloadLinks-inventory.txt del ..\static\StaticDownloadLinks-inventory.txt
@@ -374,6 +321,32 @@ del /Q ..\xslt\ExtractDownloadLinks-o*.* >nul 2>&1
 del /Q ..\xslt\ExtractExpiredIds-o*.* >nul 2>&1
 del /Q ..\xslt\ExtractValidIds-o*.* >nul 2>&1
 
+rem *** Office 2000 stuff ***
+if exist ..\client\bin\msxsl.exe del ..\client\bin\msxsl.exe
+if exist ..\client\xslt\nul rd /S /Q ..\client\xslt
+if exist ..\client\static\StaticUpdateIds-o2k.txt del ..\client\static\StaticUpdateIds-o2k.txt
+del /Q ..\exclude\ExcludeList*-o2k.txt >nul 2>&1
+del /Q ..\static\*o2k-*.* >nul 2>&1
+del /Q ..\xslt\*o2k-*.* >nul 2>&1
+if exist ..\xslt\ExtractExpiredIds-o2k.xsl del ..\xslt\ExtractExpiredIds-o2k.xsl
+if exist ..\xslt\ExtractValidIds-o2k.xsl del ..\xslt\ExtractValidIds-o2k.xsl
+
+rem *** Office XP stuff ***
+if exist ..\client\static\StaticUpdateIds-oxp.txt del ..\client\static\StaticUpdateIds-oxp.txt
+del /Q ..\static\*oxp-*.* >nul 2>&1
+
+rem *** Office 2003 stuff ***
+if exist ..\client\static\StaticUpdateIds-o2k3.txt del ..\client\static\StaticUpdateIds-o2k3.txt
+del /Q ..\static\*o2k3-*.* >nul 2>&1
+
+rem *** rootsupd restructuring stuff ***
+if exist ..\client\wxp\glb\rootsupd.exe (
+  if not exist ..\client\win\glb\nul md ..\client\win\glb
+  move /Y ..\client\wxp\glb\rootsupd.exe ..\client\win\glb >nul
+  if exist ..\client\md\hashes-win-glb.txt del ..\client\md\hashes-win-glb.txt
+  if exist ..\client\md\hashes-wxp-glb.txt del ..\client\md\hashes-wxp-glb.txt
+)
+
 rem *** CPP restructuring stuff ***
 if exist ..\client\md\hashes-cpp-x64-glb.txt del ..\client\md\hashes-cpp-x64-glb.txt
 if exist ..\client\cpp\x64-glb\nul (
@@ -386,13 +359,44 @@ if exist ..\client\cpp\x86-glb\nul (
   rd /S /Q ..\client\cpp\x86-glb
 )
 
-rem *** rootsupd restructuring stuff ***
-if exist ..\client\wxp\glb\rootsupd.exe (
-  if not exist ..\client\win\glb\nul md ..\client\win\glb
-  move /Y ..\client\wxp\glb\rootsupd.exe ..\client\win\glb >nul
-  if exist ..\client\md\hashes-win-glb.txt del ..\client\md\hashes-win-glb.txt
-  if exist ..\client\md\hashes-wxp-glb.txt del ..\client\md\hashes-wxp-glb.txt
+rem *** .NET restructuring stuff ***
+if exist ..\exclude\ExcludeList-dotnet.txt del ..\exclude\ExcludeList-dotnet.txt
+if exist ..\client\win\glb\ndp*.* (
+  if not exist ..\client\dotnet\x86-glb\nul md ..\client\dotnet\x86-glb
+  move /Y ..\client\win\glb\ndp*.* ..\client\dotnet\x86-glb >nul
 )
+if exist ..\client\w2k3-x64\glb\ndp*.* (
+  if not exist ..\client\dotnet\x64-glb\nul md ..\client\dotnet\x64-glb
+  move /Y ..\client\w2k3-x64\glb\ndp*.* ..\client\dotnet\x64-glb >nul
+)
+if exist ..\static\StaticDownloadLink-dotnet.txt del ..\static\StaticDownloadLink-dotnet.txt
+if exist ..\xslt\ExtractDownloadLinks-dotnet-glb.xsl del ..\xslt\ExtractDownloadLinks-dotnet-glb.xsl
+if exist ..\client\static\StaticUpdateIds-dotnet.txt del ..\client\static\StaticUpdateIds-dotnet.txt
+if exist ..\client\dotnet\glb\nul (
+  if not exist ..\client\dotnet\x64-glb\nul md ..\client\dotnet\x64-glb
+  move /Y ..\client\dotnet\glb\*-x64_*.* ..\client\dotnet\x64-glb >nul
+  if not exist ..\client\dotnet\x86-glb\nul md ..\client\dotnet\x86-glb
+  move /Y ..\client\dotnet\glb\*-x86_*.* ..\client\dotnet\x86-glb >nul
+  rd /S /Q ..\client\dotnet\glb
+)
+
+rem *** Microsoft Security Essentials stuff ***
+if exist ..\static\StaticDownloadLink-mssedefs-x64.txt del ..\static\StaticDownloadLink-mssedefs-x64.txt
+if exist ..\static\StaticDownloadLink-mssedefs-x86.txt del ..\static\StaticDownloadLink-mssedefs-x86.txt
+if exist ..\static\StaticDownloadLink-mssedefs-x64-glb.txt del ..\static\StaticDownloadLink-mssedefs-x64-glb.txt
+if exist ..\static\StaticDownloadLink-mssedefs-x86-glb.txt del ..\static\StaticDownloadLink-mssedefs-x86-glb.txt
+if exist ..\client\mssedefs\x64\nul (
+  if not exist ..\client\mssedefs\x64-glb\nul md ..\client\mssedefs\x64-glb
+  move /Y ..\client\mssedefs\x64\*.* ..\client\mssedefs\x64-glb >nul
+  rd /S /Q ..\client\mssedefs\x64
+)
+if exist ..\client\mssedefs\x86\nul (
+  if not exist ..\client\mssedefs\x86-glb\nul md ..\client\mssedefs\x86-glb
+  move /Y ..\client\mssedefs\x86\*.* ..\client\mssedefs\x86-glb >nul
+  rd /S /Q ..\client\mssedefs\x86
+)
+if exist ..\client\mssedefs\nul move /Y ..\client\mssedefs msse >nul
+if exist ..\client\md\hashes-mssedefs.txt del ..\client\md\hashes-mssedefs.txt
 
 rem *** Update static download definitions ***
 if "%SKIP_SDD%"=="1" goto SkipSDD
@@ -883,13 +887,13 @@ if "%VERIFY_DL%"=="1" (
 :SkipWDDefs
 
 rem *** Download the platform specific patches ***
-for %%i in (wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64) do (
+for %%i in (w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64) do (
   if /i "%1"=="%%i" (
     call :DownloadCore win glb x86 %SKIP_PARAM%
     if errorlevel 1 goto Error
   )
 )
-for %%i in (wxp w2k3) do (
+for %%i in (w2k3) do (
   if /i "%1"=="%%i" (
     call :DownloadCore win %2 %TARGET_ARCH% %SKIP_PARAM%
     if errorlevel 1 goto Error
@@ -901,7 +905,7 @@ for %%i in (o2k7 o2k10 o2k13) do (
     if errorlevel 1 goto Error
   )
 )
-for %%i in (wxp w2k3 w2k3-x64 o2k7 o2k10 o2k13) do (
+for %%i in (w2k3 w2k3-x64 o2k7 o2k10 o2k13) do (
   if /i "%1"=="%%i" (
     call :DownloadCore %1 glb %TARGET_ARCH% %SKIP_PARAM%
     if errorlevel 1 goto Error
@@ -1056,7 +1060,7 @@ if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
 echo %TIME% - Done.
 echo %DATE% %TIME% - Info: Determined superseded updates>>%DOWNLOAD_LOGFILE%
 :SkipSuperseded
-for %%i in (dotnet win wxp w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64) do (if /i "%1"=="%%i" goto DetermineWindows)
+for %%i in (dotnet win w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64) do (if /i "%1"=="%%i" goto DetermineWindows)
 for %%i in (ofc) do (if /i "%1"=="%%i" goto DetermineOffice)
 del "%TEMP%\package.xml"
 goto DoDownload
@@ -1418,7 +1422,7 @@ if exist ..\client\md\hashes-%1-%2.txt (
 if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" del "%TEMP%\ValidStaticLinks-%1-%2.txt"
 if exist "%TEMP%\ValidDynamicLinks-%1-%2.csv" del "%TEMP%\ValidDynamicLinks-%1-%2.csv"
 if "%4"=="/skipdownload" (
-  for %%i in (win wxp w2k3 w60 w61 w62 w63) do (
+  for %%i in (win w2k3 w60 w61 w62 w63) do (
     if /i "%1"=="%%i" (
       if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" move /Y "%TEMP%\ValidDynamicLinks-%1-%2.txt" ..\static\custom\StaticDownloadLinks-%1-%3-%2.txt >nul
     )
@@ -1445,7 +1449,7 @@ exit /b 1
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %*
-echo Usage1: %~n0 {wxp ^| w2k3 ^| w2k3-x64 ^| o2k7 ^| o2k10 ^| o2k13} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
+echo Usage1: %~n0 {w2k3 ^| w2k3-x64 ^| o2k7 ^| o2k10 ^| o2k13} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
 echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| w62 ^| w62-x64 ^| w63 ^| w63-x64 ^| ofc} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
 echo %DATE% %TIME% - Error: Invalid parameter: %*>>%DOWNLOAD_LOGFILE%
 echo.

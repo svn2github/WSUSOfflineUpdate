@@ -1,5 +1,0 @@
-http://xpsp.dlservice.microsoft.com/download/0/7/7/077a5aa5-07d6-41a1-bed5-680f84898439/WindowsXP-KB936929-SP3-x86-HUN.exe
-http://download.microsoft.com/download/0/C/A/0CA6E243-6A7D-403F-BAED-46D393C2284F/WindowsXP-KB969084-x86-hun.exe
-http://download.microsoft.com/download/B/0/3/B033D5EF-933F-4E8F-A04D-2C0CDC0C9731/WindowsXP-KB968930-x86-HUN.exe
-http://download.microsoft.com/download/1/4/1/1416dc2b-5365-40af-aa1a-c00abe4c186d/wmp11-windowsxp-x86-HU-HU.exe
-http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-hu-hu-kb2564958_cee49e4add9e76f962812a2f4ca727f807d8a382.exe

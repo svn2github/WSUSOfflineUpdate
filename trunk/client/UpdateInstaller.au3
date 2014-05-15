@@ -49,9 +49,7 @@ Dim Const $ini_value_ie9              = "instie9"
 Dim Const $ini_value_ie10             = "instie10"
 Dim Const $ini_value_ie11             = "instie11"
 Dim Const $ini_value_cpp              = "updatecpp"
-Dim Const $ini_value_dx               = "updatedx"
 Dim Const $ini_value_mssl             = "instmssl"
-Dim Const $ini_value_wmp              = "updatewmp"
 Dim Const $ini_value_dotnet35         = "instdotnet35"
 Dim Const $ini_value_dotnet4          = "instdotnet4"
 Dim Const $ini_value_psh              = "instpsh"
@@ -97,7 +95,7 @@ Dim Const $path_rel_msse_x64          = "\msse\x64-glb\MSEInstall-x64-*.exe"
 Dim Const $path_rel_msi_all           = "\wouallmsi.txt"
 Dim Const $path_rel_msi_selected      = "\Temp\wouselmsi.txt"
 
-Dim $maindlg, $scriptdir, $mapped, $tabitemfocused, $backup, $rcerts, $ie7, $ie8, $ie9, $ie10, $ie11, $cpp, $dx, $mssl, $wmp, $dotnet35, $dotnet4, $psh, $wmf, $msse, $tsc, $ofv, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_donate, $btn_exit, $options, $builddate
+Dim $maindlg, $scriptdir, $mapped, $tabitemfocused, $backup, $rcerts, $ie7, $ie8, $ie9, $ie10, $ie11, $cpp, $mssl, $dotnet35, $dotnet4, $psh, $wmf, $msse, $tsc, $ofv, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_donate, $btn_exit, $options, $builddate
 Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos, $msiall, $msipacks[$msimax], $msicount, $line, $i, $msilistfile
 
 Func ShowGUIInGerman()
@@ -185,9 +183,7 @@ Dim $ini_src, $ini_dest, $i
   IniWrite($ini_dest, $ini_section_installation, $ini_value_ie10, CheckBoxStateToString($ie10))
   IniWrite($ini_dest, $ini_section_installation, $ini_value_ie11, CheckBoxStateToString($ie11))
   IniWrite($ini_dest, $ini_section_installation, $ini_value_cpp, CheckBoxStateToString($cpp))
-  IniWrite($ini_dest, $ini_section_installation, $ini_value_dx, CheckBoxStateToString($dx))
   IniWrite($ini_dest, $ini_section_installation, $ini_value_mssl, CheckBoxStateToString($mssl))
-  IniWrite($ini_dest, $ini_section_installation, $ini_value_wmp, CheckBoxStateToString($wmp))
   IniWrite($ini_dest, $ini_section_installation, $ini_value_dotnet35, CheckBoxStateToString($dotnet35))
   IniWrite($ini_dest, $ini_section_installation, $ini_value_psh, CheckBoxStateToString($psh))
   IniWrite($ini_dest, $ini_section_installation, $ini_value_dotnet4, CheckBoxStateToString($dotnet4))
@@ -364,7 +360,7 @@ Func CalcGUISize()
   If ($reg_val = "") Then
     $reg_val = $default_logpixels
   EndIf
-  $dlgheight = 400 * $reg_val / $default_logpixels
+  $dlgheight = 380 * $reg_val / $default_logpixels
   If ShowGUIInGerman() Then
     $txtwidth = 240 * $reg_val / $default_logpixels
   Else
@@ -428,7 +424,7 @@ EndIf
 ;  Installation group
 $txtxpos = 2 * $txtxoffset
 $txtypos = 3.5 * $txtyoffset + 1.5 * $txtheight
-GUICtrlCreateGroup("Installation", $txtxpos, $txtypos, $groupwidth, 11 * $txtheight)
+GUICtrlCreateGroup("Installation", $txtxpos, $txtypos, $groupwidth, 10 * $txtheight)
 
 ; Backup
 $txtxpos = 3 * $txtxoffset
@@ -602,27 +598,8 @@ Else
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 EndIf
 
-; Update DirectX Runtime Libraries
-$txtxpos = $txtxpos + $txtwidth
-If ShowGUIInGerman() Then
-  $dx = GUICtrlCreateCheckbox("DirectX-Laufzeitbibliotheken aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
-Else
-  $dx = GUICtrlCreateCheckbox("Update DirectX Runtime Libraries", $txtxpos, $txtypos, $txtwidth, $txtheight)
-EndIf
-If ( (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") _
-  OR (NOT WinGlbPresent($scriptdir)) ) Then
-  GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
-Else
-  If MyIniRead($ini_section_installation, $ini_value_dx, $disabled) = $enabled Then
-    GUICtrlSetState(-1, $GUI_CHECKED)
-  Else
-    GUICtrlSetState(-1, $GUI_UNCHECKED)
-  EndIf
-EndIf
-
 ; Install Microsoft Silverlight
-$txtxpos = 3 * $txtxoffset
-$txtypos = $txtypos + $txtheight
+$txtxpos = $txtxpos + $txtwidth
 If ShowGUIInGerman() Then
   If MSSLInstalled() Then
     $mssl = GUICtrlCreateCheckbox("Microsoft Silverlight aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
@@ -640,25 +617,6 @@ If ( (NOT WinGlbPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If MyIniRead($ini_section_installation, $ini_value_mssl, $disabled) = $enabled Then
-    GUICtrlSetState(-1, $GUI_CHECKED)
-  Else
-    GUICtrlSetState(-1, $GUI_UNCHECKED)
-  EndIf
-EndIf
-
-; Update Windows Media Player
-$txtxpos = $txtxpos + $txtwidth
-If ShowGUIInGerman() Then
-  $wmp = GUICtrlCreateCheckbox("Windows Media Player aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
-Else
-  $wmp = GUICtrlCreateCheckbox("Update Windows Media Player", $txtxpos, $txtypos, $txtwidth, $txtheight)
-EndIf
-If ( (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
-  OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") _
-  OR (NOT WinGlbPresent($scriptdir)) ) Then
-  GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
-Else
-  If MyIniRead($ini_section_installation, $ini_value_wmp, $enabled) = $enabled Then
     GUICtrlSetState(-1, $GUI_CHECKED)
   Else
     GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -1319,14 +1277,8 @@ While 1
       If IsCheckBoxChecked($cpp) Then
         $options = $options & " /updatecpp"
       EndIf
-      If IsCheckBoxChecked($dx) Then
-        $options = $options & " /updatedx"
-      EndIf
       If IsCheckBoxChecked($mssl) Then
         $options = $options & " /instmssl"
-      EndIf
-      If IsCheckBoxChecked($wmp) Then
-        $options = $options & " /updatewmp"
       EndIf
       If IsCheckBoxChecked($dotnet35) Then
         $options = $options & " /instdotnet35"

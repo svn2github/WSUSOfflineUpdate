@@ -5,4 +5,3 @@ rootsupd
 rvkroots
 kb923789
 vcredist
-wmp11

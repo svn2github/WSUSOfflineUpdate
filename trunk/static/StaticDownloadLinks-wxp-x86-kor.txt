@@ -1,5 +1,0 @@
-http://xpsp.dlservice.microsoft.com/download/7/9/a/79aaf123-878f-4945-933c-7b13c64576ab/WindowsXP-KB936929-SP3-x86-KOR.exe
-http://download.microsoft.com/download/B/3/2/B3268015-52FD-4C27-8E0B-521CA958B96B/WindowsXP-KB969084-x86-kor.exe
-http://download.microsoft.com/download/9/5/1/95189CFD-43A6-4F03-B1A4-DB4CE2292F5D/WindowsXP-KB968930-x86-KOR.exe
-http://download.microsoft.com/download/6/a/2/6a2ca6a3-41b1-442a-baeb-47c56fa23c82/wmp11-windowsxp-x86-ko-kr.exe
-http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-ko-kr-kb2564958_3e113be021705ef6e691b434f0d53fdcea88c8fd.exe

@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.2.1+ (r581)
+set WSUSOFFLINE_VERSION=9.2.1+ (r582)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -28,7 +28,7 @@ echo %DATE% %TIME% - Info: Used path "%~dp0" on %COMPUTERNAME% (user: %USERNAME%
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/nobackup /verify /updatercerts /instie7 /instie8 /instie9 /instie10 /instie11 /instielatest /updatecpp /updatedx /instmssl /updatewmp /instdotnet35 /instdotnet4 /instpsh /instwmf /instmsse /updatetsc /instofv /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
+for %%i in (/nobackup /verify /updatercerts /instie7 /instie8 /instie9 /instie10 /instie11 /instielatest /updatecpp /instmssl /instdotnet35 /instdotnet4 /instpsh /instwmf /instmsse /updatetsc /instofv /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected>>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/nobackup" set BACKUP_MODE=/nobackup
@@ -41,9 +41,7 @@ if /i "%1"=="/instie10" set INSTALL_IE=/instie10
 if /i "%1"=="/instie11" set INSTALL_IE=/instie11
 if /i "%1"=="/instielatest" set INSTALL_IE=/instielatest
 if /i "%1"=="/updatecpp" set UPDATE_CPP=/updatecpp
-if /i "%1"=="/updatedx" set UPDATE_DX=/updatedx
 if /i "%1"=="/instmssl" set INSTALL_MSSL=/instmssl
-if /i "%1"=="/updatewmp" set UPDATE_WMP=/updatewmp
 if /i "%1"=="/instdotnet35" set INSTALL_DOTNET35=/instdotnet35
 if /i "%1"=="/instdotnet4" set INSTALL_DOTNET4=/instdotnet4
 if /i "%1"=="/instpsh" set INSTALL_PSH=/instpsh
@@ -95,32 +93,6 @@ if "%OS_ARCH%"=="" (
 if "%OS_LANG%"=="" goto UnsupLang
 if /i "%OS_ARCH%"=="x64" (set HASHDEEP_PATH=..\bin\hashdeep64.exe) else (set HASHDEEP_PATH=..\bin\hashdeep.exe)
 
-rem *** Determine DirectX main version ***
-if "%UPDATE_DX%" NEQ "/updatedx" goto NoDXDiag
-if "%OS_NAME%"=="w62" goto NoDXDiag
-if "%OS_NAME%"=="w63" goto NoDXDiag
-if not exist %SystemRoot%\System32\dxdiag.exe goto NoDXDiag
-echo Determining DirectX main version...
-if /i "%OS_ARCH%"=="x64" (
-  %SystemRoot%\System32\dxdiag.exe /whql:off /64bit /t %TEMP%\dxdiag.txt
-) else (
-  %SystemRoot%\System32\dxdiag.exe /whql:off /t %TEMP%\dxdiag.txt
-)
-for /L %%i in (1,1,10) do (
-  if exist "%TEMP%\dxdiag.txt" (goto CheckDXDiag) else (%CSCRIPT_PATH% //Nologo //B //E:vbs Sleep.vbs 100)
-)
-:CheckDXDiag
-if not exist "%TEMP%\dxdiag.txt" goto NoDXDiag
-%SystemRoot%\System32\findstr.exe /L /C:"DirectX Version" "%TEMP%\dxdiag.txt" >"%TEMP%\dxver.txt"
-del "%TEMP%\dxdiag.txt"
-for /F "usebackq tokens=2 delims=:" %%i in ("%TEMP%\dxver.txt") do (
-  for /F "tokens=1*" %%j in ("%%i") do echo set DX_MAIN_VER=%%k>"%TEMP%\SetDXVer.cmd"
-)
-del "%TEMP%\dxver.txt"
-call "%TEMP%\SetDXVer.cmd"
-del "%TEMP%\SetDXVer.cmd"
-:NoDXDiag
-
 rem *** Set target environment variables ***
 call SetTargetEnvVars.cmd
 if errorlevel 1 goto Cleanup
@@ -140,6 +112,7 @@ if "%USERNAME%"=="WOUTempAdmin" (
 rem *** Check Operating System ***
 if "%OS_NAME%"=="" goto UnsupOS
 if "%OS_NAME%"=="w2k" goto UnsupOS
+if "%OS_NAME%"=="wxp" goto UnsupOS
 for %%i in (x86 x64) do (if /i "%OS_ARCH%"=="%%i" goto ValidArch)
 goto UnsupArch
 :ValidArch
@@ -154,7 +127,6 @@ if not exist %SystemRoot%\System32\powercfg.exe goto SkipPowerCfg
 echo Adjusting power management settings...
 goto PWR%OS_NAME%
 
-:PWRwxp
 :PWRw2k3
 for %%i in (monitor disk standby hibernate) do (
   for %%j in (ac dc) do %SystemRoot%\System32\powercfg.exe /X %PWR_POL_IDX% /N /%%i-timeout-%%j 0
@@ -194,8 +166,6 @@ rem echo Found Internet Explorer version: %IE_VER_MAJOR%.%IE_VER_MINOR%.%IE_VER_
 rem echo Found Trusted Root Certificates' version: %TRCERTS_VER_MAJOR%.%TRCERTS_VER_MINOR%.%TRCERTS_VER_BUILD%.%TRCERTS_VER_REVIS%
 rem echo Found Revoked Root Certificates' version: %RRCERTS_VER_MAJOR%.%RRCERTS_VER_MINOR%.%RRCERTS_VER_BUILD%.%RRCERTS_VER_REVIS%
 rem echo Found Microsoft Data Access Components version: %MDAC_VER_MAJOR%.%MDAC_VER_MINOR%.%MDAC_VER_BUILD%.%MDAC_VER_REVIS%
-rem if "%DX_MAIN_VER%" NEQ "" echo Found Microsoft DirectX main version: %DX_MAIN_VER%
-rem echo Found Microsoft DirectX core version: %DX_NAME% (%DX_CORE_VER_MAJOR%.%DX_CORE_VER_MINOR%.%DX_CORE_VER_BUILD%.%DX_CORE_VER_REVIS%)
 rem echo Found Microsoft Silverlight version: %MSSL_VER_MAJOR%.%MSSL_VER_MINOR%.%MSSL_VER_BUILD%.%MSSL_VER_REVIS%
 rem echo Found Windows Media Player version: %WMP_VER_MAJOR%.%WMP_VER_MINOR%.%WMP_VER_BUILD%.%WMP_VER_REVIS%
 rem echo Found Remote Desktop Client version: %TSC_VER_MAJOR%.%TSC_VER_MINOR%.%TSC_VER_BUILD%.%TSC_VER_REVIS%
@@ -229,8 +199,6 @@ echo %DATE% %TIME% - Info: Found Internet Explorer version %IE_VER_MAJOR%.%IE_VE
 echo %DATE% %TIME% - Info: Found Trusted Root Certificates' version %TRCERTS_VER_MAJOR%.%TRCERTS_VER_MINOR%.%TRCERTS_VER_BUILD%.%TRCERTS_VER_REVIS%>>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Revoked Root Certificates' version %RRCERTS_VER_MAJOR%.%RRCERTS_VER_MINOR%.%RRCERTS_VER_BUILD%.%RRCERTS_VER_REVIS%>>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft Data Access Components version %MDAC_VER_MAJOR%.%MDAC_VER_MINOR%.%MDAC_VER_BUILD%.%MDAC_VER_REVIS%>>%UPDATE_LOGFILE%
-if "%DX_MAIN_VER%" NEQ "" echo %DATE% %TIME% - Info: Found Microsoft DirectX main version %DX_MAIN_VER%>>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft DirectX core version %DX_NAME% (%DX_CORE_VER_MAJOR%.%DX_CORE_VER_MINOR%.%DX_CORE_VER_BUILD%.%DX_CORE_VER_REVIS%)>>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft Silverlight version %MSSL_VER_MAJOR%.%MSSL_VER_MINOR%.%MSSL_VER_BUILD%.%MSSL_VER_REVIS%>>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows Media Player version %WMP_VER_MAJOR%.%WMP_VER_MINOR%.%WMP_VER_BUILD%.%WMP_VER_REVIS%>>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Remote Desktop Client version %TSC_VER_MAJOR%.%TSC_VER_MINOR%.%TSC_VER_BUILD%.%TSC_VER_REVIS%>>%UPDATE_LOGFILE%
@@ -327,18 +295,6 @@ if not exist "%TEMP%\UpdatesToInstall.txt" (
 echo Installing most recent Windows Service Pack...
 goto SP%OS_NAME%
 
-:SPwxp
-if 0 EQU %OS_SP_VER_MAJOR% (
-  echo Faking Windows XP Service Pack 1...
-  %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\Control\Windows /v CSDVersion /t REG_DWORD /d 0x100 /f >nul 2>&1
-  if errorlevel 1 (
-    echo Warning: Faking of Windows XP Service Pack 1 failed.
-    echo %DATE% %TIME% - Warning: Faking of Windows XP Service Pack 1 failed>>%UPDATE_LOGFILE%
-    goto SkipSPInst
-  ) else (
-    echo %DATE% %TIME% - Info: Faked Windows XP Service Pack ^1>>%UPDATE_LOGFILE%
-  )
-)
 :SPw2k3
 echo %DATE% %TIME% - Info: Installing most recent Service Pack for Windows XP / Server 2003>>%UPDATE_LOGFILE%
 if "%BACKUP_MODE%"=="/nobackup" (
@@ -495,14 +451,6 @@ if %IE_VER_REVIS% GEQ %IE_VER_TARGET_REVIS% goto SkipIEInst
 :InstallIE
 goto IE%OS_NAME%
 
-:IEwxp
-if "%INSTALL_IE%"=="/instie8" (
-  set IE_FILENAME=..\%OS_NAME%\%OS_LANG%\IE8-WindowsXP-%OS_ARCH%-%OS_LANG%*.exe
-) else (
-  set IE_FILENAME=..\%OS_NAME%\%OS_LANG%\ie7-windowsxp-%OS_ARCH%-%OS_LANG%*.exe
-)
-goto IEwxp2k3
-
 :IEw2k3
 if /i "%OS_ARCH%"=="x64" (
   if "%INSTALL_IE%"=="/instie8" (
@@ -517,9 +465,6 @@ if /i "%OS_ARCH%"=="x64" (
     set IE_FILENAME=..\%OS_NAME%\%OS_LANG%\ie7-windowsserver2003-%OS_ARCH%-%OS_LANG%*.exe
   )
 )
-goto IEwxp2k3
-
-:IEwxp2k3
 dir /B %IE_FILENAME% >nul 2>&1
 if errorlevel 1 (
   echo Warning: File %IE_FILENAME% not found.
@@ -823,39 +768,6 @@ if "%CPP_2012_x86%"=="1" (
 )
 :SkipCPPInst
 
-rem *** Install DirectX End-User Runtime ***
-if "%UPDATE_DX%" NEQ "/updatedx" goto SkipDirectXInst
-if "%OS_NAME%"=="w62" goto SkipDirectXInst
-if "%OS_NAME%"=="w63" goto SkipDirectXInst
-echo Checking DirectX version...
-if %DX_CORE_VER_MAJOR% LSS %DX_CORE_VER_TARGET_MAJOR% goto InstallDirectX
-if %DX_CORE_VER_MAJOR% GTR %DX_CORE_VER_TARGET_MAJOR% goto SkipDirectXInst
-if %DX_CORE_VER_MINOR% LSS %DX_CORE_VER_TARGET_MINOR% goto InstallDirectX
-if %DX_CORE_VER_MINOR% GTR %DX_CORE_VER_TARGET_MINOR% goto SkipDirectXInst
-if %DX_CORE_VER_BUILD% LSS %DX_CORE_VER_TARGET_BUILD% goto InstallDirectX
-if %DX_CORE_VER_BUILD% GTR %DX_CORE_VER_TARGET_BUILD% goto SkipDirectXInst
-if %DX_CORE_VER_REVIS% LSS %DX_CORE_VER_TARGET_REVIS% goto InstallDirectX
-if exist %DX_DLL_LATEST% goto SkipDirectXInst
-:InstallDirectX
-set DIRECTX_FILENAME=..\win\glb\directx_*_redist.exe
-dir /B %DIRECTX_FILENAME% >nul 2>&1
-if errorlevel 1 (
-  echo Warning: File %DIRECTX_FILENAME% not found.
-  echo %DATE% %TIME% - Warning: File %DIRECTX_FILENAME% not found>>%UPDATE_LOGFILE%
-  goto SkipDirectXInst
-)
-echo Installing most recent DirectX End-User Runtime...
-for /F %%i in ('dir /B %DIRECTX_FILENAME%') do (
-  echo Installing ..\win\glb\%%i...
-  ..\win\glb\%%i /T:"%TEMP%\directx" /C /Q
-  "%TEMP%\directx\dxsetup.exe" /silent
-  call SafeRmDir.cmd "%TEMP%\directx"
-  echo %DATE% %TIME% - Info: Installed ..\win\glb\%%i>>%UPDATE_LOGFILE%
-  set REBOOT_REQUIRED=1
-)
-set DIRECTX_FILENAME=
-:SkipDirectXInst
-
 rem *** Install Microsoft Silverlight ***
 if "%INSTALL_MSSL%" NEQ "/instmssl" goto SkipMSSLInst
 echo Checking Microsoft Silverlight version...
@@ -896,35 +808,6 @@ set MSSL_VER_TARGET_MAJOR=
 set MSSL_VER_TARGET_MINOR=
 set MSSL_VER_TARGET_BUILD=
 set MSSL_VER_TARGET_REVIS=
-
-rem *** Install most recent Windows Media Player ***
-if "%OS_NAME%"=="w2k3" goto SkipWMPInst
-if %OS_DOMAIN_ROLE% GEQ 2 goto SkipWMPInst
-if "%UPDATE_WMP%" NEQ "/updatewmp" goto SkipWMPInst
-echo Checking Windows Media Player version...
-if %WMP_VER_MAJOR% LSS %WMP_VER_TARGET_MAJOR% goto InstallWMP
-if %WMP_VER_MAJOR% GTR %WMP_VER_TARGET_MAJOR% goto SkipWMPInst
-if %WMP_VER_MINOR% LSS %WMP_VER_TARGET_MINOR% goto InstallWMP
-if %WMP_VER_MINOR% GEQ %WMP_VER_TARGET_MINOR% goto SkipWMPInst
-:InstallWMP
-if "%WMP_TARGET_ID%"=="" (
-  echo Warning: Environment variable WMP_TARGET_ID not set.
-  echo %DATE% %TIME% - Warning: Environment variable WMP_TARGET_ID not set>>%UPDATE_LOGFILE%
-  goto SkipWMPInst
-)
-echo %WMP_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
-call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
-if errorlevel 1 goto ListError
-if exist "%TEMP%\UpdatesToInstall.txt" (
-  echo Installing most recent Windows Media Player...
-  call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /errorsaswarnings
-) else (
-  echo Warning: Windows Media Player installation file ^(kb%WMP_TARGET_ID%^) not found.
-  echo %DATE% %TIME% - Warning: Windows Media Player installation file ^(kb%WMP_TARGET_ID%^) not found>>%UPDATE_LOGFILE%
-  goto SkipWMPInst
-)
-set REBOOT_REQUIRED=1
-:SkipWMPInst
 
 rem *** Install .NET Framework 3.5 SP1 ***
 if "%INSTALL_DOTNET35%" NEQ "/instdotnet35" goto SkipDotNet35Inst
@@ -1525,7 +1408,7 @@ if "%RECALL_REQUIRED%"=="1" (
     )
     if "%USERNAME%" NEQ "WOUTempAdmin" (
       echo Preparing automatic recall...
-      call PrepareRecall.cmd "%~f0" %BACKUP_MODE% %VERIFY_MODE% %UPDATE_RCERTS% %INSTALL_IE% %UPDATE_CPP% %UPDATE_DX% %INSTALL_MSSL% %UPDATE_WMP% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_WMF% %INSTALL_MSSE% %UPDATE_TSC% %INSTALL_OFC% %INSTALL_OFV% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES% %SKIP_DYNAMIC%
+      call PrepareRecall.cmd "%~f0" %BACKUP_MODE% %VERIFY_MODE% %UPDATE_RCERTS% %INSTALL_IE% %UPDATE_CPP% %INSTALL_MSSL% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_WMF% %INSTALL_MSSE% %UPDATE_TSC% %INSTALL_OFV% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES% %SKIP_DYNAMIC%
     )
     if exist %SystemRoot%\System32\bcdedit.exe (
       echo Adjusting boot sequence for next reboot...

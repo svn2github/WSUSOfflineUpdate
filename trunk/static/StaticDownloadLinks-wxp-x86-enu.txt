@@ -1,4 +1,0 @@
-http://xpsp.dlservice.microsoft.com/download/d/3/0/d30e32d8-418a-469d-b600-f32ce3edf42d/WindowsXP-KB936929-SP3-x86-ENU.exe
-http://download.microsoft.com/download/A/D/B/ADB61C11-6705-437A-ACAD-CAA9C0200C4C/WindowsXP-KB969084-x86-enu.exe
-http://download.microsoft.com/download/0/9/5/0953e553-3bb6-44b1-8973-106f1b7e5049/wmp11-windowsxp-x86-enu.exe
-http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-en-us-kb2564958_65c98e33d275c4410dd2dec71cf39e4e81bf530a.exe
