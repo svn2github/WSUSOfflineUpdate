@@ -17,7 +17,6 @@
 *wddefs*
 *dotnetfx35*
 *dotNetFx40*
-*NDP451*
 *vcredist*_x64*
 *MSEInstall*
 *Silverlight_x64*

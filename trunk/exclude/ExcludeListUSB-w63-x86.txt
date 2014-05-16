@@ -23,7 +23,6 @@ w62-x64\
 w63-x64\
 wddefs\
 dotnetfx*
-NDP451*
 vcredist*_x64
 MSEInstall*
 Silverlight_x64*
