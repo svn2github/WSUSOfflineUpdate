@@ -2121,9 +2121,9 @@ GUICtrlSetState(-1, $GUI_DISABLE)
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
 If ShowGUIInGerman() Then
-  GUICtrlCreateGroup("Windows XP / Server 2003 x64-Editionen (w2k3-x64)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
+  GUICtrlCreateGroup("Windows Server 2003 x64-Editionen (w2k3-x64)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
 Else
-  GUICtrlCreateGroup("Windows XP / Server 2003 x64 editions (w2k3-x64)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
+  GUICtrlCreateGroup("Windows Server 2003 x64 editions (w2k3-x64)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
 EndIf
 ;  Windows Server 2003 x64 English
 $txtypos = $txtypos + 1.5 * $txtyoffset
