@@ -1,6 +1,7 @@
 ndp1
 ndp2
 ndp3
+ndp40
 ofc\
 o2k\
 oxp\
@@ -22,8 +23,8 @@ w61-x64\
 w62-x64\
 w63-x64\
 wddefs\
-dotnetfx*
-vcredist*_x64
-MSEInstall*
-Silverlight_x64*
+dotnetfx35
+dotNetFx40
+MSEInstall
+_x64
 .au3

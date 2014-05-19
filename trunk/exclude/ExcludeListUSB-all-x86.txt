@@ -4,6 +4,10 @@ w60-x64\
 w61-x64\
 w62-x64\
 w63-x64\
-*-x64
-*vcredist*_x64
+vcredist2005_x64
+vcredist2008_x64
+vcredist2010_x64
+vcredist2012_x64
+vcredist2013_x64
+-x64
 .au3

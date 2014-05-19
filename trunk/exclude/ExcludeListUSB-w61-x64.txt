@@ -21,5 +21,6 @@ w2k3-x64\
 w60-x64\
 w62-x64\
 w63-x64\
-dotnetfx*
+dotnetfx35
+dotNetFx40
 .au3

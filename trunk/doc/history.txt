@@ -898,5 +898,6 @@ Version 9.3 -- ??.05.14
 - .NET Framework 4.5 updated to v. 4.5.2 (Thanks to "harry")
 - Support removed for Windows XP since Microsoft discontinued support for it on April 8th, 2014 (see http://support.microsoft.com/lifecycle/?p1=3223)
 - Support removed for Office 2003 since Microsoft discontinued support for it on April 8th, 2014 (see http://support.microsoft.com/lifecycle/?p1=2488)
+- ISO and USB filters adjusted (Thanks to "harry" and "Matjes")
 - Fix: Microsoft corrected Windows 8.1 Update 1 (kb2919355) again by adding clearcompressionflag.exe
 - Fix: Download part missed Security Update kb2880463 for Office 2013 (Thanks to "Gerby")
