@@ -4,6 +4,14 @@
 
 #include <GUIConstants.au3>
 #RequireAdmin
+#pragma compile(CompanyName, "T. Wittrock")
+#pragma compile(FileDescription, "WSUS Offline Update Installer")
+#pragma compile(FileVersion, 9.3.0.587)
+#pragma compile(InternalName, "Installer")
+#pragma compile(LegalCopyright, "GNU GPLv3")
+#pragma compile(OriginalFilename, UpdateInstaller.exe)
+#pragma compile(ProductName, "WSUS Offline Update")
+#pragma compile(ProductVersion, 9.3b)
 
 Dim Const $caption                    = "WSUS Offline Update 9.3b - Installer"
 Dim Const $wou_hostname               = "www.wsusoffline.net"
@@ -19,8 +27,7 @@ Dim Const $reg_key_dotnet4            = "HKEY_LOCAL_MACHINE\Software\Microsoft\N
 Dim Const $reg_key_psh                = "HKEY_LOCAL_MACHINE\Software\Microsoft\PowerShell\1\PowerShellEngine"
 Dim Const $reg_key_wmf                = "HKEY_LOCAL_MACHINE\Software\Microsoft\PowerShell\3\PowerShellEngine"
 Dim Const $reg_key_msse               = "HKEY_LOCAL_MACHINE\Software\Microsoft\Microsoft Security Client"
-Dim Const $reg_key_fontdpi            = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontDPI"
-Dim Const $reg_key_windowmetrics      = "HKEY_CURRENT_USER\Control Panel\Desktop\WindowMetrics"
+Dim Const $reg_key_hkcu_desktop       = "HKEY_CURRENT_USER\Control Panel\Desktop"
 Dim Const $reg_key_windowsupdate      = "HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsUpdate"
 
 Dim Const $reg_val_default            = ""
@@ -28,7 +35,6 @@ Dim Const $reg_val_enabled            = "Enabled"
 Dim Const $reg_val_version            = "Version"
 Dim Const $reg_val_pshversion         = "PowerShellVersion"
 Dim Const $reg_val_logpixels          = "LogPixels"
-Dim Const $reg_val_applieddpi         = "AppliedDPI"
 Dim Const $reg_val_wustatusserver     = "WUStatusServer"
 
 ; Defaults
@@ -353,10 +359,11 @@ EndFunc
 Func CalcGUISize()
   Dim $reg_val
 
-  $reg_val = RegRead($reg_key_windowmetrics, $reg_val_applieddpi)
-  If ($reg_val = "") Then
-    $reg_val = RegRead($reg_key_fontdpi, $reg_val_logpixels)
+  If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
+    OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") ) Then
+    DllCall("user32.dll", "int", "SetProcessDPIAware")
   EndIf
+  $reg_val = RegRead($reg_key_hkcu_desktop, $reg_val_logpixels)
   If ($reg_val = "") Then
     $reg_val = $default_logpixels
   EndIf
