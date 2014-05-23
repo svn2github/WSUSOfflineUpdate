@@ -893,7 +893,7 @@ Version 9.2.1 -- 05.05.14
 - Fix: Microsoft now delivers Windows 8.1 Update 1 installation files through catalog file wsusscn2.cab (Thanks to "psj")
 - Fix: DetermineSystemProperties.vbs script did not detect Microsoft Silverlight x86 installations under x64 Operating Systems (Thanks to "rbr555")
 --------------------------------------------------------------------------------
-Version 9.3 -- ??.05.14
+Version 9.3 -- 23.05.14
 - NOTE: If you customized your copy of WOU using the script AddCustomLanguageSupport.cmd {lng}, please call it again once (per language) to get the appropriate .NET 4.5.2 language pack(s) downloaded
 - .NET Framework 4.5 updated to v. 4.5.2 (Thanks to "harry")
 - Support removed for Windows XP since Microsoft discontinued support for it on April 8th, 2014 (see http://support.microsoft.com/lifecycle/?p1=3223)
@@ -902,3 +902,4 @@ Version 9.3 -- ??.05.14
 - Fix: UpdateGenerator and UpdateInstaller dialog scaling corrected for Windows 8 / 8.1 and Server 2012 (R2) systems (Thanks to "fly")
 - Fix: Microsoft corrected Windows 8.1 Update 1 (kb2919355) again by adding clearcompressionflag.exe
 - Fix: Download part missed Security Update kb2880463 for Office 2013 (Thanks to "Gerby")
+--------------------------------------------------------------------------------
