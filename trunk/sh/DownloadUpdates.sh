@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                              v. 9.3                               ###
+###                          v. 9.3+ (r590)                           ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -127,18 +127,16 @@ getsystem()
 {
 cat << END
 Please select your OS:
-[1] Windows XP			[2] Windowx XP			    64 bit
-[3] Windows Server 2003		[4] Windows Server 2003		    64 bit
-[5] Windows Vista / Server 2008	[6] Windows Vista / Server 2008     64 bit
-[7] Windows 7			[8] Windows 7     / Server 2008 R2  64 bit
-[9] Windows 8			[10] Windows 8    / Server 2012     64 bit
-[11] Windows 8.1		[12] Windows 8.1		    64 bit
+[1] Windows Server 2003		[2] Windows Server 2003		    64 bit
+[3] Windows Vista / Server 2008	[4] Windows Vista / Server 2008     64 bit
+[5] Windows 7			[6] Windows 7     / Server 2008 R2  64 bit
+[7] Windows 8			[8] Windows 8    / Server 2012     64 bit
+[9] Windows 8.1		[10] Windows 8.1		    64 bit
 
-[13] All 32 bit			[14] All 64 bit
+[11] All 32 bit			[12] All 64 bit
 
-[15] Office 2003	[16] Office 2007
-[17] Office 2010	[18] Office 2013
-[19] All Office updates (2003 - 2013)
+[13] Office 2007 [14] Office 2010	[15] Office 2013
+[16] All Office updates (2007 - 2013)
 
 END
 read -p "which number? " syschoice

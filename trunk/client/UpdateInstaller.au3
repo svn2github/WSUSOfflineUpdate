@@ -6,7 +6,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 9.3.0.589)
+#pragma compile(FileVersion, 9.3.0.590)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -43,6 +43,7 @@ Dim Const $default_logpixels          = 96
 Dim Const $target_version_dotnet35    = "3.5.30729"
 Dim Const $target_version_dotnet40    = "4.0.30319"
 Dim Const $target_version_dotnet45    = "4.5.51209"
+Dim Const $target_version_dotnet45w63 = "4.5.51650"
 Dim Const $target_version_psh         = "2.0"
 
 ; INI file constants
@@ -280,7 +281,11 @@ Func DotNet4TargetVersion()
   If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") ) Then
     Return $target_version_dotnet40
   Else
-    Return $target_version_dotnet45
+    If ( (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") ) Then
+      Return $target_version_dotnet45w63
+    Else
+      Return $target_version_dotnet45
+    EndIf
   EndIf
 EndFunc
 
@@ -293,7 +298,7 @@ Func ManagementFrameworkVersion()
 EndFunc
 
 Func WMFTargetVersion()
-  If (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_2012") Then
+  If (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_2012") OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") Then
     Return "4.0"
   Else
     Return "3.0"
