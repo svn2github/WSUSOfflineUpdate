@@ -1,6 +1,8 @@
 kb816093,MS03-011: Flaw in the Microsoft VM could enable system compromise
 kb951847,.NET Framework 3.5 Service Pack 1
 kb890830,Malicious Software Removal Tool
+kb931125,Trusted Root Certificates
+kb2917500,Revoked Root Certificates
 kb926874,Internet Explorer 7
 kb940767,Internet Explorer 7
 kb944036,Internet Explorer 8
