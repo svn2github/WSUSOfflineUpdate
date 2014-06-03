@@ -4,4 +4,5 @@ kb2835361
 windows6.1-kb2644615
 windows6.1-kb2425227-x64
 windowsserver2003-kb956744-x86
-kb2964358
+windowsxp-kb2964358-x86
+windowsserver2003-kb2964358-x64
