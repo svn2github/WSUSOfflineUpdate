@@ -906,6 +906,7 @@ Version 9.3 -- 23.05.14
 Version ?.? -- ??.??.??
 - AutoIt script compiler updated to version 3.3.12.0
 - Fix: .NET Framework 4.5.2 was not properly detected and installed on Windows 8.1 and Server 2012 R2 systems (Thanks to "DK3")
+- Fix: Download part missed kb2964358 (MS14-021) (Thanks to "off")
 - Fix: Download part missed Security Update kb2878284 (MS14-023) for Office 2010
 - Fix: Root Certificates' updates kb931125 and kb2917500 added to installation exclude list (explicit installation) (Thanks to "aker")
 - Fix: Target confusion in Linux script DownloadUpdates.sh (Thanks to "OliWee")
