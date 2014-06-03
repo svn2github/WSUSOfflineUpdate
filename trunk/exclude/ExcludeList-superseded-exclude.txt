@@ -6,3 +6,4 @@ windows6.1-kb2425227-x64
 windowsserver2003-kb956744-x86
 windowsxp-kb2964358-x86
 windowsserver2003-kb2964358-x64
+windowsxp-kb975713
