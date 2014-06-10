@@ -905,6 +905,7 @@ Version 9.3 -- 23.05.14
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
 - AutoIt script compiler updated to version 3.3.12.0
+- Fix: Windows 8.1 Update 1 integrated installation media may not contain kb2919355 supplementary patches, e.g. kb2959977 (Thanks to A. Koziaris)
 - Fix: .NET Framework 4.5.2 was not properly detected and installed on Windows 8.1 and Server 2012 R2 systems (Thanks to "DK3")
 - Fix: Download part missed kb2964358 (MS14-021) for Windows XP x64 and Server 2003 x64 (Thanks to "off")
 - Fix: Download part missed kb975713 (MS10-007) for Windows XP x64 and Server 2003 x64 (Thanks to "off")

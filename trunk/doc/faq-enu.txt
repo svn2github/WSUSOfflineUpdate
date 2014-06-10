@@ -31,6 +31,8 @@ The following updates are already excluded:
 - kb816093 (Security update for Microsoft VM)
 - kb951847 (.NET Framework 3.5 SP1 Family Update (will be explicitly installed if selected)) 
 - kb890830 (Windows Malicious Software Removal Tool (MSRT))
+- kb931125 (Trusted Root Certificates (will be explicitly updated if selected))
+- kb2917500 (Revoked Root Certificates (will be explicitly updated if selected))
 - kb926874 (Internet Explorer 7 (will be explicitly installed if selected))
 - kb940767 (Internet Explorer 7 (will be explicitly installed if selected))
 - kb944036 (Internet Explorer 8 (will be explicitly installed if selected))

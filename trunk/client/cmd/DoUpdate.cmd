@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.3+ (r596)
+set WSUSOFFLINE_VERSION=9.3+ (r597)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -279,12 +279,7 @@ if "%OS_NAME%"=="w63" goto SPw63
 echo Checking Windows Service Pack version...
 if %OS_SP_VER_MAJOR% GEQ %OS_SP_VER_TARGET_MAJOR% goto SkipSPInst
 if "%OS_SP_TARGET_ID%"=="" goto NoSPTargetId
-if "%OS_SP_PREREQ_ID%"=="" (
-  echo %OS_SP_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
-) else (
-  echo %OS_SP_PREREQ_ID%>"%TEMP%\MissingUpdateIds.txt"
-  echo %OS_SP_TARGET_ID%>>"%TEMP%\MissingUpdateIds.txt"
-)
+echo %OS_SP_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if not exist "%TEMP%\UpdatesToInstall.txt" (
@@ -324,16 +319,20 @@ goto Installed
 :SPw63
 if exist %SystemRoot%\Temp\wou_w63upd_tried.txt goto SkipSPInst
 echo Checking Windows 8.1 Update 1 installation state...
+if %OS_VER_REVIS% GEQ %OS_SP_VER_TARGET_REVIS% goto SkipSPInst
 %CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
 if exist "%TEMP%\InstalledUpdateIds.txt" (
   %SystemRoot%\System32\find.exe /I "%OS_SP_TARGET_ID%" "%TEMP%\InstalledUpdateIds.txt" >nul 2>&1
-  if not errorlevel 1 (
+  if errorlevel 1 (
+    copy /Y ..\static\StaticUpdateIds-w63-upd1.txt "%TEMP%\MissingUpdateIds.txt" >nul
     del "%TEMP%\InstalledUpdateIds.txt"
-    goto SkipSPInst
+  ) else (
+    %SystemRoot%\System32\findstr.exe /I /V "%OS_SP_PREREQ_ID% clearcompressionflag %OS_SP_TARGET_ID%" ..\static\StaticUpdateIds-w63-upd1.txt >"%TEMP%\MissingUpdateIds.txt"
+    del "%TEMP%\InstalledUpdateIds.txt"
   )
-  del "%TEMP%\InstalledUpdateIds.txt"
+) else (
+  copy /Y ..\static\StaticUpdateIds-w63-upd1.txt "%TEMP%\MissingUpdateIds.txt" >nul
 )
-copy /Y ..\static\StaticUpdateIds-w63-upd1.txt "%TEMP%\MissingUpdateIds.txt" >nul
 call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
