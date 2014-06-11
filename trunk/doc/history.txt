@@ -910,5 +910,6 @@ Version ?.? -- ??.??.??
 - Fix: Download part missed kb2964358 (MS14-021) for Windows XP x64 and Server 2003 x64 (Thanks to "off")
 - Fix: Download part missed kb975713 (MS10-007) for Windows XP x64 and Server 2003 x64 (Thanks to "off")
 - Fix: Download part missed Security Update kb2878284 (MS14-023) for Office 2010
+- Fix: Download part missed Security Update kb2881013 (MS14-036) for Office 2013 (Thanks to "Gerby")
 - Fix: Root Certificates' updates kb931125 and kb2917500 added to installation exclude list (explicit installation) (Thanks to "aker")
 - Fix: Target confusion in Linux script DownloadUpdates.sh (Thanks to "OliWee")
