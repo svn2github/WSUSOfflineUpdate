@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 9.3
+WSUS Offline Update 9.3.1
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -903,9 +903,10 @@ Version 9.3 -- 23.05.14
 - Fix: Microsoft corrected Windows 8.1 Update 1 (kb2919355) again by adding clearcompressionflag.exe
 - Fix: Download part missed Security Update kb2880463 (MS14-023) for Office 2013 (Thanks to "Gerby")
 --------------------------------------------------------------------------------
-Version ?.? -- ??.??.??
+Version 9.3.1 -- 12.06.14
 - AutoIt script compiler updated to version 3.3.12.0
 - Fix: Windows 8.1 Update 1 integrated installation media may not contain kb2919355 supplementary patches, e.g. kb2959977 (Thanks to A. Koziaris)
+- Fix: Update kb2969339 added to Windows 8.1 Update 1 (kb2919355) installation routine (Thanks to "Gerby")
 - Fix: .NET Framework 4.5.2 was not properly detected and installed on Windows 8.1 and Server 2012 R2 systems (Thanks to "DK3")
 - Fix: Download part missed kb2964358 (MS14-021) for Windows XP x64 and Server 2003 x64 (Thanks to "off")
 - Fix: Download part missed kb975713 (MS10-007) for Windows XP x64 and Server 2003 x64 (Thanks to "off")
@@ -913,3 +914,4 @@ Version ?.? -- ??.??.??
 - Fix: Download part missed Security Update kb2881013 (MS14-036) for Office 2013 (Thanks to "Gerby")
 - Fix: Root Certificates' updates kb931125 and kb2917500 added to installation exclude list (explicit installation) (Thanks to "aker")
 - Fix: Target confusion in Linux script DownloadUpdates.sh (Thanks to "OliWee")
+--------------------------------------------------------------------------------
