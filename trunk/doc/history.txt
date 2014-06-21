@@ -915,3 +915,5 @@ Version 9.3.1 -- 12.06.14
 - Fix: Root Certificates' updates kb931125 and kb2917500 added to installation exclude list (explicit installation) (Thanks to "aker")
 - Fix: Target confusion in Linux script DownloadUpdates.sh (Thanks to "OliWee")
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- CreateISOImage.cmd and CopyToTarget.cmd scripts will now also call InitializationHook.cmd and FinalizationHook.cmd scripts if present (Thanks to M. Köhler)

@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.3.1
+set WSUSOFFLINE_VERSION=9.3.1+ (r601)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -18,10 +18,17 @@ if exist .\custom\InitializationHook.cmd (
   echo Executing custom initialization hook...
   pushd .\custom
   call InitializationHook.cmd
+  set ERR_LEVEL=%errorlevel%
   popd
-  echo %DATE% %TIME% - Info: Executed custom initialization hook ^(Errorlevel: %errorlevel%^)>>%UPDATE_LOGFILE%
-) else (
-  if exist %UPDATE_LOGFILE% echo.>>%UPDATE_LOGFILE%
+)
+if exist %UPDATE_LOGFILE% (
+  echo.>>%UPDATE_LOGFILE%
+  echo -------------------------------------------------------------------------------->>%UPDATE_LOGFILE%
+  echo.>>%UPDATE_LOGFILE%
+)
+if exist .\custom\InitializationHook.cmd (
+  echo %DATE% %TIME% - Info: Executed custom initialization hook ^(Errorlevel: %ERR_LEVEL%^)>>%UPDATE_LOGFILE%
+  set ERR_LEVEL=
 )
 echo %DATE% %TIME% - Info: Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%)>>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Used path "%~dp0" on %COMPUTERNAME% (user: %USERNAME%)>>%UPDATE_LOGFILE%
@@ -1264,6 +1271,7 @@ copy /Y ..\wsus\wsusscn2.cab "%TEMP%" >nul
 %CSCRIPT_PATH% //Nologo //B //E:vbs ListMissingUpdateIds.vbs %LIST_MODE_IDS%
 if exist "%TEMP%\wsusscn2.cab" del "%TEMP%\wsusscn2.cab"
 echo %TIME% - Done.
+echo %DATE% %TIME% - Info: Listed ids of missing updates>>%UPDATE_LOGFILE%
 if not exist "%TEMP%\MissingUpdateIds.txt" set NO_MISSING_IDS=1
 
 :ListInstalledIds
@@ -1272,12 +1280,14 @@ if "%LIST_MODE_IDS%"=="/all" goto ListInstFiles
 if "%LIST_MODE_UPDATES%"=="/excludestatics" goto ListInstFiles
 echo Listing ids of installed updates...
 %CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
+echo %DATE% %TIME% - Info: Listed ids of installed updates>>%UPDATE_LOGFILE%
 
 :ListInstFiles
 rem *** List update files ***
 echo Listing update files...
 call ListUpdatesToInstall.cmd %LIST_MODE_UPDATES%
 if errorlevel 1 goto ListError
+echo %DATE% %TIME% - Info: Listed update files>>%UPDATE_LOGFILE%
 
 :InstallUpdates
 rem *** Install updates ***

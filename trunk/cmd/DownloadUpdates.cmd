@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.3.1
+set WSUSOFFLINE_VERSION=9.3.1+ (r601)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -18,6 +18,7 @@ if exist .\custom\InitializationHook.cmd (
   echo Executing custom initialization hook...
   pushd .\custom
   call InitializationHook.cmd
+  set ERR_LEVEL=%errorlevel%
   popd
 )
 if exist %DOWNLOAD_LOGFILE% (
@@ -25,11 +26,11 @@ if exist %DOWNLOAD_LOGFILE% (
   echo -------------------------------------------------------------------------------->>%DOWNLOAD_LOGFILE%
   echo.>>%DOWNLOAD_LOGFILE%
 )
-echo %DATE% %TIME% - Info: Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2>>%DOWNLOAD_LOGFILE%
 if exist .\custom\InitializationHook.cmd (
-  echo %DATE% %TIME% - Info: Executed custom initialization hook ^(Errorlevel: %errorlevel%^)>>%DOWNLOAD_LOGFILE%
+  echo %DATE% %TIME% - Info: Executed custom initialization hook ^(Errorlevel: %ERR_LEVEL%^)>>%DOWNLOAD_LOGFILE%
+  set ERR_LEVEL=
 )
-
+echo %DATE% %TIME% - Info: Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2>>%DOWNLOAD_LOGFILE%
 for %%i in (w2k3 w2k3-x64) do (
   if /i "%1"=="%%i" (
     for %%j in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%2"=="%%j" goto EvalParams)

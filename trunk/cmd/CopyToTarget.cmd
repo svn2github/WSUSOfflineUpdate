@@ -7,13 +7,25 @@ if errorlevel 1 goto NoExtensions
 
 cd /D "%~dp0"
 
-if "%DOWNLOAD_LOGFILE%"=="" set DOWNLOAD_LOGFILE=..\log\download.log
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting copying for %1 %2 %3 %4 %5 %6 %7 %8 %9...
+set DOWNLOAD_LOGFILE=..\log\download.log
+rem *** Execute custom initialization hook ***
+if exist .\custom\InitializationHook.cmd (
+  echo Executing custom initialization hook...
+  pushd .\custom
+  call InitializationHook.cmd
+  set ERR_LEVEL=%errorlevel%
+  popd
+)
 if exist %DOWNLOAD_LOGFILE% (
   echo.>>%DOWNLOAD_LOGFILE%
   echo -------------------------------------------------------------------------------->>%DOWNLOAD_LOGFILE%
   echo.>>%DOWNLOAD_LOGFILE%
+)
+if exist .\custom\InitializationHook.cmd (
+  echo %DATE% %TIME% - Info: Executed custom initialization hook ^(Errorlevel: %ERR_LEVEL%^)>>%DOWNLOAD_LOGFILE%
+  set ERR_LEVEL=
 )
 echo %DATE% %TIME% - Info: Starting copying for %1 %2 %3 %4 %5 %6 %7 %8 %9>>%DOWNLOAD_LOGFILE%
 
@@ -246,6 +258,14 @@ if "%EXIT_ERR%"=="1" (
 )
 
 :EoF
+rem *** Execute custom finalization hook ***
+if exist .\custom\FinalizationHook.cmd (
+  echo Executing custom finalization hook...
+  pushd .\custom
+  call FinalizationHook.cmd
+  popd
+  echo %DATE% %TIME% - Info: Executed custom finalization hook ^(Errorlevel: %errorlevel%^)>>%DOWNLOAD_LOGFILE%
+)
 echo %DATE% %TIME% - Info: Ending copying for %1 %2 %3 %4 %5 %6 %7 %8 %9>>%DOWNLOAD_LOGFILE%
 title %ComSpec%
 endlocal
