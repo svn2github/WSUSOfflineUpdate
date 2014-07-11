@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.3.1+ (r601)
+set WSUSOFFLINE_VERSION=9.3.1+ (r602)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -334,7 +334,7 @@ if exist "%TEMP%\InstalledUpdateIds.txt" (
     copy /Y ..\static\StaticUpdateIds-w63-upd1.txt "%TEMP%\MissingUpdateIds.txt" >nul
     del "%TEMP%\InstalledUpdateIds.txt"
   ) else (
-    %SystemRoot%\System32\findstr.exe /I /V "%OS_SP_PREREQ_ID% 2969339 clearcompressionflag %OS_SP_TARGET_ID%" ..\static\StaticUpdateIds-w63-upd1.txt >"%TEMP%\MissingUpdateIds.txt"
+    %SystemRoot%\System32\findstr.exe /I /V "%OS_SP_PREREQ_ID% 2939087 2969339 2975061 clearcompressionflag %OS_SP_TARGET_ID%" ..\static\StaticUpdateIds-w63-upd1.txt >"%TEMP%\MissingUpdateIds.txt"
     del "%TEMP%\InstalledUpdateIds.txt"
   )
 ) else (
@@ -370,12 +370,28 @@ if %WUA_VER_BUILD% LSS %WUA_VER_TARGET_BUILD% goto InstallWUA
 if %WUA_VER_BUILD% GTR %WUA_VER_TARGET_BUILD% goto SkipWUAInst
 if %WUA_VER_REVIS% GEQ %WUA_VER_TARGET_REVIS% goto SkipWUAInst
 :InstallWUA
-set WUA_FILENAME=..\wsus\WindowsUpdateAgent*-%OS_ARCH%.exe
+if "%OS_NAME%"=="w61" (
+  if /i "%OS_ARCH%"=="x64" (
+    set WUA_FILENAME=..\%OS_NAME%-%OS_ARCH%\glb\WindowsUpdateAgent*-%OS_ARCH%.exe
+  ) else (
+    set WUA_FILENAME=..\%OS_NAME%\glb\WindowsUpdateAgent*-%OS_ARCH%.exe
+  )
+) else (
+  set WUA_FILENAME=..\wsus\WindowsUpdateAgent*-%OS_ARCH%.exe
+)
 dir /B %WUA_FILENAME% >nul 2>&1
 if errorlevel 1 goto NoWUAInst
 echo Installing most recent Windows Update Agent...
 for /F %%i in ('dir /B %WUA_FILENAME%') do (
-  call InstallOSUpdate.cmd ..\wsus\%%i %VERIFY_MODE% /ignoreerrors /wuforce /quiet /norestart
+  if "%OS_NAME%"=="w61" (
+    if /i "%OS_ARCH%"=="x64" (
+      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /norestart /norestartforapi
+    ) else (
+      call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /norestart /norestartforapi
+    )
+  ) else (
+    call InstallOSUpdate.cmd ..\wsus\%%i %VERIFY_MODE% /ignoreerrors /wuforce /quiet /norestart
+  )
   if errorlevel 1 goto InstError
   set REBOOT_REQUIRED=1
 )

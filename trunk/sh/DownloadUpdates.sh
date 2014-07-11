@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                          v. 9.3.1+ (r601)                         ###
+###                          v. 9.3.1+ (r602)                         ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -34,7 +34,7 @@ export SHELLOPTS
 export TERM=xterm
 
 source $(dirname $0)/commonparts.inc || {
-    echo commonparts.sh fehlt
+    echo commonparts.inc fehlt
     exit 1
     }
 
