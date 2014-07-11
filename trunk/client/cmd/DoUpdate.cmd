@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.3.1+ (r602)
+set WSUSOFFLINE_VERSION=9.3.1+ (r603)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -334,7 +334,7 @@ if exist "%TEMP%\InstalledUpdateIds.txt" (
     copy /Y ..\static\StaticUpdateIds-w63-upd1.txt "%TEMP%\MissingUpdateIds.txt" >nul
     del "%TEMP%\InstalledUpdateIds.txt"
   ) else (
-    %SystemRoot%\System32\findstr.exe /I /V "%OS_SP_PREREQ_ID% 2939087 2969339 2975061 clearcompressionflag %OS_SP_TARGET_ID%" ..\static\StaticUpdateIds-w63-upd1.txt >"%TEMP%\MissingUpdateIds.txt"
+    %SystemRoot%\System32\findstr.exe /I /V "2939087 %OS_SP_PREREQ_ID% clearcompressionflag %OS_SP_TARGET_ID%" ..\static\StaticUpdateIds-w63-upd1.txt >"%TEMP%\MissingUpdateIds.txt"
     del "%TEMP%\InstalledUpdateIds.txt"
   )
 ) else (

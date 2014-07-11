@@ -1,5 +1,3 @@
-http://download.microsoft.com/download/9/D/A/9DA6C939-9E65-4681-BBBE-A8F73A5C116F/Windows8.1-KB2919442-x86.msu
 http://download.microsoft.com/download/2/2/A/22A75610-6A05-4C28-9D40-0C04E99B1DD6/Windows8.1-KB2939087-x86.msu
-http://download.microsoft.com/download/B/F/7/BF70A246-B3D5-4E8B-B0F3-1A7599CBC466/Windows8.1-KB2969339-x86.msu
 http://download.microsoft.com/download/0/7/C/07CBAA67-0BAC-4F1A-89B4-124E89ED0A55/Windows8.1-KB2975061-x86.msu
 http://download.microsoft.com/download/4/E/C/4EC66C83-1E15-43FD-B591-63FB7A1A5C04/clearcompressionflag.exe
