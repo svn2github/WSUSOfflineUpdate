@@ -872,7 +872,7 @@ Version 9.0 -- 05.03.14
 Version 9.1 -- 04.04.14
 - NOTE: This version will be the last one supporting Windows XP and Office 2003 (see http://support.microsoft.com/lifecycle/?p1=3223 and http://support.microsoft.com/lifecycle/?p1=2488)
 - Support added for Remote Desktop Connection 8.1 client (kb2830477) on Windows 7 / Server 2008 R2 (x86/x64) systems (Thanks to K. Olbrich)
-- Static download URLs for Microsoft Silverlight updated to v. 5.1.30214.0 (Thanks to "harry")
+- Microsoft Silverlight updated to v. 5.1.30214.0 (Thanks to "harry")
 - Static download URLs for aria2 download utility updated to v. 1.18.5 (Thanks to M. Köhler)
 - Fix: 'x86-cross-product' ISO images exceeded 4.7 GB (max. capacity of DVD-5 media) and therefore won't any longer contain updates for Windows XP and Office 2003 / 2007 and installation files for .NET 3.5 SP1 / 4.0
 - Fix: RemoveGermanLanguageSupport.cmd script didn't consider StaticDownloadLinks-dotnet.txt (Thanks to "rubasik")
@@ -917,6 +917,7 @@ Version 9.3.1 -- 12.06.14
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
 - Updated static download URL for untrusted/revoked root certificates (rvkroots.exe/kb2982792) (Thanks to "friday123")
+- Microsoft Silverlight updated to v. 5.1.30514.0 (Thanks to "harry")
 - Windows Update Agent (WUA) will now be updated to v. 7.6.7600.320 on Windows 7 / 8 and Server 2008 R2 / 2012 (x86/x64) systems (Thanks to "boco")
 - CreateISOImage.cmd and CopyToTarget.cmd scripts will now also call InitializationHook.cmd and FinalizationHook.cmd scripts if present (Thanks to M. Köhler)
 - Fix: Updates kb2939087 and kb2975061 added to Windows 8.1 Update 1 (kb2919355) installation routine (Thanks to B. Schinkel-Momsen)
