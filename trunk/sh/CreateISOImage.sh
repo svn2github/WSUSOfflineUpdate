@@ -2,7 +2,7 @@
 
 #########################################################################
 ###          WSUS Offline Update ISO maker for Linux systems          ###
-###                           v. 9.3.1+ (r605)                        ###
+###                           v. 9.3.1+ (r606)                        ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg                     ###
@@ -28,13 +28,14 @@ test $debug -eq 1 && set -x
 export SHELLOPTS
 export TERM=xterm
 
-source $(dirname $0)/commonparts.inc || {
+#set working directory
+cd $( dirname $(readlink -f "$0") )
+
+source commonparts.inc || {
     echo commonparts.inc fehlt
     exit 1
     }
 
-#set working directory
-cd $( dirname $(readlink -f "$0") )
 rm -f ../temp/ExcludeListISO*
 
 clear
