@@ -2,7 +2,7 @@
 
 #########################################################################
 ###          WSUS Offline Update ISO maker for Linux systems          ###
-###                           v. 9.3.1+ (r606)                        ###
+###                           v. 9.3.1+ (r607)                        ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg                     ###
@@ -28,8 +28,35 @@ test $debug -eq 1 && set -x
 export SHELLOPTS
 export TERM=xterm
 
+# test operating system
+OpSys=$(uname -s)
+
+test "$OpSys" || {
+    echo unknown Operating System
+    exit 1
+    }
+
+case "$OpSys" in
+    Linux)
+    #set working directory
+    cd $( dirname $(readlink -f "$0") )
+    ;;
+    *BSD|Darwin)
+    echo "Operating System $OpSys not yet supported"
+    echo "Maybe something doesn't work as expected"
+    sleep 10
+    #set working directory
+    cd $( dirname $(readlink "$0") )
+    ;;
+    *)
+    echo "unknown Operating System"
+    exit 1
+    ;;
+esac
+
 #set working directory
-cd $( dirname $(readlink -f "$0") )
+# cd $( dirname $(readlink -f "$0") )
+PATH_PWD="$( pwd )"
 
 source commonparts.inc || {
     echo commonparts.inc fehlt

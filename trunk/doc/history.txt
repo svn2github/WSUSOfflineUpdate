@@ -920,6 +920,7 @@ Version ?.? -- ??.??.??
 - Microsoft Silverlight updated to v. 5.1.30514.0 (Thanks to "harry")
 - Windows Update Agent (WUA) will now be updated to v. 7.6.7600.320 on Windows 7 / 8 and Server 2008 R2 / 2012 (x86/x64) systems (Thanks to "boco")
 - CreateISOImage.cmd and CopyToTarget.cmd scripts will now also call InitializationHook.cmd and FinalizationHook.cmd scripts if present (Thanks to M. Köhler)
+- Linux scripts now also support Mac OS X (Darwin) and BSD (Thanks to "ovizii" and H. Hullen)
 - Fix: Updates kb2939087 and kb2975061 added to Windows 8.1 Update 1 (kb2919355) installation routine (Thanks to B. Schinkel-Momsen)
 - Fix: Superseded Updates kb2919442 and kb2969339 removed from Windows 8.1 Update 1 (kb2919355) installation routine (Thanks to "harry")
 - Fix: Linux scripts contained misleading error message regarding commonparts.sh (Thanks to H. Hullen)

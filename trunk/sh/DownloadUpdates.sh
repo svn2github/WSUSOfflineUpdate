@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                          v. 9.3.1+ (r606)                         ###
+###                          v. 9.3.1+ (r607)                         ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -33,8 +33,34 @@ export SHELLOPTS
 
 export TERM=xterm
 
+# test operating system
+OpSys=$(uname -s)
+
+test "$OpSys" || {
+    echo unknown Operating System
+    exit 1
+    }
+
+case "$OpSys" in
+    Linux)
+    #set working directory
+    cd $( dirname $(readlink -f "$0") )
+    ;;
+    *BSD|Darwin)
+    echo "Operating System $OpSys not yet supported"
+    echo "Maybe something doesn't work as expected"
+    sleep 10
+    #set working directory
+    cd $( dirname $(readlink "$0") )
+    ;;
+    *)
+    echo "unknown Operating System"
+    exit 1
+    ;;
+esac
+
 #set working directory
-cd $( dirname $(readlink -f "$0") )
+# cd $( dirname $(readlink -f "$0") )
 PATH_PWD="$( pwd )"
 
 source commonparts.inc || {
@@ -342,6 +368,17 @@ stat_urls() {
     cp ../$Pfad/StaticDownloadLinks-$Vz-${OS_ARCH}-glb.txt ../temp/StaticUrls-$Vz-${OS_ARCH}-glb.txt
     }
 
+crlf2lf() {
+    test -f "$1" || return 0
+    grep -q -m1 $'\r' "$1" || return 0
+    tr -d '\r' < "$1" > "$1.tmp" &&
+	touch -r "$1" "$1.tmp" &&
+	mv "$1.tmp" "$1" 
+    # POSIX-konforme Lösung von Stefan Reuther, de.comp.unix.shell 5.8.14
+    }
+# ist derzeit nur für GNU/Linux
+
+
 # ------------- end of functions -------------
 
 clear
@@ -416,11 +453,7 @@ mydate=$(date +%Y%m%d)
 #convert files to Linux format
 for Datei in ../{exclude,static}/*.txt ../{exclude,static}/custom/*.txt
   do
-    test -f "$Datei" || continue
-    grep -q -m1 $'\r' "$Datei" || continue
-    OrigDat=$(stat -c %y "$Datei")
-    sed -i 's/\r//g' "$Datei"
-    touch -d "$OrigDat" "$Datei"
+    crlf2lf "$Datei"
   done
 
 Liste=""
@@ -558,10 +591,7 @@ if [ -f ../exclude/ExcludeList-superseded.txt ]; then
     #  %WGET_PATH% -N -P ..\exclude http://download.wsusoffline.net/ExcludeList-superseded-exclude.txt
     doWget http://download.wsusoffline.net/ExcludeList-superseded-exclude.txt -P ../exclude
     Datei=../exclude/ExcludeList-superseded-exclude.txt
-    OrigDat=$(stat -c %y "$Datei")
-    sed -i 's/\r//g' "$Datei"
-    touch -d "$OrigDat" "$Datei"
-
+    crlf2lf "$Datei"
   else
     echo "Found valid list of superseded updates..."
   fi
@@ -998,9 +1028,12 @@ exit 0
 # 
 
 # ========================================================================
-# $Id: DownloadUpdates.sh,v 1.9 2013-12-27 17:25:29+01 HHullen Exp $
+# $Id: DownloadUpdates.sh,v 1.10 2014-08-06 11:47:01+02 HHullen Exp $
 # $Log: DownloadUpdates.sh,v $
-# Revision 2.0  2013-03-05 09:52:00+01  twittrock
+# Revision 1.10  2014-08-06 11:47:01+02  HHullen
+# Umwandlung von DOS-Datei nach Linux mit POSIX-konformen Befehlen
+#
+# Revision 1.9.1 2014-03-05 09:52:00+01  twittrock
 # builddate.txt-Erzeugung eingefügt
 #
 # Revision 1.9  2013-12-27 17:25:29+01  HHullen
