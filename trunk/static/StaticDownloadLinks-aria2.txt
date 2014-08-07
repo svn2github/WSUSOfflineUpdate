@@ -1,2 +1,2 @@
-http://optimate.dl.sourceforge.net/project/aria2/stable/aria2-1.18.5/aria2-1.18.5-win-32bit-build1.zip
-http://optimate.dl.sourceforge.net/project/aria2/stable/aria2-1.18.5/aria2-1.18.5-win-64bit-build1.zip
+http://optimate.dl.sourceforge.net/project/aria2/stable/aria2-1.18.7/aria2-1.18.7-win-32bit-build1.zip
+http://optimate.dl.sourceforge.net/project/aria2/stable/aria2-1.18.7/aria2-1.18.7-win-64bit-build1.zip
