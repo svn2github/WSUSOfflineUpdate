@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.3.1+ (r608)
+set WSUSOFFLINE_VERSION=9.3.1+ (r609)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -989,7 +989,19 @@ if "%PSH_TARGET_ID%"=="" (
   echo %DATE% %TIME% - Warning: Environment variable PSH_TARGET_ID not set>>%UPDATE_LOGFILE%
   goto SkipPShInst
 )
-echo %PSH_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
+%CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
+if exist "%TEMP%\InstalledUpdateIds.txt" (
+  %SystemRoot%\System32\find.exe /I "%PSH_TARGET_ID%" "%TEMP%\InstalledUpdateIds.txt" >nul 2>&1
+  if errorlevel 1 (
+    echo %PSH_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
+    del "%TEMP%\InstalledUpdateIds.txt"
+  ) else (
+    del "%TEMP%\InstalledUpdateIds.txt"
+    goto SkipPShInst    
+  )
+) else (
+  echo %PSH_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
+)
 call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (

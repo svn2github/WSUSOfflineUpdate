@@ -53,7 +53,7 @@ Private Const strBuildNumbers_o2k13           = "4420,4420,4420,4420,4420,4420;4
 Private Const idxBuild                        = 2
 
 Dim wshShell, objNetwork, objFileSystem, objCmdFile, objWMIService, objQueryItem, objInstaller, arrayOfficeNames, arrayOfficeVersions, arrayOfficeAppNames, arrayOfficeExeNames
-Dim strSystemFolder, strTempFolder, strWUAFileName, strMSIFileName, strWSHFileName, strTSCFileName, strWMPFileName, strCmdFileName, strBuildLabEx, strOfficeInstallPath, strOfficeExeVersion, strProduct, strPatch, languageCode, i, j
+Dim strSystemFolder, strTempFolder, strWUAFileName, strMSIFileName, strWSHFileName, strTSCFileName, strWMPFileName, strCmdFileName, strOSArchitecture, strBuildLabEx, strOfficeInstallPath, strOfficeExeVersion, strProduct, strPatch, languageCode, i, j
 Dim cpp2005_x86_old, cpp2005_x86_new, cpp2005_x64_old, cpp2005_x64_new
 Dim cpp2008_x86_old, cpp2008_x86_new, cpp2008_x64_old, cpp2008_x64_new
 Dim cpp2010_x86_old, cpp2010_x86_new, cpp2010_x64_old, cpp2010_x64_new
@@ -331,13 +331,21 @@ Dim strRegVal
   End If
 End Function
 
-Private Function OfficeArchitecture(objShell, strVersionInfix)
+Private Function OfficeArchitecture(objShell, strOSArch, strVersionInfix, strOfficeInstPath)
 Dim strRegVal
 
-  OfficeArchitecture = "x86"
+  OfficeArchitecture = strOSArch
+  If strOSArch = "x86" Then
+    Exit Function
+  End If
   strRegVal = RegRead(objShell, strRegKeyOfficePrefix_Mx86 & strVersionInfix & strRegKeyOfficeSuffix_Outlook & strRegValOfficeArchitecture)
   If strRegVal <> "" Then
     OfficeArchitecture = strRegVal
+    Exit Function
+  End If
+  If InStr(strOfficeInstPath, "x86") > 0 Then
+    OfficeArchitecture = "x86"
+    Exit Function
   End If
 End Function
 
@@ -408,7 +416,8 @@ For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_OperatingS
 Next
 ' Documentation: http://msdn.microsoft.com/en-us/library/aa394102(VS.85).aspx
 For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_ComputerSystem")
-  objCmdFile.WriteLine("set OS_ARCH=" & LCase(Left(objQueryItem.SystemType, 3)))
+  strOSArchitecture = LCase(Left(objQueryItem.SystemType, 3))
+  objCmdFile.WriteLine("set OS_ARCH=" & strOSArchitecture)
   objCmdFile.WriteLine("set OS_DOMAIN_ROLE=" & objQueryItem.DomainRole)
 Next
 If objNetwork.UserName = strWOUTempAdminName Then
@@ -537,7 +546,7 @@ For i = 0 To UBound(arrayOfficeNames)
         strOfficeExeVersion = GetFileVersion(objFileSystem, strOfficeInstallPath & arrayOfficeExeNames(j))
         WriteVersionToFile objCmdFile, UCase(arrayOfficeNames(i)) & "_VER", strOfficeExeVersion
         objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_SP_VER=" & OfficeSPVersion(strOfficeExeVersion, j))
-        objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_ARCH=" & OfficeArchitecture(wshShell, arrayOfficeVersions(i)))
+        objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_ARCH=" & OfficeArchitecture(wshShell, strOSArchitecture, arrayOfficeVersions(i), strOfficeInstallPath))
         languageCode = OfficeLanguageCode(wshShell, arrayOfficeVersions(i))
         objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_LANG_CODE=0x" & Hex(languageCode))
         If languageCode = 0 Then

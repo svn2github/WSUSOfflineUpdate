@@ -924,5 +924,7 @@ Version ?.? -- ??.??.??
 - Static download URLs for aria2 download utility updated to v. 1.18.7 (Thanks to "harry")
 - Fix: Updates kb2939087 and kb2975061 added to Windows 8.1 Update 1 (kb2919355) installation routine (Thanks to B. Schinkel-Momsen)
 - Fix: Superseded Updates kb2919442 and kb2969339 removed from Windows 8.1 Update 1 (kb2919355) installation routine (Thanks to "harry")
+- Fix: Improved detection of Office architecture (Thanks to "luxor", "aker", "boco" and "Denniss")
+- Fix: Improved detection of PowerShell 2.0 (Thanks to "aker")
 - Fix: Linux scripts contained misleading error message regarding commonparts.sh (Thanks to H. Hullen)
 - Fix: Linux scripts' improvements (Thanks to "hbuhrmester" and H. Hullen)
