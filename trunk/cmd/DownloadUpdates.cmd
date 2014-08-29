@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.3.1+ (r609)
+set WSUSOFFLINE_VERSION=9.4b (r610)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -256,6 +256,9 @@ if exist ..\client\cmd\Reboot.vbs del ..\client\cmd\Reboot.vbs
 if exist ..\client\cmd\Shutdown.vbs del ..\client\cmd\Shutdown.vbs
 if exist ..\client\msi\nul rd /S /Q ..\client\msi
 if exist ..\client\static\StaticUpdateIds-ie9-w61.txt del ..\client\static\StaticUpdateIds-ie9-w61.txt
+if exist ..\xslt\ExtractDownloadLinks-wua-x86.xsl del ..\xslt\ExtractDownloadLinks-wua-x86.xsl
+if exist ..\xslt\ExtractDownloadLinks-wua-x64.xsl del ..\xslt\ExtractDownloadLinks-wua-x64.xsl
+if exist ..\xslt\ExtractBundledUpdateRelationsAndFileIds.xsl del ..\xslt\ExtractBundledUpdateRelationsAndFileIds.xsl
 
 rem *** Obsolete external stuff ***
 if exist ..\bin\extract.exe del ..\bin\extract.exe
@@ -270,8 +273,6 @@ if exist ..\static\StaticDownloadLink-sigcheck.txt del ..\static\StaticDownloadL
 if exist ..\static\StaticDownloadLink-streams.txt del ..\static\StaticDownloadLink-streams.txt
 if exist ..\static\StaticDownloadLinks-mkisofs.txt del ..\static\StaticDownloadLinks-mkisofs.txt
 if exist ..\static\StaticDownloadLink-unzip.txt del ..\static\StaticDownloadLink-unzip.txt
-if exist ..\xslt\ExtractDownloadLinks-wua-x86.xsl del ..\xslt\ExtractDownloadLinks-wua-x86.xsl
-if exist ..\xslt\ExtractDownloadLinks-wua-x64.xsl del ..\xslt\ExtractDownloadLinks-wua-x64.xsl
 
 rem *** Windows 2000 stuff ***
 if exist ..\client\bin\reg.exe del ..\client\bin\reg.exe
@@ -446,7 +447,7 @@ if exist "%TEMP%\SetFileVersion.cmd" (
   del "%TEMP%\SetFileVersion.cmd"
 ) else (set SIGCHK_VER_MAJOR=2)
 if %SIGCHK_VER_MAJOR% GEQ 2 (set SIGCHK_COPT=/accepteula -q -c) else (set SIGCHK_COPT=/accepteula -q -v)
-echo %DATE% %TIME% - Info: Found sigcheck.exe version %SIGCHK_VER_MAJOR%.%SIGCHK_VER_MINOR%.%SIGCHK_VER_BUILD%.%SIGCHK_VER_REVIS% (common options: %SIGCHK_COPT%)>>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Found sigcheck.exe version %SIGCHK_VER_MAJOR%.%SIGCHK_VER_MINOR%.%SIGCHK_VER_BUILD%.%SIGCHK_VER_REVIS%>>%DOWNLOAD_LOGFILE%
 set SIGCHK_VER_MAJOR=
 set SIGCHK_VER_MINOR=
 set SIGCHK_VER_BUILD=
@@ -1021,13 +1022,24 @@ if errorlevel 1 goto DownloadError
 %SystemRoot%\System32\findstr.exe /L /G:"%TEMP%\ValidSupersedingRevisionIds.txt" "%TEMP%\SupersededUpdateRelations.txt" >"%TEMP%\ValidSupersededUpdateRelations.txt"
 del "%TEMP%\SupersededUpdateRelations.txt"
 del "%TEMP%\ValidSupersedingRevisionIds.txt"
-%CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractBundledUpdateRelationsAndFileIds.xsl "%TEMP%\BundledUpdateRelationsAndFileIds.txt"
-if errorlevel 1 goto DownloadError
 %CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\ValidSupersededUpdateRelations.txt" "%TEMP%\ValidSupersededRevisionIds.txt" /firstonly
 del "%TEMP%\ValidSupersededUpdateRelations.txt"
-%SystemRoot%\System32\findstr.exe /L /G:"%TEMP%\ValidSupersededRevisionIds.txt" "%TEMP%\BundledUpdateRelationsAndFileIds.txt" >"%TEMP%\SupersededRevisionAndFileIds.txt"
+%CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractUpdateRevisionAndFileIds.xsl "%TEMP%\UpdateRevisionAndFileIds.txt"
+if errorlevel 1 goto DownloadError
+set REVISION_ID=
+for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\UpdateRevisionAndFileIds.txt") do (
+  if "%%j"=="" (
+    set REVISION_ID=%%i
+    echo %%i>>"%TEMP%\BundledUpdateRevisionAndFileIds.txt"
+  ) else (
+    echo %%i,%%j;!REVISION_ID!>>"%TEMP%\BundledUpdateRevisionAndFileIds.txt"
+  )
+)
+set REVISION_ID=
+del "%TEMP%\UpdateRevisionAndFileIds.txt"
+%SystemRoot%\System32\findstr.exe /L /G:"%TEMP%\ValidSupersededRevisionIds.txt" "%TEMP%\BundledUpdateRevisionAndFileIds.txt" >"%TEMP%\SupersededRevisionAndFileIds.txt"
 del "%TEMP%\ValidSupersededRevisionIds.txt"
-del "%TEMP%\BundledUpdateRelationsAndFileIds.txt"
+del "%TEMP%\BundledUpdateRevisionAndFileIds.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\SupersededRevisionAndFileIds.txt" "%TEMP%\SupersededFileIds.txt" /secondonly
 del "%TEMP%\SupersededRevisionAndFileIds.txt"
 %SystemRoot%\System32\sort.exe "%TEMP%\SupersededFileIds.txt" /O "%TEMP%\SupersededFileIdsSorted.txt"

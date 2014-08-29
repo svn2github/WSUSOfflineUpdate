@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                          v. 9.3.1+ (r609)                         ###
+###                          v. 9.4b (r610)                           ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -612,13 +612,25 @@ $xml tr ../xslt/ExtractSupersededUpdateRelations.xsl ../temp/package.xml > ../te
 grep -F -f ../temp/ValidSupersedingRevisionIds.txt ../temp/SupersededUpdateRelations.txt > ../temp/ValidSupersededUpdateRelations.txt
 rm -f ../temp/SupersededUpdateRelations.txt
 rm -f ../temp/ValidSupersedingRevisionIds.txt
-$xml tr ../xslt/ExtractBundledUpdateRelationsAndFileIds.xsl ../temp/package.xml > ../temp/BundledUpdateRelationsAndFileIds.txt
+$xml tr ../xslt/ExtractUpdateRevisionAndFileIds.xsl ../temp/package.xml > ../temp/UpdateRevisionAndFileIds.txt
+
+REVISION_ID=""
+  while IFS=',' read Platz0 Platz1 Rest
+  do
+    read temp0 Rest <<< ${Platz1//;/ }
+    if [ "${temp0}" == "" ]; then
+      REVISION_ID=${Platz0}
+      echo "${Platz0}" >> ../temp/BundledUpdateRevisionAndFileIds.txt
+    else
+      echo "${Platz0},${temp0};$REVISION_ID" >> ../temp/BundledUpdateRevisionAndFileIds.txt
+    fi
+  done < ../temp/UpdateRevisionAndFileIds.txt
 
   while IFS=',' read ValidRevID Rest
   do
   echo "${ValidRevID}" >> ../temp/ValidSupersededRevisionIds.txt
   done < ../temp/ValidSupersededUpdateRelations.txt
-grep -F -f ../temp/ValidSupersededRevisionIds.txt ../temp/BundledUpdateRelationsAndFileIds.txt > ../temp/SupersededRevisionAndFileIds.txt
+grep -F -f ../temp/ValidSupersededRevisionIds.txt ../temp/BundledUpdateRevisionAndFileIds.txt > ../temp/SupersededRevisionAndFileIds.txt
 
   while IFS=',' read Platz0 Platz1 Rest
   do

@@ -13,6 +13,14 @@
     </xsl:when>
     <xsl:when test="name()='BundledBy'">
     </xsl:when>
+    <xsl:when test="name()='Categories'">
+    </xsl:when>
+    <xsl:when test="name()='PayloadFiles'">
+    </xsl:when>
+    <xsl:when test="name()='Prerequisites'">
+    </xsl:when>
+    <xsl:when test="name()='Languages'">
+    </xsl:when>
     <xsl:when test="name()='Revision'">
       <xsl:text>,_</xsl:text>
       <xsl:value-of select="@Id"/>

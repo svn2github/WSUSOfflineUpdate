@@ -12,15 +12,14 @@
       <xsl:text>&#10;</xsl:text>
     </xsl:when>
     <xsl:when test="name()='BundledBy'">
-      <xsl:text>;BundledBy</xsl:text>
-      <xsl:apply-templates select="*"/>
+    </xsl:when>
+    <xsl:when test="name()='Categories'">
+    </xsl:when>
+    <xsl:when test="name()='Prerequisites'">
+    </xsl:when>
+    <xsl:when test="name()='Languages'">
     </xsl:when>
     <xsl:when test="name()='SupersededBy'">
-    </xsl:when>
-    <xsl:when test="name()='Revision'">
-      <xsl:text>,#</xsl:text>
-      <xsl:value-of select="@Id"/>
-      <xsl:text>#</xsl:text>
     </xsl:when>
     <xsl:when test="name()='File'">
       <xsl:text>,</xsl:text>

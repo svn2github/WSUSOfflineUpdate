@@ -21,7 +21,7 @@ objUpdateSearcher.ServiceID = objUpdateService.ServiceID
 If LCase(strArgument) = "/all" Then
   Set objSearchResult = objUpdateSearcher.Search("Type='Software'")
 Else
-  Set objSearchResult = objUpdateSearcher.Search("Type='Software' and IsInstalled=0")
+  Set objSearchResult = objUpdateSearcher.Search("Type='Software' and IsInstalled=0 and IsHidden=0")
 End If
 
 If objSearchResult.Updates.Count > 0 Then

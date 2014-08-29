@@ -24,12 +24,23 @@ rem del "%TEMP%\SupersedingRevisionIds.txt"
 %SystemRoot%\System32\findstr.exe /L /G:"%TEMP%\ValidSupersedingRevisionIds.txt" "%TEMP%\SupersededUpdateRelations.txt" >"%TEMP%\ValidSupersededUpdateRelations.txt"
 rem del "%TEMP%\SupersededUpdateRelations.txt"
 rem del "%TEMP%\ValidSupersedingRevisionIds.txt"
-%SystemRoot%\System32\cscript.exe //Nologo //B //E:vbs .\cmd\XSLT.vbs "%TEMP%\package.xml" .\xslt\ExtractBundledUpdateRelationsAndFileIds.xsl "%TEMP%\BundledUpdateRelationsAndFileIds.txt"
 %SystemRoot%\System32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractIdsAndFileNames.vbs "%TEMP%\ValidSupersededUpdateRelations.txt" "%TEMP%\ValidSupersededRevisionIds.txt" /firstonly
 rem del "%TEMP%\ValidSupersededUpdateRelations.txt"
-%SystemRoot%\System32\findstr.exe /L /G:"%TEMP%\ValidSupersededRevisionIds.txt" "%TEMP%\BundledUpdateRelationsAndFileIds.txt" >"%TEMP%\SupersededRevisionAndFileIds.txt"
+%SystemRoot%\System32\cscript.exe //Nologo //B //E:vbs .\cmd\XSLT.vbs "%TEMP%\package.xml" .\xslt\ExtractUpdateRevisionAndFileIds.xsl "%TEMP%\UpdateRevisionAndFileIds.txt"
+set REVISION_ID=
+for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\UpdateRevisionAndFileIds.txt") do (
+  if "%%j"=="" (
+    set REVISION_ID=%%i
+    echo %%i>>"%TEMP%\BundledUpdateRevisionAndFileIds.txt"
+  ) else (
+    echo %%i,%%j;!REVISION_ID!>>"%TEMP%\BundledUpdateRevisionAndFileIds.txt"
+  )
+)
+set REVISION_ID=
+rem del "%TEMP%\UpdateRevisionAndFileIds.txt"
+%SystemRoot%\System32\findstr.exe /L /G:"%TEMP%\ValidSupersededRevisionIds.txt" "%TEMP%\BundledUpdateRevisionAndFileIds.txt" >"%TEMP%\SupersededRevisionAndFileIds.txt"
 rem del "%TEMP%\ValidSupersededRevisionIds.txt"
-rem del "%TEMP%\BundledUpdateRelationsAndFileIds.txt"
+rem del "%TEMP%\BundledUpdateRevisionAndFileIds.txt"
 %SystemRoot%\System32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractIdsAndFileNames.vbs "%TEMP%\SupersededRevisionAndFileIds.txt" "%TEMP%\SupersededFileIds.txt" /secondonly
 rem del "%TEMP%\SupersededRevisionAndFileIds.txt"
 %SystemRoot%\System32\sort.exe "%TEMP%\SupersededFileIds.txt" /O "%TEMP%\SupersededFileIdsSorted.txt"
