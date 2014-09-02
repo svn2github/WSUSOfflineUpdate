@@ -915,7 +915,8 @@ Version 9.3.1 -- 12.06.14
 - Fix: Root Certificates' updates kb931125 and kb2917500 added to installation exclude list (explicit installation) (Thanks to "aker")
 - Fix: Target confusion in Linux script DownloadUpdates.sh (Thanks to "OliWee")
 --------------------------------------------------------------------------------
-Version ?.? -- ??.??.??
+Version 9.4 -- 02.09.14
+- NOTE: Please delete ...\exclude\ExcludeList-superseded.txt once you updated to v. 9.4 to be sure to have it re-created during the next download run
 - Updated static download URL for untrusted/revoked root certificates (rvkroots.exe/kb2982792) (Thanks to "friday123")
 - Microsoft Silverlight updated to v. 5.1.30514.0 (Thanks to "harry")
 - Windows Update Agent (WUA) will now be updated to v. 7.6.7600.320 on Windows 7 / 8 and Server 2008 R2 / 2012 (x86/x64) systems (Thanks to "boco")
@@ -930,3 +931,4 @@ Version ?.? -- ??.??.??
 - Fix: Improved detection of PowerShell 2.0 (Thanks to "aker")
 - Fix: Linux scripts contained misleading error message regarding commonparts.sh (Thanks to H. Hullen)
 - Fix: Linux scripts' improvements (Thanks to "hbuhrmester" and H. Hullen)
+--------------------------------------------------------------------------------

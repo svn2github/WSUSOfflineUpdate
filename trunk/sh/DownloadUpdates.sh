@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                          v. 9.4b (r610)                           ###
+###                               v. 9.4                              ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -636,13 +636,13 @@ grep -F -f ../temp/ValidSupersededRevisionIds.txt ../temp/BundledUpdateRevisionA
   do
     test "$Platz1" || continue
     read temp0 Rest <<< ${Platz1//;/ }
-   if [ "${temp0}" != "" ]; then
-    echo "${temp0}" >> ../temp/SupersededFileIds.txt
-  fi
+   test "${temp0}" && echo "${temp0}" >> ../temp/SupersededFileIds.txt
   done < ../temp/SupersededRevisionAndFileIds.txt
 
 test $debug -eq 0 && rm -f ../temp/SupersededRevisionAndFileIds.txt
+test -s ../temp/SupersededFileIds.txt && {
 sort -u ../temp/SupersededFileIds.txt | grep -v '#' > ../temp/SupersededFileIdsUnique.txt
+    }
 test $debug -eq 0 && rm -f ../temp/SupersededFileIds.txt
 $xml tr ../xslt/ExtractUpdateCabExeIdsAndLocations.xsl ../temp/package.xml | sort -u > ../temp/UpdateCabExeIdsAndLocations.txt
 grep -F -f ../temp/SupersededFileIdsUnique.txt ../temp/UpdateCabExeIdsAndLocations.txt >> ../temp/SupersededCabExeIdsAndLocations.txt
@@ -1040,8 +1040,11 @@ exit 0
 # 
 
 # ========================================================================
-# $Id: DownloadUpdates.sh,v 1.10 2014-08-06 11:47:01+02 HHullen Exp $
+# $Id: DownloadUpdates.sh,v 1.11 2014-09-01 17:16:38+02 HHullen Exp $
 # $Log: DownloadUpdates.sh,v $
+# Revision 1.11  2014-09-01 17:16:38+02  HHullen
+# REVISION_ID ergänzt
+#
 # Revision 1.10  2014-08-06 11:47:01+02  HHullen
 # Umwandlung von DOS-Datei nach Linux mit POSIX-konformen Befehlen
 #
