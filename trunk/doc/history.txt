@@ -932,3 +932,6 @@ Version 9.4 -- 02.09.14
 - Fix: Linux scripts contained misleading error message regarding commonparts.sh (Thanks to H. Hullen)
 - Fix: Linux scripts' improvements (Thanks to "hbuhrmester" and H. Hullen)
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- Fix: Static download URLs for MSE Network Realtime Inspection definitions updated (Thanks to "harry")
+- Fix: Download part did not exclude kb2976627 (superseded cumulative security update for IE) (Thanks to "Matjes")
