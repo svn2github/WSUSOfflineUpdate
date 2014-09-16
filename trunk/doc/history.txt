@@ -934,4 +934,5 @@ Version 9.4 -- 02.09.14
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
 - Fix: Static download URLs for MSE Network Realtime Inspection definitions updated (Thanks to "harry")
+- Fix: TouchMSITree.cmd script did not properly handle duplicate file name parts and MST file names containing spaces (Thanks to F. Mezou)
 - Fix: Download part did not exclude kb2976627 (superseded cumulative security update for IE) (Thanks to "Matjes")
