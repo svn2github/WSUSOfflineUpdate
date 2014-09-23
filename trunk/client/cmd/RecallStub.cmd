@@ -13,6 +13,7 @@ if not exist RecallUpdate.cmd (
   goto Cleanup
 )
 if not exist ReconnectNetDrive.cmd goto SkipReconnect
+%SystemRoot%\System32\timeout.exe /T 2 >nul
 for /F "tokens=3*" %%i in (ReconnectNetDrive.cmd) do (
   echo Reconnecting network drive %%i to %%j...
   call ReconnectNetDrive.cmd

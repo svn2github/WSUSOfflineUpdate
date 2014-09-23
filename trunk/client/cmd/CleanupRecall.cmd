@@ -73,24 +73,25 @@ if errorlevel 1 (
 )
 
 echo Deleting WOUTempAdmin account...
-if "%USERNAME%"=="WOUTempAdmin" (
-  if "%USERSID%"=="" (
-    echo %DATE% %TIME% - Warning: Environment variable USERSID not found - skipped deletion of registry reference to WOUTempAdmin profile>>%UPDATE_LOGFILE%
-  ) else (
-    %REG_PATH% DELETE "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\%USERSID%" /f >nul 2>&1
-    if errorlevel 1 (
-      echo %DATE% %TIME% - Warning: Registry reference to WOUTempAdmin profile not found - skipped deletion>>%UPDATE_LOGFILE%
-    ) else (
-      echo %DATE% %TIME% - Info: Deleted registry reference to WOUTempAdmin profile>>%UPDATE_LOGFILE%
-    )
-  )
-  %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v DeleteWOUTempAdminProfile /t REG_SZ /d "cmd /c rd /S /Q \"%USERPROFILE%\"" /f >nul 2>&1
-  echo %DATE% %TIME% - Info: Registered deletion of WOUTempAdmin profile>>%UPDATE_LOGFILE%
-  %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v DeleteWOURecallDir /t REG_SZ /d "cmd /c rd /S /Q \"%SystemRoot%\Temp\WOURecall\"" /f >nul 2>&1
-  echo %DATE% %TIME% - Info: Registered deletion of recall directory>>%UPDATE_LOGFILE%
-) else (
-  echo %DATE% %TIME% - Warning: WOUTempAdmin is not logged on - skipped registration of profile and recall directory deletion>>%UPDATE_LOGFILE%
+%CSCRIPT_PATH% //Nologo //B //E:vbs DetermineTempAdminSID.vbs
+if exist "%TEMP%\SetTempAdminSID.cmd" (
+  call "%TEMP%\SetTempAdminSID.cmd"
+  del "%TEMP%\SetTempAdminSID.cmd"
 )
+if "%TempAdminSID%"=="" (
+  echo %DATE% %TIME% - Warning: Environment variable TempAdminSID not found - skipped deletion of registry reference to WOUTempAdmin profile>>%UPDATE_LOGFILE%
+) else (
+  %REG_PATH% DELETE "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\%TempAdminSID%" /f >nul 2>&1
+  if errorlevel 1 (
+    echo %DATE% %TIME% - Warning: Registry reference to WOUTempAdmin profile not found - skipped deletion>>%UPDATE_LOGFILE%
+  ) else (
+    echo %DATE% %TIME% - Info: Deleted registry reference to WOUTempAdmin profile>>%UPDATE_LOGFILE%
+  )
+)
+%REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v DeleteWOUTempAdminProfile /t REG_SZ /d "cmd /c rd /S /Q \"%USERPROFILE%\"" /f >nul 2>&1
+echo %DATE% %TIME% - Info: Registered deletion of WOUTempAdmin profile>>%UPDATE_LOGFILE%
+%REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v DeleteWOURecallDir /t REG_SZ /d "cmd /c rd /S /Q \"%SystemRoot%\Temp\WOURecall\"" /f >nul 2>&1
+echo %DATE% %TIME% - Info: Registered deletion of recall directory>>%UPDATE_LOGFILE%
 %CSCRIPT_PATH% //Nologo //B //E:vbs DeleteUpdateAdmin.vbs
 if errorlevel 1 (
   echo Warning: Deletion of WOUTempAdmin account failed.

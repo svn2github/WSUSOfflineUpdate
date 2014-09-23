@@ -933,6 +933,8 @@ Version 9.4 -- 02.09.14
 - Fix: Linux scripts' improvements (Thanks to "hbuhrmester" and H. Hullen)
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
+- Static download URLs for aria2 download utility updated to v. 1.18.8 (Thanks to "harry")
 - Fix: Static download URLs for MSE Network Realtime Inspection definitions updated (Thanks to "harry")
 - Fix: TouchMSITree.cmd script did not properly handle duplicate file name parts and MST file names containing spaces (Thanks to F. Mezou)
+- Fix: If executed manually, CleanupRecall.cmd script did not delete registry reference to WOUTempAdmin profile (Thanks to "aker")
 - Fix: Download part did not exclude kb2976627 (superseded cumulative security update for IE) (Thanks to "Matjes")

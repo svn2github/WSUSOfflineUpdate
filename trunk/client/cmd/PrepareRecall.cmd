@@ -58,7 +58,7 @@ if errorlevel 1 (
 
 echo Preparing recall directory...
 if not exist %SystemRoot%\Temp\WOURecall\nul md %SystemRoot%\Temp\WOURecall
-for %%i in (CleanupRecall.cmd DeleteUpdateAdmin.vbs RecallStub.cmd ..\bin\Autologon.exe) do copy /Y %%i %SystemRoot%\Temp\WOURecall >nul
+for %%i in (CleanupRecall.cmd DeleteUpdateAdmin.vbs DetermineTempAdminSID.vbs RecallStub.cmd ..\bin\Autologon.exe) do copy /Y %%i %SystemRoot%\Temp\WOURecall >nul
 echo @%*>%SystemRoot%\Temp\WOURecall\RecallUpdate.cmd
 %SystemRoot%\System32\net.exe use %~d0 >nul 2>&1
 if errorlevel 1 (

@@ -2,7 +2,6 @@
 
 Option Explicit
 
-Private Const strWOUTempAdminName             = "WOUTempAdmin"
 Private Const strRegKeyWindowsVersion         = "HKLM\Software\Microsoft\Windows NT\CurrentVersion\"
 Private Const strRegKeyTrustedRCerts_x86      = "HKLM\Software\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}\"
 Private Const strRegKeyTrustedRCerts_x64      = "HKLM\Software\Wow6432Node\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}\"
@@ -52,7 +51,7 @@ Private Const strBuildNumbers_o2k10           = "4762,4756,4760,4754,4750,4750;6
 Private Const strBuildNumbers_o2k13           = "4420,4420,4420,4420,4420,4420;4569,4569,4569,4454,4569,4569"
 Private Const idxBuild                        = 2
 
-Dim wshShell, objNetwork, objFileSystem, objCmdFile, objWMIService, objQueryItem, objInstaller, arrayOfficeNames, arrayOfficeVersions, arrayOfficeAppNames, arrayOfficeExeNames
+Dim wshShell, objFileSystem, objCmdFile, objWMIService, objQueryItem, objInstaller, arrayOfficeNames, arrayOfficeVersions, arrayOfficeAppNames, arrayOfficeExeNames
 Dim strSystemFolder, strTempFolder, strWUAFileName, strMSIFileName, strWSHFileName, strTSCFileName, strWMPFileName, strCmdFileName, strOSArchitecture, strBuildLabEx, strOfficeInstallPath, strOfficeExeVersion, strProduct, strPatch, languageCode, i, j
 Dim cpp2005_x86_old, cpp2005_x86_new, cpp2005_x64_old, cpp2005_x64_new
 Dim cpp2008_x86_old, cpp2008_x86_new, cpp2008_x64_old, cpp2008_x64_new
@@ -393,7 +392,6 @@ Set objFileSystem = CreateObject("Scripting.FileSystemObject")
 Set objCmdFile = objFileSystem.CreateTextFile(strCmdFileName, True)
 
 ' Determine basic system properties
-Set objNetwork = WScript.CreateObject("WScript.Network")
 Set objWMIService = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
 ' Documentation: http://msdn.microsoft.com/en-us/library/aa394239(VS.85).aspx
 For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_OperatingSystem")
@@ -420,12 +418,6 @@ For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_ComputerSy
   objCmdFile.WriteLine("set OS_ARCH=" & strOSArchitecture)
   objCmdFile.WriteLine("set OS_DOMAIN_ROLE=" & objQueryItem.DomainRole)
 Next
-If objNetwork.UserName = strWOUTempAdminName Then
-  ' Documentation: http://msdn.microsoft.com/en-us/library/aa394507(VS.85).aspx
-  For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_UserAccount Where Domain = '" & objNetwork.ComputerName & "' And Name = '" & objNetwork.UserName & "'")
-    objCmdFile.WriteLine("set USERSID=" & objQueryItem.SID)
-  Next
-End If
 ' Documentation: http://msdn.microsoft.com/en-us/library/hww8txat(v=VS.85).aspx
 objCmdFile.WriteLine("set FS_TYPE=" & objFileSystem.GetDrive(objFileSystem.GetDriveName(wshShell.CurrentDirectory)).FileSystem)
 ' Determine current power policy
