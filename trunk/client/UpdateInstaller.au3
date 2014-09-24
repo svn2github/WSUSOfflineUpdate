@@ -6,7 +6,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 9.4.0.616)
+#pragma compile(FileVersion, 9.4.0.617)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -1171,7 +1171,7 @@ While 1
     Case $dotnet4              ; .NET 4 check box toggled
       If ( (IsCheckBoxChecked($dotnet4)) _
        AND (@OSVersion <> "WIN_XP") AND (@OSVersion <> "WIN_2003") AND (@OSVersion <> "WIN_VISTA") _
-       AND (@OSVersion <> "WIN_8") OR (@OSVersion <> "WIN_81") OR (@OSVersion <> "WIN_2012R2") _
+       AND (@OSVersion <> "WIN_8") AND (@OSVersion <> "WIN_81") AND (@OSVersion <> "WIN_2012R2") _
        AND (ManagementFrameworkVersion() <> WMFTargetVersion()) ) Then
         GUICtrlSetState($wmf, $GUI_ENABLE)
       Else

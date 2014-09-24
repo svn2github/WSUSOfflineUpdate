@@ -938,3 +938,4 @@ Version ?.? -- ??.??.??
 - Fix: TouchMSITree.cmd script did not properly handle duplicate file name parts and MST file names containing spaces (Thanks to F. Mezou)
 - Fix: If executed manually, CleanupRecall.cmd script did not delete registry reference to WOUTempAdmin profile (Thanks to "aker")
 - Fix: Download part did not exclude kb2976627 (superseded cumulative security update for IE) (Thanks to "Matjes")
+- Fix: Minor options' control flow bug in UpdateInstaller script
