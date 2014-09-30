@@ -4,3 +4,4 @@ http://www.info-zip.org/UnZip.html
 http://www.mingw.org/
 http://sourceforge.net/projects/tumagcc/files/
 http://update.microsoft.com/redist/wuredist.cab
+http://aria2.sourceforge.net/
