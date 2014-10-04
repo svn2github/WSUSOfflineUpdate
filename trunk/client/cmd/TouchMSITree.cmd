@@ -31,10 +31,9 @@ goto :eof
 
 :Proceed
 if /i "%1"=="/listall" (
-  pushd "%~dp0..\software\msi"
-  dir /B /ON /S *.msi >"%TEMP%\wouallmsi.txt" 2>nul
+  if exist "%TEMP%\wouallmsi.txt" del "%TEMP%\wouallmsi.txt"
+  for /R "%~dp0..\software\msi" %%i in (*.msi) do echo %%~nxi>>"%TEMP%\wouallmsi.txt"
   for %%i in ("%TEMP%\wouallmsi.txt") do if %%~zi==0 del "%%i"
-  popd
 ) else (
   for /R "%~dp0..\software\msi" %%i in (*.msi) do (
     if /i "%1"=="/instselected" (

@@ -1,4 +1,4 @@
-; ***  WSUS Offline Update 9.4.1 - Installer  ***
+; ***  WSUS Offline Update 9.4.2 - Installer  ***
 ; ***       Author: T. Wittrock, Kiel         ***
 ; ***   Dialog scaling added by Th. Baisch    ***
 
@@ -6,14 +6,14 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 9.4.1.620)
+#pragma compile(FileVersion, 9.4.2.622)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
 #pragma compile(ProductName, "WSUS Offline Update")
-#pragma compile(ProductVersion, 9.4.1)
+#pragma compile(ProductVersion, 9.4.2)
 
-Dim Const $caption                    = "WSUS Offline Update 9.4.1 - Installer"
+Dim Const $caption                    = "WSUS Offline Update 9.4.2 - Installer"
 Dim Const $wou_hostname               = "www.wsusoffline.net"
 Dim Const $donationURL                = "http://www.wsusoffline.net/donate.html"
 
@@ -876,7 +876,7 @@ If FileExists(@TempDir & $path_rel_msi_all) Then
   For $msicount = 0 To $msimax - 1
     $line = FileReadLine(@TempDir & $path_rel_msi_all, $msicount + 1)
     If @error <> 0 Then ExitLoop
-    $msipacks[$msicount] = GUICtrlCreateCheckbox(StringMid($line, StringInStr($line, "\", 2, -1) + 1, StringInStr($line, ".", 2, -1) - StringInStr($line, "\", 2, -1) - 1), $txtxpos + Mod($msicount, 2) * $txtwidth, $txtypos + BitShift($msicount, 1) * $txtheight, $txtwidth, $txtheight)
+    $msipacks[$msicount] = GUICtrlCreateCheckbox($line, $txtxpos + Mod($msicount, 2) * $txtwidth, $txtypos + BitShift($msicount, 1) * $txtheight, $txtwidth, $txtheight)
     If MyIniRead($ini_section_msi, GUICtrlRead(-1, 1), $disabled) = $enabled Then
       GUICtrlSetState(-1, $GUI_CHECKED)
     EndIf

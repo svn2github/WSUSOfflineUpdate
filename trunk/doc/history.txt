@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 9.4.1
+WSUS Offline Update 9.4.2
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -939,4 +939,7 @@ Version 9.4.1 -- 30.09.14
 - Fix: If executed manually, CleanupRecall.cmd script did not delete registry reference to WOUTempAdmin profile (Thanks to "aker")
 - Fix: Download part did not exclude kb2976627 (superseded cumulative security update for IE) for Windows Vista and Server 2008 (x86/x64) (Thanks to "Matjes")
 - Fix: Minor options' control flow bug in UpdateInstaller script
+--------------------------------------------------------------------------------
+Version 9.4.2 -- 04.10.14
+- Fix: MSI packages' installation was broken (Thanks to "rbr555")
 --------------------------------------------------------------------------------
