@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.4.2
+set WSUSOFFLINE_VERSION=9.5b (r623)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -146,12 +146,13 @@ goto EvalParams
 
 :EvalParams
 if "%3"=="" goto NoMoreParams
-for %%i in (/excludesp /excludestatics /includedotnet /includemsse /includewddefs /nocleanup /verify /exitonerror /skipsdd /skiptz /skipdownload /skipdynamic /proxy /wsus /wsusonly /wsusbyproxy) do (
+for %%i in (/excludesp /excludestatics /includedotnet /includewle /includemsse /includewddefs /nocleanup /verify /exitonerror /skipsdd /skiptz /skipdownload /skipdynamic /proxy /wsus /wsusonly /wsusbyproxy) do (
   if /i "%3"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected>>%DOWNLOAD_LOGFILE%
 )
 if /i "%3"=="/excludesp" set EXC_SP=1
 if /i "%3"=="/excludestatics" set EXC_STATICS=1
 if /i "%3"=="/includedotnet" set INC_DOTNET=1
+if /i "%3"=="/includewle" set INC_WLE=1
 if /i "%3"=="/includemsse" set INC_MSSE=1
 if /i "%3"=="/includewddefs" (
   echo %1 | %SystemRoot%\System32\find.exe /I "w62" >nul 2>&1
@@ -609,7 +610,7 @@ if "%VERIFY_DL%"=="1" (
 )
 :SkipDotNet
 
-rem *** Download installation files for C++ Runtime Libraries ***
+rem *** Download C++ Runtime Libraries' installation files ***
 if "%INC_DOTNET%" NEQ "1" goto SkipCPP
 if "%SKIP_DL%"=="1" goto SkipCPP
 if "%VERIFY_DL%" NEQ "1" goto DownloadCPP
@@ -637,7 +638,7 @@ if exist ..\client\md\hashes-cpp.txt (
   echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-cpp.txt not found>>%DOWNLOAD_LOGFILE%
 )
 :DownloadCPP
-echo Downloading/validating installation files for C++ Runtime Libraries...
+echo Downloading/validating C++ Runtime Libraries' installation files...
 for %%i in (x64 x86) do (
   for /F "tokens=1,2 delims=," %%j in (..\static\StaticDownloadLinks-cpp-%%i-glb.txt) do (
     if "%%k" NEQ "" (
@@ -663,7 +664,7 @@ for %%i in (x64 x86) do (
     )
   )
 )
-echo %DATE% %TIME% - Info: Downloaded/validated installation files for C++ Runtime Libraries>>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Downloaded/validated C++ Runtime Libraries' installation files>>%DOWNLOAD_LOGFILE%
 if "%CLEANUP_DL%"=="0" goto VerifyCPP
 echo Cleaning up client directory for C++ Runtime Libraries...
 for /F %%i in ('dir ..\client\cpp /A:-D /B') do (
@@ -710,6 +711,115 @@ if "%VERIFY_DL%"=="1" (
   )
 )
 :SkipCPP
+
+rem *** Download Windows Essentials 2012 - not required for w2k3 and w60 ***
+if /i "%1"=="w2k3" goto SkipWLE
+if /i "%1"=="w2k3-x64" goto SkipWLE
+if /i "%1"=="w60" goto SkipWLE
+if /i "%1"=="w60-x64" goto SkipWLE
+if "%INC_WLE%" NEQ "1" goto SkipWLE
+if "%SKIP_DL%"=="1" goto SkipWLE
+if "%VERIFY_DL%" NEQ "1" goto DownloadWLE
+if not exist ..\client\wle\nul goto DownloadWLE
+if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
+if exist ..\client\md\hashes-wle.txt (
+  echo Verifying integrity of Windows Essentials 2012 installation files...
+  pushd ..\client\md
+  ..\bin\%HASHDEEP_EXE% -a -l -vv -k hashes-wle.txt -r ..\wle
+  if errorlevel 1 (
+    popd
+    goto IntegrityError
+  )
+  popd
+  echo %DATE% %TIME% - Info: Verified integrity of Windows Essentials 2012 installation files>>%DOWNLOAD_LOGFILE%
+  for %%i in (..\client\md\hashes-wle.txt) do echo _%%~ti | %SystemRoot%\System32\find.exe "_%DATE:~-10%" >nul 2>&1
+  if not errorlevel 1 (
+    echo Skipping download/validation of Windows Essentials 2012 installation files due to 'same day' rule.
+    echo %DATE% %TIME% - Info: Skipped download/validation of Windows Essentials 2012 installation files due to 'same day' rule>>%DOWNLOAD_LOGFILE%
+    goto SkipWLE
+  )
+  del ..\client\md\hashes-wle.txt
+) else (
+  echo Warning: Integrity database ..\client\md\hashes-wle.txt not found.
+  echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-wle.txt not found>>%DOWNLOAD_LOGFILE%
+)
+:DownloadWLE
+echo Downloading/validating Windows Essentials 2012 installation files...
+copy /Y ..\static\StaticDownloadLinks-wle-glb.txt "%TEMP%\StaticDownloadLinks-wle-glb.txt" >nul
+if exist ..\static\custom\StaticDownloadLinks-wle-glb.txt (
+  type ..\static\custom\StaticDownloadLinks-wle-glb.txt >>"%TEMP%\StaticDownloadLinks-wle-glb.txt"
+)
+for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\StaticDownloadLinks-wle-glb.txt") do (
+  if "%%j" NEQ "" (
+    if exist ..\client\wle\%%j (
+      echo Renaming file ..\client\wle\%%j to %%~nxi...
+      if exist ..\client\wle\%%~nxi del ..\client\wle\%%~nxi
+      ren ..\client\wle\%%j %%~nxi
+      echo %DATE% %TIME% - Info: Renamed file ..\client\wle\%%j to %%~nxi>>%DOWNLOAD_LOGFILE%
+    )
+  )
+  %DLDR_PATH% %DLDR_COPT% %DLDR_POPT% ..\client\wle %%i
+  if errorlevel 1 (
+    if exist ..\client\wle\%%~nxi del ..\client\wle\%%~nxi
+    echo Warning: Download of %%i failed.
+    echo %DATE% %TIME% - Warning: Download of %%i failed>>%DOWNLOAD_LOGFILE%
+  )
+  if "%%j" NEQ "" (
+    if exist ..\client\wle\%%~nxi (
+      echo Renaming file ..\client\wle\%%~nxi to %%j...
+      ren ..\client\wle\%%~nxi %%j
+      echo %DATE% %TIME% - Info: Renamed file ..\client\wle\%%~nxi to %%j>>%DOWNLOAD_LOGFILE%
+    )
+  )
+)
+echo %DATE% %TIME% - Info: Downloaded/validated Windows Essentials 2012 installation files>>%DOWNLOAD_LOGFILE%
+if "%CLEANUP_DL%"=="0" (
+  del "%TEMP%\StaticDownloadLinks-wle-glb.txt"
+  goto VerifyWLE
+)
+echo Cleaning up client directory for Windows Essentials 2012...
+for /F %%i in ('dir ..\client\wle /A:-D /B') do (
+  %SystemRoot%\System32\find.exe /I "%%i" "%TEMP%\StaticDownloadLinks-wle-glb.txt" >nul 2>&1
+  if errorlevel 1 (
+    del ..\client\wle\%%i
+    echo %DATE% %TIME% - Info: Deleted ..\client\wle\%%i>>%DOWNLOAD_LOGFILE%
+  )
+)
+del "%TEMP%\StaticDownloadLinks-wle-glb.txt"
+echo %DATE% %TIME% - Info: Cleaned up client directory for Windows Essentials 2012>>%DOWNLOAD_LOGFILE%
+:VerifyWLE
+if "%VERIFY_DL%"=="1" (
+  rem *** Verifying digital file signatures for Windows Essentials 2012 installation files ***
+  if not exist ..\bin\sigcheck.exe goto NoSigCheck
+  echo Verifying digital file signatures for Windows Essentials 2012 installation files...
+  ..\bin\sigcheck.exe %SIGCHK_COPT% -s ..\client\wle >"%TEMP%\sigcheck-wle-glb.txt"
+  for /F "tokens=1 delims=," %%i in ('%SystemRoot%\System32\findstr.exe /I "Unsigned" "%TEMP%\sigcheck-wle-glb.txt"') do (
+    del %%i
+    echo Warning: Deleted unsigned file %%i.
+    echo %DATE% %TIME% - Warning: Deleted unsigned file %%i>>%DOWNLOAD_LOGFILE%
+  )
+  if exist "%TEMP%\sigcheck-wle-glb.txt" del "%TEMP%\sigcheck-wle-glb.txt"
+  echo %DATE% %TIME% - Info: Verified digital file signatures for Windows Essentials 2012 installation files>>%DOWNLOAD_LOGFILE%
+  if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
+  echo Creating integrity database for Windows Essentials 2012 installation files...
+  if not exist ..\client\md\nul md ..\client\md
+  pushd ..\client\md
+  ..\bin\%HASHDEEP_EXE% -c md5,sha1,sha256 -l -r ..\wle >hashes-wle.txt
+  if errorlevel 1 (
+    popd
+    echo Warning: Error creating integrity database ..\client\md\hashes-wle.txt.
+    echo %DATE% %TIME% - Warning: Error creating integrity database ..\client\md\hashes-wle.txt>>%DOWNLOAD_LOGFILE%
+  ) else (
+    popd
+    echo %DATE% %TIME% - Info: Created integrity database for Windows Essentials 2012 installation files>>%DOWNLOAD_LOGFILE%
+  )
+) else (
+  if exist ..\client\md\hashes-wle.txt (
+    del ..\client\md\hashes-wle.txt
+    echo %DATE% %TIME% - Info: Deleted integrity database for Windows Essentials 2012 installation files>>%DOWNLOAD_LOGFILE%
+  )
+)
+:SkipWLE
 
 rem *** Download Microsoft Security Essentials - not required for w2k3 ***
 if /i "%1"=="w2k3" goto SkipMSSE

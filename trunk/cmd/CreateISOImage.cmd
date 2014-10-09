@@ -60,6 +60,7 @@ if "%2"=="" goto V1CreateFilter
 if /i "%2"=="/excludesp" set EXC_SP=1
 if /i "%2"=="/excludesw" set EXC_SW=1
 if /i "%2"=="/includedotnet" set INC_DOTNET=1
+if /i "%2"=="/includewle" set INC_WLE=1
 if /i "%2"=="/includemsse" set INC_MSSE=1
 if /i "%2"=="/includewddefs" (
   echo %1 | %SystemRoot%\System32\find.exe /I "w62" >nul 2>&1
@@ -82,6 +83,7 @@ if "%3"=="" goto V2CreateFilter
 if /i "%3"=="/excludesp" set EXC_SP=1
 if /i "%3"=="/excludesw" set EXC_SW=1
 if /i "%3"=="/includedotnet" set INC_DOTNET=1
+if /i "%3"=="/includewle" set INC_WLE=1
 if /i "%3"=="/includemsse" set INC_MSSE=1
 if /i "%3"=="/includewddefs" (
   echo %1 | %SystemRoot%\System32\find.exe /I "w62" >nul 2>&1
@@ -139,6 +141,9 @@ for %%i in (ofc) do (
 )
 if "%INC_DOTNET%" NEQ "1" (
   for /F %%i in (..\exclude\ExcludeListISO-dotnet.txt) do echo %%i/>>%ISO_FILTER%
+)
+if "%INC_WLE%" NEQ "1" (
+  for /F %%i in (..\exclude\ExcludeList-wle.txt) do echo %%i/>>%ISO_FILTER%
 )
 if "%INC_MSSE%" NEQ "1" (
   for /F %%i in (..\exclude\ExcludeList-msse.txt) do echo %%i/>>%ISO_FILTER%

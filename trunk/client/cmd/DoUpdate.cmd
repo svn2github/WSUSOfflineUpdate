@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.4.2
+set WSUSOFFLINE_VERSION=9.5b (r623)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -35,7 +35,7 @@ echo %DATE% %TIME% - Info: Used path "%~dp0" on %COMPUTERNAME% (user: %USERNAME%
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/nobackup /verify /updatercerts /instie7 /instie8 /instie9 /instie10 /instie11 /instielatest /updatecpp /instmssl /instdotnet35 /instdotnet4 /instpsh /instwmf /instmsse /updatetsc /instofv /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
+for %%i in (/nobackup /verify /updatercerts /instie7 /instie8 /instie9 /instie10 /instie11 /instielatest /updatecpp /instmssl /instdotnet35 /instdotnet4 /instpsh /instwmf /instmsse /updatetsc /instofv /instwle /instmsi /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected>>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/nobackup" set BACKUP_MODE=/nobackup
@@ -56,6 +56,8 @@ if /i "%1"=="/instwmf" set INSTALL_WMF=/instwmf
 if /i "%1"=="/instmsse" set INSTALL_MSSE=/instmsse
 if /i "%1"=="/updatetsc" set UPDATE_TSC=/updatetsc
 if /i "%1"=="/instofv" set INSTALL_OFV=/instofv
+if /i "%1"=="/instwle" set INSTALL_WLE=/instwle
+if /i "%1"=="/instmsi" set INSTALL_MSI=/instmsi
 if /i "%1"=="/autoreboot" set BOOT_MODE=/autoreboot
 if /i "%1"=="/shutdown" set FINISH_MODE=/shutdown
 if /i "%1"=="/showlog" set SHOW_LOG=/showlog
@@ -1198,20 +1200,54 @@ if "%OFC_FILE_VALID%" NEQ "1" (
 :SkipOFVAL
 :SkipOffice
 
+rem *** Install Windows Essentials 2012 ***
+set WLE_FILENAME=..\wle\wlsetup-all-%OS_LANG%.exe
+if exist %SystemRoot%\Temp\wouinstwle.cmd goto InstSelWLE
+if "%INSTALL_WLE%"=="/instwle" goto InstAllWLE
+goto SkipWLE
+:InstSelWLE
+if not exist %WLE_FILENAME% goto NoWLE
+echo %TIME% - Installing Windows Essentials 2012 (please be patient, this will take a while)...
+call %SystemRoot%\Temp\wouinstwle.cmd %WLE_FILENAME%
+del %SystemRoot%\Temp\wouinstwle.cmd
+echo %TIME% - Done.
+set REBOOT_REQUIRED=1
+goto SkipWLE
+:InstAllWLE
+if not exist %WLE_FILENAME% goto NoWLE
+echo %TIME% - Installing Windows Essentials 2012 (please be patient, this will take a while)...
+%WLE_FILENAME% /AppSelect:All /noToolbarCEIP /noSearch /noHomepage /noMU /noLaunch /q
+echo %DATE% %TIME% - Info: Installed Windows Essentials 2012 (%WLE_FILENAME% /AppSelect:All /noToolbarCEIP /noSearch /noHomepage /noMU /noLaunch /q)>>%UPDATE_LOGFILE%
+echo %TIME% - Done.
+set REBOOT_REQUIRED=1
+goto SkipWLE
+:NoWLE
+echo Warning: Windows Essentials 2012 installation file (%WLE_FILENAME%) not found.
+echo %DATE% %TIME% - Warning: Windows Essentials 2012 installation file (%WLE_FILENAME%) not found>>%UPDATE_LOGFILE%
+:SkipWLE
+set WLE_FILENAME=
+
 rem *** Install MSI packages and custom software ***
+if exist %SystemRoot%\Temp\wouselmsi.txt (
+  echo Installing selected MSI packages...
+  call TouchMSITree.cmd /instselected
+  echo %DATE% %TIME% - Info: Installed selected MSI packages>>%UPDATE_LOGFILE%
+  del %SystemRoot%\Temp\wouselmsi.txt
+  set REBOOT_REQUIRED=1
+) else (
+  if "%INSTALL_MSI%"=="/instmsi" (
+    echo Installing all MSI packages...
+    call TouchMSITree.cmd /install
+    echo %DATE% %TIME% - Info: Installed all MSI packages>>%UPDATE_LOGFILE%
+    set REBOOT_REQUIRED=1
+  )
+)
 if exist ..\software\custom\InstallCustomSoftware.cmd (
   echo Installing custom software...
   pushd ..\software\custom
   call InstallCustomSoftware.cmd
   popd
   echo %DATE% %TIME% - Info: Executed custom software installation hook ^(Errorlevel: %errorlevel%^)>>%UPDATE_LOGFILE%
-  set REBOOT_REQUIRED=1
-)
-if exist %SystemRoot%\Temp\wouselmsi.txt (
-  echo Installing selected MSI packages...
-  call TouchMSITree.cmd /instselected
-  echo %DATE% %TIME% - Info: Installed selected MSI packages>>%UPDATE_LOGFILE%
-  del %SystemRoot%\Temp\wouselmsi.txt
   set REBOOT_REQUIRED=1
 )
 
@@ -1445,7 +1481,7 @@ if "%RECALL_REQUIRED%"=="1" (
     )
     if "%USERNAME%" NEQ "WOUTempAdmin" (
       echo Preparing automatic recall...
-      call PrepareRecall.cmd "%~f0" %BACKUP_MODE% %VERIFY_MODE% %UPDATE_RCERTS% %INSTALL_IE% %UPDATE_CPP% %INSTALL_MSSL% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_WMF% %INSTALL_MSSE% %UPDATE_TSC% %INSTALL_OFV% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES% %SKIP_DYNAMIC%
+      call PrepareRecall.cmd "%~f0" %BACKUP_MODE% %VERIFY_MODE% %UPDATE_RCERTS% %INSTALL_IE% %UPDATE_CPP% %INSTALL_MSSL% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_WMF% %INSTALL_MSSE% %UPDATE_TSC% %INSTALL_OFV% %INSTALL_WLE% %INSTALL_MSI% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES% %SKIP_DYNAMIC%
     )
     if exist %SystemRoot%\System32\bcdedit.exe (
       echo Adjusting boot sequence for next reboot...
