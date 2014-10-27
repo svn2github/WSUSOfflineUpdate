@@ -950,3 +950,6 @@ Version 9.5 -- ??.??.??
 - Fix: Microsoft revoked kb2949927 for Windows 7 and Server 2008 R2 (x86/x64) (Thanks to "Matjes")
 - Fix: DoUpdate.cmd script will now raise a warning instead of an error if most recent Windows Update Agent installation file is not found (Thanks to "radkins", "Kettenhund" and "aker")
 - Fix: CreateISOImage.cmd and CreateISOImage.sh scripts will now create ISO images containing Joliet directory information as well as UDF file system (Thanks to "Pamela", "aker" and "boco")
+- Fix: Removed obsolete Security Updates for Flash Player (kb913433 and kb923789)
+- Fix: Removed obsolete Security Updates for MDAC 2.8 SP1 (kb911562 and kb927779)
+- Fix: Reviewed and consolidated internal structures

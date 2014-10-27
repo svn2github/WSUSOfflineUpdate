@@ -17,10 +17,6 @@
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>
-      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/windowsxp') and contains(@Url, '-kb923789-') and contains(@Url, '-x86-') and contains(@Url, '-deu') and contains(@Url, '.exe')">
-        <xsl:value-of select="@Url"/>
-        <xsl:text>&#10;</xsl:text>
-      </xsl:if>
     </xsl:when>
     <xsl:otherwise>
       <xsl:apply-templates select="*"/>

@@ -64,12 +64,12 @@ if exist ..\exclude\custom\ExcludeList.txt (
   type ..\exclude\custom\ExcludeList.txt >>"%TEMP%\ExcludeList.txt"
 )
 :IgnoreBL
-if "%OS_ARCH%"=="x64" (set OS_SEARCH_DIRS=%OS_NAME%-%OS_ARCH%) else (set OS_SEARCH_DIRS=%OS_NAME% win)
+if "%OS_ARCH%"=="x64" (set OS_SEARCH_DIR=%OS_NAME%-%OS_ARCH%) else (set OS_SEARCH_DIR=%OS_NAME%)
 for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do (
   if exist "%TEMP%\Update.txt" del "%TEMP%\Update.txt"
   %SystemRoot%\System32\find.exe /I "%%i" "%TEMP%\ExcludeList.txt" >nul 2>&1
   if errorlevel 1 (
-    for %%k in (%OS_SEARCH_DIRS%) do (
+    for %%k in (%OS_SEARCH_DIR%) do (
       for %%l in (%OS_LANG% glb) do (
         if %IE_VER_MAJOR%%IE_VER_MINOR%0 GEQ 9100 (
           call ListUpdateFile.cmd ie%IE_VER_MINOR%-*%%i ..\%%k\%%l
@@ -78,8 +78,6 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
         )
         call ListUpdateFile.cmd windowsmedia%WMP_VER_MAJOR%-*%%i ..\%%k\%%l
         call ListUpdateFile.cmd windowsmedia-*%%i ..\%%k\%%l
-        call ListUpdateFile.cmd mdac%MDAC_VER_MAJOR%%MDAC_VER_MINOR%-*%%i ..\%%k\%%l
-        call ListUpdateFile.cmd windowsxp*%%i ..\%%k\%%l /searchleftmost
         call ListUpdateFile.cmd windowsserver2003*%%i ..\%%k\%%l /searchleftmost
         call ListUpdateFile.cmd windows6*%%i ..\%%k\%%l /searchleftmost
         call ListUpdateFile.cmd windows*%%i ..\%%k\%%l /searchleftmost

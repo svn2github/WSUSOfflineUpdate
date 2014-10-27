@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.5b (r626)
+set WSUSOFFLINE_VERSION=9.5b (r627)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -260,6 +260,7 @@ if exist ..\client\static\StaticUpdateIds-ie9-w61.txt del ..\client\static\Stati
 if exist ..\xslt\ExtractDownloadLinks-wua-x86.xsl del ..\xslt\ExtractDownloadLinks-wua-x86.xsl
 if exist ..\xslt\ExtractDownloadLinks-wua-x64.xsl del ..\xslt\ExtractDownloadLinks-wua-x64.xsl
 if exist ..\xslt\ExtractBundledUpdateRelationsAndFileIds.xsl del ..\xslt\ExtractBundledUpdateRelationsAndFileIds.xsl
+del /Q ..\xslt\*-win-x86-*.* >nul 2>&1
 
 rem *** Obsolete external stuff ***
 if exist ..\bin\extract.exe del ..\bin\extract.exe
