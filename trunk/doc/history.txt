@@ -948,3 +948,5 @@ Version 9.5 -- ??.??.??
 - Support added for Windows Essentials 2012 (Thanks to J. Smith)
 - Fix: Download part did not completely exclude kb2976627 (MS14-051, superseded cumulative security update for IE) (Thanks to "Matjes")
 - Fix: Microsoft revoked kb2949927 for Windows 7 and Server 2008 R2 (x86/x64) (Thanks to "Matjes")
+- Fix: DoUpdate.cmd script will now raise a warning instead of an error if most recent Windows Update Agent installation file is not found (Thanks to "radkins", "Kettenhund" and "aker")
+- Fix: CreateISOImage.cmd and CreateISOImage.sh scripts will now create ISO images containing Joliet directory information as well as UDF file system (Thanks to "Pamela", "aker" and "boco")

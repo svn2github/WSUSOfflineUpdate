@@ -205,7 +205,7 @@ for /F "usebackq tokens=1,2* delims=\" %%i in ("%TEMP%\ExcludeListISO_2.txt") do
   ) else (echo */%%i/%%j/*>>%ISO_FILTER%)
 )
 if exist "%TEMP%\ExcludeListISO_2.txt" del "%TEMP%\ExcludeListISO_2.txt"
-..\bin\mkisofs.exe -iso-level 4 -udf -exclude-list %ISO_FILTER% -output %OUTPUT_PATH%\%ISO_NAME%.iso -volid %ISO_VOLID% ..\client
+..\bin\mkisofs.exe -iso-level 4 -joliet -joliet-long -udf -exclude-list %ISO_FILTER% -output %OUTPUT_PATH%\%ISO_NAME%.iso -volid %ISO_VOLID% ..\client
 if errorlevel 1 (
   if exist %ISO_FILTER% del %ISO_FILTER%
   goto MkIsoError

@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.5b (r625)
+set WSUSOFFLINE_VERSION=9.5b (r626)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -382,7 +382,11 @@ if "%OS_NAME%"=="w61" (
   set WUA_FILENAME=..\wsus\WindowsUpdateAgent*-%OS_ARCH%.exe
 )
 dir /B %WUA_FILENAME% >nul 2>&1
-if errorlevel 1 goto NoWUAInst
+if errorlevel 1 (
+  echo Warning: File %WUA_FILENAME% not found.
+  echo %DATE% %TIME% - Warning: File %WUA_FILENAME% not found>>%UPDATE_LOGFILE%
+  goto SkipWUAInst
+)
 echo Installing most recent Windows Update Agent...
 for /F %%i in ('dir /B %WUA_FILENAME%') do (
   if "%OS_NAME%"=="w61" (
@@ -1626,13 +1630,6 @@ goto Cleanup
 echo.
 echo ERROR: Medium neither supports your Windows nor your Office version.
 echo %DATE% %TIME% - Error: Medium neither supports your Windows nor your Office version>>%UPDATE_LOGFILE%
-echo.
-goto Cleanup
-
-:NoWUAInst
-echo.
-echo ERROR: File %WUA_FILENAME% not found.
-echo %DATE% %TIME% - Error: File %WUA_FILENAME% not found>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 

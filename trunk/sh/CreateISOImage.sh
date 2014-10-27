@@ -2,7 +2,7 @@
 
 #########################################################################
 ###          WSUS Offline Update ISO maker for Linux systems          ###
-###                           v. 9.5b (r625)                          ###
+###                           v. 9.5b (r626)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg                     ###
@@ -153,7 +153,7 @@ sed -i 's#/\*$##' ../temp/ExcludeListISO-${sys}.txt
 # Verzeichnisse passend reduzieren; 11.4.14
 
 echo "Creating ISO image for $sys $Origlang..."
-$iso_tool -iso-level 4 -udf -exclude-list ../temp/ExcludeListISO-${sys}.txt \
+$iso_tool -iso-level 4 -joliet -joliet-long -udf -exclude-list ../temp/ExcludeListISO-${sys}.txt \
     -quiet -output ../iso/wsusoffline-${sys}-$Origlang.iso -volid wou_${sys}_${lang} ../client/
 echo "done."
 
