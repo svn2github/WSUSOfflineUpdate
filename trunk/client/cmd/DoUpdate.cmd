@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.5b (r627)
+set WSUSOFFLINE_VERSION=9.5b (r628)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -300,7 +300,7 @@ echo Installing most recent Windows Service Pack...
 goto SP%OS_NAME%
 
 :SPw2k3
-echo %DATE% %TIME% - Info: Installing most recent Service Pack for Windows XP / Server 2003>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Installing most recent Service Pack for Windows Server 2003>>%UPDATE_LOGFILE%
 if "%BACKUP_MODE%"=="/nobackup" (
   call InstallListedUpdates.cmd %VERIFY_MODE% /u /z /n
 ) else (
@@ -326,9 +326,9 @@ set RECALL_REQUIRED=1
 goto Installed
 
 :SPw63
-if exist %SystemRoot%\Temp\wou_w63upd_tried.txt goto SkipSPInst
-echo Checking Windows 8.1 Update 1 installation state...
-if %OS_VER_REVIS% GEQ %OS_SP_VER_TARGET_REVIS% goto SkipSPInst
+echo Checking Windows 8.1 / Server 2012 R2 Update 1 installation state...
+if %OS_VER_REVIS% GEQ %OS_SP_VER_TARGET_REVIS% goto Upd2w63
+if exist %SystemRoot%\Temp\wou_w63upd1_tried.txt goto SkipSPInst
 %CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
 if exist "%TEMP%\InstalledUpdateIds.txt" (
   %SystemRoot%\System32\find.exe /I "%OS_SP_TARGET_ID%" "%TEMP%\InstalledUpdateIds.txt" >nul 2>&1
@@ -345,20 +345,48 @@ if exist "%TEMP%\InstalledUpdateIds.txt" (
 call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
-  echo Installing Windows 8.1 Update 1...
-  echo %DATE% %TIME% - Info: Installing Windows 8.1 Update ^1>>%UPDATE_LOGFILE%
+  echo Installing Windows 8.1 / Server 2012 R2 Update 1...
+  echo %DATE% %TIME% - Info: Installing Windows 8.1 / Server 2012 R2 Update ^1>>%UPDATE_LOGFILE%
   call InstallListedUpdates.cmd %VERIFY_MODE% /errorsaswarnings
   if not errorlevel 1 (
     if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
-    echo. >%SystemRoot%\Temp\wou_w63upd_tried.txt
+    echo. >%SystemRoot%\Temp\wou_w63upd1_tried.txt
     set RECALL_REQUIRED=1
     goto Installed
   )
 ) else (
-  echo Warning: Windows 8.1 Update 1 installation files not found.
-  echo %DATE% %TIME% - Warning: Windows 8.1 Update 1 installation files not found>>%UPDATE_LOGFILE%
+  echo Warning: Windows 8.1 / Server 2012 R2 Update 1 installation files not found.
+  echo %DATE% %TIME% - Warning: Windows 8.1 / Server 2012 R2 Update 1 installation files not found>>%UPDATE_LOGFILE%
   if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
-  echo. >%SystemRoot%\Temp\wou_w63upd_tried.txt
+  echo. >%SystemRoot%\Temp\wou_w63upd1_tried.txt
+)
+:Upd2w63
+echo Checking Windows 8.1 / Server 2012 R2 November 2014 Update Rollup installation state...
+if exist %SystemRoot%\Temp\wou_w63upd2_tried.txt goto SkipSPInst
+%CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
+if exist "%TEMP%\InstalledUpdateIds.txt" (
+  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\InstalledUpdateIds.txt" ..\static\StaticUpdateIds-w63-upd2.txt >"%TEMP%\MissingUpdateIds.txt"
+  del "%TEMP%\InstalledUpdateIds.txt"
+) else (
+  copy /Y ..\static\StaticUpdateIds-w63-upd2.txt "%TEMP%\MissingUpdateIds.txt" >nul
+)
+call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
+if errorlevel 1 goto ListError
+if exist "%TEMP%\UpdatesToInstall.txt" (
+  echo Installing Windows 8.1 / Server 2012 R2 November 2014 Update Rollup...
+  echo %DATE% %TIME% - Info: Installing Windows 8.1 / Server 2012 R2 November 2014 Update Rollup>>%UPDATE_LOGFILE%
+  call InstallListedUpdates.cmd %VERIFY_MODE% /errorsaswarnings
+  if not errorlevel 1 (
+    if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
+    echo. >%SystemRoot%\Temp\wou_w63upd2_tried.txt
+    set RECALL_REQUIRED=1
+    goto Installed
+  )
+) else (
+  echo Warning: Windows 8.1 / Server 2012 R2 November 2014 Update Rollup installation files not found.
+  echo %DATE% %TIME% - Warning: Windows 8.1 / Server 2012 R2 November 2014 Update Rollup installation files not found>>%UPDATE_LOGFILE%
+  if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
+  echo. >%SystemRoot%\Temp\wou_w63upd2_tried.txt
 )
 :SkipSPInst
 
@@ -1496,7 +1524,8 @@ if "%RECALL_REQUIRED%"=="1" (
     %SystemRoot%\System32\shutdown.exe /r /f /t 3
   ) else goto ManualRecall
 ) else (
-  if exist %SystemRoot%\Temp\wou_w63upd_tried.txt del %SystemRoot%\Temp\wou_w63upd_tried.txt
+  if exist %SystemRoot%\Temp\wou_w63upd1_tried.txt del %SystemRoot%\Temp\wou_w63upd1_tried.txt
+  if exist %SystemRoot%\Temp\wou_w63upd2_tried.txt del %SystemRoot%\Temp\wou_w63upd2_tried.txt
   if exist %SystemRoot%\Temp\wou_iepre_tried.txt del %SystemRoot%\Temp\wou_iepre_tried.txt
   if exist %SystemRoot%\Temp\wou_ie_tried.txt del %SystemRoot%\Temp\wou_ie_tried.txt
   if exist %SystemRoot%\Temp\wou_wupre_tried.txt del %SystemRoot%\Temp\wou_wupre_tried.txt
@@ -1688,7 +1717,8 @@ echo.
 goto Cleanup
 
 :Cleanup
-if exist %SystemRoot%\Temp\wou_w63upd_tried.txt del %SystemRoot%\Temp\wou_w63upd_tried.txt
+if exist %SystemRoot%\Temp\wou_w63upd1_tried.txt del %SystemRoot%\Temp\wou_w63upd1_tried.txt
+if exist %SystemRoot%\Temp\wou_w63upd2_tried.txt del %SystemRoot%\Temp\wou_w63upd2_tried.txt
 if exist %SystemRoot%\Temp\wou_iepre_tried.txt del %SystemRoot%\Temp\wou_iepre_tried.txt
 if exist %SystemRoot%\Temp\wou_ie_tried.txt del %SystemRoot%\Temp\wou_ie_tried.txt
 if exist %SystemRoot%\Temp\wou_wupre_tried.txt del %SystemRoot%\Temp\wou_wupre_tried.txt

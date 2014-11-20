@@ -945,6 +945,7 @@ Version 9.4.2 -- 04.10.14
 --------------------------------------------------------------------------------
 Version 9.5 -- ??.??.??
 - NOTE: If you customized your copy of WOU using the script AddCustomLanguageSupport.cmd {lng}, please call it again once (per language) to get the appropriate Windows Essentials 2012 installation file(s) downloaded
+- Integrated November 2014 Update Rollup (kb3000850) for Windows 8.1 (x86/x64) and Server 2012 R2 (Thanks to "Gerby")
 - Support added for Windows Essentials 2012 (Thanks to J. Smith)
 - Fix: Download part did not completely exclude kb2976627 (MS14-051, superseded cumulative security update for IE) (Thanks to "Matjes")
 - Fix: Microsoft revoked kb2949927 for Windows 7 and Server 2008 R2 (x86/x64) (Thanks to "Matjes")
