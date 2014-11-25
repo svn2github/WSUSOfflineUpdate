@@ -53,8 +53,9 @@ if "%O2K13_VER_MAJOR%" NEQ "" (
 :ListFiles
 rem *** List update files ***
 if exist "%TEMP%\InstalledUpdateIds.txt" del "%TEMP%\InstalledUpdateIds.txt"
-if not exist "%TEMP%\MissingUpdateIds.txt" goto EoF
 if exist "%TEMP%\UpdatesToInstall.txt" del "%TEMP%\UpdatesToInstall.txt"
+for %%i in ("%TEMP%\MissingUpdateIds.txt") do if %%~zi==0 del %%i
+if not exist "%TEMP%\MissingUpdateIds.txt" goto EoF
 echo.>"%TEMP%\ExcludeList.txt"
 if "%IGNORE_BL%"=="1" goto IgnoreBL
 if exist ..\exclude\ExcludeList.txt (

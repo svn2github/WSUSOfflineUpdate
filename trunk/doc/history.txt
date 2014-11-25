@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 9.4.2
+WSUS Offline Update 9.5
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -943,10 +943,10 @@ Version 9.4.1 -- 30.09.14
 Version 9.4.2 -- 04.10.14
 - Fix: MSI packages' installation was broken (Thanks to "rbr555")
 --------------------------------------------------------------------------------
-Version 9.5 -- ??.??.??
+Version 9.5 -- 25.11.14
 - NOTE: If you customized your copy of WOU using the script AddCustomLanguageSupport.cmd {lng}, please call it again once (per language) to get the appropriate Windows Essentials 2012 installation file(s) downloaded
 - Integrated November 2014 Update Rollup (kb3000850) for Windows 8.1 (x86/x64) and Server 2012 R2 (Thanks to "Gerby")
-- Support added for Windows Essentials 2012 (Thanks to J. Smith)
+- Support added for Windows Essentials 2012 - not yet available for Linux download script (Thanks to J. Smith)
 - Fix: Download part did not completely exclude kb2976627 (MS14-051, superseded cumulative security update for IE) (Thanks to "Matjes")
 - Fix: Microsoft revoked kb2949927 for Windows 7 and Server 2008 R2 (x86/x64) (Thanks to "Matjes")
 - Fix: DoUpdate.cmd script will now raise a warning instead of an error if most recent Windows Update Agent installation file is not found (Thanks to "radkins", "Kettenhund" and "aker")
@@ -954,3 +954,4 @@ Version 9.5 -- ??.??.??
 - Fix: Removed obsolete Security Updates for Flash Player (kb913433 and kb923789)
 - Fix: Removed obsolete Security Updates for MDAC 2.8 SP1 (kb911562 and kb927779)
 - Fix: Reviewed and consolidated internal structures
+--------------------------------------------------------------------------------

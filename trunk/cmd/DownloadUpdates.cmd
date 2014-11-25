@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.5b (r628)
+set WSUSOFFLINE_VERSION=9.5
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -1169,9 +1169,7 @@ if exist ..\exclude\custom\ExcludeList-superseded-exclude.txt (
   type ..\exclude\custom\ExcludeList-superseded-exclude.txt >>"%TEMP%\ExcludeList-superseded-exclude.txt"
 )
 if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
-  for %%i in ("%TEMP%\ExcludeList-superseded-exclude.txt") do (
-    if %%~zi==0 del %%i
-  )
+  for %%i in ("%TEMP%\ExcludeList-superseded-exclude.txt") do if %%~zi==0 del %%i
 )
 if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
   %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-superseded-exclude.txt" "%TEMP%\ExcludeList-superseded-all.txt" >..\exclude\ExcludeList-superseded.txt

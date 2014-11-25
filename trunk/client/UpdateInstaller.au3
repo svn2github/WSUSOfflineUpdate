@@ -6,14 +6,14 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 9.5.0.628)
+#pragma compile(FileVersion, 9.5.0.630)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
 #pragma compile(ProductName, "WSUS Offline Update")
 #pragma compile(ProductVersion, 9.5.0)
 
-Dim Const $caption                    = "WSUS Offline Update 9.5b - Installer"
+Dim Const $caption                    = "WSUS Offline Update 9.5 - Installer"
 Dim Const $wou_hostname               = "www.wsusoffline.net"
 Dim Const $donationURL                = "http://www.wsusoffline.net/donate.html"
 
