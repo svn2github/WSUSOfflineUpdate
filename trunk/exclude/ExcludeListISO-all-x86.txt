@@ -13,5 +13,4 @@
 *fullfile-x64*
 *_x64*
 *.x64*
-*directx*
 *.au3

@@ -12,6 +12,4 @@
 */w62/*
 */w63/*
 */*/x86-glb/*
-*fullfile-x86*
-*directx*
 *.au3

@@ -6,7 +6,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 9.5.0.630)
+#pragma compile(FileVersion, 9.5.0.631)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)

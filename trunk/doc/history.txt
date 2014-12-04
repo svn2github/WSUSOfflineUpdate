@@ -955,3 +955,5 @@ Version 9.5 -- 25.11.14
 - Fix: Removed obsolete Security Updates for MDAC 2.8 SP1 (kb911562 and kb927779)
 - Fix: Reviewed and consolidated internal structures
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- Fix: Filter file ExcludeListUSB-all-x86.txt erroneously excluded .NET Framework 4.5.2 installation packages (kb2901907) (Thanks to "random")

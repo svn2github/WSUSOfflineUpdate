@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.5
+set WSUSOFFLINE_VERSION=9.5+ (r631)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -327,7 +327,7 @@ goto Installed
 
 :SPw63
 echo Checking Windows 8.1 / Server 2012 R2 Update April 2014 installation state...
-if %OS_VER_REVIS% GEQ %OS_SP_VER_TARGET_REVIS% goto Upd2w63
+if %OS_VER_REVIS% GEQ %OS_UPD1_TARGET_REVIS% goto Upd2w63
 if exist %SystemRoot%\Temp\wou_w63upd1_tried.txt goto SkipSPInst
 %CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
 if exist "%TEMP%\InstalledUpdateIds.txt" (
@@ -364,6 +364,7 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
 )
 :Upd2w63
 echo Checking Windows 8.1 / Server 2012 R2 Update Rollup Nov. 2014 installation state...
+if %OS_VER_REVIS% GEQ %OS_UPD2_TARGET_REVIS% goto SkipSPInst
 if exist %SystemRoot%\Temp\wou_w63upd2_tried.txt goto SkipSPInst
 copy /Y ..\static\StaticUpdateIds-w63-upd2.txt "%TEMP%\StaticUpdateIds-w63-upd2.txt" >nul
 if %OS_DOMAIN_ROLE% GEQ 2 echo 3016437>>"%TEMP%\StaticUpdateIds-w63-upd2.txt"
