@@ -956,4 +956,5 @@ Version 9.5 -- 25.11.14
 - Fix: Reviewed and consolidated internal structures
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
+- Microsoft Silverlight updated to v. 5.1.31010.0 (Thanks to "harry")
 - Fix: Filter file ExcludeListUSB-all-x86.txt erroneously excluded .NET Framework 4.5.2 installation packages (kb2901907) (Thanks to "random")
