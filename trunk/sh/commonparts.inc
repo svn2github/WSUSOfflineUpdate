@@ -3,7 +3,7 @@
 # gemeinsam benutzt werden
 # Start: 10.3.2013 Hullen
 
-syslist="w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64 all-x86 all-x64 o2k7 o2k10 o2k13 ofc"
+syslist="w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64 all-x86 all-x64 o2k7 o2k10 o2k13 ofc all-61 all-62 all-63"
 langlist="enu deu nld esn fra ptg ptb ita rus plk ell csy dan nor sve fin jpn kor chs cht hun trk ara heb"
 
 printusage()
@@ -193,4 +193,13 @@ wget -nv -N --timeout=120 $* 2>>../temp/wget.$mydate
 return $?
 }
 
+# ================================================================
+
+# $Id: commonparts.inc,v 1.3 2014-12-10 13:58:23+01 root Exp $
+# $Log: commonparts.inc,v $
+# Revision 1.3  2014-12-10 13:58:23+01  root
+# w6x-all ergänzt
+
+# Revision 1.2  2014-12-10 13:56:57+01  root
+# Start
 
