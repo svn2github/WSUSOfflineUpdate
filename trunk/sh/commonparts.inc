@@ -33,6 +33,7 @@ Parameters:
 /msse      - download Microsoft Security Essentials files
 /wddefs    - download Windows Defender definition files
 /nocleanup - do not cleanup client directory
+/wle       - download Essentials
 $Iso
 
 Example: bash `basename $0` w2k3 deu /dotnet /excludesp
@@ -43,7 +44,7 @@ exit 1
 evaluateparams()
 {
 Cmdline="$@"
-paramlist=("/excludesp" "/dotnet" "/msse" "/makeiso" "/nocleanup" "/proxy" "/wddefs")
+paramlist=("/excludesp" "/dotnet" "/msse" "/makeiso" "/nocleanup" "/proxy" "/wddefs" "/wle")
 EXCLUDE_SP="0"
 EXCLUDE_STATICS="0"
 CLEANUP_DOWNLOADS="1"
@@ -51,6 +52,7 @@ createiso="0"
 dotnet="0"
 msse="0"
 wddefs="0"
+wle="0"
 param1=""
 param2=""
 param3=""
@@ -58,6 +60,7 @@ param4=""
 param5=""
 param6=""
 param7=""
+param8=""
 
 #determining system
 grep -q -w $1 <<< $syslist && sys=$1
@@ -89,8 +92,8 @@ test "$lang" || {
 Origlang=$lang
 
 case $sys in
-    w6[0-2]*)
-    echo "Setting language to glb..."
+    w6[0-3]*)
+#    echo "Setting language to glb..."
     lang="glb"
     ;;
 esac
@@ -164,6 +167,11 @@ esac
     esac
   fi
 
+  if grep -q /wle <<< $Cmdline ; then
+    param8=/wle
+    wle="1"
+  fi
+
 if [ "$sys" == "w2k3" -o "$sys" == "w2k3-x64" ]; then
   msse="0"
 fi
@@ -195,11 +203,15 @@ return $?
 
 # ================================================================
 
-# $Id: commonparts.inc,v 1.3 2014-12-10 13:58:23+01 root Exp $
+# $Id: commonparts.inc,v 1.4 2014-12-16 16:46:12+01 hhullen Exp $
 # $Log: commonparts.inc,v $
+# Revision 1.4  2014-12-16 16:46:12+01  hhullen
+# exclude-Liste überarbeitet
+#
 # Revision 1.3  2014-12-10 13:58:23+01  root
 # w6x-all ergänzt
 
 # Revision 1.2  2014-12-10 13:56:57+01  root
 # Start
+
 

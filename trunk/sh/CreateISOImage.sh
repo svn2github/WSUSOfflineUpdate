@@ -2,7 +2,7 @@
 
 #########################################################################
 ###          WSUS Offline Update ISO maker for Linux systems          ###
-###                           v. 9.5+ (r634)                          ###
+###                           v. 9.5+ (r635)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg                     ###
@@ -133,6 +133,9 @@ fi
 if [ "$wddefs" != "1" ]; then
   echo "wddefs/*" >> ../temp/ExcludeListISO-${sys}.txt
 fi
+if [ "$wle" != "1" ]; then
+  echo "wle/*" >> ../temp/ExcludeListISO-${sys}.txt
+fi
 
 for skip in $langlist
   do
@@ -140,7 +143,7 @@ for skip in $langlist
 	enu|$Origlang)
 	;;
 	*)
-        echo "*${skip}*" 
+        echo "*${skip}.exe" 
     esac
   done >> ../temp/ExcludeListISO-${sys}.txt
 
@@ -153,8 +156,8 @@ sed -i 's#/\*$##' ../temp/ExcludeListISO-${sys}.txt
 # Verzeichnisse passend reduzieren; 11.4.14
 
 echo "Creating ISO image for $sys $Origlang..."
-$iso_tool -iso-level 4 -joliet -joliet-long -rational-rock -udf -exclude-list ../temp/ExcludeListISO-${sys}.txt \
-    -quiet -output ../iso/wsusoffline-${sys}-$Origlang.iso -volid wou_${sys}_${lang} ../client/
+$iso_tool -iso-level 4 -udf -exclude-list ../temp/ExcludeListISO-${sys}.txt \
+    -quiet -output ../iso/wsusoffline-${sys}-$Origlang.iso -volid wou_${sys}_${Origlang} ../client/
 echo "done."
 
 exit 0
@@ -162,8 +165,14 @@ exit 0
 # EOF
 
 # ============================================================================
-# $Id: CreateISOImage.sh,v 1.6 2013-03-11 13:17:24+01 HHullen Exp $
+# $Id: CreateISOImage.sh,v 1.9 2014-12-16 16:43:49+01 hhullen Exp $
 # $Log: CreateISOImage.sh,v $
+# Revision 1.9  2014-12-16 16:43:49+01  hhullen
+# exclude-Liste überarbeitet
+#
+# Revision 1.8  2014-12-10 15:10:18+01  hhullen
+# ISO-Typ udf
+#
 # Revision 1.7  2013-03-05 09:52:00+01  twittrock
 # builddate.txt-Erzeugung entfernt
 #
