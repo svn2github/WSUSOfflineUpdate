@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                          v. 9.5+ (r636)                           ###
+###                          v. 9.5+ (r637)                           ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -524,14 +524,14 @@ if [ -f ../static/custom/StaticDownloadLinks-${OS_sys}-${lang}.txt ]; then
 fi
 
 for Pfad in static static/custom; do
-test "$lang" != glb -a "$sys" != "w2k3-x64" || continue
+# test "$lang" != glb -a "$sys" != "w2k3-x64" || continue
   static="../$Pfad/StaticDownloadLinks-win-${OS_ARCH}-${Origlang}.txt"
   if [ -f "$static" ]; then
-    cat $static > ../temp/StaticUrls-${Origlang}.txt
+    cat $static >> ../temp/StaticUrls-${Origlang}.txt
   fi
   static="../$Pfad/StaticDownloadLinks-win-${OS_ARCH}-glb.txt"
   if [ -f "$static" ]; then
-    cat $static > ../temp/StaticUrls-glb.txt
+    cat $static >> ../temp/StaticUrls-glb.txt
   fi
 done
 
@@ -539,7 +539,7 @@ for Pfad in static static/custom; do
 if [ $lang != glb  ]; then
   static="../$Pfad/StaticDownloadLinks-${OS_sys}-glb.txt"
   if [ -f "$static" ]; then
-    cat $static > ../temp/StaticUrls-${sys}-glb.txt
+    cat $static >> ../temp/StaticUrls-${sys}-glb.txt
   fi
 fi
 done
@@ -716,26 +716,28 @@ test $lang == glb || {
 
 if [ $lang != glb -a $sys != "w2k3-x64" -a "$sys" != "ofc" ]; then
   echo "Determining update URLs for win ..."
-  $xml tr ../xslt/ExtractDownloadLinks-win-x86-${lang}.xsl ../temp/package.xml > ../temp/Urls-win-${OS_ARCH}-${lang}.txt
+  test -f ../xslt/ExtractDownloadLinks-win-x86-${lang}.xsl && \
+    $xml tr ../xslt/ExtractDownloadLinks-win-x86-${lang}.xsl ../temp/package.xml >> ../temp/Urls-win-${OS_ARCH}-${lang}.txt
   cat ../exclude/ExcludeList-win-x86.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
   test -f ../exclude/custom/ExcludeList-win-x86.txt && \
     cat ../exclude/custom/ExcludeList-win-x86.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
   test -f ../exclude/ExcludeList-superseded.txt && \
     cat ../exclude/ExcludeList-superseded.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
-  grep -F -i -v -f ../temp/tmpExcludeList-win-${OS_ARCH}.txt ../temp/Urls-win-${OS_ARCH}-${lang}.txt > ../temp/ValidUrls-win-${OS_ARCH}-${lang}.txt
+  test -f ../temp/Urls-win-${OS_ARCH}-${lang}.txt && \
+    grep -F -i -v -f ../temp/tmpExcludeList-win-${OS_ARCH}.txt ../temp/Urls-win-${OS_ARCH}-${lang}.txt >> ../temp/ValidUrls-win-${OS_ARCH}-${lang}.txt
 fi
 
 if [ $lang == glb ]; then
   echo "Determining update URLs for win ..."
-#  $xml tr ../xslt/ExtractDownloadLinks-win-${OS_ARCH}-${lang}.xsl ../temp/package.xml > ../temp/Urls-win-${OS_ARCH}-${lang}.txt
-  $xml tr ../xslt/ExtractDownloadLinks-win-x86-${lang}.xsl ../temp/package.xml > ../temp/Urls-win-${OS_ARCH}-${lang}.txt
-#  cat ../exclude/ExcludeList-win-${OS_ARCH}.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
+  test -f ../xslt/ExtractDownloadLinks-win-x86-${lang}.xsl && \
+    $xml tr ../xslt/ExtractDownloadLinks-win-x86-${lang}.xsl ../temp/package.xml >> ../temp/Urls-win-${OS_ARCH}-${lang}.txt
   cat ../exclude/ExcludeList-win-x86.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
   test -f ../exclude/custom/ExcludeList-win-x86.txt && \
     cat ../exclude/custom/ExcludeList-win-x86.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
   test -f ../exclude/ExcludeList-superseded.txt && \
     cat ../exclude/ExcludeList-superseded.txt >> ../temp/tmpExcludeList-win-${OS_ARCH}.txt
-  grep -F -i -v -f ../temp/tmpExcludeList-win-${OS_ARCH}.txt ../temp/Urls-win-${OS_ARCH}-${lang}.txt > ../temp/ValidUrls-win-${OS_ARCH}-${lang}.txt
+  test -f ../temp/Urls-win-${OS_ARCH}-${lang}.txt && \
+    grep -F -i -v -f ../temp/tmpExcludeList-win-${OS_ARCH}.txt ../temp/Urls-win-${OS_ARCH}-${lang}.txt >> ../temp/ValidUrls-win-${OS_ARCH}-${lang}.txt
 fi
 
 # ------------- Office -------------
@@ -852,7 +854,7 @@ cat ../temp/StaticUrls-dotnet.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-dotnet-${OS_ARCH}-${lang}.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-cpp-${OS_ARCH}-glb.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-msse-${OS_ARCH}-glb.txt >> ../temp/urls.txt
-cat ../temp/StaticUrls-wle-${OS_ARCH}-glb.txt >> ../temp/urls.txt
+cat ../temp/StaticUrls-wle-${OS_ARCH}-glb.txt >> ../temp/urls.txt 2>/dev/null
 cat ../temp/StaticUrls-wddefs-${OS_ARCH}-glb.txt >> ../temp/urls.txt
 test "$sys_old" && {
     cat ../temp/StaticUrls-${sys_old}-${lang}.txt >> ../temp/urls.txt
@@ -1047,8 +1049,11 @@ exit 0
 # 
 
 # ========================================================================
-# $Id: DownloadUpdates.sh,v 1.14 2014-12-16 17:47:18+01 hhullen Exp $
+# $Id: DownloadUpdates.sh,v 1.15 2014-12-21 17:03:31+01 HHullen Exp $
 # $Log: DownloadUpdates.sh,v $
+# Revision 1.15  2014-12-21 17:03:31+01  HHullen
+# Fehler beim Befüllen des win-Verzeichnisses korrigiert
+#
 # Revision 1.14  2014-12-16 17:47:18+01  hhullen
 # kleine Korrekturen
 #
