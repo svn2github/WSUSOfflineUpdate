@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 9.5
+WSUS Offline Update 9.5.1
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -955,9 +955,10 @@ Version 9.5 -- 25.11.14
 - Fix: Removed obsolete Security Updates for MDAC 2.8 SP1 (kb911562 and kb927779)
 - Fix: Reviewed and consolidated internal structures
 --------------------------------------------------------------------------------
-Version ?.? -- ??.??.??
+Version 9.5.1 -- 05.01.15
 - Linux scripts now also support Windows Essentials 2012 (Thanks to H. Hullen)
 - RemoveEnglishLanguageSupport.cmd script added for non-english users' convenience
 - Fix: Removed download exclusion of kb2976627 (MS14-051, superseded cumulative security update for IE) for IE11 under Windows 7, 8.1 and Server 2008/2012 R2 (x86/x64) systems
 - Fix: Removed superseded IE cumulative security update kb3003057 (MS14-065) from November 2014 Update Rollup (kb3000850) installation for Windows 8.1 (x86/x64) and Server 2012 R2 (Thanks to "jonas")
 - Fix: Filter file ExcludeListUSB-all-x86.txt erroneously excluded .NET Framework 4.5.2 installation packages (kb2901907) (Thanks to "random")
+--------------------------------------------------------------------------------
