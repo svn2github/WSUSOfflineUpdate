@@ -1,0 +1,3 @@
+http://download.microsoft.com/download/5/B/4/5B48BDD0-1921-4964-984C-FA71EB4CB463/IE9-Windows7-x86-ara.exe
+http://download.microsoft.com/download/C/A/9/CA90370F-9BC9-4EF0-8761-164F2543A74B/IE10-Windows6.1-x86-ar-sa.exe
+http://download.microsoft.com/download/1/9/5/195AA545-2316-435F-8AAE-C4798D598BDC/IE11-Windows6.1-x86-ar-sa.exe
