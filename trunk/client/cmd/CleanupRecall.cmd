@@ -81,18 +81,15 @@ if exist "%TEMP%\SetTempAdminSID.cmd" (
 if "%TempAdminSID%"=="" (
   echo %DATE% %TIME% - Warning: Environment variable TempAdminSID not found - skipped deletion of WOUTempAdmin profile>>%UPDATE_LOGFILE%
 ) else (
-  for /F "tokens=3" %%i in ('%REG_PATH% QUERY "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\%TempAdminSID%" /v ProfileImagePath ^| %SystemRoot%\System32\find.exe /I "ProfileImagePath"') do (
-    if "%%i"=="" (
-      echo %DATE% %TIME% - Warning: Registry reference to WOUTempAdmin profile not found - skipped deletion of WOUTempAdmin profile>>%UPDATE_LOGFILE%
-    ) else (
-      %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v DeleteWOUTempAdminProfile /t REG_SZ /d "cmd /c rd /S /Q \"%%i\"" /f >nul 2>&1
-      echo %DATE% %TIME% - Info: Registered deletion of WOUTempAdmin profile>>%UPDATE_LOGFILE%
-    )
-  )
-  %REG_PATH% DELETE "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\%TempAdminSID%" /f >nul 2>&1
+  %REG_PATH% QUERY "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\%TempAdminSID%" /v ProfileImagePath >nul 2>&1
   if errorlevel 1 (
     echo %DATE% %TIME% - Warning: Registry reference to WOUTempAdmin profile not found - skipped deletion>>%UPDATE_LOGFILE%
   ) else (
+    for /F "tokens=2*" %%i in ('%REG_PATH% QUERY "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\%TempAdminSID%" /v ProfileImagePath ^| %SystemRoot%\System32\find.exe /I "ProfileImagePath"') do (
+      %REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v DeleteWOUTempAdminProfile /t REG_SZ /d "cmd /c rd /S /Q \"%%j\"" /f >nul 2>&1
+      echo %DATE% %TIME% - Info: Registered deletion of WOUTempAdmin profile ^("%%j"^)>>%UPDATE_LOGFILE%
+    )
+    %REG_PATH% DELETE "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\%TempAdminSID%" /f >nul 2>&1
     echo %DATE% %TIME% - Info: Deleted registry reference to WOUTempAdmin profile>>%UPDATE_LOGFILE%
   )
 )

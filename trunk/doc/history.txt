@@ -962,7 +962,8 @@ Version 9.5.1 -- 05.01.15
 - Fix: Removed superseded IE cumulative security update kb3003057 (MS14-065) from November 2014 Update Rollup (kb3000850) installation for Windows 8.1 (x86/x64) and Server 2012 R2 (Thanks to "jonas")
 - Fix: Filter file ExcludeListUSB-all-x86.txt erroneously excluded .NET Framework 4.5.2 installation packages (kb2901907) (Thanks to "random")
 --------------------------------------------------------------------------------
-Version 9.5.2 -- ??.02.15
+Version 9.5.2 -- 11.02.15
 - Static download URLs for aria2 download utility updated to v. 1.18.9 (Thanks to "harry")
 - Fix: CleanupRecall.cmd script could erroneously delete a user profile different from WOUTempAdmin (Thanks to "LogicDaemon")
 - Fix: Removed static download definition for obsolete Update kb2687503 for Office 2010 x86 (Thanks to "harry")
+--------------------------------------------------------------------------------
