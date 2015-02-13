@@ -967,3 +967,5 @@ Version 9.5.2 -- 11.02.15
 - Fix: CleanupRecall.cmd script could erroneously delete a user profile different from WOUTempAdmin (Thanks to "LogicDaemon")
 - Fix: Removed static download definition for obsolete Update kb2687503 for Office 2010 x86 (Thanks to "harry")
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- Update for Root Certificates (rootsupd.exe/kb931125) updated to v. 41,0,2195,0 (March 2014) (Thanks to "Gerby", "boco", "-Iwan-" and "aker")
