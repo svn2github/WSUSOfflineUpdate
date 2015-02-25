@@ -17,11 +17,11 @@ del "%TEMP%\package.cab"
 
 %SystemRoot%\System32\cscript.exe //Nologo //B //E:vbs .\cmd\XSLT.vbs "%TEMP%\package.xml" .\xslt\ExtractUpdateRevisionIds.xsl "%TEMP%\ValidUpdateRevisionIds.txt"
 %SystemRoot%\System32\cscript.exe //Nologo //B //E:vbs .\cmd\XSLT.vbs "%TEMP%\package.xml" .\xslt\ExtractSupersedingRevisionIds.xsl "%TEMP%\SupersedingRevisionIds.txt"
-%SystemRoot%\System32\findstr.exe /L /G:"%TEMP%\SupersedingRevisionIds.txt" "%TEMP%\ValidUpdateRevisionIds.txt" >"%TEMP%\ValidSupersedingRevisionIds.txt"
+%SystemRoot%\System32\findstr.exe /L /I /G:"%TEMP%\SupersedingRevisionIds.txt" "%TEMP%\ValidUpdateRevisionIds.txt" >"%TEMP%\ValidSupersedingRevisionIds.txt"
 rem del "%TEMP%\ValidUpdateRevisionIds.txt"
 rem del "%TEMP%\SupersedingRevisionIds.txt"
 %SystemRoot%\System32\cscript.exe //Nologo //B //E:vbs .\cmd\XSLT.vbs "%TEMP%\package.xml" .\xslt\ExtractSupersededUpdateRelations.xsl "%TEMP%\SupersededUpdateRelations.txt"
-%SystemRoot%\System32\findstr.exe /L /G:"%TEMP%\ValidSupersedingRevisionIds.txt" "%TEMP%\SupersededUpdateRelations.txt" >"%TEMP%\ValidSupersededUpdateRelations.txt"
+%SystemRoot%\System32\findstr.exe /L /I /G:"%TEMP%\ValidSupersedingRevisionIds.txt" "%TEMP%\SupersededUpdateRelations.txt" >"%TEMP%\ValidSupersededUpdateRelations.txt"
 rem del "%TEMP%\SupersededUpdateRelations.txt"
 rem del "%TEMP%\ValidSupersedingRevisionIds.txt"
 %SystemRoot%\System32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractIdsAndFileNames.vbs "%TEMP%\ValidSupersededUpdateRelations.txt" "%TEMP%\ValidSupersededRevisionIds.txt" /firstonly
@@ -38,7 +38,7 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\UpdateRevisionAndFileIds.t
 )
 set REVISION_ID=
 rem del "%TEMP%\UpdateRevisionAndFileIds.txt"
-%SystemRoot%\System32\findstr.exe /L /G:"%TEMP%\ValidSupersededRevisionIds.txt" "%TEMP%\BundledUpdateRevisionAndFileIds.txt" >"%TEMP%\SupersededRevisionAndFileIds.txt"
+%SystemRoot%\System32\findstr.exe /L /I /G:"%TEMP%\ValidSupersededRevisionIds.txt" "%TEMP%\BundledUpdateRevisionAndFileIds.txt" >"%TEMP%\SupersededRevisionAndFileIds.txt"
 rem del "%TEMP%\ValidSupersededRevisionIds.txt"
 rem del "%TEMP%\BundledUpdateRevisionAndFileIds.txt"
 %SystemRoot%\System32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractIdsAndFileNames.vbs "%TEMP%\SupersededRevisionAndFileIds.txt" "%TEMP%\SupersededFileIds.txt" /secondonly
@@ -48,7 +48,7 @@ rem del "%TEMP%\SupersededFileIds.txt"
 %SystemRoot%\System32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractUniqueFromSorted.vbs "%TEMP%\SupersededFileIdsSorted.txt" "%TEMP%\SupersededFileIdsUnique.txt"
 rem del "%TEMP%\SupersededFileIdsSorted.txt"
 %SystemRoot%\System32\cscript.exe //Nologo //B //E:vbs .\cmd\XSLT.vbs "%TEMP%\package.xml" .\xslt\ExtractUpdateCabExeIdsAndLocations.xsl "%TEMP%\UpdateCabExeIdsAndLocations.txt"
-%SystemRoot%\System32\findstr.exe /B /L /G:"%TEMP%\SupersededFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\SupersededCabExeIdsAndLocations.txt"
+%SystemRoot%\System32\findstr.exe /B /L /I /G:"%TEMP%\SupersededFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\SupersededCabExeIdsAndLocations.txt"
 rem del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 rem del "%TEMP%\SupersededFileIdsUnique.txt"
 %SystemRoot%\System32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractIdsAndFileNames.vbs "%TEMP%\SupersededCabExeIdsAndLocations.txt" "%TEMP%\ExcludeList-superseded-all.txt" /noids

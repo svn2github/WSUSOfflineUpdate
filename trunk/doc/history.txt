@@ -970,4 +970,5 @@ Version 9.5.2 -- 11.02.15
 Version ?.? -- ??.??.??
 - Update for Root Certificates (rootsupd.exe/kb931125) updated to v. 41,0,2195,0 (March 2014) (Thanks to "Gerby", "boco", "-Iwan-" and "aker")
 - Added fix for text quality degradation (kb3037639) after security update kb3013455 for Windows Vista and Server 2003/2008 (x86/x64) systems
+- Increased filtering stability by operating findstr.exe case insensitively (Thanks to "hbuhrmester")
 - Static download URLs for aria2 download utility updated to v. 1.18.10 (Thanks to "harry")

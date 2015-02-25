@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.5.2+ (r646)
+set WSUSOFFLINE_VERSION=9.5.2+ (r647)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -166,7 +166,7 @@ rem *** Echo OS properties ***
 echo Found Microsoft Windows version: %OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_VER_BUILD%.%OS_VER_REVIS% (%OS_NAME% %OS_ARCH% %OS_LANG% sp%OS_SP_VER_MAJOR%)
 if exist "%TEMP%\wou_slmgr.txt" (
   echo Found Microsoft Windows Software Licensing Management Tool info...
-  for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /B /L "1: 2: 3: 4: 5: 6:" "%TEMP%\wou_slmgr.txt"') do echo %%j
+  for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /B /L /I "1: 2: 3: 4: 5: 6:" "%TEMP%\wou_slmgr.txt"') do echo %%j
 )
 rem echo Found Windows Update Agent version: %WUA_VER_MAJOR%.%WUA_VER_MINOR%.%WUA_VER_BUILD%.%WUA_VER_REVIS%
 rem echo Found Windows Installer version: %MSI_VER_MAJOR%.%MSI_VER_MINOR%.%MSI_VER_BUILD%.%MSI_VER_REVIS%
@@ -198,7 +198,7 @@ if "%O2K13_VER_MAJOR%" NEQ "" (
 echo %DATE% %TIME% - Info: Found Microsoft Windows version %OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_VER_BUILD%.%OS_VER_REVIS% (%OS_NAME% %OS_ARCH% %OS_LANG% sp%OS_SP_VER_MAJOR%)>>%UPDATE_LOGFILE%
 if exist "%TEMP%\wou_slmgr.txt" (
   echo %DATE% %TIME% - Info: Found Microsoft Windows Software Licensing Management Tool info...>>%UPDATE_LOGFILE%
-  for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /B /L "1: 2: 3: 4: 5: 6:" "%TEMP%\wou_slmgr.txt"') do echo %DATE% %TIME% - Info: %%j>>%UPDATE_LOGFILE%
+  for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /B /L /I "1: 2: 3: 4: 5: 6:" "%TEMP%\wou_slmgr.txt"') do echo %DATE% %TIME% - Info: %%j>>%UPDATE_LOGFILE%
   del "%TEMP%\wou_slmgr.txt"
 )
 echo %DATE% %TIME% - Info: Found Windows Update Agent version %WUA_VER_MAJOR%.%WUA_VER_MINOR%.%WUA_VER_BUILD%.%WUA_VER_REVIS%>>%UPDATE_LOGFILE%
@@ -1362,7 +1362,7 @@ if not exist ..\md\hashes-wsus.txt (
   goto SkipVerifyCatalog
 )
 echo Verifying integrity of Windows Update catalog file...
-%SystemRoot%\System32\findstr.exe /L /C:%% /C:## /C:..\wsus\wsusscn2.cab ..\md\hashes-wsus.txt >"%TEMP%\hash-wsusscn2.txt"
+%SystemRoot%\System32\findstr.exe /L /I /C:%% /C:## /C:..\wsus\wsusscn2.cab ..\md\hashes-wsus.txt >"%TEMP%\hash-wsusscn2.txt"
 %HASHDEEP_PATH% -a -l -k "%TEMP%\hash-wsusscn2.txt" ..\wsus\wsusscn2.cab
 if errorlevel 1 (
   if exist "%TEMP%\hash-wsusscn2.txt" del "%TEMP%\hash-wsusscn2.txt"

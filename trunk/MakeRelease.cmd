@@ -27,7 +27,7 @@ if /i "%PROCESSOR_ARCHITECTURE%"=="AMD64" (set HASHDEEP_EXE=hashdeep64.exe) else
   if /i "%PROCESSOR_ARCHITEW6432%"=="AMD64" (set HASHDEEP_EXE=hashdeep64.exe) else (set HASHDEEP_EXE=hashdeep.exe)
 )
 %~dps0client\bin\%HASHDEEP_EXE% -c md5,sha1,sha256 -b wsusoffline%1.zip >wsusoffline%1.mds
-%SystemRoot%\System32\findstr.exe /L /C:## /V wsusoffline%1.mds >wsusoffline%1_hashes.txt
+%SystemRoot%\System32\findstr.exe /L /I /C:## /V wsusoffline%1.mds >wsusoffline%1_hashes.txt
 del wsusoffline%1.mds
 popd
 rd /S /Q "%TEMP%\wsusoffline"

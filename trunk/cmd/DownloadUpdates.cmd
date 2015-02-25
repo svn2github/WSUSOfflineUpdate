@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.5.2+ (r646)
+set WSUSOFFLINE_VERSION=9.5.2+ (r647)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -1125,12 +1125,12 @@ echo %TIME% - Determining superseded updates (please be patient, this will take 
 if errorlevel 1 goto DownloadError
 %CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractSupersedingRevisionIds.xsl "%TEMP%\SupersedingRevisionIds.txt"
 if errorlevel 1 goto DownloadError
-%SystemRoot%\System32\findstr.exe /L /G:"%TEMP%\SupersedingRevisionIds.txt" "%TEMP%\ValidUpdateRevisionIds.txt" >"%TEMP%\ValidSupersedingRevisionIds.txt"
+%SystemRoot%\System32\findstr.exe /L /I /G:"%TEMP%\SupersedingRevisionIds.txt" "%TEMP%\ValidUpdateRevisionIds.txt" >"%TEMP%\ValidSupersedingRevisionIds.txt"
 del "%TEMP%\ValidUpdateRevisionIds.txt"
 del "%TEMP%\SupersedingRevisionIds.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractSupersededUpdateRelations.xsl "%TEMP%\SupersededUpdateRelations.txt"
 if errorlevel 1 goto DownloadError
-%SystemRoot%\System32\findstr.exe /L /G:"%TEMP%\ValidSupersedingRevisionIds.txt" "%TEMP%\SupersededUpdateRelations.txt" >"%TEMP%\ValidSupersededUpdateRelations.txt"
+%SystemRoot%\System32\findstr.exe /L /I /G:"%TEMP%\ValidSupersedingRevisionIds.txt" "%TEMP%\SupersededUpdateRelations.txt" >"%TEMP%\ValidSupersededUpdateRelations.txt"
 del "%TEMP%\SupersededUpdateRelations.txt"
 del "%TEMP%\ValidSupersedingRevisionIds.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\ValidSupersededUpdateRelations.txt" "%TEMP%\ValidSupersededRevisionIds.txt" /firstonly
@@ -1148,7 +1148,7 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\UpdateRevisionAndFileIds.t
 )
 set REVISION_ID=
 del "%TEMP%\UpdateRevisionAndFileIds.txt"
-%SystemRoot%\System32\findstr.exe /L /G:"%TEMP%\ValidSupersededRevisionIds.txt" "%TEMP%\BundledUpdateRevisionAndFileIds.txt" >"%TEMP%\SupersededRevisionAndFileIds.txt"
+%SystemRoot%\System32\findstr.exe /L /I /G:"%TEMP%\ValidSupersededRevisionIds.txt" "%TEMP%\BundledUpdateRevisionAndFileIds.txt" >"%TEMP%\SupersededRevisionAndFileIds.txt"
 del "%TEMP%\ValidSupersededRevisionIds.txt"
 del "%TEMP%\BundledUpdateRevisionAndFileIds.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\SupersededRevisionAndFileIds.txt" "%TEMP%\SupersededFileIds.txt" /secondonly
@@ -1159,7 +1159,7 @@ del "%TEMP%\SupersededFileIds.txt"
 del "%TEMP%\SupersededFileIdsSorted.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractUpdateCabExeIdsAndLocations.xsl "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 if errorlevel 1 goto DownloadError
-%SystemRoot%\System32\findstr.exe /B /L /G:"%TEMP%\SupersededFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\SupersededCabExeIdsAndLocations.txt"
+%SystemRoot%\System32\findstr.exe /B /L /I /G:"%TEMP%\SupersededFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\SupersededCabExeIdsAndLocations.txt"
 del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 del "%TEMP%\SupersededFileIdsUnique.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\SupersededCabExeIdsAndLocations.txt" "%TEMP%\ExcludeList-superseded-all.txt" /noids
@@ -1276,22 +1276,13 @@ set UPDATE_CATEGORY=
 set UPDATE_LANGUAGES=
 del "%TEMP%\UpdateCategoriesAndFileIds.txt"
 
-%SystemRoot%\System32\sort.exe "%TEMP%\OfficeFileIds.txt" /O "%TEMP%\OfficeFileIdsSortedForward.txt"
-%SystemRoot%\System32\sort.exe /R "%TEMP%\OfficeFileIds.txt" /O "%TEMP%\OfficeFileIdsSortedReverse.txt"
+%SystemRoot%\System32\sort.exe "%TEMP%\OfficeFileIds.txt" /O "%TEMP%\OfficeFileIdsSorted.txt"
 del "%TEMP%\OfficeFileIds.txt"
-%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractUniqueFromSorted.vbs "%TEMP%\OfficeFileIdsSortedForward.txt" "%TEMP%\OfficeFileIdsUniqueForward.txt"
-del "%TEMP%\OfficeFileIdsSortedForward.txt"
-%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractUniqueFromSorted.vbs "%TEMP%\OfficeFileIdsSortedReverse.txt" "%TEMP%\OfficeFileIdsUniqueReverse.txt"
-del "%TEMP%\OfficeFileIdsSortedReverse.txt"
-%SystemRoot%\System32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIdsUniqueForward.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocationsDouble.txt"
-del "%TEMP%\OfficeFileIdsUniqueForward.txt"
-%SystemRoot%\System32\findstr.exe /B /L /G:"%TEMP%\OfficeFileIdsUniqueReverse.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >>"%TEMP%\OfficeUpdateCabExeIdsAndLocationsDouble.txt"
-del "%TEMP%\OfficeFileIdsUniqueReverse.txt"
+%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractUniqueFromSorted.vbs "%TEMP%\OfficeFileIdsSorted.txt" "%TEMP%\OfficeFileIdsUnique.txt"
+del "%TEMP%\OfficeFileIdsSorted.txt"
+%SystemRoot%\System32\findstr.exe /B /L /I /G:"%TEMP%\OfficeFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
+del "%TEMP%\OfficeFileIdsUnique.txt"
 del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
-%SystemRoot%\System32\sort.exe "%TEMP%\OfficeUpdateCabExeIdsAndLocationsDouble.txt" /O "%TEMP%\OfficeUpdateCabExeIdsAndLocationsSorted.txt"
-del "%TEMP%\OfficeUpdateCabExeIdsAndLocationsDouble.txt"
-%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractUniqueFromSorted.vbs "%TEMP%\OfficeUpdateCabExeIdsAndLocationsSorted.txt" "%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
-del "%TEMP%\OfficeUpdateCabExeIdsAndLocationsSorted.txt"
 
 if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
 if exist "%TEMP%\UpdateTableURL-%1-%2.csv" del "%TEMP%\UpdateTableURL-%1-%2.csv"
