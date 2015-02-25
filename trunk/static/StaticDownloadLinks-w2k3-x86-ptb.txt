@@ -3,3 +3,4 @@ http://download.microsoft.com/download/1/9/a/19a1ce0c-fe08-4cb3-aaed-2cfd761db51
 http://download.microsoft.com/download/D/7/D/D7D5AB51-A29F-4742-A6CF-DB6F67BA2489/WindowsServer2003-KB968930-x86-PTB.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-pt-br-kb2564958_4a863e58c308760d1ef0bb7cd69ccef7b5fee738.exe
 http://download.microsoft.com/download/f/f/1/ff178bb1-da91-48ed-89e5-478a99387d4f/wic_x86_ptb.exe
+http://download.microsoft.com/download/7/7/8/778382B2-4ACD-4B7A-AEC8-EA2D14637D2F/WindowsServer2003-KB3037639-x86-PTB.exe
