@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 9.5.2
+WSUS Offline Update 9.5.3
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -967,10 +967,11 @@ Version 9.5.2 -- 11.02.15
 - Fix: CleanupRecall.cmd script could erroneously delete a user profile different from WOUTempAdmin (Thanks to "LogicDaemon")
 - Fix: Removed static download definition for obsolete Update kb2687503 for Office 2010 x86 (Thanks to "harry")
 --------------------------------------------------------------------------------
-Version ?.? -- ??.??.??
+Version 9.5.3 -- 05.03.15
 - Update for Root Certificates (rootsupd.exe/kb931125) updated to v. 41,0,2195,0 (March 2014) (Thanks to "Gerby", "boco", "-Iwan-" and "aker")
 - Added fix for text quality degradation (kb3037639) after security update kb3013455 for Windows Vista and Server 2003/2008 (x86/x64) systems
 - Increased filtering stability by operating findstr.exe case insensitively (Thanks to "hbuhrmester")
 - Self update will now automatically update custom language additions (Thanks to "aker")
 - Static download URLs for aria2 download utility updated to v. 1.18.10 (Thanks to "harry")
 - Fix: Replaced obsolete Security Update for Office 2010 kb2878284 (MS14-023) by kb2956073 (MS15-012)
+--------------------------------------------------------------------------------

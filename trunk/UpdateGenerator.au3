@@ -1,4 +1,4 @@
-; ***  WSUS Offline Update 9.5.2 - Generator  ***
+; ***  WSUS Offline Update 9.5.3 - Generator  ***
 ; ***       Author: T. Wittrock, Kiel         ***
 ; ***     USB-Option added by Ch. Riedel      ***
 ; ***   Dialog scaling added by Th. Baisch    ***
@@ -6,14 +6,14 @@
 #include <GUIConstants.au3>
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Generator")
-#pragma compile(FileVersion, 9.5.2.650)
+#pragma compile(FileVersion, 9.5.3.652)
 #pragma compile(InternalName, "Generator")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateGenerator.exe)
 #pragma compile(ProductName, "WSUS Offline Update")
-#pragma compile(ProductVersion, 9.5.2)
+#pragma compile(ProductVersion, 9.5.3)
 
-Dim Const $caption                  = "WSUS Offline Update 9.5.2"
+Dim Const $caption                  = "WSUS Offline Update 9.5.3"
 Dim Const $title                    = $caption & " - Generator"
 Dim Const $donationURL              = "http://www.wsusoffline.net/donate.html"
 Dim Const $downloadLogFile          = "download.log"
