@@ -2,7 +2,7 @@
 rem *** Author: T. Wittrock, Kiel ***
 
 verify other 2>nul
-setlocal enableextensions
+setlocal enableextensions enabledelayedexpansion
 if errorlevel 1 goto NoExtensions
 
 if "%DIRCMD%" NEQ "" set DIRCMD=
@@ -68,10 +68,37 @@ for /F %%i in (..\static\StaticDownloadLink-recent.txt) do (
   del ..\%%~ni_hashes.txt
   echo %DATE% %TIME% - Info: Deleted %%~ni_hashes.txt>>%DOWNLOAD_LOGFILE%
 )
+echo Preserving custom language additions...
+set CUST_LANG=
+if exist ..\static\custom\StaticDownloadLinks-wle-glb.txt (
+  for %%i in (fra esn jpn kor rus ptg ptb nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (
+    %SystemRoot%\System32\find.exe /I "%%i" ..\static\custom\StaticDownloadLinks-wle-glb.txt >nul 2>&1
+    if not errorlevel 1 set CUST_LANG=%%i !CUST_LANG!
+  )
+)
+if "%CUST_LANG%" NEQ "" (
+  for %%i in (%CUST_LANG%) do call RemoveCustomLanguageSupport.cmd %%i /quiet
+)
+set OX64_LANG=
+for %%i in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (
+  if exist ..\static\custom\StaticDownloadLinks-o2k13-%%i.txt (
+    set OX64_LANG=%%i !OX64_LANG!
+    call RemoveOffice2010x64Support.cmd %%i /quiet
+  )
+)
+echo %DATE% %TIME% - Info: Preserved custom language additions>>%DOWNLOAD_LOGFILE%
 echo Updating WSUS Offline Update...
 %SystemRoot%\System32\xcopy.exe ..\wsusoffline .. /S /Q /Y
 rd /S /Q ..\wsusoffline
 echo %DATE% %TIME% - Info: Updated WSUS Offline Update>>%DOWNLOAD_LOGFILE%
+echo Updating custom language additions...
+if "%CUST_LANG%" NEQ "" (
+  for %%i in (%CUST_LANG%) do call AddCustomLanguageSupport.cmd %%i /quiet
+)
+if "%OX64_LANG%" NEQ "" (
+  for %%i in (%OX64_LANG%) do call AddOffice2010x64Support.cmd %%i /quiet
+)
+echo %DATE% %TIME% - Info: Updated custom language additions>>%DOWNLOAD_LOGFILE%
 if "%RESTART_GENERATOR%"=="1" (
   echo %DATE% %TIME% - Info: Ending WSUS Offline Update self update>>%DOWNLOAD_LOGFILE%
   cd ..
