@@ -6,10 +6,7 @@ sts
 wacwfe
 lync
 project
+proof
 visio
 snapview
 wss
-intl-
-/conv-
-/proof-
-/msconv_

@@ -8,3 +8,5 @@ windowsserver2003-kb2964358-x64
 ie11-windows6.1-kb2976627
 kb2535512
 kb2536276
+windows6.1-kb3031432
+windows6.1-kb3004375

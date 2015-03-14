@@ -2,4 +2,3 @@ http://www.download.windowsupdate.com/msdownload/update/software/dflt/2008/02/wi
 http://download.microsoft.com/download/4/6/2/46283b55-1754-47b1-b2ca-97cdfa13a00f/WindowsServer2003-KB925876-v2-x86-PTG.exe
 http://download.microsoft.com/download/8/F/A/8FAD9D19-E3D9-41AA-81B1-A5BC8C7A0C83/WindowsServer2003-KB968930-x86-PTG.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-pt-pt-kb2564958_3852c8dd630d3fef1bae83a80b08a204c6bdc41d.exe
-http://download.microsoft.com/download/F/C/8/FC85902C-9038-4D8B-818A-6713A20ABCBA/WindowsServer2003-KB3037639-x86-PTG.exe

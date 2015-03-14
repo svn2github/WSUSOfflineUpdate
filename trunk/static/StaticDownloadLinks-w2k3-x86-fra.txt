@@ -3,4 +3,3 @@ http://download.microsoft.com/download/0/c/f/0cf00549-3572-4505-b455-4a0e1f09156
 http://download.microsoft.com/download/C/C/9/CC9A4084-50EF-42E8-A825-0F6452174D8C/WindowsServer2003-KB968930-x86-FRA.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-fr-fr-kb2564958_2c894b38c34867980c71a815f99c82e315875c44.exe
 http://download.microsoft.com/download/f/f/1/ff178bb1-da91-48ed-89e5-478a99387d4f/wic_x86_fra.exe
-http://download.microsoft.com/download/F/F/F/FFF56511-FD2B-406F-B38C-E7D26B0BC575/WindowsServer2003-KB3037639-x86-FRA.exe

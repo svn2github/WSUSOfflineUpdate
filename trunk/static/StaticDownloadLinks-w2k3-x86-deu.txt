@@ -3,4 +3,3 @@ http://download.microsoft.com/download/6/8/1/681dc962-9412-40f3-8e2b-b58fbb1bd1a
 http://download.microsoft.com/download/C/6/A/C6A1DE01-CFED-410A-8FC4-74D4197610CB/WindowsServer2003-KB968930-x86-DEU.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-de-de-kb2564958_2f0db05462ea383c8c20f9251eb3b72399a030d9.exe
 http://download.microsoft.com/download/f/f/1/ff178bb1-da91-48ed-89e5-478a99387d4f/wic_x86_deu.exe
-http://download.microsoft.com/download/5/B/6/5B676D9A-2628-4FBA-A369-41AAAB844C8B/WindowsServer2003-KB3037639-x86-DEU.exe
