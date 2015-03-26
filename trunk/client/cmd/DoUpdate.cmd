@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.5.4+ (r655)
+set WSUSOFFLINE_VERSION=9.6b (r656)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -876,9 +876,7 @@ set MSSL_VER_TARGET_REVIS=
 rem *** Install .NET Framework 3.5 SP1 ***
 if "%INSTALL_DOTNET35%" NEQ "/instdotnet35" goto SkipDotNet35Inst
 if "%OS_NAME%"=="w61" goto SkipDotNet35Inst
-if "%OS_NAME%"=="w62" goto SkipDotNet35Inst
-if "%OS_NAME%"=="w63" goto SkipDotNet35Inst
-echo Checking .NET Framework 3.5 SP1 installation state...
+echo Checking .NET Framework 3.5 installation state...
 if %DOTNET35_VER_MAJOR% LSS %DOTNET35_VER_TARGET_MAJOR% goto InstallDotNet35
 if %DOTNET35_VER_MAJOR% GTR %DOTNET35_VER_TARGET_MAJOR% goto SkipDotNet35Inst
 if %DOTNET35_VER_MINOR% LSS %DOTNET35_VER_TARGET_MINOR% goto InstallDotNet35
@@ -887,6 +885,8 @@ if %DOTNET35_VER_BUILD% LSS %DOTNET35_VER_TARGET_BUILD% goto InstallDotNet35
 if %DOTNET35_VER_BUILD% GTR %DOTNET35_VER_TARGET_BUILD% goto SkipDotNet35Inst
 if %DOTNET35_VER_REVIS% GEQ %DOTNET35_VER_TARGET_REVIS% goto SkipDotNet35Inst
 :InstallDotNet35
+if "%OS_NAME%"=="w62" goto InstallDotNet35%OS_NAME%
+if "%OS_NAME%"=="w63" goto InstallDotNet35%OS_NAME%
 set DOTNET35_FILENAME=..\dotnet\dotnetfx35.exe
 set DOTNET35LP_FILENAME=..\dotnet\%OS_ARCH%-glb\dotnetfx35langpack_%OS_ARCH%%OS_LANG_SHORT%*.exe
 if not exist %DOTNET35_FILENAME% (
@@ -916,6 +916,62 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
 set RECALL_REQUIRED=1
 set DOTNET35_FILENAME=
 set DOTNET35LP_FILENAME=
+goto SkipDotNet35Inst
+
+:InstallDotNet35w62
+:InstallDotNet35w63
+if /i "%OS_ARCH%"=="x64" (
+  if exist ..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\sxs\nul (
+    if exist %SystemRoot%\Sysnative\Dism.exe (
+      echo Enabling .NET Framework 3.5 feature...
+      %SystemRoot%\Sysnative\Dism.exe /Online /Quiet /NoRestart /Enable-Feature /FeatureName:NetFx3 /All /LimitAccess /Source:..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\sxs 
+      if errorlevel 1 (
+        echo %DATE% %TIME% - Warning: Failed to enable .NET Framework 3.5 feature>>%UPDATE_LOGFILE%
+      ) else (
+        echo %DATE% %TIME% - Info: Enabled .NET Framework 3.5 feature>>%UPDATE_LOGFILE%
+      )
+    ) else (
+      if exist %SystemRoot%\System32\Dism.exe (
+        echo Enabling .NET Framework 3.5 feature...
+        %SystemRoot%\System32\Dism.exe /Online /Quiet /NoRestart /Enable-Feature /FeatureName:NetFx3 /All /LimitAccess /Source:..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\sxs
+        if errorlevel 1 (
+          echo %DATE% %TIME% - Warning: Failed to enable .NET Framework 3.5 feature>>%UPDATE_LOGFILE%
+        ) else (
+          echo %DATE% %TIME% - Info: Enabled .NET Framework 3.5 feature>>%UPDATE_LOGFILE%
+        )
+      ) else (
+        echo Warning: Utility %SystemRoot%\System32\Dism.exe not found. Unable to enable .NET Framework 3.5 feature.
+        echo %DATE% %TIME% - Warning: Utility %SystemRoot%\System32\Dism.exe not found. Unable to enable .NET Framework 3.5 feature>>%UPDATE_LOGFILE%
+        goto SkipDotNet35Inst
+      )
+    )
+  ) else (
+    echo Warning: Directory ..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\sxs not found. Unable to enable .NET Framework 3.5 feature.
+    echo %DATE% %TIME% - Warning: Directory ..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\sxs not found. Unable to enable .NET Framework 3.5 feature>>%UPDATE_LOGFILE%
+    goto SkipDotNet35Inst
+  )
+) else (
+  if exist ..\%OS_NAME%\%OS_LANG%\sxs\nul (
+    if exist %SystemRoot%\System32\Dism.exe (
+      echo Enabling .NET Framework 3.5 feature...
+      %SystemRoot%\System32\Dism.exe /Online /Quiet /NoRestart /Enable-Feature /FeatureName:NetFx3 /All /LimitAccess /Source:..\%OS_NAME%\%OS_LANG%\sxs
+      if errorlevel 1 (
+        echo %DATE% %TIME% - Warning: Failed to enable .NET Framework 3.5 feature>>%UPDATE_LOGFILE%
+      ) else (
+        echo %DATE% %TIME% - Info: Enabled .NET Framework 3.5 feature>>%UPDATE_LOGFILE%
+      )
+    ) else (
+      echo Warning: Utility %SystemRoot%\System32\Dism.exe not found. Unable to enable .NET Framework 3.5 feature.
+      echo %DATE% %TIME% - Warning: Utility %SystemRoot%\System32\Dism.exe not found. Unable to enable .NET Framework 3.5 feature>>%UPDATE_LOGFILE%
+      goto SkipDotNet35Inst
+    )
+  ) else (
+    echo Warning: Directory ..\%OS_NAME%\%OS_LANG%\sxs not found. Unable to enable .NET Framework 3.5 feature.
+    echo %DATE% %TIME% - Warning: Directory ..\%OS_NAME%\%OS_LANG%\sxs not found. Unable to enable .NET Framework 3.5 feature>>%UPDATE_LOGFILE%
+    goto SkipDotNet35Inst
+  )
+)
+set REBOOT_REQUIRED=1
 :SkipDotNet35Inst
 
 rem *** Install .NET Framework 4 ***

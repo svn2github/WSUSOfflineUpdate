@@ -1,19 +1,19 @@
-; ***  WSUS Offline Update 9.5.4 - Installer  ***
-; ***       Author: T. Wittrock, Kiel         ***
-; ***   Dialog scaling added by Th. Baisch    ***
+; ***  WSUS Offline Update 9.6b - Installer  ***
+; ***       Author: T. Wittrock, Kiel       ***
+; ***   Dialog scaling added by Th. Baisch  ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 9.5.4.655)
+#pragma compile(FileVersion, 9.6.0.656)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
 #pragma compile(ProductName, "WSUS Offline Update")
-#pragma compile(ProductVersion, 9.5.4)
+#pragma compile(ProductVersion, 9.6.0)
 
-Dim Const $caption                    = "WSUS Offline Update 9.5.4 - Installer"
+Dim Const $caption                    = "WSUS Offline Update 9.6 - Installer"
 Dim Const $wou_hostname               = "www.wsusoffline.net"
 Dim Const $donationURL                = "http://www.wsusoffline.net/donate.html"
 
@@ -95,7 +95,6 @@ Dim Const $path_rel_hashes            = "\md\"
 Dim Const $path_rel_autologon         = "\bin\Autologon.exe"
 Dim Const $path_rel_win_glb           = "\win\glb\"
 Dim Const $path_rel_cpp               = "\cpp\vcredist*.exe"
-Dim Const $path_rel_instdotnet35      = "\dotnet\dotnetfx35.exe"
 Dim Const $path_rel_instdotnet40      = "\dotnet\dotNetFx40*.exe"
 Dim Const $path_rel_instdotnet45      = "\dotnet\NDP452-KB2901907-x86-x64-AllOS*.exe"
 Dim Const $path_rel_ofc_glb           = "\ofc\glb\"
@@ -345,10 +344,6 @@ EndFunc
 
 Func CPPPresent($basepath)
   Return FileExists($basepath & $path_rel_cpp)
-EndFunc
-
-Func DotNet35InstPresent($basepath)
-  Return FileExists($basepath & $path_rel_instdotnet35)
 EndFunc
 
 Func DotNet4InstPresent($basepath)
@@ -651,16 +646,16 @@ Else
   EndIf
 EndIf
 
-; Install .NET Framework 3.5 SP1
+; Install .NET Framework 3.5
 $txtxpos = 3 * $txtxoffset
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
-  $dotnet35 = GUICtrlCreateCheckbox(".NET Framework 3.5 SP1 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $dotnet35 = GUICtrlCreateCheckbox(".NET Framework 3.5 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $dotnet35 = GUICtrlCreateCheckbox("Install .NET Framework 3.5 SP1", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $dotnet35 = GUICtrlCreateCheckbox("Install .NET Framework 3.5", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") _
-  OR (DotNet35Version() = $target_version_dotnet35) OR (NOT DotNet35InstPresent($scriptdir)) ) Then
+If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
+  OR (DotNet35Version() = $target_version_dotnet35) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If MyIniRead($ini_section_installation, $ini_value_dotnet35, $disabled) = $enabled Then
@@ -880,7 +875,7 @@ If ( ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "W
   Else
     $wleall = GUICtrlCreateCheckbox("Select all", $txtxpos, $txtypos, $txtwidth, $txtheight)
   EndIf
-  If (DotNet35Version() <> $target_version_dotnet35) _
+  If ( (DotNet35Version() <> $target_version_dotnet35) AND (NOT IsCheckBoxChecked($dotnet35)) ) _
   OR ( (DotNet4MainVersion() <> "4.5") AND (NOT IsCheckBoxChecked($dotnet4)) ) Then
     GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
   EndIf
@@ -911,7 +906,7 @@ If ( ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "W
       Case 6
         $wlepacks[$i] = GUICtrlCreateCheckbox("Family Safety", $txtxpos + Mod($i, 2) * $txtwidth, $txtypos + BitShift($i, 1) * $txtheight, $txtwidth, $txtheight)
     EndSwitch
-    If (DotNet35Version() <> $target_version_dotnet35) _
+    If ( (DotNet35Version() <> $target_version_dotnet35) AND (NOT IsCheckBoxChecked($dotnet35)) ) _
     OR ( (DotNet4MainVersion() <> "4.5") AND (NOT IsCheckBoxChecked($dotnet4)) ) Then
       GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
     Else
@@ -931,15 +926,15 @@ If ( ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "W
   $txtypos = $txtypos + 1.5 * $txtyoffset
   If ShowGUIInGerman() Then
     GUICtrlCreateLabel("Windows Essentials 2012 erfordern sowohl .NET Framework 3.5 als auch 4.5." _
-               & @LF & "Wenn die Optionen auf dieser Seite deaktiviert sind, stellen Sie bitte Folgendes sicher:" _
-               & @LF & "Windows 7: Wählen Sie '.NET Framework 4.x installieren' unter 'Aktualisierung'." _
-               & @LF & "Windows 8 / 8.1: Aktivieren Sie die Funktion '.NET Framework 3.5' in der Systemsteuerung.", _
+               & @LF & "Wenn die Optionen auf dieser Seite deaktiviert sind," _
+               & @LF & "wählen Sie bitte die entsprechende(n) Installationsoption(en) unter 'Aktualisierung'." _
+               & @LF & "Windows 8 / 8.1: Stellen Sie zusätzlich sicher, dass das Sxs-Verzeichnis integriert wurde.", _
                $txtxpos, $txtypos, 3 * $groupwidth - 2 * $txtxoffset, 3 * $txtheight)
   Else
     GUICtrlCreateLabel("Windows Essentials 2012 require both .NET Frameworks 3.5 and 4.5." _
-               & @LF & "If options are grayed out on this tab, please ensure the following:" _
-               & @LF & "Windows 7: On the 'Updating' tab, select 'Install .NET Framework 4.x'." _
-               & @LF & "Windows 8 / 8.1: In the system's control panel, enable the feature '.NET Framework 3.5'.", _
+               & @LF & "If options are grayed out on this tab," _
+               & @LF & "please select the corresponding installation option(s) on the 'Updating' tab." _
+               & @LF & "Windows 8 / 8.1: Additionally be sure to have the Sxs folder integrated.", _
                $txtxpos, $txtypos, 3 * $groupwidth - 2 * $txtxoffset, 3 * $txtheight)
   EndIf
 EndIf
@@ -1272,7 +1267,7 @@ While 1
         GUICtrlSetState($wmf, $GUI_UNCHECKED + $GUI_DISABLE)
       EndIf
       If ( ( (IsCheckBoxChecked($dotnet4)) OR (DotNet4MainVersion() = "4.5") ) _
-       AND (DotNet35Version() = $target_version_dotnet35) ) Then
+       AND ( (IsCheckBoxChecked($dotnet35)) OR (DotNet35Version() = $target_version_dotnet35) ) ) Then
         GUICtrlSetState($wleall, $GUI_ENABLE)
         For $i = 0 To $wlecount - 1
           GUICtrlSetState($wlepacks[$i], $GUI_ENABLE)
