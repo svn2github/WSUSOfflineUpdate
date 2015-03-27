@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.6b (r656)
+set WSUSOFFLINE_VERSION=9.6b (r657)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -122,6 +122,7 @@ rem *** Check Operating System ***
 if "%OS_NAME%"=="" goto UnsupOS
 if "%OS_NAME%"=="w2k" goto UnsupOS
 if "%OS_NAME%"=="wxp" goto UnsupOS
+if "%OS_NAME%"=="w10" goto UnsupOS
 for %%i in (x86 x64) do (if /i "%OS_ARCH%"=="%%i" goto ValidArch)
 goto UnsupArch
 :ValidArch
