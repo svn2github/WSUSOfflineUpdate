@@ -981,6 +981,6 @@ Version 9.5.4 -- 14.03.15
 --------------------------------------------------------------------------------
 Version 9.6 -- ??.??.??
 - Ability added to enable .NET Framework 3.5 feature on Windows 8, 8.1 and Server 2012(R2) (x86/x64) systems (Thanks to J. Smith)
-- Update for untrusted/revoked Root Certificates (rvkroots.exe) updated to v. 7,0,2195,0 (kb3048051, March 2015) (Thanks to "aker")
+- Update for untrusted/revoked Root Certificates (rvkroots.exe) updated to v. 8,0,2195,0 (kb3050995, March 2015) (Thanks to "harry" and "aker")
 - Detection capability added for Windows 10
 - Fix: Consolidated ExcludeList-superseded-exclude.txt
