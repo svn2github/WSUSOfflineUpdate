@@ -1,4 +1,4 @@
-; ***  WSUS Offline Update 9.6b - Generator  ***
+; ***  WSUS Offline Update 9.6 - Generator  ***
 ; ***       Author: T. Wittrock, Kiel       ***
 ; ***     USB-Option added by Ch. Riedel    ***
 ; ***   Dialog scaling added by Th. Baisch  ***
@@ -6,14 +6,14 @@
 #include <GUIConstants.au3>
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Generator")
-#pragma compile(FileVersion, 9.6.0.658)
+#pragma compile(FileVersion, 9.6.0.660)
 #pragma compile(InternalName, "Generator")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateGenerator.exe)
 #pragma compile(ProductName, "WSUS Offline Update")
 #pragma compile(ProductVersion, 9.6.0)
 
-Dim Const $caption                  = "WSUS Offline Update 9.6b"
+Dim Const $caption                  = "WSUS Offline Update 9.6"
 Dim Const $title                    = $caption & " - Generator"
 Dim Const $donationURL              = "http://www.wsusoffline.net/donate.html"
 Dim Const $downloadLogFile          = "download.log"
@@ -21,7 +21,9 @@ Dim Const $runAllFile               = "RunAll.cmd"
 
 ; Registry constants
 Dim Const $reg_key_hkcu_desktop     = "HKEY_CURRENT_USER\Control Panel\Desktop"
+Dim Const $reg_key_hkcu_winmetrics  = "HKEY_CURRENT_USER\Control Panel\Desktop\WindowMetrics"
 Dim Const $reg_val_logpixels        = "LogPixels"
+Dim Const $reg_val_applieddpi       = "AppliedDPI"
 
 ; Message box return codes
 Dim Const $msgbox_btn_ok            = 1
@@ -1151,7 +1153,10 @@ Func CalcGUISize()
     OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") ) Then
     DllCall("user32.dll", "int", "SetProcessDPIAware")
   EndIf
-  $reg_val = RegRead($reg_key_hkcu_desktop, $reg_val_logpixels)
+  $reg_val = RegRead($reg_key_hkcu_winmetrics, $reg_val_applieddpi)
+  If ($reg_val = "") Then
+    $reg_val = RegRead($reg_key_hkcu_desktop, $reg_val_logpixels)
+  EndIf
   If ($reg_val = "") Then
     $reg_val = $default_logpixels
   EndIf

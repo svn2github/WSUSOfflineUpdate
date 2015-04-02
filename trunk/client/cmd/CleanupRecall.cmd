@@ -7,9 +7,21 @@ if "%UPDATE_LOGFILE%"=="" set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 
 cd /D "%~dp0"
 
-if "%REG_PATH%"=="" set REG_PATH=%SystemRoot%\System32\reg.exe
+if "%REG_PATH%"=="" (
+  if exist %SystemRoot%\Sysnative\reg.exe (
+    set REG_PATH=%SystemRoot%\Sysnative\reg.exe
+  ) else (
+    set REG_PATH=%SystemRoot%\System32\reg.exe
+  )
+)
 if not exist %REG_PATH% goto NoReg
-if "%CSCRIPT_PATH%"=="" set CSCRIPT_PATH=%SystemRoot%\System32\cscript.exe
+if "%CSCRIPT_PATH%"=="" (
+  if exist %SystemRoot%\Sysnative\cscript.exe (
+    set CSCRIPT_PATH=%SystemRoot%\Sysnative\cscript.exe
+  ) else (
+    set CSCRIPT_PATH=%SystemRoot%\System32\cscript.exe
+  )
+)
 if not exist %CSCRIPT_PATH% goto NoCScript
 
 if exist %SystemRoot%\woubak-winlogon.reg (

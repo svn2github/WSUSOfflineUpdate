@@ -979,8 +979,12 @@ Version 9.5.4 -- 14.03.15
 - Fix: Removed obsolete fix for text quality degradation (kb3037639) for Windows Vista and Server 2003/2008 (x86/x64) systems (Thanks to "Denniss")
 - Fix: Download part missed kb3031432 and kb3004375 for Windows 7 and Server 2008 R2 (x86/x64) systems (Thanks to A. Goldbaum, "Denniss" and "harry")
 --------------------------------------------------------------------------------
-Version 9.6 -- ??.??.??
+Version 9.6 -- 02.04.15
 - Ability added to enable .NET Framework 3.5 feature on Windows 8, 8.1 and Server 2012(R2) (x86/x64) systems (Thanks to J. Smith)
 - Update for untrusted/revoked Root Certificates (rvkroots.exe) updated to v. 8,0,2195,0 (kb3050995, March 2015) (Thanks to "harry" and "aker")
 - Detection capability added for Windows 10
+- Fix: DoUpdate.cmd script will now stop service 'Windows Update' (wuauserv) after scanning for missing updates to prevent system reboot prompts (Thanks to "putput", "blackerking", "phaedrus" and "aker")
+- Fix: UpdateGenerator and UpdateInstaller dialog scaling calculation enhanced (Thanks to "Ethan" and "ProTofik")
+- Fix: When launched by a foreign 32-bit host process on a 64-bit system, CleanupRecall.cmd script did not properly disable autologon (Thanks to "JabraXx")
 - Fix: Consolidated ExcludeList-superseded-exclude.txt
+--------------------------------------------------------------------------------

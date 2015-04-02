@@ -6,7 +6,13 @@ if "%UPDATE_LOGFILE%"=="" set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
 if '%1'=='' goto NoParam
 if not exist %1 goto EoF
 
-if "%CSCRIPT_PATH%"=="" set CSCRIPT_PATH=%SystemRoot%\System32\cscript.exe
+if "%CSCRIPT_PATH%"=="" (
+  if exist %SystemRoot%\Sysnative\cscript.exe (
+    set CSCRIPT_PATH=%SystemRoot%\Sysnative\cscript.exe
+  ) else (
+    set CSCRIPT_PATH=%SystemRoot%\System32\cscript.exe
+  )
+)
 if not exist %CSCRIPT_PATH% goto NoCScript
 
 pushd "%~dp0"

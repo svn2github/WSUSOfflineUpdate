@@ -206,6 +206,7 @@ echo %DATE% %TIME% - Info: Installed %1>>%UPDATE_LOGFILE%
 goto EoF
 
 :InstFailure
+if "%IGNORE_ERRORS%"=="1" goto EoF
 if "%ERRORS_AS_WARNINGS%"=="1" (goto InstWarning) else (goto InstError)
 
 :InstWarning

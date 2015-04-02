@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.6b (r658)
+set WSUSOFFLINE_VERSION=9.6
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -73,10 +73,18 @@ pushd "%TEMP%"
 if errorlevel 1 goto NoTempDir
 popd
 
-set CSCRIPT_PATH=%SystemRoot%\System32\cscript.exe
-if not exist %CSCRIPT_PATH% goto NoCScript
-set REG_PATH=%SystemRoot%\System32\reg.exe
+if exist %SystemRoot%\Sysnative\reg.exe (
+  set REG_PATH=%SystemRoot%\Sysnative\reg.exe
+) else (
+  set REG_PATH=%SystemRoot%\System32\reg.exe
+)
 if not exist %REG_PATH% goto NoReg
+if exist %SystemRoot%\Sysnative\cscript.exe (
+  set CSCRIPT_PATH=%SystemRoot%\Sysnative\cscript.exe
+) else (
+  set CSCRIPT_PATH=%SystemRoot%\System32\cscript.exe
+)
+if not exist %CSCRIPT_PATH% goto NoCScript
 
 rem *** Check user's privileges ***
 echo Checking user's privileges...
@@ -1434,6 +1442,14 @@ if exist "%TEMP%\wsusscn2.cab" del "%TEMP%\wsusscn2.cab"
 echo %TIME% - Done.
 echo %DATE% %TIME% - Info: Listed ids of missing updates>>%UPDATE_LOGFILE%
 if not exist "%TEMP%\MissingUpdateIds.txt" set NO_MISSING_IDS=1
+echo Stopping service 'Windows Update' (wuauserv) - previous state will be recovered later...
+%SystemRoot%\System32\net.exe stop wuauserv >nul
+if errorlevel 1 (
+  echo %DATE% %TIME% - Warning: Stopping of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
+) else (
+  set AUSVC_STOPPED=1
+  echo %DATE% %TIME% - Info: Stopped service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
+)
 
 :ListInstalledIds
 rem *** List ids of installed updates ***
@@ -1657,17 +1673,17 @@ echo %DATE% %TIME% - Error: Directory "%TEMP%" not found>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
-:NoCScript
-echo.
-echo ERROR: VBScript interpreter %CSCRIPT_PATH% not found.
-echo %DATE% %TIME% - Error: VBScript interpreter %CSCRIPT_PATH% not found>>%UPDATE_LOGFILE%
-echo.
-goto Cleanup
-
 :NoReg
 echo.
 echo ERROR: Registry tool %REG_PATH% not found.
 echo %DATE% %TIME% - Error: Registry tool %REG_PATH% not found>>%UPDATE_LOGFILE%
+echo.
+goto Cleanup
+
+:NoCScript
+echo.
+echo ERROR: VBScript interpreter %CSCRIPT_PATH% not found.
+echo %DATE% %TIME% - Error: VBScript interpreter %CSCRIPT_PATH% not found>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
@@ -1801,13 +1817,15 @@ if "%USERNAME%"=="WOUTempAdmin" (
   echo Rebooting...
   %SystemRoot%\System32\shutdown.exe /r /f /t 3
 ) else (
-  if "%AUSVC_STARTED%"=="1" (
-    echo Stopping service 'Windows Update' ^(wuauserv^)...
-    %SystemRoot%\System32\net.exe stop wuauserv >nul
-    if errorlevel 1 (
-      echo %DATE% %TIME% - Warning: Stopping of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
-    ) else (
-      echo %DATE% %TIME% - Info: Stopped service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
+  if "%AUSVC_STOPPED%"=="1" (
+    if "%AUSVC_STARTED%" NEQ "1" (
+      echo Starting service 'Windows Update' ^(wuauserv^)...
+      %SystemRoot%\System32\net.exe start wuauserv >nul
+      if errorlevel 1 (
+        echo %DATE% %TIME% - Warning: Starting of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
+      ) else (
+        echo %DATE% %TIME% - Info: Started service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
+      )
     )
   )
   if "%SHOW_LOG%"=="/showlog" start %SystemRoot%\System32\notepad.exe %UPDATE_LOGFILE%
