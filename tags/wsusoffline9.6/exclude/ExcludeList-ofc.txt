@@ -1,0 +1,12 @@
+fullfile
+server
+srvapp
+srv
+sts
+wacwfe
+lync
+project
+proof
+visio
+snapview
+wss
