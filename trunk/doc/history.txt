@@ -988,3 +988,5 @@ Version 9.6 -- 02.04.15
 - Fix: When launched by a foreign 32-bit host process on a 64-bit system, CleanupRecall.cmd script did not properly disable autologon (Thanks to "JabraXx")
 - Fix: Consolidated ExcludeList-superseded-exclude.txt
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- Microsoft Silverlight updated to v. 5.1.40416.0 (Thanks to "harry")
