@@ -990,4 +990,5 @@ Version 9.6 -- 02.04.15
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
 - Microsoft Silverlight updated to v. 5.1.40416.0 (Thanks to "harry")
+- Static download URLs for aria2 download utility updated to v. 1.19.0 (Thanks to "harry")
 - Fix: Excluded security update kb3057781 (MS15-044) for .NET Framework 4.6 RC (Thanks to "Denniss" and "harry")
