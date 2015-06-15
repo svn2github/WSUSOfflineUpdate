@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.6+ (r664)
+set WSUSOFFLINE_VERSION=9.6+ (r665)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -335,7 +335,7 @@ set RECALL_REQUIRED=1
 goto Installed
 
 :SPw63
-echo Checking Windows 8.1 / Server 2012 R2 Update April 2014 installation state...
+echo Checking Windows 8.1 / Server 2012 R2 Update Rollup April 2014 installation state...
 if %OS_VER_REVIS% GEQ %OS_UPD1_TARGET_REVIS% goto Upd2w63
 if exist %SystemRoot%\Temp\wou_w63upd1_tried.txt goto SkipSPInst
 %CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
@@ -356,8 +356,8 @@ if not exist "%TEMP%\MissingUpdateIds.txt" goto Upd2w63
 call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
-  echo Installing Windows 8.1 / Server 2012 R2 Update April 2014...
-  echo %DATE% %TIME% - Info: Installing Windows 8.1 / Server 2012 R2 Update April 2014>>%UPDATE_LOGFILE%
+  echo Installing Windows 8.1 / Server 2012 R2 Update Rollup April 2014...
+  echo %DATE% %TIME% - Info: Installing Windows 8.1 / Server 2012 R2 Update Rollup April 2014>>%UPDATE_LOGFILE%
   call InstallListedUpdates.cmd %VERIFY_MODE% /errorsaswarnings
   if not errorlevel 1 (
     if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
@@ -366,8 +366,8 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
     goto Installed
   )
 ) else (
-  echo Warning: Windows 8.1 / Server 2012 R2 Update April 2014 installation files not found.
-  echo %DATE% %TIME% - Warning: Windows 8.1 / Server 2012 R2 Update April 2014 installation files not found>>%UPDATE_LOGFILE%
+  echo Warning: Windows 8.1 / Server 2012 R2 Update Rollup April 2014 installation files not found.
+  echo %DATE% %TIME% - Warning: Windows 8.1 / Server 2012 R2 Update Rollup April 2014 installation files not found>>%UPDATE_LOGFILE%
   if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
   echo. >%SystemRoot%\Temp\wou_w63upd1_tried.txt
 )
@@ -1777,7 +1777,7 @@ if "%NO_MISSING_IDS%"=="1" (
   echo No missing update found. Nothing to do!
   echo %DATE% %TIME% - Info: No missing update found>>%UPDATE_LOGFILE%
 ) else (
-  echo Any missing update was either black listed or not found.
+  echo Any missing update was either black listed or not found. Nothing to do!
   echo %DATE% %TIME% - Info: Any missing update was either black listed or not found>>%UPDATE_LOGFILE%
 )
 echo.
