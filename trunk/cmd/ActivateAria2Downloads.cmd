@@ -75,7 +75,7 @@ echo :x86>>custom\SetAria2EnvVars.cmd
 echo set DLDR_PATH=..\bin\aria2c-x86.exe>>custom\SetAria2EnvVars.cmd 
 echo.>>custom\SetAria2EnvVars.cmd
 echo :SetParams>>custom\SetAria2EnvVars.cmd
-echo set DLDR_COPT=--conditional-get=true --allow-overwrite=true --file-allocation=none -x10 -j10 -s10 -k1M -R>>custom\SetAria2EnvVars.cmd
+echo set DLDR_COPT=--conditional-get=true --allow-overwrite=true --file-allocation=none --always-resume=false --max-resume-failure-tries=0 --max-tries=10 --retry-wait=10 --timeout=60 --remote-time=true -x10 -j10 -s10 -k1M -R>>custom\SetAria2EnvVars.cmd
 echo set DLDR_LOPT=--log-level=notice -l %%DOWNLOAD_LOGFILE%%>>custom\SetAria2EnvVars.cmd
 echo set DLDR_IOPT=-i>>custom\SetAria2EnvVars.cmd 
 echo set DLDR_POPT=-d>>custom\SetAria2EnvVars.cmd 
