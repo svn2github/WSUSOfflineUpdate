@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 9.6
+WSUS Offline Update 9.7
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -988,7 +988,8 @@ Version 9.6 -- 02.04.15
 - Fix: When launched by a foreign 32-bit host process on a 64-bit system, CleanupRecall.cmd script did not properly disable autologon (Thanks to "JabraXx")
 - Fix: Consolidated ExcludeList-superseded-exclude.txt
 --------------------------------------------------------------------------------
-Version ?.? -- ??.??.??
+Version 9.7 -- 25.06.15
+- NOTE: This version is supposed to be the last one supporting Windows Server 2003 (see https://support.microsoft.com/en-us/lifecycle?p1=3198)
 - Integrated December 2014 update rollup (kb3013769) for Windows 8.1 (x86/x64) and Server 2012 R2 (Thanks to "Gerby")
 - Microsoft Silverlight updated to v. 5.1.40416.0 (Thanks to "harry")
 - Static download URLs for aria2 download utility updated to v. 1.19.0 (Thanks to "harry")
@@ -1000,3 +1001,4 @@ Version ?.? -- ??.??.??
 - Fix: Replaced superseded update kb2913751 by kb2923545 in Remote Desktop Connection 8.1 client installation on Windows 7 / Server 2008 R2 (x86/x64) systems
 - Fix: Adjusted aria2 download options (Thanks to "hbuhrmester")
 - Fix: Removed obsolete script CheckTRCerts.cmd (Thanks to "hbuhrmester")
+--------------------------------------------------------------------------------
