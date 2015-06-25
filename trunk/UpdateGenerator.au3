@@ -6,7 +6,7 @@
 #include <GUIConstants.au3>
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Generator")
-#pragma compile(FileVersion, 9.6.0.666)
+#pragma compile(FileVersion, 9.6.0.667)
 #pragma compile(InternalName, "Generator")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateGenerator.exe)
@@ -752,47 +752,6 @@ Func RunSelfUpdate($strproxy)
     Run(@ComSpec & " /D /C UpdateOU.cmd /restartgenerator /proxy " & $strproxy, @ScriptDir & "\cmd", @SW_SHOW)
   EndIf
   Return 0
-EndFunc
-
-Func RunTRCertsCheck($strproxy)
-Dim $result
-
-  $result = 0
-  If NOT IsCheckBoxChecked($verifydownloads) Then
-    Return $result
-  EndIf
-  If IsCheckBoxChecked($imageonly) Then
-    Return $result
-  EndIf
-  DisableGUI()
-  If $strproxy = "" Then
-    $result = RunWait(@ComSpec & " /D /C CheckTRCerts.cmd /exitonerror", @ScriptDir & "\cmd", @SW_SHOWMINNOACTIVE)
-  Else
-    $result = RunWait(@ComSpec & " /D /C CheckTRCerts.cmd /exitonerror /proxy " & $strproxy, @ScriptDir & "\cmd", @SW_SHOWMINNOACTIVE)
-  EndIf
-  If $result = 0 Then
-    $result = @error
-  EndIf
-  If $result <> 0 Then
-    If ShowGUIInGerman() Then
-      $result = MsgBox(0x2023, "Versionsprüfung", "Ihre Liste vertrauenswürdiger" _
-                       & @LF & "Stammzertifikate ist nicht aktuell." _
-                       & @LF & "Möchten Sie sie nun aktualisieren?")
-    Else
-      $result = MsgBox(0x2023, "Version check", "Your list of Trusted Root Certificates is outdated." _
-                       & @LF & "Would you like to update it now?")
-    EndIf
-    Switch $result
-      Case $msgbox_btn_yes
-        $result = -1
-      Case $msgbox_btn_no
-        $result = 0
-      Case Else
-        $result = 1
-    EndSwitch
-  EndIf
-  EnableGUI()
-  Return $result
 EndFunc
 
 Func RunDownloadScript($stroptions, $strswitches)
@@ -2757,12 +2716,6 @@ While 1
             Case -1 ; Yes
               RunSelfUpdate(AuthProxy($proxy, $proxypwd))
               ExitLoop
-            Case 1  ; Cancel / Close
-              ContinueLoop
-          EndSwitch
-          Switch RunTRCertsCheck(AuthProxy($proxy, $proxypwd))
-            Case -1 ; Yes
-              RunWait(@ComSpec & " /D /C rootsupd.exe /Q", @ScriptDir & $path_rel_win_glb, @SW_SHOW)
             Case 1  ; Cancel / Close
               ContinueLoop
           EndSwitch

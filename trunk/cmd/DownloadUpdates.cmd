@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.6+ (r666)
+set WSUSOFFLINE_VERSION=9.6+ (r667)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -252,6 +252,7 @@ rem *** Obsolete internal stuff ***
 if exist ActivateVistaAllLanguageServicePacks.cmd del ActivateVistaAllLanguageServicePacks.cmd
 if exist ActivateVistaFiveLanguageServicePacks.cmd del ActivateVistaFiveLanguageServicePacks.cmd
 if exist DetermineAutoDaylightTimeSet.vbs del DetermineAutoDaylightTimeSet.vbs
+if exist CheckTRCerts.cmd del CheckTRCerts.cmd
 if exist ..\doc\faq.txt del ..\doc\faq.txt
 if exist ..\client\cmd\Reboot.vbs del ..\client\cmd\Reboot.vbs
 if exist ..\client\cmd\Shutdown.vbs del ..\client\cmd\Shutdown.vbs
@@ -1484,9 +1485,15 @@ if not exist ..\bin\sigcheck.exe goto NoSigCheck
 echo Verifying digital file signatures for %1 %2...
 ..\bin\sigcheck.exe %SIGCHK_COPT% -s ..\client\%1\%2 >"%TEMP%\sigcheck-%1-%2.txt"
 for /F "tokens=1 delims=," %%i in ('%SystemRoot%\System32\findstr.exe /I "Unsigned" "%TEMP%\sigcheck-%1-%2.txt"') do (
-  del %%i
-  echo Warning: Deleted unsigned file %%i.
-  echo %DATE% %TIME% - Warning: Deleted unsigned file %%i>>%DOWNLOAD_LOGFILE%
+  echo %%i | %SystemRoot%\System32\find.exe /I "rootsupd.exe" >nul 2>&1
+  if errorlevel 1 (
+    del %%i
+    echo Warning: Deleted unsigned file %%i.
+    echo %DATE% %TIME% - Warning: Deleted unsigned file %%i>>%DOWNLOAD_LOGFILE%
+  ) else (
+    echo Warning: Kept unsigned file %%i.
+    echo %DATE% %TIME% - Warning: Kept unsigned file %%i>>%DOWNLOAD_LOGFILE%
+  )
 )
 if exist "%TEMP%\sigcheck-%1-%2.txt" del "%TEMP%\sigcheck-%1-%2.txt"
 echo %DATE% %TIME% - Info: Verified digital file signatures for %1 %2>>%DOWNLOAD_LOGFILE%
