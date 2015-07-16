@@ -1002,3 +1002,5 @@ Version 9.7 -- 25.06.15
 - Fix: Adjusted aria2 download options (Thanks to "hbuhrmester")
 - Fix: Removed obsolete script CheckTRCerts.cmd (Thanks to "hbuhrmester")
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- AutoIt script compiler updated to version 3.3.14.0 (Thanks to "harry")

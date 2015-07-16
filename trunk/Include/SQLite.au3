@@ -8,7 +8,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: SQLite
-; AutoIt Version : 3.3.12.0
+; AutoIt Version : 3.3.14.0
 ; Language ......: English
 ; Description ...: Functions that assist access to an SQLite database.
 ; Author(s) .....: Fida Florian (piccaso), jchd, jpm
@@ -278,8 +278,8 @@ Func _SQLite_Shutdown()
 	$__g_hDll_SQLite = 0
 	If $__g_hMsvcrtDll_SQLite > 0 Then DllClose($__g_hMsvcrtDll_SQLite)
 	$__g_hMsvcrtDll_SQLite = 0
-	For $sTempFile In $__g_aTempFiles_SQLite
-		If FileExists($sTempFile) Then FileDelete($sTempFile)
+	For $sTempfile In $__g_aTempFiles_SQLite
+		If FileExists($sTempfile) Then FileDelete($sTempfile)
 	Next
 	OnAutoItExitUnRegister("_SQLite_Shutdown")
 EndFunc   ;==>_SQLite_Shutdown
@@ -399,7 +399,7 @@ Func _SQLite_Exec($hDB, $sSQL, $sCallBack = "")
 			"struct*", $tSQL8, _ ; SQL to be executed
 			"ptr", 0, _ ; Callback function
 			"ptr", 0, _ ; 1st argument to callback function
-			"long*", 0) ; Error msg written here
+			"ptr*", 0) ; Error msg written here
 	If @error Then Return SetError(1, @error, $SQLITE_MISUSE) ; DllCall error
 	__SQLite_szFree($avRval[5]) ; free error message
 	If $avRval[0] <> $SQLITE_OK Then
@@ -809,7 +809,7 @@ EndFunc   ;==>_SQLite_QuerySingleRow
 ; #FUNCTION# ====================================================================================================================
 ; Author ........: piccaso (Fida Florian)
 ; ===============================================================================================================================
-Func _SQLite_SQLiteExe($sDatabaseFile, $sInput, ByRef $sOutput, $sSQLiteExeFilename = -1, $bDebug = False)
+Func _SQLite_SQLiteExe($sDatabaseFile, $sInput, ByRef $sOutput, $sSQLiteExeFilename = "sqlite3.exe", $bDebug = False)
 	If $sSQLiteExeFilename = -1 Or $sSQLiteExeFilename = Default Then
 		$sSQLiteExeFilename = "sqlite3.exe"
 		If Not FileExists($sSQLiteExeFilename) Then
@@ -1031,7 +1031,7 @@ Func __SQLite_StringToUtf8Struct($sString)
 			"ptr", 0, "int", 0, "ptr", 0, "ptr", 0)
 	If @error Then Return SetError(1, @error, "") ; DllCall error
 	Local $tText = DllStructCreate("char[" & $aResult[0] & "]")
-	$aResult = DllCall("Kernel32.dll", "int", "WideCharToMultiByte", "uint", 65001, "dword", 0, "wstr", $sString, "int", -1, _
+	$aResult = DllCall("kernel32.dll", "int", "WideCharToMultiByte", "uint", 65001, "dword", 0, "wstr", $sString, "int", -1, _
 			"struct*", $tText, "int", $aResult[0], "ptr", 0, "ptr", 0)
 	If @error Then Return SetError(2, @error, "") ; DllCall error
 	Return $tText
@@ -1052,7 +1052,7 @@ Func __SQLite_Utf8StructToString($tText)
 			"ptr", 0, "int", 0)
 	If @error Then Return SetError(1, @error, "") ; DllCall error
 	Local $tWstr = DllStructCreate("wchar[" & $aResult[0] & "]")
-	$aResult = DllCall("Kernel32.dll", "int", "MultiByteToWideChar", "uint", 65001, "dword", 0, "struct*", $tText, "int", -1, _
+	$aResult = DllCall("kernel32.dll", "int", "MultiByteToWideChar", "uint", 65001, "dword", 0, "struct*", $tText, "int", -1, _
 			"struct*", $tWstr, "int", $aResult[0])
 	If @error Then Return SetError(2, @error, "") ; DllCall error
 	Return DllStructGetData($tWstr, 1)
@@ -1087,7 +1087,7 @@ Func __SQLite_Download_SQLite3File(ByRef $sFilePath, $sFileName, $sVersion, $sFi
 		$iInetRet = InetGet($sURL & $sRetFile, $sTempfile, $INET_FORCERELOAD)
 		$iError = @error
 		Local $iPos = StringInStr($sTempfile, "\", 0, -1)
-		$sRetFile = StringTrimLeft($sTempFile, $iPos)
+		$sRetFile = StringTrimLeft($sTempfile, $iPos)
 	EndIf
 	If $iError Then __SQLite_Print('@@ Debug(' & $iScripLineNumber & ') : __SQLite_Download_SQLite3File : $URL = ' & $sURL & $sFileName & $sFileExt & @CRLF & @TAB & '$sTempfile = ' & $sTempfile & @CRLF & '>Error: ' & $iError & @CRLF)
 
