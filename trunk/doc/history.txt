@@ -1005,3 +1005,4 @@ Version 9.7 -- 25.06.15
 Version ?.? -- ??.??.??
 - AutoIt script compiler updated to version 3.3.14.0 (Thanks to "harry")
 - Integrated Windows Update Client July 2015 (kb3065987/kb3065988) for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2 (Thanks to "Denniss" and "harry")
+- Fix: Linux scripts' improvements (Thanks to "techge", "deramon", "DanielEckl", "hbuhrmester" and H. Hullen)

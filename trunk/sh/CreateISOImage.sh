@@ -2,12 +2,14 @@
 
 #########################################################################
 ###          WSUS Offline Update ISO maker for Linux systems          ###
-###                           v. 9.7+ (r671)                          ###
+###                           v. 9.7+ (r672)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg                     ###
 ###   maintained by H. Hullen                                         ###
 #########################################################################
+
+export LC_ALL=C
 
 Prog=$(basename $0)
 case $BASH in
