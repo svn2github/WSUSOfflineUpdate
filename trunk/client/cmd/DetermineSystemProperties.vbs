@@ -58,6 +58,7 @@ Dim cpp2008_x86_old, cpp2008_x86_new, cpp2008_x64_old, cpp2008_x64_new
 Dim cpp2010_x86_old, cpp2010_x86_new, cpp2010_x64_old, cpp2010_x64_new
 Dim cpp2012_x86_old, cpp2012_x86_new, cpp2012_x64_old, cpp2012_x64_new
 Dim cpp2013_x86_old, cpp2013_x86_new, cpp2013_x64_old, cpp2013_x64_new
+Dim cpp2015_x86_old, cpp2015_x86_new, cpp2015_x64_old, cpp2015_x64_new
 
 Private Function RegExists(objShell, strName)
 Dim dummy
@@ -573,6 +574,10 @@ cpp2013_x86_old = False
 cpp2013_x86_new = False
 cpp2013_x64_old = False
 cpp2013_x64_new = False
+cpp2015_x86_old = False
+cpp2015_x86_new = False
+cpp2015_x64_old = False
+cpp2015_x64_new = False
 Set objInstaller = CreateObject("WindowsInstaller.Installer")
 For Each strProduct In objInstaller.Products
   Select Case UCase(strProduct)
@@ -637,6 +642,12 @@ For Each strProduct In objInstaller.Products
     Case "{A749D8E6-B613-3BE3-8F5F-045C84EBA29B}", "{929FBD26-9020-399B-9A7A-751D61F0B942}"
       cpp2013_x64_old = True
       cpp2013_x64_new = True
+    Case "{A2563E55-3BEC-3828-8D67-E5E8B9E8B675}", "{BE960C1C-7BAD-3DE6-8B1A-2616FE532845}", "{74d0e5db-b326-4dae-a6b2-445b9de1836e}"
+      cpp2015_x86_old = True
+      cpp2015_x86_new = True
+    Case "{0D3E9E15-DE7A-300B-96F1-B4AF12B96488}", "{BC958BD2-5DAC-3862-BB1A-C1BE0790438D}", "{e46eca4f-393b-40df-9f49-076faf788d83}"
+      cpp2015_x64_old = True
+      cpp2015_x64_new = True
   End Select
 Next
 
@@ -650,6 +661,8 @@ If (cpp2012_x86_old) And (Not cpp2012_x86_new) Then objCmdFile.WriteLine("set CP
 If (cpp2012_x64_old) And (Not cpp2012_x64_new) Then objCmdFile.WriteLine("set CPP_2012_x64=1")
 If (cpp2013_x86_old) And (Not cpp2013_x86_new) Then objCmdFile.WriteLine("set CPP_2013_x86=1")
 If (cpp2013_x64_old) And (Not cpp2013_x64_new) Then objCmdFile.WriteLine("set CPP_2013_x64=1")
+If (cpp2015_x86_old) And (Not cpp2015_x86_new) Then objCmdFile.WriteLine("set CPP_2015_x86=1")
+If (cpp2015_x64_old) And (Not cpp2015_x64_new) Then objCmdFile.WriteLine("set CPP_2015_x64=1")
 
 objCmdFile.Close
 WScript.Quit(0)

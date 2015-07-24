@@ -6,7 +6,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 9.7.0.672)
+#pragma compile(FileVersion, 9.7.0.673)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -44,9 +44,7 @@ Dim Const $wlemax                     = 7
 Dim Const $msimax                     = 22
 Dim Const $default_logpixels          = 96
 Dim Const $target_version_dotnet35    = "3.5.30729"
-Dim Const $target_version_dotnet40    = "4.0.30319"
-Dim Const $target_version_dotnet45    = "4.5.51209"
-Dim Const $target_version_dotnet45w63 = "4.5.51650"
+Dim Const $target_version_dotnet4     = "4.6.00081"
 Dim Const $target_version_psh         = "2.0"
 
 ; INI file constants
@@ -97,8 +95,7 @@ Dim Const $path_rel_hashes            = "\md\"
 Dim Const $path_rel_autologon         = "\bin\Autologon.exe"
 Dim Const $path_rel_win_glb           = "\win\glb\"
 Dim Const $path_rel_cpp               = "\cpp\vcredist*.exe"
-Dim Const $path_rel_instdotnet40      = "\dotnet\dotNetFx40*.exe"
-Dim Const $path_rel_instdotnet45      = "\dotnet\NDP452-KB2901907-x86-x64-AllOS*.exe"
+Dim Const $path_rel_instdotnet4       = "\dotnet\NDP46-KB3045557-x86-x64-AllOS*.exe"
 Dim Const $path_rel_ofc_glb           = "\ofc\glb\"
 Dim Const $path_rel_msse_x86          = "\msse\x86-glb\MSEInstall-x86-*.exe"
 Dim Const $path_rel_msse_x64          = "\msse\x64-glb\MSEInstall-x64-*.exe"
@@ -291,15 +288,7 @@ Func DotNet4MainVersion()
 EndFunc
 
 Func DotNet4TargetVersion()
-  If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") ) Then
-    Return $target_version_dotnet40
-  Else
-    If ( (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") ) Then
-      Return $target_version_dotnet45w63
-    Else
-      Return $target_version_dotnet45
-    EndIf
-  EndIf
+  Return $target_version_dotnet4
 EndFunc
 
 Func PowerShellVersion()
@@ -349,7 +338,7 @@ Func CPPPresent($basepath)
 EndFunc
 
 Func DotNet4InstPresent($basepath)
-  Return (FileExists($basepath & $path_rel_instdotnet40) OR FileExists($basepath & $path_rel_instdotnet45))
+  Return FileExists($basepath & $path_rel_instdotnet4)
 EndFunc
 
 Func OfcGlbPresent($basepath)
@@ -693,9 +682,9 @@ EndIf
 $txtxpos = 3 * $txtxoffset
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
-  $dotnet4 = GUICtrlCreateCheckbox(".NET Framework 4.x installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $dotnet4 = GUICtrlCreateCheckbox(".NET Framework 4.6 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $dotnet4 = GUICtrlCreateCheckbox("Install .NET Framework 4.x", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $dotnet4 = GUICtrlCreateCheckbox("Install .NET Framework 4.6", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (DotNet4Version() = DotNet4TargetVersion()) OR (NOT DotNet4InstPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)

@@ -5,4 +5,6 @@ ndp20-
 ndp20sp1
 kb971111
 ndp35-
+ndp40-
+ndp45-
 kb3057781

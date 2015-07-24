@@ -1,3 +1,2 @@
 http://download.microsoft.com/download/5/f/5/5f5ab722-6045-4864-bcbc-6b5a7651dc40/dotnetfx35langpack_x86ko.exe
-http://download.microsoft.com/download/9/9/3/99354E84-C605-46D9-8289-840436244E72/dotNetFx40LP_Full_x86_x64ko.exe
-http://download.microsoft.com/download/B/5/D/B5D4501C-0D72-459A-8FDC-2D47AFF4E8BA/NDP452-KB2901907-x86-x64-AllOS-KOR.exe
+http://download.microsoft.com/download/2/4/6/246497D9-B00F-4353-8C3E-12B04A83E4A6/NDP46-KB3045557-x86-x64-AllOS-KOR.exe

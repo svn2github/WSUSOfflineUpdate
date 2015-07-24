@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.7+ (r672)
+set WSUSOFFLINE_VERSION=9.7+ (r673)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -992,41 +992,22 @@ if %DOTNET4_VER_MINOR% LSS %DOTNET4_VER_TARGET_MINOR% goto InstallDotNet4
 if %DOTNET4_VER_MINOR% GTR %DOTNET4_VER_TARGET_MINOR% goto SkipDotNet4Inst
 if %DOTNET4_VER_BUILD% GEQ %DOTNET4_VER_TARGET_BUILD% goto SkipDotNet4Inst
 :InstallDotNet4
-if "%OS_NAME%" NEQ "w2k3" goto SkipDotNet4Prereq
-if /i "%OS_ARCH%"=="x64" (
-  set DOTNET4_PREREQ=..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\wic_%OS_ARCH%_%OS_LANG%.exe
-) else (
-  set DOTNET4_PREREQ=..\%OS_NAME%\%OS_LANG%\wic_%OS_ARCH%_%OS_LANG%.exe
-)
-if exist %DOTNET4_PREREQ% (
-  call InstallOSUpdate.cmd %DOTNET4_PREREQ% %VERIFY_MODE% /errorsaswarnings /quiet /norestart
-) else (
-  echo Warning: .NET Framework 4 prerequisite WIC installation file ^(%DOTNET4_PREREQ%^) not found.
-  echo %DATE% %TIME% - Warning: .NET Framework 4 prerequisite WIC installation file ^(%DOTNET4_PREREQ%^) not found>>%UPDATE_LOGFILE%
-)
-set DOTNET4_PREREQ=
-:SkipDotNet4Prereq
-if %DOTNET4_VER_TARGET_MINOR% EQU 0 (
-  set DOTNET4_FILENAME=..\dotnet\dotNetFx40_Full_x86_x64.exe
-  set DOTNET4LP_FILENAME=..\dotnet\dotNetFx40LP_Full_x86_x64%OS_LANG_SHORT%.exe
-) else (
-  set DOTNET4_FILENAME=..\dotnet\NDP452-KB2901907-x86-x64-AllOS-ENU.exe
-  set DOTNET4LP_FILENAME=..\dotnet\NDP452-KB2901907-x86-x64-AllOS-%OS_LANG%.exe
-)
+set DOTNET4_FILENAME=..\dotnet\NDP46-KB3045557-x86-x64-AllOS-ENU.exe
+set DOTNET4LP_FILENAME=..\dotnet\NDP46-KB3045557-x86-x64-AllOS-%OS_LANG%.exe
 if not exist %DOTNET4_FILENAME% (
-  echo Warning: .NET Framework 4 installation file ^(%DOTNET4_FILENAME%^) not found.
-  echo %DATE% %TIME% - Warning: .NET Framework 4 installation file ^(%DOTNET4_FILENAME%^) not found>>%UPDATE_LOGFILE%
+  echo Warning: .NET Framework 4.6 installation file ^(%DOTNET4_FILENAME%^) not found.
+  echo %DATE% %TIME% - Warning: .NET Framework 4.6 installation file ^(%DOTNET4_FILENAME%^) not found>>%UPDATE_LOGFILE%
   goto SkipDotNet4Inst
 )
-echo Installing .NET Framework 4...
+echo Installing .NET Framework 4.6...
 for /F %%i in ('dir /B %DOTNET4_FILENAME%') do call InstallOSUpdate.cmd ..\dotnet\%%i %VERIFY_MODE% /errorsaswarnings /passive /norestart /lcid 1033
 if "%OS_LANG%" NEQ "enu" (
   if exist %DOTNET4LP_FILENAME% (
-    echo Installing .NET Framework 4 Language Pack...
+    echo Installing .NET Framework 4.6 Language Pack...
     for /F %%i in ('dir /B %DOTNET4LP_FILENAME%') do call InstallOSUpdate.cmd ..\dotnet\%%i %VERIFY_MODE% /errorsaswarnings /passive /norestart
   ) else (
-    echo Warning: .NET Framework 4 Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found.
-    echo %DATE% %TIME% - Warning: .NET Framework 4 Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found>>%UPDATE_LOGFILE%
+    echo Warning: .NET Framework 4.6 Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found.
+    echo %DATE% %TIME% - Warning: .NET Framework 4.6 Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found>>%UPDATE_LOGFILE%
   )
 )
 set RECALL_REQUIRED=1
