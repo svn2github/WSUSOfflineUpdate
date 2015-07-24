@@ -3,7 +3,7 @@
 # gemeinsam benutzt werden
 # Start: 10.3.2013 Hullen
 
-syslist="w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64 all-x86 all-x64 o2k7 o2k10 o2k13 ofc all-61 all-62 all-63"
+syslist="w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64 all-x86 all-x64 o2k7 o2k10 o2k13 ofc all-61 all-62 all-63"
 langlist="enu deu nld esn fra ptg ptb ita rus plk ell csy dan nor sve fin jpn kor chs cht hun trk ara heb"
 
 printusage()
@@ -36,7 +36,7 @@ Parameters:
 /wle       - download Essentials
 $Iso
 
-Example: bash `basename $0` w2k3 deu /dotnet /excludesp
+Example: bash `basename $0` w61 deu /dotnet /excludesp
 END
 exit 1
 }
@@ -171,10 +171,6 @@ esac
     param8=/wle
     wle="1"
   fi
-
-if [ "$sys" == "w2k3" -o "$sys" == "w2k3-x64" ]; then
-  msse="0"
-fi
 
 #determining proxy
 shift 2

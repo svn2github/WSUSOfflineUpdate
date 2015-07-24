@@ -26,11 +26,6 @@ if /i "%2"=="/selectoptions" (
   shift /2
   goto EvalParams
 )
-if /i "%2"=="/nobackup" (
-  set BACKUP_FILES=0
-  shift /2
-  goto EvalParams
-)
 if /i "%2"=="/verify" (
   set VERIFY_FILES=1
   shift /2

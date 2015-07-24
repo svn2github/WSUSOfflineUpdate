@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                          v. 9.7+ (r673)                           ###
+###                          v. 9.7+ (r674)                           ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -157,18 +157,17 @@ getsystem()
 {
 cat << END
 Please select your OS:
-[1] Windows Server 2003		[2] Windows Server 2003		    64 bit
-[3] Windows Vista / Server 2008	[4] Windows Vista / Server 2008     64 bit
-[5] Windows 7   (w61)		[6] Windows 7     / Server 2008 R2  64 bit
-[7] Windows 8   (w62)		[8] Windows 8     / Server 2012     64 bit
-[9] Windows 8.1 (w63)		[10] Windows 8.1		    64 bit
+[1] Windows Vista / Server 2008	[2] Windows Vista / Server 2008     64 bit
+[3] Windows 7   (w61)		[4] Windows 7     / Server 2008 R2  64 bit
+[5] Windows 8   (w62)		[6] Windows 8     / Server 2012     64 bit
+[7] Windows 8.1 (w63)		[8] Windows 8.1		    64 bit
 
-[11] All Windows 32 bit		[12] All Windows 64 bit
+[9] All Windows 32 bit		[10] All Windows 64 bit
 
-[13] Office 2007 	[14] Office 2010	[15] Office 2013
-[16] All Office updates (2007 - 2013)
+[11] Office 2007 	[12] Office 2010	[13] Office 2013
+[14] All Office updates (2007 - 2013)
 
-[17] all Windows 7	[18] all Windows 8	[19] all Windows 8.1
+[15] all Windows 7	[16] all Windows 8	[17] all Windows 8.1
 
 END
 read -p "which number? " syschoice
@@ -184,10 +183,6 @@ sys_old=""
 set -- $(echo $syslist)
 shift $((syschoice -1))
 sys=$1
-
-if [ "$sys" == "wxp-x64" ]; then
-  sys="w2k3-x64"
-fi
 
 case $sys in
     *-x64)
@@ -259,13 +254,11 @@ fi
 getmsse()
 {
 msse="0"
-if [ "$sys" != "w2k3" -a "$sys" != "w2k3-x64" ]; then
   read -p "Download Microsoft Security Essentials files? [y/n] " addmsse
   if [ "$addmsse" == "y" ]; then
     msse="1"
     param5="/msse"
   fi
-fi
 }
 
 getwddefs()
@@ -469,8 +462,8 @@ for Datei in ../{exclude,static}/*.txt ../{exclude,static}/custom/*.txt
 
 Liste=""
 case $sys in
-    all-x64) Liste="w2k3-x64 w60-x64 w61-x64 w62-x64 w63-x64" ;;
-    all-x86) Liste="w2k3     w60     w61     w62     w63" ;;
+    all-x64) Liste="w60-x64 w61-x64 w62-x64 w63-x64" ;;
+    all-x86) Liste="w60     w61     w62     w63" ;;
     all-61)  Liste="w61 w61-x64" ;;
     all-62)  Liste="w62 w62-x64" ;;
     all-63)  Liste="w63 w63-x64" ;;
@@ -526,7 +519,6 @@ if [ -f ../static/custom/StaticDownloadLinks-${OS_sys}-${lang}.txt ]; then
 fi
 
 for Pfad in static static/custom; do
-# test "$lang" != glb -a "$sys" != "w2k3-x64" || continue
   static="../$Pfad/StaticDownloadLinks-win-${OS_ARCH}-${Origlang}.txt"
   if [ -f "$static" ]; then
     cat $static >> ../temp/StaticUrls-${Origlang}.txt
@@ -716,7 +708,7 @@ test $lang == glb || {
 
 > ../temp/tmpExcludeList-win-${OS_ARCH}.txt
 
-if [ $lang != glb -a $sys != "w2k3-x64" -a "$sys" != "ofc" ]; then
+if [ $lang != glb -a "$sys" != "ofc" ]; then
   echo "Determining update URLs for win ..."
   test -f ../xslt/ExtractDownloadLinks-win-x86-${lang}.xsl && \
     $xml tr ../xslt/ExtractDownloadLinks-win-x86-${lang}.xsl ../temp/package.xml >> ../temp/Urls-win-${OS_ARCH}-${lang}.txt
@@ -875,7 +867,7 @@ printheader
 
 echo "Downloading patches for ${sys}..."
 echo "Downloading static patches..."
-if [ $lang != "glb" -a $sys != "w2k3-x64" ]; then
+if [ $lang != "glb" ]; then
   doWget -i ../temp/StaticUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
   doWget -i ../temp/StaticUrls-${lang}.txt -P ../client/win/${lang}
 fi
@@ -956,7 +948,7 @@ if [ "$wle" == "1" ]; then
 fi
 
 echo "Downloading patches for $sys $Origlang"
-if [ $lang != glb -a "$sys" != "w2k3-x64" ]; then
+if [ $lang != glb ]; then
   doWget -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
   doWget -i ../temp/ValidUrls-win-${OS_ARCH}-${lang}.txt -P ../client/win/${lang}
 fi
@@ -967,7 +959,7 @@ printheader
 echo "Validating patches for ${sys}..."
 echo "Validating static patches..."
 
-if [ $lang != glb -a $sys != "w2k3-x64" ]; then
+if [ $lang != glb ]; then
   doWget -i ../temp/StaticUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
   doWget -i ../temp/StaticUrls-${lang}.txt -P ../client/win/${lang}
 fi
@@ -994,7 +986,7 @@ if [ -d ../client/${sys}/glb ]; then
   (cd ../client/md; hashdeep -c md5,sha1,sha256 -l -r ../${sys}/glb | tr '/' '\\' > hashes-${sys}-glb.txt)
 fi
 
-if [ $lang != glb -a $sys != "w2k3-x64" ] ; then
+if [ $lang != glb ] ; then
   doWget -i ../temp/ValidUrls-win-${OS_ARCH}-${lang}.txt -P ../client/win/${lang}
 fi
 if [ $lang == glb ] ; then
@@ -1028,7 +1020,7 @@ if [ "$CLEANUP_DOWNLOADS" != "0" ]; then
   cat ../temp/StaticUrls-${sys}-glb.txt >> ../temp/ValidUrls-${sys}-glb.txt
   cleanup "../temp/ValidUrls-${sys}-glb.txt" "../client/${sys}/glb"
   case $sys in
-    w6[0-3]*|w2k3-x64)
+    w6[0-3]*)
     ;;
     *)
     echo "Cleaning up client directory for win $Origlang"

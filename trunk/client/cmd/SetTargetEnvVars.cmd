@@ -64,9 +64,7 @@ if /i "%OS_ARCH%"=="x64" (
   set WSH_VER_TARGET_MINOR=7
 )
 if /i "%INSTALL_IE%"=="/instielatest" set INSTALL_IE=/instie8
-if /i "%INSTALL_IE%"=="/instie8" (set IE_VER_TARGET_MAJOR=8) else (
-  if /i "%INSTALL_IE%"=="/instie7" (set IE_VER_TARGET_MAJOR=7) else (set IE_VER_TARGET_MAJOR=6)
-)
+if /i "%INSTALL_IE%"=="/instie8" (set IE_VER_TARGET_MAJOR=8) else (set IE_VER_TARGET_MAJOR=6)
 set IE_VER_TARGET_MINOR=0
 if /i "%OS_ARCH%"=="x64" (
   set TSC_VER_TARGET_MAJOR=5

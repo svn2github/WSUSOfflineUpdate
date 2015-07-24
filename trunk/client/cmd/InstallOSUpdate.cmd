@@ -26,11 +26,6 @@ if /i "%2"=="/selectoptions" (
   shift /2
   goto EvalParams
 )
-if /i "%2"=="/nobackup" (
-  set BACKUP_FILES=0
-  shift /2
-  goto EvalParams
-)
 if /i "%2"=="/verify" (
   set VERIFY_FILES=1
   shift /2
@@ -112,7 +107,7 @@ if "%INSTALL_SWITCHES%"=="" (
   )
 )
 if "%INSTALL_SWITCHES%"=="" (
-  if "%BACKUP_FILES%"=="0" (set INSTALL_SWITCHES=/q /n /z) else (set INSTALL_SWITCHES=/q /z)
+  set INSTALL_SWITCHES=/q /z
 )
 echo Installing %1...
 %1 %INSTALL_SWITCHES%
@@ -172,8 +167,8 @@ echo ERROR: No command extensions available.
 goto Error
 
 :NoParam
-echo ERROR: Invalid parameter. Usage: %~n0 ^<filename^> [/selectoptions [/nobackup]] [/errorsaswarnings] [switches]
-echo %DATE% %TIME% - Error: Invalid parameter. Usage: %~n0 ^<filename^> [/selectoptions [/nobackup]] [/errorsaswarnings] [switches]>>%UPDATE_LOGFILE%
+echo ERROR: Invalid parameter. Usage: %~n0 ^<filename^> [/selectoptions] [/errorsaswarnings] [switches]
+echo %DATE% %TIME% - Error: Invalid parameter. Usage: %~n0 ^<filename^> [/selectoptions] [/errorsaswarnings] [switches]>>%UPDATE_LOGFILE%
 goto Error
 
 :InvalidParam

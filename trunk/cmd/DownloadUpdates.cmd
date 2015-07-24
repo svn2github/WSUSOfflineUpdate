@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.7+ (r673)
+set WSUSOFFLINE_VERSION=9.7+ (r674)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -343,14 +343,6 @@ del /Q ..\static\*oxp-*.* >nul 2>&1
 rem *** Office 2003 stuff ***
 if exist ..\client\static\StaticUpdateIds-o2k3.txt del ..\client\static\StaticUpdateIds-o2k3.txt
 del /Q ..\static\*o2k3-*.* >nul 2>&1
-
-rem *** rootsupd restructuring stuff ***
-if exist ..\client\wxp\glb\rootsupd.exe (
-  if not exist ..\client\win\glb\nul md ..\client\win\glb
-  move /Y ..\client\wxp\glb\rootsupd.exe ..\client\win\glb >nul
-  if exist ..\client\md\hashes-win-glb.txt del ..\client\md\hashes-win-glb.txt
-  if exist ..\client\md\hashes-wxp-glb.txt del ..\client\md\hashes-wxp-glb.txt
-)
 
 rem *** CPP restructuring stuff ***
 if exist ..\client\md\hashes-cpp-x64-glb.txt del ..\client\md\hashes-cpp-x64-glb.txt
@@ -1485,15 +1477,9 @@ if not exist ..\bin\sigcheck.exe goto NoSigCheck
 echo Verifying digital file signatures for %1 %2...
 ..\bin\sigcheck.exe %SIGCHK_COPT% -s ..\client\%1\%2 >"%TEMP%\sigcheck-%1-%2.txt"
 for /F "tokens=1 delims=," %%i in ('%SystemRoot%\System32\findstr.exe /I "Unsigned" "%TEMP%\sigcheck-%1-%2.txt"') do (
-  echo %%i | %SystemRoot%\System32\find.exe /I "rootsupd.exe" >nul 2>&1
-  if errorlevel 1 (
-    del %%i
-    echo Warning: Deleted unsigned file %%i.
-    echo %DATE% %TIME% - Warning: Deleted unsigned file %%i>>%DOWNLOAD_LOGFILE%
-  ) else (
-    echo Warning: Kept unsigned file %%i.
-    echo %DATE% %TIME% - Warning: Kept unsigned file %%i>>%DOWNLOAD_LOGFILE%
-  )
+  del %%i
+  echo Warning: Deleted unsigned file %%i.
+  echo %DATE% %TIME% - Warning: Deleted unsigned file %%i>>%DOWNLOAD_LOGFILE%
 )
 if exist "%TEMP%\sigcheck-%1-%2.txt" del "%TEMP%\sigcheck-%1-%2.txt"
 echo %DATE% %TIME% - Info: Verified digital file signatures for %1 %2>>%DOWNLOAD_LOGFILE%

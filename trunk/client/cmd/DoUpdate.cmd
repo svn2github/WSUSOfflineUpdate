@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.7+ (r673)
+set WSUSOFFLINE_VERSION=9.7+ (r674)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -35,13 +35,10 @@ echo %DATE% %TIME% - Info: Used path "%~dp0" on %COMPUTERNAME% (user: %USERNAME%
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/nobackup /verify /updatercerts /instie7 /instie8 /instie9 /instie10 /instie11 /instielatest /updatecpp /instmssl /instdotnet35 /instdotnet4 /instpsh /instwmf /instmsse /updatetsc /instofv /instwle /instmsi /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
+for %%i in (/verify /instie8 /instie9 /instie10 /instie11 /instielatest /updatecpp /instmssl /instdotnet35 /instdotnet4 /instpsh /instwmf /instmsse /updatetsc /instofv /instwle /instmsi /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected>>%UPDATE_LOGFILE%
 )
-if /i "%1"=="/nobackup" set BACKUP_MODE=/nobackup
 if /i "%1"=="/verify" set VERIFY_MODE=/verify
-if /i "%1"=="/updatercerts" set UPDATE_RCERTS=/updatercerts
-if /i "%1"=="/instie7" set INSTALL_IE=/instie7
 if /i "%1"=="/instie8" set INSTALL_IE=/instie8
 if /i "%1"=="/instie9" set INSTALL_IE=/instie9
 if /i "%1"=="/instie10" set INSTALL_IE=/instie10
@@ -310,11 +307,7 @@ goto SP%OS_NAME%
 
 :SPw2k3
 echo %DATE% %TIME% - Info: Installing most recent Service Pack for Windows Server 2003>>%UPDATE_LOGFILE%
-if "%BACKUP_MODE%"=="/nobackup" (
-  call InstallListedUpdates.cmd %VERIFY_MODE% /u /z /n
-) else (
-  call InstallListedUpdates.cmd %VERIFY_MODE% /u /z
-)
+call InstallListedUpdates.cmd %VERIFY_MODE% /u /z
 if errorlevel 1 goto InstError
 set RECALL_REQUIRED=1
 goto Installed
@@ -478,9 +471,9 @@ if errorlevel 1 (
 echo Installing most recent Windows Installer...
 for /F %%i in ('dir /B %MSI_FILENAME%') do (
   if /i "%OS_ARCH%"=="x64" (
-    call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\glb\%%i %VERIFY_MODE% /quiet %BACKUP_MODE% /norestart
+    call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\glb\%%i %VERIFY_MODE% /quiet /norestart
   ) else (
-    call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /quiet %BACKUP_MODE% /norestart
+    call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /quiet /norestart
   )
   if not errorlevel 1 set REBOOT_REQUIRED=1
 )
@@ -505,7 +498,7 @@ if not exist %WSH_FILENAME% (
 )
 echo Installing most recent Windows Script Host...
 for /F %%i in ('dir /B %WSH_FILENAME%') do (
-  call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /quiet %BACKUP_MODE% /norestart
+  call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /quiet /norestart
   if not errorlevel 1 set REBOOT_REQUIRED=1
 )
 set WSH_FILENAME=
@@ -528,14 +521,10 @@ goto IE%OS_NAME%
 if /i "%OS_ARCH%"=="x64" (
   if "%INSTALL_IE%"=="/instie8" (
     set IE_FILENAME=..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\IE8-WindowsServer2003-%OS_ARCH%-%OS_LANG%*.exe
-  ) else (
-    set IE_FILENAME=..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\ie7-windowsserver2003-%OS_ARCH%-%OS_LANG%*.exe
   )
 ) else (
   if "%INSTALL_IE%"=="/instie8" (
     set IE_FILENAME=..\%OS_NAME%\%OS_LANG%\IE8-WindowsServer2003-%OS_ARCH%-%OS_LANG%*.exe
-  ) else (
-    set IE_FILENAME=..\%OS_NAME%\%OS_LANG%\ie7-windowsserver2003-%OS_ARCH%-%OS_LANG%*.exe
   )
 )
 dir /B %IE_FILENAME% >nul 2>&1
@@ -550,13 +539,13 @@ for /F %%i in ('dir /B %IE_FILENAME%') do (
     if "%INSTALL_IE%"=="/instie8" (
       call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors /passive /update-no /no-default /norestart
     ) else (
-      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors /passive /update-no /no-default %BACKUP_MODE% /norestart
+      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors /passive /update-no /no-default /norestart
     )
   ) else (
     if "%INSTALL_IE%"=="/instie8" (
       call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors /passive /update-no /no-default /norestart
     ) else (
-      call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors /passive /update-no /no-default %BACKUP_MODE% /norestart
+      call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors /passive /update-no /no-default /norestart
     )
   )
   if not errorlevel 1 set RECALL_REQUIRED=1
@@ -598,7 +587,7 @@ if "%INSTALL_IE%"=="/instie9" (
   if errorlevel 1 goto ListError
   if exist "%TEMP%\UpdatesToInstall.txt" (
     echo Installing Internet Explorer 9 prerequisites...
-    call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
+    call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /ignoreerrors
     if not errorlevel 1 (
       if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
       echo. >%SystemRoot%\Temp\wou_iepre_tried.txt
@@ -673,7 +662,7 @@ call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing Internet Explorer 10/11 prerequisites...
-  call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
+  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /ignoreerrors
   if not errorlevel 1 (
     if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
     echo. >%SystemRoot%\Temp\wou_iepre_tried.txt
@@ -703,62 +692,6 @@ goto IEInstalled
 set IE_FILENAME=
 if "%RECALL_REQUIRED%"=="1" goto Installed
 :SkipIEInst
-
-rem *** Install update for Trusted Root Certificates ***
-if "%UPDATE_RCERTS%" NEQ "/updatercerts" goto SkipTRCertsInst
-echo Checking Trusted Root Certificates' version...
-set TRCERTS_FILENAME=..\win\glb\rootsupd.exe
-if not exist %TRCERTS_FILENAME% (
-  echo Warning: File %TRCERTS_FILENAME% not found.
-  echo %DATE% %TIME% - Warning: File %TRCERTS_FILENAME% not found>>%UPDATE_LOGFILE%
-  goto SkipTRCertsInst
-)
-%TRCERTS_FILENAME% /T:"%TEMP%\rootsupd" /C /Q
-for /F "tokens=2 delims== " %%i in ('%SystemRoot%\System32\findstr.exe /B /L /I "Version" "%TEMP%\rootsupd\rootsupd.inf"') do (
-  call SafeRmDir.cmd "%TEMP%\rootsupd"
-  for /F "tokens=1-4 delims=," %%j in (%%i) do (
-    if %TRCERTS_VER_MAJOR% LSS %%j goto InstallTRCerts
-    if %TRCERTS_VER_MAJOR% GTR %%j goto SkipTRCertsInst
-    if %TRCERTS_VER_MINOR% LSS %%k goto InstallTRCerts
-    if %TRCERTS_VER_MINOR% GTR %%k goto SkipTRCertsInst
-    if %TRCERTS_VER_BUILD% LSS %%l goto InstallTRCerts
-    if %TRCERTS_VER_BUILD% GTR %%l goto SkipTRCertsInst
-    if %TRCERTS_VER_REVIS% GEQ %%m goto SkipTRCertsInst
-  )
-)
-:InstallTRCerts
-echo Installing most recent update for Trusted Root Certificates...
-call InstallOSUpdate.cmd %TRCERTS_FILENAME% %VERIFY_MODE% /errorsaswarnings /Q
-set TRCERTS_FILENAME=
-:SkipTRCertsInst
-
-rem *** Install update for Revoked Root Certificates ***
-if "%UPDATE_RCERTS%" NEQ "/updatercerts" goto SkipRRCertsInst
-echo Checking Revoked Root Certificates' version...
-set RRCERTS_FILENAME=..\win\glb\rvkroots.exe
-if not exist %RRCERTS_FILENAME% (
-  echo Warning: File %RRCERTS_FILENAME% not found.
-  echo %DATE% %TIME% - Warning: File %RRCERTS_FILENAME% not found>>%UPDATE_LOGFILE%
-  goto SkipRRCertsInst
-)
-%RRCERTS_FILENAME% /T:"%TEMP%\rvkroots" /C /Q
-for /F "tokens=2 delims== " %%i in ('%SystemRoot%\System32\findstr.exe /B /L /I "Version" "%TEMP%\rvkroots\rvkroots.inf"') do (
-  call SafeRmDir.cmd "%TEMP%\rvkroots"
-  for /F "tokens=1-4 delims=," %%j in (%%i) do (
-    if %RRCERTS_VER_MAJOR% LSS %%j goto InstallRRCerts
-    if %RRCERTS_VER_MAJOR% GTR %%j goto SkipRRCertsInst
-    if %RRCERTS_VER_MINOR% LSS %%k goto InstallRRCerts
-    if %RRCERTS_VER_MINOR% GTR %%k goto SkipRRCertsInst
-    if %RRCERTS_VER_BUILD% LSS %%l goto InstallRRCerts
-    if %RRCERTS_VER_BUILD% GTR %%l goto SkipRRCertsInst
-    if %RRCERTS_VER_REVIS% GEQ %%m goto SkipRRCertsInst
-  )
-)
-:InstallRRCerts
-echo Installing most recent update for Revoked Root Certificates...
-call InstallOSUpdate.cmd %RRCERTS_FILENAME% %VERIFY_MODE% /errorsaswarnings /Q
-set RRCERTS_FILENAME=
-:SkipRRCertsInst
 
 rem *** Install C++ Runtime Libraries ***
 if "%UPDATE_CPP%" NEQ "/updatecpp" goto SkipCPPInst
@@ -920,7 +853,7 @@ call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing .NET Framework 3.5 SP1 Family Update...
-  call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
+  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /ignoreerrors
 )
 set RECALL_REQUIRED=1
 set DOTNET35_FILENAME=
@@ -1033,7 +966,7 @@ call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing .NET Framework 3.5 custom updates...
-  call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
+  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /ignoreerrors
 )
 :SkipDotNet35CustomInst
 rem *** Install .NET Framework 4 - Custom ***
@@ -1054,7 +987,7 @@ call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing .NET Framework 4 custom updates...
-  call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
+  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /ignoreerrors
 )
 :SkipDotNet4CustomInst
 if "%RECALL_REQUIRED%"=="1" goto Installed
@@ -1094,7 +1027,7 @@ call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing Windows PowerShell 2.0...
-  call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /errorsaswarnings
+  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /errorsaswarnings
 ) else (
   echo Warning: Windows PowerShell 2.0 installation file ^(kb%PSH_TARGET_ID%^) not found.
   echo %DATE% %TIME% - Warning: Windows PowerShell 2.0 installation file ^(kb%PSH_TARGET_ID%^) not found>>%UPDATE_LOGFILE%
@@ -1132,7 +1065,7 @@ call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing Windows Management Framework...
-  call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /errorsaswarnings
+  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /errorsaswarnings
 ) else (
   echo Warning: Windows Management Framework installation file ^(kb%WMF_TARGET_ID%^) not found.
   echo %DATE% %TIME% - Warning: Windows Management Framework installation file ^(kb%WMF_TARGET_ID%^) not found>>%UPDATE_LOGFILE%
@@ -1171,7 +1104,7 @@ call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing most recent Remote Desktop Client...
-  call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /errorsaswarnings
+  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /errorsaswarnings
 ) else (
   echo Warning: Remote Desktop Client installation file^(s^) not found.
   echo %DATE% %TIME% - Warning: Remote Desktop Client installation file^(s^) not found>>%UPDATE_LOGFILE%
@@ -1360,7 +1293,7 @@ call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing most recent Cumulative Security Update for Internet Explorer...
-  call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /ignoreerrors
+  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /ignoreerrors
   if not errorlevel 1 (
     if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
     echo. >%SystemRoot%\Temp\wou_wupre_tried.txt
@@ -1451,7 +1384,7 @@ echo %DATE% %TIME% - Info: Listed update files>>%UPDATE_LOGFILE%
 rem *** Install updates ***
 if not exist "%TEMP%\UpdatesToInstall.txt" goto SkipUpdates
 echo Installing updates...
-call InstallListedUpdates.cmd /selectoptions %BACKUP_MODE% %VERIFY_MODE% /errorsaswarnings
+call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /errorsaswarnings
 if errorlevel 1 goto InstError
 set REBOOT_REQUIRED=1
 :SkipUpdates
@@ -1575,7 +1508,7 @@ if "%RECALL_REQUIRED%"=="1" (
     )
     if "%USERNAME%" NEQ "WOUTempAdmin" (
       echo Preparing automatic recall...
-      call PrepareRecall.cmd "%~f0" %BACKUP_MODE% %VERIFY_MODE% %UPDATE_RCERTS% %INSTALL_IE% %UPDATE_CPP% %INSTALL_MSSL% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_WMF% %INSTALL_MSSE% %UPDATE_TSC% %INSTALL_OFV% %INSTALL_WLE% %INSTALL_MSI% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES% %SKIP_DYNAMIC%
+      call PrepareRecall.cmd "%~f0" %VERIFY_MODE% %INSTALL_IE% %UPDATE_CPP% %INSTALL_MSSL% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_WMF% %INSTALL_MSSE% %UPDATE_TSC% %INSTALL_OFV% %INSTALL_WLE% %INSTALL_MSI% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES% %SKIP_DYNAMIC%
     )
     if exist %SystemRoot%\System32\bcdedit.exe (
       echo Adjusting boot sequence for next reboot...
