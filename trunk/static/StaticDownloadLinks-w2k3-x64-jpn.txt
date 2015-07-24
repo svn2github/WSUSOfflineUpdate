@@ -1,4 +1,0 @@
-http://www.download.windowsupdate.com/msdownload/update/v3-19990518/cabpool/windowsserver2003.windowsxp-kb914961-sp2-x64-jpn_c725a8c4e03803b12a9ac8820e964dbc377a80dc.exe
-http://download.microsoft.com/download/6/7/E/67E7D4B2-E34D-42B4-A4EC-E30CC6721A6A/WindowsServer2003-KB968930-x64-JPN.exe
-http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-ja-jp-kb2564958_fd08ea556fe151d7f70ca6580b14518100293465.exe
-http://download.microsoft.com/download/6/4/5/645fed5f-a6e7-44d9-9d10-fe83348796b0/wic_x64_jpn.exe

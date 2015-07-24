@@ -79,7 +79,6 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
         )
         call ListUpdateFile.cmd windowsmedia%WMP_VER_MAJOR%-*%%i ..\%%k\%%l
         call ListUpdateFile.cmd windowsmedia-*%%i ..\%%k\%%l
-        call ListUpdateFile.cmd windowsserver2003*%%i ..\%%k\%%l /searchleftmost
         call ListUpdateFile.cmd windows6*%%i ..\%%k\%%l /searchleftmost
         call ListUpdateFile.cmd windows*%%i ..\%%k\%%l /searchleftmost
         call ListUpdateFile.cmd %%i ..\%%k\%%l

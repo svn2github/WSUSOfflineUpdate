@@ -1,5 +1,0 @@
-http://www.download.windowsupdate.com/msdownload/update/software/dflt/2008/02/windowsserver2003-kb914961-sp2-x86-chs_c3e7772c6ad063bac3cb6ca05ea6e1b39c5bb35d.exe
-http://download.microsoft.com/download/6/9/3/69321906-d1cf-421c-9f70-d6755c85caf1/WindowsServer2003-KB925876-v2-x86-CHS.exe
-http://download.microsoft.com/download/4/0/9/409AF958-70B7-4493-B5C6-CFB49C915F7D/WindowsServer2003-KB968930-x86-CHS.exe
-http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-zh-cn-kb2564958_28212ab9f2da637bc7e956d8dcd3bad9ec350abf.exe
-http://download.microsoft.com/download/f/f/1/ff178bb1-da91-48ed-89e5-478a99387d4f/wic_x86_chs.exe

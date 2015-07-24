@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.7+ (r674)
+set WSUSOFFLINE_VERSION=9.8b (r675)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -127,6 +127,7 @@ rem *** Check Operating System ***
 if "%OS_NAME%"=="" goto UnsupOS
 if "%OS_NAME%"=="w2k" goto UnsupOS
 if "%OS_NAME%"=="wxp" goto UnsupOS
+if "%OS_NAME%"=="w2k3" goto UnsupOS
 if "%OS_NAME%"=="w10" goto UnsupOS
 for %%i in (x86 x64) do (if /i "%OS_ARCH%"=="%%i" goto ValidArch)
 goto UnsupArch
@@ -141,13 +142,6 @@ if "%PWR_POL_IDX%"=="" goto SkipPowerCfg
 if not exist %SystemRoot%\System32\powercfg.exe goto SkipPowerCfg
 echo Adjusting power management settings...
 goto PWR%OS_NAME%
-
-:PWRw2k3
-for %%i in (monitor disk standby hibernate) do (
-  for %%j in (ac dc) do %SystemRoot%\System32\powercfg.exe /X %PWR_POL_IDX% /N /%%i-timeout-%%j 0
-)
-echo %DATE% %TIME% - Info: Adjusted power management settings>>%UPDATE_LOGFILE%
-goto SkipPowerCfg
 
 :PWRw60
 :PWRw61
@@ -304,13 +298,6 @@ if not exist "%TEMP%\UpdatesToInstall.txt" (
 )
 echo Installing most recent Windows Service Pack...
 goto SP%OS_NAME%
-
-:SPw2k3
-echo %DATE% %TIME% - Info: Installing most recent Service Pack for Windows Server 2003>>%UPDATE_LOGFILE%
-call InstallListedUpdates.cmd %VERIFY_MODE% /u /z
-if errorlevel 1 goto InstError
-set RECALL_REQUIRED=1
-goto Installed
 
 :SPw60
 :SPw61
@@ -516,41 +503,6 @@ if %IE_VER_BUILD% GTR %IE_VER_TARGET_BUILD% goto SkipIEInst
 if %IE_VER_REVIS% GEQ %IE_VER_TARGET_REVIS% goto SkipIEInst
 :InstallIE
 goto IE%OS_NAME%
-
-:IEw2k3
-if /i "%OS_ARCH%"=="x64" (
-  if "%INSTALL_IE%"=="/instie8" (
-    set IE_FILENAME=..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\IE8-WindowsServer2003-%OS_ARCH%-%OS_LANG%*.exe
-  )
-) else (
-  if "%INSTALL_IE%"=="/instie8" (
-    set IE_FILENAME=..\%OS_NAME%\%OS_LANG%\IE8-WindowsServer2003-%OS_ARCH%-%OS_LANG%*.exe
-  )
-)
-dir /B %IE_FILENAME% >nul 2>&1
-if errorlevel 1 (
-  echo Warning: File %IE_FILENAME% not found.
-  echo %DATE% %TIME% - Warning: File %IE_FILENAME% not found>>%UPDATE_LOGFILE%
-  goto SkipIEInst
-)
-if "%INSTALL_IE%"=="/instie8" (echo Installing Internet Explorer 8...) else (echo Installing Internet Explorer 7...)
-for /F %%i in ('dir /B %IE_FILENAME%') do (
-  if /i "%OS_ARCH%"=="x64" (
-    if "%INSTALL_IE%"=="/instie8" (
-      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors /passive /update-no /no-default /norestart
-    ) else (
-      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors /passive /update-no /no-default /norestart
-    )
-  ) else (
-    if "%INSTALL_IE%"=="/instie8" (
-      call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors /passive /update-no /no-default /norestart
-    ) else (
-      call InstallOSUpdate.cmd ..\%OS_NAME%\%OS_LANG%\%%i %VERIFY_MODE% /ignoreerrors /passive /update-no /no-default /norestart
-    )
-  )
-  if not errorlevel 1 set RECALL_REQUIRED=1
-)
-goto IEInstalled
 
 :IEw60
 if exist %SystemRoot%\Temp\wou_ie_tried.txt goto SkipIEInst

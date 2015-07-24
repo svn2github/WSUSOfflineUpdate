@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.7+ (r674)
+set WSUSOFFLINE_VERSION=9.8b (r675)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -31,11 +31,6 @@ if exist .\custom\InitializationHook.cmd (
   set ERR_LEVEL=
 )
 echo %DATE% %TIME% - Info: Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2>>%DOWNLOAD_LOGFILE%
-for %%i in (w2k3 w2k3-x64) do (
-  if /i "%1"=="%%i" (
-    for %%j in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%2"=="%%j" goto EvalParams)
-  )
-)
 for %%i in (w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64 ofc) do (
   if /i "%1"=="%%i" (
     if /i "%2"=="glb" goto EvalParams
@@ -300,6 +295,18 @@ if exist ..\exclude\ExcludeListUSB-wxp-x86.txt del ..\exclude\ExcludeListUSB-wxp
 del /Q ..\static\*-wxp-x86-*.* >nul 2>&1
 del /Q ..\xslt\*-wxp-x86-*.* >nul 2>&1
 
+rem *** Windows Server 2003 stuff ***
+if exist ..\client\static\StaticUpdateIds-w2k3-x86.txt del ..\client\static\StaticUpdateIds-w2k3-x86.txt
+if exist ..\client\static\StaticUpdateIds-w2k3-x64.txt del ..\client\static\StaticUpdateIds-w2k3-x64.txt
+if exist ..\exclude\ExcludeList-w2k3-x86.txt del ..\exclude\ExcludeList-w2k3-x86.txt
+if exist ..\exclude\ExcludeList-w2k3-x64.txt del ..\exclude\ExcludeList-w2k3-x64.txt
+if exist ..\exclude\ExcludeListISO-w2k3-x86.txt del ..\exclude\ExcludeListISO-w2k3-x86.txt
+if exist ..\exclude\ExcludeListISO-w2k3-x64.txt del ..\exclude\ExcludeListISO-w2k3-x64.txt
+if exist ..\exclude\ExcludeListUSB-w2k3-x86.txt del ..\exclude\ExcludeListUSB-w2k3-x86.txt
+if exist ..\exclude\ExcludeListUSB-w2k3-x64.txt del ..\exclude\ExcludeListUSB-w2k3-x64.txt
+del /Q ..\static\*-w2k3-*.* >nul 2>&1
+del /Q ..\xslt\*-w2k3-*.* >nul 2>&1
+
 rem *** Office and invcif.exe stuff ***
 if exist ..\static\StaticDownloadLinks-inventory.txt del ..\static\StaticDownloadLinks-inventory.txt
 if exist ..\client\wsus\invcif.exe (
@@ -361,10 +368,6 @@ if exist ..\exclude\ExcludeList-dotnet.txt del ..\exclude\ExcludeList-dotnet.txt
 if exist ..\client\win\glb\ndp*.* (
   if not exist ..\client\dotnet\x86-glb\nul md ..\client\dotnet\x86-glb
   move /Y ..\client\win\glb\ndp*.* ..\client\dotnet\x86-glb >nul
-)
-if exist ..\client\w2k3-x64\glb\ndp*.* (
-  if not exist ..\client\dotnet\x64-glb\nul md ..\client\dotnet\x64-glb
-  move /Y ..\client\w2k3-x64\glb\ndp*.* ..\client\dotnet\x64-glb >nul
 )
 if exist ..\static\StaticDownloadLink-dotnet.txt del ..\static\StaticDownloadLink-dotnet.txt
 if exist ..\xslt\ExtractDownloadLinks-dotnet-glb.xsl del ..\xslt\ExtractDownloadLinks-dotnet-glb.xsl
@@ -706,9 +709,7 @@ if "%VERIFY_DL%"=="1" (
 )
 :SkipCPP
 
-rem *** Download Windows Essentials 2012 - not required for w2k3 and w60 ***
-if /i "%1"=="w2k3" goto SkipWLE
-if /i "%1"=="w2k3-x64" goto SkipWLE
+rem *** Download Windows Essentials 2012 - not required for w60 ***
 if /i "%1"=="w60" goto SkipWLE
 if /i "%1"=="w60-x64" goto SkipWLE
 if "%INC_WLE%" NEQ "1" goto SkipWLE
@@ -815,9 +816,7 @@ if "%VERIFY_DL%"=="1" (
 )
 :SkipWLE
 
-rem *** Download Microsoft Security Essentials - not required for w2k3 ***
-if /i "%1"=="w2k3" goto SkipMSSE
-if /i "%1"=="w2k3-x64" goto SkipMSSE
+rem *** Download Microsoft Security Essentials ***
 if "%INC_MSSE%" NEQ "1" goto SkipMSSE
 if "%SKIP_DL%"=="1" goto SkipMSSE
 if "%VERIFY_DL%" NEQ "1" goto DownloadMSSE
@@ -993,15 +992,9 @@ if "%VERIFY_DL%"=="1" (
 :SkipWDDefs
 
 rem *** Download the platform specific patches ***
-for %%i in (w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64) do (
+for %%i in (w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64) do (
   if /i "%1"=="%%i" (
     call :DownloadCore win glb x86 %SKIP_PARAM%
-    if errorlevel 1 goto Error
-  )
-)
-for %%i in (w2k3) do (
-  if /i "%1"=="%%i" (
-    call :DownloadCore win %2 %TARGET_ARCH% %SKIP_PARAM%
     if errorlevel 1 goto Error
   )
 )
@@ -1011,7 +1004,7 @@ for %%i in (o2k7 o2k10 o2k13) do (
     if errorlevel 1 goto Error
   )
 )
-for %%i in (w2k3 w2k3-x64 o2k7 o2k10 o2k13) do (
+for %%i in (o2k7 o2k10 o2k13) do (
   if /i "%1"=="%%i" (
     call :DownloadCore %1 glb %TARGET_ARCH% %SKIP_PARAM%
     if errorlevel 1 goto Error
@@ -1175,7 +1168,7 @@ if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
 echo %TIME% - Done.
 echo %DATE% %TIME% - Info: Determined superseded updates>>%DOWNLOAD_LOGFILE%
 :SkipSuperseded
-for %%i in (dotnet win w2k3 w2k3-x64 w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64) do (if /i "%1"=="%%i" goto DetermineWindows)
+for %%i in (dotnet win w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64) do (if /i "%1"=="%%i" goto DetermineWindows)
 for %%i in (ofc) do (if /i "%1"=="%%i" goto DetermineOffice)
 del "%TEMP%\package.xml"
 goto DoDownload
@@ -1534,7 +1527,7 @@ if exist ..\client\md\hashes-%1-%2.txt (
 if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" del "%TEMP%\ValidStaticLinks-%1-%2.txt"
 if exist "%TEMP%\ValidDynamicLinks-%1-%2.csv" del "%TEMP%\ValidDynamicLinks-%1-%2.csv"
 if "%4"=="/skipdownload" (
-  for %%i in (win w2k3 w60 w61 w62 w63) do (
+  for %%i in (win w60 w61 w62 w63) do (
     if /i "%1"=="%%i" (
       if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" move /Y "%TEMP%\ValidDynamicLinks-%1-%2.txt" ..\static\custom\StaticDownloadLinks-%1-%3-%2.txt >nul
     )
@@ -1561,7 +1554,7 @@ exit /b 1
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %*
-echo Usage1: %~n0 {w2k3 ^| w2k3-x64 ^| o2k7 ^| o2k10 ^| o2k13} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
+echo Usage1: %~n0 {o2k7 ^| o2k10 ^| o2k13} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
 echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| w62 ^| w62-x64 ^| w63 ^| w63-x64 ^| ofc} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
 echo %DATE% %TIME% - Error: Invalid parameter: %*>>%DOWNLOAD_LOGFILE%
 echo.

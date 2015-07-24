@@ -38,7 +38,6 @@ if errorlevel 1 (
   echo %DATE% %TIME% - Info: Saved System policies registry hive>>%UPDATE_LOGFILE%
 )
 
-if "%OS_NAME%"=="w2k3" goto SkipPowerCfg
 echo Creating temporary power scheme...
 for /F "tokens=2 delims=:(" %%i in ('%SystemRoot%\System32\powercfg.exe -getactivescheme') do echo %%i>%SystemRoot%\woubak-pwrscheme-act.txt
 for /F %%i in (%SystemRoot%\woubak-pwrscheme-act.txt) do (
@@ -54,7 +53,6 @@ if errorlevel 1 (
 ) else (
   echo %DATE% %TIME% - Info: Activated temporary power scheme>>%UPDATE_LOGFILE%
 )
-:SkipPowerCfg
 
 echo Preparing recall directory...
 if not exist %SystemRoot%\Temp\WOURecall\nul md %SystemRoot%\Temp\WOURecall

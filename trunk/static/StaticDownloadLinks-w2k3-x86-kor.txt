@@ -1,4 +1,0 @@
-http://www.download.windowsupdate.com/msdownload/update/software/dflt/2008/02/windowsserver2003-kb914961-sp2-x86-kor_65bcd5be738a08046f0714a108a5fa334ef08fd0.exe
-http://download.microsoft.com/download/3/b/2/3b2683ea-70f1-47ba-b28f-157ad272ecfd/WindowsServer2003-KB925876-v2-x86-KOR.exe
-http://download.microsoft.com/download/E/6/9/E693BDE0-B3C6-4277-8B21-2FC322755962/WindowsServer2003-KB968930-x86-KOR.exe
-http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-ko-kr-kb2564958_cbba78e1b7ffa9ba95b2bb385bde1a3b93b080ce.exe

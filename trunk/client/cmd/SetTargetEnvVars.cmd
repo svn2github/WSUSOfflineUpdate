@@ -52,50 +52,6 @@ goto SetOfficeName
 :Windows5.2
 rem *** Windows Server 2003 ***
 set OS_NAME=w2k3
-set OS_SP_VER_TARGET_MAJOR=2
-set OS_SP_TARGET_ID=914961
-set MSI_VER_TARGET_MAJOR=4
-set MSI_VER_TARGET_MINOR=5
-set MSI_TARGET_ID=942288
-set WSH_VER_TARGET_MAJOR=5
-if /i "%OS_ARCH%"=="x64" (
-  set WSH_VER_TARGET_MINOR=6
-) else (
-  set WSH_VER_TARGET_MINOR=7
-)
-if /i "%INSTALL_IE%"=="/instielatest" set INSTALL_IE=/instie8
-if /i "%INSTALL_IE%"=="/instie8" (set IE_VER_TARGET_MAJOR=8) else (set IE_VER_TARGET_MAJOR=6)
-set IE_VER_TARGET_MINOR=0
-if /i "%OS_ARCH%"=="x64" (
-  set TSC_VER_TARGET_MAJOR=5
-  set TSC_VER_TARGET_MINOR=2
-  set WOU_ENDLESS=3
-) else (
-  set TSC_VER_TARGET_MAJOR=6
-  set TSC_VER_TARGET_MINOR=0
-  set TSC_TARGET_ID=925876
-  if exist "%TEMP%\wou_ie_kbids.txt" del "%TEMP%\wou_ie_kbids.txt"
-  for /F %%i in ('dir /B /S ..\ie*-kb???????-*.exe') do (
-    for /F "tokens=3 delims=-" %%j in ("%%~ni") do echo %%j>>"%TEMP%\wou_ie_kbids.txt"
-  )
-  if exist "%TEMP%\wou_ie_kbids.txt" (
-    for %%i in ("%TEMP%\wou_ie_kbids.txt") do (
-      if %%~zi==0 del %%i
-    )
-  )
-  if exist "%TEMP%\wou_ie_kbids.txt" (
-    %SystemRoot%\System32\sort.exe "%TEMP%\wou_ie_kbids.txt" /O "%TEMP%\wou_ie_kbids_sorted.txt"
-    del "%TEMP%\wou_ie_kbids.txt"
-    for /F "usebackq" %%i in ("%TEMP%\wou_ie_kbids_sorted.txt") do (
-      set WUSCN_PREREQ_ID=%%i
-    )
-    del "%TEMP%\wou_ie_kbids_sorted.txt"
-  ) else (
-    set WUSCN_PREREQ_ID=kb2898785
-  )
-  set WOU_ENDLESS=4
-)
-if "%WUSCN_PREREQ_ID%" NEQ "" set WUSCN_PREREQ_ID=%WUSCN_PREREQ_ID:~2%
 goto SetOfficeName
 
 :Windows6.0
