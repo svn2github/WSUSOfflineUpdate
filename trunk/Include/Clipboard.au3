@@ -4,7 +4,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: Clipboard
-; AutoIt Version : 3.3.14.0
+; AutoIt Version : 3.3.14.1
 ; Language ......: English
 ; Description ...: Functions that assist with Clipboard management.
 ;                  The clipboard is a set of functions and messages that enable applications to transfer data.

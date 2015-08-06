@@ -4,7 +4,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: Microsoft Excel Function Library
-; AutoIt Version : 3.3.14.0
+; AutoIt Version : 3.3.14.1
 ; Language ......: English
 ; Description ...: A collection of functions for accessing and manipulating Microsoft Excel files
 ; Author(s) .....: SEO (Locodarwin), DaLiMan, Stanley Lim, MikeOsdx, MRDev, big_daddy, PsaltyDS, litlmike, water, spiff59, golfinhu, bowmore, GMX, Andreu, danwilli

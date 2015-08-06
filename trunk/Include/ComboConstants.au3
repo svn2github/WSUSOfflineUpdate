@@ -2,7 +2,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: ComboBox_Constants
-; AutoIt Version : 3.3.14.0
+; AutoIt Version : 3.3.14.1
 ; Language ......: English
 ; Description ...: Constants for <a href="../appendix/GUIStyles.htm#Combo">GUI control Combo styles</a> and more.
 ; Author(s) .....: Valik, Gary Frost
