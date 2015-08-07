@@ -1,8 +1,6 @@
-windowsserver2003-kb956744-x86
-windowsserver2003-kb2535512-x86
-windowsserver2003.windowsxp-kb2535512-x64
 kb2536276
 kb2835361
+windows6.1-kb2552343
 windows6.1-kb2644615
 ie11-windows6.1-kb2976627
 windows6.1-kb3031432

@@ -1002,10 +1002,13 @@ Version 9.7 -- 25.06.15
 - Fix: Adjusted aria2 download options (Thanks to "hbuhrmester")
 - Fix: Removed obsolete script CheckTRCerts.cmd (Thanks to "hbuhrmester")
 --------------------------------------------------------------------------------
-Version 9.8 -- ??.??.??
+Version 9.8 -- 07.08.15
 - .NET Framework 4 updated to v. 4.6 (Thanks to "harry" and "aker")
 - C++ 2015 Runtime Libraries integrated (Thanks to "harry")
 - Support removed for Windows Server 2003 since Microsoft discontinued support for it on July 14th, 2015 (see https://support.microsoft.com/en-us/lifecycle?p1=10394)
 - AutoIt script compiler updated to version 3.3.14.1 (Thanks to "harry")
 - Integrated Windows Update Client August 2015 (kb3075851/kb3075853) for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2 (Thanks to "Denniss" and "harry")
+- Fix: Static installation definition added for kb2552343 under Windows 7 and Server 2008 R2 (x86/x64) in order to fix repeated installation attempts of kb2532531 (Thanks to "cantab" and "aker")
+- Fix: Download part missed Security Update kb2863817 (MS15-059) for Office 2010
 - Fix: Linux scripts' improvements (Thanks to "techge", "deramon", "DanielEckl", "hbuhrmester" and H. Hullen)
+--------------------------------------------------------------------------------

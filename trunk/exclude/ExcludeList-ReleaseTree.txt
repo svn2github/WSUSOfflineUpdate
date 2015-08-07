@@ -2,7 +2,7 @@
 ico\
 Include\
 Aut2Exe.exe
-AutoItSC.bin
+upx.exe
 ExcludeList-ProductionTree.txt
 ExcludeList-ReleaseTree.txt
 ExtractUpdateFileIdsAndLocations.xsl
