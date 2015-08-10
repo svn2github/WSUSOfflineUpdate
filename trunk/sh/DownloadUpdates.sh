@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                               v. 9.8                              ###
+###                          v. 9.8+ (r679)                           ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -120,6 +120,34 @@ zypper install $Datei
 END
     Missing=1
   done
+}
+
+for Datei in unix2dos todos
+  do
+    U2D=$(which $Datei 2>/dev/null)
+    test -x "$U2D" && continue
+  done
+  
+test -x $U2D || {
+
+  cat << END
+
+Please install $Datei
+
+Command in Fedora:
+yum install dos2unix
+
+Command in Debian:
+apt-get install dos2unix
+
+Command in SuSE:
+zypper install dos2unix
+
+Program under Slackware:
+  todos as part of the "bin" packet
+
+END
+    Missing=1
 }
 
 test $Missing -eq 0 || exit 1
@@ -1006,6 +1034,30 @@ if [ -d ../client/wsus ]; then
   echo "Creating integrity database for WSUS ..."
   (cd ../client/md; hashdeep -c md5,sha1,sha256 -l -r ../wsus | tr '/' '\\' > hashes-wsus.txt)
 fi
+
+# set -x
+# export SHELLOPTS
+
+# Zeilenumbruch passend für DOS/Windows
+(cd ../client/md 
+for Datei in hashes*.txt
+  do
+    grep -q -m1 $'\r' $Datei && continue
+#    recode l1..pc hashes-*.txt 2>/dev/null
+
+#    while read Zeile
+#      do
+#      sed 's/$/\r/' $Zeile
+#      done < $Datei > ${Datei}.tmp
+#    unix2dos < $Datei > ${Datei}.tmp
+    $U2D < $Datei > ${Datei}.tmp
+    mv -f ${Datei}.tmp ${Datei}
+  done
+)
+
+# set +x
+# export SHELLOPTS
+
 
 echo "**************************************
 $(grep -c http: ../temp/urls.txt) patches successfully downloaded.

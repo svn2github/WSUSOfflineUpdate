@@ -1012,3 +1012,5 @@ Version 9.8 -- 07.08.15
 - Fix: Download part missed Security Update kb2863817 (MS15-059) for Office 2010
 - Fix: Linux scripts' improvements (Thanks to "techge", "deramon", "DanielEckl", "hbuhrmester" and H. Hullen)
 --------------------------------------------------------------------------------
+Version ?.? -- ??.??.??
+- Fix: Linux scripts' improvements (Thanks to H. Klatte and H. Hullen)
