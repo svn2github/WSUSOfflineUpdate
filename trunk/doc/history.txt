@@ -1013,4 +1013,9 @@ Version 9.8 -- 07.08.15
 - Fix: Linux scripts' improvements (Thanks to "techge", "deramon", "DanielEckl", "hbuhrmester" and H. Hullen)
 --------------------------------------------------------------------------------
 Version ?.? -- ??.??.??
-- Fix: Linux scripts' improvements (Thanks to H. Klatte and H. Hullen)
+- Microsoft Silverlight updated to v. 5.1.40728.0 (Thanks to "harry")
+- Fix: Replaced obsolete Lync 2013 Security Update kb2881013 (MS14-036) by kb3055014 (MS15-080)
+- Fix: Download part missed Security Update kb3054876 (MS15-081) for Visio 2010
+- Fix: Removed obsolete Security Update kb2965236 (MS15-033) for Office 2010
+- Fix: Disk Cleanup Wizard addon (kb2852386) for Windows 7 / Server 2008 R2 (x64) updated to v2 (Thanks to "scu")
+- Fix: Linux scripts' improvements (Thanks to H. Klatte, N. Möndjen and H. Hullen)

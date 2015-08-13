@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                          v. 9.8+ (r679)                           ###
+###                          v. 9.8+ (r680)                           ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -120,34 +120,6 @@ zypper install $Datei
 END
     Missing=1
   done
-}
-
-for Datei in unix2dos todos
-  do
-    U2D=$(which $Datei 2>/dev/null)
-    test -x "$U2D" && continue
-  done
-  
-test -x $U2D || {
-
-  cat << END
-
-Please install $Datei
-
-Command in Fedora:
-yum install dos2unix
-
-Command in Debian:
-apt-get install dos2unix
-
-Command in SuSE:
-zypper install dos2unix
-
-Program under Slackware:
-  todos as part of the "bin" packet
-
-END
-    Missing=1
 }
 
 test $Missing -eq 0 || exit 1
@@ -1035,29 +1007,20 @@ if [ -d ../client/wsus ]; then
   (cd ../client/md; hashdeep -c md5,sha1,sha256 -l -r ../wsus | tr '/' '\\' > hashes-wsus.txt)
 fi
 
-# set -x
-# export SHELLOPTS
-
 # Zeilenumbruch passend für DOS/Windows
 (cd ../client/md 
+# Unix2Dos fuer Arme - Dank an Norbert Möndjen
 for Datei in hashes*.txt
   do
     grep -q -m1 $'\r' $Datei && continue
-#    recode l1..pc hashes-*.txt 2>/dev/null
-
-#    while read Zeile
-#      do
+    while read Zeile
+      do
 #      sed 's/$/\r/' $Zeile
-#      done < $Datei > ${Datei}.tmp
-#    unix2dos < $Datei > ${Datei}.tmp
-    $U2D < $Datei > ${Datei}.tmp
+	echo -e "${Zeile}\r" 
+      done < $Datei > ${Datei}.tmp
     mv -f ${Datei}.tmp ${Datei}
   done
 )
-
-# set +x
-# export SHELLOPTS
-
 
 echo "**************************************
 $(grep -c http: ../temp/urls.txt) patches successfully downloaded.
@@ -1095,8 +1058,11 @@ exit 0
 # 
 
 # ========================================================================
-# $Id: DownloadUpdates.sh,v 1.15 2014-12-21 17:03:31+01 HHullen Exp $
+# $Id: DownloadUpdates.sh,v 1.16 2015-08-11 13:07:46+02 HHullen Exp $
 # $Log: DownloadUpdates.sh,v $
+# Revision 1.16  2015-08-11 13:07:46+02  HHullen
+# Unix2DOS fuer Arme nachgebaut
+#
 # Revision 1.15  2014-12-21 17:03:31+01  HHullen
 # Fehler beim Befüllen des win-Verzeichnisses korrigiert
 #

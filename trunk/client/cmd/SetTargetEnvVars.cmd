@@ -170,8 +170,8 @@ set WOU_ENDLESS=4
 goto SetOfficeName
 
 :Windows10.0
-rem *** Windows 10 ***
-set OS_NAME=w10
+rem *** Windows 10.0 ***
+set OS_NAME=w100
 set OS_SP_VER_TARGET_MAJOR=0
 set MSI_VER_TARGET_MAJOR=5
 set MSI_VER_TARGET_MINOR=0
