@@ -2,7 +2,6 @@
 *ndp2*
 *ndp3*
 *dotnetfx35*
-*dotNetFx40*
 *ofc*
 *o2k*
 *wxp*
@@ -11,5 +10,6 @@
 */w61/*
 */w62/*
 */w63/*
+*/w100/*
 */*/x86-glb/*
 *.au3

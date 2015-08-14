@@ -1,7 +1,6 @@
 *ndp1*
 *ndp2*
 *ndp3*
-*ndp40*
 *o2k*
 *oxp*
 *ofc*
@@ -11,9 +10,9 @@
 *w61*
 */w62/*
 *w63*
+*w100*
 *wddefs*
 */*/x86-glb/*
 *dotnetfx35*
-*dotNetFx40*
 *MSEInstall*
 *.au3

@@ -2,12 +2,12 @@
 *ndp2*
 *ndp3*
 *dotnetfx35*
-*dotNetFx40*
 *o2k3*
 *o2k7*
 *wxp*
 *w2k3*
 *w60*
+*w62*
 */*-x64/*
 */*/x64-glb/*
 *fullfile-x64*

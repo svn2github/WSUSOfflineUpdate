@@ -10,7 +10,7 @@
 */w61/*
 *w62*
 *w63*
+*w100*
 */*/x86-glb/*
 *dotnetfx35*
-*dotNetFx40*
 *.au3

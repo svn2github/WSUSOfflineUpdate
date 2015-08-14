@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 9.8
+WSUS Offline Update 10.0
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1012,7 +1012,8 @@ Version 9.8 -- 07.08.15
 - Fix: Download part missed Security Update kb2863817 (MS15-059) for Office 2010
 - Fix: Linux scripts' improvements (Thanks to "techge", "deramon", "DanielEckl", "hbuhrmester" and H. Hullen)
 --------------------------------------------------------------------------------
-Version ?.? -- ??.??.??
+Version 10.0 -- ??.??.15
+- Support added for Windows 10 and Server 2016
 - Microsoft Silverlight updated to v. 5.1.40728.0 (Thanks to "harry")
 - Fix: Replaced obsolete Lync 2013 Security Update kb2881013 (MS14-036) by kb3055014 (MS15-080)
 - Fix: Download part missed Security Update kb3054876 (MS15-081) for Visio 2010

@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.8+ (r680)
+set WSUSOFFLINE_VERSION=10.0b (r681)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -128,7 +128,6 @@ if "%OS_NAME%"=="" goto UnsupOS
 if "%OS_NAME%"=="w2k" goto UnsupOS
 if "%OS_NAME%"=="wxp" goto UnsupOS
 if "%OS_NAME%"=="w2k3" goto UnsupOS
-if "%OS_NAME%"=="w100" goto UnsupOS
 for %%i in (x86 x64) do (if /i "%OS_ARCH%"=="%%i" goto ValidArch)
 goto UnsupArch
 :ValidArch
@@ -147,6 +146,7 @@ goto PWR%OS_NAME%
 :PWRw61
 :PWRw62
 :PWRw63
+:PWRw100
 for %%i in (monitor disk standby hibernate) do (
   for %%j in (ac dc) do %SystemRoot%\System32\powercfg.exe -X -%%i-timeout-%%j 0
 )
@@ -385,6 +385,7 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
   if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
   echo. >%SystemRoot%\Temp\wou_w63upd2_tried.txt
 )
+:SPw100
 :SkipSPInst
 
 rem *** Install Windows Update Agent ***
@@ -640,6 +641,7 @@ goto IEInstalled
 
 :IEw62
 :IEw63
+:IEw100
 :IEInstalled
 set IE_FILENAME=
 if "%RECALL_REQUIRED%"=="1" goto Installed
@@ -732,6 +734,7 @@ echo Checking Microsoft Silverlight version...
 if "%OS_NAME%"=="w61" goto MSSL%OS_ARCH%
 if "%OS_NAME%"=="w62" goto MSSL%OS_ARCH%
 if "%OS_NAME%"=="w63" goto MSSL%OS_ARCH%
+if "%OS_NAME%"=="w100" goto MSSL%OS_ARCH%
 :MSSLx86
 set MSSL_FILENAME=..\win\glb\Silverlight.exe
 goto CheckMSSL
@@ -770,6 +773,7 @@ set MSSL_VER_TARGET_REVIS=
 rem *** Install .NET Framework 3.5 SP1 ***
 if "%INSTALL_DOTNET35%" NEQ "/instdotnet35" goto SkipDotNet35Inst
 if "%OS_NAME%"=="w61" goto SkipDotNet35Inst
+if "%OS_NAME%"=="w100" goto SkipDotNet35Inst
 echo Checking .NET Framework 3.5 installation state...
 if %DOTNET35_VER_MAJOR% LSS %DOTNET35_VER_TARGET_MAJOR% goto InstallDotNet35
 if %DOTNET35_VER_MAJOR% GTR %DOTNET35_VER_TARGET_MAJOR% goto SkipDotNet35Inst
@@ -999,6 +1003,7 @@ if "%OS_NAME%"=="w60" (if %OS_DOMAIN_ROLE% GEQ 2 goto CheckWMF)
 if "%OS_NAME%"=="w61" goto CheckWMF
 if "%OS_NAME%"=="w62" (if %OS_DOMAIN_ROLE% GEQ 2 goto CheckWMF)
 if "%OS_NAME%"=="w63" goto CheckWMF
+if "%OS_NAME%"=="w100" goto CheckWMF
 goto SkipWMFInst
 :CheckWMF
 echo Checking Windows Management Framework installation state...
@@ -1071,6 +1076,7 @@ if "%WD_INSTALLED%" NEQ "1" goto SkipWDInst
 if "%WD_DISABLED%"=="1" goto SkipWDInst
 if "%OS_NAME%"=="w62" goto WDmpam
 if "%OS_NAME%"=="w63" goto WDmpam
+if "%OS_NAME%"=="w100" goto WDmpam
 if /i "%OS_ARCH%"=="x64" (
   set WDDEFS_FILENAME=..\wddefs\%OS_ARCH%-glb\mpas-feX64.exe
 ) else (
@@ -1344,6 +1350,7 @@ set REBOOT_REQUIRED=1
 rem *** Install Microsoft Security Essentials ***
 if "%OS_NAME%"=="w62" goto SkipMSSEInst
 if "%OS_NAME%"=="w63" goto SkipMSSEInst
+if "%OS_NAME%"=="w100" goto SkipMSSEInst
 echo Checking Microsoft Security Essentials installation state...
 if "%INSTALL_MSSE%" NEQ "/instmsse" (
   if "%MSSE_INSTALLED%"=="1" (goto CheckMSSEDefs) else (goto SkipMSSEInst)
