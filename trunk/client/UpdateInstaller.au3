@@ -6,7 +6,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 10.0.0.681)
+#pragma compile(FileVersion, 10.0.0.682)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -45,6 +45,7 @@ Dim Const $msimax                     = 18
 Dim Const $default_logpixels          = 96
 Dim Const $target_version_dotnet35    = "3.5.30729"
 Dim Const $target_version_dotnet4     = "4.6.00081"
+Dim Const $target_version_dotnet4_w10 = "4.6.00079"
 Dim Const $target_version_psh         = "2.0"
 
 ; INI file constants
@@ -282,7 +283,11 @@ Func DotNet4MainVersion()
 EndFunc
 
 Func DotNet4TargetVersion()
-  Return $target_version_dotnet4
+  If ( (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") ) Then
+    Return $target_version_dotnet4_w10
+  Else
+    Return $target_version_dotnet4
+  EndIf
 EndFunc
 
 Func PowerShellVersion()
