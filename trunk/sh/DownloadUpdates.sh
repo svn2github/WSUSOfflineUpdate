@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                              v. 10.0                              ###
+###                          v. 10.0 (r685)                           ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -369,7 +369,7 @@ down_msse_cpp() {
     done < ../temp/StaticUrls-${Datei}.txt
 
   echo "Creating integrity database for $Txt ..."
-  (cd ../client/md; hashdeep -c md5,sha1,sha256 -l -r ../$Vz | tr '/' '\\' > hashes-${Vz}.txt)
+  (cd ../client/md; hashdeep -c md5,sha1,sha256 -l -r ../$Vz > hashes-${Vz}.txt)
     }
 
 crlf2lf() {
@@ -786,8 +786,7 @@ do
 	grep -w -q "en" <<< ${UPDATE_lang} && UPDATE_LANGUAGES=en
 	grep -w -q "$LANG_SHORT" <<< ${UPDATE_lang} && UPDATE_LANGUAGES=$LANG_SHORT
 	}
-      fi
-    done < ../temp/UpdateCategoriesAndFileIds.txt
+      fi    done < ../temp/UpdateCategoriesAndFileIds.txt
 
   cut -d',' -f2 ../temp/OfficeUpdateAndFileIds.txt | sort -u > ../temp/OfficeFileIds.txt 
 
@@ -917,10 +916,10 @@ if [ "$dotnet" == "1" ]; then
     do
         test -s "$Datei" || rm -f "$Datei"
     done
-    (cd ../client/md; hashdeep -c md5,sha1,sha256 -l ../${Vz}/*.exe | tr '/' '\\' > hashes-${Vz}.txt)
+    (cd ../client/md; hashdeep -c md5,sha1,sha256 -l ../${Vz}/*.exe > hashes-${Vz}.txt)
 
   echo "Creating integrity database for ${Txt}-${OS_ARCH}-glb ..."
-  (cd ../client/md; hashdeep -c md5,sha1,sha256 -l -r ../${Vz}/${OS_ARCH}-glb | tr '/' '\\' > hashes-${Vz}-${OS_ARCH}-glb.txt)
+  (cd ../client/md; hashdeep -c md5,sha1,sha256 -l -r ../${Vz}/${OS_ARCH}-glb > hashes-${Vz}-${OS_ARCH}-glb.txt)
 
     Vz=cpp
     Txt=CPP
@@ -972,20 +971,20 @@ if [ "$sys" == "ofc" ] && [ "$sys_old" != "" ]; then
    doWget -i ../temp/StaticUrls-${sys_old}-${lang}.txt -P ../client/${sys_old}/${lang}
    doWget -i ../temp/StaticUrls-${sys_old}-glb.txt -P ../client/${sys_old}/glb
    echo "Creating integrity database for ${sys_old} ${lang}..."
-   (cd ../client/md; hashdeep -c md5,sha1,sha256 -l -r ../${sys_old}/${lang} | tr '/' '\\' > hashes-${sys_old}-${lang}.txt)
-   (cd ../client/md; hashdeep -c md5,sha1,sha256 -l -r ../${sys_old}/glb | tr '/' '\\' > hashes-${sys_old}-glb.txt)
+   (cd ../client/md; hashdeep -c md5,sha1,sha256 -l -r ../${sys_old}/${lang} > hashes-${sys_old}-${lang}.txt)
+   (cd ../client/md; hashdeep -c md5,sha1,sha256 -l -r ../${sys_old}/glb > hashes-${sys_old}-glb.txt)
 fi
 
 echo "Validating patches for $sys ${lang}..."
 if [ $lang != glb ]; then
   doWget -i ../temp/ValidUrls-${sys}-${lang}.txt -P ../client/${sys}/${lang}
   echo "Creating integrity database for $sys-$lang ..."
-  (cd ../client/md; hashdeep -c md5,sha1,sha256 -l -r ../${sys}/${lang} | tr '/' '\\' > hashes-${sys}-${lang}.txt)
+  (cd ../client/md; hashdeep -c md5,sha1,sha256 -l -r ../${sys}/${lang} > hashes-${sys}-${lang}.txt)
 fi
 doWget -i ../temp/ValidUrls-${sys}-glb.txt -P ../client/${sys}/glb
 if [ -d ../client/${sys}/glb ]; then
   echo "Creating integrity database for $sys-glb ..."
-  (cd ../client/md; hashdeep -c md5,sha1,sha256 -l -r ../${sys}/glb | tr '/' '\\' > hashes-${sys}-glb.txt)
+  (cd ../client/md; hashdeep -c md5,sha1,sha256 -l -r ../${sys}/glb > hashes-${sys}-glb.txt)
 fi
 
 if [ $lang != glb ] ; then
@@ -997,16 +996,16 @@ fi
 
 if [ -d ../client/win/${lang} -a $lang != glb  ]; then
   echo "Creating integrity database for win-$lang ..."
-  (cd ../client/md; hashdeep -c md5,sha1,sha256 -l -r ../win/${lang} | tr '/' '\\' > hashes-win-${lang}.txt)
+  (cd ../client/md; hashdeep -c md5,sha1,sha256 -l -r ../win/${lang} > hashes-win-${lang}.txt)
 fi
 if [ -d ../client/win/glb ]; then
   echo "Creating integrity database for win-glb ..."
-  (cd ../client/md; hashdeep -c md5,sha1,sha256 -l -r ../win/glb | tr '/' '\\' > hashes-win-glb.txt)
+  (cd ../client/md; hashdeep -c md5,sha1,sha256 -l -r ../win/glb > hashes-win-glb.txt)
 fi
 
 if [ -d ../client/wsus ]; then
   echo "Creating integrity database for WSUS ..."
-  (cd ../client/md; hashdeep -c md5,sha1,sha256 -l -r ../wsus | tr '/' '\\' > hashes-wsus.txt)
+  (cd ../client/md; hashdeep -c md5,sha1,sha256 -l -r ../wsus > hashes-wsus.txt)
 fi
 
 # Zeilenumbruch passend für DOS/Windows
@@ -1017,9 +1016,15 @@ for Datei in hashes*.txt
     grep -q -m1 $'\r' $Datei && continue
     while read Zeile
       do
-#      sed 's/$/\r/' $Zeile
 	echo -e "${Zeile}\r" 
       done < $Datei > ${Datei}.tmp
+    mv -f ${Datei}.tmp ${Datei}
+  done
+# Reihenfolge der Anpassungen geändert; Dank an Harald Klatte
+for Datei in hashes*.txt
+  do
+    grep -q -m1 '/' $Datei || continue
+    tr '/' '\\' < $Datei > ${Datei}.tmp
     mv -f ${Datei}.tmp ${Datei}
   done
 )
