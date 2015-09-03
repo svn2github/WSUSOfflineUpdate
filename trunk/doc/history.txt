@@ -1022,4 +1022,5 @@ Version 10.0 -- 20.08.15
 - Fix: Linux scripts' improvements (Thanks to H. Klatte, N. Möndjen and H. Hullen)
 --------------------------------------------------------------------------------
 Version ??.? -- ??.??.??
+- Shortcut evaluation added for Office only media (Thanks to "Tester", "Lokmup", "Denniss" and "aker")
 - Fix: Linux scripts' improvements (Thanks to H. Klatte and H. Hullen)

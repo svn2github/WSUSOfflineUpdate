@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.0 (r685)
+set WSUSOFFLINE_VERSION=10.0 (r686)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -151,9 +151,8 @@ for %%i in (monitor disk standby hibernate) do (
   for %%j in (ac dc) do %SystemRoot%\System32\powercfg.exe -X -%%i-timeout-%%j 0
 )
 echo %DATE% %TIME% - Info: Adjusted power management settings>>%UPDATE_LOGFILE%
-goto SkipPowerCfg
-
 :SkipPowerCfg
+
 rem *** Determine Windows licensing info ***
 if exist %SystemRoot%\System32\slmgr.vbs (
   echo Determining Windows licensing info...
@@ -217,6 +216,7 @@ echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 4 version %DOTNET4_VER
 echo %DATE% %TIME% - Info: Found Windows Management Framework version %WMF_VER_MAJOR%.%WMF_VER_MINOR%>>%UPDATE_LOGFILE%
 if "%OS_NAME%"=="w62" goto SkipLogMSSEVer
 if "%OS_NAME%"=="w63" goto SkipLogMSSEVer
+if "%OS_NAME%"=="w100" goto SkipLogMSSEVer
 echo %DATE% %TIME% - Info: Found Microsoft Security Essentials version %MSSE_VER_MAJOR%.%MSSE_VER_MINOR%.%MSSE_VER_BUILD%.%MSSE_VER_REVIS%>>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft Security Essentials definitions version %MSSEDEFS_VER_MAJOR%.%MSSEDEFS_VER_MINOR%.%MSSEDEFS_VER_BUILD%.%MSSEDEFS_VER_REVIS%>>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Network Inspection System definitions version %NISDEFS_VER_MAJOR%.%NISDEFS_VER_MINOR%.%NISDEFS_VER_BUILD%.%NISDEFS_VER_REVIS%>>%UPDATE_LOGFILE%
@@ -266,6 +266,7 @@ if /i "%OS_ARCH%"=="x64" (
 echo Medium does not support Microsoft Windows (%OS_NAME% %OS_ARCH% %OS_LANG%).
 echo %DATE% %TIME% - Info: Medium does not support Microsoft Windows (%OS_NAME% %OS_ARCH% %OS_LANG%)>>%UPDATE_LOGFILE%
 if "%OFC_NAME%"=="" goto InvalidMedium
+set JUST_OFFICE=1
 
 :CheckOfficeMedium
 if "%OFC_NAME%"=="" goto ProperMedium
@@ -281,7 +282,9 @@ if exist ..\ofc\glb\nul (
 )
 echo Medium does not support Microsoft Office (ofc glb).
 echo %DATE% %TIME% - Info: Medium does not support Microsoft Office (ofc glb)>>%UPDATE_LOGFILE%
+if "%JUST_OFFICE%"=="1" goto InvalidMedium
 :ProperMedium
+if "%JUST_OFFICE%"=="1" goto JustOffice
 
 rem *** Install Windows Service Pack ***
 if "%OS_NAME%"=="w63" goto SPw63
@@ -1121,6 +1124,7 @@ set WDDEFS_VER_TARGET_REVIS=
 if "%RECALL_REQUIRED%"=="1" goto Installed
 if "%OFC_NAME%"=="" goto SkipOffice
 
+:JustOffice
 rem *** Check Office Service Pack versions ***
 echo Checking Office Service Pack versions...
 if exist "%TEMP%\MissingUpdateIds.txt" del "%TEMP%\MissingUpdateIds.txt"
