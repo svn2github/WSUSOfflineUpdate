@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.0 (r686)
+set WSUSOFFLINE_VERSION=10.0 (r687)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -243,6 +243,27 @@ if exist ..\client\software\custom\InstallCustomSoftware.cmd (
 if exist UpdateOU.new (
   if exist UpdateOU.cmd del UpdateOU.cmd
   ren UpdateOU.new UpdateOU.cmd
+  rem *** Remove NTFS alternate data streams from new or updated script files ***
+  if exist ..\bin\streams.exe (
+    ..\bin\streams.exe /accepteula ..\*.* >nul 2>&1
+    if errorlevel 1 (
+      echo %DATE% %TIME% - Info: File system does not support streams>>%DOWNLOAD_LOGFILE%
+    ) else (
+      echo Removing NTFS alternate data streams from new or updated script files...
+      ..\bin\streams.exe /accepteula -s -d ..\*.cmd >nul 2>&1
+      ..\bin\streams.exe /accepteula -s -d ..\*.exe >nul 2>&1
+      ..\bin\streams.exe /accepteula -s -d ..\*.vbs >nul 2>&1
+      if errorlevel 1 (
+        echo Warning: Unable to remove NTFS alternate data streams from new or updated script files.
+        echo %DATE% %TIME% - Warning: Unable to remove NTFS alternate data streams from new or updated script files>>%DOWNLOAD_LOGFILE%
+      ) else (
+        echo %DATE% %TIME% - Info: Removed NTFS alternate data streams from new or updated script files>>%DOWNLOAD_LOGFILE%
+      )
+    )
+  ) else (
+    echo Warning: Sysinternals' NTFS alternate data stream handling tool ..\bin\streams.exe not found.
+    echo %DATE% %TIME% - Warning: Sysinternals' NTFS alternate data stream handling tool ..\bin\streams.exe not found>>%DOWNLOAD_LOGFILE%
+  )
 )
 if exist .\--no-proxy\nul rd /S /Q .\--no-proxy
 
@@ -1450,7 +1471,7 @@ echo %DATE% %TIME% - Info: Cleaned up client directory for %1 %2>>%DOWNLOAD_LOGF
 if not exist ..\client\%1\%2\nul goto RemoveHashes
 rem *** Remove NTFS alternate data streams for %1 %2 ***
 if exist ..\bin\streams.exe (
-  ..\bin\streams.exe /accepteula -s ..\client\%1\%2\*.* >nul 2>&1
+  ..\bin\streams.exe /accepteula ..\client\%1\%2\*.* >nul 2>&1
   if errorlevel 1 (
     echo %DATE% %TIME% - Info: File system does not support streams>>%DOWNLOAD_LOGFILE%
   ) else (

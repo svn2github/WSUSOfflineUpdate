@@ -1023,4 +1023,5 @@ Version 10.0 -- 20.08.15
 --------------------------------------------------------------------------------
 Version ??.? -- ??.??.??
 - Shortcut evaluation added for Office only media (Thanks to "Tester", "Lokmup", "Denniss" and "aker")
+- DownloadUpdates.cmd script will now delete NTFS alternate data streams from new or updated script files (Thanks to "blackerking", "boco" and "aker")
 - Fix: Linux scripts' improvements (Thanks to H. Klatte and H. Hullen)
