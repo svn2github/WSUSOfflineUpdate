@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 10.0
+WSUS Offline Update 10.0.1
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1021,7 +1021,12 @@ Version 10.0 -- 20.08.15
 - Fix: Disk Cleanup Wizard addon (kb2852386) for Windows 7 / Server 2008 R2 (x64) updated to v2 (Thanks to "scu")
 - Fix: Linux scripts' improvements (Thanks to H. Klatte, N. Möndjen and H. Hullen)
 --------------------------------------------------------------------------------
-Version ??.? -- ??.??.??
+Version 10.0.1 -- 10.09.15
 - Shortcut evaluation added for Office only media (Thanks to "Tester", "Lokmup", "Denniss" and "aker")
 - DownloadUpdates.cmd script will now delete NTFS alternate data streams from new or updated script files (Thanks to "blackerking", "boco" and "aker")
+- Integrated Windows Update Client September 2015 (kb3083324/kb3083325) for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2 (Thanks to "harry")
+- Fix: Replaced obsolete Office 2010 Security Update kb2863817 (MS15-059) by kb3054965 (MS15-099)
+- Fix: Replaced obsolete Office 2013 Security Update kb3039749 (MS15-059) by kb3054932 (MS15-099) (Thanks to "Gerby")
+- Fix: Replaced obsolete Lync 2013 Security Update kb3055014 (MS15-080) by kb3085500 (MS15-097) (Thanks to "Gerby")
 - Fix: Linux scripts' improvements (Thanks to H. Klatte and H. Hullen)
+--------------------------------------------------------------------------------

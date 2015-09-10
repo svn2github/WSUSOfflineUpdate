@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.0+ (r688)
+set WSUSOFFLINE_VERSION=10.0.1
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -469,7 +469,6 @@ if exist "%TEMP%\SetFileVersion.cmd" (
   del "%TEMP%\SetFileVersion.cmd"
 ) else (set SIGCHK_VER_MAJOR=2)
 if %SIGCHK_VER_MAJOR% GEQ 2 (set SIGCHK_COPT=/accepteula -q -c) else (set SIGCHK_COPT=/accepteula -q -v)
-echo %DATE% %TIME% - Info: Found sigcheck.exe version %SIGCHK_VER_MAJOR%.%SIGCHK_VER_MINOR%.%SIGCHK_VER_BUILD%.%SIGCHK_VER_REVIS%>>%DOWNLOAD_LOGFILE%
 set SIGCHK_VER_MAJOR=
 set SIGCHK_VER_MINOR=
 set SIGCHK_VER_BUILD=
