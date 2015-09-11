@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.0.1
+set WSUSOFFLINE_VERSION=10.0.2
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -240,31 +240,6 @@ if exist ..\client\cmd\custom\FinalizationHook.cmd (
 if exist ..\client\software\custom\InstallCustomSoftware.cmd (
   if exist ..\client\software\custom\InstallCustomSoftware.cmdt del ..\client\software\custom\InstallCustomSoftware.cmdt
 )
-if exist UpdateOU.new (
-  if exist UpdateOU.cmd del UpdateOU.cmd
-  ren UpdateOU.new UpdateOU.cmd
-  rem *** Remove NTFS alternate data streams from new or updated script files ***
-  if exist ..\bin\streams.exe (
-    ..\bin\streams.exe /accepteula ..\*.* >nul 2>&1
-    if errorlevel 1 (
-      echo %DATE% %TIME% - Info: File system does not support streams>>%DOWNLOAD_LOGFILE%
-    ) else (
-      echo Removing NTFS alternate data streams from new or updated script files...
-      ..\bin\streams.exe /accepteula -s -d ..\*.cmd >nul 2>&1
-      ..\bin\streams.exe /accepteula -s -d ..\*.exe >nul 2>&1
-      ..\bin\streams.exe /accepteula -s -d ..\*.vbs >nul 2>&1
-      if errorlevel 1 (
-        echo Warning: Unable to remove NTFS alternate data streams from new or updated script files.
-        echo %DATE% %TIME% - Warning: Unable to remove NTFS alternate data streams from new or updated script files>>%DOWNLOAD_LOGFILE%
-      ) else (
-        echo %DATE% %TIME% - Info: Removed NTFS alternate data streams from new or updated script files>>%DOWNLOAD_LOGFILE%
-      )
-    )
-  ) else (
-    echo Warning: Sysinternals' NTFS alternate data stream handling tool ..\bin\streams.exe not found.
-    echo %DATE% %TIME% - Warning: Sysinternals' NTFS alternate data stream handling tool ..\bin\streams.exe not found>>%DOWNLOAD_LOGFILE%
-  )
-)
 if exist .\--no-proxy\nul rd /S /Q .\--no-proxy
 
 rem *** Obsolete internal stuff ***
@@ -474,6 +449,33 @@ set SIGCHK_VER_MINOR=
 set SIGCHK_VER_BUILD=
 set SIGCHK_VER_REVIS=
 :SkipSigChkOpts
+
+rem *** Cleanup UpdateOU.new ***
+if exist UpdateOU.new (
+  if exist UpdateOU.cmd del UpdateOU.cmd
+  ren UpdateOU.new UpdateOU.cmd
+  rem *** Remove NTFS alternate data streams from new or updated script files ***
+  if exist ..\bin\streams.exe (
+    ..\bin\streams.exe /accepteula ..\*.* >nul 2>&1
+    if errorlevel 1 (
+      echo %DATE% %TIME% - Info: File system does not support streams>>%DOWNLOAD_LOGFILE%
+    ) else (
+      echo Removing NTFS alternate data streams from new or updated script files...
+      ..\bin\streams.exe /accepteula -s -d ..\*.cmd >nul 2>&1
+      ..\bin\streams.exe /accepteula -s -d ..\*.exe >nul 2>&1
+      ..\bin\streams.exe /accepteula -s -d ..\*.vbs >nul 2>&1
+      if errorlevel 1 (
+        echo Warning: Unable to remove NTFS alternate data streams from new or updated script files.
+        echo %DATE% %TIME% - Warning: Unable to remove NTFS alternate data streams from new or updated script files>>%DOWNLOAD_LOGFILE%
+      ) else (
+        echo %DATE% %TIME% - Info: Removed NTFS alternate data streams from new or updated script files>>%DOWNLOAD_LOGFILE%
+      )
+    )
+  ) else (
+    echo Warning: Sysinternals' NTFS alternate data stream handling tool ..\bin\streams.exe not found.
+    echo %DATE% %TIME% - Warning: Sysinternals' NTFS alternate data stream handling tool ..\bin\streams.exe not found>>%DOWNLOAD_LOGFILE%
+  )
+)
 
 rem *** Download most recent Windows Update Agent installation and catalog files ***
 if "%VERIFY_DL%" NEQ "1" goto DownloadWSUS

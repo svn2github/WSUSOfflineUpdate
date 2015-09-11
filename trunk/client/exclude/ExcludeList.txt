@@ -18,3 +18,5 @@ kb914961,Windows Server 2003 Service Pack 2
 kb936330,Windows Vista / Server 2008 Service Pack 1
 kb948465,Windows Vista / Server 2008 Service Pack 2
 kb976932,Windows 7 / Server 2008 R2 Service Pack 1
+kb3081444,August 2015 cumulative update for Windows 10
+kb3081448,August 2015 cumulative update for Windows 10

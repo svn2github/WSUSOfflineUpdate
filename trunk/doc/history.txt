@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 10.0.1
+WSUS Offline Update 10.0.2
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1029,4 +1029,9 @@ Version 10.0.1 -- 10.09.15
 - Fix: Replaced obsolete Office 2013 Security Update kb3039749 (MS15-059) by kb3054932 (MS15-099) (Thanks to "Gerby")
 - Fix: Replaced obsolete Lync 2013 Security Update kb3055014 (MS15-080) by kb3085500 (MS15-097) (Thanks to "Gerby")
 - Fix: Linux scripts' improvements (Thanks to H. Klatte and H. Hullen)
+--------------------------------------------------------------------------------
+Version 10.0.2 -- 11.09.15
+- Integrated September 2015 cumulative update for Windows 10 (kb3081455) and prerequisite compatibility update (kb3081452)
+- Blacklisted superseded August 2015 cumulative updates for Windows 10 (kb3081444 and kb3081448)
+- Fix: DownloadUpdates.cmd script did not delete NTFS alternate data streams from new script files (Thanks to "aker")
 --------------------------------------------------------------------------------
