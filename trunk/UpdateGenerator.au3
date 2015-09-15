@@ -6,7 +6,7 @@
 #include <GUIConstants.au3>
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Generator")
-#pragma compile(FileVersion, 10.0.2.692)
+#pragma compile(FileVersion, 10.0.2.693)
 #pragma compile(InternalName, "Generator")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateGenerator.exe)
