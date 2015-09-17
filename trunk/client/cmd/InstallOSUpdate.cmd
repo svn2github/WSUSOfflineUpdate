@@ -79,18 +79,10 @@ echo %1 | %SystemRoot%\System32\find.exe /I ".exe" >nul 2>&1
 if not errorlevel 1 goto InstExe
 echo %1 | %SystemRoot%\System32\find.exe /I ".msi" >nul 2>&1
 if not errorlevel 1 goto InstMsi
-if /i "%OS_NAME%" EQU "w60" goto FindCabMsu
-if /i "%OS_NAME%" EQU "w61" goto FindCabMsu
-if /i "%OS_NAME%" EQU "w62" goto FindCabMsu
-if /i "%OS_NAME%" EQU "w63" goto FindCabMsu
-if /i "%OS_NAME%" EQU "w100" goto FindCabMsu
-goto UnsupType
-
-:FindCabMsu
-echo %1 | %SystemRoot%\System32\find.exe /I ".cab" >nul 2>&1
-if not errorlevel 1 goto InstCab
 echo %1 | %SystemRoot%\System32\find.exe /I ".msu" >nul 2>&1
 if not errorlevel 1 goto InstMsu
+echo %1 | %SystemRoot%\System32\find.exe /I ".cab" >nul 2>&1
+if not errorlevel 1 goto InstCab
 goto UnsupType
 
 :InstExe

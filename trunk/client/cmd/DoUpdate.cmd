@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.0.2+ (r693)
+set WSUSOFFLINE_VERSION=10.1
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1121,10 +1121,8 @@ set WDDEFS_VER_TARGET_MINOR=
 set WDDEFS_VER_TARGET_BUILD=
 set WDDEFS_VER_TARGET_REVIS=
 
-if "%RECALL_REQUIRED%"=="1" goto Installed
-if "%OFC_NAME%"=="" goto SkipOffice
-
 :JustOffice
+if "%OFC_NAME%"=="" goto SkipOffice
 rem *** Check Office Service Pack versions ***
 echo Checking Office Service Pack versions...
 if exist "%TEMP%\MissingUpdateIds.txt" del "%TEMP%\MissingUpdateIds.txt"
@@ -1240,7 +1238,7 @@ if "%SKIP_DYNAMIC%"=="/skipdynamic" (
 )
 if "%WUSCN_PREREQ_ID%"=="" goto CheckWUSvc
 if exist %SystemRoot%\Temp\wou_wupre_tried.txt goto CheckWUSvc
-echo Checking most recent Cumulative Security Update for Internet Explorer...
+echo Checking Windows Update scan prerequisite update...
 %CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
 if exist "%TEMP%\InstalledUpdateIds.txt" (
   %SystemRoot%\System32\find.exe /I "%WUSCN_PREREQ_ID%" "%TEMP%\InstalledUpdateIds.txt" >nul 2>&1
@@ -1254,18 +1252,17 @@ echo %WUSCN_PREREQ_ID%>"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
-  echo Installing most recent Cumulative Security Update for Internet Explorer...
+  echo Installing Windows Update scan prerequisite update...
   call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /ignoreerrors
   if not errorlevel 1 (
     if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
     echo. >%SystemRoot%\Temp\wou_wupre_tried.txt
-    set RECALL_REQUIRED=1
+    set REBOOT_REQUIRED=1
   )
 ) else (
-  echo Warning: Cumulative Security Update for Internet Explorer ^(kb%WUSCN_PREREQ_ID%^) not found.
-  echo %DATE% %TIME% - Warning: Cumulative Security Update for Internet Explorer ^(kb%WUSCN_PREREQ_ID%^) not found>>%UPDATE_LOGFILE%
+  echo Warning: Windows Update scan prerequisite update ^(kb%WUSCN_PREREQ_ID%^) not found.
+  echo %DATE% %TIME% - Warning: Windows Update scan prerequisite update ^(kb%WUSCN_PREREQ_ID%^) not found>>%UPDATE_LOGFILE%
 )
-if "%RECALL_REQUIRED%"=="1" goto Installed
 :CheckWUSvc
 rem *** Check state of service 'Windows Update' ***
 echo Checking state of service 'Windows Update'...

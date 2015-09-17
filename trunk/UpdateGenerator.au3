@@ -1,19 +1,19 @@
-; ***  WSUS Offline Update 10.0.2 - Generator  ***
-; ***        Author: T. Wittrock, Kiel         ***
-; ***      USB-Option added by Ch. Riedel      ***
-; ***    Dialog scaling added by Th. Baisch    ***
+; ***  WSUS Offline Update 10.1 - Generator  ***
+; ***       Author: T. Wittrock, Kiel        ***
+; ***     USB-Option added by Ch. Riedel     ***
+; ***   Dialog scaling added by Th. Baisch   ***
 
 #include <GUIConstants.au3>
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Generator")
-#pragma compile(FileVersion, 10.0.2.693)
+#pragma compile(FileVersion, 10.1.0.695)
 #pragma compile(InternalName, "Generator")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateGenerator.exe)
 #pragma compile(ProductName, "WSUS Offline Update")
-#pragma compile(ProductVersion, 10.0.2)
+#pragma compile(ProductVersion, 10.1.0)
 
-Dim Const $caption                  = "WSUS Offline Update 10.0.2"
+Dim Const $caption                  = "WSUS Offline Update 10.1"
 Dim Const $title                    = $caption & " - Generator"
 Dim Const $donationURL              = "http://www.wsusoffline.net/donate.html"
 Dim Const $downloadLogFile          = "download.log"
@@ -1123,39 +1123,9 @@ GuiCtrlCreateTab($txtxpos, $txtypos, $groupwidth + 2 * $txtxoffset, 5 * $grouphe
 ;  Operating Systems' Tab
 $tabitemfocused = GuiCtrlCreateTabItem("Windows")
 
-;  Windows Vista / Server 2008 group
-$txtxpos = 2 * $txtxoffset
-$txtypos = 3.5 * $txtyoffset + $txtheight
-GUICtrlCreateGroup("Windows Vista / Server 2008 (w60 / w60-x64)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
-;  Windows Vista / Server 2008 global
-$txtypos = $txtypos + 1.5 * $txtyoffset
-$txtxpos = 3 * $txtxoffset
-If ShowGUIInGerman() Then
-  $w60_glb = GUICtrlCreateCheckbox("x86 Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
-Else
-  $w60_glb = GUICtrlCreateCheckbox("x86 Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
-EndIf
-If IniRead($inifilename, $ini_section_w60, $lang_token_glb, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows Vista / Server 2008 x64 global
-$txtxpos = $txtxpos + $groupwidth / 2 - $txtxoffset
-If ShowGUIInGerman() Then
-  $w60_x64_glb = GUICtrlCreateCheckbox("x64 Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
-Else
-  $w60_x64_glb = GUICtrlCreateCheckbox("x64 Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
-EndIf
-If IniRead($inifilename, $ini_section_w60_x64, $lang_token_glb, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-
 ;  Windows 7 / Server 2008 R2 group
 $txtxpos = 2 * $txtxoffset
-$txtypos = $txtypos + 2.5 * $txtyoffset
+$txtypos = 3.5 * $txtyoffset + $txtheight
 GUICtrlCreateGroup("Windows 7 / Server 2008 R2 (w61 / w61-x64)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
 ;  Windows 7 global
 $txtypos = $txtypos + 1.5 * $txtyoffset
@@ -1178,36 +1148,6 @@ Else
   $w61_x64_glb = GUICtrlCreateCheckbox("x64 Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
 EndIf
 If IniRead($inifilename, $ini_section_w61_x64, $lang_token_glb, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-
-;  Windows 8 / Server 2012 group
-$txtxpos = 2 * $txtxoffset
-$txtypos = $txtypos + 2.5 * $txtyoffset
-GUICtrlCreateGroup("Windows 8 / Server 2012 (w62 / w62-x64)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
-;  Windows 8 global
-$txtypos = $txtypos + 1.5 * $txtyoffset
-$txtxpos = 3 * $txtxoffset
-If ShowGUIInGerman() Then
-  $w62_glb = GUICtrlCreateCheckbox("x86 Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
-Else
-  $w62_glb = GUICtrlCreateCheckbox("x86 Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
-EndIf
-If IniRead($inifilename, $ini_section_w62, $lang_token_glb, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 8 / Server 2012 x64 global
-$txtxpos = $txtxpos + $groupwidth / 2 - $txtxoffset
-If ShowGUIInGerman() Then
-  $w62_x64_glb = GUICtrlCreateCheckbox("x64 Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
-Else
-  $w62_x64_glb = GUICtrlCreateCheckbox("x64 Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
-EndIf
-If IniRead($inifilename, $ini_section_w62_x64, $lang_token_glb, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -1683,9 +1623,69 @@ Else
   GuiCtrlCreateTabItem("Legacy products")
 EndIf
 
-;  Office 2007 group
+;  Windows Vista / Server 2008 group
 $txtxpos = 2 * $txtxoffset
 $txtypos = 3.5 * $txtyoffset + $txtheight
+GUICtrlCreateGroup("Windows Vista / Server 2008 (w60 / w60-x64)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
+;  Windows Vista / Server 2008 global
+$txtypos = $txtypos + 1.5 * $txtyoffset
+$txtxpos = 3 * $txtxoffset
+If ShowGUIInGerman() Then
+  $w60_glb = GUICtrlCreateCheckbox("x86 Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
+Else
+  $w60_glb = GUICtrlCreateCheckbox("x86 Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
+EndIf
+If IniRead($inifilename, $ini_section_w60, $lang_token_glb, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows Vista / Server 2008 x64 global
+$txtxpos = $txtxpos + $groupwidth / 2 - $txtxoffset
+If ShowGUIInGerman() Then
+  $w60_x64_glb = GUICtrlCreateCheckbox("x64 Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
+Else
+  $w60_x64_glb = GUICtrlCreateCheckbox("x64 Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
+EndIf
+If IniRead($inifilename, $ini_section_w60_x64, $lang_token_glb, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+
+;  Windows 8 / Server 2012 group
+$txtxpos = 2 * $txtxoffset
+$txtypos = $txtypos + 2.5 * $txtyoffset
+GUICtrlCreateGroup("Windows 8 / Server 2012 (w62 / w62-x64)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
+;  Windows 8 global
+$txtypos = $txtypos + 1.5 * $txtyoffset
+$txtxpos = 3 * $txtxoffset
+If ShowGUIInGerman() Then
+  $w62_glb = GUICtrlCreateCheckbox("x86 Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
+Else
+  $w62_glb = GUICtrlCreateCheckbox("x86 Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
+EndIf
+If IniRead($inifilename, $ini_section_w62, $lang_token_glb, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows 8 / Server 2012 x64 global
+$txtxpos = $txtxpos + $groupwidth / 2 - $txtxoffset
+If ShowGUIInGerman() Then
+  $w62_x64_glb = GUICtrlCreateCheckbox("x64 Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
+Else
+  $w62_x64_glb = GUICtrlCreateCheckbox("x64 Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
+EndIf
+If IniRead($inifilename, $ini_section_w62_x64, $lang_token_glb, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+
+;  Office 2007 group
+$txtxpos = 2 * $txtxoffset
+$txtypos = $txtypos + 2.5 * $txtyoffset
 GUICtrlCreateGroup("Office 2007 (o2k7)", $txtxpos, $txtypos, $groupwidth, $groupheight_lng)
 ;  Office 2007 English
 $txtypos = $txtypos + 1.5 * $txtyoffset
@@ -1895,9 +1895,9 @@ EndIf
 $txtypos = $txtypos + 2 * $txtyoffset
 $txtxpos = 3 * $txtxoffset
 If ShowGUIInGerman() Then
-  GUICtrlCreateLabel("Diese Produkte wurden von Microsoft zum 10. Oktober 2017 abgekündigt.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
+  GUICtrlCreateLabel("Diese Produkte wurden von Microsoft abgekündigt zum 12.01.2016 (Windows 8), 11.04.2017 (Vista) bzw. 10.10.2017 (Office 2007).", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
 Else
-  GUICtrlCreateLabel("Microsoft will discontinue support for these products on October 10th, 2017.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
+  GUICtrlCreateLabel("Microsoft will discontinue these products on 01/12/2016 (Windows 8), 04/11/2017 (Vista) resp. 10/10/2017 (Office 2007).", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
 EndIf
 
 ;  End Tab item definition
