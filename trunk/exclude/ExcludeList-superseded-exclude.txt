@@ -1,5 +1,7 @@
 kb2536276
 kb2835361
+windows6.0-kb2535512
+windows6.0-kb2973201
 windows6.1-kb2552343
 windows6.1-kb2644615
 ie11-windows6.1-kb2976627

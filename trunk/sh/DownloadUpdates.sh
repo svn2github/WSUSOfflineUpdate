@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                              v. 10.1                              ###
+###                          v. 10.1+ (r696)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###

@@ -1041,3 +1041,5 @@ Version 10.1 -- 17.09.15
 - Fix: Excluded obsolete patches for .NET Framework versions 1.1, 2.0 and 3.0 (Thanks to "Denniss")
 - Fix: Replaced superseded Office 2007 Security Update kb2760415 (MS13-091) by kb3054987 (MS15-099) (Thanks to "Denniss")
 --------------------------------------------------------------------------------
+Version ??.? -- ??.??.??
+- Fix: Download part erroneously excluded Security Updates kb2535512 (MS11-042) and kb2973201 (MS14-039) for Windows Vista and Server 2008 (x86)
