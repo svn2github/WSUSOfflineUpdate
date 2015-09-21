@@ -2,7 +2,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: NTSTATUS UDF Library for AutoIt3
-; AutoIt Version : 3.3.14.1
+; AutoIt Version : 3.3.14.2
 ; Description ...: NT error codes (NTSTATUS) to be used with WinAPI* UDF library
 ; Author(s) .....: Yashied
 ; ===============================================================================================================================

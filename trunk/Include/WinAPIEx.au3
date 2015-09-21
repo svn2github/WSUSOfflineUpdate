@@ -17,7 +17,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: WinAPI Extended UDF Library for AutoIt3
-; AutoIt Version : 3.3.14.1
+; AutoIt Version : 3.3.14.2
 ; Language ......: English
 ; Description ...: Additional variables, constants and functions for WinAPI.au3
 ; Author(s) .....: Yashied

@@ -7,7 +7,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: Animation
-; AutoIt Version : 3.3.14.1
+; AutoIt Version : 3.3.14.2
 ; Language ......: English
 ; Description ...: Functions that assist with AVI control management.
 ;                  An animation control is a window that displays an Audio-Video Interleaved (AVI) clip.  An AVI clip is a series

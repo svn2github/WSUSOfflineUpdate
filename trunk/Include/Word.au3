@@ -6,7 +6,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: Microsoft Word Function Library (MS Word 2003 and later)
-; AutoIt Version : 3.3.14.1
+; AutoIt Version : 3.3.14.2
 ; Language ......: English
 ; Description ...: A collection of functions for accessing and manipulating Microsoft Word documents
 ; Author(s) .....: Bob Anthony, rewritten by water

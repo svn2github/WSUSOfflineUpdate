@@ -10,7 +10,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: Edit
-; AutoIt Version : 3.3.14.1
+; AutoIt Version : 3.3.14.2
 ; Language ......: English
 ; Description ...: Functions that assist with Edit control management.
 ;                  An edit control is a rectangular control window typically used in a dialog box to permit the user to enter

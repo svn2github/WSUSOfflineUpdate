@@ -3,12 +3,12 @@
 
 #include "FileConstants.au3"
 #include "InetConstants.au3"
-#include "Array.au3" 	; Using: _ArrayAdd(),_ArrayDelete(),_ArraySearch()
-#include "File.au3" 	; Using: _TempFile()
+#include "Array.au3" ; Using: _ArrayAdd(),_ArrayDelete(),_ArraySearch()
+#include "File.au3" ; Using: _TempFile()
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: SQLite
-; AutoIt Version : 3.3.14.1
+; AutoIt Version : 3.3.15.1
 ; Language ......: English
 ; Description ...: Functions that assist access to an SQLite database.
 ; Author(s) .....: Fida Florian (piccaso), jchd, jpm
@@ -29,7 +29,6 @@ Global $__g_bSafeModeState_SQLite = True ; Safemode State (boolean)
 Global $__g_ahDBs_SQLite[1] = [''] ; Array of known $hDB handles
 Global $__g_ahQuerys_SQLite[1] = [''] ; Array of known $hQuery handles
 Global $__g_hMsvcrtDll_SQLite = 0 ; pseudo dll handle for 'msvcrt.dll'
-Global $__g_aTempFiles_SQLite[1] = [''] ; Array of used Temp Files
 ; ===============================================================================================================================
 
 ; #CONSTANTS# ===================================================================================================================
@@ -117,7 +116,8 @@ Global Const $SQLITE_TYPE_NULL = 5
 ; __SQLite_StringToUtf8Struct
 ; __SQLite_Utf8StructToString
 ; __SQLite_ConsoleWrite
-; __SQLite_Download_SQLite3File
+;~ ; __SQLite_Download_SQLite3File
+;~ ; __SQLite_Download_Confirmation
 ; __SQLite_Print
 ; ===============================================================================================================================
 
@@ -195,6 +195,7 @@ Global Const $SQLITE_TYPE_NULL = 5
 	04.02.14	Added _SQLite_SQLiteExe() download sqlite3.exe if needed.
 	05.04.14	Added __SQLite_Download_SQLite3File() download sqlite3.exe or sqlite3.dll if needed.
 	08.04.14	Fixed __SQLite_Download_SQLite3File() when running in Admin mode.
+	11.09.15	Fixed _SQLite_Startup() No Download, search dll in @LocalAppDataDir & "\AutoIt v3\SQLite" if needed.
 #comments-end
 
 ; #FUNCTION# ====================================================================================================================
@@ -243,8 +244,8 @@ Func _SQLite_Startup($sDll_Filename = "", $bUTF8ErrorMsg = False, $iForceLocal =
 
 		If $bDownloadDLL Then
 			If Not FileExists($sDll_Dirname & $sDll_Filename) Then
-				; Create in SystemDir to avoid reloading: need #requireAdmin under Windows7/8
-				$sDll_Dirname = @SystemDir & "\"
+				; Create in @LocalAppDataDir & "\AutoIt v3\" to avoid reloading (only valid for the current user)
+				$sDll_Dirname = @LocalAppDataDir & "\AutoIt v3\SQLite"
 			EndIf
 			If $iForceLocal Then
 				; download the latest version. Usely related with internal testing.
@@ -254,12 +255,14 @@ Func _SQLite_Startup($sDll_Filename = "", $bUTF8ErrorMsg = False, $iForceLocal =
 				$vInlineVersion = "_" & $vInlineVersion
 				$iExt = 1
 			EndIf
-			$sDll_Filename = __SQLite_Download_SQLite3File($sDll_Dirname, StringReplace($sDll_Filename, ".dll", ""), $vInlineVersion, ".dll")
-			If @error Then Return SetError(@error, @extended, "") ; download not successful
-			If $sDll_Dirname = @TempDir & "\" Then $sDll_Filename = StringReplace($sDll_Filename, @TempDir & "\", "")
+			$sDll_Filename = $sDll_Dirname & "\" & StringReplace($sDll_Filename, ".dll", "") &  $vInlineVersion &  ".dll"
+;~ 			$sDll_Filename = __SQLite_Download_SQLite3File($sDll_Dirname, StringReplace($sDll_Filename, ".dll", ""), $vInlineVersion, ".dll")
+;~ 			If @error Then Return SetError(@error, @extended, "") ; download not successful
+;~ 			$iExt = @extended
 		EndIf
 	EndIf
-	$sDll_Filename = $sDll_Dirname & $sDll_Filename
+;~ 	If Not FileExists($sDll_Filename) Then Then Return SetError(2, 0, "") ; File not found
+
 	Local $hDll = DllOpen($sDll_Filename)
 	If $hDll = -1 Then
 		$__g_hDll_SQLite = 0
@@ -278,10 +281,6 @@ Func _SQLite_Shutdown()
 	$__g_hDll_SQLite = 0
 	If $__g_hMsvcrtDll_SQLite > 0 Then DllClose($__g_hMsvcrtDll_SQLite)
 	$__g_hMsvcrtDll_SQLite = 0
-	For $sTempfile In $__g_aTempFiles_SQLite
-		If FileExists($sTempfile) Then FileDelete($sTempfile)
-	Next
-	OnAutoItExitUnRegister("_SQLite_Shutdown")
 EndFunc   ;==>_SQLite_Shutdown
 
 ; #FUNCTION# ====================================================================================================================
@@ -815,10 +814,11 @@ Func _SQLite_SQLiteExe($sDatabaseFile, $sInput, ByRef $sOutput, $sSQLiteExeFilen
 		If Not FileExists($sSQLiteExeFilename) Then
 			Local $sInlineVersion = "_" & Call('__SQLite_Inline_Version')
 			If @error Then $sInlineVersion = "" ; no valid SQLite version define so use any version
-			Local $sSQLiteExe_FilePath = @TempDir & "\"
-			$sSQLiteExeFilename = __SQLite_Download_SQLite3File($sSQLiteExe_FilePath, "sqlite3", $sInlineVersion, ".exe", True)
-			If @error Then Return SetError(2, 0, $SQLITE_MISUSE) ; Can't Found sqlite3.exe
-			$sSQLiteExeFilename = $sSQLiteExe_FilePath & $sSQLiteExeFilename
+			$sSQLiteExeFilename = StringReplace($sSQLiteExeFilename, ".exe", "") & $sInlineVersion & ".exe"
+			If Not FileExists($sSQLiteExeFilename) Then Return SetError(2, 0, $SQLITE_MISUSE) ; Can't Found sqlite3.exe
+;~ 			$sSQLiteExeFilename = __SQLite_Download_SQLite3File($sSQLiteExe_FilePath, "sqlite3", $sInlineVersion, ".exe")
+;~ 			If @error Then Return SetError(2, 0, $SQLITE_MISUSE) ; Can't Found sqlite3.exe
+;~ 			If StringInStr($sSQLiteExeFilename, "\") = 0 Then $sSQLiteExeFilename = $sSQLiteExe_FilePath & $sSQLiteExeFilename
 		EndIf
 	EndIf
 	If Not FileExists($sDatabaseFile) Then
@@ -1071,31 +1071,33 @@ Func __SQLite_ConsoleWrite($sText)
 	ConsoleWrite($sText)
 EndFunc   ;==>__SQLite_ConsoleWrite
 
-Func __SQLite_Download_SQLite3File(ByRef $sFilePath, $sFileName, $sVersion, $sFileExt, $bDownload = False, $iScripLineNumber = @ScriptLineNumber)
-	Local $sRetFile = $sFileName & $sVersion & $sFileExt
-	Local $sTempfile = $sFilePath & $sRetFile
-	If $bDownload And FileExists($sTempfile) Then Return $sTempfile
+;~ Func __SQLite_Download_SQLite3File(ByRef $sFilePath, $sFileName, $sVersion, $sFileExt, $iScripLineNumber = @ScriptLineNumber)
+;~ 	Local $sRetFile = $sFileName & $sVersion & $sFileExt
+;~ 	Local $sTempfile = $sFilePath & $sRetFile
+;~ 	If FileExists($sTempfile) Then Return $sTempfile
 
-	Local $sURL = "http://www.autoitscript.com/autoit3/files/beta/autoit/archive/sqlite/"
-	Local $iInetRet = InetGet($sURL & $sRetFile, $sTempfile, $INET_FORCERELOAD)
-	Local $iError = @error
-	If @error And StringInStr($sTempfile, @SystemDir) Then
-		$sFilePath = @TempDir & "\"
-		$sTempfile = _TempFile(@TempDir, "~", ".dll")
-		_ArrayAdd($__g_aTempFiles_SQLite, $sTempfile)
-		OnAutoItExitRegister("_SQLite_Shutdown") ; in case the script exit without calling _SQLite_Shutdown()
-		$iInetRet = InetGet($sURL & $sRetFile, $sTempfile, $INET_FORCERELOAD)
-		$iError = @error
-		Local $iPos = StringInStr($sTempfile, "\", 0, -1)
-		$sRetFile = StringTrimLeft($sTempfile, $iPos)
-	EndIf
-	If $iError Then __SQLite_Print('@@ Debug(' & $iScripLineNumber & ') : __SQLite_Download_SQLite3File : $URL = ' & $sURL & $sFileName & $sFileExt & @CRLF & @TAB & '$sTempfile = ' & $sTempfile & @CRLF & '>Error: ' & $iError & @CRLF)
+;~ 	If Not __SQLite_Download_Confirmation("Sqlite File Download") Then Return SetError(-1, 0, "")
 
-	Local $sModifiedTime = Call('__SQLite_Inline_Modified')
-	If Not @error Then FileSetTime($sTempfile, $sModifiedTime, 0) ; update filetime if defined
+;~ 	If Not FileExists($sFilePath) Then DirCreate($sFilePath)
 
-	Return SetError($iError, $iInetRet, $sRetFile)
-EndFunc   ;==>__SQLite_Download_SQLite3File
+;~ 	Local $sURL = "http://www.autoitscript.com/autoit3/files/beta/autoit/archive/sqlite.new/"
+;~ 	Local $iInetRet = InetGet($sURL & $sRetFile, $sTempfile, $INET_FORCERELOAD)
+;~ 	Local $iError = @error
+;~ 	If $iError Then __SQLite_Print('@@ Debug(' & $iScripLineNumber & ') : __SQLite_Download_SQLite3File : $URL = ' & $sURL & $sFileName & $sFileExt & @CRLF & @TAB & '$sTempfile = ' & $sTempfile & @CRLF & '>Error: ' & $iError & @CRLF)
+
+;~ 	Local $sModifiedTime = Call('__SQLite_Inline_Modified')
+;~ 	If Not @error Then FileSetTime($sTempfile, $sModifiedTime, 0) ; update filetime if defined
+
+;~ 	Return SetError($iError, $iInetRet, $sRetFile)
+;~ EndFunc   ;==>__SQLite_Download_SQLite3File
+
+;~ Func __SQLite_Download_Confirmation($sTitle)
+;~ 	Local $sTemp =  _TempFile(@TempDir, "", "")
+;~ 	Local $aArray = StringRegExp($sTemp, "^\h*((?:\\\\\?\\)*(\\\\[^\?\/\\]+|[A-Za-z]:)?(.*[\/\\]\h*)?((?:[^\.\/\\]|(?(?=\.[^\/\\]*\.)\.))*)?([^\/\\]*))$", $STR_REGEXPARRAYMATCH)
+;~ 	Local $s = InputBox($sTitle, "Please confirm by typing :" & @lf & @lf & "   " & $aArray[3] & @lf & @lf & "It will be dowloaded only on first use")
+;~ 	If $s == $aArray[3] Then Return True
+;~ 	Return False
+;~ EndFunc   ;==>__SQLite_Download_Confirmation
 
 ; #INTERNAL_USE_ONLY# ===========================================================================================================
 ; Name...........: __SQLite_Print

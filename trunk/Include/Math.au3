@@ -4,7 +4,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: Mathematical calculations
-; AutoIt Version : 3.3.14.1
+; AutoIt Version : 3.3.14.2
 ; Language ......: English
 ; Description ...: Functions that assist with mathematical calculations.
 ; Author(s) .....: Valik, Gary Frost, guinness ...

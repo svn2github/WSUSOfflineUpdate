@@ -1042,4 +1042,5 @@ Version 10.1 -- 17.09.15
 - Fix: Replaced superseded Office 2007 Security Update kb2760415 (MS13-091) by kb3054987 (MS15-099) (Thanks to "Denniss")
 --------------------------------------------------------------------------------
 Version ??.? -- ??.??.??
+- AutoIt script compiler updated to version 3.3.14.2
 - Fix: Download part erroneously excluded Security Updates kb2535512 (MS11-042) and kb2973201 (MS14-039) for Windows Vista and Server 2008 (x86)

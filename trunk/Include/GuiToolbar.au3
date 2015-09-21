@@ -9,7 +9,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: Toolbar
-; AutoIt Version : 3.3.14.1
+; AutoIt Version : 3.3.14.2
 ; Language ......: English
 ; Description ...: Functions that assist with Toolbar control management.
 ;                  A toolbar is a control window that contains one or more buttons.  Each button, when clicked by a user, sends a

@@ -6,7 +6,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: Array
-; AutoIt Version : 3.3.14.1
+; AutoIt Version : 3.3.14.2
 ; Language ......: English
 ; Description ...: Functions for manipulating arrays.
 ; Author(s) .....: JdeB, Erik Pilsits, Ultima, Dale (Klaatu) Thompson, Cephas,randallc, Gary Frost, GEOSoft,
@@ -57,8 +57,6 @@
 ; __ArrayDualPivotSort
 ; __ArrayQuickSort1D
 ; __ArrayQuickSort2D
-; __ArrayUnique_AutoErrRegister
-; __ArrayUnique_AutoErrUnregister
 ; __ArrayUnique_AutoErrFunc
 ; ===============================================================================================================================
 
@@ -66,10 +64,6 @@
 Global Enum $ARRAYFILL_FORCE_DEFAULT, $ARRAYFILL_FORCE_SINGLEITEM, $ARRAYFILL_FORCE_INT, $ARRAYFILL_FORCE_NUMBER, $ARRAYFILL_FORCE_PTR, $ARRAYFILL_FORCE_HWND, $ARRAYFILL_FORCE_STRING
 Global Enum $ARRAYUNIQUE_NOCOUNT, $ARRAYUNIQUE_COUNT
 Global Enum $ARRAYUNIQUE_AUTO, $ARRAYUNIQUE_FORCE32, $ARRAYUNIQUE_FORCE64, $ARRAYUNIQUE_MATCH, $ARRAYUNIQUE_DISTINCT
-; ===============================================================================================================================
-
-; #GLOBAL VARIABLES# ============================================================================================================
-Global $g_oArrayUniqueCOMErrorHandler = 0
 ; ===============================================================================================================================
 
 ; #FUNCTION# ====================================================================================================================
@@ -2291,11 +2285,11 @@ Func _ArrayUnique(Const ByRef $aArray, $iColumn = 0, $iBase = 0, $iCase = 0, $iC
 	If $iCount < 0 Or $iCount > 1 Or (Not IsInt($iCount)) Then Return SetError(4, 0, 0)
 	If $iIntType < 0 Or $iIntType > 4 Or (Not IsInt($iIntType)) Then Return SetError(5, 0, 0)
 	If $iColumn < 0 Or ($iNumColumns = 0 And $iColumn > 0) Or ($iNumColumns > 0 And $iColumn >= $iNumColumns) Then Return SetError(6, 0, 0)
-
 	; Autocheck of first element
 	If $iIntType = $ARRAYUNIQUE_AUTO Then
-		If IsInt($aArray[$iBase]) Then
-			Switch VarGetType($aArray[$iBase])
+		Local $vFirstElem = ( ($iDims = 1) ? ($aArray[$iBase]) : ($aArray[$iColumn][$iBase]) )
+		If IsInt($vFirstElem) Then
+			Switch VarGetType($vFirstElem)
 				Case "Int32"
 					$iIntType = $ARRAYUNIQUE_FORCE32
 				Case "Int64"
@@ -2305,15 +2299,14 @@ Func _ArrayUnique(Const ByRef $aArray, $iColumn = 0, $iBase = 0, $iCase = 0, $iC
 			$iIntType = $ARRAYUNIQUE_FORCE32
 		EndIf
 	EndIf
-
+	; Create error handler
+	ObjEvent("AutoIt.Error", "__ArrayUnique_AutoErrFunc")
 	; Create dictionary
 	Local $oDictionary = ObjCreate("Scripting.Dictionary")
 	; Set case sensitivity
 	$oDictionary.CompareMode = Number(Not $iCase)
 	; Add elements to dictionary
 	Local $vElem, $sType, $vKey, $bCOMError = False
-	; Register COM error handler
-	__ArrayUnique_AutoErrRegister()
 	For $i = $iBase To UBound($aArray) - 1
 		If $iDims = 1 Then
 			; 1D array
@@ -2358,8 +2351,6 @@ Func _ArrayUnique(Const ByRef $aArray, $iColumn = 0, $iBase = 0, $iCase = 0, $iC
 				EndIf
 		EndSwitch
 	Next
-	; Unregister COM error handler
-	__ArrayUnique_AutoErrUnregister()
 	; Create return array
 	Local $aValues, $j = 0
 	If $bCOMError Then ; Mismatch Int32/64
@@ -2385,6 +2376,7 @@ Func _ArrayUnique(Const ByRef $aArray, $iColumn = 0, $iBase = 0, $iCase = 0, $iC
 	EndIf
 	; Return array
 	Return $aValues
+
 EndFunc   ;==>_ArrayUnique
 
 ; #FUNCTION# ====================================================================================================================
@@ -2618,14 +2610,6 @@ EndFunc   ;==>__Array_GreaterThan
 Func __Array_LessThan($vValue1, $vValue2)
 	Return $vValue1 < $vValue2
 EndFunc   ;==>__Array_LessThan
-
-Func __ArrayUnique_AutoErrRegister()
-	$g_oArrayUniqueCOMErrorHandler = ObjEvent("AutoIt.Error", "__ArrayUnique_AutoErrFunc")
-EndFunc   ;==>__ArrayUnique_AutoErrRegister
-
-Func __ArrayUnique_AutoErrUnregister()
-	$g_oArrayUniqueCOMErrorHandler = 0
-EndFunc   ;==>__ArrayUnique_AutoErrUnregister
 
 Func __ArrayUnique_AutoErrFunc()
 	; Do nothing special, just check @error after suspect functions.
