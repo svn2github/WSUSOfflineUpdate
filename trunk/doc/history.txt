@@ -1044,3 +1044,4 @@ Version 10.1 -- 17.09.15
 Version ??.? -- ??.??.??
 - AutoIt script compiler updated to version 3.3.14.2
 - Fix: Download part erroneously excluded Security Updates kb2535512 (MS11-042) and kb2973201 (MS14-039) for Windows Vista and Server 2008 (x86)
+- Fix: .NET Framework 4.6 was not properly installed on Server Core systems (Thanks to R. Bronca)

@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.1+ (r697)
+set WSUSOFFLINE_VERSION=10.1+ (r698)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -886,17 +886,22 @@ if %DOTNET4_VER_BUILD% GEQ %DOTNET4_VER_TARGET_BUILD% goto SkipDotNet4Inst
 :InstallDotNet4
 set DOTNET4_FILENAME=..\dotnet\NDP46-KB3045557-x86-x64-AllOS-ENU.exe
 set DOTNET4LP_FILENAME=..\dotnet\NDP46-KB3045557-x86-x64-AllOS-%OS_LANG%.exe
+if "%OS_CORE%"=="1" (
+  set DOTNET4_INSTOPTS=/q /norestart
+) else (
+  set DOTNET4_INSTOPTS=/passive /norestart
+)
 if not exist %DOTNET4_FILENAME% (
   echo Warning: .NET Framework 4.6 installation file ^(%DOTNET4_FILENAME%^) not found.
   echo %DATE% %TIME% - Warning: .NET Framework 4.6 installation file ^(%DOTNET4_FILENAME%^) not found>>%UPDATE_LOGFILE%
   goto SkipDotNet4Inst
 )
 echo Installing .NET Framework 4.6...
-for /F %%i in ('dir /B %DOTNET4_FILENAME%') do call InstallOSUpdate.cmd ..\dotnet\%%i %VERIFY_MODE% /errorsaswarnings /passive /norestart /lcid 1033
+call InstallOSUpdate.cmd %DOTNET4_FILENAME% %VERIFY_MODE% /errorsaswarnings %DOTNET4_INSTOPTS% /lcid 1033
 if "%OS_LANG%" NEQ "enu" (
   if exist %DOTNET4LP_FILENAME% (
     echo Installing .NET Framework 4.6 Language Pack...
-    for /F %%i in ('dir /B %DOTNET4LP_FILENAME%') do call InstallOSUpdate.cmd ..\dotnet\%%i %VERIFY_MODE% /errorsaswarnings /passive /norestart
+    for /F %%i in ('dir /B %DOTNET4LP_FILENAME%') do call InstallOSUpdate.cmd ..\dotnet\%%i %VERIFY_MODE% /errorsaswarnings %DOTNET4_INSTOPTS%
   ) else (
     echo Warning: .NET Framework 4.6 Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found.
     echo %DATE% %TIME% - Warning: .NET Framework 4.6 Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found>>%UPDATE_LOGFILE%
@@ -905,6 +910,7 @@ if "%OS_LANG%" NEQ "enu" (
 set RECALL_REQUIRED=1
 set DOTNET4_FILENAME=
 set DOTNET4LP_FILENAME=
+set DOTNET4_INSTOPTS=
 :SkipDotNet4Inst
 
 rem *** Install .NET Framework 3.5 - Custom ***
