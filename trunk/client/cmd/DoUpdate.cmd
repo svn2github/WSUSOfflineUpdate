@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.1+ (r698)
+set WSUSOFFLINE_VERSION=10.1+ (r699)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -496,7 +496,7 @@ set WSH_FILENAME=
 :SkipWSHInst
 
 rem *** Install Internet Explorer ***
-if "%OS_CORE%"=="1" goto SkipIEInst
+if "%OS_SRV_CORE%"=="1" goto SkipIEInst
 echo Checking Internet Explorer version...
 if %IE_VER_MAJOR% LSS %IE_VER_TARGET_MAJOR% goto InstallIE
 if %IE_VER_MAJOR% GTR %IE_VER_TARGET_MAJOR% goto SkipIEInst
@@ -886,7 +886,7 @@ if %DOTNET4_VER_BUILD% GEQ %DOTNET4_VER_TARGET_BUILD% goto SkipDotNet4Inst
 :InstallDotNet4
 set DOTNET4_FILENAME=..\dotnet\NDP46-KB3045557-x86-x64-AllOS-ENU.exe
 set DOTNET4LP_FILENAME=..\dotnet\NDP46-KB3045557-x86-x64-AllOS-%OS_LANG%.exe
-if "%OS_CORE%"=="1" (
+if "%OS_SRV_CORE%"=="1" (
   set DOTNET4_INSTOPTS=/q /norestart
 ) else (
   set DOTNET4_INSTOPTS=/passive /norestart
