@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.1+ (r699)
+set WSUSOFFLINE_VERSION=10.1+ (r700)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -91,7 +91,7 @@ if not errorlevel 1 goto NoAdmin
 
 rem *** Determine system's properties ***
 echo Determining system's properties...
-%CSCRIPT_PATH% //Nologo //B //E:vbs DetermineSystemProperties.vbs
+%CSCRIPT_PATH% //Nologo //B //E:vbs DetermineSystemProperties.vbs /nodebug
 if errorlevel 1 goto NoSysEnvVars
 if not exist "%TEMP%\SetSystemEnvVars.cmd" goto NoSysEnvVars
 

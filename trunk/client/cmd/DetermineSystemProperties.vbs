@@ -3,7 +3,6 @@
 Option Explicit
 
 Private Const strRegKeyWindowsVersion         = "HKLM\Software\Microsoft\Windows NT\CurrentVersion\"
-Private Const strRegKeyServerLevels           = "HKLM\Software\Microsoft\Windows NT\CurrentVersion\Server\ServerLevels\"
 Private Const strRegKeyTrustedRCerts_x86      = "HKLM\Software\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}\"
 Private Const strRegKeyTrustedRCerts_x64      = "HKLM\Software\Wow6432Node\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}\"
 Private Const strRegKeyRevokedRCerts_x86      = "HKLM\Software\Microsoft\Active Setup\Installed Components\{C3C986D6-06B1-43BF-90DD-BE30756C00DE}\"
@@ -26,7 +25,6 @@ Private Const strRegValVersion                = "Version"
 Private Const strRegValDisplayVersion         = "DisplayVersion"
 Private Const strRegValBuildLabEx             = "BuildLabEx"
 Private Const strRegValInstallationType       = "InstallationType"
-Private Const strRegValServerCore             = "ServerCore"
 Private Const strRegValPShVersion             = "PowerShellVersion"
 Private Const strRegValAVSVersion             = "AVSignatureVersion"
 Private Const strRegValNISSVersion            = "NISSignatureVersion"
@@ -55,8 +53,8 @@ Private Const strBuildNumbers_o2k13           = "4420,4420,4420,4420,4420,4420;4
 Private Const idxBuild                        = 2
 
 Dim wshShell, objFileSystem, objCmdFile, objWMIService, objQueryItem, objInstaller, arrayOfficeNames, arrayOfficeVersions, arrayOfficeAppNames, arrayOfficeExeNames
-Dim strSystemFolder, strTempFolder, strWUAFileName, strMSIFileName, strWSHFileName, strTSCFileName, strWMPFileName, strCmdFileName
-Dim strOSArchitecture, strBuildLabEx, strInstallationType, strServerCore, strOfficeInstallPath, strOfficeExeVersion, strProduct, strPatch, languageCode, i, j
+Dim strSystemFolder, strTempFolder, strProfileFolder, strWUAFileName, strMSIFileName, strWSHFileName, strTSCFileName, strWMPFileName, strCmdFileName
+Dim strOSArchitecture, strBuildLabEx, strInstallationType, strOfficeInstallPath, strOfficeExeVersion, strProduct, strPatch, languageCode, i, j
 Dim cpp2005_x86_old, cpp2005_x86_new, cpp2005_x64_old, cpp2005_x64_new
 Dim cpp2008_x86_old, cpp2008_x86_new, cpp2008_x64_old, cpp2008_x64_new
 Dim cpp2010_x86_old, cpp2010_x86_new, cpp2010_x64_old, cpp2010_x64_new
@@ -386,13 +384,21 @@ End Function
 Set wshShell = WScript.CreateObject("WScript.Shell")
 strSystemFolder = wshShell.ExpandEnvironmentStrings("%SystemRoot%") & "\system32"
 strTempFolder = wshShell.ExpandEnvironmentStrings("%TEMP%")
+strProfileFolder = wshShell.ExpandEnvironmentStrings("%USERPROFILE%")
 strWUAFileName = strSystemFolder & "\wuaueng.dll"
 strMSIFileName = strSystemFolder & "\msi.dll"
 strWSHFileName = strSystemFolder & "\vbscript.dll"
 strWMPFileName = strSystemFolder & "\wmp.dll"
 strTSCFileName = strSystemFolder & "\mstsc.exe"
-strCmdFileName = strTempFolder & "\SetSystemEnvVars.cmd"
-
+If WScript.Arguments.Count = 0 Then
+  strCmdFileName = strProfileFolder & "\Desktop\WOUSystemProperties.txt"
+Else
+  If LCase(WScript.Arguments(0)) = "/nodebug" Then
+    strCmdFileName = strTempFolder & "\SetSystemEnvVars.cmd"
+  Else
+    strCmdFileName = strProfileFolder & "\Desktop\WOUSystemProperties.txt"
+  End If
+End If
 Set objFileSystem = CreateObject("Scripting.FileSystemObject")
 Set objCmdFile = objFileSystem.CreateTextFile(strCmdFileName, True)
 
@@ -410,9 +416,8 @@ For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_OperatingS
   objCmdFile.WriteLine("set OS_SP_VER_MINOR=" & objQueryItem.ServicePackMinorVersion)
   objCmdFile.WriteLine("set OS_LANG_CODE=0x" & Hex(objQueryItem.OSLanguage))
   WriteLanguageToFile objCmdFile, "OS_LANG", objQueryItem.OSLanguage, True, True
-  strServerCore = RegRead(wshShell, strRegKeyServerLevels & strRegValServerCore)
   strInstallationType = RegRead(wshShell, strRegKeyWindowsVersion & strRegValInstallationType)
-  If ( (strServerCore = "1") Or (InStr(1, strInstallationType, "Core", vbTextCompare) > 0) ) Then
+  If InStr(1, strInstallationType, "Core", vbTextCompare) > 0 Then
     objCmdFile.WriteLine("set OS_SRV_CORE=1")
   End If
   objCmdFile.WriteLine("set SystemDirectory=" & objQueryItem.SystemDirectory)
