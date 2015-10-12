@@ -6,7 +6,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 10.1.0.700)
+#pragma compile(FileVersion, 10.1.0.701)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -861,13 +861,13 @@ If ( ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "W
   $txtxpos = 3 * $txtxoffset
   $txtypos = $txtypos + 1.5 * $txtyoffset
   If ShowGUIInGerman() Then
-    GUICtrlCreateLabel("Windows Essentials 2012 erfordern sowohl .NET Framework 3.5 als auch 4.5." _
+    GUICtrlCreateLabel("Windows Essentials 2012 erfordern sowohl .NET Framework 3.5 als auch 4.6." _
                & @LF & "Wenn die Optionen auf dieser Seite deaktiviert sind," _
                & @LF & "wählen Sie bitte die entsprechende(n) Installationsoption(en) unter 'Aktualisierung'." _
                & @LF & "Windows 8 / 8.1: Stellen Sie zusätzlich sicher, dass das Sxs-Verzeichnis integriert wurde.", _
                $txtxpos, $txtypos, 3 * $groupwidth - 2 * $txtxoffset, 3 * $txtheight)
   Else
-    GUICtrlCreateLabel("Windows Essentials 2012 require both .NET Frameworks 3.5 and 4.5." _
+    GUICtrlCreateLabel("Windows Essentials 2012 require both .NET Frameworks 3.5 and 4.6." _
                & @LF & "If options are grayed out on this tab," _
                & @LF & "please select the corresponding installation option(s) on the 'Updating' tab." _
                & @LF & "Windows 8 / 8.1: Additionally be sure to have the Sxs folder integrated.", _

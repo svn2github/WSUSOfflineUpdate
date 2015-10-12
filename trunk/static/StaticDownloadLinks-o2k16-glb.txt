@@ -1,0 +1,2 @@
+http://download.microsoft.com/download/5/A/7/5A7BDDA3-7B81-43F1-91F2-A218C84BB2F2/conv2016-kb2910993-fullfile-x86-glb.exe
+http://download.microsoft.com/download/7/8/3/78311088-72D0-42A3-A862-1E71BACC6D37/lync2016-kb2910994-fullfile-x86-glb.exe

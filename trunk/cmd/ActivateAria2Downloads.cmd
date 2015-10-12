@@ -33,34 +33,26 @@ goto EvalParams
 :NoMoreParams
 rem *** Activate Aria2 downloads ***
 title Activating Aria2 downloads...
-if exist ..\bin\aria2c-x64.exe goto DLx86
 if /i "%PROCESSOR_ARCHITECTURE%"=="AMD64" goto DLx64
 if /i "%PROCESSOR_ARCHITEW6432%"=="AMD64" goto DLx64
 goto DLx86
 :DLx64
+if exist ..\bin\aria2c-x64.exe goto DLx86
 echo Downloading most recent version of Aria2 (x64)...
-for /F %%i in ('%SystemRoot%\System32\findstr.exe /I "64bit" ..\static\StaticDownloadLinks-aria2.txt') do (
+for /F %%i in ('%SystemRoot%\System32\findstr.exe /I "x64" ..\static\StaticDownloadLinks-aria2.txt') do (
   %WGET_PATH% -N -P ..\bin %%i
   if errorlevel 1 goto DownloadError
+  ..\bin\streams.exe /accepteula -d ..\bin\aria2*.exe >nul 2>&1
   echo %DATE% %TIME% - Info: Downloaded most recent version of Aria2 ^(x64^)>>%DOWNLOAD_LOGFILE%
-  echo Unpacking aria2c.exe from ..\bin\%%~nxi to ..\bin\aria2c-x64.exe...
-  ..\bin\unzip.exe -p ..\bin\%%~nxi */aria2c.exe >..\bin\aria2c-x64.exe
-  echo %DATE% %TIME% - Info: Unpacked aria2c.exe ..\bin\%%~nxi to ..\bin\aria2c-x64.exe>>%DOWNLOAD_LOGFILE%
-  del ..\bin\%%~nxi
-  echo %DATE% %TIME% - Info: Deleted %%~nxi>>%DOWNLOAD_LOGFILE%
 )
 :DLx86
 if exist ..\bin\aria2c-x86.exe goto Activate
 echo Downloading most recent version of Aria2 (x86)...
-for /F %%i in ('%SystemRoot%\System32\findstr.exe /I "32bit" ..\static\StaticDownloadLinks-aria2.txt') do (
+for /F %%i in ('%SystemRoot%\System32\findstr.exe /I "x86" ..\static\StaticDownloadLinks-aria2.txt') do (
   %WGET_PATH% -N -P ..\bin %%i
   if errorlevel 1 goto DownloadError
+  ..\bin\streams.exe /accepteula -d ..\bin\aria2*.exe >nul 2>&1
   echo %DATE% %TIME% - Info: Downloaded most recent version of Aria2 ^(x86^)>>%DOWNLOAD_LOGFILE%
-  echo Unpacking aria2c.exe from ..\bin\%%~nxi to ..\bin\aria2c-x86.exe...
-  ..\bin\unzip.exe -p ..\bin\%%~nxi */aria2c.exe >..\bin\aria2c-x86.exe
-  echo %DATE% %TIME% - Info: Unpacked aria2c.exe ..\bin\%%~nxi to ..\bin\aria2c-x86.exe>>%DOWNLOAD_LOGFILE%
-  del ..\bin\%%~nxi
-  echo %DATE% %TIME% - Info: Deleted %%~nxi>>%DOWNLOAD_LOGFILE%
 )
 :Activate
 echo if /i "%%PROCESSOR_ARCHITECTURE%%"=="AMD64" goto x64>custom\SetAria2EnvVars.cmd

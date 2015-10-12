@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.1+ (r700)
+set WSUSOFFLINE_VERSION=10.1+ (r701)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -31,7 +31,7 @@ if exist .\custom\InitializationHook.cmd (
   set ERR_LEVEL=
 )
 echo %DATE% %TIME% - Info: Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2>>%DOWNLOAD_LOGFILE%
-for %%i in (w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64 w100 w100-x64 ofc) do (
+for %%i in (w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64 w100 w100-x64 ofc o2k16) do (
   if /i "%1"=="%%i" (
     if /i "%2"=="glb" goto EvalParams
   )
@@ -1023,7 +1023,7 @@ for %%i in (w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64 w100 w100-x64) do (
     if errorlevel 1 goto Error
   )
 )
-for %%i in (o2k7 o2k10 o2k13) do (
+for %%i in (o2k7 o2k10 o2k13 o2k16) do (
   if /i "%1"=="%%i" (
     call :DownloadCore ofc %2 %TARGET_ARCH% %SKIP_PARAM%
     if errorlevel 1 goto Error
@@ -1034,6 +1034,12 @@ for %%i in (o2k7 o2k10 o2k13) do (
     call :DownloadCore %1 glb %TARGET_ARCH% %SKIP_PARAM%
     if errorlevel 1 goto Error
     call :DownloadCore %1 %2 %TARGET_ARCH% %SKIP_PARAM%
+    if errorlevel 1 goto Error
+  )
+)
+for %%i in (o2k16) do (
+  if /i "%1"=="%%i" (
+    call :DownloadCore %1 glb %TARGET_ARCH% %SKIP_PARAM%
     if errorlevel 1 goto Error
   )
 )
@@ -1580,7 +1586,7 @@ exit /b 1
 echo.
 echo ERROR: Invalid parameter: %*
 echo Usage1: %~n0 {o2k7 ^| o2k10 ^| o2k13} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
-echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| w62 ^| w62-x64 ^| w63 ^| w63-x64 ^| w100 ^| w100-x64 ^| ofc} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
+echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| w62 ^| w62-x64 ^| w63 ^| w63-x64 ^| w100 ^| w100-x64 ^| ofc ^| o2k16} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
 echo %DATE% %TIME% - Error: Invalid parameter: %*>>%DOWNLOAD_LOGFILE%
 echo.
 goto Error

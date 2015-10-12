@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.1+ (r700)
+set WSUSOFFLINE_VERSION=10.1+ (r701)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -171,11 +171,7 @@ rem echo Found Windows Update Agent version: %WUA_VER_MAJOR%.%WUA_VER_MINOR%.%WU
 rem echo Found Windows Installer version: %MSI_VER_MAJOR%.%MSI_VER_MINOR%.%MSI_VER_BUILD%.%MSI_VER_REVIS%
 rem echo Found Windows Script Host version: %WSH_VER_MAJOR%.%WSH_VER_MINOR%.%WSH_VER_BUILD%.%WSH_VER_REVIS%
 rem echo Found Internet Explorer version: %IE_VER_MAJOR%.%IE_VER_MINOR%.%IE_VER_BUILD%.%IE_VER_REVIS%
-rem echo Found Trusted Root Certificates' version: %TRCERTS_VER_MAJOR%.%TRCERTS_VER_MINOR%.%TRCERTS_VER_BUILD%.%TRCERTS_VER_REVIS%
-rem echo Found Revoked Root Certificates' version: %RRCERTS_VER_MAJOR%.%RRCERTS_VER_MINOR%.%RRCERTS_VER_BUILD%.%RRCERTS_VER_REVIS%
-rem echo Found Microsoft Data Access Components version: %MDAC_VER_MAJOR%.%MDAC_VER_MINOR%.%MDAC_VER_BUILD%.%MDAC_VER_REVIS%
 rem echo Found Microsoft Silverlight version: %MSSL_VER_MAJOR%.%MSSL_VER_MINOR%.%MSSL_VER_BUILD%.%MSSL_VER_REVIS%
-rem echo Found Windows Media Player version: %WMP_VER_MAJOR%.%WMP_VER_MINOR%.%WMP_VER_BUILD%.%WMP_VER_REVIS%
 rem echo Found Remote Desktop Client version: %TSC_VER_MAJOR%.%TSC_VER_MINOR%.%TSC_VER_BUILD%.%TSC_VER_REVIS%
 rem echo Found Microsoft .NET Framework 3.5 version: %DOTNET35_VER_MAJOR%.%DOTNET35_VER_MINOR%.%DOTNET35_VER_BUILD%.%DOTNET35_VER_REVIS%
 rem echo Found Windows PowerShell version: %PSH_VER_MAJOR%.%PSH_VER_MINOR%
@@ -194,6 +190,9 @@ if "%O2K10_VER_MAJOR%" NEQ "" (
 if "%O2K13_VER_MAJOR%" NEQ "" (
   echo Found Microsoft Office 2013 %O2K13_VER_APP% version: %O2K13_VER_MAJOR%.%O2K13_VER_MINOR%.%O2K13_VER_BUILD%.%O2K13_VER_REVIS% ^(o2k13 %O2K13_ARCH% %O2K13_LANG% sp%O2K13_SP_VER%^)
 )
+if "%O2K16_VER_MAJOR%" NEQ "" (
+  echo Found Microsoft Office 2016 %O2K16_VER_APP% version: %O2K16_VER_MAJOR%.%O2K16_VER_MINOR%.%O2K16_VER_BUILD%.%O2K16_VER_REVIS% ^(o2k16 %O2K16_ARCH% %O2K16_LANG% sp%O2K16_SP_VER%^)
+)
 echo %DATE% %TIME% - Info: Found Microsoft Windows version %OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_VER_BUILD%.%OS_VER_REVIS% (%OS_NAME% %OS_ARCH% %OS_LANG% sp%OS_SP_VER_MAJOR%)>>%UPDATE_LOGFILE%
 if exist "%TEMP%\wou_slmgr.txt" (
   echo %DATE% %TIME% - Info: Found Microsoft Windows Software Licensing Management Tool info...>>%UPDATE_LOGFILE%
@@ -204,11 +203,7 @@ echo %DATE% %TIME% - Info: Found Windows Update Agent version %WUA_VER_MAJOR%.%W
 echo %DATE% %TIME% - Info: Found Windows Installer version %MSI_VER_MAJOR%.%MSI_VER_MINOR%.%MSI_VER_BUILD%.%MSI_VER_REVIS%>>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows Script Host version %WSH_VER_MAJOR%.%WSH_VER_MINOR%.%WSH_VER_BUILD%.%WSH_VER_REVIS%>>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Internet Explorer version %IE_VER_MAJOR%.%IE_VER_MINOR%.%IE_VER_BUILD%.%IE_VER_REVIS%>>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Trusted Root Certificates' version %TRCERTS_VER_MAJOR%.%TRCERTS_VER_MINOR%.%TRCERTS_VER_BUILD%.%TRCERTS_VER_REVIS%>>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Revoked Root Certificates' version %RRCERTS_VER_MAJOR%.%RRCERTS_VER_MINOR%.%RRCERTS_VER_BUILD%.%RRCERTS_VER_REVIS%>>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Microsoft Data Access Components version %MDAC_VER_MAJOR%.%MDAC_VER_MINOR%.%MDAC_VER_BUILD%.%MDAC_VER_REVIS%>>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft Silverlight version %MSSL_VER_MAJOR%.%MSSL_VER_MINOR%.%MSSL_VER_BUILD%.%MSSL_VER_REVIS%>>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Windows Media Player version %WMP_VER_MAJOR%.%WMP_VER_MINOR%.%WMP_VER_BUILD%.%WMP_VER_REVIS%>>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Remote Desktop Client version %TSC_VER_MAJOR%.%TSC_VER_MINOR%.%TSC_VER_BUILD%.%TSC_VER_REVIS%>>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 3.5 version %DOTNET35_VER_MAJOR%.%DOTNET35_VER_MINOR%.%DOTNET35_VER_BUILD%.%DOTNET35_VER_REVIS%>>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows PowerShell version %PSH_VER_MAJOR%.%PSH_VER_MINOR%>>%UPDATE_LOGFILE%
@@ -230,6 +225,9 @@ if "%O2K10_VER_MAJOR%" NEQ "" (
 )
 if "%O2K13_VER_MAJOR%" NEQ "" (
   echo %DATE% %TIME% - Info: Found Microsoft Office 2013 %O2K13_VER_APP% version %O2K13_VER_MAJOR%.%O2K13_VER_MINOR%.%O2K13_VER_BUILD%.%O2K13_VER_REVIS% ^(o2k13 %O2K13_ARCH% %O2K13_LANG% sp%O2K13_SP_VER%^)>>%UPDATE_LOGFILE%
+)
+if "%O2K16_VER_MAJOR%" NEQ "" (
+  echo %DATE% %TIME% - Info: Found Microsoft Office 2016 %O2K16_VER_APP% version %O2K16_VER_MAJOR%.%O2K16_VER_MINOR%.%O2K16_VER_BUILD%.%O2K16_VER_REVIS% ^(o2k16 %O2K16_ARCH% %O2K16_LANG% sp%O2K16_SP_VER%^)>>%UPDATE_LOGFILE%
 )
 
 rem *** Check medium content ***
@@ -1141,6 +1139,9 @@ if %O2K10_SP_VER% LSS %O2K10_SP_VER_TARGET% echo %O2K10_SP_TARGET_ID%>>"%TEMP%\M
 if "%O2K13_VER_MAJOR%"=="" goto SkipSPo2k13
 if %O2K13_SP_VER% LSS %O2K13_SP_VER_TARGET% echo %O2K13_SP_TARGET_ID%>>"%TEMP%\MissingUpdateIds.txt"
 :SkipSPo2k13
+if "%O2K16_VER_MAJOR%"=="" goto SkipSPo2k16
+if %O2K16_SP_VER% LSS %O2K16_SP_VER_TARGET% echo %O2K16_SP_TARGET_ID%>>"%TEMP%\MissingUpdateIds.txt"
+:SkipSPo2k16
 if not exist "%TEMP%\MissingUpdateIds.txt" goto SkipSPOfc
 call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError

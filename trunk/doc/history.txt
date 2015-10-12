@@ -1042,7 +1042,9 @@ Version 10.1 -- 17.09.15
 - Fix: Replaced superseded Office 2007 Security Update kb2760415 (MS13-091) by kb3054987 (MS15-099) (Thanks to "Denniss")
 --------------------------------------------------------------------------------
 Version ??.? -- ??.??.??
+- Support added for Office 2016
 - AutoIt script compiler updated to version 3.3.14.2
+- Static download URLs for aria2 download utility updated to v. 1.19.2 (Thanks to "harry")
 - DetermineSystemProperties.vbs script will now create file "%USERPROFILE%\Desktop\WOUSystemProperties.txt" instead of "%TEMP%\SetSystemEnvVars.cmd" if executed manually (Thanks to "boco") 
 - Fix: Download part erroneously excluded Security Updates kb2535512 (MS11-042) and kb2973201 (MS14-039) for Windows Vista and Server 2008 (x86)
 - Fix: .NET Framework 4.6 was not properly installed on Server Core systems (Thanks to R. Bronca)

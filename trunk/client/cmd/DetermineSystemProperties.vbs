@@ -3,14 +3,9 @@
 Option Explicit
 
 Private Const strRegKeyWindowsVersion         = "HKLM\Software\Microsoft\Windows NT\CurrentVersion\"
-Private Const strRegKeyTrustedRCerts_x86      = "HKLM\Software\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}\"
-Private Const strRegKeyTrustedRCerts_x64      = "HKLM\Software\Wow6432Node\Microsoft\Active Setup\Installed Components\{EF289A85-8E57-408d-BE47-73B55609861A}\"
-Private Const strRegKeyRevokedRCerts_x86      = "HKLM\Software\Microsoft\Active Setup\Installed Components\{C3C986D6-06B1-43BF-90DD-BE30756C00DE}\"
-Private Const strRegKeyRevokedRCerts_x64      = "HKLM\Software\Wow6432Node\Microsoft\Active Setup\Installed Components\{C3C986D6-06B1-43BF-90DD-BE30756C00DE}\"
 Private Const strRegKeyIE                     = "HKLM\Software\Microsoft\Internet Explorer\"
 Private Const strRegKeyMSSL_x86               = "HKLM\Software\Microsoft\Silverlight\"
 Private Const strRegKeyMSSL_x64               = "HKLM\Software\Wow6432Node\Microsoft\Silverlight\"
-Private Const strRegKeyMDAC                   = "HKLM\Software\Microsoft\DataAccess\"
 Private Const strRegKeyDotNet35               = "HKLM\Software\Microsoft\NET Framework Setup\NDP\v3.5\"
 Private Const strRegKeyDotNet4                = "HKLM\Software\Microsoft\NET Framework Setup\NDP\v4\Full\"
 Private Const strRegKeyPowerShell             = "HKLM\Software\Microsoft\PowerShell\1\PowerShellEngine\"
@@ -34,7 +29,7 @@ Private Const strRegValCurrentPowerPolicy     = "CurrentPowerPolicy"
 Private Const strRegKeyOfficePrefix_Mx86      = "HKLM\Software\Microsoft\Office\"
 Private Const strRegKeyOfficePrefix_Mx64      = "HKLM\Software\Wow6432Node\Microsoft\Office\"
 Private Const strRegKeyOfficePrefix_User      = "HKCU\Software\Microsoft\Office\"
-Private Const strRegKeyOfficeInfixes_Version  = "12.0,14.0,15.0"
+Private Const strRegKeyOfficeInfixes_Version  = "12.0,14.0,15.0,16.0"
 Private Const strRegKeyOfficeSuffix_InstRoot  = "\Common\InstallRoot\"
 Private Const strRegKeyOfficeSuffix_Language  = "\Common\LanguageResources\"
 Private Const strRegKeyOfficeSuffix_Outlook   = "\Outlook\"
@@ -44,16 +39,17 @@ Private Const strRegValOfficeLanguage_User    = "InstallLanguage"
 Private Const strRegValOfficeVersion          = "LastProduct"
 Private Const strRegValOfficeArchitecture     = "Bitness"
 Private Const strVersionSuffixes              = "MAJOR,MINOR,BUILD,REVIS"
-Private Const strOfficeNames                  = "o2k7,o2k10,o2k13"
+Private Const strOfficeNames                  = "o2k7,o2k10,o2k13,o2k16"
 Private Const strOfficeAppNames               = "Word,Excel,Outlook,Powerpoint,Access,FrontPage"
 Private Const strOfficeExeNames               = "WINWORD.EXE,EXCEL.EXE,OUTLOOK.EXE,POWERPNT.EXE,MSACCESS.EXE,FRONTPG.EXE"
 Private Const strBuildNumbers_o2k7            = "4518,4518,4518,4518,4518,4518;6211,6214,6212,6211,6211,6211;6425,6425,6423,6425,6423,6423;6612,6611,6607,6600,6606,6600"
 Private Const strBuildNumbers_o2k10           = "4762,4756,4760,4754,4750,4750;6024,6024,6025,6009,6024,6024;7015,7015,7012,6009,7015,7015"
 Private Const strBuildNumbers_o2k13           = "4420,4420,4420,4420,4420,4420;4569,4569,4569,4454,4569,4569"
+Private Const strBuildNumbers_o2k16           = "4266,4266,4266,4266,4266,4266"
 Private Const idxBuild                        = 2
 
 Dim wshShell, objFileSystem, objCmdFile, objWMIService, objQueryItem, objInstaller, arrayOfficeNames, arrayOfficeVersions, arrayOfficeAppNames, arrayOfficeExeNames
-Dim strSystemFolder, strTempFolder, strProfileFolder, strWUAFileName, strMSIFileName, strWSHFileName, strTSCFileName, strWMPFileName, strCmdFileName
+Dim strSystemFolder, strTempFolder, strProfileFolder, strWUAFileName, strMSIFileName, strWSHFileName, strTSCFileName, strCmdFileName
 Dim strOSArchitecture, strBuildLabEx, strInstallationType, strOfficeInstallPath, strOfficeExeVersion, strProduct, strPatch, languageCode, i, j
 Dim cpp2005_x86_old, cpp2005_x86_new, cpp2005_x64_old, cpp2005_x64_new
 Dim cpp2008_x86_old, cpp2008_x86_new, cpp2008_x64_old, cpp2008_x64_new
@@ -363,6 +359,8 @@ Dim arrayVersion, arraySPs, arrayBuilds, i
       arraySPs = Split(strBuildNumbers_o2k10, ";")
     Case 15
       arraySPs = Split(strBuildNumbers_o2k13, ";")
+    Case 16
+      arraySPs = Split(strBuildNumbers_o2k16, ";")
     Case Else
       arraySPs = Split("0,0,0,0,0,0", ";")
   End Select
@@ -388,7 +386,6 @@ strProfileFolder = wshShell.ExpandEnvironmentStrings("%USERPROFILE%")
 strWUAFileName = strSystemFolder & "\wuaueng.dll"
 strMSIFileName = strSystemFolder & "\msi.dll"
 strWSHFileName = strSystemFolder & "\vbscript.dll"
-strWMPFileName = strSystemFolder & "\wmp.dll"
 strTSCFileName = strSystemFolder & "\mstsc.exe"
 If WScript.Arguments.Count = 0 Then
   strCmdFileName = strProfileFolder & "\Desktop\WOUSystemProperties.txt"
@@ -457,9 +454,6 @@ End If
 ' Determine Internet Explorer version
 WriteVersionToFile objCmdFile, "IE_VER", RegRead(wshShell, strRegKeyIE & strRegValVersion)
 
-' Determine Microsoft Data Access Components version
-WriteVersionToFile objCmdFile, "MDAC_VER", RegRead(wshShell, strRegKeyMDAC & strRegValVersion)
-
 ' Determine Microsoft Silverlight version
 If RegExists(wshShell, strRegKeyMSSL_x64) Then
   WriteVersionToFile objCmdFile, "MSSL_VER", RegRead(wshShell, strRegKeyMSSL_x64 & strRegValVersion)
@@ -506,32 +500,11 @@ objCmdFile.WriteLine("set WD_DISABLED=" & RegRead(wshShell, strRegKeyWD & strReg
 ' Determine Microsoft Antispyware signatures' version
 WriteVersionToFile objCmdFile, "WDDEFS_VER", RegRead(wshShell, strRegKeyWDDefs & strRegValASSVersion)
 
-' Determine Microsoft Trusted Root Certificates' version
-If RegExists(wshShell, strRegKeyTrustedRCerts_x64) Then
-  WriteVersionToFile objCmdFile, "TRCERTS_VER", Replace(RegRead(wshShell, strRegKeyTrustedRCerts_x64 & strRegValVersion), ",", ".")
-Else
-  WriteVersionToFile objCmdFile, "TRCERTS_VER", Replace(RegRead(wshShell, strRegKeyTrustedRCerts_x86 & strRegValVersion), ",", ".")
-End If
-
-' Determine Microsoft Revoked Root Certificates' version
-If RegExists(wshShell, strRegKeyRevokedRCerts_x64) Then
-  WriteVersionToFile objCmdFile, "RRCERTS_VER", Replace(RegRead(wshShell, strRegKeyRevokedRCerts_x64 & strRegValVersion), ",", ".")
-Else
-  WriteVersionToFile objCmdFile, "RRCERTS_VER", Replace(RegRead(wshShell, strRegKeyRevokedRCerts_x86 & strRegValVersion), ",", ".")
-End If
-
 ' Determine Remote Desktop Connection (Terminal Services Client) version
 If objFileSystem.FileExists(strTSCFileName) Then
   WriteVersionToFile objCmdFile, "TSC_VER", GetFileVersion(objFileSystem, strTSCFileName)
 Else
   WriteVersionToFile objCmdFile, "TSC_VER", ""
-End If
-
-' Determine Windows Media Player version
-If objFileSystem.FileExists(strWMPFileName) Then
-  WriteVersionToFile objCmdFile, "WMP_VER", GetFileVersion(objFileSystem, strWMPFileName)
-Else
-  WriteVersionToFile objCmdFile, "WMP_VER", ""
 End If
 
 ' Determine Office version

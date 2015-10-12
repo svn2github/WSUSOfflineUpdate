@@ -49,6 +49,10 @@ if "%O2K13_VER_MAJOR%" NEQ "" (
   if exist ..\static\StaticUpdateIds-o2k13.txt call :EvalStatics ..\static\StaticUpdateIds-o2k13.txt
   if exist ..\static\custom\StaticUpdateIds-o2k13.txt call :EvalStatics ..\static\custom\StaticUpdateIds-o2k13.txt
 )
+if "%O2K16_VER_MAJOR%" NEQ "" (
+  if exist ..\static\StaticUpdateIds-o2k16.txt call :EvalStatics ..\static\StaticUpdateIds-o2k16.txt
+  if exist ..\static\custom\StaticUpdateIds-o2k16.txt call :EvalStatics ..\static\custom\StaticUpdateIds-o2k16.txt
+)
 
 :ListFiles
 rem *** List update files ***
@@ -77,8 +81,6 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
         ) else (
           call ListUpdateFile.cmd ie%IE_VER_MAJOR%-*%%i ..\%%k\%%l
         )
-        call ListUpdateFile.cmd windowsmedia%WMP_VER_MAJOR%-*%%i ..\%%k\%%l
-        call ListUpdateFile.cmd windowsmedia-*%%i ..\%%k\%%l
         call ListUpdateFile.cmd windows6*%%i ..\%%k\%%l /searchleftmost
         call ListUpdateFile.cmd windows*%%i ..\%%k\%%l /searchleftmost
         call ListUpdateFile.cmd %%i ..\%%k\%%l
@@ -86,7 +88,7 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
     )
     call ListUpdateFile.cmd ndp*%%i*-%OS_ARCH% ..\dotnet\%OS_ARCH%-glb /searchleftmost
     if not exist "%TEMP%\Update.txt" (
-      for %%k in (%OFC_NAME% ofc o2k7 o2k10 o2k13) do (
+      for %%k in (%OFC_NAME% ofc o2k7 o2k10 o2k13 o2k16) do (
         for %%l in (%OFC_LANG% %OS_LANG% glb) do (
           call ListUpdateFile.cmd %%i*%OFC_ARCH% ..\%%k\%%l
           call ListUpdateFile.cmd %%i ..\%%k\%%l

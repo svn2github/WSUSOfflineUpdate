@@ -6,7 +6,7 @@
 #include <GUIConstants.au3>
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Generator")
-#pragma compile(FileVersion, 10.1.0.700)
+#pragma compile(FileVersion, 10.1.0.701)
 #pragma compile(InternalName, "Generator")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateGenerator.exe)
@@ -53,6 +53,7 @@ Dim Const $ini_section_w100_x64     = "Windows Server 2016"
 Dim Const $ini_section_o2k7         = "Office 2007"
 Dim Const $ini_section_o2k10        = "Office 2010"
 Dim Const $ini_section_o2k13        = "Office 2013"
+Dim Const $ini_section_o2k16        = "Office 2016"
 Dim Const $ini_section_iso          = "ISO Images"
 Dim Const $ini_section_usb          = "USB Images"
 Dim Const $ini_section_opts         = "Options"
@@ -148,6 +149,7 @@ Dim $o2k7_heb, $o2k10_heb, $o2k13_heb   ; Hebrew
 Dim $o2k7_dan, $o2k10_dan, $o2k13_dan   ; Danish
 Dim $o2k7_nor, $o2k10_nor, $o2k13_nor   ; Norwegian
 Dim $o2k7_fin, $o2k10_fin, $o2k13_fin   ; Finnish
+Dim $o2k16_glb                          ; Office 2016 (global)
 Dim $w60_glb, $w60_x64_glb              ; Windows Vista / Server 2008 (global)
 Dim $w61_glb, $w61_x64_glb              ; Windows 7 / Server 2008 R2 (global)
 Dim $w62_glb, $w62_x64_glb              ; Windows 8 / Server 2012 (global)
@@ -494,6 +496,7 @@ Func SwitchDownloadTargets($state)
   GUICtrlSetState($o2k7_fin, $state)
   GUICtrlSetState($o2k10_fin, $state)
   GUICtrlSetState($o2k13_fin, $state)
+  GUICtrlSetState($o2k16_glb, $state)
   Return 0
 EndFunc
 
@@ -1023,6 +1026,9 @@ Func SaveSettings()
   IniWrite($inifilename, $ini_section_o2k13, $lang_token_dan, CheckBoxStateToString($o2k13_dan))
   IniWrite($inifilename, $ini_section_o2k13, $lang_token_nor, CheckBoxStateToString($o2k13_nor))
   IniWrite($inifilename, $ini_section_o2k13, $lang_token_fin, CheckBoxStateToString($o2k13_fin))
+
+;  Office 2016 group
+  IniWrite($inifilename, $ini_section_o2k16, $lang_token_glb, CheckBoxStateToString($o2k16_glb))
 
 ;  Image creation
   IniWrite($inifilename, $ini_section_iso, $iso_token_cd, CheckBoxStateToString($cdiso))
@@ -1611,6 +1617,24 @@ EndIf
 $txtxpos = $txtxpos + $txtwidth + 5
 $o2k13_fin = GUICtrlCreateCheckbox(LanguageCaption($lang_token_fin, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
 If IniRead($inifilename, $ini_section_o2k13, $lang_token_fin, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+
+;  Office 2016 group
+$txtxpos = 2 * $txtxoffset
+$txtypos = $txtypos + 2.5 * $txtyoffset
+GUICtrlCreateGroup("Office 2016 (o2k16)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
+;  Office 2016 global
+$txtypos = $txtypos + 1.5 * $txtyoffset
+$txtxpos = 3 * $txtxoffset
+If ShowGUIInGerman() Then
+  $o2k16_glb = GUICtrlCreateCheckbox("Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
+Else
+  $o2k16_glb = GUICtrlCreateCheckbox("Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
+EndIf
+If IniRead($inifilename, $ini_section_o2k16, $lang_token_glb, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -2905,6 +2929,13 @@ While 1
       EndIf
       If IsCheckBoxChecked($o2k13_fin) Then
         If RunScripts("o2k13 fin", IsCheckBoxChecked($imageonly), DetermineDownloadSwitches($includesp, $dotnet, $wle, $msse, $wddefs, $verifydownloads, AuthProxy($proxy, $proxypwd), $wsus), False, DetermineISOSwitches($includesp, $dotnet, $wle, $msse, $wddefs, $usbclean), False, GUICtrlRead($usbpath)) <> 0 Then
+          ContinueLoop
+        EndIf
+      EndIf
+
+;  Global (Office 2016)
+      If IsCheckBoxChecked($o2k16_glb) Then
+        If RunScripts("o2k16 glb", IsCheckBoxChecked($imageonly), DetermineDownloadSwitches($includesp, $dotnet, $wle, $msse, $wddefs, $verifydownloads, AuthProxy($proxy, $proxypwd), $wsus), False, DetermineISOSwitches($includesp, $dotnet, $wle, $msse, $wddefs, $usbclean), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf
