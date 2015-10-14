@@ -2,4 +2,4 @@ http://download.microsoft.com/download/4/1/C/41CADC65-8F27-4387-A1FF-1A7A3AF03F0
 http://download.microsoft.com/download/0/2/A/02A6CA2C-707E-4142-97F1-4802B11477BA/proofloc2010-kb2956073-fullfile-x64-glb.exe
 http://download.microsoft.com/download/A/C/4/AC42CAE2-1036-41CB-A4ED-F5C6E3C470B3/wordloc2010-kb2553428-fullfile-x64-glb.exe
 http://download.microsoft.com/download/D/0/7/D07D1051-99B3-47F7-A27A-06DCF2B27052/convloc2010-kb3054965-fullfile-x64-glb.exe
-http://download.microsoft.com/download/C/D/3/CD3CA86A-B681-4123-92F3-36B1943F7732/visio2010-kb3054876-fullfile-x64-glb.exe
+http://download.microsoft.com/download/C/B/4/CB43305C-4631-4BF0-8350-497155B3C9CD/visio2010-kb3085514-fullfile-x64-glb.exe
