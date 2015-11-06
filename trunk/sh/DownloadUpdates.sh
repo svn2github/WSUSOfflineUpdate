@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                              v. 10.2                              ###
+###                          v. 10.2+ (r705)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -16,6 +16,9 @@
 export LC_ALL=C
 
 Prog=$(basename $0)
+SCRIPT_DIR=$(readlink -f ${0%/*})   # MIAL FIX
+SELF="$SCRIPT_DIR/$Prog"   # MIAL FIX
+cd $pwd
 case $BASH in
     *bin/bash)
     ;;
@@ -46,14 +49,16 @@ test "$OpSys" || {
 case "$OpSys" in
     Linux)
     #set working directory
-    cd $( dirname $(readlink -f "$0") )
+    # cd $( dirname $(readlink -f "$0") )  # MIAL FIX
+    cd "$SCRIPT_DIR"  # MIAL FIX
     ;;
     *BSD|Darwin)
     echo "Operating System $OpSys not yet supported"
     echo "Maybe something doesn't work as expected"
     sleep 10
     #set working directory
-    cd $( dirname $(readlink "$0") )
+    # cd $( dirname $(readlink "$0") )
+    cd "$SCRIPT_DIR"  # MIAL FIX
     ;;
     *)
     echo "unknown Operating System"
@@ -64,7 +69,8 @@ esac
 #set working directory
 PATH_PWD="$( pwd )"
 
-source commonparts.inc || {
+#source commonparts.inc || {
+source "$SCRIPT_DIR/commonparts.inc" || {   # MIAL fix
     echo commonparts.inc fehlt
     exit 1
     }
@@ -319,7 +325,8 @@ done > ../temp/cleanup.txt
 
 printheader() {
 echo " "
-head -20 "$0" | grep '^###'
+# head -20 "$0" | grep '^###'    # MIAL FIX
+head -20 "$SELF" | grep '^###'    # MIAL FIX
     }
 
 # gilt auch für dotnet und wddefs

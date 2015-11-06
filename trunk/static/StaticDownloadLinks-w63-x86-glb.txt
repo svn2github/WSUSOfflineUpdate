@@ -4,4 +4,5 @@ http://download.microsoft.com/download/A/5/1/A51119A7-729B-4800-844C-189E2BDCFF8
 http://download.microsoft.com/download/A/5/1/A51119A7-729B-4800-844C-189E2BDCFF85/Windows8.1-KB3003057-x86.msu
 http://download.microsoft.com/download/A/5/1/A51119A7-729B-4800-844C-189E2BDCFF85/Windows8.1-KB3014442-x86.msu
 http://download.microsoft.com/download/4/5/2/4523ACEE-9CF5-4209-AE2D-52BA993A1CD4/Windows8.1-KB3013769-x86.msu
-http://download.microsoft.com/download/2/F/3/2F3345C4-050D-4478-AF7E-93BA66C3646E/Windows8.1-KB3083325-x86.msu
+http://download.microsoft.com/download/8/C/C/8CC98C69-F594-402C-B1B1-67D4AE4B6AB6/Windows8.1-KB3083711-x86.msu
+http://download.microsoft.com/download/4/C/1/4C130775-6445-4330-9DC9-DEE9768E834A/Windows8.1-KB3102812-x86.msu

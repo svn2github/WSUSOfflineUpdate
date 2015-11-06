@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.2
+set WSUSOFFLINE_VERSION=10.2+ (r705)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1243,32 +1243,26 @@ if "%SKIP_DYNAMIC%"=="/skipdynamic" (
   echo %DATE% %TIME% - Info: Skipped determination of missing updates on demand>>%UPDATE_LOGFILE%
   goto ListInstalledIds
 )
-if "%WUSCN_PREREQ_ID%"=="" goto CheckWUSvc
+if not exist ..\static\StaticUpdateIds-wupre-%OS_NAME%.txt goto CheckWUSvc
 if exist %SystemRoot%\Temp\wou_wupre_tried.txt goto CheckWUSvc
-echo Checking Windows Update scan prerequisite update...
+echo Checking Windows Update scan prerequisites...
 %CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
 if exist "%TEMP%\InstalledUpdateIds.txt" (
-  %SystemRoot%\System32\find.exe /I "%WUSCN_PREREQ_ID%" "%TEMP%\InstalledUpdateIds.txt" >nul 2>&1
-  if not errorlevel 1 (
-    del "%TEMP%\InstalledUpdateIds.txt"
-    goto CheckWUSvc
-  )
+  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\InstalledUpdateIds.txt" ..\static\StaticUpdateIds-wupre-%OS_NAME%.txt >"%TEMP%\MissingUpdateIds.txt"
   del "%TEMP%\InstalledUpdateIds.txt"
+) else (
+  copy /Y ..\static\StaticUpdateIds-wupre-%OS_NAME%.txt "%TEMP%\MissingUpdateIds.txt" >nul
 )
-echo %WUSCN_PREREQ_ID%>"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
-  echo Installing Windows Update scan prerequisite update...
+  echo Installing Windows Update scan prerequisites...
   call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /ignoreerrors
   if not errorlevel 1 (
     if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
     echo. >%SystemRoot%\Temp\wou_wupre_tried.txt
     set REBOOT_REQUIRED=1
   )
-) else (
-  echo Warning: Windows Update scan prerequisite update ^(kb%WUSCN_PREREQ_ID%^) not found.
-  echo %DATE% %TIME% - Warning: Windows Update scan prerequisite update ^(kb%WUSCN_PREREQ_ID%^) not found>>%UPDATE_LOGFILE%
 )
 :CheckWUSvc
 rem *** Check state of service 'Windows Update' ***
