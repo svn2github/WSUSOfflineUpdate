@@ -1,0 +1,3 @@
+http://download.microsoft.com/download/1/7/1/171B6017-ABB1-4B78-AE43-B558E400B7AF/IE9-Windows7-x64-jpn.exe
+http://download.microsoft.com/download/A/6/6/A66DA70E-9378-423C-A3A6-993E06F4FD96/IE10-Windows6.1-x64-ja-jp.exe
+http://download.microsoft.com/download/3/F/2/3F2D186B-826D-4F72-8386-91AFCCAED57F/IE11-Windows6.1-x64-ja-jp.exe

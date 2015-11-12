@@ -1,0 +1,3 @@
+http://download.microsoft.com/download/C/B/9/CB983F81-081A-40F2-B1EE-D3BE858F8600/office2007sp3-kb2526086-fullfile-it-it.exe
+http://download.microsoft.com/download/8/4/2/842B5AE8-C473-415B-AFA4-C552F6A5E643/excelviewer2007sp3-kb2526302-fullfile-it-it.exe
+http://download.microsoft.com/download/6/1/D/61DFC7C5-B226-43C5-A247-3AB877D4DA36/powerpointviewer2007sp3-kb2526298-fullfile-it-it.exe
