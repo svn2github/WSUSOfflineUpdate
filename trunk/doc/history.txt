@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 10.2
+WSUS Offline Update 10.2.1
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1051,7 +1051,17 @@ Version 10.2 -- 15.10.15
 - Fix: Download part erroneously excluded Security Updates kb2535512 (MS11-042) and kb2973201 (MS14-039) for Windows Vista and Server 2008 (x86)
 - Fix: .NET Framework 4.6 was not properly installed on Server Core systems (Thanks to R. Bronca)
 --------------------------------------------------------------------------------
-Version ??.? -- ??.??.??
-- Integrated Windows Update Client October 2015 (kb3083710/kb3083711) for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2 (Thanks to "harry")
+Version 10.2.1 -- 12.11.15
 - Integrated Windows Update Client improvement updates (kb3102810/kb3102812) for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2 (Thanks to "harry")
+- Fix: Replaced superseded Office 2007 Security Update kb3054987 (MS15-099) by kb3085620 (MS15-099)
+- Fix: Replaced superseded Office 2010 Security Update kb3054965 (MS15-099) by kb3085560 (MS15-099)
+- Fix: Replaced superseded Word 2010 Security Update kb2553428 (MS15-033) by kb2965313 (MS15-116)
+- Fix: Replaced superseded Visio 2010 Security Update kb3085514 (MS15-110) by kb3101526 (MS15-116)
+- Fix: Download part missed OneNote 2010 Security Update kb3054978 (MS15-116)
+- Fix: Replaced superseded Office 2013 Security Update kb3054932 (MS15-099) by kb3085572 (MS15-099)
+- Fix: Replaced superseded Lync 2013 Security Update kb3085500 (MS15-097) by kb3101496 (MS15-116 and MS15-123)
+- Fix: Replaced superseded Office 2016 Security Update kb2910993 (MS15-099) by kb3085635 (MS15-099)
+- Fix: Replaced superseded Lync 2016 Security Update kb2910994 (MS15-097) by kb3085634 (MS15-116 and MS15-123)
+- Fix: Replaced superseded Visio 2016 Security Update kb2920708 (MS15-081) by kb3101507 (MS15-116)
 - Fix: Linux scripts' improvements (Thanks to M. Althaus and H. Hullen)
+--------------------------------------------------------------------------------

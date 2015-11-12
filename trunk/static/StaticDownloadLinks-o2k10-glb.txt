@@ -1,4 +1,5 @@
 http://download.microsoft.com/download/E/C/6/EC6B83C0-2805-499E-B5D0-CE0C64A9CB32/proofloc2010-kb2956073-fullfile-x86-glb.exe
-http://download.microsoft.com/download/5/0/A/50A8F6E1-0DCA-4F8E-A774-DEF37046DA2A/wordloc2010-kb2553428-fullfile-x86-glb.exe
-http://download.microsoft.com/download/6/A/2/6A2ACBC4-1EF5-4CBF-ACDD-5F94A3D6874D/convloc2010-kb3054965-fullfile-x86-glb.exe
-http://download.microsoft.com/download/6/F/2/6F2AC25F-F9F0-4FAE-A9B2-FF4A3896C13C/visio2010-kb3085514-fullfile-x86-glb.exe
+http://download.microsoft.com/download/0/F/E/0FEF569D-24D2-446F-A177-EE35843D2FC7/wordloc2010-kb2965313-fullfile-x86-glb.exe
+http://download.microsoft.com/download/6/9/C/69C1DCF0-1A82-4AD1-B351-5A9F53D15ED1/convloc2010-kb3085560-fullfile-x86-glb.exe
+http://download.microsoft.com/download/E/F/9/EF9D0CF6-B594-4AC0-8425-41DE4E5D9AC6/visio2010-kb3101526-fullfile-x86-glb.exe
+http://download.microsoft.com/download/9/C/5/9C5090F7-BD42-406D-9CFE-8CFFD70AE695/onenoteloc2010-kb3054978-fullfile-x86-glb.exe
