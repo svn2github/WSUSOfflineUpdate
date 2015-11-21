@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                             v. 10.2.1                             ###
+###                          v. 10.2.1+ (r708)                        ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -16,9 +16,6 @@
 export LC_ALL=C
 
 Prog=$(basename $0)
-SCRIPT_DIR=$(readlink -f ${0%/*})   # MIAL FIX
-SELF="$SCRIPT_DIR/$Prog"   # MIAL FIX
-cd $pwd
 case $BASH in
     *bin/bash)
     ;;
@@ -49,16 +46,14 @@ test "$OpSys" || {
 case "$OpSys" in
     Linux)
     #set working directory
-    # cd $( dirname $(readlink -f "$0") )  # MIAL FIX
-    cd "$SCRIPT_DIR"  # MIAL FIX
+    cd "$( dirname $(readlink -f "$0") )"
     ;;
     *BSD|Darwin)
     echo "Operating System $OpSys not yet supported"
     echo "Maybe something doesn't work as expected"
     sleep 10
     #set working directory
-    # cd $( dirname $(readlink "$0") )
-    cd "$SCRIPT_DIR"  # MIAL FIX
+    cd "$( dirname $(readlink "$0") )"
     ;;
     *)
     echo "unknown Operating System"
@@ -69,11 +64,13 @@ esac
 #set working directory
 PATH_PWD="$( pwd )"
 
-#source commonparts.inc || {
-source "$SCRIPT_DIR/commonparts.inc" || {   # MIAL fix
+source commonparts.inc || {
     echo commonparts.inc fehlt
     exit 1
     }
+
+Kopf=$(echo " "
+head -20 "$0" | grep '^###')
 
 checkconfig()
 {
@@ -172,11 +169,13 @@ Please select your OS:
 [11] All Windows 32 bit		[12] All Windows 64 bit
 
 [13] Office 2007 	[14] Office 2010	[15] Office 2013
-[16] All Office updates (2007 - 2013)
+[17] All Office updates (2007 - 2016)
 
-[17] all Windows 7	[18] all Windows 8	[19] all Windows 8.1	[20] all Windows 10
+[18] all Windows 7	[19] all Windows 8	[20] all Windows 8.1	[21] all Windows 10
 
 END
+
+
 read -p "which number? " syschoice
     sysmax=$(wc -w <<< $syslist)
     test "$syschoice" || exit 1
@@ -315,18 +314,13 @@ cleanup()
 {
 file="$1"
 path="$2"
+test -d "$path" || return
 > ../temp/cleanup.txt
 for i in $(ls "$path"); do
   test "$i" == "ie6setup" && continue
   grep "${i}" "${file}" || echo "$i" 
   echo rm -f ${path}/"$i"
 done > ../temp/cleanup.txt
-    }
-
-printheader() {
-echo " "
-# head -20 "$0" | grep '^###'    # MIAL FIX
-head -20 "$SELF" | grep '^###'    # MIAL FIX
     }
 
 # gilt auch für dotnet und wddefs
@@ -393,11 +387,11 @@ crlf2lf() {
 # ------------- end of functions -------------
 
 clear
-printheader
+echo "$Kopf"
 
 #check for required packages
 checkconfig
-printheader
+echo "$Kopf"
 
 #check if parameters are valid
 if [ "$1" != "" ]; then
@@ -433,7 +427,7 @@ mkdir -p ../client/wle
 mkdir -p ../temp
 rm -f ../temp/*
 
-printheader
+echo "$Kopf"
 
 cat << END
   Your choice
@@ -476,7 +470,7 @@ case $sys in
     all-62)  Liste="w62 w62-x64" ;;
     all-63)  Liste="w63 w63-x64" ;;
     all-100) Liste="w100 w100-x64" ;;
-    ofc) test "$sys_old" || Liste="o2k7 o2k10 o2k13" ;;
+    ofc) test "$sys_old" || Liste="o2k7 o2k10 o2k13 o2k16" ;;
 esac
 test "$Liste" && {
   for OS in $Liste
@@ -512,6 +506,8 @@ if [ "$sys" == "ofc" ] && [ "$sys_old" != "" ]; then
 fi # Ende Office
 
 > ../temp/StaticUrls-${sys}-${lang}.txt
+
+# read -p "nach Office" dummy
 
 for static in "../static/StaticDownloadLinks-${OS_sys}-${lang}.txt" "../static/StaticDownloadLinks-${OS_sys}.txt"
   do
@@ -871,7 +867,7 @@ Found $(grep -c http: ../temp/urls.txt) patches...
 #create needed directories
 mkdir -p ../client/${sys}/glb ../client/${sys}/${lang} ../client/md
 
-printheader
+echo "$Kopf"
 
 echo "Downloading patches for ${sys}..."
 echo "Downloading static patches..."
@@ -962,7 +958,7 @@ if [ $lang != glb ]; then
 fi
 doWget -i ../temp/ValidUrls-${sys}-glb.txt -P ../client/${sys}/glb
 
-printheader
+echo "$Kopf"
 
 echo "Validating patches for ${sys}..."
 echo "Validating static patches..."
@@ -1072,8 +1068,11 @@ exit 0
 # 
 
 # ========================================================================
-# $Id: DownloadUpdates.sh,v 1.16 2015-08-11 13:07:46+02 HHullen Exp $
+# $Id: DownloadUpdates.sh,v 1.2 2015-11-19 18:27:23+01 HHullen Exp $
 # $Log: DownloadUpdates.sh,v $
+# Revision 1.2  2015-11-19 18:27:23+01  HHullen
+# MIAL-Änderungen überarbeitet
+#
 # Revision 1.17  2015-08-20 15:10:00+02  twittrock
 # Windows 10 (w100 / w100-x64) ergänzt
 #

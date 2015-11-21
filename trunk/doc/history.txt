@@ -1065,3 +1065,5 @@ Version 10.2.1 -- 12.11.15
 - Fix: Replaced superseded Visio 2016 Security Update kb2920708 (MS15-081) by kb3101507 (MS15-116)
 - Fix: Linux scripts' improvements (Thanks to M. Althaus and H. Hullen)
 --------------------------------------------------------------------------------
+Version ??.? -- ??.??.??
+- Fix: Linux scripts' improvements (Thanks to H. Hullen)
