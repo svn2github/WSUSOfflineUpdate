@@ -1066,4 +1066,5 @@ Version 10.2.1 -- 12.11.15
 - Fix: Linux scripts' improvements (Thanks to M. Althaus and H. Hullen)
 --------------------------------------------------------------------------------
 Version ??.? -- ??.??.??
+- Fix: .NET Framework 4.6 was erroneously offered for installation on Windows 10 Threshold 2 systems (Thanks to "aker")
 - Fix: Linux scripts' improvements (Thanks to H. Hullen)

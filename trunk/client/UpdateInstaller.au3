@@ -6,7 +6,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 10.2.1.708)
+#pragma compile(FileVersion, 10.2.1.709)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -44,8 +44,6 @@ Dim Const $wlemax                     = 7
 Dim Const $msimax                     = 18
 Dim Const $default_logpixels          = 96
 Dim Const $target_version_dotnet35    = "3.5.30729"
-Dim Const $target_version_dotnet4     = "4.6.00081"
-Dim Const $target_version_dotnet4_w10 = "4.6.00079"
 Dim Const $target_version_psh         = "2.0"
 
 ; INI file constants
@@ -280,14 +278,6 @@ EndFunc
 
 Func DotNet4MainVersion()
   Return StringLeft(DotNet4Version(), 3)
-EndFunc
-
-Func DotNet4TargetVersion()
-  If ( (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") ) Then
-    Return $target_version_dotnet4_w10
-  Else
-    Return $target_version_dotnet4
-  EndIf
 EndFunc
 
 Func PowerShellVersion()
@@ -625,7 +615,7 @@ If ShowGUIInGerman() Then
 Else
   $dotnet4 = GUICtrlCreateCheckbox("Install .NET Framework 4.6", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (DotNet4Version() = DotNet4TargetVersion()) OR (NOT DotNet4InstPresent($scriptdir)) ) Then
+If ( (DotNet4MainVersion() = "4.6") OR (NOT DotNet4InstPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If MyIniRead($ini_section_installation, $ini_value_dotnet4, $disabled) = $enabled Then
