@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 10.3
+WSUS Offline Update 10.3.1
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1079,4 +1079,7 @@ Version 10.3 -- 05.01.16
 - Fix: USB filters for Windows did not exclude Office 2016 (Thanks to "hbuhrmester")
 - Fix: Minor bug in RemoveOffice2010x64Support.cmd script (Thanks to "pandabianco")
 - Fix: Linux scripts' improvements (Thanks to H. Hullen)
+--------------------------------------------------------------------------------
+Version 10.3.1 -- 05.01.16
+- Fix: DoUpdate.cmd script contained invalid installation file name for .NET Framework 4.6.1
 --------------------------------------------------------------------------------
