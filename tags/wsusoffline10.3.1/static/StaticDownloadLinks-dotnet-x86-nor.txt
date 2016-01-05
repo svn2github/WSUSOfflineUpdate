@@ -1,0 +1,2 @@
+http://download.microsoft.com/download/7/8/b/78bdff4f-c803-46e0-96e5-1758b715d43a/dotnetfx35langpack_x86no.exe
+http://download.microsoft.com/download/4/1/7/4174D46C-29C2-423A-8F38-A0BAD707FA93/NDP461-KB3102436-x86-x64-AllOS-NOR.exe

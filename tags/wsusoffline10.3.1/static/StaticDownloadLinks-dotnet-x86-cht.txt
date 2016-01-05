@@ -1,0 +1,2 @@
+http://download.microsoft.com/download/6/3/2/632f43b6-fe1e-4dc6-9f17-00e37eea0463/dotnetfx35langpack_x86zh-cht.exe
+http://download.microsoft.com/download/A/3/F/A3F5CCB7-E386-436D-AA7A-01AFEA30A1BB/NDP461-KB3102436-x86-x64-AllOS-CHT.exe
