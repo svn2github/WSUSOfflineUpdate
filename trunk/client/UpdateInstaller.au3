@@ -1,19 +1,19 @@
-; ***  WSUS Offline Update 10.2.1 - Installer  ***
-; ***        Author: T. Wittrock, Kiel         ***
-; ***    Dialog scaling added by Th. Baisch    ***
+; ***  WSUS Offline Update 10.3 - Installer  ***
+; ***       Author: T. Wittrock, Kiel        ***
+; ***   Dialog scaling added by Th. Baisch   ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 10.2.1.710)
+#pragma compile(FileVersion, 10.3.0.712)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
 #pragma compile(ProductName, "WSUS Offline Update")
-#pragma compile(ProductVersion, 10.2.1)
+#pragma compile(ProductVersion, 10.3.0)
 
-Dim Const $caption                    = "WSUS Offline Update 10.2.1 - Installer"
+Dim Const $caption                    = "WSUS Offline Update 10.3 - Installer"
 Dim Const $wou_hostname               = "www.wsusoffline.net"
 Dim Const $donationURL                = "http://www.wsusoffline.net/donate.html"
 
@@ -91,7 +91,7 @@ Dim Const $path_rel_hashes            = "\md\"
 Dim Const $path_rel_autologon         = "\bin\Autologon.exe"
 Dim Const $path_rel_win_glb           = "\win\glb\"
 Dim Const $path_rel_cpp               = "\cpp\vcredist*.exe"
-Dim Const $path_rel_instdotnet4       = "\dotnet\NDP46-KB3045557-x86-x64-AllOS*.exe"
+Dim Const $path_rel_instdotnet4       = "\dotnet\NDP461-KB3102436-x86-x64-AllOS*.exe"
 Dim Const $path_rel_ofc_glb           = "\ofc\glb\"
 Dim Const $path_rel_msse_x86          = "\msse\x86-glb\MSEInstall-x86-*.exe"
 Dim Const $path_rel_msse_x64          = "\msse\x64-glb\MSEInstall-x64-*.exe"
@@ -611,11 +611,11 @@ EndIf
 $txtxpos = 3 * $txtxoffset
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
-  $dotnet4 = GUICtrlCreateCheckbox(".NET Framework 4.6 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $dotnet4 = GUICtrlCreateCheckbox(".NET Framework 4.6.1 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $dotnet4 = GUICtrlCreateCheckbox("Install .NET Framework 4.6", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $dotnet4 = GUICtrlCreateCheckbox("Install .NET Framework 4.6.1", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (DotNet4MainVersion() = "4.6") OR (NOT DotNet4InstPresent($scriptdir)) ) Then
+If ( (StringLeft(DotNet4Version(), 6) = "4.6.01") OR (NOT DotNet4InstPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If MyIniRead($ini_section_installation, $ini_value_dotnet4, $disabled) = $enabled Then
@@ -851,13 +851,13 @@ If ( ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "W
   $txtxpos = 3 * $txtxoffset
   $txtypos = $txtypos + 1.5 * $txtyoffset
   If ShowGUIInGerman() Then
-    GUICtrlCreateLabel("Windows Essentials 2012 erfordern sowohl .NET Framework 3.5 als auch 4.6." _
+    GUICtrlCreateLabel("Windows Essentials 2012 erfordern sowohl .NET Framework 3.5 als auch 4.x." _
                & @LF & "Wenn die Optionen auf dieser Seite deaktiviert sind," _
                & @LF & "wählen Sie bitte die entsprechende(n) Installationsoption(en) unter 'Aktualisierung'." _
                & @LF & "Windows 8 / 8.1: Stellen Sie zusätzlich sicher, dass das Sxs-Verzeichnis integriert wurde.", _
                $txtxpos, $txtypos, 3 * $groupwidth - 2 * $txtxoffset, 3 * $txtheight)
   Else
-    GUICtrlCreateLabel("Windows Essentials 2012 require both .NET Frameworks 3.5 and 4.6." _
+    GUICtrlCreateLabel("Windows Essentials 2012 require both .NET Frameworks 3.5 and 4.x." _
                & @LF & "If options are grayed out on this tab," _
                & @LF & "please select the corresponding installation option(s) on the 'Updating' tab." _
                & @LF & "Windows 8 / 8.1: Additionally be sure to have the Sxs folder integrated.", _

@@ -1,2 +1,2 @@
-http://download.microsoft.com/download/8/E/7/8E7D9B4B-2088-4AED-8356-20E65BE3EC91/40728.00/Silverlight.exe
-http://download.microsoft.com/download/8/E/7/8E7D9B4B-2088-4AED-8356-20E65BE3EC91/40728.00/Silverlight_x64.exe
+http://download.microsoft.com/download/8/5/8/858377D7-5FDE-410D-B2FA-411B8078D227/41105/41105.00/Silverlight.exe
+http://download.microsoft.com/download/8/5/8/858377D7-5FDE-410D-B2FA-411B8078D227/41105/41105.00/Silverlight_x64.exe

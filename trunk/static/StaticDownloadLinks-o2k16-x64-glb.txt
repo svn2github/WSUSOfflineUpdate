@@ -1,3 +1,3 @@
 http://download.microsoft.com/download/D/6/4/D64F3999-0D88-4BCE-A0C9-7FA9E9FC31F9/conv2016-kb3085635-fullfile-x64-glb.exe
-http://download.microsoft.com/download/4/B/7/4B7B65CE-3D17-4CA9-AC0F-A1934EFBB802/lync2016-kb3085634-fullfile-x64-glb.exe
 http://download.microsoft.com/download/3/3/4/3343C7A3-90E3-43C4-882E-B181FC473A3B/visio2016-kb3101507-fullfile-x64-glb.exe
+http://download.microsoft.com/download/3/E/B/3EBDB931-668A-423A-A33B-8FD709C645E5/lync2016-kb3114372-fullfile-x64-glb.exe

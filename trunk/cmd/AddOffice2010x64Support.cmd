@@ -14,33 +14,33 @@ goto InvalidParams
 call RemoveOffice2010x64Support.cmd %1 /quiet
 
 rem *** Add x64 support for %1 to Office 2010 custom URL files ***
-echo Adding x64 support for %1 to Office 2010 custom URL files...
 if exist ..\static\StaticDownloadLinks-o2k10-x64-%1.txt (
+  echo Adding x64 support for %1 to Office 2010 custom URL files...
   type ..\static\StaticDownloadLinks-o2k10-x64-%1.txt >>..\static\custom\StaticDownloadLinks-o2k10-%1.txt
 )
 rem *** Add x64 support for glb to Office 2010 custom URL files ***
-echo Adding x64 support for glb to Office 2010 custom URL files...
 if exist ..\static\StaticDownloadLinks-o2k10-x64-glb.txt (
+  echo Adding x64 support for glb to Office 2010 custom URL files...
   type ..\static\StaticDownloadLinks-o2k10-x64-glb.txt >>..\static\custom\StaticDownloadLinks-o2k10-glb.txt
 )
 rem *** Add x64 support for %1 to Office 2013 custom URL files ***
-echo Adding x64 support for %1 to Office 2013 custom URL files...
 if exist ..\static\StaticDownloadLinks-o2k13-x64-%1.txt (
+  echo Adding x64 support for %1 to Office 2013 custom URL files...
   type ..\static\StaticDownloadLinks-o2k13-x64-%1.txt >>..\static\custom\StaticDownloadLinks-o2k13-%1.txt
 )
 rem *** Add x64 support for glb to Office 2013 custom URL files ***
-echo Adding x64 support for glb to Office 2013 custom URL files...
 if exist ..\static\StaticDownloadLinks-o2k13-x64-glb.txt (
+  echo Adding x64 support for glb to Office 2013 custom URL files...
   type ..\static\StaticDownloadLinks-o2k13-x64-glb.txt >>..\static\custom\StaticDownloadLinks-o2k13-glb.txt
 )
 rem *** Add x64 support for %1 to Office 2016 custom URL files ***
-echo Adding x64 support for %1 to Office 2016 custom URL files...
 if exist ..\static\StaticDownloadLinks-o2k16-x64-%1.txt (
+  echo Adding x64 support for %1 to Office 2016 custom URL files...
   type ..\static\StaticDownloadLinks-o2k16-x64-%1.txt >>..\static\custom\StaticDownloadLinks-o2k16-%1.txt
 )
 rem *** Add x64 support for glb to Office 2016 custom URL files ***
-echo Adding x64 support for glb to Office 2016 custom URL files...
 if exist ..\static\StaticDownloadLinks-o2k16-x64-glb.txt (
+  echo Adding x64 support for glb to Office 2016 custom URL files...
   type ..\static\StaticDownloadLinks-o2k16-x64-glb.txt >>..\static\custom\StaticDownloadLinks-o2k16-glb.txt
 )
 goto EoF

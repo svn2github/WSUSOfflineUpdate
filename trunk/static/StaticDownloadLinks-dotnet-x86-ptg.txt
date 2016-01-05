@@ -1,2 +1,2 @@
 http://download.microsoft.com/download/e/b/1/eb1f55b6-45be-401f-8a64-8d0ff3e0ec45/dotnetfx35langpack_x86pt-PT.exe
-http://download.microsoft.com/download/C/0/4/C04DCCFA-5D25-4B90-862B-2C687BDF3474/NDP46-KB3045557-x86-x64-AllOS-PTG.exe
+http://download.microsoft.com/download/8/2/3/823C38F2-2DB9-453B-AD13-A329BBDCD789/NDP461-KB3102436-x86-x64-AllOS-PTG.exe

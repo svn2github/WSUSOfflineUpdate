@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.2.1+ (r710)
+set WSUSOFFLINE_VERSION=10.3
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -690,6 +690,24 @@ if "%CPP_2012_x64%"=="1" (
     echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2012_x64.exe not found>>%UPDATE_LOGFILE%
   )
 )
+if "%CPP_2013_x64%"=="1" (
+  if exist ..\cpp\vcredist2013_x64.exe (
+    echo Installing most recent C++ 2013 x64 Runtime Library...
+    call InstallOSUpdate.cmd ..\cpp\vcredist2013_x64.exe %VERIFY_MODE% /errorsaswarnings /q /norestart
+  ) else (
+    echo Warning: File ..\cpp\vcredist2013_x64.exe not found.
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2013_x64.exe not found>>%UPDATE_LOGFILE%
+  )
+)
+if "%CPP_2015_x64%"=="1" (
+  if exist ..\cpp\vcredist2015_x64.exe (
+    echo Installing most recent C++ 2015 x64 Runtime Library...
+    call InstallOSUpdate.cmd ..\cpp\vcredist2015_x64.exe %VERIFY_MODE% /errorsaswarnings /q /norestart
+  ) else (
+    echo Warning: File ..\cpp\vcredist2015_x64.exe not found.
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2015_x64.exe not found>>%UPDATE_LOGFILE%
+  )
+)
 :CPPInstx86
 if "%CPP_2005_x86%"=="1" (
   if exist ..\cpp\vcredist2005_x86.exe (
@@ -725,6 +743,24 @@ if "%CPP_2012_x86%"=="1" (
   ) else (
     echo Warning: File ..\cpp\vcredist2012_x86.exe not found.
     echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2012_x86.exe not found>>%UPDATE_LOGFILE%
+  )
+)
+if "%CPP_2013_x86%"=="1" (
+  if exist ..\cpp\vcredist2013_x86.exe (
+    echo Installing most recent C++ 2013 x86 Runtime Library...
+    call InstallOSUpdate.cmd ..\cpp\vcredist2013_x86.exe %VERIFY_MODE% /errorsaswarnings /q /norestart
+  ) else (
+    echo Warning: File ..\cpp\vcredist2013_x86.exe not found.
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2013_x86.exe not found>>%UPDATE_LOGFILE%
+  )
+)
+if "%CPP_2015_x86%"=="1" (
+  if exist ..\cpp\vcredist2015_x86.exe (
+    echo Installing most recent C++ 2015 x86 Runtime Library...
+    call InstallOSUpdate.cmd ..\cpp\vcredist2015_x86.exe %VERIFY_MODE% /errorsaswarnings /q /norestart
+  ) else (
+    echo Warning: File ..\cpp\vcredist2015_x86.exe not found.
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2015_x86.exe not found>>%UPDATE_LOGFILE%
   )
 )
 :SkipCPPInst
@@ -890,19 +926,19 @@ if "%OS_SRV_CORE%"=="1" (
   set DOTNET4_INSTOPTS=/passive /norestart
 )
 if not exist %DOTNET4_FILENAME% (
-  echo Warning: .NET Framework 4.6 installation file ^(%DOTNET4_FILENAME%^) not found.
-  echo %DATE% %TIME% - Warning: .NET Framework 4.6 installation file ^(%DOTNET4_FILENAME%^) not found>>%UPDATE_LOGFILE%
+  echo Warning: .NET Framework 4.6.1 installation file ^(%DOTNET4_FILENAME%^) not found.
+  echo %DATE% %TIME% - Warning: .NET Framework 4.6.1 installation file ^(%DOTNET4_FILENAME%^) not found>>%UPDATE_LOGFILE%
   goto SkipDotNet4Inst
 )
-echo Installing .NET Framework 4.6...
+echo Installing .NET Framework 4.6.1...
 call InstallOSUpdate.cmd %DOTNET4_FILENAME% %VERIFY_MODE% /errorsaswarnings %DOTNET4_INSTOPTS% /lcid 1033
 if "%OS_LANG%" NEQ "enu" (
   if exist %DOTNET4LP_FILENAME% (
-    echo Installing .NET Framework 4.6 Language Pack...
+    echo Installing .NET Framework 4.6.1 Language Pack...
     for /F %%i in ('dir /B %DOTNET4LP_FILENAME%') do call InstallOSUpdate.cmd ..\dotnet\%%i %VERIFY_MODE% /errorsaswarnings %DOTNET4_INSTOPTS%
   ) else (
-    echo Warning: .NET Framework 4.6 Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found.
-    echo %DATE% %TIME% - Warning: .NET Framework 4.6 Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found>>%UPDATE_LOGFILE%
+    echo Warning: .NET Framework 4.6.1 Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found.
+    echo %DATE% %TIME% - Warning: .NET Framework 4.6.1 Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found>>%UPDATE_LOGFILE%
   )
 )
 set RECALL_REQUIRED=1

@@ -1,19 +1,19 @@
-; ***  WSUS Offline Update 10.2.1 - Generator  ***
-; ***        Author: T. Wittrock, Kiel         ***
-; ***      USB-Option added by Ch. Riedel      ***
-; ***    Dialog scaling added by Th. Baisch    ***
+; ***  WSUS Offline Update 10.3 - Generator  ***
+; ***       Author: T. Wittrock, Kiel        ***
+; ***     USB-Option added by Ch. Riedel     ***
+; ***   Dialog scaling added by Th. Baisch   ***
 
 #include <GUIConstants.au3>
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Generator")
-#pragma compile(FileVersion, 10.2.1.710)
+#pragma compile(FileVersion, 10.3.0.712)
 #pragma compile(InternalName, "Generator")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateGenerator.exe)
 #pragma compile(ProductName, "WSUS Offline Update")
-#pragma compile(ProductVersion, 10.2.1)
+#pragma compile(ProductVersion, 10.3.0)
 
-Dim Const $caption                  = "WSUS Offline Update 10.2.1"
+Dim Const $caption                  = "WSUS Offline Update 10.3"
 Dim Const $title                    = $caption & " - Generator"
 Dim Const $donationURL              = "http://www.wsusoffline.net/donate.html"
 Dim Const $downloadLogFile          = "download.log"
@@ -2519,7 +2519,7 @@ While 1
           ContinueLoop
         EndIf
       EndIf
-      If IsLangOfficeChecked() Then
+      If (IsLangOfficeChecked() OR IsCheckBoxChecked($o2k16_glb)) Then
         If RunScripts("ofc glb", IsCheckBoxChecked($imageonly), DetermineDownloadSwitches($includesp, $dotnet, $wle, $msse, $wddefs, $verifydownloads, AuthProxy($proxy, $proxypwd), $wsus), False, DetermineISOSwitches($includesp, $dotnet, $wle, $msse, $wddefs, $usbclean), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf

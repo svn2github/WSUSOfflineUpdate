@@ -1,3 +1,3 @@
 http://download.microsoft.com/download/5/8/3/58362B10-6044-4DD4-84C7-FF62CEE3A229/proofloc2013-kb2880463-fullfile-x64-glb.exe
 http://download.microsoft.com/download/8/4/B/84B4531A-83A6-49AD-B825-DEB2A4BB5ED4/conv2013-kb3085572-fullfile-x64-glb.exe
-http://download.microsoft.com/download/E/1/7/E17E0B06-792A-49C3-AE8B-6AD7F6F64CB2/lync2013-kb3101496-fullfile-x64-glb.exe
+http://download.microsoft.com/download/9/B/C/9BC23882-814B-4E1D-92BD-61E93DF35F99/lync2013-kb3114351-fullfile-x64-glb.exe

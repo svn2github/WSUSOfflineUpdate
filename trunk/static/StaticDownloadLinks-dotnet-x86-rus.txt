@@ -1,2 +1,2 @@
 http://download.microsoft.com/download/A/1/E/A1E99089-91E7-48E2-9FE5-BBD64CC6D51D/dotnetfx35langpack_x86ru.exe
-http://download.microsoft.com/download/F/2/A/F2ADB2B0-C99C-432D-A98D-DB79369F6910/NDP46-KB3045557-x86-x64-AllOS-RUS.exe
+http://download.microsoft.com/download/6/B/6/6B61C1E9-A91D-4005-98E5-E50F65F7E145/NDP461-KB3102436-x86-x64-AllOS-RUS.exe

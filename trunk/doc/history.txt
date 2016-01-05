@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 10.2.1
+WSUS Offline Update 10.3
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1065,9 +1065,18 @@ Version 10.2.1 -- 12.11.15
 - Fix: Replaced superseded Visio 2016 Security Update kb2920708 (MS15-081) by kb3101507 (MS15-116)
 - Fix: Linux scripts' improvements (Thanks to M. Althaus and H. Hullen)
 --------------------------------------------------------------------------------
-Version ??.? -- ??.??.??
+Version 10.3 -- 05.01.16
 - Speeded up determination of missing updates on Windows Vista, 7 and Server 2008(R2) (x86/x64) systems by adding kb3087039 (MS15-097) and kb3109094 (MS15-128 and MS15-135) to scan prerequisites (Thanks to "Denniss", "Dalai", "aker" and the community)
+- .NET Framework 4 updated to v. 4.6.1 (Thanks to "boco", "harry" and "aker")
+- C++ 2015 Runtime Libraries updated to v. 14.0.23506 (Thanks to "Denniss" and "harry")
+- Microsoft Silverlight updated to v. 5.1.41105.0 (Thanks to "harry")
 - Aria2 download utility updated to v. 1.19.3 (Thanks to "harry")
 - Fix: Replaced superseded Windows Update Client improvement updates (kb3102810/kb3102812) for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2 by Windows Update Client December 2015 (kb3112343/kb3112336) (Thanks to "harry")
+- Fix: Replaced superseded Lync 2013 Security Update kb3101496 (MS15-116 and MS15-123) by kb3114351 (MS15-128)
+- Fix: Replaced superseded Lync 2016 Security Update kb3085634 (MS15-116 and MS15-123) by kb3114372 (MS15-128)
 - Fix: .NET Framework 4.6 was erroneously offered for installation on Windows 10 Threshold 2 systems (Thanks to "aker")
+- Fix: Download target "ofc glb" was executed twice if Office 2016 was selected in addition to any other Office product (Thanks to "banzeo" and "hbuhrmester")
+- Fix: USB filters for Windows did not exclude Office 2016 (Thanks to "hbuhrmester")
+- Fix: Minor bug in RemoveOffice2010x64Support.cmd script (Thanks to "pandabianco")
 - Fix: Linux scripts' improvements (Thanks to H. Hullen)
+--------------------------------------------------------------------------------
