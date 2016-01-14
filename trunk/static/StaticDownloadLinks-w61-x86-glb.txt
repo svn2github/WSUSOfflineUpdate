@@ -2,7 +2,6 @@ http://download.microsoft.com/download/0/A/F/0AFB5316-3062-494A-AB78-7FB0D446135
 http://download.microsoft.com/download/C/3/B/C3BF2EF4-E764-430C-BDCE-479F2142FC81/IE9-Windows7-x86-enu.exe
 http://download.microsoft.com/download/F/6/4/F6414410-F454-43BA-834E-1B4A7C1E774C/IE9-Windows7-x86-deu.exe
 http://download.microsoft.com/download/2/B/2/2B280EDD-FDA9-4044-9FB4-A3BE7CBF9AB1/Windows6.1-KB2574819-v2-x86.msu
-http://download.microsoft.com/download/1/E/2/1E2A08C9-B87B-4808-94A6-30BC9D65775E/Windows6.1-KB2592687-x86.msu
 http://download.microsoft.com/download/2/B/2/2B280EDD-FDA9-4044-9FB4-A3BE7CBF9AB1/Windows6.1-KB2830477-x86.msu
 http://download.microsoft.com/download/2/B/2/2B280EDD-FDA9-4044-9FB4-A3BE7CBF9AB1/Windows6.1-KB2857650-x86.msu
 http://download.microsoft.com/download/C/6/2/C62C5E5F-90B4-4F03-AB7B-5EA94F17EA6D/Windows6.1-KB2923545-x86.msu

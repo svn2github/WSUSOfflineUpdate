@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 10.3.1
+WSUS Offline Update 10.3.2
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1083,6 +1083,12 @@ Version 10.3 -- 05.01.16
 Version 10.3.1 -- 05.01.16
 - Fix: DoUpdate.cmd script contained invalid installation file name for .NET Framework 4.6.1
 --------------------------------------------------------------------------------
-Version ??.? -- ??.??.16
+Version 10.3.2 -- 14.01.16
+- Microsoft Silverlight updated to v. 5.1.41212.0 (Thanks to "harry")
+- Fix: Replaced superseded Visio 2010 Security Update kb3101526 (MS15-116) by kb3114402 (MS16-004)
+- Fix: Replaced superseded Visio 2016 Security Update kb3101507 (MS15-116) by kb3114511 (MS16-004)
+- Fix: Moved kb2552343 for Windows 7 and Server 2008 R2 (x86/x64) from static installation definitions to scan prerequisites (Thanks to "jonas" and "aker")
+- Fix: Removed kb2592687 from Remote Desktop Connection 8.1 client installation on Windows 7 / Server 2008 R2 (x86/x64) systems (Thanks to "jonas")
 - Fix: Excluded obsolete kb3097877 for Windows 10 x64 from download (Thanks to "aker")
 - Fix: AddCustomLanguageSupport.cmd script contained invalid file name prefix for .NET Framework 4.6.1 (Thanks to "hbuhrmester")
+--------------------------------------------------------------------------------
