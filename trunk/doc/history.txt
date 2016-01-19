@@ -1094,5 +1094,7 @@ Version 10.3.2 -- 14.01.16
 --------------------------------------------------------------------------------
 Version 10.4 -- ??.??.16
 - Speeded up determination of missing updates on Windows Vista, 7 and Server 2008(R2) (x86/x64) systems by adding kb3124000 (MS16-005) to scan prerequisites (Thanks to "Denniss", "Dalai" and the community)
+- Dynamically determined updates will now be validated only once a day (Thanks to "hbuhrmester", "aker" and "Denniss")
+- Fix: Enhanced hashdeep verification stability by deleting zero size checksum files (Thanks to "hbuhrmester")
 - Fix: URLs corrected in StaticDownloadLinks-sysinternals.txt (Thanks to "hbuhrmester" and "harry")
 - Fix: FAQs corrected (Thanks to "aker")
