@@ -9,7 +9,7 @@ A: Yes, that's possible through customizing the download- and update scripts acc
 You have to differentiate between statically defined updates (like the latest Service Packs, for example) and updates that are determined dynamically at runtime of the script.
 
 a) Statically defined updates
-Should you desire to exclude all static updates from download, simply check the "Exclude statically defined updates" checkbox inside the Update Generator before downloading. Please be aware that updates you downloaded earlier, which are now excluded, will be deleted on the run.
+To exclude static updates from download, please delete the corresponding URL definitions in the matching file named "StaticDownloadLinks-<platform>[-<architecture>].txt" in the folder "static". Please note that the files residing here will be overwritten on a software update.
 
 b) Dynamically determined updates
 To exclude dynamically determined updates from download, insert their knowledge base ID (KBxxxxxx or simply xxxxxx) into the matching exclude file named "ExcludeList-<platform>[-<architecture>].txt".
