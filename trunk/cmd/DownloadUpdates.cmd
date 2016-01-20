@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.3.2+ (r719)
+set WSUSOFFLINE_VERSION=10.3.2+ (r720)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -1081,6 +1081,7 @@ if exist ..\client\md\hashes-%1-%2.txt (
       if errorlevel 1 (
         echo Skipping download/validation of %1 %2 due to 'same day' rule.
         echo %DATE% %TIME% - Info: Skipped download/validation of %1 %2 due to 'same day' rule>>%DOWNLOAD_LOGFILE%
+        verify >nul
         goto :eof
       )
     )
@@ -1573,6 +1574,7 @@ if "%4"=="/skipdownload" (
 ) else (
   if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" del "%TEMP%\ValidDynamicLinks-%1-%2.txt"
 )
+verify >nul
 goto :eof
 
 :RemindDate
