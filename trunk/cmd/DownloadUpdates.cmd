@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.3.2+ (r721)
+set WSUSOFFLINE_VERSION=10.3.2+ (r722)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -305,6 +305,14 @@ if exist ..\exclude\ExcludeListUSB-w2k3-x86.txt del ..\exclude\ExcludeListUSB-w2
 if exist ..\exclude\ExcludeListUSB-w2k3-x64.txt del ..\exclude\ExcludeListUSB-w2k3-x64.txt
 del /Q ..\static\*-w2k3-*.* >nul 2>&1
 del /Q ..\xslt\*-w2k3-*.* >nul 2>&1
+
+rem *** Windows 8 stuff ***
+if exist ..\client\static\StaticUpdateIds-w62-x86.txt del ..\client\static\StaticUpdateIds-w62-x86.txt
+if exist ..\exclude\ExcludeList-w62-x86.txt del ..\exclude\ExcludeList-w62-x86.txt
+if exist ..\exclude\ExcludeListISO-w62-x86.txt del ..\exclude\ExcludeListISO-w62-x86.txt
+if exist ..\exclude\ExcludeListUSB-w62-x86.txt del ..\exclude\ExcludeListUSB-w62-x86.txt
+if exist ..\static\StaticDownloadLinks-w62-x86-glb.txt del ..\static\StaticDownloadLinks-w62-x86-glb.txt
+if exist ..\xslt\ExtractDownloadLinks-w62-x86-glb.xsl del ..\xslt\ExtractDownloadLinks-w62-x86-glb.xsl
 
 rem *** Office and invcif.exe stuff ***
 if exist ..\static\StaticDownloadLinks-inventory.txt del ..\static\StaticDownloadLinks-inventory.txt

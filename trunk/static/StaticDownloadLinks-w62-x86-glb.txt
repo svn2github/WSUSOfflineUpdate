@@ -1,2 +1,0 @@
-http://download.microsoft.com/download/5/B/7/5B78A8E8-3E47-4F4F-97DF-BF9362D9679C/Windows8-RT-KB2769165-x86.msu
-http://download.microsoft.com/download/6/7/0/670287B4-32F0-458E-83AE-4316B0B1D0B8/Windows8-RT-KB2937636-x86.msu
