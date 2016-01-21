@@ -3,7 +3,7 @@
 # gemeinsam benutzt werden
 # Start: 10.3.2013 Hullen
 
-syslist="w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64 w100 w100-x64 all-x86 all-x64 o2k7 o2k10 o2k13 o2k16 ofc all-61 all-62 all-63 all-100"
+syslist="w60 w60-x64 w61 w61-x64 w62-x64 w63 w63-x64 w100 w100-x64 all-x86 all-x64 o2k7 o2k10 o2k13 o2k16 ofc all-61 all-62 all-63 all-100"
 langlist="enu deu nld esn fra ptg ptb ita rus plk ell csy dan nor sve fin jpn kor chs cht hun trk ara heb"
 
 printusage()

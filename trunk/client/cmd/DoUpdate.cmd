@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.3.2+ (r720)
+set WSUSOFFLINE_VERSION=10.3.2+ (r721)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -128,6 +128,9 @@ if "%OS_NAME%"=="" goto UnsupOS
 if "%OS_NAME%"=="w2k" goto UnsupOS
 if "%OS_NAME%"=="wxp" goto UnsupOS
 if "%OS_NAME%"=="w2k3" goto UnsupOS
+if "%OS_NAME%"=="w62" (
+  if /i "%OS_ARCH%"=="x86" goto UnsupOS
+)
 for %%i in (x86 x64) do (if /i "%OS_ARCH%"=="%%i" goto ValidArch)
 goto UnsupArch
 :ValidArch
@@ -1635,8 +1638,8 @@ goto Cleanup
 
 :UnsupOS
 echo.
-echo ERROR: Unsupported Operating System (%OS_NAME%).
-echo %DATE% %TIME% - Error: Unsupported Operating System (%OS_NAME%)>>%UPDATE_LOGFILE%
+echo ERROR: Unsupported Operating System (%OS_NAME% %OS_ARCH%).
+echo %DATE% %TIME% - Error: Unsupported Operating System (%OS_NAME% %OS_ARCH%)>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 

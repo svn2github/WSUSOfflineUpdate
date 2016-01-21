@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.3.2+ (r720)
+set WSUSOFFLINE_VERSION=10.3.2+ (r721)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -31,7 +31,7 @@ if exist .\custom\InitializationHook.cmd (
   set ERR_LEVEL=
 )
 echo %DATE% %TIME% - Info: Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2>>%DOWNLOAD_LOGFILE%
-for %%i in (w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64 w100 w100-x64 ofc o2k16) do (
+for %%i in (w60 w60-x64 w61 w61-x64 w62-x64 w63 w63-x64 w100 w100-x64 ofc o2k16) do (
   if /i "%1"=="%%i" (
     if /i "%2"=="glb" goto EvalParams
   )
@@ -1023,7 +1023,7 @@ if "%VERIFY_DL%"=="1" (
 :SkipWDDefs
 
 rem *** Download the platform specific patches ***
-for %%i in (w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64 w100 w100-x64) do (
+for %%i in (w60 w60-x64 w61 w61-x64 w62-x64 w63 w63-x64 w100 w100-x64) do (
   if /i "%1"=="%%i" (
     call :DownloadCore win glb x86 %SKIP_PARAM%
     if errorlevel 1 goto Error
@@ -1045,7 +1045,7 @@ for %%i in (o2k16) do (
     if errorlevel 1 goto Error
   )
 )
-for %%i in (w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64 w100 w100-x64 ofc) do (
+for %%i in (w60 w60-x64 w61 w61-x64 w62-x64 w63 w63-x64 w100 w100-x64 ofc) do (
   if /i "%1"=="%%i" (
     call :DownloadCore %1 %2 %TARGET_ARCH% %SKIP_PARAM%
     if errorlevel 1 goto Error
@@ -1213,7 +1213,7 @@ if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
 echo %TIME% - Done.
 echo %DATE% %TIME% - Info: Determined superseded updates>>%DOWNLOAD_LOGFILE%
 :SkipSuperseded
-for %%i in (dotnet win w60 w60-x64 w61 w61-x64 w62 w62-x64 w63 w63-x64 w100 w100-x64) do (if /i "%1"=="%%i" goto DetermineWindows)
+for %%i in (dotnet win w60 w60-x64 w61 w61-x64 w62-x64 w63 w63-x64 w100 w100-x64) do (if /i "%1"=="%%i" goto DetermineWindows)
 for %%i in (ofc) do (if /i "%1"=="%%i" goto DetermineOffice)
 del "%TEMP%\package.xml"
 goto DoDownload
@@ -1594,7 +1594,7 @@ exit /b 1
 echo.
 echo ERROR: Invalid parameter: %*
 echo Usage1: %~n0 {o2k7 ^| o2k10 ^| o2k13} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
-echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| w62 ^| w62-x64 ^| w63 ^| w63-x64 ^| w100 ^| w100-x64 ^| ofc ^| o2k16} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
+echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| w62-x64 ^| w63 ^| w63-x64 ^| w100 ^| w100-x64 ^| ofc ^| o2k16} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
 echo %DATE% %TIME% - Error: Invalid parameter: %*>>%DOWNLOAD_LOGFILE%
 echo.
 goto Error

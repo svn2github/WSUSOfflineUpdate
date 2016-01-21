@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                          v. 10.3.2+ (r720)                        ###
+###                          v. 10.3.2+ (r721)                        ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -162,16 +162,16 @@ cat << END
 Please select your OS:
 [1] Windows Vista / Server 2008	[2] Windows Vista / Server 2008     64 bit
 [3] Windows 7   (w61)		[4] Windows 7     / Server 2008 R2  64 bit
-[5] Windows 8   (w62)		[6] Windows 8     / Server 2012     64 bit
-[7] Windows 8.1 (w63)		[8] Windows 8.1   / Server 2012 R2  64 bit
-[9] Windows 10  (w100)		[10] Windows 10   / Server 2016     64 bit
+                     		[5] Windows Server 2012             64 bit
+[6] Windows 8.1 (w63)		[7] Windows 8.1   / Server 2012 R2  64 bit
+[8] Windows 10  (w100)		[9] Windows 10   / Server 2016     64 bit
 
-[11] All Windows 32 bit		[12] All Windows 64 bit
+[10] All Windows 32 bit		[11] All Windows 64 bit
 
-[13] Office 2007 	[14] Office 2010	[15] Office 2013
-[17] All Office updates (2007 - 2016)
+[12] Office 2007 	[13] Office 2010	[14] Office 2013
+[16] All Office updates (2007 - 2016)
 
-[18] all Windows 7	[19] all Windows 8	[20] all Windows 8.1	[21] all Windows 10
+[17] all Windows 7	[18] all Windows 8	[19] all Windows 8.1	[20] all Windows 10
 
 END
 
@@ -465,9 +465,9 @@ for Datei in ../{exclude,static}/*.txt ../{exclude,static}/custom/*.txt
 Liste=""
 case $sys in
     all-x64) Liste="w60-x64 w61-x64 w62-x64 w63-x64 w100-x64" ;;
-    all-x86) Liste="w60     w61     w62     w63     w100" ;;
+    all-x86) Liste="w60     w61             w63     w100" ;;
     all-61)  Liste="w61 w61-x64" ;;
-    all-62)  Liste="w62 w62-x64" ;;
+    all-62)  Liste="    w62-x64" ;;
     all-63)  Liste="w63 w63-x64" ;;
     all-100) Liste="w100 w100-x64" ;;
     ofc) test "$sys_old" || Liste="o2k7 o2k10 o2k13 o2k16" ;;
