@@ -1094,6 +1094,7 @@ Version 10.3.2 -- 14.01.16
 --------------------------------------------------------------------------------
 Version 10.4 -- ??.??.16
 - Support removed for Windows 8 (w62 x86) since Microsoft discontinued support for it on January 12, 2016 (see https://support.microsoft.com/en-us/lifecycle#Microsoft-Windows-81)
+- Mandatory installation of most recent Internet Explorer on Windows Vista, 7 and Server 2008(R2) (x86/x64) systems (see https://www.microsoft.com/en-us/WindowsForBusiness/End-of-IE-support)
 - Speeded up determination of missing updates on Windows Vista, 7 and Server 2008(R2) (x86/x64) systems by adding kb3124000 (MS16-005) to scan prerequisites (Thanks to "Denniss", "Dalai" and the community)
 - Dynamically determined updates will now be validated only once a day (Thanks to "hbuhrmester", "aker" and "Denniss")
 - Fix: Enhanced hashdeep verification stability by deleting zero size checksum files (Thanks to "hbuhrmester")

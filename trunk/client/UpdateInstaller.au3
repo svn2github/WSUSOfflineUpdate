@@ -1,19 +1,19 @@
-; ***  WSUS Offline Update 10.3.2 - Installer  ***
-; ***        Author: T. Wittrock, Kiel         ***
-; ***    Dialog scaling added by Th. Baisch    ***
+; ***  WSUS Offline Update 10.4b - Installer  ***
+; ***       Author: T. Wittrock, Kiel        ***
+; ***   Dialog scaling added by Th. Baisch   ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 10.3.2.722)
+#pragma compile(FileVersion, 10.4.0.723)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
 #pragma compile(ProductName, "WSUS Offline Update")
-#pragma compile(ProductVersion, 10.3.2)
+#pragma compile(ProductVersion, 10.4.0)
 
-Dim Const $caption                    = "WSUS Offline Update 10.3.2 - Installer"
+Dim Const $caption                    = "WSUS Offline Update 10.4b - Installer"
 Dim Const $wou_hostname               = "www.wsusoffline.net"
 Dim Const $donationURL                = "http://www.wsusoffline.net/donate.html"
 
@@ -41,17 +41,13 @@ Dim Const $reg_val_wustatusserver     = "WUStatusServer"
 
 ; Defaults
 Dim Const $wlemax                     = 7
-Dim Const $msimax                     = 18
+Dim Const $msimax                     = 14
 Dim Const $default_logpixels          = 96
 Dim Const $target_version_dotnet35    = "3.5.30729"
 Dim Const $target_version_psh         = "2.0"
 
 ; INI file constants
 Dim Const $ini_section_installation   = "Installation"
-Dim Const $ini_value_ie8              = "instie8"
-Dim Const $ini_value_ie9              = "instie9"
-Dim Const $ini_value_ie10             = "instie10"
-Dim Const $ini_value_ie11             = "instie11"
 Dim Const $ini_value_cpp              = "updatecpp"
 Dim Const $ini_value_mssl             = "instmssl"
 Dim Const $ini_value_dotnet35         = "instdotnet35"
@@ -100,7 +96,7 @@ Dim Const $path_rel_wle_cmd           = "\Temp\wouinstwle.cmd"
 Dim Const $path_rel_msi_all           = "\wouallmsi.txt"
 Dim Const $path_rel_msi_selected      = "\Temp\wouselmsi.txt"
 
-Dim $maindlg, $scriptdir, $mapped, $tabitemfocused, $ie8, $ie9, $ie10, $ie11, $cpp, $mssl, $dotnet35, $dotnet4, $psh, $wmf, $msse, $tsc, $ofv, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_donate, $btn_exit, $options, $builddate
+Dim $maindlg, $scriptdir, $mapped, $tabitemfocused, $cpp, $mssl, $dotnet35, $dotnet4, $psh, $wmf, $msse, $tsc, $ofv, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_donate, $btn_exit, $options, $builddate
 Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos, $wleall, $wlepacks[$wlemax], $wlecount, $wlecmdfile, $msiall, $msipacks[$msimax], $msicount, $msilistfile, $line, $i
 
 Func ShowGUIInGerman()
@@ -180,10 +176,6 @@ Dim $ini_src, $ini_dest, $i
   FileCopy($ini_src, $ini_dest, 1)
   FileSetAttrib($ini_dest, "-R")
 
-  IniWrite($ini_dest, $ini_section_installation, $ini_value_ie8, CheckBoxStateToString($ie8))
-  IniWrite($ini_dest, $ini_section_installation, $ini_value_ie9, CheckBoxStateToString($ie9))
-  IniWrite($ini_dest, $ini_section_installation, $ini_value_ie10, CheckBoxStateToString($ie10))
-  IniWrite($ini_dest, $ini_section_installation, $ini_value_ie11, CheckBoxStateToString($ie11))
   IniWrite($ini_dest, $ini_section_installation, $ini_value_cpp, CheckBoxStateToString($cpp))
   IniWrite($ini_dest, $ini_section_installation, $ini_value_mssl, CheckBoxStateToString($mssl))
   IniWrite($ini_dest, $ini_section_installation, $ini_value_dotnet35, CheckBoxStateToString($dotnet35))
@@ -368,7 +360,7 @@ Func CalcGUISize()
   If ($reg_val = "") Then
     $reg_val = $default_logpixels
   EndIf
-  $dlgheight = 340 * $reg_val / $default_logpixels
+  $dlgheight = 300 * $reg_val / $default_logpixels
   If ShowGUIInGerman() Then
     $txtwidth = 240 * $reg_val / $default_logpixels
   Else
@@ -432,102 +424,11 @@ EndIf
 ;  Installation group
 $txtxpos = 2 * $txtxoffset
 $txtypos = 3.5 * $txtyoffset + 1.5 * $txtheight
-GUICtrlCreateGroup("Installation", $txtxpos, $txtypos, $groupwidth, 8 * $txtheight)
-
-; Install IE8
-$txtxpos = 3 * $txtxoffset
-$txtypos = $txtypos + 1.5 * $txtyoffset
-If ShowGUIInGerman() Then
-  $ie8 = GUICtrlCreateCheckbox("Internet Explorer 8 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
-Else
-  $ie8 = GUICtrlCreateCheckbox("Install Internet Explorer 8", $txtxpos, $txtypos, $txtwidth, $txtheight)
-EndIf
-If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") _
-  OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") OR (NOT WinGlbPresent($scriptdir)) ) Then
-  GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
-Else
-  If MyIniRead($ini_section_installation, $ini_value_ie8, $enabled) = $enabled Then
-    GUICtrlSetState(-1, $GUI_CHECKED)
-  Else
-    GUICtrlSetState(-1, $GUI_UNCHECKED)
-  EndIf
-EndIf
-
-; Install IE9
-$txtxpos = $txtxpos + $txtwidth
-If ShowGUIInGerman() Then
-  $ie9 = GUICtrlCreateCheckbox("Internet Explorer 9 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
-Else
-  $ie9 = GUICtrlCreateCheckbox("Install Internet Explorer 9", $txtxpos, $txtypos, $txtwidth, $txtheight)
-EndIf
-If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") _
-  OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") OR (NOT WinGlbPresent($scriptdir)) ) Then
-  GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
-Else
-  If MyIniRead($ini_section_installation, $ini_value_ie9, $disabled) = $enabled Then
-    GUICtrlSetState(-1, $GUI_CHECKED)
-    GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
-  Else
-    GUICtrlSetState(-1, $GUI_UNCHECKED)
-    If IsCheckBoxChecked($ie8) Then
-      GUICtrlSetState(-1, $GUI_DISABLE)
-    EndIf
-  EndIf
-EndIf
-
-; Install IE10
-$txtxpos = 3 * $txtxoffset
-$txtypos = $txtypos + $txtheight
-If ShowGUIInGerman() Then
-  $ie10 = GUICtrlCreateCheckbox("Internet Explorer 10 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
-Else
-  $ie10 = GUICtrlCreateCheckbox("Install Internet Explorer 10", $txtxpos, $txtypos, $txtwidth, $txtheight)
-EndIf
-If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") _
-  OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") _
-  OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") OR (IEVersion() = "10") OR (IEVersion() = "11") OR (NOT WinGlbPresent($scriptdir)) ) Then
-  GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
-Else
-  If MyIniRead($ini_section_installation, $ini_value_ie10, $disabled) = $enabled Then
-    GUICtrlSetState(-1, $GUI_CHECKED)
-    GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
-    GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
-  Else
-    GUICtrlSetState(-1, $GUI_UNCHECKED)
-    If (IsCheckBoxChecked($ie8) OR IsCheckBoxChecked($ie9)) Then
-      GUICtrlSetState(-1, $GUI_DISABLE)
-    EndIf
-  EndIf
-EndIf
-
-; Install IE11
-$txtxpos = $txtxpos + $txtwidth
-If ShowGUIInGerman() Then
-  $ie11 = GUICtrlCreateCheckbox("Internet Explorer 11 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
-Else
-  $ie11 = GUICtrlCreateCheckbox("Install Internet Explorer 11", $txtxpos, $txtypos, $txtwidth, $txtheight)
-EndIf
-If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") _
-  OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") _
-  OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") OR (IEVersion() = "11") OR (NOT WinGlbPresent($scriptdir)) ) Then
-  GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
-Else
-  If MyIniRead($ini_section_installation, $ini_value_ie11, $disabled) = $enabled Then
-    GUICtrlSetState(-1, $GUI_CHECKED)
-    GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
-    GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
-    GUICtrlSetState($ie10, $GUI_UNCHECKED + $GUI_DISABLE)
-  Else
-    GUICtrlSetState(-1, $GUI_UNCHECKED)
-    If (IsCheckBoxChecked($ie8) OR IsCheckBoxChecked($ie9) OR IsCheckBoxChecked($ie10)) Then
-      GUICtrlSetState(-1, $GUI_DISABLE)
-    EndIf
-  EndIf
-EndIf
+GUICtrlCreateGroup("Installation", $txtxpos, $txtypos, $groupwidth, 6 * $txtheight)
 
 ; Update C++ Runtime Libraries
 $txtxpos = 3 * $txtxoffset
-$txtypos = $txtypos + $txtheight
+$txtypos = $txtypos + 1.5 * $txtyoffset
 If ShowGUIInGerman() Then
   $cpp = GUICtrlCreateCheckbox("C++-Laufzeitbibliotheken aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
@@ -844,23 +745,21 @@ If ( ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "W
   $txtxpos = 2 * $txtxoffset
   $txtypos = $txtypos + BitShift($wlecount + 1, 1) * $txtheight + 0.5 * $txtyoffset
   If ShowGUIInGerman() Then
-    GUICtrlCreateGroup("Systemvoraussetzungen", $txtxpos, $txtypos, $groupwidth, 4 * $txtheight)
+    GUICtrlCreateGroup("Systemvoraussetzungen", $txtxpos, $txtypos, $groupwidth, 3 * $txtheight)
   Else
-    GUICtrlCreateGroup("Prerequisites", $txtxpos, $txtypos, $groupwidth, 4 * $txtheight)
+    GUICtrlCreateGroup("Prerequisites", $txtxpos, $txtypos, $groupwidth, 3 * $txtheight)
   EndIf
   $txtxpos = 3 * $txtxoffset
   $txtypos = $txtypos + 1.5 * $txtyoffset
   If ShowGUIInGerman() Then
     GUICtrlCreateLabel("Windows Essentials 2012 erfordern sowohl .NET Framework 3.5 als auch 4.x." _
                & @LF & "Wenn die Optionen auf dieser Seite deaktiviert sind," _
-               & @LF & "wählen Sie bitte die entsprechende(n) Installationsoption(en) unter 'Aktualisierung'." _
-               & @LF & "Windows 8 / 8.1: Stellen Sie zusätzlich sicher, dass das Sxs-Verzeichnis integriert wurde.", _
+               & @LF & "wählen Sie bitte die entsprechende(n) Installationsoption(en) unter 'Aktualisierung'.", _
                $txtxpos, $txtypos, 3 * $groupwidth - 2 * $txtxoffset, 3 * $txtheight)
   Else
     GUICtrlCreateLabel("Windows Essentials 2012 require both .NET Frameworks 3.5 and 4.x." _
                & @LF & "If options are grayed out on this tab," _
-               & @LF & "please select the corresponding installation option(s) on the 'Updating' tab." _
-               & @LF & "Windows 8 / 8.1: Additionally be sure to have the Sxs folder integrated.", _
+               & @LF & "please select the corresponding installation option(s) on the 'Updating' tab.", _
                $txtxpos, $txtypos, 3 * $groupwidth - 2 * $txtxoffset, 3 * $txtheight)
   EndIf
 EndIf
@@ -998,119 +897,6 @@ While 1
 
     Case $btn_donate         ; Donate button pressed
       Run(@ComSpec & " /D /C start " & $donationURL)
-
-    Case $ie8                ; IE8 check box toggled
-      If IsCheckBoxChecked($ie8) Then
-        GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
-        GUICtrlSetState($ie10, $GUI_UNCHECKED + $GUI_DISABLE)
-        GUICtrlSetState($ie11, $GUI_UNCHECKED + $GUI_DISABLE)
-      Else
-        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
-          OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") _
-          OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
-          GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
-        Else
-          GUICtrlSetState($ie9, $GUI_ENABLE)
-        EndIf
-        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") _
-          OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
-          GUICtrlSetState($ie10, $GUI_UNCHECKED + $GUI_DISABLE)
-        Else
-          GUICtrlSetState($ie10, $GUI_ENABLE)
-        EndIf
-        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") _
-          OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") _
-          OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") OR (IEVersion() = "11") ) Then
-          GUICtrlSetState($ie11, $GUI_UNCHECKED + $GUI_DISABLE)
-        Else
-          GUICtrlSetState($ie11, $GUI_ENABLE)
-        EndIf
-      EndIf
-
-    Case $ie9                ; IE9 check box toggled
-      If IsCheckBoxChecked($ie9) Then
-        GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
-        GUICtrlSetState($ie10, $GUI_UNCHECKED + $GUI_DISABLE)
-        GUICtrlSetState($ie11, $GUI_UNCHECKED + $GUI_DISABLE)
-      Else
-        If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
-          OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") _
-          OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
-          GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
-        Else
-          GUICtrlSetState($ie8, $GUI_ENABLE)
-        EndIf
-        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") _
-          OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
-          GUICtrlSetState($ie10, $GUI_UNCHECKED + $GUI_DISABLE)
-        Else
-          GUICtrlSetState($ie10, $GUI_ENABLE)
-        EndIf
-        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") _
-          OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") _
-          OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") OR (IEVersion() = "11") ) Then
-          GUICtrlSetState($ie11, $GUI_UNCHECKED + $GUI_DISABLE)
-        Else
-          GUICtrlSetState($ie11, $GUI_ENABLE)
-        EndIf
-      EndIf
-
-    Case $ie10               ; IE10 check box toggled
-      If IsCheckBoxChecked($ie10) Then
-        GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
-        GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
-        GUICtrlSetState($ie11, $GUI_UNCHECKED + $GUI_DISABLE)
-      Else
-        If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
-          OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") _
-          OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
-          GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
-        Else
-          GUICtrlSetState($ie8, $GUI_ENABLE)
-        EndIf
-        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
-          OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") _
-          OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
-          GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
-        Else
-          GUICtrlSetState($ie9, $GUI_ENABLE)
-        EndIf
-        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") _
-          OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") _
-          OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") OR (IEVersion() = "11") ) Then
-          GUICtrlSetState($ie11, $GUI_UNCHECKED + $GUI_DISABLE)
-        Else
-          GUICtrlSetState($ie11, $GUI_ENABLE)
-        EndIf
-      EndIf
-
-    Case $ie11               ; IE11 check box toggled
-      If IsCheckBoxChecked($ie11) Then
-        GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
-        GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
-        GUICtrlSetState($ie10, $GUI_UNCHECKED + $GUI_DISABLE)
-      Else
-        If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
-          OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") _
-          OR (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
-          GUICtrlSetState($ie8, $GUI_UNCHECKED + $GUI_DISABLE)
-        Else
-          GUICtrlSetState($ie8, $GUI_ENABLE)
-        EndIf
-        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
-          OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") _
-          OR (IEVersion() = "9") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
-          GUICtrlSetState($ie9, $GUI_UNCHECKED + $GUI_DISABLE)
-        Else
-          GUICtrlSetState($ie9, $GUI_ENABLE)
-        EndIf
-        If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") _
-          OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") OR (IEVersion() = "10") OR (IEVersion() = "11") ) Then
-          GUICtrlSetState($ie10, $GUI_UNCHECKED + $GUI_DISABLE)
-        Else
-          GUICtrlSetState($ie10, $GUI_ENABLE)
-        EndIf
-      EndIf
 
     Case $dotnet35             ; .NET 3.5 check box toggled
       If ( (IsCheckBoxChecked($dotnet35)) _
@@ -1254,18 +1040,6 @@ While 1
         RegWrite($reg_key_windowsupdate, $reg_val_wustatusserver, "REG_SZ", $options)
       EndIf
       $options = ""
-      If IsCheckBoxChecked($ie8) Then
-        $options = $options & " /instie8"
-      EndIf
-      If IsCheckBoxChecked($ie9) Then
-        $options = $options & " /instie9"
-      EndIf
-      If IsCheckBoxChecked($ie10) Then
-        $options = $options & " /instie10"
-      EndIf
-      If IsCheckBoxChecked($ie11) Then
-        $options = $options & " /instie11"
-      EndIf
       If IsCheckBoxChecked($cpp) Then
         $options = $options & " /updatecpp"
       EndIf

@@ -61,10 +61,7 @@ set MSI_VER_TARGET_MAJOR=4
 set MSI_VER_TARGET_MINOR=5
 set WSH_VER_TARGET_MAJOR=5
 set WSH_VER_TARGET_MINOR=7
-if /i "%INSTALL_IE%"=="/instielatest" set INSTALL_IE=/instie9
-if /i "%INSTALL_IE%"=="/instie9" (set IE_VER_TARGET_MAJOR=9) else (
-  if /i "%INSTALL_IE%"=="/instie8" (set IE_VER_TARGET_MAJOR=8) else (set IE_VER_TARGET_MAJOR=7)
-)
+set IE_VER_TARGET_MAJOR=9
 set IE_VER_TARGET_MINOR=0
 if %OS_DOMAIN_ROLE% LEQ 1 (
   set TSC_VER_TARGET_MAJOR=6
@@ -103,24 +100,8 @@ set MSI_VER_TARGET_MAJOR=5
 set MSI_VER_TARGET_MINOR=0
 set WSH_VER_TARGET_MAJOR=5
 set WSH_VER_TARGET_MINOR=8
-if /i "%INSTALL_IE%"=="/instielatest" set INSTALL_IE=/instie11
-if /i "%INSTALL_IE%"=="/instie11" (
-  set IE_VER_TARGET_MAJOR=9
-  set IE_VER_TARGET_MINOR=11
-) else (
-  if /i "%INSTALL_IE%"=="/instie10" (
-    set IE_VER_TARGET_MAJOR=9
-    set IE_VER_TARGET_MINOR=10
-  ) else (
-    if /i "%INSTALL_IE%"=="/instie9" (
-      set IE_VER_TARGET_MAJOR=9
-      set IE_VER_TARGET_MINOR=0
-    ) else (
-      set IE_VER_TARGET_MAJOR=8
-      set IE_VER_TARGET_MINOR=0
-    )
-  )
-)
+set IE_VER_TARGET_MAJOR=9
+set IE_VER_TARGET_MINOR=11
 set TSC_VER_TARGET_MAJOR=6
 set TSC_VER_TARGET_MINOR=3
 set TSC_TARGET_ID_FILE=..\static\StaticUpdateIds-rdc-w61.txt

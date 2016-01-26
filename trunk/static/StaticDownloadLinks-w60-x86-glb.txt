@@ -3,8 +3,6 @@ http://download.microsoft.com/download/F/B/9/FB9F0DF8-4CE2-416D-9D08-BABC7EA48F8
 http://download.microsoft.com/download/A/7/5/A75BC017-63CE-47D6-8FA4-AFB5C21BAC54/Windows6.0-KB968930-x86.msu
 http://download.microsoft.com/download/3/9/8/398298E8-2FBB-4AD0-9B81-A5DE0131BB66/Windows6.0-KB969084-x86.msu
 http://download.microsoft.com/download/5/5/B/55BAB264-02AB-40C0-8B59-438FA4AC22A0/Windows6.0-KB2416470-x86.msu
-http://download.microsoft.com/download/F/8/8/F88F09A2-A315-44C0-848E-48476A9E1577/IE8-WindowsVista-x86-ENU.exe
-http://download.microsoft.com/download/3/D/C/3DC5DC1B-2B60-487A-BAE2-732662BC0886/IE8-WindowsVista-x86-DEU.exe
 http://download.microsoft.com/download/B/A/F/BAF2D238-529A-4C54-AD31-BAFFE001F91E/Windows6.0-KB971512-x86.msu
 http://download.microsoft.com/download/0/E/D/0ED4ED7C-9FD8-4162-8024-F0643843B8EE/Windows6.0-KB2117917-x86.msu
 http://download.microsoft.com/download/0/8/7/08768091-35BC-48E0-9F7F-B9802A0EE2D6/IE9-WindowsVista-x86-enu.exe

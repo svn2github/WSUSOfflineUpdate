@@ -9,7 +9,7 @@
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>
-      <xsl:if test="contains(@Url, 'http://') and (contains(@Url, '/ie8') or contains(@Url, '/ie9')) and contains(@Url, 'windows6.0') and contains(@Url, '-x86') and contains(@Url, '.cab')">
+      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/ie9') and contains(@Url, 'windows6.0') and contains(@Url, '-x86') and contains(@Url, '.cab')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>
