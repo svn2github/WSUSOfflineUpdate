@@ -17,11 +17,12 @@ del "%TEMP%\package.cab"
 
 %SystemRoot%\System32\cscript.exe //Nologo //B //E:vbs .\cmd\XSLT.vbs "%TEMP%\package.xml" .\xslt\ExtractUpdateCategoriesAndFileIds.xsl "%TEMP%\UpdateCategoriesAndFileIds.txt"
 %SystemRoot%\System32\cscript.exe //Nologo //B //E:vbs .\cmd\XSLT.vbs "%TEMP%\package.xml" .\xslt\ExtractUpdateCabExeIdsAndLocations.xsl "%TEMP%\UpdateCabExeIdsAndLocations.txt"
+.\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\UpdateCabExeIdsAndLocationsUnique.txt"
+rem del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 goto DoIt
 
 :Determine
-if exist "%TEMP%\OfficeUpdateAndFileIds.txt" del "%TEMP%\OfficeUpdateAndFileIds.txt"
-if exist "%TEMP%\OfficeFileIds.txt" del "%TEMP%\OfficeFileIds.txt"
+if exist "%TEMP%\OfficeFileAndUpdateIds.txt" del "%TEMP%\OfficeFileAndUpdateIds.txt"
 set UPDATE_ID=
 set UPDATE_CATEGORY=
 set UPDATE_LANGUAGES=
@@ -32,17 +33,14 @@ for /F "usebackq tokens=1,2 delims=;" %%i in ("%TEMP%\UpdateCategoriesAndFileIds
         if "%%l" NEQ "" (
           if /i "%2"=="glb" (
             if "!UPDATE_LANGUAGES!_%%m"=="_" (
-              echo !UPDATE_ID!,%%l>>"%TEMP%\OfficeUpdateAndFileIds.txt"
-              echo %%l>>"%TEMP%\OfficeFileIds.txt"
+              echo %%l,!UPDATE_ID!>>"%TEMP%\OfficeFileAndUpdateIds.txt"
             )
             if "!UPDATE_LANGUAGES!_%%m"=="en_en" (
-              echo !UPDATE_ID!,%%l>>"%TEMP%\OfficeUpdateAndFileIds.txt"
-              echo %%l>>"%TEMP%\OfficeFileIds.txt"
+              echo %%l,!UPDATE_ID!>>"%TEMP%\OfficeFileAndUpdateIds.txt"
             )
           ) else (
             if "%%m"=="%3" (
-              echo !UPDATE_ID!,%%l>>"%TEMP%\OfficeUpdateAndFileIds.txt"
-              echo %%l>>"%TEMP%\OfficeFileIds.txt"
+              echo %%l,!UPDATE_ID!>>"%TEMP%\OfficeFileAndUpdateIds.txt"
             )
           )
         )
@@ -63,26 +61,18 @@ set UPDATE_CATEGORY=
 set UPDATE_LANGUAGES=
 rem del "%TEMP%\UpdateCategoriesAndFileIds.txt"
 
-%SystemRoot%\System32\sort.exe "%TEMP%\OfficeFileIds.txt" /O "%TEMP%\OfficeFileIdsSorted.txt"
+%SystemRoot%\System32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractIdsAndFileNames.vbs "%TEMP%\OfficeFileAndUpdateIds.txt" "%TEMP%\OfficeFileIds.txt" /firstonly
+.\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\OfficeFileIds.txt" >"%TEMP%\OfficeFileIdsUnique.txt"
 rem del "%TEMP%\OfficeFileIds.txt"
-%SystemRoot%\System32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractUniqueFromSorted.vbs "%TEMP%\OfficeFileIdsSorted.txt" "%TEMP%\OfficeFileIdsUnique.txt"
-rem del "%TEMP%\OfficeFileIdsSorted.txt"
-%SystemRoot%\System32\findstr.exe /B /L /I /G:"%TEMP%\OfficeFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
+.\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\OfficeFileAndUpdateIds.txt" >"%TEMP%\OfficeFileAndUpdateIdsUnique.txt"
+rem del "%TEMP%\OfficeFileAndUpdateIds.txt"
+.\bin\join.exe -t "," "%TEMP%\OfficeFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocationsUnique.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocationsUnique.txt"
 rem del "%TEMP%\OfficeFileIdsUnique.txt"
-rem del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
-
-if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
-if exist "%TEMP%\UpdateTableURL-%1-%2.csv" del "%TEMP%\UpdateTableURL-%1-%2.csv"
-for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt") do (
-  for /F "usebackq tokens=1,2 delims=," %%k in ("%TEMP%\OfficeUpdateAndFileIds.txt") do (
-    if /i "%%l"=="%%i" (
-      echo %%j>>"%TEMP%\DynamicDownloadLinks-%1-%2.txt"
-      echo %%k,%%j>>"%TEMP%\UpdateTableURL-%1-%2.csv"
-    )
-  )
-)
-rem del "%TEMP%\OfficeUpdateAndFileIds.txt"
-rem del "%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
+rem del "%TEMP%\UpdateCabExeIdsAndLocationsUnique.txt"
+.\bin\join.exe -t "," -o "1.2" "%TEMP%\OfficeUpdateCabExeIdsAndLocationsUnique.txt" "%TEMP%\OfficeFileAndUpdateIdsUnique.txt" >"%TEMP%\DynamicDownloadLinks-%1-%2.txt"
+.\bin\join.exe -t "," -o "2.2,1.2" "%TEMP%\OfficeUpdateCabExeIdsAndLocationsUnique.txt" "%TEMP%\OfficeFileAndUpdateIdsUnique.txt" >"%TEMP%\UpdateTableURL-%1-%2.csv"
+rem del "%TEMP%\OfficeFileAndUpdateIdsUnique.txt"
+rem del "%TEMP%\OfficeUpdateCabExeIdsAndLocationsUnique.txt"
 %SystemRoot%\System32\cscript.exe //Nologo //B //E:vbs .\cmd\ExtractIdsAndFileNames.vbs "%TEMP%\UpdateTableURL-%1-%2.csv" "%TEMP%\UpdateTable-%1-%2.csv"
 rem del "%TEMP%\UpdateTableURL-%1-%2.csv"
 goto :EoF

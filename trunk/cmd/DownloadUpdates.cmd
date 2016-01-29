@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.4b (r723)
+set WSUSOFFLINE_VERSION=10.4b (r724)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -246,6 +246,7 @@ rem *** Obsolete internal stuff ***
 if exist ActivateVistaAllLanguageServicePacks.cmd del ActivateVistaAllLanguageServicePacks.cmd
 if exist ActivateVistaFiveLanguageServicePacks.cmd del ActivateVistaFiveLanguageServicePacks.cmd
 if exist DetermineAutoDaylightTimeSet.vbs del DetermineAutoDaylightTimeSet.vbs
+if exist ExtractUniqueFromSorted.vbs del ExtractUniqueFromSorted.vbs
 if exist CheckTRCerts.cmd del CheckTRCerts.cmd
 if exist ..\doc\faq.txt del ..\doc\faq.txt
 if exist ..\client\cmd\Reboot.vbs del ..\client\cmd\Reboot.vbs
@@ -1192,10 +1193,8 @@ del "%TEMP%\ValidSupersededRevisionIds.txt"
 del "%TEMP%\BundledUpdateRevisionAndFileIds.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\SupersededRevisionAndFileIds.txt" "%TEMP%\SupersededFileIds.txt" /secondonly
 del "%TEMP%\SupersededRevisionAndFileIds.txt"
-%SystemRoot%\System32\sort.exe "%TEMP%\SupersededFileIds.txt" /O "%TEMP%\SupersededFileIdsSorted.txt"
+..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\SupersededFileIds.txt" >"%TEMP%\SupersededFileIdsUnique.txt"
 del "%TEMP%\SupersededFileIds.txt"
-%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractUniqueFromSorted.vbs "%TEMP%\SupersededFileIdsSorted.txt" "%TEMP%\SupersededFileIdsUnique.txt"
-del "%TEMP%\SupersededFileIdsSorted.txt"
 %CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractUpdateCabExeIdsAndLocations.xsl "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 if errorlevel 1 goto DownloadError
 %SystemRoot%\System32\findstr.exe /B /L /I /G:"%TEMP%\SupersededFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\SupersededCabExeIdsAndLocations.txt"
@@ -1271,9 +1270,10 @@ if errorlevel 1 goto DownloadError
 %CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractUpdateCabExeIdsAndLocations.xsl "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 if errorlevel 1 goto DownloadError
 del "%TEMP%\package.xml"
+..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\UpdateCabExeIdsAndLocationsUnique.txt"
+del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
 
-if exist "%TEMP%\OfficeUpdateAndFileIds.txt" del "%TEMP%\OfficeUpdateAndFileIds.txt"
-if exist "%TEMP%\OfficeFileIds.txt" del "%TEMP%\OfficeFileIds.txt"
+if exist "%TEMP%\OfficeFileAndUpdateIds.txt" del "%TEMP%\OfficeFileAndUpdateIds.txt"
 set UPDATE_ID=
 set UPDATE_CATEGORY=
 set UPDATE_LANGUAGES=
@@ -1284,17 +1284,14 @@ for /F "usebackq tokens=1,2 delims=;" %%i in ("%TEMP%\UpdateCategoriesAndFileIds
         if "%%l" NEQ "" (
           if /i "%2"=="glb" (
             if "!UPDATE_LANGUAGES!_%%m"=="_" (
-              echo !UPDATE_ID!,%%l>>"%TEMP%\OfficeUpdateAndFileIds.txt"
-              echo %%l>>"%TEMP%\OfficeFileIds.txt"
+              echo %%l,!UPDATE_ID!>>"%TEMP%\OfficeFileAndUpdateIds.txt"
             )
             if "!UPDATE_LANGUAGES!_%%m"=="en_en" (
-              echo !UPDATE_ID!,%%l>>"%TEMP%\OfficeUpdateAndFileIds.txt"
-              echo %%l>>"%TEMP%\OfficeFileIds.txt"
+              echo %%l,!UPDATE_ID!>>"%TEMP%\OfficeFileAndUpdateIds.txt"
             )
           ) else (
             if "%%m"=="%LANG_SHORT%" (
-              echo !UPDATE_ID!,%%l>>"%TEMP%\OfficeUpdateAndFileIds.txt"
-              echo %%l>>"%TEMP%\OfficeFileIds.txt"
+              echo %%l,!UPDATE_ID!>>"%TEMP%\OfficeFileAndUpdateIds.txt"
             )
           )
         )
@@ -1315,28 +1312,19 @@ set UPDATE_CATEGORY=
 set UPDATE_LANGUAGES=
 del "%TEMP%\UpdateCategoriesAndFileIds.txt"
 
-%SystemRoot%\System32\sort.exe "%TEMP%\OfficeFileIds.txt" /O "%TEMP%\OfficeFileIdsSorted.txt"
+%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\OfficeFileAndUpdateIds.txt" "%TEMP%\OfficeFileIds.txt" /firstonly
+..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\OfficeFileIds.txt" >"%TEMP%\OfficeFileIdsUnique.txt"
 del "%TEMP%\OfficeFileIds.txt"
-%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractUniqueFromSorted.vbs "%TEMP%\OfficeFileIdsSorted.txt" "%TEMP%\OfficeFileIdsUnique.txt"
-del "%TEMP%\OfficeFileIdsSorted.txt"
-%SystemRoot%\System32\findstr.exe /B /L /I /G:"%TEMP%\OfficeFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
+..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\OfficeFileAndUpdateIds.txt" >"%TEMP%\OfficeFileAndUpdateIdsUnique.txt"
+del "%TEMP%\OfficeFileAndUpdateIds.txt"
+..\bin\join.exe -t "," "%TEMP%\OfficeFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocationsUnique.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocationsUnique.txt"
 del "%TEMP%\OfficeFileIdsUnique.txt"
-del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
-
-if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
-if exist "%TEMP%\UpdateTableURL-%1-%2.csv" del "%TEMP%\UpdateTableURL-%1-%2.csv"
-for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt") do (
-  for /F "usebackq tokens=1,2 delims=," %%k in ("%TEMP%\OfficeUpdateAndFileIds.txt") do (
-    if /i "%%l"=="%%i" (
-      echo %%j>>"%TEMP%\DynamicDownloadLinks-%1-%2.txt"
-      echo %%k,%%j>>"%TEMP%\UpdateTableURL-%1-%2.csv"
-    )
-  )
-)
-del "%TEMP%\OfficeUpdateAndFileIds.txt"
-del "%TEMP%\OfficeUpdateCabExeIdsAndLocations.txt"
-if not exist ..\client\ofc\nul md ..\client\ofc
-%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\UpdateTableURL-%1-%2.csv" ..\client\ofc\UpdateTable-%1-%2.csv
+del "%TEMP%\UpdateCabExeIdsAndLocationsUnique.txt"
+..\bin\join.exe -t "," -o "1.2" "%TEMP%\OfficeUpdateCabExeIdsAndLocationsUnique.txt" "%TEMP%\OfficeFileAndUpdateIdsUnique.txt" >"%TEMP%\DynamicDownloadLinks-%1-%2.txt"
+..\bin\join.exe -t "," -o "2.2,1.2" "%TEMP%\OfficeUpdateCabExeIdsAndLocationsUnique.txt" "%TEMP%\OfficeFileAndUpdateIdsUnique.txt" >"%TEMP%\UpdateTableURL-%1-%2.csv"
+del "%TEMP%\OfficeFileAndUpdateIdsUnique.txt"
+del "%TEMP%\OfficeUpdateCabExeIdsAndLocationsUnique.txt"
+%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\UpdateTableURL-%1-%2.csv" "%TEMP%\UpdateTable-%1-%2.csv"
 del "%TEMP%\UpdateTableURL-%1-%2.csv"
 
 :ExcludeOffice
@@ -1589,7 +1577,7 @@ goto :eof
 rem *** Remind build date ***
 if "%SKIP_DL%"=="1" goto EoF
 echo Reminding build date...
-echo %DATE:~-10%>..\client\builddate.txt
+echo %DATE:~-11%>..\client\builddate.txt
 goto EoF
 
 :NoExtensions
