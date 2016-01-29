@@ -9,7 +9,26 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.4b (r724)
+echo.>..\doc\dummy.txt
+if errorlevel 1 (
+  echo.
+  echo ERROR: Unable to create file ..\doc\dummy.txt
+  goto InsufficientRights
+)
+ren ..\doc\dummy.txt _dummy.txt
+if errorlevel 1 (
+  echo.
+  echo ERROR: Unable to rename file ..\doc\dummy.txt
+  goto InsufficientRights
+)
+del ..\doc\_dummy.txt
+if errorlevel 1 (
+  echo.
+  echo ERROR: Unable to delete file ..\doc\dummy.txt
+  goto InsufficientRights
+)
+
+set WSUSOFFLINE_VERSION=10.4b (r725)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -141,11 +160,12 @@ goto EvalParams
 
 :EvalParams
 if "%3"=="" goto NoMoreParams
-for %%i in (/excludesp /excludestatics /includedotnet /includewle /includemsse /includewddefs /nocleanup /verify /exitonerror /skipsdd /skiptz /skipdownload /skipdynamic /proxy /wsus /wsusonly /wsusbyproxy) do (
+for %%i in (/excludesp /excludestatics /excludewinglb /includedotnet /includewle /includemsse /includewddefs /nocleanup /verify /exitonerror /skipsdd /skiptz /skipdownload /skipdynamic /proxy /wsus /wsusonly /wsusbyproxy) do (
   if /i "%3"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected>>%DOWNLOAD_LOGFILE%
 )
 if /i "%3"=="/excludesp" set EXC_SP=1
 if /i "%3"=="/excludestatics" set EXC_STATICS=1
+if /i "%3"=="/excludewinglb" set EXC_WINGLB=1
 if /i "%3"=="/includedotnet" set INC_DOTNET=1
 if /i "%3"=="/includewle" set INC_WLE=1
 if /i "%3"=="/includemsse" set INC_MSSE=1
@@ -306,6 +326,9 @@ if exist ..\exclude\ExcludeListUSB-w2k3-x86.txt del ..\exclude\ExcludeListUSB-w2
 if exist ..\exclude\ExcludeListUSB-w2k3-x64.txt del ..\exclude\ExcludeListUSB-w2k3-x64.txt
 del /Q ..\static\*-w2k3-*.* >nul 2>&1
 del /Q ..\xslt\*-w2k3-*.* >nul 2>&1
+
+rem *** Windows language specific stuff ***
+del /Q ..\static\*-win-x86-*.* >nul 2>&1
 
 rem *** Windows 8 stuff ***
 if exist ..\client\static\StaticUpdateIds-w62-x86.txt del ..\client\static\StaticUpdateIds-w62-x86.txt
@@ -1032,12 +1055,14 @@ if "%VERIFY_DL%"=="1" (
 :SkipWDDefs
 
 rem *** Download the platform specific patches ***
+if "%EXC_WINGLB%"=="1" goto SkipWinGlb
 for %%i in (w60 w60-x64 w61 w61-x64 w62-x64 w63 w63-x64 w100 w100-x64) do (
   if /i "%1"=="%%i" (
-    call :DownloadCore win glb x86 %SKIP_PARAM%
+    call :DownloadCore win glb x86 /skipdynamic
     if errorlevel 1 goto Error
   )
 )
+:SkipWinGlb
 for %%i in (o2k7 o2k10 o2k13) do (
   if /i "%1"=="%%i" (
     call :DownloadCore ofc %2 %TARGET_ARCH% %SKIP_PARAM%
@@ -1586,11 +1611,16 @@ echo ERROR: No command extensions / delayed variable expansion available.
 echo.
 exit /b 1
 
+:InsufficientRights
+echo ERROR: Insufficient file system rights.
+echo.
+goto Error
+
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %*
-echo Usage1: %~n0 {o2k7 ^| o2k10 ^| o2k13} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
-echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| w62-x64 ^| w63 ^| w63-x64 ^| w100 ^| w100-x64 ^| ofc ^| o2k16} {glb} [/excludesp ^| /excludestatics] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
+echo Usage1: %~n0 {o2k7 ^| o2k10 ^| o2k13} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/excludewinglb] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
+echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| w62-x64 ^| w63 ^| w63-x64 ^| w100 ^| w100-x64 ^| ofc ^| o2k16} {glb} [/excludesp ^| /excludestatics] [/excludewinglb] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
 echo %DATE% %TIME% - Error: Invalid parameter: %*>>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
@@ -1667,6 +1697,7 @@ goto Error
 
 :Error
 if "%EXIT_ERR%"=="1" (
+  echo Note: To better help understanding this error, you can select and copy the last messages from this window using the context menu (right mouse click in the window).
   endlocal
   pause
   verify other 2>nul

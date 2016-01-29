@@ -1098,6 +1098,9 @@ Version 10.4 -- ??.??.16
 - Speeded up determination of dynamic Office updates by integrating UnxUtils (http://sourceforge.net/projects/unxutils/) "join" and "gsort" (Thanks to "hbuhrmester")
 - Speeded up determination of missing updates on Windows Vista, 7 and Server 2008(R2) (x86/x64) systems by adding kb3124000 (MS16-005) to scan prerequisites (Thanks to "Denniss", "Dalai" and the community)
 - Dynamically determined updates will now be validated only once a day (Thanks to "hbuhrmester", "aker" and "Denniss")
+- DownloadUpdates.cmd script will now check for sufficient file system rights (Thanks to "hbuhrmester")
+- DownloadUpdates.cmd script will now support "/excludewinglb" switch to avoid Silverlight downloads (Thanks to "boco")
+- UpdateGenerator.ini file will now support "includewinglb" setting in [Options] to control "/excludewinglb" switch for DownloadUpdates.cmd script
 - Fix: Enhanced hashdeep verification stability by deleting zero size checksum files (Thanks to "hbuhrmester")
 - Fix: URLs corrected in StaticDownloadLinks-sysinternals.txt (Thanks to "hbuhrmester" and "harry")
 - Fix: builddate.txt file will now also support dd.mmm.yyyy date format (Thanks to S. Sutherland)

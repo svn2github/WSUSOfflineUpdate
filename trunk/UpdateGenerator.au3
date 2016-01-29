@@ -6,7 +6,7 @@
 #include <GUIConstants.au3>
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Generator")
-#pragma compile(FileVersion, 10.4.0.724)
+#pragma compile(FileVersion, 10.4.0.725)
 #pragma compile(InternalName, "Generator")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateGenerator.exe)
@@ -97,6 +97,7 @@ Dim Const $opts_token_allowdotnet   = "allowdotnet"
 Dim Const $opts_token_wle           = "includewle"
 Dim Const $opts_token_msse          = "includemsse"
 Dim Const $opts_token_wddefs        = "includewddefs"
+Dim Const $opts_token_includewinglb = "includewinglb"
 Dim Const $opts_token_cleanup       = "cleanupdownloads"
 Dim Const $opts_token_verify        = "verifydownloads"
 Dim Const $misc_token_proxy         = "proxy"
@@ -608,6 +609,9 @@ Dim $result = ""
   EndIf
   If IsCheckBoxChecked($chkbox_wddefs) Then
     $result = $result & " /includewddefs"
+  EndIf
+  If IniRead($inifilename, $ini_section_opts, $opts_token_includewinglb, $enabled) = $disabled Then
+    $result = $result & " /excludewinglb"
   EndIf
   If IsCheckBoxChecked($chkbox_verifydownloads) Then
     $result = $result & " /verify"

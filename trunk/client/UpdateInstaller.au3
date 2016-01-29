@@ -6,7 +6,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 10.4.0.724)
+#pragma compile(FileVersion, 10.4.0.725)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -85,7 +85,7 @@ Dim Const $path_invalid_chars         = "!%&()^+,;="
 Dim Const $path_rel_builddate         = "\builddate.txt"
 Dim Const $path_rel_hashes            = "\md\"
 Dim Const $path_rel_autologon         = "\bin\Autologon.exe"
-Dim Const $path_rel_win_glb           = "\win\glb\"
+Dim Const $path_rel_silverlight       = "\win\glb\Silverlight*.exe"
 Dim Const $path_rel_cpp               = "\cpp\vcredist*.exe"
 Dim Const $path_rel_instdotnet4       = "\dotnet\NDP461-KB3102436-x86-x64-AllOS*.exe"
 Dim Const $path_rel_ofc_glb           = "\ofc\glb\"
@@ -311,8 +311,8 @@ Func AutologonPresent($basepath)
   Return FileExists($basepath & $path_rel_autologon)
 EndFunc
 
-Func WinGlbPresent($basepath)
-  Return FileExists($basepath & $path_rel_win_glb)
+Func SilverlightPresent($basepath)
+  Return FileExists($basepath & $path_rel_silverlight)
 EndFunc
 
 Func CPPPresent($basepath)
@@ -459,7 +459,7 @@ Else
     $mssl = GUICtrlCreateCheckbox("Install Microsoft Silverlight", $txtxpos, $txtypos, $txtwidth, $txtheight)
   EndIf
 EndIf
-If ( (NOT WinGlbPresent($scriptdir)) ) Then
+If ( (NOT SilverlightPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If MyIniRead($ini_section_installation, $ini_value_mssl, $disabled) = $enabled Then
@@ -583,8 +583,7 @@ Else
   $tsc = GUICtrlCreateCheckbox("Update Remote Desktop Client", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
-  OR (@OSVersion = "WIN_81")  OR (@OSVersion = "WIN_2012R2") OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") _
-  OR (NOT WinGlbPresent($scriptdir)) ) Then
+  OR (@OSVersion = "WIN_81")  OR (@OSVersion = "WIN_2012R2") OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If MyIniRead($ini_section_installation, $ini_value_tsc, $disabled) = $enabled Then
