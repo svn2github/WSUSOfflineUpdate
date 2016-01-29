@@ -9,26 +9,26 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-echo.>..\doc\dummy.txt
+echo.>..\client\dummy.txt
 if errorlevel 1 (
   echo.
-  echo ERROR: Unable to create file ..\doc\dummy.txt
+  echo ERROR: Unable to create file ..\client\dummy.txt
   goto InsufficientRights
 )
-ren ..\doc\dummy.txt _dummy.txt
+ren ..\client\dummy.txt _dummy.txt
 if errorlevel 1 (
   echo.
-  echo ERROR: Unable to rename file ..\doc\dummy.txt
+  echo ERROR: Unable to rename file ..\client\dummy.txt
   goto InsufficientRights
 )
-del ..\doc\_dummy.txt
+del ..\client\_dummy.txt
 if errorlevel 1 (
   echo.
-  echo ERROR: Unable to delete file ..\doc\dummy.txt
+  echo ERROR: Unable to delete file ..\client\dummy.txt
   goto InsufficientRights
 )
 
-set WSUSOFFLINE_VERSION=10.4b (r725)
+set WSUSOFFLINE_VERSION=10.4b (r726)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -1697,7 +1697,7 @@ goto Error
 
 :Error
 if "%EXIT_ERR%"=="1" (
-  echo Note: To better help understanding this error, you can select and copy the last messages from this window using the context menu (right mouse click in the window).
+  echo Note: To better help understanding this error, you can select and copy the last messages from this window using the context menu ^(right mouse click in the window^).
   endlocal
   pause
   verify other 2>nul
