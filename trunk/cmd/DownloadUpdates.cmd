@@ -9,17 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-if exist ..\doc\history.txt (
-  ren ..\doc\history.txt _history.txt
-  if errorlevel 1 (
-    echo.
-    echo ERROR: Unable to rename file ..\doc\history.txt
-    goto InsufficientRights
-  )
-  ren ..\doc\_history.txt history.txt
-)
-
-set WSUSOFFLINE_VERSION=10.4b (r727)
+set WSUSOFFLINE_VERSION=10.4b (r728)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -211,6 +201,16 @@ if "%TEMP%"=="" goto NoTemp
 pushd "%TEMP%"
 if errorlevel 1 goto NoTempDir
 popd
+if exist ..\doc\history.txt (
+  echo Checking for sufficient file system rights...
+  ren ..\doc\history.txt _history.txt
+  if errorlevel 1 (
+    echo.
+    echo ERROR: Unable to rename file ..\doc\history.txt
+    goto InsufficientRights
+  )
+  ren ..\doc\_history.txt history.txt
+)
 set CSCRIPT_PATH=%SystemRoot%\System32\cscript.exe
 if not exist %CSCRIPT_PATH% goto NoCScript
 if exist custom\SetAria2EnvVars.cmd (call custom\SetAria2EnvVars.cmd) else (
@@ -1340,6 +1340,7 @@ del "%TEMP%\UpdateCabExeIdsAndLocationsUnique.txt"
 ..\bin\join.exe -t "," -o "2.2,1.2" "%TEMP%\OfficeUpdateCabExeIdsAndLocationsUnique.txt" "%TEMP%\OfficeFileAndUpdateIdsUnique.txt" >"%TEMP%\UpdateTableURL-%1-%2.csv"
 del "%TEMP%\OfficeFileAndUpdateIdsUnique.txt"
 del "%TEMP%\OfficeUpdateCabExeIdsAndLocationsUnique.txt"
+if not exist ..\client\ofc\nul md ..\client\ofc
 %CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\UpdateTableURL-%1-%2.csv" ..\client\ofc\UpdateTable-%1-%2.csv
 del "%TEMP%\UpdateTableURL-%1-%2.csv"
 
@@ -1602,11 +1603,6 @@ echo ERROR: No command extensions / delayed variable expansion available.
 echo.
 exit /b 1
 
-:InsufficientRights
-echo ERROR: Insufficient file system rights.
-echo.
-goto Error
-
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %*
@@ -1627,6 +1623,12 @@ goto Error
 echo.
 echo ERROR: Directory "%TEMP%" not found.
 echo %DATE% %TIME% - Error: Directory "%TEMP%" not found>>%DOWNLOAD_LOGFILE%
+echo.
+goto Error
+
+:InsufficientRights
+echo ERROR: Insufficient file system rights.
+echo %DATE% %TIME% - Error: Insufficient file system rights>>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 
