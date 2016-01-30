@@ -9,26 +9,17 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-echo.>..\client\dummy.txt
-if errorlevel 1 (
-  echo.
-  echo ERROR: Unable to create file ..\client\dummy.txt
-  goto InsufficientRights
-)
-ren ..\client\dummy.txt _dummy.txt
-if errorlevel 1 (
-  echo.
-  echo ERROR: Unable to rename file ..\client\dummy.txt
-  goto InsufficientRights
-)
-del ..\client\_dummy.txt
-if errorlevel 1 (
-  echo.
-  echo ERROR: Unable to delete file ..\client\dummy.txt
-  goto InsufficientRights
+if exist ..\doc\history.txt (
+  ren ..\doc\history.txt _history.txt
+  if errorlevel 1 (
+    echo.
+    echo ERROR: Unable to rename file ..\doc\history.txt
+    goto InsufficientRights
+  )
+  ren ..\doc\_history.txt history.txt
 )
 
-set WSUSOFFLINE_VERSION=10.4b (r726)
+set WSUSOFFLINE_VERSION=10.4b (r727)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -1349,7 +1340,7 @@ del "%TEMP%\UpdateCabExeIdsAndLocationsUnique.txt"
 ..\bin\join.exe -t "," -o "2.2,1.2" "%TEMP%\OfficeUpdateCabExeIdsAndLocationsUnique.txt" "%TEMP%\OfficeFileAndUpdateIdsUnique.txt" >"%TEMP%\UpdateTableURL-%1-%2.csv"
 del "%TEMP%\OfficeFileAndUpdateIdsUnique.txt"
 del "%TEMP%\OfficeUpdateCabExeIdsAndLocationsUnique.txt"
-%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\UpdateTableURL-%1-%2.csv" "%TEMP%\UpdateTable-%1-%2.csv"
+%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\UpdateTableURL-%1-%2.csv" ..\client\ofc\UpdateTable-%1-%2.csv
 del "%TEMP%\UpdateTableURL-%1-%2.csv"
 
 :ExcludeOffice
