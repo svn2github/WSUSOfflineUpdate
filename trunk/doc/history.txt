@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 10.3.2
+WSUS Offline Update 10.4
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1092,7 +1092,7 @@ Version 10.3.2 -- 14.01.16
 - Fix: Excluded obsolete kb3097877 for Windows 10 x64 from download (Thanks to "aker")
 - Fix: AddCustomLanguageSupport.cmd script contained invalid file name prefix for .NET Framework 4.6.1 (Thanks to "hbuhrmester")
 --------------------------------------------------------------------------------
-Version 10.4 -- ??.??.16
+Version 10.4 -- 01.02.16
 - Support removed for Windows 8 (w62 x86) since Microsoft discontinued support for it on January 12, 2016 (see https://support.microsoft.com/en-us/lifecycle#Microsoft-Windows-81)
 - Mandatory installation of most recent Internet Explorer on Windows Vista, 7 and Server 2008(R2) (x86/x64) systems (see https://www.microsoft.com/en-us/WindowsForBusiness/End-of-IE-support)
 - Speeded up determination of dynamic Office updates by integrating UnxUtils (http://sourceforge.net/projects/unxutils/) "join" and "gsort" (Thanks to "hbuhrmester")
@@ -1105,3 +1105,4 @@ Version 10.4 -- ??.??.16
 - Fix: URLs corrected in StaticDownloadLinks-sysinternals.txt (Thanks to "hbuhrmester" and "harry")
 - Fix: builddate.txt file will now also support dd.mmm.yyyy date format (Thanks to S. Sutherland)
 - Fix: FAQs corrected (Thanks to "aker")
+--------------------------------------------------------------------------------
