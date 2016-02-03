@@ -17,4 +17,4 @@ http://download.microsoft.com/download/3/9/D/39D85CA8-7BF3-47C1-9031-FD6E51D8BBE
 http://download.microsoft.com/download/9/2/F/92FC119C-3BCD-476C-B425-038A39625558/IE11-Windows6.1-x86-en-us.exe
 http://download.microsoft.com/download/3/7/1/3712057D-154F-4F00-A183-0BD7285DF503/IE11-Windows6.1-x86-de-de.exe
 http://download.windowsupdate.com/windowsupdate/redist/standalone/7.6.7600.320/WindowsUpdateAgent-7.6-x86.exe
-http://download.microsoft.com/download/3/0/B/30B6E9CF-8BD5-4F0D-8759-D42147C990D3/Windows6.1-KB3112343-x86.msu
+http://download.microsoft.com/download/2/E/D/2ED368A8-9967-4829-9CD5-9037AD48FF72/Windows6.1-KB3135445-x86.msu

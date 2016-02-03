@@ -1106,3 +1106,5 @@ Version 10.4 -- 01.02.16
 - Fix: builddate.txt file will now also support dd.mmm.yyyy date format (Thanks to S. Sutherland)
 - Fix: FAQs corrected (Thanks to "aker")
 --------------------------------------------------------------------------------
+Version ??.? -- ??.??.??
+- Replaced superseded Windows Update Client December 2015 (kb3112343/kb3112336) for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2 by Windows Update Client February 2016 (kb3135445/kb3135449) (Thanks to "harry")
