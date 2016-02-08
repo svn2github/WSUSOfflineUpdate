@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.4+ (r731)
+set WSUSOFFLINE_VERSION=10.4+ (r732)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -451,13 +451,13 @@ echo Downloading Sysinternals' tools Autologon, Sigcheck and Streams...
 if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded Sysinternals' tools Autologon, Sigcheck and Streams>>%DOWNLOAD_LOGFILE%
 pushd ..\bin
-unzip.exe -o autologon.zip Autologon.exe
-del autologon.zip
+unzip.exe -o AutoLogon.zip Autologon.exe
+del AutoLogon.zip
 move /Y Autologon.exe ..\client\bin >nul
-unzip.exe -o sigcheck.zip sigcheck.exe
-del sigcheck.zip
-unzip.exe -o streams.zip streams.exe
-del streams.zip
+unzip.exe -o Sigcheck.zip sigcheck.exe
+del Sigcheck.zip
+unzip.exe -o Streams.zip streams.exe
+del Streams.zip
 popd
 :SkipSysinternals
 if not exist ..\bin\sigcheck.exe goto SkipSigChkOpts
