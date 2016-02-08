@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.4+ (r732)
+set WSUSOFFLINE_VERSION=10.4+ (r733)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -1134,8 +1134,14 @@ if exist ..\static\custom\StaticDownloadLinks-%1-%3-%2.txt (
 if not exist "%TEMP%\StaticDownloadLinks-%1-%2.txt" goto SkipStatics
 
 :EvalStatics
+if exist "%TEMP%\ExcludeListStatic.txt" del "%TEMP%\ExcludeListStatic.txt"
+if exist ..\exclude\custom\ExcludeListForce-all.txt copy /Y ..\exclude\custom\ExcludeListForce-all.txt "%TEMP%\ExcludeListStatic.txt" >nul
 if "%EXC_SP%"=="1" (
-  %SystemRoot%\System32\findstr.exe /L /I /V /G:..\exclude\ExcludeList-SPs.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >"%TEMP%\ValidStaticLinks-%1-%2.txt"
+  type ..\exclude\ExcludeList-SPs.txt >>"%TEMP%\ExcludeListStatic.txt"
+)
+if exist "%TEMP%\ExcludeListStatic.txt" (
+  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeListStatic.txt" "%TEMP%\StaticDownloadLinks-%1-%2.txt" >"%TEMP%\ValidStaticLinks-%1-%2.txt"
+  del "%TEMP%\ExcludeListStatic.txt"
   del "%TEMP%\StaticDownloadLinks-%1-%2.txt"
 ) else (
   ren "%TEMP%\StaticDownloadLinks-%1-%2.txt" ValidStaticLinks-%1-%2.txt
@@ -1267,6 +1273,9 @@ if exist ..\exclude\custom\ExcludeList-%1-%3.txt (
   type ..\exclude\custom\ExcludeList-%1-%3.txt >>"%TEMP%\ExcludeList-%1.txt"
 )
 :ExcludeWindows
+if exist ..\exclude\custom\ExcludeListForce-all.txt (
+  type ..\exclude\custom\ExcludeListForce-all.txt >>"%TEMP%\ExcludeList-%1.txt"
+)
 if exist ..\exclude\ExcludeList-superseded.txt (
   type ..\exclude\ExcludeList-superseded.txt >>"%TEMP%\ExcludeList-%1.txt"
 )
@@ -1355,6 +1364,9 @@ if exist ..\exclude\custom\ExcludeList-%1.txt (
 )
 if exist ..\exclude\custom\ExcludeList-%1-%2.txt (
   type ..\exclude\custom\ExcludeList-%1-%2.txt >>"%TEMP%\ExcludeList-%1.txt"
+)
+if exist ..\exclude\custom\ExcludeListForce-all.txt (
+  type ..\exclude\custom\ExcludeListForce-all.txt >>"%TEMP%\ExcludeList-%1.txt"
 )
 if exist ..\exclude\ExcludeList-superseded.txt (
   type ..\exclude\ExcludeList-superseded.txt >>"%TEMP%\ExcludeList-%1.txt"
