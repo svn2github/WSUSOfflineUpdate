@@ -6,7 +6,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 10.4.0.733)
+#pragma compile(FileVersion, 10.4.0.734)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -68,6 +68,7 @@ Dim Const $ini_value_shutdown         = "shutdown"
 
 Dim Const $ini_section_messaging      = "Messaging"
 Dim Const $ini_value_showlog          = "showlog"
+Dim Const $ini_value_showieinfo       = "showieinfo"
 
 Dim Const $ini_section_wle            = "Essentials"
 Dim Const $ini_section_msi            = "MSI"
@@ -880,6 +881,31 @@ If (StringRight(EnvGet("TEMP"), 1) = "\") OR (StringRight(EnvGet("TEMP"), 1) = "
   EndIf
   Exit(1)
 EndIf
+If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) _
+ AND (MyIniRead($ini_section_messaging, $ini_value_showieinfo, $enabled) = $enabled) ) Then
+  If ShowGUIInGerman() Then
+     MsgBox(0x2040, "Information", "Auf diesem System wird, sofern noch nicht vorhanden," _
+                           & @LF & "die neueste Version des Internet Explorers (IE9)" _
+                           & @LF & "automatisch installiert, wenn Sie die Aktualisierung starten.")
+  Else
+     MsgBox(0x2040, "Information", "If not already present, the most recent version" _
+                           & @LF & "of Internet Explorer (IE9) will be automatically installed" _
+                           & @LF & "on this system, when you start the updating process.")
+  EndIf
+EndIf
+If ( ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) _
+ AND (MyIniRead($ini_section_messaging, $ini_value_showieinfo, $enabled) = $enabled) ) Then
+  If ShowGUIInGerman() Then
+     MsgBox(0x2040, "Information", "Auf diesem System wird, sofern noch nicht vorhanden," _
+                           & @LF & "die neueste Version des Internet Explorers (IE11)" _
+                           & @LF & "automatisch installiert, wenn Sie die Aktualisierung starten.")
+  Else
+     MsgBox(0x2040, "Information", "If not already present, the most recent version" _
+                           & @LF & "of Internet Explorer (IE11) will be automatically installed" _
+                           & @LF & "on this system, when you start the updating process.")
+  EndIf
+EndIf
+
 While 1
   Switch GUIGetMsg()
     Case $GUI_EVENT_CLOSE    ; Window closed

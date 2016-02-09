@@ -1107,6 +1107,7 @@ Version 10.4 -- 01.02.16
 - Fix: FAQs corrected (Thanks to "aker")
 --------------------------------------------------------------------------------
 Version ??.? -- ??.??.??
+- UpdateInstaller script will now show popup information for mandatory installation of most recent Internet Explorer on Windows Vista, 7 and Server 2008(R2) (x86/x64) systems (Thanks to "Denniss")
 - Replaced superseded Windows Update Client December 2015 (kb3112343/kb3112336) for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2 by Windows Update Client February 2016 (kb3135445/kb3135449) (Thanks to "harry")
 - Excluded obsolete dynamic updates for Office XP and 2003 (Thanks to "Denniss" and "aker")
 - Introduced file ..\exclude\custom\ExcludeListForce-all.txt to exclude even statically defined updates from download (Thanks to "archiveguy", "boco" and "aker")
