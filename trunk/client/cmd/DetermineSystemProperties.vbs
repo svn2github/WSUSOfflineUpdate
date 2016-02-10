@@ -14,6 +14,7 @@ Private Const strRegKeyMSSE                   = "HKLM\Software\Microsoft\Microso
 Private Const strRegKeyMSSEUninstall          = "HKLM\Software\Microsoft\Windows\CurrentVersion\Uninstall\Microsoft Security Client\"
 Private Const strRegKeyMSSEDefs               = "HKLM\Software\Microsoft\Microsoft Antimalware\Signature Updates\"
 Private Const strRegKeyWD                     = "HKLM\Software\Microsoft\Windows Defender\"
+Private Const strRegKeyWDPolicy               = "HKLM\Software\Policies\Microsoft\Windows Defender\"
 Private Const strRegKeyWDDefs                 = "HKLM\Software\Microsoft\Windows Defender\Signature Updates\"
 Private Const strRegKeyPowerCfg               = "HKCU\Control Panel\PowerCfg\"
 Private Const strRegValVersion                = "Version"
@@ -495,7 +496,12 @@ Else
 End If
 
 ' Determine Windows Defender state
-objCmdFile.WriteLine("set WD_DISABLED=" & RegRead(wshShell, strRegKeyWD & strRegValDisableAntiSpyware))
+If ( (RegRead(wshShell, strRegKeyWD & strRegValDisableAntiSpyware) = "1") _
+  Or (RegRead(wshShell, strRegKeyWDPolicy & strRegValDisableAntiSpyware) = "1") ) Then
+  objCmdFile.WriteLine("set WD_DISABLED=1")
+Else
+  objCmdFile.WriteLine("set WD_DISABLED=0")
+End If
 
 ' Determine Microsoft Antispyware signatures' version
 WriteVersionToFile objCmdFile, "WDDEFS_VER", RegRead(wshShell, strRegKeyWDDefs & strRegValASSVersion)

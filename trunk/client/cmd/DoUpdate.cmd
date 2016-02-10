@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.4+ (r734)
+set WSUSOFFLINE_VERSION=10.4+ (r735)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -65,18 +65,24 @@ pushd "%TEMP%"
 if errorlevel 1 goto NoTempDir
 popd
 
-if exist %SystemRoot%\Sysnative\reg.exe (
-  set REG_PATH=%SystemRoot%\Sysnative\reg.exe
-) else (
-  set REG_PATH=%SystemRoot%\System32\reg.exe
-)
-if not exist %REG_PATH% goto NoReg
 if exist %SystemRoot%\Sysnative\cscript.exe (
   set CSCRIPT_PATH=%SystemRoot%\Sysnative\cscript.exe
 ) else (
   set CSCRIPT_PATH=%SystemRoot%\System32\cscript.exe
 )
 if not exist %CSCRIPT_PATH% goto NoCScript
+if exist %SystemRoot%\Sysnative\reg.exe (
+  set REG_PATH=%SystemRoot%\Sysnative\reg.exe
+) else (
+  set REG_PATH=%SystemRoot%\System32\reg.exe
+)
+if not exist %REG_PATH% goto NoReg
+if exist %SystemRoot%\Sysnative\sc.exe (
+  set SC_PATH=%SystemRoot%\Sysnative\sc.exe
+) else (
+  set SC_PATH=%SystemRoot%\System32\sc.exe
+)
+if not exist %SC_PATH% goto NoSc
 
 rem *** Check user's privileges ***
 echo Checking user's privileges...
@@ -1263,23 +1269,33 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
 :CheckWUSvc
 rem *** Check state of service 'Windows Update' ***
 echo Checking state of service 'Windows Update'...
-%CSCRIPT_PATH% //Nologo //B //E:vbs DetermineServiceState.vbs wuauserv AUSVC
+for /F "tokens=3" %%i in ('%REG_PATH% QUERY HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start ^| %SystemRoot%\System32\find.exe /I "Start"') do set WUSVC_STVAL=%%i
+for /F "tokens=3" %%i in ('%REG_PATH% QUERY HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart ^| %SystemRoot%\System32\find.exe /I "DelayedAutoStart"') do set WUSVC_STDEL=%%i
+%CSCRIPT_PATH% //Nologo //B //E:vbs DetermineServiceState.vbs wuauserv WUSVC
 if not exist "%TEMP%\SetServiceState.cmd" goto ListMissingIds
 call "%TEMP%\SetServiceState.cmd"
 del "%TEMP%\SetServiceState.cmd"
-echo %DATE% %TIME% - Info: Detected state of service 'Windows Update': %AUSVC_STATE% (start mode: %AUSVC_SMODE%)>>%UPDATE_LOGFILE%
-if /i "%AUSVC_SMODE%"=="Auto" (
+echo %DATE% %TIME% - Info: Detected state of service 'Windows Update': %WUSVC_STATE% (start mode: %WUSVC_SMODE%)>>%UPDATE_LOGFILE%
+if /i "%WUSVC_SMODE%"=="Auto" (
   if "%USERNAME%"=="WOUTempAdmin" goto ListMissingIds
 )
-if /i "%AUSVC_STATE%"=="Running" goto ListMissingIds
-if /i "%AUSVC_STATE%"=="Start Pending" goto ListMissingIds
-if /i "%AUSVC_STATE%"=="Unknown" goto ListMissingIds
-if /i "%AUSVC_STATE%"=="" goto ListMissingIds
-if /i "%AUSVC_SMODE%"=="Disabled" goto AUSvcNotRunning
+if /i "%WUSVC_STATE%"=="Running" goto ListMissingIds
+if /i "%WUSVC_STATE%"=="Start Pending" goto ListMissingIds
+if /i "%WUSVC_STATE%"=="Unknown" goto ListMissingIds
+if /i "%WUSVC_STATE%"=="" goto ListMissingIds
+if /i "%WUSVC_SMODE%"=="Disabled" (
+  echo Enabling service 'Windows Update' ^(wuauserv^) - previous state will be recovered later...
+  %SC_PATH% config wuauserv start= demand >nul
+  if errorlevel 1 goto AUSvcNotRunning
+  set WUSVC_ENABLED=1
+  echo %DATE% %TIME% - Info: Enabled service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
+  %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start /t REG_DWORD /d %WUSVC_STVAL% /f
+  %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart /t REG_DWORD /d %WUSVC_STDEL% /f
+)
 echo Starting service 'Windows Update' (wuauserv) - previous state will be recovered later...
-%SystemRoot%\System32\net.exe start wuauserv >nul
+%SC_PATH% start wuauserv >nul
 if errorlevel 1 goto AUSvcNotRunning
-set AUSVC_STARTED=1
+set WUSVC_STARTED=1
 echo %DATE% %TIME% - Info: Started service 'Windows Update' (wuauserv)>>%UPDATE_LOGFILE%
 
 :ListMissingIds
@@ -1312,14 +1328,6 @@ if exist "%TEMP%\wsusscn2.cab" del "%TEMP%\wsusscn2.cab"
 echo %TIME% - Done.
 echo %DATE% %TIME% - Info: Listed ids of missing updates>>%UPDATE_LOGFILE%
 if not exist "%TEMP%\MissingUpdateIds.txt" set NO_MISSING_IDS=1
-echo Stopping service 'Windows Update' (wuauserv) - previous state will be recovered later...
-%SystemRoot%\System32\net.exe stop wuauserv >nul
-if errorlevel 1 (
-  echo %DATE% %TIME% - Warning: Stopping of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
-) else (
-  set AUSVC_STOPPED=1
-  echo %DATE% %TIME% - Info: Stopped service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
-)
 
 :ListInstalledIds
 rem *** List ids of installed updates ***
@@ -1339,6 +1347,24 @@ echo %DATE% %TIME% - Info: Listed update files>>%UPDATE_LOGFILE%
 :InstallUpdates
 rem *** Install updates ***
 if not exist "%TEMP%\UpdatesToInstall.txt" goto SkipUpdates
+echo Stopping service 'Windows Update' (wuauserv) - previous state will be recovered later...
+%SC_PATH% stop wuauserv >nul
+if errorlevel 1 (
+  echo %DATE% %TIME% - Warning: Stopping of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
+) else (
+  set WUSVC_STOPPED=1
+  echo %DATE% %TIME% - Info: Stopped service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
+)
+echo Disabling service 'Windows Update' (wuauserv) - previous state will be recovered later...
+%SC_PATH% config wuauserv start= disabled >nul
+if errorlevel 1 (
+  echo %DATE% %TIME% - Warning: Disabling of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
+) else (
+  set WUSVC_DISABLED=1
+  echo %DATE% %TIME% - Info: Disabled service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
+)
+%REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start /t REG_DWORD /d %WUSVC_STVAL% /f
+%REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart /t REG_DWORD /d %WUSVC_STDEL% /f
 echo Installing updates...
 call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /errorsaswarnings
 if errorlevel 1 goto InstError
@@ -1544,6 +1570,13 @@ echo %DATE% %TIME% - Error: Directory "%TEMP%" not found>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
+:NoCScript
+echo.
+echo ERROR: VBScript interpreter %CSCRIPT_PATH% not found.
+echo %DATE% %TIME% - Error: VBScript interpreter %CSCRIPT_PATH% not found>>%UPDATE_LOGFILE%
+echo.
+goto Cleanup
+
 :NoReg
 echo.
 echo ERROR: Registry tool %REG_PATH% not found.
@@ -1551,10 +1584,10 @@ echo %DATE% %TIME% - Error: Registry tool %REG_PATH% not found>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
-:NoCScript
+:NoSc
 echo.
-echo ERROR: VBScript interpreter %CSCRIPT_PATH% not found.
-echo %DATE% %TIME% - Error: VBScript interpreter %CSCRIPT_PATH% not found>>%UPDATE_LOGFILE%
+echo ERROR: Service control utility %SC_PATH% not found.
+echo %DATE% %TIME% - Error: Service control utility %SC_PATH% not found>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
@@ -1623,8 +1656,8 @@ goto Cleanup
 
 :AUSvcNotRunning
 echo.
-echo ERROR: Service 'Windows Update' (wuauserv) is not running and could not be started.
-echo %DATE% %TIME% - Error: Service 'Windows Update' (wuauserv) is not running and could not be started>>%UPDATE_LOGFILE%
+echo ERROR: Service 'Windows Update' (wuauserv) could not be started.
+echo %DATE% %TIME% - Error: Service 'Windows Update' (wuauserv) could not be started>>%UPDATE_LOGFILE%
 echo.
 goto Cleanup
 
@@ -1688,10 +1721,24 @@ if "%USERNAME%"=="WOUTempAdmin" (
   echo Rebooting...
   %SystemRoot%\System32\shutdown.exe /r /f /t 3
 ) else (
-  if "%AUSVC_STOPPED%"=="1" (
-    if "%AUSVC_STARTED%" NEQ "1" (
+  if "%WUSVC_DISABLED%"=="1" (
+    if "%WUSVC_ENABLED%" NEQ "1" (
+      echo Enabling service 'Windows Update' ^(wuauserv^)...
+      %SC_PATH% config wuauserv start= auto >nul
+      if errorlevel 1 (
+        echo %DATE% %TIME% - Warning: Enabling of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
+      ) else (
+        set WUSVC_DISABLED=1
+        echo %DATE% %TIME% - Info: Enabled service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
+      )
+      %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start /t REG_DWORD /d %WUSVC_STVAL% /f
+      %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart /t REG_DWORD /d %WUSVC_STDEL% /f
+    )
+  )
+  if "%WUSVC_STOPPED%"=="1" (
+    if "%WUSVC_STARTED%" NEQ "1" (
       echo Starting service 'Windows Update' ^(wuauserv^)...
-      %SystemRoot%\System32\net.exe start wuauserv >nul
+      %SC_PATH% start wuauserv >nul
       if errorlevel 1 (
         echo %DATE% %TIME% - Warning: Starting of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
       ) else (
