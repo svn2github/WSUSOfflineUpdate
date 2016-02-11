@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.4+ (r735)
+set WSUSOFFLINE_VERSION=10.4+ (r736)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -105,24 +105,11 @@ if "%OS_ARCH%"=="" (
     if /i "%PROCESSOR_ARCHITEW6432%"=="AMD64" (set OS_ARCH=x64) else (set OS_ARCH=x86)
   )
 )
-if "%OS_LANG%"=="" goto UnsupLang
 if /i "%OS_ARCH%"=="x64" (set HASHDEEP_PATH=..\bin\hashdeep64.exe) else (set HASHDEEP_PATH=..\bin\hashdeep.exe)
 
 rem *** Set target environment variables ***
+if "%OS_VER_MAJOR%"=="" goto UnsupOS
 call SetTargetEnvVars.cmd
-if errorlevel 1 goto Cleanup
-
-rem *** Check number of automatic recalls ***
-if "%USERNAME%"=="WOUTempAdmin" (
-  echo Checking number of automatic recalls...
-  if exist "%TEMP%\wourecall.%WOU_ENDLESS%" goto EndlessLoop
-  if exist "%TEMP%\wourecall.5" ren "%TEMP%\wourecall.5" wourecall.6
-  if exist "%TEMP%\wourecall.4" ren "%TEMP%\wourecall.4" wourecall.5
-  if exist "%TEMP%\wourecall.3" ren "%TEMP%\wourecall.3" wourecall.4
-  if exist "%TEMP%\wourecall.2" ren "%TEMP%\wourecall.2" wourecall.3
-  if exist "%TEMP%\wourecall.1" ren "%TEMP%\wourecall.1" wourecall.2
-  if not exist "%TEMP%\wourecall.*" echo. >"%TEMP%\wourecall.1"
-)
 
 rem *** Check Operating System ***
 if "%OS_NAME%"=="" goto UnsupOS
@@ -135,6 +122,19 @@ if "%OS_NAME%"=="w62" (
 for %%i in (x86 x64) do (if /i "%OS_ARCH%"=="%%i" goto ValidArch)
 goto UnsupArch
 :ValidArch
+if "%OS_LANG%"=="" goto UnsupLang
+
+rem *** Check number of automatic recalls ***
+if "%USERNAME%"=="WOUTempAdmin" (
+  echo Checking number of automatic recalls...
+  if exist "%TEMP%\wourecall.%WOU_ENDLESS%" goto EndlessLoop
+  if exist "%TEMP%\wourecall.5" ren "%TEMP%\wourecall.5" wourecall.6
+  if exist "%TEMP%\wourecall.4" ren "%TEMP%\wourecall.4" wourecall.5
+  if exist "%TEMP%\wourecall.3" ren "%TEMP%\wourecall.3" wourecall.4
+  if exist "%TEMP%\wourecall.2" ren "%TEMP%\wourecall.2" wourecall.3
+  if exist "%TEMP%\wourecall.1" ren "%TEMP%\wourecall.1" wourecall.2
+  if not exist "%TEMP%\wourecall.*" echo. >"%TEMP%\wourecall.1"
+)
 
 rem *** Adjust power management settings ***
 if "%USERNAME%" NEQ "WOUTempAdmin" goto SkipPowerCfg
@@ -1285,7 +1285,7 @@ if /i "%WUSVC_STATE%"=="Unknown" goto ListMissingIds
 if /i "%WUSVC_STATE%"=="" goto ListMissingIds
 if /i "%WUSVC_SMODE%"=="Disabled" (
   echo Enabling service 'Windows Update' ^(wuauserv^) - previous state will be recovered later...
-  %SC_PATH% config wuauserv start= demand >nul
+  %SC_PATH% config wuauserv start= demand >nul 2>&1
   if errorlevel 1 goto AUSvcNotRunning
   set WUSVC_ENABLED=1
   echo %DATE% %TIME% - Info: Enabled service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
@@ -1293,7 +1293,7 @@ if /i "%WUSVC_SMODE%"=="Disabled" (
   %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart /t REG_DWORD /d %WUSVC_STDEL% /f
 )
 echo Starting service 'Windows Update' (wuauserv) - previous state will be recovered later...
-%SC_PATH% start wuauserv >nul
+%SC_PATH% start wuauserv >nul 2>&1
 if errorlevel 1 goto AUSvcNotRunning
 set WUSVC_STARTED=1
 echo %DATE% %TIME% - Info: Started service 'Windows Update' (wuauserv)>>%UPDATE_LOGFILE%
@@ -1348,7 +1348,7 @@ echo %DATE% %TIME% - Info: Listed update files>>%UPDATE_LOGFILE%
 rem *** Install updates ***
 if not exist "%TEMP%\UpdatesToInstall.txt" goto SkipUpdates
 echo Stopping service 'Windows Update' (wuauserv) - previous state will be recovered later...
-%SC_PATH% stop wuauserv >nul
+%SC_PATH% stop wuauserv >nul 2>&1
 if errorlevel 1 (
   echo %DATE% %TIME% - Warning: Stopping of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
 ) else (
@@ -1356,7 +1356,7 @@ if errorlevel 1 (
   echo %DATE% %TIME% - Info: Stopped service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
 )
 echo Disabling service 'Windows Update' (wuauserv) - previous state will be recovered later...
-%SC_PATH% config wuauserv start= disabled >nul
+%SC_PATH% config wuauserv start= disabled >nul 2>&1
 if errorlevel 1 (
   echo %DATE% %TIME% - Warning: Disabling of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
 ) else (
@@ -1473,6 +1473,71 @@ set NISDEFS_VER_TARGET_BUILD=
 set NISDEFS_VER_TARGET_REVIS=
 
 if "%REBOOT_REQUIRED%" NEQ "1" goto NoUpdates
+goto Installed
+
+:RebootOrShutdown
+if "%SHOW_LOG%"=="/showlog" call PrepareShowLogFile.cmd
+if "%FINISH_MODE%"=="/shutdown" (
+  echo Shutting down...
+  %SystemRoot%\System32\shutdown.exe /s /f /t 3
+  goto :eof
+)
+if "%BOOT_MODE%"=="/autoreboot" (
+  if exist %SystemRoot%\System32\bcdedit.exe (
+    echo Adjusting boot sequence for next reboot...
+    %SystemRoot%\System32\bcdedit.exe /bootsequence {current}
+    echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot>>%UPDATE_LOGFILE%
+  )
+  echo Rebooting...
+  %SystemRoot%\System32\shutdown.exe /r /f /t 3
+)
+goto :eof
+
+:RestoreWUSvc
+if "%WUSVC_DISABLED%"=="1" (
+  if "%WUSVC_ENABLED%" NEQ "1" (
+    echo Enabling service 'Windows Update' ^(wuauserv^)...
+    %SC_PATH% config wuauserv start= auto >nul 2>&1
+    if errorlevel 1 (
+      echo %DATE% %TIME% - Warning: Enabling of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
+    ) else (
+      set WUSVC_DISABLED=1
+      echo %DATE% %TIME% - Info: Enabled service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
+    )
+    %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start /t REG_DWORD /d %WUSVC_STVAL% /f
+    %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart /t REG_DWORD /d %WUSVC_STDEL% /f
+  )
+)
+if "%WUSVC_STOPPED%"=="1" (
+  if "%WUSVC_STARTED%" NEQ "1" (
+    echo Starting service 'Windows Update' ^(wuauserv^)...
+    %SC_PATH% start wuauserv >nul 2>&1
+    if errorlevel 1 (
+      echo %DATE% %TIME% - Warning: Starting of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
+    ) else (
+      echo %DATE% %TIME% - Info: Started service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
+    )
+  )
+)
+goto :eof
+
+:Cleanup
+if exist %SystemRoot%\Temp\wou_w63upd1_tried.txt del %SystemRoot%\Temp\wou_w63upd1_tried.txt
+if exist %SystemRoot%\Temp\wou_w63upd2_tried.txt del %SystemRoot%\Temp\wou_w63upd2_tried.txt
+if exist %SystemRoot%\Temp\wou_iepre_tried.txt del %SystemRoot%\Temp\wou_iepre_tried.txt
+if exist %SystemRoot%\Temp\wou_ie_tried.txt del %SystemRoot%\Temp\wou_ie_tried.txt
+if exist %SystemRoot%\Temp\wou_wupre_tried.txt del %SystemRoot%\Temp\wou_wupre_tried.txt
+if exist "%TEMP%\UpdateInstaller.ini" del "%TEMP%\UpdateInstaller.ini"
+if "%USERNAME%"=="WOUTempAdmin" (
+  echo Cleaning up automatic recall...
+  call CleanupRecall.cmd
+  del /Q "%TEMP%\wourecall.*"
+  call :RebootOrShutdown
+)
+if "%BOOT_MODE%"=="/autoreboot" goto :eof
+if "%FINISH_MODE%"=="/shutdown" goto :eof
+if "%SHOW_LOG%"=="/showlog" start %SystemRoot%\System32\notepad.exe %UPDATE_LOGFILE%
+goto :eof
 
 :Installed
 if "%RECALL_REQUIRED%"=="1" (
@@ -1502,47 +1567,28 @@ if "%RECALL_REQUIRED%"=="1" (
     %SystemRoot%\System32\shutdown.exe /r /f /t 3
   ) else goto ManualRecall
 ) else (
-  if exist %SystemRoot%\Temp\wou_w63upd1_tried.txt del %SystemRoot%\Temp\wou_w63upd1_tried.txt
-  if exist %SystemRoot%\Temp\wou_w63upd2_tried.txt del %SystemRoot%\Temp\wou_w63upd2_tried.txt
-  if exist %SystemRoot%\Temp\wou_iepre_tried.txt del %SystemRoot%\Temp\wou_iepre_tried.txt
-  if exist %SystemRoot%\Temp\wou_ie_tried.txt del %SystemRoot%\Temp\wou_ie_tried.txt
-  if exist %SystemRoot%\Temp\wou_wupre_tried.txt del %SystemRoot%\Temp\wou_wupre_tried.txt
-  if exist "%TEMP%\UpdateInstaller.ini" del "%TEMP%\UpdateInstaller.ini"
-  if "%SHOW_LOG%"=="/showlog" call PrepareShowLogFile.cmd
-  if "%BOOT_MODE%"=="/autoreboot" (
-    if "%USERNAME%"=="WOUTempAdmin" (
-      echo Cleaning up automatic recall...
-      call CleanupRecall.cmd
-      del /Q "%TEMP%\wourecall.*"
+  call :Cleanup
+  if "%USERNAME%" NEQ "WOUTempAdmin" (
+    if "%BOOT_MODE%"=="/autoreboot" (
+      call :RebootOrShutdown
+      goto EoF
     )
     if "%FINISH_MODE%"=="/shutdown" (
-      echo Shutting down...
-      %SystemRoot%\System32\shutdown.exe /s /f /t 3
-    ) else (
-      if exist %SystemRoot%\System32\bcdedit.exe (
-        echo Adjusting boot sequence for next reboot...
-        %SystemRoot%\System32\bcdedit.exe /bootsequence {current}
-        echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot>>%UPDATE_LOGFILE%
-      )
-      echo Rebooting...
-      %SystemRoot%\System32\shutdown.exe /r /f /t 3
+      call :RebootOrShutdown
+      goto EoF
     )
-  ) else (
-    if "%FINISH_MODE%"=="/shutdown" (
-      echo Shutting down...
-      %SystemRoot%\System32\shutdown.exe /s /f /t 3
-    ) else (
-      echo.
-      echo Installation successful. Please reboot your system now.
-      echo %DATE% %TIME% - Info: Installation successful>>%UPDATE_LOGFILE%
-      echo.
-      echo 
-    )
+    call :RestoreWUSvc
+    echo.
+    echo Installation successful. Please reboot your system now.
+    echo %DATE% %TIME% - Info: Installation successful>>%UPDATE_LOGFILE%
+    echo.
+    echo 
   )
 )
 goto EoF
 
 :ManualRecall
+call :RestoreWUSvc
 echo.
 echo Installation successful. Please reboot your system now and recall Update afterwards.
 echo %DATE% %TIME% - Info: Installation successful (Updates pending)>>%UPDATE_LOGFILE%
@@ -1561,49 +1607,56 @@ echo.
 echo ERROR: Environment variable TEMP not set.
 echo %DATE% %TIME% - Error: Environment variable TEMP not set>>%UPDATE_LOGFILE%
 echo.
-goto Cleanup
+call :Cleanup
+goto EoF
 
 :NoTempDir
 echo.
 echo ERROR: Directory "%TEMP%" not found.
 echo %DATE% %TIME% - Error: Directory "%TEMP%" not found>>%UPDATE_LOGFILE%
 echo.
-goto Cleanup
+call :Cleanup
+goto EoF
 
 :NoCScript
 echo.
 echo ERROR: VBScript interpreter %CSCRIPT_PATH% not found.
 echo %DATE% %TIME% - Error: VBScript interpreter %CSCRIPT_PATH% not found>>%UPDATE_LOGFILE%
 echo.
-goto Cleanup
+call :Cleanup
+goto EoF
 
 :NoReg
 echo.
 echo ERROR: Registry tool %REG_PATH% not found.
 echo %DATE% %TIME% - Error: Registry tool %REG_PATH% not found>>%UPDATE_LOGFILE%
 echo.
-goto Cleanup
+call :Cleanup
+goto EoF
 
 :NoSc
 echo.
 echo ERROR: Service control utility %SC_PATH% not found.
 echo %DATE% %TIME% - Error: Service control utility %SC_PATH% not found>>%UPDATE_LOGFILE%
 echo.
-goto Cleanup
+call :Cleanup
+goto EoF
 
 :EndlessLoop
 echo.
 echo ERROR: Potentially endless reboot/recall loop detected.
 echo %DATE% %TIME% - Error: Potentially endless reboot/recall loop detected>>%UPDATE_LOGFILE%
 echo.
-goto Cleanup
+call :Cleanup
+goto EoF
 
 :NoIfAdmin
 echo.
 echo ERROR: File ..\bin\IfAdmin.exe not found.
 echo %DATE% %TIME% - Error: File ..\bin\IfAdmin.exe not found>>%UPDATE_LOGFILE%
 echo.
-goto Cleanup
+call :Cleanup
+goto EoF
 
 :NoAdmin
 echo.
@@ -1617,63 +1670,72 @@ echo.
 echo ERROR: Determination of OS properties failed.
 echo %DATE% %TIME% - Error: Determination of OS properties failed>>%UPDATE_LOGFILE%
 echo.
-goto Cleanup
-
-:UnsupLang
-echo.
-echo ERROR: Unsupported Operating System language.
-echo %DATE% %TIME% - Error: Unsupported Operating System language>>%UPDATE_LOGFILE%
-echo.
-goto Cleanup
+call :Cleanup
+goto EoF
 
 :UnsupOS
 echo.
 echo ERROR: Unsupported Operating System (%OS_NAME% %OS_ARCH%).
 echo %DATE% %TIME% - Error: Unsupported Operating System (%OS_NAME% %OS_ARCH%)>>%UPDATE_LOGFILE%
 echo.
-goto Cleanup
+call :Cleanup
+goto EoF
 
 :UnsupArch
 echo.
 echo ERROR: Unsupported Operating System architecture (%OS_ARCH%).
 echo %DATE% %TIME% - Error: Unsupported Operating System architecture (%OS_ARCH%)>>%UPDATE_LOGFILE%
 echo.
-goto Cleanup
+call :Cleanup
+goto EoF
+
+:UnsupLang
+echo.
+echo ERROR: Unsupported Operating System language.
+echo %DATE% %TIME% - Error: Unsupported Operating System language>>%UPDATE_LOGFILE%
+echo.
+call :Cleanup
+goto EoF
 
 :InvalidMedium
 echo.
 echo ERROR: Medium neither supports your Windows nor your Office version.
 echo %DATE% %TIME% - Error: Medium neither supports your Windows nor your Office version>>%UPDATE_LOGFILE%
 echo.
-goto Cleanup
+call :Cleanup
+goto EoF
 
 :NoSPTargetId
 echo.
 echo ERROR: Environment variable OS_SP_TARGET_ID not set.
 echo %DATE% %TIME% - Error: Environment variable OS_SP_TARGET_ID not set>>%UPDATE_LOGFILE%
 echo.
-goto Cleanup
+call :Cleanup
+goto EoF
 
 :AUSvcNotRunning
 echo.
 echo ERROR: Service 'Windows Update' (wuauserv) could not be started.
 echo %DATE% %TIME% - Error: Service 'Windows Update' (wuauserv) could not be started>>%UPDATE_LOGFILE%
 echo.
-goto Cleanup
+call :Cleanup
+goto EoF
 
 :NoCatalog
 echo.
 echo ERROR: File ..\wsus\wsusscn2.cab not found.
 echo %DATE% %TIME% - Error: File ..\wsus\wsusscn2.cab not found>>%UPDATE_LOGFILE%
 echo.
-goto Cleanup
+call :Cleanup
+goto EoF
 
 :CatalogIntegrityError
 echo.
 echo ERROR: File hash does not match stored value (file: ..\wsus\wsusscn2.cab).
 echo %DATE% %TIME% - Error: File hash does not match stored value (file: ..\wsus\wsusscn2.cab)>>%UPDATE_LOGFILE%
 echo.
-goto Cleanup
+call :Cleanup
+goto EoF
 
 :NoUpdates
 echo.
@@ -1685,69 +1747,23 @@ if "%NO_MISSING_IDS%"=="1" (
   echo %DATE% %TIME% - Info: Any missing update was either black listed or not found>>%UPDATE_LOGFILE%
 )
 echo.
-goto Cleanup
+call :Cleanup
+goto EoF
 
 :ListError
 echo.
 echo ERROR: Listing of update files failed.
 echo %DATE% %TIME% - Error: Listing of update files failed>>%UPDATE_LOGFILE%
 echo.
-goto Cleanup
+call :Cleanup
+goto EoF
 
 :InstError
 echo.
 echo ERROR: Installation failed.
 echo %DATE% %TIME% - Error: Installation failed>>%UPDATE_LOGFILE%
 echo.
-goto Cleanup
-
-:Cleanup
-if exist %SystemRoot%\Temp\wou_w63upd1_tried.txt del %SystemRoot%\Temp\wou_w63upd1_tried.txt
-if exist %SystemRoot%\Temp\wou_w63upd2_tried.txt del %SystemRoot%\Temp\wou_w63upd2_tried.txt
-if exist %SystemRoot%\Temp\wou_iepre_tried.txt del %SystemRoot%\Temp\wou_iepre_tried.txt
-if exist %SystemRoot%\Temp\wou_ie_tried.txt del %SystemRoot%\Temp\wou_ie_tried.txt
-if exist %SystemRoot%\Temp\wou_wupre_tried.txt del %SystemRoot%\Temp\wou_wupre_tried.txt
-if exist "%TEMP%\UpdateInstaller.ini" del "%TEMP%\UpdateInstaller.ini"
-if "%USERNAME%"=="WOUTempAdmin" (
-  if "%SHOW_LOG%"=="/showlog" call PrepareShowLogFile.cmd
-  echo Cleaning up automatic recall...
-  call CleanupRecall.cmd
-  del /Q "%TEMP%\wourecall.*"
-  if exist %SystemRoot%\System32\bcdedit.exe (
-    echo Adjusting boot sequence for next reboot...
-    %SystemRoot%\System32\bcdedit.exe /bootsequence {current}
-    echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot>>%UPDATE_LOGFILE%
-  )
-  echo Rebooting...
-  %SystemRoot%\System32\shutdown.exe /r /f /t 3
-) else (
-  if "%WUSVC_DISABLED%"=="1" (
-    if "%WUSVC_ENABLED%" NEQ "1" (
-      echo Enabling service 'Windows Update' ^(wuauserv^)...
-      %SC_PATH% config wuauserv start= auto >nul
-      if errorlevel 1 (
-        echo %DATE% %TIME% - Warning: Enabling of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
-      ) else (
-        set WUSVC_DISABLED=1
-        echo %DATE% %TIME% - Info: Enabled service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
-      )
-      %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start /t REG_DWORD /d %WUSVC_STVAL% /f
-      %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart /t REG_DWORD /d %WUSVC_STDEL% /f
-    )
-  )
-  if "%WUSVC_STOPPED%"=="1" (
-    if "%WUSVC_STARTED%" NEQ "1" (
-      echo Starting service 'Windows Update' ^(wuauserv^)...
-      %SC_PATH% start wuauserv >nul
-      if errorlevel 1 (
-        echo %DATE% %TIME% - Warning: Starting of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
-      ) else (
-        echo %DATE% %TIME% - Info: Started service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
-      )
-    )
-  )
-  if "%SHOW_LOG%"=="/showlog" start %SystemRoot%\System32\notepad.exe %UPDATE_LOGFILE%
-)
+call :Cleanup
 goto EoF
 
 :EoF
@@ -1756,7 +1772,7 @@ if exist .\custom\FinalizationHook.cmd (
   echo Executing custom finalization hook...
   pushd .\custom
   call FinalizationHook.cmd
-  popd
+ÿ po?³
   echo %DATE% %TIME% - Info: Executed custom finalization hook ^(Errorlevel: %errorlevel%^)>>%UPDATE_LOGFILE%
 )
 cd ..

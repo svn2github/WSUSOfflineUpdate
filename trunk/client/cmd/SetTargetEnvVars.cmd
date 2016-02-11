@@ -1,8 +1,6 @@
 @echo off
 rem *** Author: T. Wittrock, Kiel ***
 
-if "%OS_VER_MAJOR%"=="" goto NoOSVersion
-
 set WUA_VER_TARGET_MAJOR=7
 set WUA_VER_TARGET_MINOR=4
 set WUA_VER_TARGET_BUILD=7600
@@ -200,11 +198,5 @@ set OFC_LANG=%O2K16_LANG%
 set O2K16_SP_VER_TARGET=0
 :NoO2k16
 goto EoF
-
-:NoOSVersion
-echo.
-echo ERROR: Environment variable OS_VER_MAJOR not set.
-echo.
-exit /b 1
 
 :EoF

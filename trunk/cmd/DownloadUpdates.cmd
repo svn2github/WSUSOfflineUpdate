@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.4+ (r735)
+set WSUSOFFLINE_VERSION=10.4+ (r736)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -422,10 +422,12 @@ if exist ..\client\md\hashes-mssedefs.txt del ..\client\md\hashes-mssedefs.txt
 
 rem *** Update static download definitions ***
 if "%SKIP_SDD%"=="1" goto SkipSDD
-echo Updating static download definitions...
+echo Updating static download and update definitions...
 %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\static %DLDR_LOPT% http://download.wsusoffline.net/StaticDownloadFiles-modified.txt
 %DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\static\StaticDownloadFiles-modified.txt %DLDR_POPT% ..\static
-echo %DATE% %TIME% - Info: Updated static download definitions>>%DOWNLOAD_LOGFILE%
+%DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\client\static %DLDR_LOPT% http://download.wsusoffline.net/StaticUpdateFiles-modified.txt
+%DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\client\static\StaticUpdateFiles-modified.txt %DLDR_POPT% ..\client\static
+echo %DATE% %TIME% - Info: Updated static download and update definitions>>%DOWNLOAD_LOGFILE%
 :SkipSDD
 
 rem *** Download mkisofs tool ***
