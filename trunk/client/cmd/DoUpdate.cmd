@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.4+ (r737)
+set WSUSOFFLINE_VERSION=10.4+ (r738)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -127,18 +127,22 @@ if "%OS_LANG%"=="" goto UnsupLang
 rem *** Check number of automatic recalls ***
 if "%USERNAME%"=="WOUTempAdmin" (
   echo Checking number of automatic recalls...
-  if exist "%TEMP%\wourecall.%WOU_ENDLESS%" goto EndlessLoop
-  if exist "%TEMP%\wourecall.5" ren "%TEMP%\wourecall.5" wourecall.6
-  if exist "%TEMP%\wourecall.4" ren "%TEMP%\wourecall.4" wourecall.5
-  if exist "%TEMP%\wourecall.3" ren "%TEMP%\wourecall.3" wourecall.4
-  if exist "%TEMP%\wourecall.2" ren "%TEMP%\wourecall.2" wourecall.3
-  if exist "%TEMP%\wourecall.1" ren "%TEMP%\wourecall.1" wourecall.2
-  if not exist "%TEMP%\wourecall.*" echo. >"%TEMP%\wourecall.1"
+  if exist %SystemRoot%\Temp\WOURecall\wourecall.%WOU_ENDLESS% goto EndlessLoop
+  if exist %SystemRoot%\Temp\WOURecall\wourecall.8 ren %SystemRoot%\Temp\WOURecall\wourecall.8 wourecall.9
+  if exist %SystemRoot%\Temp\WOURecall\wourecall.7 ren %SystemRoot%\Temp\WOURecall\wourecall.7 wourecall.8
+  if exist %SystemRoot%\Temp\WOURecall\wourecall.6 ren %SystemRoot%\Temp\WOURecall\wourecall.6 wourecall.7
+  if exist %SystemRoot%\Temp\WOURecall\wourecall.5 ren %SystemRoot%\Temp\WOURecall\wourecall.5 wourecall.6
+  if exist %SystemRoot%\Temp\WOURecall\wourecall.4 ren %SystemRoot%\Temp\WOURecall\wourecall.4 wourecall.5
+  if exist %SystemRoot%\Temp\WOURecall\wourecall.3 ren %SystemRoot%\Temp\WOURecall\wourecall.3 wourecall.4
+  if exist %SystemRoot%\Temp\WOURecall\wourecall.2 ren %SystemRoot%\Temp\WOURecall\wourecall.2 wourecall.3
+  if exist %SystemRoot%\Temp\WOURecall\wourecall.1 ren %SystemRoot%\Temp\WOURecall\wourecall.1 wourecall.2
+  if not exist %SystemRoot%\Temp\WOURecall\nul md %SystemRoot%\Temp\WOURecall
+  if not exist %SystemRoot%\Temp\WOURecall\wourecall.* echo. >%SystemRoot%\Temp\WOURecall\wourecall.1
 )
 
 rem *** Adjust power management settings ***
 if "%USERNAME%" NEQ "WOUTempAdmin" goto SkipPowerCfg
-if not exist "%TEMP%\wourecall.1" goto SkipPowerCfg
+if not exist "%SystemRoot%\Temp\WOURecall\wourecall.1" goto SkipPowerCfg
 rem *** Disable Screensaver for WOUTempAdmin ***
 %REG_PATH% ADD "HKCU\Control Panel\Desktop" /v ScreenSaveActive /t REG_SZ /d 0 /f
 if "%PWR_POL_IDX%"=="" goto SkipPowerCfg
@@ -1240,6 +1244,12 @@ if exist ..\software\custom\InstallCustomSoftware.cmd (
 )
 
 rem *** Determine and install missing Microsoft updates ***
+for /F "tokens=3" %%i in ('%REG_PATH% QUERY HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start ^| %SystemRoot%\System32\find.exe /I "Start"') do set WUSVC_STVAL=%%i
+for /F "tokens=3" %%i in ('%REG_PATH% QUERY HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart ^| %SystemRoot%\System32\find.exe /I "DelayedAutoStart"') do set WUSVC_STDEL=%%i
+if exist %SystemRoot%\Temp\WOUpdatesToInstall.txt (
+  move /Y %SystemRoot%\Temp\WOUpdatesToInstall.txt "%TEMP%\UpdatesToInstall.txt" >nul 2>&1
+  goto InstallUpdates
+)
 if "%SKIP_DYNAMIC%"=="/skipdynamic" (
   echo Skipping determination of missing updates on demand...
   echo %DATE% %TIME% - Info: Skipped determination of missing updates on demand>>%UPDATE_LOGFILE%
@@ -1269,8 +1279,6 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
 :CheckWUSvc
 rem *** Check state of service 'Windows Update' ***
 echo Checking state of service 'Windows Update'...
-for /F "tokens=3" %%i in ('%REG_PATH% QUERY HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start ^| %SystemRoot%\System32\find.exe /I "Start"') do set WUSVC_STVAL=%%i
-for /F "tokens=3" %%i in ('%REG_PATH% QUERY HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart ^| %SystemRoot%\System32\find.exe /I "DelayedAutoStart"') do set WUSVC_STDEL=%%i
 %CSCRIPT_PATH% //Nologo //B //E:vbs DetermineServiceState.vbs wuauserv WUSVC
 if not exist "%TEMP%\SetServiceState.cmd" goto ListMissingIds
 call "%TEMP%\SetServiceState.cmd"
@@ -1368,7 +1376,8 @@ if errorlevel 1 (
 echo Installing updates...
 call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /errorsaswarnings
 if errorlevel 1 goto InstError
-set REBOOT_REQUIRED=1
+if exist %SystemRoot%\Temp\WOUpdatesToInstall.txt (set RECALL_REQUIRED=1) else (set REBOOT_REQUIRED=1)
+if "%RECALL_REQUIRED%"=="1" goto Installed
 :SkipUpdates
 
 rem *** Install Microsoft Security Essentials ***
@@ -1504,8 +1513,12 @@ if "%WUSVC_DISABLED%"=="1" (
       set WUSVC_DISABLED=1
       echo %DATE% %TIME% - Info: Enabled service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
     )
-    %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start /t REG_DWORD /d %WUSVC_STVAL% /f
-    %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart /t REG_DWORD /d %WUSVC_STDEL% /f
+    if "%WUSVC_STVAL%" NEQ "" (
+      %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start /t REG_DWORD /d %WUSVC_STVAL% /f
+    )
+    if "%WUSVC_STDEL%" NEQ "" (
+      %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart /t REG_DWORD /d %WUSVC_STDEL% /f
+    )
   )
 )
 if "%WUSVC_STOPPED%"=="1" (
@@ -1531,7 +1544,6 @@ if exist "%TEMP%\UpdateInstaller.ini" del "%TEMP%\UpdateInstaller.ini"
 if "%USERNAME%"=="WOUTempAdmin" (
   echo Cleaning up automatic recall...
   call CleanupRecall.cmd
-  del /Q "%TEMP%\wourecall.*"
   call :RebootOrShutdown
 )
 if "%BOOT_MODE%"=="/autoreboot" goto :eof

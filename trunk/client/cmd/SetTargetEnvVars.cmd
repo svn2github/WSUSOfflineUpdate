@@ -1,6 +1,14 @@
 @echo off
 rem *** Author: T. Wittrock, Kiel ***
 
+if "%OS_RAM_GB%"=="" (
+  set UPDATES_PER_STAGE=80
+) else (
+  set /A UPDATES_PER_STAGE=OS_RAM_GB*50
+)
+if exist .\custom\SetUpdatesPerStage.cmd call .\custom\SetUpdatesPerStage.cmd
+if %UPDATES_PER_STAGE% LSS 50 set UPDATES_PER_STAGE=50
+
 set WUA_VER_TARGET_MAJOR=7
 set WUA_VER_TARGET_MINOR=4
 set WUA_VER_TARGET_BUILD=7600
@@ -72,7 +80,7 @@ if %OS_DOMAIN_ROLE% LEQ 1 (
 set WMF_VER_TARGET_MAJOR=3
 set WMF_VER_TARGET_MINOR=0
 set WMF_TARGET_ID=2506146
-set WOU_ENDLESS=6
+set WOU_ENDLESS=8
 goto Windows%OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_SP_VER_MAJOR%
 :Windows6.0.
 :Windows6.0.0
@@ -106,7 +114,7 @@ set TSC_TARGET_ID_FILE=..\static\StaticUpdateIds-rdc-w61.txt
 set WMF_VER_TARGET_MAJOR=4
 set WMF_VER_TARGET_MINOR=0
 set WMF_TARGET_ID=2819745
-set WOU_ENDLESS=5
+set WOU_ENDLESS=7
 goto SetOfficeName
 
 :Windows6.2
@@ -145,7 +153,7 @@ set TSC_VER_TARGET_MAJOR=6
 set TSC_VER_TARGET_MINOR=3
 set WMF_VER_TARGET_MAJOR=4
 set WMF_VER_TARGET_MINOR=0
-set WOU_ENDLESS=4
+set WOU_ENDLESS=5
 goto SetOfficeName
 
 :Windows10.0

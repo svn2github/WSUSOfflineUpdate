@@ -13,29 +13,49 @@ if errorlevel 1 goto NoTempDir
 popd
 
 if "%OS_NAME%"=="" goto NoOSName
+
+set UPDATE_STAGE=0
+if exist %SystemRoot%\Temp\SetWOUpdateStage.cmd (
+  call %SystemRoot%\Temp\SetWOUpdateStage.cmd
+  del %SystemRoot%\Temp\SetWOUpdateStage.cmd
+)
 if not exist "%TEMP%\UpdatesToInstall.txt" goto NoUpdates
+set /A SKIP_UPDATES=UPDATE_STAGE*UPDATES_PER_STAGE
+set /A STOP_UPDATES=(UPDATE_STAGE+1)*UPDATES_PER_STAGE
 
 for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /N $ "%TEMP%\UpdatesToInstall.txt"') do set LINES_COUNT=%%i
 for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /N $ "%TEMP%\UpdatesToInstall.txt"') do (
-  for %%k in (ofc o2k7 o2k10 o2k13 o2k16) do (
-    echo %%j | %SystemRoot%\System32\find.exe /I "\%%k\" >nul 2>&1
-    if not errorlevel 1 (
-      echo Installing update %%i of %LINES_COUNT%...
-      call InstallOfficeUpdate.cmd %%j %*
-      if errorlevel 1 goto InstError
+  if %%i GTR %STOP_UPDATES% goto BreakLoop
+  if %%i GTR %SKIP_UPDATES% (
+    for %%k in (ofc o2k7 o2k10 o2k13 o2k16) do (
+      echo %%j | %SystemRoot%\System32\find.exe /I "\%%k\" >nul 2>&1
+      if not errorlevel 1 (
+        echo Installing update %%i of %LINES_COUNT% ^(stage size: %UPDATES_PER_STAGE%^)...
+        call InstallOfficeUpdate.cmd %%j %*
+        if errorlevel 1 goto InstError
+      )
     )
-  )
-  for %%k in (dotnet %OS_NAME%-%OS_ARCH% %OS_NAME% win) do (
-    echo %%j | %SystemRoot%\System32\find.exe /I "\%%k\" >nul 2>&1
-    if not errorlevel 1 (
-      echo Installing update %%i of %LINES_COUNT%...
-      call InstallOSUpdate.cmd %%j %*
-      if errorlevel 1 goto InstError
+    for %%k in (dotnet %OS_NAME%-%OS_ARCH% %OS_NAME% win) do (
+      echo %%j | %SystemRoot%\System32\find.exe /I "\%%k\" >nul 2>&1
+      if not errorlevel 1 (
+        echo Installing update %%i of %LINES_COUNT% ^(stage size: %UPDATES_PER_STAGE%^)...
+        call InstallOSUpdate.cmd %%j %*
+        if errorlevel 1 goto InstError
+      )
     )
   )
 )
-echo %DATE% %TIME% - Info: Installed %LINES_COUNT% updates>>%UPDATE_LOGFILE%
-del "%TEMP%\UpdatesToInstall.txt"
+:BreakLoop
+set /A UPDATE_STAGE=UPDATE_STAGE+1
+if %STOP_UPDATES% LSS %LINES_COUNT% (
+  echo %DATE% %TIME% - Info: Installed %STOP_UPDATES% of %LINES_COUNT% updates>>%UPDATE_LOGFILE%
+  if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
+  echo @set UPDATE_STAGE=%UPDATE_STAGE% >%SystemRoot%\Temp\SetWOUpdateStage.cmd
+  move /Y "%TEMP%\UpdatesToInstall.txt" %SystemRoot%\Temp\WOUpdatesToInstall.txt >nul 2>&1
+) else (
+  echo %DATE% %TIME% - Info: Installed %LINES_COUNT% updates>>%UPDATE_LOGFILE%
+  del "%TEMP%\UpdatesToInstall.txt"
+)
 goto EoF
 
 :NoExtensions

@@ -425,6 +425,7 @@ For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_ComputerSy
   strOSArchitecture = LCase(Left(objQueryItem.SystemType, 3))
   objCmdFile.WriteLine("set OS_ARCH=" & strOSArchitecture)
   objCmdFile.WriteLine("set OS_DOMAIN_ROLE=" & objQueryItem.DomainRole)
+  objCmdFile.WriteLine("set OS_RAM_GB=" & CInt(CDbl(objQueryItem.TotalPhysicalMemory) / 1073741824))
 Next
 ' Documentation: http://msdn.microsoft.com/en-us/library/hww8txat(v=VS.85).aspx
 objCmdFile.WriteLine("set FS_TYPE=" & objFileSystem.GetDrive(objFileSystem.GetDriveName(wshShell.CurrentDirectory)).FileSystem)
