@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 10.4
+WSUS Offline Update 10.5
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1106,7 +1106,7 @@ Version 10.4 -- 01.02.16
 - Fix: builddate.txt file will now also support dd.mmm.yyyy date format (Thanks to S. Sutherland)
 - Fix: FAQs corrected (Thanks to "aker")
 --------------------------------------------------------------------------------
-Version ??.? -- ??.??.??
+Version 10.5 -- 15.02.16
 - Flexible multi-stage updating option added (Thanks to "einsfran", "Cababs", "Denniss", "aker" and "boco")
 - UpdateInstaller script will now show popup information for mandatory installation of most recent Internet Explorer on Windows Vista, 7 and Server 2008(R2) (x86/x64) systems (Thanks to "Denniss")
 - Replaced superseded Windows Update Client December 2015 (kb3112343/kb3112336) for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2 by Windows Update Client February 2016 (kb3135445/kb3135449) (Thanks to "harry")
@@ -1115,5 +1115,7 @@ Version ??.? -- ??.??.??
 - Excluded obsolete dynamic updates for Office XP and 2003 (Thanks to "Denniss" and "aker")
 - Introduced file ..\exclude\custom\ExcludeListForce-all.txt to exclude even statically defined updates from download (Thanks to "archiveguy", "boco" and "aker")
 - Fix: Updates for .NET Framework 4.5.x won't be excluded any longer (Thanks to H. van Doormaal)
+- Fix: ISO and USB filters refined to exclude unused .NET Framework updates (Thanks to "harry")
 - Fix: DoUpdate.cmd script will now also enable/disable service 'Windows Update' (wuauserv) on demand (Thanks to "DCEM", "boco" and "aker")
 - Fix: Windows Defender definition files were attempted to be updated even if Windows Defender was disabled II (Thanks to "aker")
+--------------------------------------------------------------------------------

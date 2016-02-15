@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.4+ (r738)
+set WSUSOFFLINE_VERSION=10.5
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -175,6 +175,7 @@ if exist "%TEMP%\wou_slmgr.txt" (
   echo Found Microsoft Windows Software Licensing Management Tool info...
   for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /B /L /I "1: 2: 3: 4: 5: 6:" "%TEMP%\wou_slmgr.txt"') do echo %%j
 )
+rem echo Found total physical memory: %OS_RAM_GB% GB
 rem echo Found Windows Update Agent version: %WUA_VER_MAJOR%.%WUA_VER_MINOR%.%WUA_VER_BUILD%.%WUA_VER_REVIS%
 rem echo Found Windows Installer version: %MSI_VER_MAJOR%.%MSI_VER_MINOR%.%MSI_VER_BUILD%.%MSI_VER_REVIS%
 rem echo Found Windows Script Host version: %WSH_VER_MAJOR%.%WSH_VER_MINOR%.%WSH_VER_BUILD%.%WSH_VER_REVIS%
@@ -207,6 +208,7 @@ if exist "%TEMP%\wou_slmgr.txt" (
   for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /B /L /I "1: 2: 3: 4: 5: 6:" "%TEMP%\wou_slmgr.txt"') do echo %DATE% %TIME% - Info: %%j>>%UPDATE_LOGFILE%
   del "%TEMP%\wou_slmgr.txt"
 )
+echo %DATE% %TIME% - Info: Found total physical memory: %OS_RAM_GB% GB>>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows Update Agent version %WUA_VER_MAJOR%.%WUA_VER_MINOR%.%WUA_VER_BUILD%.%WUA_VER_REVIS%>>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows Installer version %MSI_VER_MAJOR%.%MSI_VER_MINOR%.%MSI_VER_BUILD%.%MSI_VER_REVIS%>>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows Script Host version %WSH_VER_MAJOR%.%WSH_VER_MINOR%.%WSH_VER_BUILD%.%WSH_VER_REVIS%>>%UPDATE_LOGFILE%

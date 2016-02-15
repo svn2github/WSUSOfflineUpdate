@@ -1,5 +1,3 @@
-ndp1
-ndp2
 ndp3
 ofc\
 o2k\
