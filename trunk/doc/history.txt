@@ -1119,3 +1119,5 @@ Version 10.5 -- 15.02.16
 - Fix: DoUpdate.cmd script will now also enable/disable service 'Windows Update' (wuauserv) on demand (Thanks to "DCEM", "boco" and "aker")
 - Fix: Windows Defender definition files were attempted to be updated even if Windows Defender was disabled II (Thanks to "aker")
 --------------------------------------------------------------------------------
+Version ??.? -- ??.??.??
+- Fix: DoUpdate.cmd script attempted to restore invalid registry value "DelayedAutoStart" for service 'Windows Update' (wuauserv) under Windows 10 (Thanks to "maddes")

@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.5
+set WSUSOFFLINE_VERSION=10.5+ (r741)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1246,8 +1246,8 @@ if exist ..\software\custom\InstallCustomSoftware.cmd (
 )
 
 rem *** Determine and install missing Microsoft updates ***
-for /F "tokens=3" %%i in ('%REG_PATH% QUERY HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start ^| %SystemRoot%\System32\find.exe /I "Start"') do set WUSVC_STVAL=%%i
-for /F "tokens=3" %%i in ('%REG_PATH% QUERY HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart ^| %SystemRoot%\System32\find.exe /I "DelayedAutoStart"') do set WUSVC_STDEL=%%i
+for /F "tokens=3" %%i in ('%REG_PATH% QUERY HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start 2^>nul ^| %SystemRoot%\System32\find.exe /I "Start"') do set WUSVC_STVAL=%%i
+for /F "tokens=3" %%i in ('%REG_PATH% QUERY HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart 2^>nul ^| %SystemRoot%\System32\find.exe /I "DelayedAutoStart"') do set WUSVC_STDEL=%%i
 if exist %SystemRoot%\Temp\WOUpdatesToInstall.txt (
   move /Y %SystemRoot%\Temp\WOUpdatesToInstall.txt "%TEMP%\UpdatesToInstall.txt" >nul 2>&1
   goto InstallUpdates
@@ -1299,8 +1299,12 @@ if /i "%WUSVC_SMODE%"=="Disabled" (
   if errorlevel 1 goto AUSvcNotRunning
   set WUSVC_ENABLED=1
   echo %DATE% %TIME% - Info: Enabled service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
-  %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start /t REG_DWORD /d %WUSVC_STVAL% /f
-  %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart /t REG_DWORD /d %WUSVC_STDEL% /f
+  if "%WUSVC_STVAL%" NEQ "" (
+    %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start /t REG_DWORD /d %WUSVC_STVAL% /f
+  )
+  if "%WUSVC_STDEL%" NEQ "" (
+    %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart /t REG_DWORD /d %WUSVC_STDEL% /f
+  )
 )
 echo Starting service 'Windows Update' (wuauserv) - previous state will be recovered later...
 %SC_PATH% start wuauserv >nul 2>&1
@@ -1373,8 +1377,12 @@ if errorlevel 1 (
   set WUSVC_DISABLED=1
   echo %DATE% %TIME% - Info: Disabled service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
 )
-%REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start /t REG_DWORD /d %WUSVC_STVAL% /f
-%REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart /t REG_DWORD /d %WUSVC_STDEL% /f
+if "%WUSVC_STVAL%" NEQ "" (
+  %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start /t REG_DWORD /d %WUSVC_STVAL% /f
+)
+if "%WUSVC_STDEL%" NEQ "" (
+  %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart /t REG_DWORD /d %WUSVC_STDEL% /f
+)
 echo Installing updates...
 call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /errorsaswarnings
 if errorlevel 1 goto InstError

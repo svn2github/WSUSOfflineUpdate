@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.5
+set WSUSOFFLINE_VERSION=10.5+ (r741)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -247,6 +247,9 @@ if exist ..\client\cmd\custom\InitializationHook.cmd (
 )
 if exist ..\client\cmd\custom\FinalizationHook.cmd (
   if exist ..\client\cmd\custom\FinalizationHook.cmdt del ..\client\cmd\custom\FinalizationHook.cmdt
+)
+if exist ..\client\cmd\custom\SetUpdatesPerStage.cmd (
+  if exist ..\client\cmd\custom\SetUpdatesPerStage.cmdt del ..\client\cmd\custom\SetUpdatesPerStage.cmdt
 )
 if exist ..\client\software\custom\InstallCustomSoftware.cmd (
   if exist ..\client\software\custom\InstallCustomSoftware.cmdt del ..\client\software\custom\InstallCustomSoftware.cmdt
