@@ -1120,4 +1120,5 @@ Version 10.5 -- 15.02.16
 - Fix: Windows Defender definition files were attempted to be updated even if Windows Defender was disabled II (Thanks to "aker")
 --------------------------------------------------------------------------------
 Version ??.? -- ??.??.??
+- Fix: Installation of kb3134814 (MS16-009) for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2 missed partial update kb3141092 (Thanks to "tpa2")
 - Fix: DoUpdate.cmd script attempted to restore invalid registry value "DelayedAutoStart" for service 'Windows Update' (wuauserv) under Windows 10 (Thanks to "maddes")
