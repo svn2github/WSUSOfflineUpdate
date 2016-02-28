@@ -9,5 +9,6 @@
 *w63*
 *w100*
 */*/x86-glb/*
+*NDP461-*
 *Silverlight_x64*
 *.au3

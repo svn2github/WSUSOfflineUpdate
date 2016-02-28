@@ -1,2 +1,3 @@
 http://download.microsoft.com/download/5/f/5/5f5ab722-6045-4864-bcbc-6b5a7651dc40/dotnetfx35langpack_x86ko.exe
+http://download.microsoft.com/download/2/4/6/246497D9-B00F-4353-8C3E-12B04A83E4A6/NDP46-KB3045557-x86-x64-AllOS-KOR.exe
 http://download.microsoft.com/download/8/D/5/8D5802BA-BD5A-49CD-9AF0-358C4292ABBF/NDP461-KB3102436-x86-x64-AllOS-KOR.exe

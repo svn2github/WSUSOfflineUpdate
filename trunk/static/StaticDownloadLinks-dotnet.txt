@@ -1,3 +1,5 @@
 http://download.microsoft.com/download/2/0/e/20e90413-712f-438c-988e-fdaa79a8ac3d/dotnetfx35.exe
+http://download.microsoft.com/download/C/3/A/C3A5200B-D33C-47E9-9D70-2F7C65DAAD94/NDP46-KB3045557-x86-x64-AllOS-ENU.exe
+http://download.microsoft.com/download/5/4/C/54C214DA-370D-4CD8-8FA4-163603E02BA3/NDP46-KB3045557-x86-x64-AllOS-DEU.exe
 http://download.microsoft.com/download/E/4/1/E4173890-A24A-4936-9FC9-AF930FE3FA40/NDP461-KB3102436-x86-x64-AllOS-ENU.exe
 http://download.microsoft.com/download/B/5/7/B5730A61-49E2-4E29-9B70-18100DC77216/NDP461-KB3102436-x86-x64-AllOS-DEU.exe
