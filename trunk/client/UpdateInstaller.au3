@@ -6,7 +6,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 10.5.0.743)
+#pragma compile(FileVersion, 10.5.0.744)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -48,6 +48,7 @@ Dim Const $target_version_psh         = "2.0"
 
 ; INI file constants
 Dim Const $ini_section_installation   = "Installation"
+Dim Const $ini_value_skipieinst       = "skipieinst"
 Dim Const $ini_value_cpp              = "updatecpp"
 Dim Const $ini_value_mssl             = "instmssl"
 Dim Const $ini_value_dotnet35         = "instdotnet35"
@@ -881,7 +882,8 @@ If (StringRight(EnvGet("TEMP"), 1) = "\") OR (StringRight(EnvGet("TEMP"), 1) = "
   EndIf
   Exit(1)
 EndIf
-If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) _
+If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND FileExists(@ProgramFilesDir & "\Internet Explorer\iexplore.exe") _
+ AND (MyIniRead($ini_section_installation, $ini_value_skipieinst, $disabled) = $disabled) _
  AND (MyIniRead($ini_section_messaging, $ini_value_showieinfo, $enabled) = $enabled) ) Then
   If ShowGUIInGerman() Then
      MsgBox(0x2040, "Information", "Auf diesem System wird, sofern noch nicht vorhanden," _
@@ -893,7 +895,8 @@ If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) _
                            & @LF & "on this system, when you start the updating process.")
   EndIf
 EndIf
-If ( ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) _
+If ( ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) AND FileExists(@ProgramFilesDir & "\Internet Explorer\iexplore.exe") _
+ AND (MyIniRead($ini_section_installation, $ini_value_skipieinst, $disabled) = $disabled) _
  AND (MyIniRead($ini_section_messaging, $ini_value_showieinfo, $enabled) = $enabled) ) Then
   If ShowGUIInGerman() Then
      MsgBox(0x2040, "Information", "Auf diesem System wird, sofern noch nicht vorhanden," _
@@ -1065,6 +1068,9 @@ While 1
         RegWrite($reg_key_windowsupdate, $reg_val_wustatusserver, "REG_SZ", $options)
       EndIf
       $options = ""
+      If MyIniRead($ini_section_installation, $ini_value_skipieinst, $disabled) = $enabled Then
+        $options = $options & " /skipieinst"
+      EndIf
       If IsCheckBoxChecked($cpp) Then
         $options = $options & " /updatecpp"
       EndIf

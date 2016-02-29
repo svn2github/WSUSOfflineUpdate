@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.5+ (r743)
+set WSUSOFFLINE_VERSION=10.5+ (r744)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -35,10 +35,11 @@ echo %DATE% %TIME% - Info: Used path "%~dp0" on %COMPUTERNAME% (user: %USERNAME%
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/verify /updatecpp /instmssl /instdotnet35 /instdotnet4 /instpsh /instwmf /instmsse /updatetsc /instofv /instwle /instmsi /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
+for %%i in (/verify /skipieinst /updatecpp /instmssl /instdotnet35 /instdotnet4 /instpsh /instwmf /instmsse /updatetsc /instofv /instwle /instmsi /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected>>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/verify" set VERIFY_MODE=/verify
+if /i "%1"=="/skipieinst" set SKIP_IEINST=/skipieinst
 if /i "%1"=="/updatecpp" set UPDATE_CPP=/updatecpp
 if /i "%1"=="/instmssl" set INSTALL_MSSL=/instmssl
 if /i "%1"=="/instdotnet35" set INSTALL_DOTNET35=/instdotnet35
@@ -505,7 +506,17 @@ set WSH_FILENAME=
 
 rem *** Install Internet Explorer ***
 if "%OS_SRV_CORE%"=="1" goto SkipIEInst
+if "%SKIP_IEINST%"=="/skipieinst" (
+  echo Skipping installation of most recent Internet Explorer on demand...
+  echo %DATE% %TIME% - Info: Skipped installation of most recent Internet Explorer on demand>>%UPDATE_LOGFILE%
+  goto SkipIEInst
+)
 echo Checking Internet Explorer version...
+if not exist "%ProgramFiles%\Internet Explorer\iexplore.exe" (
+  echo Skipping installation of most recent Internet Explorer ^(seems to be disabled on this system^)...
+  echo %DATE% %TIME% - Info: Skipped installation of most recent Internet Explorer ^(seems to be disabled on this system^)>>%UPDATE_LOGFILE%
+  goto SkipIEInst
+)
 if %IE_VER_MAJOR% LSS %IE_VER_TARGET_MAJOR% goto InstallIE
 if %IE_VER_MAJOR% GTR %IE_VER_TARGET_MAJOR% goto SkipIEInst
 if %IE_VER_MINOR% LSS %IE_VER_TARGET_MINOR% goto InstallIE
@@ -1583,7 +1594,7 @@ if "%RECALL_REQUIRED%"=="1" (
     )
     if "%USERNAME%" NEQ "WOUTempAdmin" (
       echo Preparing automatic recall...
-      call PrepareRecall.cmd "%~f0" %VERIFY_MODE% %UPDATE_CPP% %INSTALL_MSSL% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_WMF% %INSTALL_MSSE% %UPDATE_TSC% %INSTALL_OFV% %INSTALL_WLE% %INSTALL_MSI% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES% %SKIP_DYNAMIC%
+      call PrepareRecall.cmd "%~f0" %VERIFY_MODE% %SKIP_IEINST% %UPDATE_CPP% %INSTALL_MSSL% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_WMF% %INSTALL_MSSE% %UPDATE_TSC% %INSTALL_OFV% %INSTALL_WLE% %INSTALL_MSI% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES% %SKIP_DYNAMIC%
     )
     if exist %SystemRoot%\System32\bcdedit.exe (
       echo Adjusting boot sequence for next reboot...
