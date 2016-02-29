@@ -6,7 +6,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 10.5.0.744)
+#pragma compile(FileVersion, 10.5.0.745)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -274,18 +274,34 @@ Func DotNet4MainVersion()
   Return StringLeft(DotNet4Version(), 3)
 EndFunc
 
+Func DotNet4TargetVersion()
+  If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) Then
+    Return "4.6.00"
+  Else
+    Return "4.6.01"
+  EndIf
+EndFunc
+
+Func DotNet4DisplayVersion()
+  If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) Then
+    Return "4.6"
+  Else
+    Return "4.6.1"
+  EndIf
+EndFunc
+
 Func PowerShellVersion()
   Return RegRead($reg_key_psh, $reg_val_pshversion)
 EndFunc
 
-Func ManagementFrameworkVersion()
-  Return RegRead($reg_key_wmf, $reg_val_pshversion)
+Func WMFMainVersion()
+  Return StringLeft(RegRead($reg_key_wmf, $reg_val_pshversion), 3)
 EndFunc
 
 Func WMFTargetVersion()
   If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_2012") _
     OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") ) Then
-    Return "4.0"
+    Return "5.0"
   Else
     Return "3.0"
   EndIf
@@ -514,11 +530,11 @@ EndIf
 $txtxpos = 3 * $txtxoffset
 $txtypos = $txtypos + $txtheight
 If ShowGUIInGerman() Then
-  $dotnet4 = GUICtrlCreateCheckbox(".NET Framework 4.6.1 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $dotnet4 = GUICtrlCreateCheckbox(".NET Framework " & DotNet4DisplayVersion() & " installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
-  $dotnet4 = GUICtrlCreateCheckbox("Install .NET Framework 4.6.1", $txtxpos, $txtypos, $txtwidth, $txtheight)
+  $dotnet4 = GUICtrlCreateCheckbox("Install .NET Framework " & DotNet4DisplayVersion(), $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (StringLeft(DotNet4Version(), 6) = "4.6.01") OR (NOT DotNet4InstPresent($scriptdir)) ) Then
+If ( (StringLeft(DotNet4Version(), 6) = DotNet4TargetVersion()) OR (NOT DotNet4InstPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If MyIniRead($ini_section_installation, $ini_value_dotnet4, $disabled) = $enabled Then
@@ -536,10 +552,9 @@ Else
   $wmf = GUICtrlCreateCheckbox("Install Management Framework " & WMFTargetVersion(), $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") _
-  OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") _
   OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") _
   OR ( (DotNet4MainVersion() <> "4.5") AND (DotNet4MainVersion() <> "4.6") AND (NOT IsCheckBoxChecked($dotnet4)) ) _
-  OR (ManagementFrameworkVersion() = WMFTargetVersion()) ) Then
+  OR (WMFMainVersion() = WMFTargetVersion()) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If MyIniRead($ini_section_installation, $ini_value_wmf, $disabled) = $enabled Then
@@ -941,9 +956,8 @@ While 1
     Case $dotnet4              ; .NET 4 check box toggled
       If ( ( (IsCheckBoxChecked($dotnet4)) OR (DotNet4MainVersion() = "4.5") OR (DotNet4MainVersion() = "4.6") ) _
        AND (@OSVersion <> "WIN_XP") AND (@OSVersion <> "WIN_2003") AND (@OSVersion <> "WIN_VISTA") _
-       AND (@OSVersion <> "WIN_8") AND (@OSVersion <> "WIN_81") AND (@OSVersion <> "WIN_2012R2") _
        AND (@OSVersion <> "WIN_10") AND (@OSVersion <> "WIN_2016") _
-       AND (ManagementFrameworkVersion() <> WMFTargetVersion()) ) Then
+       AND (WMFMainVersion() <> WMFTargetVersion()) ) Then
         GUICtrlSetState($wmf, $GUI_ENABLE)
       Else
         GUICtrlSetState($wmf, $GUI_UNCHECKED + $GUI_DISABLE)

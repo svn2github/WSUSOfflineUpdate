@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.5+ (r744)
+set WSUSOFFLINE_VERSION=10.5+ (r745)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -145,7 +145,7 @@ rem *** Adjust power management settings ***
 if "%USERNAME%" NEQ "WOUTempAdmin" goto SkipPowerCfg
 if not exist "%SystemRoot%\Temp\WOURecall\wourecall.1" goto SkipPowerCfg
 rem *** Disable Screensaver for WOUTempAdmin ***
-%REG_PATH% ADD "HKCU\Control Panel\Desktop" /v ScreenSaveActive /t REG_SZ /d 0 /f
+%REG_PATH% ADD "HKCU\Control Panel\Desktop" /v ScreenSaveActive /t REG_SZ /d 0 /f >nul 2>&1
 if "%PWR_POL_IDX%"=="" goto SkipPowerCfg
 if not exist %SystemRoot%\System32\powercfg.exe goto SkipPowerCfg
 echo Adjusting power management settings...
@@ -936,7 +936,7 @@ set DOTNET4_INSTOPTS=
 :SkipDotNet4Inst
 
 rem *** Install .NET Framework 3.5 - Custom ***
-if "%INSTALL_DOTNET35%" EQU "/instdotnet35" goto InstallDotNet35Custom
+if "%INSTALL_DOTNET35%"=="/instdotnet35" goto InstallDotNet35Custom
 if %DOTNET35_VER_MAJOR% EQU %DOTNET35_VER_TARGET_MAJOR% goto InstallDotNet35Custom
 goto SkipDotNet35CustomInst
 :InstallDotNet35Custom
@@ -957,7 +957,7 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
 )
 :SkipDotNet35CustomInst
 rem *** Install .NET Framework 4 - Custom ***
-if "%INSTALL_DOTNET4%" EQU "/instdotnet4" goto InstallDotNet4Custom
+if "%INSTALL_DOTNET4%"=="/instdotnet4" goto InstallDotNet4Custom
 if %DOTNET4_VER_MAJOR% EQU %DOTNET4_VER_TARGET_MAJOR% goto InstallDotNet4Custom
 goto SkipDotNet4CustomInst
 :InstallDotNet4Custom
@@ -1048,11 +1048,17 @@ if "%WMF_TARGET_ID%"=="" (
   echo %DATE% %TIME% - Warning: Environment variable WMF_TARGET_ID not set>>%UPDATE_LOGFILE%
   goto SkipWMFInst
 )
-echo %WMF_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
+if exist "%TEMP%\MissingUpdateIds.txt" del "%TEMP%\MissingUpdateIds.txt"
+if "%WMF_PREREQ_ID%" NEQ "" (
+  if %WMF_VER_MAJOR% LSS 4 (
+    echo %WMF_PREREQ_ID%>"%TEMP%\MissingUpdateIds.txt"
+  )
+)
+echo %WMF_TARGET_ID%>>"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
-  echo Installing Windows Management Framework...
+  echo Installing most recent Windows Management Framework...
   call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /errorsaswarnings
 ) else (
   echo Warning: Windows Management Framework installation file ^(kb%WMF_TARGET_ID%^) not found.
@@ -1264,6 +1270,7 @@ if exist ..\software\custom\InstallCustomSoftware.cmd (
 rem *** Determine and install missing Microsoft updates ***
 for /F "tokens=3" %%i in ('%REG_PATH% QUERY HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start 2^>nul ^| %SystemRoot%\System32\find.exe /I "Start"') do set WUSVC_STVAL=%%i
 for /F "tokens=3" %%i in ('%REG_PATH% QUERY HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart 2^>nul ^| %SystemRoot%\System32\find.exe /I "DelayedAutoStart"') do set WUSVC_STDEL=%%i
+for /F "tokens=3" %%i in ('%REG_PATH% QUERY HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU /v NoAutoRebootWithLoggedOnUsers 2^>nul ^| %SystemRoot%\System32\find.exe /I "NoAutoRebootWithLoggedOnUsers"') do set WUPOL_ABOOT=%%i
 if exist %SystemRoot%\Temp\WOUpdatesToInstall.txt (
   move /Y %SystemRoot%\Temp\WOUpdatesToInstall.txt "%TEMP%\UpdatesToInstall.txt" >nul 2>&1
   goto InstallUpdates
@@ -1313,15 +1320,15 @@ if /i "%WUSVC_SMODE%"=="Disabled" (
   echo Enabling service 'Windows Update' ^(wuauserv^) - previous state will be recovered later...
   %SC_PATH% config wuauserv start= demand >nul 2>&1
   if errorlevel 1 goto AUSvcNotRunning
-  set WUSVC_ENABLED=1
   echo %DATE% %TIME% - Info: Enabled service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
   if "%WUSVC_STVAL%" NEQ "" (
-    %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start /t REG_DWORD /d %WUSVC_STVAL% /f
+    %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start /t REG_DWORD /d %WUSVC_STVAL% /f >nul 2>&1
   )
   if "%WUSVC_STDEL%" NEQ "" (
-    %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart /t REG_DWORD /d %WUSVC_STDEL% /f
+    %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart /t REG_DWORD /d %WUSVC_STDEL% /f >nul 2>&1
   )
 )
+%REG_PATH% ADD HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU /v NoAutoRebootWithLoggedOnUsers /t REG_DWORD /d 1 /f >nul 2>&1
 echo Starting service 'Windows Update' (wuauserv) - previous state will be recovered later...
 %SC_PATH% start wuauserv >nul 2>&1
 if errorlevel 1 goto AUSvcNotRunning
@@ -1385,23 +1392,15 @@ if errorlevel 1 (
   set WUSVC_STOPPED=1
   echo %DATE% %TIME% - Info: Stopped service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
 )
-echo Disabling service 'Windows Update' (wuauserv) - previous state will be recovered later...
-%SC_PATH% config wuauserv start= disabled >nul 2>&1
-if errorlevel 1 (
-  echo %DATE% %TIME% - Warning: Disabling of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
-) else (
-  set WUSVC_DISABLED=1
-  echo %DATE% %TIME% - Info: Disabled service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
-)
-if "%WUSVC_STVAL%" NEQ "" (
-  %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start /t REG_DWORD /d %WUSVC_STVAL% /f
-)
-if "%WUSVC_STDEL%" NEQ "" (
-  %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart /t REG_DWORD /d %WUSVC_STDEL% /f
-)
+%REG_PATH% ADD HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU /v NoAutoRebootWithLoggedOnUsers /t REG_DWORD /d 1 /f >nul 2>&1
 echo Installing updates...
 call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /errorsaswarnings
 if errorlevel 1 goto InstError
+if "%WUPOL_ABOOT%"=="" (
+  %REG_PATH% DELETE HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU /v NoAutoRebootWithLoggedOnUsers /f >nul 2>&1
+) else (
+  %REG_PATH% ADD HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU /v NoAutoRebootWithLoggedOnUsers /t REG_DWORD /d %WUPOL_ABOOT% /f >nul 2>&1
+)
 if exist %SystemRoot%\Temp\WOUpdatesToInstall.txt (set RECALL_REQUIRED=1) else (set REBOOT_REQUIRED=1)
 if "%RECALL_REQUIRED%"=="1" goto Installed
 :SkipUpdates
@@ -1529,24 +1528,6 @@ if "%BOOT_MODE%"=="/autoreboot" (
 goto :eof
 
 :RestoreWUSvc
-if "%WUSVC_DISABLED%"=="1" (
-  if "%WUSVC_ENABLED%" NEQ "1" (
-    echo Enabling service 'Windows Update' ^(wuauserv^)...
-    %SC_PATH% config wuauserv start= auto >nul 2>&1
-    if errorlevel 1 (
-      echo %DATE% %TIME% - Warning: Enabling of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
-    ) else (
-      set WUSVC_DISABLED=1
-      echo %DATE% %TIME% - Info: Enabled service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
-    )
-    if "%WUSVC_STVAL%" NEQ "" (
-      %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start /t REG_DWORD /d %WUSVC_STVAL% /f
-    )
-    if "%WUSVC_STDEL%" NEQ "" (
-      %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart /t REG_DWORD /d %WUSVC_STDEL% /f
-    )
-  )
-)
 if "%WUSVC_STOPPED%"=="1" (
   if "%WUSVC_STARTED%" NEQ "1" (
     echo Starting service 'Windows Update' ^(wuauserv^)...

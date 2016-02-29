@@ -11,10 +11,11 @@ http://download.microsoft.com/download/F/1/4/F1424AD7-F754-4B6E-B0DA-151C7CBAE85
 http://download.microsoft.com/download/4/8/1/481C640E-D3EE-4ADC-AA48-6D0ED2869D37/Windows6.1-KB2786081-x86.msu
 http://download.microsoft.com/download/3/1/D/31DB4F4F-207D-416E-9A07-FBD9E431F9FB/Windows6.1-KB2639308-x86.msu
 http://download.microsoft.com/download/8/E/1/8E19C5F1-6331-4982-87C2-B714DF8A083A/Windows6.1-KB2852386-x86.msu
-http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x86-MultiPkg.msu
 http://download.microsoft.com/download/7/C/E/7CE5D2A0-3A08-427E-9AA9-8A79E47B87B9/Windows6.1-KB2882822-x86.msu
 http://download.microsoft.com/download/3/9/D/39D85CA8-7BF3-47C1-9031-FD6E51D8BBEB/Windows6.1-KB2888049-x86.msu
 http://download.microsoft.com/download/9/2/F/92FC119C-3BCD-476C-B425-038A39625558/IE11-Windows6.1-x86-en-us.exe
 http://download.microsoft.com/download/3/7/1/3712057D-154F-4F00-A183-0BD7285DF503/IE11-Windows6.1-x86-de-de.exe
 http://download.windowsupdate.com/windowsupdate/redist/standalone/7.6.7600.320/WindowsUpdateAgent-7.6-x86.exe
 http://download.microsoft.com/download/2/E/D/2ED368A8-9967-4829-9CD5-9037AD48FF72/Windows6.1-KB3135445-x86.msu
+http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x86-MultiPkg.msu
+http://download.microsoft.com/download/2/C/6/2C6E1B4A-EBE5-48A6-B225-2D2058A9CEFB/Win7-KB3134760-x86.msu

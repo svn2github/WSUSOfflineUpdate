@@ -19,7 +19,7 @@ Dim objWMIService, objWOUTempAdmin, objGroup, objItem, strResult
   Set objWMIService = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
   Set objWOUTempAdmin = objComp.Create("user", strWOUTempAdminName)
   Randomize
-  strResult = "Wou" & Int(90000 * Rnd) + 10000
+  strResult = "!Wou_" & Int(90000 * Rnd) + 10000
   objWOUTempAdmin.SetPassword strResult
   objWOUTempAdmin.SetInfo
   For Each objItem in objWMIService.ExecQuery("Select * from Win32_Group Where SID = 'S-1-5-32-544'")
