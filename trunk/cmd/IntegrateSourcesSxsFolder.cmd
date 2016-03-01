@@ -16,7 +16,7 @@ if exist %DOWNLOAD_LOGFILE% (
 )
 echo %DATE% %TIME% - Info: Starting %~n0 %1 %2 %3 %4>>%DOWNLOAD_LOGFILE%
 
-for %%i in (w62-x64 w63 w63-x64) do (
+for %%i in (w62-x64 w63 w63-x64 w100 w100-x64) do (
   if /i "%~2"=="%%i" (
     for %%j in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (
       if /i "%~3"=="%%j" goto EvalParam1
@@ -50,7 +50,7 @@ exit /b 1
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %*
-echo Usage: %~n0 ^<SxsPath^> {w62-x64 ^| w63 ^| w63-x64} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/cleanup]
+echo Usage: %~n0 ^<SxsPath^> {w62-x64 ^| w63 ^| w63-x64 ^| w100 ^| w100-x64} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/cleanup]
 echo Example: %~n0 D:\sources\sxs w63-x64 enu
 echo %DATE% %TIME% - Error: Invalid parameter: %*>>%DOWNLOAD_LOGFILE%
 echo.
@@ -59,7 +59,7 @@ goto Error
 :InvalidFolder
 echo.
 echo ERROR: Folder not found: %1
-echo Usage: %~n0 ^<SxsPath^> {w62-x64 ^| w63 ^| w63-x64} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/cleanup]
+echo Usage: %~n0 ^<SxsPath^> {w62-x64 ^| w63 ^| w63-x64 ^| w100 ^| w100-x64} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/cleanup]
 echo Example: %~n0 D:\sources\sxs w63-x64 enu
 echo %DATE% %TIME% - Error: Folder not found: %1>>%DOWNLOAD_LOGFILE%
 echo.

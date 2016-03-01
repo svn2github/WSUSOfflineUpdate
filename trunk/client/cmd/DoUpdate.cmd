@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.5+ (r745)
+set WSUSOFFLINE_VERSION=10.5+ (r746)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -186,7 +186,7 @@ rem echo Found Remote Desktop Client version: %TSC_VER_MAJOR%.%TSC_VER_MINOR%.%T
 rem echo Found Microsoft .NET Framework 3.5 version: %DOTNET35_VER_MAJOR%.%DOTNET35_VER_MINOR%.%DOTNET35_VER_BUILD%.%DOTNET35_VER_REVIS%
 rem echo Found Windows PowerShell version: %PSH_VER_MAJOR%.%PSH_VER_MINOR%
 rem echo Found Microsoft .NET Framework 4 version: %DOTNET4_VER_MAJOR%.%DOTNET4_VER_MINOR%.%DOTNET4_VER_BUILD%
-rem echo Found Windows Management Framework version: %WMF_VER_MAJOR%.%WMF_VER_MINOR%
+rem echo Found Windows Management Framework version: %WMF_VER_MAJOR%.%WMF_VER_MINOR%.%WMF_VER_BUILD%.%WMF_VER_REVIS%
 rem echo Found Microsoft Security Essentials version: %MSSE_VER_MAJOR%.%MSSE_VER_MINOR%.%MSSE_VER_BUILD%.%MSSE_VER_REVIS%
 rem echo Found Microsoft Security Essentials definitions version: %MSSEDEFS_VER_MAJOR%.%MSSEDEFS_VER_MINOR%.%MSSEDEFS_VER_BUILD%.%MSSEDEFS_VER_REVIS%
 rem echo Found Network Inspection System definitions version: %NISDEFS_VER_MAJOR%.%NISDEFS_VER_MINOR%.%NISDEFS_VER_BUILD%.%NISDEFS_VER_REVIS%
@@ -219,7 +219,7 @@ echo %DATE% %TIME% - Info: Found Remote Desktop Client version %TSC_VER_MAJOR%.%
 echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 3.5 version %DOTNET35_VER_MAJOR%.%DOTNET35_VER_MINOR%.%DOTNET35_VER_BUILD%.%DOTNET35_VER_REVIS%>>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Windows PowerShell version %PSH_VER_MAJOR%.%PSH_VER_MINOR%>>%UPDATE_LOGFILE%
 echo %DATE% %TIME% - Info: Found Microsoft .NET Framework 4 version %DOTNET4_VER_MAJOR%.%DOTNET4_VER_MINOR%.%DOTNET4_VER_BUILD%>>%UPDATE_LOGFILE%
-echo %DATE% %TIME% - Info: Found Windows Management Framework version %WMF_VER_MAJOR%.%WMF_VER_MINOR%>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Found Windows Management Framework version %WMF_VER_MAJOR%.%WMF_VER_MINOR%.%WMF_VER_BUILD%.%WMF_VER_REVIS%>>%UPDATE_LOGFILE%
 if "%OS_NAME%"=="w62" goto SkipLogMSSEVer
 if "%OS_NAME%"=="w63" goto SkipLogMSSEVer
 if "%OS_NAME%"=="w100" goto SkipLogMSSEVer
@@ -793,7 +793,6 @@ set MSSL_VER_TARGET_REVIS=
 rem *** Install .NET Framework 3.5 SP1 ***
 if "%INSTALL_DOTNET35%" NEQ "/instdotnet35" goto SkipDotNet35Inst
 if "%OS_NAME%"=="w61" goto SkipDotNet35Inst
-if "%OS_NAME%"=="w100" goto SkipDotNet35Inst
 echo Checking .NET Framework 3.5 installation state...
 if %DOTNET35_VER_MAJOR% LSS %DOTNET35_VER_TARGET_MAJOR% goto InstallDotNet35
 if %DOTNET35_VER_MAJOR% GTR %DOTNET35_VER_TARGET_MAJOR% goto SkipDotNet35Inst
@@ -803,8 +802,11 @@ if %DOTNET35_VER_BUILD% LSS %DOTNET35_VER_TARGET_BUILD% goto InstallDotNet35
 if %DOTNET35_VER_BUILD% GTR %DOTNET35_VER_TARGET_BUILD% goto SkipDotNet35Inst
 if %DOTNET35_VER_REVIS% GEQ %DOTNET35_VER_TARGET_REVIS% goto SkipDotNet35Inst
 :InstallDotNet35
+if exist %SystemRoot%\Temp\wou_net35_tried.txt goto SkipDotNet35Inst
+echo. >%SystemRoot%\Temp\wou_net35_tried.txt
 if "%OS_NAME%"=="w62" goto InstallDotNet35%OS_NAME%
 if "%OS_NAME%"=="w63" goto InstallDotNet35%OS_NAME%
+if "%OS_NAME%"=="w100" goto InstallDotNet35%OS_NAME%
 set DOTNET35_FILENAME=..\dotnet\dotnetfx35.exe
 set DOTNET35LP_FILENAME=..\dotnet\%OS_ARCH%-glb\dotnetfx35langpack_%OS_ARCH%%OS_LANG_SHORT%*.exe
 if not exist %DOTNET35_FILENAME% (
@@ -838,6 +840,7 @@ goto SkipDotNet35Inst
 
 :InstallDotNet35w62
 :InstallDotNet35w63
+:InstallDotNet35w100
 if /i "%OS_ARCH%"=="x64" (
   if exist ..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\sxs\nul (
     if exist %SystemRoot%\Sysnative\Dism.exe (
@@ -901,6 +904,8 @@ if %DOTNET4_VER_MINOR% LSS %DOTNET4_VER_TARGET_MINOR% goto InstallDotNet4
 if %DOTNET4_VER_MINOR% GTR %DOTNET4_VER_TARGET_MINOR% goto SkipDotNet4Inst
 if %DOTNET4_VER_BUILD% GEQ %DOTNET4_VER_TARGET_BUILD% goto SkipDotNet4Inst
 :InstallDotNet4
+if exist %SystemRoot%\Temp\wou_net4_tried.txt goto SkipDotNet4Inst
+echo. >%SystemRoot%\Temp\wou_net4_tried.txt
 if "%OS_NAME%"=="w60" (
   set DOTNET4_FILENAME=..\dotnet\NDP46-KB3045557-x86-x64-AllOS-ENU.exe
   set DOTNET4LP_FILENAME=..\dotnet\NDP46-KB3045557-x86-x64-AllOS-%OS_LANG%.exe
@@ -914,19 +919,19 @@ if "%OS_SRV_CORE%"=="1" (
   set DOTNET4_INSTOPTS=/passive /norestart
 )
 if not exist %DOTNET4_FILENAME% (
-  echo Warning: .NET Framework 4.6.1 installation file ^(%DOTNET4_FILENAME%^) not found.
-  echo %DATE% %TIME% - Warning: .NET Framework 4.6.1 installation file ^(%DOTNET4_FILENAME%^) not found>>%UPDATE_LOGFILE%
+  echo Warning: .NET Framework 4.6.x installation file ^(%DOTNET4_FILENAME%^) not found.
+  echo %DATE% %TIME% - Warning: .NET Framework 4.6.x installation file ^(%DOTNET4_FILENAME%^) not found>>%UPDATE_LOGFILE%
   goto SkipDotNet4Inst
 )
-echo Installing .NET Framework 4.6.1...
+echo Installing .NET Framework 4.6.x...
 call InstallOSUpdate.cmd %DOTNET4_FILENAME% %VERIFY_MODE% /errorsaswarnings %DOTNET4_INSTOPTS% /lcid 1033
 if "%OS_LANG%" NEQ "enu" (
   if exist %DOTNET4LP_FILENAME% (
-    echo Installing .NET Framework 4.6.1 Language Pack...
+    echo Installing .NET Framework 4.6.x Language Pack...
     for /F %%i in ('dir /B %DOTNET4LP_FILENAME%') do call InstallOSUpdate.cmd ..\dotnet\%%i %VERIFY_MODE% /errorsaswarnings %DOTNET4_INSTOPTS%
   ) else (
-    echo Warning: .NET Framework 4.6.1 Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found.
-    echo %DATE% %TIME% - Warning: .NET Framework 4.6.1 Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found>>%UPDATE_LOGFILE%
+    echo Warning: .NET Framework 4.6.x Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found.
+    echo %DATE% %TIME% - Warning: .NET Framework 4.6.x Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found>>%UPDATE_LOGFILE%
   )
 )
 set RECALL_REQUIRED=1
@@ -1043,29 +1048,42 @@ if %WMF_VER_MAJOR% GTR %WMF_VER_TARGET_MAJOR% goto SkipWMFInst
 if %WMF_VER_MINOR% LSS %WMF_VER_TARGET_MINOR% goto InstallWMF
 if %WMF_VER_MINOR% GEQ %WMF_VER_TARGET_MINOR% goto SkipWMFInst
 :InstallWMF
-if "%WMF_TARGET_ID%"=="" (
-  echo Warning: Environment variable WMF_TARGET_ID not set.
-  echo %DATE% %TIME% - Warning: Environment variable WMF_TARGET_ID not set>>%UPDATE_LOGFILE%
-  goto SkipWMFInst
-)
-if exist "%TEMP%\MissingUpdateIds.txt" del "%TEMP%\MissingUpdateIds.txt"
-if "%WMF_PREREQ_ID%" NEQ "" (
-  if %WMF_VER_MAJOR% LSS 4 (
-    echo %WMF_PREREQ_ID%>"%TEMP%\MissingUpdateIds.txt"
+if %WMF_VER_MAJOR% LSS 4 (
+  if exist %SystemRoot%\Temp\wou_wmfpre_tried.txt goto SkipWMFInst
+  echo. >%SystemRoot%\Temp\wou_wmfpre_tried.txt
+  if "%WMF_PREREQ_ID%"=="" (
+    echo Warning: Environment variable WMF_PREREQ_ID not set.
+    echo %DATE% %TIME% - Warning: Environment variable WMF_PREREQ_ID not set>>%UPDATE_LOGFILE%
+    goto SkipWMFInst
   )
+  echo %WMF_PREREQ_ID%>"%TEMP%\MissingUpdateIds.txt"
+) else (
+  if exist %SystemRoot%\Temp\wou_wmf_tried.txt goto SkipWMFInst
+  echo. >%SystemRoot%\Temp\wou_wmf_tried.txt
+  if "%WMF_TARGET_ID%"=="" (
+    echo Warning: Environment variable WMF_TARGET_ID not set.
+    echo %DATE% %TIME% - Warning: Environment variable WMF_TARGET_ID not set>>%UPDATE_LOGFILE%
+    goto SkipWMFInst
+  )
+  echo %WMF_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
 )
-echo %WMF_TARGET_ID%>>"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
-  echo Installing most recent Windows Management Framework...
+  echo Installing Windows Management Framework...
   call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /errorsaswarnings
 ) else (
-  echo Warning: Windows Management Framework installation file ^(kb%WMF_TARGET_ID%^) not found.
-  echo %DATE% %TIME% - Warning: Windows Management Framework installation file ^(kb%WMF_TARGET_ID%^) not found>>%UPDATE_LOGFILE%
+  if %WMF_VER_MAJOR% LSS 4 (
+    echo Warning: Windows Management Framework installation file ^(kb%WMF_PREREQ_ID%^) not found.
+    echo %DATE% %TIME% - Warning: Windows Management Framework installation file ^(kb%WMF_PREREQ_ID%^) not found>>%UPDATE_LOGFILE%
+  ) else (
+    echo Warning: Windows Management Framework installation file ^(kb%WMF_TARGET_ID%^) not found.
+    echo %DATE% %TIME% - Warning: Windows Management Framework installation file ^(kb%WMF_TARGET_ID%^) not found>>%UPDATE_LOGFILE%
+  )
   goto SkipWMFInst
 )
-set REBOOT_REQUIRED=1
+if %WMF_VER_MAJOR% LSS 4 (set RECALL_REQUIRED=1) else (set REBOOT_REQUIRED=1)
+if "%RECALL_REQUIRED%"=="1" goto Installed
 :SkipWMFInst
 
 rem *** Install most recent Remote Desktop Client ***
@@ -1546,6 +1564,10 @@ if exist %SystemRoot%\Temp\wou_w63upd1_tried.txt del %SystemRoot%\Temp\wou_w63up
 if exist %SystemRoot%\Temp\wou_w63upd2_tried.txt del %SystemRoot%\Temp\wou_w63upd2_tried.txt
 if exist %SystemRoot%\Temp\wou_iepre_tried.txt del %SystemRoot%\Temp\wou_iepre_tried.txt
 if exist %SystemRoot%\Temp\wou_ie_tried.txt del %SystemRoot%\Temp\wou_ie_tried.txt
+if exist %SystemRoot%\Temp\wou_net35_tried.txt del %SystemRoot%\Temp\wou_net35_tried.txt
+if exist %SystemRoot%\Temp\wou_net4_tried.txt del %SystemRoot%\Temp\wou_net4_tried.txt
+if exist %SystemRoot%\Temp\wou_wmfpre_tried.txt del %SystemRoot%\Temp\wou_wmfpre_tried.txt
+if exist %SystemRoot%\Temp\wou_wmf_tried.txt del %SystemRoot%\Temp\wou_wmf_tried.txt
 if exist %SystemRoot%\Temp\wou_wupre_tried.txt del %SystemRoot%\Temp\wou_wupre_tried.txt
 if exist "%TEMP%\UpdateInstaller.ini" del "%TEMP%\UpdateInstaller.ini"
 if "%USERNAME%"=="WOUTempAdmin" (

@@ -117,7 +117,7 @@ set WMF_TARGET_ID=3134760
 set TSC_VER_TARGET_MAJOR=6
 set TSC_VER_TARGET_MINOR=3
 set TSC_TARGET_ID_FILE=..\static\StaticUpdateIds-rdc-w61.txt
-set WOU_ENDLESS=7
+set WOU_ENDLESS=8
 goto SetOfficeName
 
 :Windows6.2

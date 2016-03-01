@@ -1121,11 +1121,12 @@ Version 10.5 -- 15.02.16
 --------------------------------------------------------------------------------
 Version ??.? -- ??.??.??
 - Support added for Windows Management Framework 5.0 on Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems (Thanks to "harry")
+- Ability added to enable .NET Framework 3.5 feature even on Windows 10 and Server 2016 (x86/x64) systems (Thanks to "eLPuSHeR", "Cababs", "aker" and "boco")
 - DoUpdate.cmd script will now support "/skipieinst" switch to avoid mandatory installation of most recent Internet Explorer (Thanks to "Joe", "FrankH", "smeijer", "jbegarek", "mAsTa", "boco", "Denniss" and "aker")
 - UpdateInstaller.ini file will now support "skipieinst" setting in [Installation] to control "/skipieinst" switch for DoUpdate.cmd script
 - Fix: DoUpdate.cmd script will now only install most recent Internet Explorer if IE feature was not disabled before (Thanks to "Joe", "FrankH", "smeijer", "jbegarek", "mAsTa", "boco", "Denniss" and "aker")
 - Fix: Installation of kb3134814 (MS16-009) for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2 missed partial update kb3141092 (Thanks to "tpa2")
-- Fix: .NET Framework 4 rolled back to v. 4.6 on Windows Vista and Server 2008 (x86/x64) systems (Thanks to "joew", "Lokmup" and "Denniss")
+- Fix: .NET Framework 4 rolled back to v. 4.6 for Windows Vista and Server 2008 (x86/x64) systems (Thanks to "joew", "Lokmup" and "Denniss")
 - Fix: Installation of MSU packages failed because DoUpdate.cmd script disabled service 'Windows Update' (wuauserv) (Thanks to "rbr555", "boco" and "aker")
 - Fix: WOUTempAdmin password enhanced to satisfy complexity policies (Thanks to G. Sciuto and "mtk")
 - Fix: DoUpdate.cmd script attempted to restore invalid registry value "DelayedAutoStart" for service 'Windows Update' (wuauserv) under Windows 10 (Thanks to "maddes")
