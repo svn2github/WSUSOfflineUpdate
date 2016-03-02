@@ -17,8 +17,9 @@
 */w100-x64/*
 */*/x64-glb/*
 *wddefs*
-*dotnetfx35*
 *vcredist*_x64*
+*dotnetfx35*
+*NDP46-KB3045557*
 *MSEInstall*
 *Silverlight_x64*
 *.au3

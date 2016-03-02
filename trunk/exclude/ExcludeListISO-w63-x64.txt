@@ -14,5 +14,6 @@
 *wddefs*
 */*/x86-glb/*
 *dotnetfx35*
+*NDP46-KB3045557*
 *MSEInstall*
 *.au3
