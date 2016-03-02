@@ -1122,6 +1122,7 @@ Version 10.5 -- 15.02.16
 Version ??.? -- ??.??.??
 - Support added for Windows Management Framework 5.0 on Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems (Thanks to "harry")
 - Ability added to enable .NET Framework 3.5 feature even on Windows 10 and Server 2016 (x86/x64) systems (Thanks to "eLPuSHeR", "Cababs", "aker" and "boco")
+- Replaced superseded Windows Update Client February 2016 (kb3135445/kb3135449) for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2 by Windows Update Client March 2016 (kb3138612/kb3138615) (Thanks to "harry")
 - DoUpdate.cmd script will now support "/skipieinst" switch to avoid mandatory installation of most recent Internet Explorer (Thanks to "Joe", "FrankH", "smeijer", "jbegarek", "mAsTa", "boco", "Denniss" and "aker")
 - UpdateInstaller.ini file will now support "skipieinst" setting in [Installation] to control "/skipieinst" switch for DoUpdate.cmd script
 - Fix: DoUpdate.cmd script will now only install most recent Internet Explorer if IE feature was not disabled before (Thanks to "Joe", "FrankH", "smeijer", "jbegarek", "mAsTa", "boco", "Denniss" and "aker")
