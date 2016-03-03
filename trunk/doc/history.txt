@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 10.5
+WSUS Offline Update 10.6
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1119,7 +1119,7 @@ Version 10.5 -- 15.02.16
 - Fix: DoUpdate.cmd script will now also enable/disable service 'Windows Update' (wuauserv) on demand (Thanks to "DCEM", "boco" and "aker")
 - Fix: Windows Defender definition files were attempted to be updated even if Windows Defender was disabled II (Thanks to "aker")
 --------------------------------------------------------------------------------
-Version ??.? -- ??.??.??
+Version 10.6 -- 03.03.16
 - Support added for Windows Management Framework 5.0 on Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems (Thanks to "harry")
 - Ability added to enable .NET Framework 3.5 feature even on Windows 10 and Server 2016 (x86/x64) systems (Thanks to "eLPuSHeR", "Cababs", "aker" and "boco")
 - Replaced superseded Windows Update Client February 2016 (kb3135445/kb3135449) for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2 by Windows Update Client March 2016 (kb3138612/kb3138615) (Thanks to "harry")
@@ -1131,3 +1131,4 @@ Version ??.? -- ??.??.??
 - Fix: Installation of MSU packages failed because DoUpdate.cmd script disabled service 'Windows Update' (wuauserv) (Thanks to "rbr555", "boco" and "aker")
 - Fix: WOUTempAdmin password enhanced to satisfy complexity policies (Thanks to G. Sciuto and "mtk")
 - Fix: DoUpdate.cmd script attempted to restore invalid registry value "DelayedAutoStart" for service 'Windows Update' (wuauserv) under Windows 10 (Thanks to "maddes")
+--------------------------------------------------------------------------------
