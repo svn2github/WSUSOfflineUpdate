@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.6
+set WSUSOFFLINE_VERSION=10.6+ (r751)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1284,11 +1284,108 @@ if exist ..\software\custom\InstallCustomSoftware.cmd (
   echo %DATE% %TIME% - Info: Executed custom software installation hook ^(Errorlevel: %errorlevel%^)>>%UPDATE_LOGFILE%
   set REBOOT_REQUIRED=1
 )
+goto UpdateSystem
 
-rem *** Determine and install missing Microsoft updates ***
+:EnableWUSvc
+if "%WUSVC_ENABLED%"=="1" goto :eof
 for /F "tokens=3" %%i in ('%REG_PATH% QUERY HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start 2^>nul ^| %SystemRoot%\System32\find.exe /I "Start"') do set WUSVC_STVAL=%%i
 for /F "tokens=3" %%i in ('%REG_PATH% QUERY HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart 2^>nul ^| %SystemRoot%\System32\find.exe /I "DelayedAutoStart"') do set WUSVC_STDEL=%%i
-for /F "tokens=3" %%i in ('%REG_PATH% QUERY HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU /v NoAutoRebootWithLoggedOnUsers 2^>nul ^| %SystemRoot%\System32\find.exe /I "NoAutoRebootWithLoggedOnUsers"') do set WUPOL_ABOOT=%%i
+for /F "tokens=4" %%i in ('%SystemRoot%\System32\sc.exe qc wuauserv 2^>nul ^| %SystemRoot%\System32\find.exe /I "START_TYPE"') do (
+  if /i "%%i"=="DISABLED" (
+    echo Enabling service 'Windows Update' ^(wuauserv^) - previous state will be recovered later...
+    echo %DATE% %TIME% - Info: Enabling service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
+    %SC_PATH% config wuauserv start= demand >nul 2>&1
+    if errorlevel 1 (
+      echo Warning: Enabling of service 'Windows Update' ^(wuauserv^) failed.
+      echo %DATE% %TIME% - Warning: Enabling of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
+    ) else (
+      echo %DATE% %TIME% - Info: Enabled service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
+      set WUSVC_ENABLED=1
+      if "%WUSVC_STVAL%" NEQ "" (
+        %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start /t REG_DWORD /d %WUSVC_STVAL% /f >nul 2>&1
+      )
+      if "%WUSVC_STDEL%" NEQ "" (
+        %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart /t REG_DWORD /d %WUSVC_STDEL% /f >nul 2>&1
+      )
+    )
+  )
+)
+set WUSVC_STVAL=
+set WUSVC_STDEL=
+goto :eof
+
+:WaitService
+echo Waiting for service '%1' to reach state '%2' (timeout: %3s)...
+echo %DATE% %TIME% - Info: Waiting for service '%1' to reach state '%2' (timeout: %3s)>>%UPDATE_LOGFILE%
+for /L %%i in (2,2,%3) do (
+  for /F "tokens=4" %%j in ('%SystemRoot%\System32\sc.exe query %1 2^>nul ^| %SystemRoot%\System32\find.exe /I "STATE"') do (
+    if /i "%%j"=="%2" (
+      echo %DATE% %TIME% - Info: Service '%1' reached state '%2'>>%UPDATE_LOGFILE%
+      goto :eof
+    )
+  )
+  %SystemRoot%\System32\timeout.exe /T 2 >nul
+)
+echo Warning: Service '%1' did not reach state '%2' (timeout occured)
+echo %DATE% %TIME% - Warning: Service '%1' did not reach state '%2' (timeout occured)>>%UPDATE_LOGFILE%
+verify other 2>nul
+goto :eof
+
+:StopWUSvc
+for /F "tokens=4" %%i in ('%SystemRoot%\System32\sc.exe query wuauserv 2^>nul ^| %SystemRoot%\System32\find.exe /I "STATE"') do (
+  if /i "%%i"=="STOPPED" goto :eof
+)
+echo Stopping service 'Windows Update' (wuauserv)...
+echo %DATE% %TIME% - Info: Stopping service 'Windows Update' (wuauserv)>>%UPDATE_LOGFILE%
+%SC_PATH% stop wuauserv >nul 2>&1
+if errorlevel 1 (
+  echo Warning: Stopping of service 'Windows Update' ^(wuauserv^) failed.
+  echo %DATE% %TIME% - Warning: Stopping of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
+) else (
+  call :WaitService wuauserv STOPPED 60
+  if not errorlevel 1 echo %DATE% %TIME% - Info: Stopped service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
+)
+goto :eof
+
+:StartWUSvc
+for /F "tokens=4" %%i in ('%SystemRoot%\System32\sc.exe query wuauserv 2^>nul ^| %SystemRoot%\System32\find.exe /I "STATE"') do (
+  if /i "%%i"=="RUNNING" goto :eof
+)
+echo Starting service 'Windows Update' (wuauserv)...
+echo %DATE% %TIME% - Info: Starting service 'Windows Update' (wuauserv)>>%UPDATE_LOGFILE%
+%SC_PATH% start wuauserv >nul 2>&1
+if errorlevel 1 (
+  echo Warning: Starting of service 'Windows Update' ^(wuauserv^) failed.
+  echo %DATE% %TIME% - Warning: Starting of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
+) else (
+  call :WaitService wuauserv RUNNING 60
+  if not errorlevel 1 echo %DATE% %TIME% - Info: Started service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
+)
+goto :eof
+
+:AdjustWUSvc
+for /F "tokens=3" %%i in ('%REG_PATH% QUERY HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU /v NoAutoRebootWithLoggedOnUsers 2^>nul ^| %SystemRoot%\System32\find.exe /I "NoAutoRebootWithLoggedOnUsers"') do set WUPOL_NOAR=%%i
+for /F "tokens=3" %%i in ('%REG_PATH% QUERY HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU /v NoAutoUpdate 2^>nul ^| %SystemRoot%\System32\find.exe /I "NoAutoUpdate"') do set WUPOL_NOAU=%%i
+%REG_PATH% ADD HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU /v NoAutoRebootWithLoggedOnUsers /t REG_DWORD /d 1 /f >nul 2>&1
+%REG_PATH% ADD HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU /v NoAutoUpdate /t REG_DWORD /d 1 /f >nul 2>&1
+call :StopWUSvc
+call :StartWUSvc
+if "%WUPOL_NOAR%"=="" (
+  %REG_PATH% DELETE HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU /v NoAutoRebootWithLoggedOnUsers /f >nul 2>&1
+) else (
+  %REG_PATH% ADD HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU /v NoAutoRebootWithLoggedOnUsers /t REG_DWORD /d %WUPOL_NOAR% /f >nul 2>&1
+)
+if "%WUPOL_NOAU%"=="" (
+  %REG_PATH% DELETE HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU /v NoAutoUpdate /f >nul 2>&1
+) else (
+  %REG_PATH% ADD HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU /v NoAutoUpdate /t REG_DWORD /d %WUPOL_NOAU% /f >nul 2>&1
+)
+set WUPOL_NOAR=
+set WUPOL_NOAU=
+goto :eof
+
+:UpdateSystem
+rem *** Determine and install missing Microsoft updates ***
 if exist %SystemRoot%\Temp\WOUpdatesToInstall.txt (
   move /Y %SystemRoot%\Temp\WOUpdatesToInstall.txt "%TEMP%\UpdatesToInstall.txt" >nul 2>&1
   goto InstallUpdates
@@ -1298,8 +1395,8 @@ if "%SKIP_DYNAMIC%"=="/skipdynamic" (
   echo %DATE% %TIME% - Info: Skipped determination of missing updates on demand>>%UPDATE_LOGFILE%
   goto ListInstalledIds
 )
-if not exist ..\static\StaticUpdateIds-wupre-%OS_NAME%.txt goto CheckWUSvc
-if exist %SystemRoot%\Temp\wou_wupre_tried.txt goto CheckWUSvc
+if not exist ..\static\StaticUpdateIds-wupre-%OS_NAME%.txt goto ListMissingIds
+if exist %SystemRoot%\Temp\wou_wupre_tried.txt goto ListMissingIds
 echo Checking Windows Update scan prerequisites...
 %CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
 if exist "%TEMP%\InstalledUpdateIds.txt" (
@@ -1311,6 +1408,7 @@ if exist "%TEMP%\InstalledUpdateIds.txt" (
 call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
+  call :EnableWUSvc
   echo Installing Windows Update scan prerequisites...
   call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /ignoreerrors
   if not errorlevel 1 (
@@ -1319,41 +1417,13 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
     set REBOOT_REQUIRED=1
   )
 )
-:CheckWUSvc
-rem *** Check state of service 'Windows Update' ***
-echo Checking state of service 'Windows Update'...
-%CSCRIPT_PATH% //Nologo //B //E:vbs DetermineServiceState.vbs wuauserv WUSVC
-if not exist "%TEMP%\SetServiceState.cmd" goto ListMissingIds
-call "%TEMP%\SetServiceState.cmd"
-del "%TEMP%\SetServiceState.cmd"
-echo %DATE% %TIME% - Info: Detected state of service 'Windows Update': %WUSVC_STATE% (start mode: %WUSVC_SMODE%)>>%UPDATE_LOGFILE%
-if /i "%WUSVC_SMODE%"=="Auto" (
-  if "%USERNAME%"=="WOUTempAdmin" goto ListMissingIds
-)
-if /i "%WUSVC_STATE%"=="Running" goto ListMissingIds
-if /i "%WUSVC_STATE%"=="Start Pending" goto ListMissingIds
-if /i "%WUSVC_STATE%"=="Unknown" goto ListMissingIds
-if /i "%WUSVC_STATE%"=="" goto ListMissingIds
-if /i "%WUSVC_SMODE%"=="Disabled" (
-  echo Enabling service 'Windows Update' ^(wuauserv^) - previous state will be recovered later...
-  %SC_PATH% config wuauserv start= demand >nul 2>&1
-  if errorlevel 1 goto AUSvcNotRunning
-  echo %DATE% %TIME% - Info: Enabled service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
-  if "%WUSVC_STVAL%" NEQ "" (
-    %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start /t REG_DWORD /d %WUSVC_STVAL% /f >nul 2>&1
-  )
-  if "%WUSVC_STDEL%" NEQ "" (
-    %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart /t REG_DWORD /d %WUSVC_STDEL% /f >nul 2>&1
-  )
-)
-%REG_PATH% ADD HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU /v NoAutoRebootWithLoggedOnUsers /t REG_DWORD /d 1 /f >nul 2>&1
-echo Starting service 'Windows Update' (wuauserv) - previous state will be recovered later...
-%SC_PATH% start wuauserv >nul 2>&1
-if errorlevel 1 goto AUSvcNotRunning
-set WUSVC_STARTED=1
-echo %DATE% %TIME% - Info: Started service 'Windows Update' (wuauserv)>>%UPDATE_LOGFILE%
 
 :ListMissingIds
+rem *** Adjust service 'Windows Update' ***
+echo Adjusting service 'Windows Update'...
+call :EnableWUSvc
+call :AdjustWUSvc
+set WUSVC_STARTED=1
 rem *** List ids of missing updates ***
 if not exist ..\wsus\wsusscn2.cab goto NoCatalog
 if "%VERIFY_MODE%" NEQ "/verify" goto SkipVerifyCatalog
@@ -1402,23 +1472,11 @@ echo %DATE% %TIME% - Info: Listed update files>>%UPDATE_LOGFILE%
 :InstallUpdates
 rem *** Install updates ***
 if not exist "%TEMP%\UpdatesToInstall.txt" goto SkipUpdates
-echo Stopping service 'Windows Update' (wuauserv) - previous state will be recovered later...
-%SC_PATH% stop wuauserv >nul 2>&1
-if errorlevel 1 (
-  echo %DATE% %TIME% - Warning: Stopping of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
-) else (
-  set WUSVC_STOPPED=1
-  echo %DATE% %TIME% - Info: Stopped service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
-)
-%REG_PATH% ADD HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU /v NoAutoRebootWithLoggedOnUsers /t REG_DWORD /d 1 /f >nul 2>&1
+call :StopWUSvc
+set WUSVC_STOPPED=1
 echo Installing updates...
 call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /errorsaswarnings
 if errorlevel 1 goto InstError
-if "%WUPOL_ABOOT%"=="" (
-  %REG_PATH% DELETE HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU /v NoAutoRebootWithLoggedOnUsers /f >nul 2>&1
-) else (
-  %REG_PATH% ADD HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU /v NoAutoRebootWithLoggedOnUsers /t REG_DWORD /d %WUPOL_ABOOT% /f >nul 2>&1
-)
 if exist %SystemRoot%\Temp\WOUpdatesToInstall.txt (set RECALL_REQUIRED=1) else (set REBOOT_REQUIRED=1)
 if "%RECALL_REQUIRED%"=="1" goto Installed
 :SkipUpdates
@@ -1547,15 +1605,7 @@ goto :eof
 
 :RestoreWUSvc
 if "%WUSVC_STOPPED%"=="1" (
-  if "%WUSVC_STARTED%" NEQ "1" (
-    echo Starting service 'Windows Update' ^(wuauserv^)...
-    %SC_PATH% start wuauserv >nul 2>&1
-    if errorlevel 1 (
-      echo %DATE% %TIME% - Warning: Starting of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
-    ) else (
-      echo %DATE% %TIME% - Info: Started service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
-    )
-  )
+  if "%WUSVC_STARTED%" NEQ "1" call :StartWUSvc
 )
 goto :eof
 
@@ -1750,14 +1800,6 @@ goto EoF
 echo.
 echo ERROR: Environment variable OS_SP_TARGET_ID not set.
 echo %DATE% %TIME% - Error: Environment variable OS_SP_TARGET_ID not set>>%UPDATE_LOGFILE%
-echo.
-call :Cleanup
-goto EoF
-
-:AUSvcNotRunning
-echo.
-echo ERROR: Service 'Windows Update' (wuauserv) could not be started.
-echo %DATE% %TIME% - Error: Service 'Windows Update' (wuauserv) could not be started>>%UPDATE_LOGFILE%
 echo.
 call :Cleanup
 goto EoF
