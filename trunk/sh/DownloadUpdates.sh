@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                          v. 10.6+ (r754)                          ###
+###                          v. 10.6+ (r755)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -798,6 +798,7 @@ do
   rm -f ../client/ofc/UpdateTable-${sys}-${lang}.csv
 
    while IFS=',' read Platz1 temp_linkid Rest
+    do
       test "${temp_linkid}" || continue
 	# Brechstange
       Line=$(grep "^${temp_linkid}," ../temp/OfficeUpdateCabExeIdsAndLocations.txt)
