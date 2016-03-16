@@ -1134,6 +1134,7 @@ Version 10.6 -- 03.03.16
 --------------------------------------------------------------------------------
 Version ??.? -- ??.??.??
 - Replaced superseded scan prerequisite update kb3134214 (MS16-018) by kb3139852 (MS16-034) (Thanks to "Denniss", "Dalai" and the community)
+- Aria2 download utility updated to v. 1.21.0 (Thanks to "harry")
 - Fix: Online update scan interfered with determination of missing updates (Thanks to "aker", "boco", "Denniss" and "okseeusoon")
 - Fix: Corrected 'same day' rule
 - Fix: Download part missed Outlook 2007 Security Update kb2880510 (MS16-029)
