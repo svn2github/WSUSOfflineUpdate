@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.6+ (r756)
+set WSUSOFFLINE_VERSION=10.6+ (r757)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1317,17 +1317,20 @@ goto :eof
 :WaitService
 echo Waiting for service '%1' to reach state '%2' (timeout: %3s)...
 echo %DATE% %TIME% - Info: Waiting for service '%1' to reach state '%2' (timeout: %3s)>>%UPDATE_LOGFILE%
+echo WScript.Sleep(2000)>"%TEMP%\Sleep2Seconds.vbs"
 for /L %%i in (2,2,%3) do (
   for /F "tokens=4" %%j in ('%SystemRoot%\System32\sc.exe query %1 2^>nul ^| %SystemRoot%\System32\find.exe /I "STATE"') do (
     if /i "%%j"=="%2" (
       echo %DATE% %TIME% - Info: Service '%1' reached state '%2'>>%UPDATE_LOGFILE%
+      del "%TEMP%\Sleep2Seconds.vbs"
       goto :eof
     )
   )
-  %SystemRoot%\System32\timeout.exe /T 2 >nul
+  %CSCRIPT_PATH% //Nologo //B //E:vbs "%TEMP%\Sleep2Seconds.vbs"
 )
 echo Warning: Service '%1' did not reach state '%2' (timeout occured)
 echo %DATE% %TIME% - Warning: Service '%1' did not reach state '%2' (timeout occured)>>%UPDATE_LOGFILE%
+del "%TEMP%\Sleep2Seconds.vbs"
 verify other 2>nul
 goto :eof
 
