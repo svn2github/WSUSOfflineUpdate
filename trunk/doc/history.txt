@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 10.6
+WSUS Offline Update 10.6.1
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1132,13 +1132,14 @@ Version 10.6 -- 03.03.16
 - Fix: WOUTempAdmin password enhanced to satisfy complexity policies (Thanks to G. Sciuto and "mtk")
 - Fix: DoUpdate.cmd script attempted to restore invalid registry value "DelayedAutoStart" for service 'Windows Update' (wuauserv) under Windows 10 (Thanks to "maddes")
 --------------------------------------------------------------------------------
-Version ??.? -- ??.??.??
+Version 10.6.1 -- 18.03.16
 - Replaced superseded scan prerequisite update kb3134214 (MS16-018) by kb3139852 (MS16-034) (Thanks to "Denniss", "Dalai" and the community)
 - Aria2 download utility updated to v. 1.21.0 (Thanks to "harry")
 - Fix: Online update scan interfered with determination of missing updates (Thanks to "aker", "boco", "Denniss" and "okseeusoon")
 - Fix: Corrected 'same day' rule
-- Fix: Installation of kb3139929 (MS16-023) for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2 missed partial update kb3141092 of kb3134814 (MS16-009)
+- Fix: Removed obsolete partial IE update kb3141092 (MS16-009) from static definitions
 - Fix: Download part missed Outlook 2007 Security Update kb2880510 (MS16-029)
 - Fix: Download part missed Outlook 2010 Security Update kb3114883 (MS16-029)
 - Fix: Download part missed Outlook 2013 Security Update kb3114829 (MS16-029)
 - Fix: Download part missed Outlook 2016 Security Update kb3114861 (MS16-029)
+--------------------------------------------------------------------------------

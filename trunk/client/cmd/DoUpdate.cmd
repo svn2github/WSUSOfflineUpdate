@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.6+ (r758)
+set WSUSOFFLINE_VERSION=10.6.1
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1345,7 +1345,7 @@ if errorlevel 1 (
   echo Warning: Stopping of service 'Windows Update' ^(wuauserv^) failed.
   echo %DATE% %TIME% - Warning: Stopping of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
 ) else (
-  call :WaitService wuauserv STOPPED 120
+  call :WaitService wuauserv STOPPED 180
   if not errorlevel 1 echo %DATE% %TIME% - Info: Stopped service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
 )
 goto :eof
@@ -1361,7 +1361,7 @@ if errorlevel 1 (
   echo Warning: Starting of service 'Windows Update' ^(wuauserv^) failed.
   echo %DATE% %TIME% - Warning: Starting of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
 ) else (
-  call :WaitService wuauserv RUNNING 120
+  call :WaitService wuauserv RUNNING 60
   if not errorlevel 1 echo %DATE% %TIME% - Info: Started service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
 )
 goto :eof

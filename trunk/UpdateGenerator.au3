@@ -1,19 +1,19 @@
-; ***  WSUS Offline Update 10.6 - Generator  ***
-; ***       Author: T. Wittrock, Kiel        ***
-; ***     USB-Option added by Ch. Riedel     ***
-; ***   Dialog scaling added by Th. Baisch   ***
+; ***  WSUS Offline Update 10.6.1 - Generator  ***
+; ***        Author: T. Wittrock, Kiel         ***
+; ***      USB-Option added by Ch. Riedel      ***
+; ***    Dialog scaling added by Th. Baisch    ***
 
 #include <GUIConstants.au3>
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Generator")
-#pragma compile(FileVersion, 10.6.0.758)
+#pragma compile(FileVersion, 10.6.1.760)
 #pragma compile(InternalName, "Generator")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateGenerator.exe)
 #pragma compile(ProductName, "WSUS Offline Update")
-#pragma compile(ProductVersion, 10.6.0)
+#pragma compile(ProductVersion, 10.6.1)
 
-Dim Const $caption                  = "WSUS Offline Update 10.6"
+Dim Const $caption                  = "WSUS Offline Update 10.6.1"
 Dim Const $title                    = $caption & " - Generator"
 Dim Const $donationURL              = "http://www.wsusoffline.net/donate.html"
 Dim Const $downloadLogFile          = "download.log"
