@@ -1143,3 +1143,5 @@ Version 10.6.1 -- 18.03.16
 - Fix: Download part missed Outlook 2013 Security Update kb3114829 (MS16-029)
 - Fix: Download part missed Outlook 2016 Security Update kb3114861 (MS16-029)
 --------------------------------------------------------------------------------
+Version ??.?.? -- ??.??.??
+- Replaced superseded scan prerequisite update kb3139852 (MS16-034) by kb3145739 (MS16-039) (Thanks to "Dalai")
