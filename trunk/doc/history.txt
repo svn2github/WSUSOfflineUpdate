@@ -1146,3 +1146,7 @@ Version 10.6.1 -- 18.03.16
 Version ??.?.? -- ??.??.??
 - C++ 2015 Runtime Libraries updated to v. 14.0.23918 (Thanks to "harry")
 - Replaced superseded scan prerequisite update kb3139852 (MS16-034) by kb3145739 (MS16-039) (Thanks to "Dalai")
+- Aria2 download utility updated to v. 1.22.0 (Thanks to "harry")
+- Fix: Replaced superseded Lync 2013 Security Update kb3114351 (MS15-128) by kb3114944 (MS16-039)
+- Fix: Replaced superseded Lync 2016 Security Update kb3114372 (MS15-128) by kb3114960 (MS16-039)
+- Fix: Download part erroneously excluded Security Update kb3032663 (MS15-048) for .NET Framework 4.5.x under Windows 8.1 (x86/x64) and Server 2012 R2 (Thanks to "aker" and "Denniss")
