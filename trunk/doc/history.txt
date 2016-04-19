@@ -1150,3 +1150,5 @@ Version ??.?.? -- ??.??.??
 - Fix: Replaced superseded Lync 2013 Security Update kb3114351 (MS15-128) by kb3114944 (MS16-039)
 - Fix: Replaced superseded Lync 2016 Security Update kb3114372 (MS15-128) by kb3114960 (MS16-039)
 - Fix: Download part erroneously excluded Security Update kb3032663 (MS15-048) for .NET Framework 4.5.x under Windows 8.1 (x86/x64) and Server 2012 R2 (Thanks to "aker" and "Denniss")
+- Fix: Excluded obsolete updates for .NET Framework 4.5 and 4.5.1 (Thanks to "Denniss" and "harry")
+- Fix: Power management settings were only adjusted for WOUTempAdmin user account (Thanks to G. Dixon)

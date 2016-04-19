@@ -45,27 +45,6 @@ if exist %SystemRoot%\woubak-system-policies.reg (
   )
 )
 
-if not exist %SystemRoot%\woubak-pwrscheme-act.txt goto SkipPowerCfg
-if not exist %SystemRoot%\woubak-pwrscheme-temp.txt goto SkipPowerCfg
-echo Deleting temporary power scheme...
-for /F %%i in (%SystemRoot%\woubak-pwrscheme-act.txt) do %SystemRoot%\System32\powercfg.exe -setactive %%i
-if errorlevel 1 (
-  echo Warning: Activation of previous power scheme failed.
-  echo %DATE% %TIME% - Warning: Activation of previous power scheme failed>>%UPDATE_LOGFILE%
-) else (
-  del %SystemRoot%\woubak-pwrscheme-act.txt
-  echo %DATE% %TIME% - Info: Activated previous power scheme>>%UPDATE_LOGFILE%
-)
-for /F %%i in (%SystemRoot%\woubak-pwrscheme-temp.txt) do %SystemRoot%\System32\powercfg.exe -delete %%i
-if errorlevel 1 (
-  echo Warning: Deletion of temporary power scheme failed.
-  echo %DATE% %TIME% - Warning: Deletion of temporary power scheme failed>>%UPDATE_LOGFILE%
-) else (
-  del %SystemRoot%\woubak-pwrscheme-temp.txt
-  echo %DATE% %TIME% - Info: Deleted temporary power scheme>>%UPDATE_LOGFILE%
-)
-:SkipPowerCfg
-
 echo Unregistering recall...
 %REG_PATH% DELETE "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v WSUSOfflineUpdate /f >nul 2>&1
 if errorlevel 1 (

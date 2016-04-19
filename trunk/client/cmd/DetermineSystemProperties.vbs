@@ -429,8 +429,6 @@ For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_ComputerSy
 Next
 ' Documentation: http://msdn.microsoft.com/en-us/library/hww8txat(v=VS.85).aspx
 objCmdFile.WriteLine("set FS_TYPE=" & objFileSystem.GetDrive(objFileSystem.GetDriveName(wshShell.CurrentDirectory)).FileSystem)
-' Determine current power policy
-objCmdFile.WriteLine("set PWR_POL_IDX=" & RegRead(wshShell, strRegKeyPowerCfg & strRegValCurrentPowerPolicy))
 
 ' Determine Windows Update Agent version
 If objFileSystem.FileExists(strWUAFileName) Then

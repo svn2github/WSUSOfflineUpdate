@@ -38,22 +38,6 @@ if errorlevel 1 (
   echo %DATE% %TIME% - Info: Saved System policies registry hive>>%UPDATE_LOGFILE%
 )
 
-echo Creating temporary power scheme...
-for /F "tokens=2 delims=:(" %%i in ('%SystemRoot%\System32\powercfg.exe -getactivescheme') do echo %%i>%SystemRoot%\woubak-pwrscheme-act.txt
-for /F %%i in (%SystemRoot%\woubak-pwrscheme-act.txt) do (
-  for /F "tokens=2 delims=:(" %%j in ('%SystemRoot%\System32\powercfg.exe -duplicatescheme %%i') do echo %%j>%SystemRoot%\woubak-pwrscheme-temp.txt
-)
-for /F %%i in (%SystemRoot%\woubak-pwrscheme-temp.txt) do (
-  %SystemRoot%\System32\powercfg.exe -changename %%i WOUTemp
-  %SystemRoot%\System32\powercfg.exe -setactive %%i
-)
-if errorlevel 1 (
-  echo Warning: Activation of temporary power scheme failed.
-  echo %DATE% %TIME% - Warning: Activation of temporary power scheme failed>>%UPDATE_LOGFILE%
-) else (
-  echo %DATE% %TIME% - Info: Activated temporary power scheme>>%UPDATE_LOGFILE%
-)
-
 echo Preparing recall directory...
 if not exist %SystemRoot%\Temp\WOURecall\nul md %SystemRoot%\Temp\WOURecall
 for %%i in (CleanupRecall.cmd DeleteUpdateAdmin.vbs DetermineTempAdminSID.vbs RecallStub.cmd ..\bin\Autologon.exe) do copy /Y %%i %SystemRoot%\Temp\WOURecall >nul

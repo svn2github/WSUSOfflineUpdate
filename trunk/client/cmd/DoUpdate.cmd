@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.6.1+ (r763)
+set WSUSOFFLINE_VERSION=10.6.1+ (r764)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -140,27 +140,6 @@ if "%USERNAME%"=="WOUTempAdmin" (
   if not exist %SystemRoot%\Temp\WOURecall\nul md %SystemRoot%\Temp\WOURecall
   if not exist %SystemRoot%\Temp\WOURecall\wourecall.* echo. >%SystemRoot%\Temp\WOURecall\wourecall.1
 )
-
-rem *** Adjust power management settings ***
-if "%USERNAME%" NEQ "WOUTempAdmin" goto SkipPowerCfg
-if not exist "%SystemRoot%\Temp\WOURecall\wourecall.1" goto SkipPowerCfg
-rem *** Disable Screensaver for WOUTempAdmin ***
-%REG_PATH% ADD "HKCU\Control Panel\Desktop" /v ScreenSaveActive /t REG_SZ /d 0 /f >nul 2>&1
-if "%PWR_POL_IDX%"=="" goto SkipPowerCfg
-if not exist %SystemRoot%\System32\powercfg.exe goto SkipPowerCfg
-echo Adjusting power management settings...
-goto PWR%OS_NAME%
-
-:PWRw60
-:PWRw61
-:PWRw62
-:PWRw63
-:PWRw100
-for %%i in (monitor disk standby hibernate) do (
-  for %%j in (ac dc) do %SystemRoot%\System32\powercfg.exe -X -%%i-timeout-%%j 0
-)
-echo %DATE% %TIME% - Info: Adjusted power management settings>>%UPDATE_LOGFILE%
-:SkipPowerCfg
 
 rem *** Determine Windows licensing info ***
 if exist %SystemRoot%\System32\slmgr.vbs (
@@ -293,8 +272,41 @@ echo Medium does not support Microsoft Office (ofc glb).
 echo %DATE% %TIME% - Info: Medium does not support Microsoft Office (ofc glb)>>%UPDATE_LOGFILE%
 if "%JUST_OFFICE%"=="1" goto InvalidMedium
 :ProperMedium
-if "%JUST_OFFICE%"=="1" goto JustOffice
 
+rem *** Disable screensaver ***
+echo Disabling screensaver...
+for /F "tokens=3" %%i in ('%REG_PATH% QUERY "HKCU\Control Panel\Desktop" /v ScreenSaveActive 2^>nul ^| %SystemRoot%\System32\find.exe /I "ScreenSaveActive"') do set CUPOL_SSA=%%i
+%REG_PATH% ADD "HKCU\Control Panel\Desktop" /v ScreenSaveActive /t REG_SZ /d 0 /f >nul 2>&1
+echo %DATE% %TIME% - Info: Disabled screensaver>>%UPDATE_LOGFILE%
+
+rem *** Adjust power management settings ***
+if not exist %SystemRoot%\System32\powercfg.exe goto SkipPowerCfg
+if exist %SystemRoot%\woubak-pwrscheme-act.txt goto SkipPowerCfg
+if exist %SystemRoot%\woubak-pwrscheme-temp.txt goto SkipPowerCfg
+echo Creating temporary power scheme...
+for /F "tokens=2 delims=:(" %%i in ('%SystemRoot%\System32\powercfg.exe -getactivescheme') do echo %%i>%SystemRoot%\woubak-pwrscheme-act.txt
+for /F %%i in (%SystemRoot%\woubak-pwrscheme-act.txt) do (
+  for /F "tokens=2 delims=:(" %%j in ('%SystemRoot%\System32\powercfg.exe -duplicatescheme %%i') do echo %%j>%SystemRoot%\woubak-pwrscheme-temp.txt
+)
+for /F %%i in (%SystemRoot%\woubak-pwrscheme-temp.txt) do (
+  %SystemRoot%\System32\powercfg.exe -changename %%i WOUTemp
+  %SystemRoot%\System32\powercfg.exe -setactive %%i
+)
+if errorlevel 1 (
+  echo Warning: Creation of temporary power scheme failed.
+  echo %DATE% %TIME% - Warning: Creation of temporary power scheme failed>>%UPDATE_LOGFILE%
+  goto SkipPowerCfg
+) else (
+  echo %DATE% %TIME% - Info: Created temporary power scheme>>%UPDATE_LOGFILE%
+)
+echo Adjusting power management settings...
+for %%i in (monitor disk standby hibernate) do (
+  for %%j in (ac dc) do %SystemRoot%\System32\powercfg.exe -X -%%i-timeout-%%j 0
+)
+echo %DATE% %TIME% - Info: Adjusted power management settings>>%UPDATE_LOGFILE%
+:SkipPowerCfg
+
+if "%JUST_OFFICE%"=="1" goto JustOffice
 rem *** Install Windows Service Pack ***
 if "%OS_NAME%"=="w63" goto SPw63
 echo Checking Windows Service Pack version...
@@ -1623,6 +1635,33 @@ if exist %SystemRoot%\Temp\wou_wmfpre_tried.txt del %SystemRoot%\Temp\wou_wmfpre
 if exist %SystemRoot%\Temp\wou_wmf_tried.txt del %SystemRoot%\Temp\wou_wmf_tried.txt
 if exist %SystemRoot%\Temp\wou_wupre_tried.txt del %SystemRoot%\Temp\wou_wupre_tried.txt
 if exist "%TEMP%\UpdateInstaller.ini" del "%TEMP%\UpdateInstaller.ini"
+if "%CUPOL_SSA%" NEQ "" (
+  echo Restoring screensaver setting...
+  %REG_PATH% ADD "HKCU\Control Panel\Desktop" /v ScreenSaveActive /t REG_SZ /d %CUPOL_SSA% /f >nul 2>&1
+  echo %DATE% %TIME% - Info: Restored screensaver setting>>%UPDATE_LOGFILE%
+)
+if exist %SystemRoot%\woubak-pwrscheme-act.txt (
+  echo Activating previous power scheme...
+  for /F %%i in (%SystemRoot%\woubak-pwrscheme-act.txt) do %SystemRoot%\System32\powercfg.exe -setactive %%i
+  if errorlevel 1 (
+    echo Warning: Activation of previous power scheme failed.
+    echo %DATE% %TIME% - Warning: Activation of previous power scheme failed>>%UPDATE_LOGFILE%
+  ) else (
+    del %SystemRoot%\woubak-pwrscheme-act.txt
+    echo %DATE% %TIME% - Info: Activated previous power scheme>>%UPDATE_LOGFILE%
+  )
+)
+if exist %SystemRoot%\woubak-pwrscheme-temp.txt (
+  echo Deleting temporary power scheme...
+  for /F %%i in (%SystemRoot%\woubak-pwrscheme-temp.txt) do %SystemRoot%\System32\powercfg.exe -delete %%i
+  if errorlevel 1 (
+    echo Warning: Deletion of temporary power scheme failed.
+    echo %DATE% %TIME% - Warning: Deletion of temporary power scheme failed>>%UPDATE_LOGFILE%
+  ) else (
+    del %SystemRoot%\woubak-pwrscheme-temp.txt
+    echo %DATE% %TIME% - Info: Deleted temporary power scheme>>%UPDATE_LOGFILE%
+  )
+)
 if "%USERNAME%"=="WOUTempAdmin" (
   echo Cleaning up automatic recall...
   call CleanupRecall.cmd
