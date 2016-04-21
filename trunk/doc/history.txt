@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 10.6.1
+WSUS Offline Update 10.6.2
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1143,7 +1143,7 @@ Version 10.6.1 -- 18.03.16
 - Fix: Download part missed Outlook 2013 Security Update kb3114829 (MS16-029)
 - Fix: Download part missed Outlook 2016 Security Update kb3114861 (MS16-029)
 --------------------------------------------------------------------------------
-Version ??.?.? -- ??.??.??
+Version 10.6.2 -- 21.04.16
 - C++ 2015 Runtime Libraries updated to v. 14.0.23918 (Thanks to "harry")
 - Replaced superseded scan prerequisite update kb3139852 (MS16-034) by kb3145739 (MS16-039) (Thanks to "Dalai")
 - Aria2 download utility updated to v. 1.22.0 (Thanks to "harry")
@@ -1152,3 +1152,4 @@ Version ??.?.? -- ??.??.??
 - Fix: Download part erroneously excluded Security Update kb3032663 (MS15-048) for .NET Framework 4.5.x under Windows 8.1 (x86/x64) and Server 2012 R2 (Thanks to "aker" and "Denniss")
 - Fix: Excluded obsolete updates for .NET Framework 4.5 and 4.5.1 (Thanks to "Denniss" and "harry")
 - Fix: Power management settings were only adjusted for WOUTempAdmin user account (Thanks to G. Dixon)
+--------------------------------------------------------------------------------
