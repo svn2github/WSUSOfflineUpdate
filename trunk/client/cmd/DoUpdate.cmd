@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.6.2+ (r767)
+set WSUSOFFLINE_VERSION=10.6.2+ (r768)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1331,7 +1331,7 @@ echo Waiting for service '%1' to reach state '%2' (timeout: %3s)...
 echo %DATE% %TIME% - Info: Waiting for service '%1' to reach state '%2' (timeout: %3s)>>%UPDATE_LOGFILE%
 echo WScript.Sleep(2000)>"%TEMP%\Sleep2Seconds.vbs"
 for /L %%i in (2,2,%3) do (
-  for /F "tokens=4" %%j in ('%SystemRoot%\System32\sc.exe query %1 2^>nul ^| %SystemRoot%\System32\find.exe /I "STATE"') do (
+  for /F "tokens=4" %%j in ('%SystemRoot%\System32\sc.exe query %1 2^>nul ^| %SystemRoot%\System32\find.exe /I "STAT"') do (
     if /i "%%j"=="%2" (
       echo %DATE% %TIME% - Info: Service '%1' reached state '%2'>>%UPDATE_LOGFILE%
       del "%TEMP%\Sleep2Seconds.vbs"
@@ -1347,7 +1347,7 @@ verify other 2>nul
 goto :eof
 
 :StopWUSvc
-for /F "tokens=4" %%i in ('%SystemRoot%\System32\sc.exe query wuauserv 2^>nul ^| %SystemRoot%\System32\find.exe /I "STATE"') do (
+for /F "tokens=4" %%i in ('%SystemRoot%\System32\sc.exe query wuauserv 2^>nul ^| %SystemRoot%\System32\find.exe /I "STAT"') do (
   if /i "%%i"=="STOPPED" goto :eof
 )
 echo Stopping service 'Windows Update' (wuauserv)...
@@ -1363,7 +1363,7 @@ if errorlevel 1 (
 goto :eof
 
 :StartWUSvc
-for /F "tokens=4" %%i in ('%SystemRoot%\System32\sc.exe query wuauserv 2^>nul ^| %SystemRoot%\System32\find.exe /I "STATE"') do (
+for /F "tokens=4" %%i in ('%SystemRoot%\System32\sc.exe query wuauserv 2^>nul ^| %SystemRoot%\System32\find.exe /I "STAT"') do (
   if /i "%%i"=="RUNNING" goto :eof
 )
 echo Starting service 'Windows Update' (wuauserv)...
