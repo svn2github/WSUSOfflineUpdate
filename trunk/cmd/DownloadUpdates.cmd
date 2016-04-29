@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.6.2
+set WSUSOFFLINE_VERSION=10.6.2+ (r767)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -449,6 +449,7 @@ if errorlevel 1 (
 rem *** Download Sysinternals' tools Autologon, Sigcheck and Streams ***
 if not exist ..\client\bin\Autologon.exe goto DownloadSysinternals
 if not exist ..\bin\sigcheck.exe goto DownloadSysinternals
+if not exist ..\bin\sigcheck64.exe goto DownloadSysinternals
 if not exist ..\bin\streams.exe goto DownloadSysinternals
 goto SkipSysinternals
 :DownloadSysinternals
@@ -461,13 +462,17 @@ unzip.exe -o AutoLogon.zip Autologon.exe
 del AutoLogon.zip
 move /Y Autologon.exe ..\client\bin >nul
 unzip.exe -o Sigcheck.zip sigcheck.exe
+unzip.exe -o Sigcheck.zip sigcheck64.exe
 del Sigcheck.zip
 unzip.exe -o Streams.zip streams.exe
 del Streams.zip
 popd
 :SkipSysinternals
-if not exist ..\bin\sigcheck.exe goto SkipSigChkOpts
-%CSCRIPT_PATH% //Nologo //B //E:vbs ..\client\cmd\DetermineFileVersion.vbs ..\bin\sigcheck.exe SIGCHK_VER
+if /i "%PROCESSOR_ARCHITECTURE%"=="AMD64" (set SIGCHK_PATH=..\bin\sigcheck64.exe) else (
+  if /i "%PROCESSOR_ARCHITEW6432%"=="AMD64" (set SIGCHK_PATH=..\bin\sigcheck64.exe) else (set SIGCHK_PATH=..\bin\sigcheck.exe)
+)
+if not exist %SIGCHK_PATH% goto SkipSigChkOpts
+%CSCRIPT_PATH% //Nologo //B //E:vbs ..\client\cmd\DetermineFileVersion.vbs %SIGCHK_PATH% SIGCHK_VER
 if exist "%TEMP%\SetFileVersion.cmd" (
   call "%TEMP%\SetFileVersion.cmd"
   del "%TEMP%\SetFileVersion.cmd"
@@ -531,9 +536,9 @@ echo Downloading/validating most recent Windows Update Agent installation and ca
 if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded/validated most recent Windows Update Agent installation and catalog files>>%DOWNLOAD_LOGFILE%
 if "%VERIFY_DL%" NEQ "1" goto SkipWSUS
-if not exist ..\bin\sigcheck.exe goto NoSigCheck
+if not exist %SIGCHK_PATH% goto NoSigCheck
 echo Verifying digital file signatures of Windows Update Agent installation and catalog files...
-..\bin\sigcheck.exe %SIGCHK_COPT% -s ..\client\wsus >"%TEMP%\sigcheck-wsus.txt"
+%SIGCHK_PATH% %SIGCHK_COPT% -s ..\client\wsus >"%TEMP%\sigcheck-wsus.txt"
 for /F "tokens=1 delims=," %%i in ('%SystemRoot%\System32\findstr.exe /I "Unsigned" "%TEMP%\sigcheck-wsus.txt"') do (
   del %%i
   echo Warning: Deleted unsigned file %%i.
@@ -626,9 +631,9 @@ echo %DATE% %TIME% - Info: Cleaned up client directory for .NET Frameworks 3.5 S
 :VerifyDotNet
 if "%VERIFY_DL%" NEQ "1" goto SkipDotNet
 rem *** Verifying digital file signatures for .NET Frameworks' installation files ***
-if not exist ..\bin\sigcheck.exe goto NoSigCheck
+if not exist %SIGCHK_PATH% goto NoSigCheck
 echo Verifying digital file signatures for .NET Frameworks' installation files...
-..\bin\sigcheck.exe %SIGCHK_COPT% ..\client\dotnet >"%TEMP%\sigcheck-dotnet.txt"
+%SIGCHK_PATH% %SIGCHK_COPT% ..\client\dotnet >"%TEMP%\sigcheck-dotnet.txt"
 for /F "tokens=1 delims=," %%i in ('%SystemRoot%\System32\findstr.exe /I "Unsigned" "%TEMP%\sigcheck-dotnet.txt"') do (
   del %%i
   echo Warning: Deleted unsigned file %%i.
@@ -723,9 +728,9 @@ echo %DATE% %TIME% - Info: Cleaned up client directory for C++ Runtime Libraries
 :VerifyCPP
 if "%VERIFY_DL%" NEQ "1" goto SkipCPP
 rem *** Verifying digital file signatures for C++ Runtime Libraries' installation files ***
-if not exist ..\bin\sigcheck.exe goto NoSigCheck
+if not exist %SIGCHK_PATH% goto NoSigCheck
 echo Verifying digital file signatures for C++ Runtime Libraries' installation files...
-..\bin\sigcheck.exe %SIGCHK_COPT% ..\client\cpp >"%TEMP%\sigcheck-cpp.txt"
+%SIGCHK_PATH% %SIGCHK_COPT% ..\client\cpp >"%TEMP%\sigcheck-cpp.txt"
 for /F "tokens=1 delims=," %%i in ('%SystemRoot%\System32\findstr.exe /I "Unsigned" "%TEMP%\sigcheck-cpp.txt"') do (
   del %%i
   echo Warning: Deleted unsigned file %%i.
@@ -825,9 +830,9 @@ echo %DATE% %TIME% - Info: Cleaned up client directory for Windows Essentials 20
 :VerifyWLE
 if "%VERIFY_DL%" NEQ "1" goto SkipWLE
 rem *** Verifying digital file signatures for Windows Essentials 2012 installation files ***
-if not exist ..\bin\sigcheck.exe goto NoSigCheck
+if not exist %SIGCHK_PATH% goto NoSigCheck
 echo Verifying digital file signatures for Windows Essentials 2012 installation files...
-..\bin\sigcheck.exe %SIGCHK_COPT% -s ..\client\wle >"%TEMP%\sigcheck-wle-glb.txt"
+%SIGCHK_PATH% %SIGCHK_COPT% -s ..\client\wle >"%TEMP%\sigcheck-wle-glb.txt"
 for /F "tokens=1 delims=," %%i in ('%SystemRoot%\System32\findstr.exe /I "Unsigned" "%TEMP%\sigcheck-wle-glb.txt"') do (
   del %%i
   echo Warning: Deleted unsigned file %%i.
@@ -927,9 +932,9 @@ echo %DATE% %TIME% - Info: Cleaned up client directory for Microsoft Security Es
 :VerifyMSSE
 if "%VERIFY_DL%" NEQ "1" goto SkipMSSE
 rem *** Verifying digital file signatures for Microsoft Security Essentials files ***
-if not exist ..\bin\sigcheck.exe goto NoSigCheck
+if not exist %SIGCHK_PATH% goto NoSigCheck
 echo Verifying digital file signatures for Microsoft Security Essentials files...
-..\bin\sigcheck.exe %SIGCHK_COPT% -s ..\client\msse\%TARGET_ARCH%-glb >"%TEMP%\sigcheck-msse-%TARGET_ARCH%-glb.txt"
+%SIGCHK_PATH% %SIGCHK_COPT% -s ..\client\msse\%TARGET_ARCH%-glb >"%TEMP%\sigcheck-msse-%TARGET_ARCH%-glb.txt"
 for /F "tokens=1 delims=," %%i in ('%SystemRoot%\System32\findstr.exe /I "Unsigned" "%TEMP%\sigcheck-msse-%TARGET_ARCH%-glb.txt"') do (
   del %%i
   echo Warning: Deleted unsigned file %%i.
@@ -990,9 +995,9 @@ echo %DATE% %TIME% - Info: Downloaded/validated Windows Defender definition file
 
 rem *** Verifying digital file signatures for Windows Defender definition files ***
 if "%VERIFY_DL%" NEQ "1" goto SkipWDDefs
-if not exist ..\bin\sigcheck.exe goto NoSigCheck
+if not exist %SIGCHK_PATH% goto NoSigCheck
 echo Verifying digital file signatures for Windows Defender definition files...
-..\bin\sigcheck.exe %SIGCHK_COPT% -s ..\client\wddefs\%TARGET_ARCH%-glb >"%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt"
+%SIGCHK_PATH% %SIGCHK_COPT% -s ..\client\wddefs\%TARGET_ARCH%-glb >"%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt"
 for /F "tokens=1 delims=," %%i in ('%SystemRoot%\System32\findstr.exe /I "Unsigned" "%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt"') do (
   del %%i
   echo Warning: Deleted unsigned file %%i.
@@ -1506,9 +1511,9 @@ if exist ..\bin\streams.exe (
 )
 if "%VERIFY_DL%" NEQ "1" goto RemoveHashes
 rem *** Verifying digital file signatures for %1 %2 ***
-if not exist ..\bin\sigcheck.exe goto NoSigCheck
+if not exist %SIGCHK_PATH% goto NoSigCheck
 echo Verifying digital file signatures for %1 %2...
-..\bin\sigcheck.exe %SIGCHK_COPT% -s ..\client\%1\%2 >"%TEMP%\sigcheck-%1-%2.txt"
+%SIGCHK_PATH% %SIGCHK_COPT% -s ..\client\%1\%2 >"%TEMP%\sigcheck-%1-%2.txt"
 for /F "tokens=1 delims=," %%i in ('%SystemRoot%\System32\findstr.exe /I "Unsigned" "%TEMP%\sigcheck-%1-%2.txt"') do (
   del %%i
   echo Warning: Deleted unsigned file %%i.
@@ -1645,8 +1650,8 @@ goto Error
 
 :NoSigCheck
 echo.
-echo ERROR: Sysinternals' digital file signature verification tool ..\bin\sigcheck.exe not found.
-echo %DATE% %TIME% - Error: Sysinternals' digital file signature verification tool ..\bin\sigcheck.exe not found>>%DOWNLOAD_LOGFILE%
+echo ERROR: Sysinternals' digital file signature verification tool %SIGCHK_PATH% not found.
+echo %DATE% %TIME% - Error: Sysinternals' digital file signature verification tool %SIGCHK_PATH% not found>>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 

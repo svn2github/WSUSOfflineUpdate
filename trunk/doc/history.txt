@@ -1153,3 +1153,6 @@ Version 10.6.2 -- 21.04.16
 - Fix: Excluded obsolete updates for .NET Framework 4.5 and 4.5.1 (Thanks to "Denniss" and "harry")
 - Fix: Power management settings were only adjusted for WOUTempAdmin user account (Thanks to G. Dixon)
 --------------------------------------------------------------------------------
+Version ??.? -- ??.??.??
+- DownloadUpdates.cmd script will now also support x64 variant of Sysinternals' Sigcheck tool v. 2.51+ (Thanks to "harry")
+- Fix: Errors on running version check fired misleading new version notifications (Thanks to "Telli")

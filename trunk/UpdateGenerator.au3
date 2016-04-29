@@ -6,7 +6,7 @@
 #include <GUIConstants.au3>
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Generator")
-#pragma compile(FileVersion, 10.6.2.766)
+#pragma compile(FileVersion, 10.6.2.767)
 #pragma compile(InternalName, "Generator")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateGenerator.exe)
@@ -697,8 +697,13 @@ Dim $result
   Else
     $result = RunWait(@ComSpec & " /D /C CheckOUVersion.cmd /exitonerror /proxy " & $strproxy, @ScriptDir & "\cmd", @SW_SHOWMINNOACTIVE)
   EndIf
-  If $result = 0 Then
-    $result = @error
+  If @error <> 0 Then
+    If ShowGUIInGerman() Then
+      MsgBox(0x2030, "Warnung", "Die Versionsprüfung (CheckOUVersion.cmd) konnte nicht ausgeführt werden.")
+    Else
+      MsgBox(0x2030, "Warning", "The version check (CheckOUVersion.cmd) could not be executed.")
+    EndIf
+    Return 0
   EndIf
   If $result <> 0 Then
     If ShowGUIInGerman() Then
