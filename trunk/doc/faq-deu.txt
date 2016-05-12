@@ -8,9 +8,9 @@ A: Ja, Sie haben die Möglichkeit, das Verhalten der Download- und Update-Skripte
 1. Ausschluss von Updates vom Download
 Beim Ausschluss von Updates vom Download muss prinzipiell zwischen statisch definierten Updates, z.B. den neuesten Service Packs, und dynamisch ermittelten unterschieden werden.
   a) Statisch definierte Updates
-    Wollen Sie statisch definierte Updates vom Download ausschließen, so löschen Sie die entsprechenden URL-Definitionen in der zugehörigen Datei "StaticDownloadLinks-<Plattform>[-<Architektur>].txt" im Verzeichnis "static". Bitte beachten Sie, dass die Dateien dort bei einem Update der Software überschrieben werden.
+    Wollen Sie statisch definierte Updates vom Download ausschließen, so löschen Sie die entsprechenden URL-Definitionen in der zugehörigen Datei "StaticDownloadLinks-<Plattform>[-<Architektur>].txt" im Verzeichnis "static\custom". Bitte beachten Sie, dass die Dateien dort bei einem Update der Software überschrieben werden.
   b) Dynamische ermittelte Updates
-    Wollen Sie dynamisch ermittelte Updates vom Download ausschließen, so tragen Sie deren "knowledge base ids" (KBxxxxxx bzw. nur xxxxxx) in die zugehörige Datei "ExcludeList-<Plattform>[-<Architektur>].txt" im Verzeichnis "exclude" ein.
+    Wollen Sie dynamisch ermittelte Updates vom Download ausschließen, so tragen Sie deren "knowledge base ids" (KBxxxxxx bzw. nur xxxxxx) in die zugehörige Datei "ExcludeList-<Plattform>[-<Architektur>].txt" im Verzeichnis "exclude\custom" ein.
      
 2. Ausschluss von Updates von der Installation
 Beim Ausschluss von Updates von der Installation muss ebenfalls zwischen statisch definierten Updates und dynamisch ermittelten unterschieden werden.
@@ -23,7 +23,7 @@ Beim Ausschluss von Updates von der Installation muss ebenfalls zwischen statisc
     - Internet Explorer (IE)
     Diese werden jedoch nur dann installiert, wenn deren Versionsnummer auf dem Zielsystem kleiner ist als die in der Datei "SetTargetEnvVars.cmd" im Verzeichnis "client\cmd" definierte. Wollen Sie die Installation eines dieser statisch definierten Updates generell verhindern, so müssen Sie die "Erwartungshaltung" in der Datei "SetTargetEnvVars.cmd" anpassen bzw. entsprechende Sprungmarken in die Datei "DoUpdate.cmd", die den Installationsablauf steuert, einfügen. Dies sollten Sie nur in Ausnahmefällen tun, denn im Falle von SP, WUA, MSI und WSH sind bestimmte Versionen für einen erfolgreichen Installationsablauf erforderlich.
   b) Dynamische ermittelte Updates
-    Wollen Sie dynamisch ermittelte Updates von der Installation ausschließen, so tragen Sie deren "knowledge base ids" (KBxxxxxx bzw. nur xxxxxx) in die Datei "ExcludeList.txt" im Verzeichnis "client\exclude" ein. Das Update wird nun nicht mehr berücksichtigt; bei der Installation erhalten Sie eine entsprechende Warnung.
+    Wollen Sie dynamisch ermittelte Updates von der Installation ausschließen, so tragen Sie deren "knowledge base ids" (KBxxxxxx bzw. nur xxxxxx) in die Datei "ExcludeList.txt" im Verzeichnis "client\exclude\custom" ein. Das Update wird nun nicht mehr berücksichtigt; bei der Installation erhalten Sie eine entsprechende Warnung.
     Bereits ausgeschlossene Updates sind folgende:
     - kb816093 (Sicherheitsupdate für Microsoft VM)
     - kb951847 (.NET Framework 3.5 SP1 Family Update (wird ggf. explizit installiert)) 
@@ -189,4 +189,7 @@ A: Bitte führen Sie einmalig ...\cmd\AddOffice2010x64Support.cmd {lng} aus, um d
 --------------------------------------------------------------------------------
 F: Ich benötige die deutschsprachigen Installationspakete für IEx, .NET, MSSE und WLE nicht. Wie kann ich deren Download deaktivieren?
 A: Bitte führen Sie einmalig das Skript ...\cmd\RemoveGermanLanguageSupport.cmd aus, um die URLs der Pakete aus den statischen Download-Definitionen zu entfernen.
+--------------------------------------------------------------------------------
+F: Vor der Updateinstallation wird das System geprüft um festzulegen, wieviele Updates in einem Lauf max. installiert werden. Gibt es einen Parameter, um diesen Wert vorzugeben?
+A: Der Parameter kann in der Datei ...\client\cmd\custom\SetUpdatesPerStage.cmdt vorgegeben werden. Er sollte nicht kleiner als 50 sein. Kleinere Werte werden automatisch auf 50 korrigiert. Nach Vorgabe des Stage-Limits muss die Datei in SetUpdatesPerStage.cmd (cmd ohne t) umbenannt werden!
 --------------------------------------------------------------------------------

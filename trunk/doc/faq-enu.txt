@@ -9,10 +9,10 @@ A: Yes, that's possible through customizing the download- and update scripts acc
 You have to differentiate between statically defined updates (like the latest Service Packs, for example) and updates that are determined dynamically at runtime of the script.
 
 a) Statically defined updates
-To exclude static updates from download, please delete the corresponding URL definitions in the matching file named "StaticDownloadLinks-<platform>[-<architecture>].txt" in the folder "static". Please note that the files residing here will be overwritten on a software update.
+To exclude static updates from download, please delete the corresponding URL definitions in the matching file named "StaticDownloadLinks-<platform>[-<architecture>].txt" in the folder "static\custom". Please note that the files residing here will be overwritten on a software update.
 
 b) Dynamically determined updates
-To exclude dynamically determined updates from download, insert their knowledge base ID (KBxxxxxx or simply xxxxxx) into the matching exclude file named "ExcludeList-<platform>[-<architecture>].txt".
+To exclude dynamically determined updates from download, insert their knowledge base ID (KBxxxxxx or simply xxxxxx) into the matching exclude file named "ExcludeList-<platform>[-<architecture>].txt" in the folder "exclude\custom".
 
 2. Excluding updates from installation
 Once again you have to make a difference between statically defined and dynamically determined updates.
@@ -25,7 +25,7 @@ The statically defined updates (latest version each) are:
 - Internet Explorer (IE)
 These updates will be installed only if the version installed on the target system is lower than the versions defined in the file "SetTargetEnvVars.cmd" (directory .\client\cmd). If you generally want to prevent installation of one of those updates, you have to modify the expected values in the "SetTargetEnvVars.cmd" or insert jump marks into the "DoUpdate.cmd" (which controls the installation process). You should do this in very special cases only, as with SP, WUA, MSI and WSH, certain versions are required as preconditions.
 b) Dynamically determined updates
-To exclude dynamically determined updates from installation, insert their knowledge base ID (KBxxxxxx or simply xxxxxx) into the file "ExcludeList.txt" (directory .\client\exclude). These updates will now be ignored; and you'll receive a warning in the log.
+To exclude dynamically determined updates from installation, insert their knowledge base ID (KBxxxxxx or simply xxxxxx) into the file "ExcludeList.txt" (directory .\client\exclude\custom). These updates will now be ignored; and you'll receive a warning in the log.
 
 The following updates are already excluded:
 - kb816093 (Security update for Microsoft VM)
@@ -191,4 +191,7 @@ A: Please call ...\cmd\AddOffice2010x64Support.cmd {lng} once to add their URLs 
 --------------------------------------------------------------------------------
 Q: I don't need the German installation files for IEx, .NET, MSSE and WLE. How can I disable their downloads?
 A: Please call ...\cmd\RemoveGermanLanguageSupport.cmd once to remove their URLs from the static download definitions.
+--------------------------------------------------------------------------------
+Q: Before the update installation, the system is checked to determine how many updates to be installed in one run max. Is there a parameter to specify this value?
+A: The parameters can be specified in the file ...\client\cmd\custom\SetUpdatesPerStage.cmdt. It should not be less than the 50. Smaller values are automatically corrected to 50. After setting the stage limits, the file SetUpdatesPerStage.cmd must be renamed (cmd without t)!
 --------------------------------------------------------------------------------

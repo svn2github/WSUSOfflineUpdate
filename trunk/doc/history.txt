@@ -1154,6 +1154,8 @@ Version 10.6.2 -- 21.04.16
 - Fix: Power management settings were only adjusted for WOUTempAdmin user account (Thanks to G. Dixon)
 --------------------------------------------------------------------------------
 Version ??.? -- ??.??.??
+- Replaced superseded scan prerequisite update kb3145739 (MS16-039) by kb3153199 (MS16-062) (Thanks to "Denniss" and "Dalai")
 - DownloadUpdates.cmd script will now also support x64 variant of Sysinternals' Sigcheck tool v. 2.51+ (Thanks to "harry")
 - Fix: Querying state of service 'Windows Update' (wuauserv) could fail on foreign systems (Thanks to P. Pellegrini)
 - Fix: Errors on running version check fired misleading new version notifications (Thanks to "Telli")
+- Fix: FAQs enhanced and corrected (Thanks to "jonas" and "aker")
