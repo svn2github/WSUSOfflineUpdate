@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                          v. 10.6.2+ (r770)                        ###
+###                          v. 10.6.2+ (r771)                        ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -75,14 +75,14 @@ head -20 "$0" | grep '^###')
 checkconfig()
 {
 C=$(which cabextract 2> /dev/null)
-M=$(which md5deep 2> /dev/null)
+M=$(which hashdeep 2> /dev/null)
 S=$(which xmlstarlet 2> /dev/null)
 T=$(which xml 2> /dev/null)
 xml=""
 
 Missing=0
 
-for Datei in cabextract md5deep
+for Datei in cabextract hashdeep
   do
     Nomiss=$(which $Datei 2>/dev/null)
     test -x "$Nomiss" && continue

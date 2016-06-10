@@ -1155,7 +1155,10 @@ Version 10.6.2 -- 21.04.16
 --------------------------------------------------------------------------------
 Version ??.? -- ??.??.??
 - Added scan prerequisite update kb3153199 (MS16-062) (Thanks to "jonas", "Denniss" and "Dalai")
+- C++ 2013 Redistributable Runtime Libraries updated to v. 12.0.40649.5 (Thanks to "harry")
+- Aria2 download utility updated to v. 1.23.0 (Thanks to "harry")
 - DownloadUpdates.cmd script will now also support x64 variant of Sysinternals' Sigcheck tool v. 2.51+ (Thanks to "harry")
 - Fix: Querying state of service 'Windows Update' (wuauserv) could fail on foreign systems (Thanks to P. Pellegrini)
 - Fix: Errors on running version check fired misleading new version notifications (Thanks to "Telli")
+- Fix: Renamed md5deep to hashdeep in Linux script DownloadUpdates.sh (Thanks to B. Marwell)
 - Fix: FAQs enhanced and corrected (Thanks to "jonas" and "aker")
