@@ -1154,7 +1154,7 @@ Version 10.6.2 -- 21.04.16
 - Fix: Power management settings were only adjusted for WOUTempAdmin user account (Thanks to G. Dixon)
 --------------------------------------------------------------------------------
 Version ??.? -- ??.??.??
-- Added scan prerequisite update kb3153199 (MS16-062) (Thanks to "jonas", "Denniss" and "Dalai")
+- Added scan prerequisite update kb3161664 (MS16-073) (Thanks to "Denniss" and "Dalai")
 - C++ 2013 Redistributable Runtime Libraries updated to v. 12.0.40649.5 (Thanks to "harry")
 - Aria2 download utility updated to v. 1.23.0 (Thanks to "harry")
 - DownloadUpdates.cmd script will now also support x64 variant of Sysinternals' Sigcheck tool v. 2.51+ (Thanks to "harry")

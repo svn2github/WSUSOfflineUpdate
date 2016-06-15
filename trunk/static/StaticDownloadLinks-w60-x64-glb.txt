@@ -9,3 +9,4 @@ http://download.microsoft.com/download/7/C/3/7C3BA535-1D8C-4A87-9F1D-163BBA971CA
 http://download.microsoft.com/download/8/3/2/83205D42-C4DE-435E-AF10-4919CBDB3A13/IE9-WindowsVista-x64-deu.exe
 http://download.microsoft.com/download/E/7/6/E76850B8-DA6E-4FF5-8CCE-A24FC513FD16/Windows6.0-KB2506146-x64.msu
 http://download.microsoft.com/download/3/E/F/3EF7CF0F-661B-480E-8D60-76F6E378C20C/Windows6.0-KB2506014-x64.msu
+http://download.microsoft.com/download/7/2/2/722910DA-F16A-4AEE-8CE0-CE5898FF621A/Windows6.0-KB3161664-x64.msu
