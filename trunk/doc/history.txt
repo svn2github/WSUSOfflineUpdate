@@ -1161,4 +1161,6 @@ Version ??.? -- ??.??.??
 - Fix: Querying state of service 'Windows Update' (wuauserv) could fail on foreign systems (Thanks to P. Pellegrini)
 - Fix: Errors on running version check fired misleading new version notifications (Thanks to "Telli")
 - Fix: Renamed md5deep to hashdeep in Linux script DownloadUpdates.sh (Thanks to B. Marwell)
+- Fix: Replaced superseded Visio 2010 Security Update kb3114402 (MS16-004) by kb3114872 (MS16-070)
+- Fix: Replaced superseded Visio 2016 Security Update kb3114511 (MS16-004) by kb3115041 (MS16-070)
 - Fix: FAQs enhanced and corrected (Thanks to "jonas" and "aker")
