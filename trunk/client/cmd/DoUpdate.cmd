@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.6.3
+set WSUSOFFLINE_VERSION=10.6.3+ (r776)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1060,42 +1060,29 @@ if %WMF_VER_MAJOR% GTR %WMF_VER_TARGET_MAJOR% goto SkipWMFInst
 if %WMF_VER_MINOR% LSS %WMF_VER_TARGET_MINOR% goto InstallWMF
 if %WMF_VER_MINOR% GEQ %WMF_VER_TARGET_MINOR% goto SkipWMFInst
 :InstallWMF
-if %WMF_VER_MAJOR% LSS 4 (
-  if exist %SystemRoot%\Temp\wou_wmfpre_tried.txt goto SkipWMFInst
-  echo. >%SystemRoot%\Temp\wou_wmfpre_tried.txt
-  if "%WMF_PREREQ_ID%"=="" (
-    echo Warning: Environment variable WMF_PREREQ_ID not set.
-    echo %DATE% %TIME% - Warning: Environment variable WMF_PREREQ_ID not set>>%UPDATE_LOGFILE%
-    goto SkipWMFInst
-  )
-  echo %WMF_PREREQ_ID%>"%TEMP%\MissingUpdateIds.txt"
-) else (
-  if exist %SystemRoot%\Temp\wou_wmf_tried.txt goto SkipWMFInst
-  echo. >%SystemRoot%\Temp\wou_wmf_tried.txt
-  if "%WMF_TARGET_ID%"=="" (
-    echo Warning: Environment variable WMF_TARGET_ID not set.
-    echo %DATE% %TIME% - Warning: Environment variable WMF_TARGET_ID not set>>%UPDATE_LOGFILE%
-    goto SkipWMFInst
-  )
-  echo %WMF_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
+if exist %SystemRoot%\Temp\wou_wmf_tried.txt goto SkipWMFInst
+echo. >%SystemRoot%\Temp\wou_wmf_tried.txt
+if "%WMF_TARGET_ID%"=="" (
+  echo Warning: Environment variable WMF_TARGET_ID not set.
+  echo %DATE% %TIME% - Warning: Environment variable WMF_TARGET_ID not set>>%UPDATE_LOGFILE%
+  goto SkipWMFInst
 )
+echo %WMF_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing Windows Management Framework...
   call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /errorsaswarnings
 ) else (
-  if %WMF_VER_MAJOR% LSS 4 (
-    echo Warning: Windows Management Framework installation file ^(kb%WMF_PREREQ_ID%^) not found.
-    echo %DATE% %TIME% - Warning: Windows Management Framework installation file ^(kb%WMF_PREREQ_ID%^) not found>>%UPDATE_LOGFILE%
-  ) else (
-    echo Warning: Windows Management Framework installation file ^(kb%WMF_TARGET_ID%^) not found.
-    echo %DATE% %TIME% - Warning: Windows Management Framework installation file ^(kb%WMF_TARGET_ID%^) not found>>%UPDATE_LOGFILE%
-  )
+  echo Warning: Windows Management Framework installation file ^(kb%WMF_TARGET_ID%^) not found.
+  echo %DATE% %TIME% - Warning: Windows Management Framework installation file ^(kb%WMF_TARGET_ID%^) not found>>%UPDATE_LOGFILE%
   goto SkipWMFInst
 )
-if %WMF_VER_MAJOR% LSS 4 (set RECALL_REQUIRED=1) else (set REBOOT_REQUIRED=1)
-if "%RECALL_REQUIRED%"=="1" goto Installed
+if "%WMF_TARGET_ID%"=="2819745" (set RECALL_REQUIRED=1) else (set REBOOT_REQUIRED=1)
+if "%RECALL_REQUIRED%"=="1" (
+  if exist %SystemRoot%\Temp\wou_wmf_tried.txt del %SystemRoot%\Temp\wou_wmf_tried.txt
+  goto Installed
+)
 :SkipWMFInst
 
 rem *** Install most recent Remote Desktop Client ***
@@ -1631,7 +1618,6 @@ if exist %SystemRoot%\Temp\wou_iepre_tried.txt del %SystemRoot%\Temp\wou_iepre_t
 if exist %SystemRoot%\Temp\wou_ie_tried.txt del %SystemRoot%\Temp\wou_ie_tried.txt
 if exist %SystemRoot%\Temp\wou_net35_tried.txt del %SystemRoot%\Temp\wou_net35_tried.txt
 if exist %SystemRoot%\Temp\wou_net4_tried.txt del %SystemRoot%\Temp\wou_net4_tried.txt
-if exist %SystemRoot%\Temp\wou_wmfpre_tried.txt del %SystemRoot%\Temp\wou_wmfpre_tried.txt
 if exist %SystemRoot%\Temp\wou_wmf_tried.txt del %SystemRoot%\Temp\wou_wmf_tried.txt
 if exist %SystemRoot%\Temp\wou_wupre_tried.txt del %SystemRoot%\Temp\wou_wupre_tried.txt
 if exist "%TEMP%\UpdateInstaller.ini" del "%TEMP%\UpdateInstaller.ini"

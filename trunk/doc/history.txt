@@ -1165,3 +1165,6 @@ Version 10.6.3 -- 17.06.16
 - Fix: Replaced superseded Visio 2016 Security Update kb3114511 (MS16-004) by kb3115041 (MS16-070)
 - Fix: FAQs enhanced and corrected (Thanks to "jonas" and "aker")
 --------------------------------------------------------------------------------
+Version ??.? -- ??.??.??
+- Fix: Excluded cumulative update for Windows Server 2016 Technical Preview 5 (kb3158987) from download (Thanks to "aker")
+- Fix: Corrected WMF installation on Windows Vista and Server 2008 (x86/x64) systems

@@ -4,4 +4,4 @@ http://www.info-zip.org/UnZip.html
 http://www.mingw.org/
 http://sourceforge.net/projects/tumagcc/files/
 http://update.microsoft.com/redist/wuredist.cab
-https://github.com/tatsuhiro-t/aria2/releases
+https://github.com/aria2/aria2/releases
