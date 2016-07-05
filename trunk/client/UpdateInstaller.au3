@@ -6,7 +6,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 10.6.3.780)
+#pragma compile(FileVersion, 10.6.3.781)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -909,13 +909,11 @@ If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) _
  AND (MyIniRead($ini_section_installation, $ini_value_skipieinst, $disabled) = $disabled) _
  AND (MyIniRead($ini_section_messaging, $ini_value_showieinfo, $enabled) = $enabled) ) Then
   If ShowGUIInGerman() Then
-     MsgBox(0x2040, "Information", "Auf diesem System wird, sofern noch nicht vorhanden," _
-                           & @LF & "die neueste Version des Internet Explorers (IE9)" _
+     MsgBox(0x2040, "Information", "Auf diesem System wird die neueste Version des Internet Explorers (IE9)" _
                            & @LF & "automatisch installiert, wenn Sie die Aktualisierung starten.")
   Else
-     MsgBox(0x2040, "Information", "If not already present, the most recent version" _
-                           & @LF & "of Internet Explorer (IE9) will be automatically installed" _
-                           & @LF & "on this system, when you start the updating process.")
+     MsgBox(0x2040, "Information", "On this system, the most recent version of Internet Explorer (IE9)" _
+                           & @LF & "will be automatically installed, when you start the updating process.")
   EndIf
 EndIf
 If ( ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) _
@@ -924,13 +922,11 @@ If ( ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) _
  AND (MyIniRead($ini_section_installation, $ini_value_skipieinst, $disabled) = $disabled) _
  AND (MyIniRead($ini_section_messaging, $ini_value_showieinfo, $enabled) = $enabled) ) Then
   If ShowGUIInGerman() Then
-     MsgBox(0x2040, "Information", "Auf diesem System wird, sofern noch nicht vorhanden," _
-                           & @LF & "die neueste Version des Internet Explorers (IE11)" _
+     MsgBox(0x2040, "Information", "Auf diesem System wird die neueste Version des Internet Explorers (IE11)" _
                            & @LF & "automatisch installiert, wenn Sie die Aktualisierung starten.")
   Else
-     MsgBox(0x2040, "Information", "If not already present, the most recent version" _
-                           & @LF & "of Internet Explorer (IE11) will be automatically installed" _
-                           & @LF & "on this system, when you start the updating process.")
+     MsgBox(0x2040, "Information", "On this system, the most recent version of Internet Explorer (IE11)" _
+                           & @LF & "will be automatically installed, when you start the updating process.")
   EndIf
 EndIf
 
