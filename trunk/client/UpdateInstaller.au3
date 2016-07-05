@@ -6,7 +6,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 10.6.3.779)
+#pragma compile(FileVersion, 10.6.3.780)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -903,7 +903,9 @@ If (StringRight(EnvGet("TEMP"), 1) = "\") OR (StringRight(EnvGet("TEMP"), 1) = "
   EndIf
   Exit(1)
 EndIf
-If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND FileExists(@ProgramFilesDir & "\Internet Explorer\iexplore.exe") _
+If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) _
+ AND FileExists(@ProgramFilesDir & "\Internet Explorer\iexplore.exe") _
+ AND ( (IEVersion() = "7") OR (IEVersion() = "8") ) _
  AND (MyIniRead($ini_section_installation, $ini_value_skipieinst, $disabled) = $disabled) _
  AND (MyIniRead($ini_section_messaging, $ini_value_showieinfo, $enabled) = $enabled) ) Then
   If ShowGUIInGerman() Then
@@ -916,7 +918,9 @@ If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) AND FileExists(
                            & @LF & "on this system, when you start the updating process.")
   EndIf
 EndIf
-If ( ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) AND FileExists(@ProgramFilesDir & "\Internet Explorer\iexplore.exe") _
+If ( ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) _
+ AND FileExists(@ProgramFilesDir & "\Internet Explorer\iexplore.exe") _
+ AND ( (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") ) _
  AND (MyIniRead($ini_section_installation, $ini_value_skipieinst, $disabled) = $disabled) _
  AND (MyIniRead($ini_section_messaging, $ini_value_showieinfo, $enabled) = $enabled) ) Then
   If ShowGUIInGerman() Then
