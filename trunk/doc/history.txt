@@ -1167,6 +1167,8 @@ Version 10.6.3 -- 17.06.16
 --------------------------------------------------------------------------------
 Version ??.? -- ??.??.??
 - Added June 2016 update rollup (kb3161608/kb3161606) for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2 to update scan prerequisites (Thanks to "harry" and "jonas")
+- C++ 2015 Redistributable Runtime Libraries updated to v. 14.0.24210.0 (Thanks to "mAsTa" and "harry")
 - Microsoft Silverlight updated to v. 5.1.50428.00 (Thanks to "mAsTa")
+- DownloadUpdates.cmd script will now also support x64 variant of Sysinternals' Streams tool v. 2.52+
 - Fix: Excluded cumulative update for Windows Server 2016 Technical Preview 5 (kb3158987) from download (Thanks to "aker")
 - Fix: Corrected WMF installation on Windows Vista and Server 2008 (x86/x64) systems

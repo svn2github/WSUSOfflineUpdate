@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.6.3+ (r778)
+set WSUSOFFLINE_VERSION=10.6.3+ (r779)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -451,6 +451,7 @@ if not exist ..\client\bin\Autologon.exe goto DownloadSysinternals
 if not exist ..\bin\sigcheck.exe goto DownloadSysinternals
 if not exist ..\bin\sigcheck64.exe goto DownloadSysinternals
 if not exist ..\bin\streams.exe goto DownloadSysinternals
+if not exist ..\bin\streams64.exe goto DownloadSysinternals
 goto SkipSysinternals
 :DownloadSysinternals
 echo Downloading Sysinternals' tools Autologon, Sigcheck and Streams...
@@ -465,6 +466,7 @@ unzip.exe -o Sigcheck.zip sigcheck.exe
 unzip.exe -o Sigcheck.zip sigcheck64.exe
 del Sigcheck.zip
 unzip.exe -o Streams.zip streams.exe
+unzip.exe -o Streams.zip streams64.exe
 del Streams.zip
 popd
 :SkipSysinternals
@@ -483,21 +485,24 @@ set SIGCHK_VER_MINOR=
 set SIGCHK_VER_BUILD=
 set SIGCHK_VER_REVIS=
 :SkipSigChkOpts
+if /i "%PROCESSOR_ARCHITECTURE%"=="AMD64" (set STRMS_PATH=..\bin\streams64.exe) else (
+  if /i "%PROCESSOR_ARCHITEW6432%"=="AMD64" (set STRMS_PATH=..\bin\streams64.exe) else (set STRMS_PATH=..\bin\streams.exe)
+)
 
 rem *** Cleanup UpdateOU.new ***
 if exist UpdateOU.new (
   if exist UpdateOU.cmd del UpdateOU.cmd
   ren UpdateOU.new UpdateOU.cmd
   rem *** Remove NTFS alternate data streams from new or updated script files ***
-  if exist ..\bin\streams.exe (
-    ..\bin\streams.exe /accepteula ..\*.* >nul 2>&1
+  if exist %STRMS_PATH% (
+    %STRMS_PATH% /accepteula ..\*.* >nul 2>&1
     if errorlevel 1 (
       echo %DATE% %TIME% - Info: File system does not support streams>>%DOWNLOAD_LOGFILE%
     ) else (
       echo Removing NTFS alternate data streams from new or updated script files...
-      ..\bin\streams.exe /accepteula -s -d ..\*.cmd >nul 2>&1
-      ..\bin\streams.exe /accepteula -s -d ..\*.exe >nul 2>&1
-      ..\bin\streams.exe /accepteula -s -d ..\*.vbs >nul 2>&1
+      %STRMS_PATH% /accepteula -s -d ..\*.cmd >nul 2>&1
+      %STRMS_PATH% /accepteula -s -d ..\*.exe >nul 2>&1
+      %STRMS_PATH% /accepteula -s -d ..\*.vbs >nul 2>&1
       if errorlevel 1 (
         echo Warning: Unable to remove NTFS alternate data streams from new or updated script files.
         echo %DATE% %TIME% - Warning: Unable to remove NTFS alternate data streams from new or updated script files>>%DOWNLOAD_LOGFILE%
@@ -506,8 +511,8 @@ if exist UpdateOU.new (
       )
     )
   ) else (
-    echo Warning: Sysinternals' NTFS alternate data stream handling tool ..\bin\streams.exe not found.
-    echo %DATE% %TIME% - Warning: Sysinternals' NTFS alternate data stream handling tool ..\bin\streams.exe not found>>%DOWNLOAD_LOGFILE%
+    echo Warning: Sysinternals' NTFS alternate data stream handling tool %STRMS_PATH% not found.
+    echo %DATE% %TIME% - Warning: Sysinternals' NTFS alternate data stream handling tool %STRMS_PATH% not found>>%DOWNLOAD_LOGFILE%
   )
 )
 
@@ -1491,13 +1496,13 @@ echo %DATE% %TIME% - Info: Cleaned up client directory for %1 %2>>%DOWNLOAD_LOGF
 :VerifyDownload
 if not exist ..\client\%1\%2\nul goto RemoveHashes
 rem *** Remove NTFS alternate data streams for %1 %2 ***
-if exist ..\bin\streams.exe (
-  ..\bin\streams.exe /accepteula ..\client\%1\%2\*.* >nul 2>&1
+if exist %STRMS_PATH% (
+  %STRMS_PATH% /accepteula ..\client\%1\%2\*.* >nul 2>&1
   if errorlevel 1 (
     echo %DATE% %TIME% - Info: File system does not support streams>>%DOWNLOAD_LOGFILE%
   ) else (
     echo Removing NTFS alternate data streams for %1 %2...
-    ..\bin\streams.exe /accepteula -s -d ..\client\%1\%2\*.* >nul 2>&1
+    %STRMS_PATH% /accepteula -s -d ..\client\%1\%2\*.* >nul 2>&1
     if errorlevel 1 (
       echo Warning: Unable to remove NTFS alternate data streams for %1 %2.
       echo %DATE% %TIME% - Warning: Unable to remove NTFS alternate data streams for %1 %2>>%DOWNLOAD_LOGFILE%
@@ -1506,8 +1511,8 @@ if exist ..\bin\streams.exe (
     )
   )
 ) else (
-  echo Warning: Sysinternals' NTFS alternate data stream handling tool ..\bin\streams.exe not found.
-  echo %DATE% %TIME% - Warning: Sysinternals' NTFS alternate data stream handling tool ..\bin\streams.exe not found>>%DOWNLOAD_LOGFILE%
+  echo Warning: Sysinternals' NTFS alternate data stream handling tool %STRMS_PATH% not found.
+  echo %DATE% %TIME% - Warning: Sysinternals' NTFS alternate data stream handling tool %STRMS_PATH% not found>>%DOWNLOAD_LOGFILE%
 )
 if "%VERIFY_DL%" NEQ "1" goto RemoveHashes
 rem *** Verifying digital file signatures for %1 %2 ***
