@@ -128,8 +128,8 @@ for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
 goto InstFailure
 
 :InstCab
-echo Installing %1...
 if exist %SystemRoot%\System32\Dism.exe goto InstDism
+echo Installing %1...
 set ERR_LEVEL=0
 if "%OS_ARCH%"=="x64" (set TOKEN_KB=3) else (set TOKEN_KB=2)
 for /F "tokens=%TOKEN_KB% delims=-" %%i in ("%1") do (
@@ -145,6 +145,18 @@ for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
 goto InstFailure
 
 :InstDism
+if "%OS_NAME%"=="w100" (
+  if exist %SystemRoot%\Sysnative\Dism.exe (
+    for /F "tokens=3" %%i in ('%SystemRoot%\Sysnative\Dism.exe /Online /Get-PackageInfo /PackagePath:%1 /English ^| %SystemRoot%\System32\find.exe /I "Applicable"') do (
+      if /i "%%i"=="No" goto InstSkipped
+    )
+  ) else (
+    for /F "tokens=3" %%i in ('%SystemRoot%\System32\Dism.exe /Online /Get-PackageInfo /PackagePath:%1 /English ^| %SystemRoot%\System32\find.exe /I "Applicable"') do (
+      if /i "%%i"=="No" goto InstSkipped
+    )
+  )
+)
+echo Installing %1...
 if exist %SystemRoot%\Sysnative\Dism.exe (
   %SystemRoot%\Sysnative\Dism.exe /Online /Quiet /NoRestart /Add-Package /PackagePath:%1 /IgnoreCheck
 ) else (
@@ -180,14 +192,19 @@ echo %DATE% %TIME% - Error: Directory "%TEMP%" not found>>%UPDATE_LOGFILE%
 goto Error
 
 :UnsupType
-echo ERROR: Unsupported file type (file: %1).
-echo %DATE% %TIME% - Error: Unsupported file type (file: %1)>>%UPDATE_LOGFILE%
+echo ERROR: Unsupported file type (%1).
+echo %DATE% %TIME% - Error: Unsupported file type (%1)>>%UPDATE_LOGFILE%
 goto InstFailure
 
 :IntegrityError
-echo ERROR: File hash does not match stored value (file: %1).
-echo %DATE% %TIME% - Error: File hash does not match stored value (file: %1)>>%UPDATE_LOGFILE%
+echo ERROR: File hash does not match stored value (%1).
+echo %DATE% %TIME% - Error: File hash does not match stored value (%1)>>%UPDATE_LOGFILE%
 goto InstFailure
+
+:InstSkipped
+echo Skipped inapplicable %1.
+echo %DATE% %TIME% - Info: Skipped inapplicable %1>>%UPDATE_LOGFILE%
+goto EoF
 
 :InstSuccess
 echo %DATE% %TIME% - Info: Installed %1>>%UPDATE_LOGFILE%
