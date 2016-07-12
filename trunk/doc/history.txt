@@ -1045,7 +1045,7 @@ Version 10.2 -- 15.10.15
 - Support added for Office 2016
 - AutoIt script compiler updated to version 3.3.14.2
 - Static download URLs for aria2 download utility updated to v. 1.19.2 (Thanks to "harry")
-- DetermineSystemProperties.vbs script will now create file "%USERPROFILE%\Desktop\WOUSystemProperties.txt" instead of "%TEMP%\SetSystemEnvVars.cmd" if executed manually (Thanks to "boco") 
+- DetermineSystemProperties.vbs script will now create file "%USERPROFILE%\Desktop\WOUSystemProperties.txt" instead of "%TEMP%\SetSystemEnvVars.cmd" if executed manually (Thanks to "boco")
 - Fix: Removed obsolete September 2015 cumulative update for Windows 10 (kb3081455) and prerequisite compatibility update (kb3081452)
 - Fix: Replaced obsolete Visio 2010 Security Update kb3054876 (MS15-081) by kb3085514 (MS15-110)
 - Fix: Download part erroneously excluded Security Updates kb2535512 (MS11-042) and kb2973201 (MS14-039) for Windows Vista and Server 2008 (x86)
@@ -1165,7 +1165,8 @@ Version 10.6.3 -- 17.06.16
 - Fix: Replaced superseded Visio 2016 Security Update kb3114511 (MS16-004) by kb3115041 (MS16-070)
 - Fix: FAQs enhanced and corrected (Thanks to "jonas" and "aker")
 --------------------------------------------------------------------------------
-Version ??.? -- ??.??.??
+Version 10.7 -- ??.??.??
+- Simplified, stabilized and speeded up determination of superseded updates (Special thanks to H. Buhrmester)
 - Added June 2016 update rollup (kb3161608/kb3161606) for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2 to update scan prerequisites (Thanks to "harry" and "jonas")
 - Replaced superseded scan prerequisite update kb3087039 (MS15-097) by kb3164033 (MS16-074) (Thanks to "aker")
 - C++ 2015 Redistributable Runtime Libraries updated to v. 14.0.24210.0 (Thanks to "mAsTa" and "harry")

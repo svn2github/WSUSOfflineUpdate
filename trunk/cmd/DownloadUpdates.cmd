@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.6.3+ (r782)
+set WSUSOFFLINE_VERSION=10.7b (r783)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -479,7 +479,7 @@ if exist "%TEMP%\SetFileVersion.cmd" (
   call "%TEMP%\SetFileVersion.cmd"
   del "%TEMP%\SetFileVersion.cmd"
 ) else (set SIGCHK_VER_MAJOR=2)
-if %SIGCHK_VER_MAJOR% GEQ 2 (set SIGCHK_COPT=/accepteula -q -c) else (set SIGCHK_COPT=/accepteula -q -v)
+if %SIGCHK_VER_MAJOR% GEQ 2 (set SIGCHK_COPT=/accepteula -q -c -nobanner) else (set SIGCHK_COPT=/accepteula -q -v)
 set SIGCHK_VER_MAJOR=
 set SIGCHK_VER_MINOR=
 set SIGCHK_VER_BUILD=
@@ -1094,58 +1094,62 @@ if exist ..\exclude\ExcludeList-superseded.txt (
   goto SkipSuperseded
 )
 echo %TIME% - Determining superseded updates (please be patient, this will take a while)...
-%CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractUpdateRevisionIds.xsl "%TEMP%\ValidUpdateRevisionIds.txt"
-if errorlevel 1 goto DownloadError
-%CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractSupersedingRevisionIds.xsl "%TEMP%\SupersedingRevisionIds.txt"
-if errorlevel 1 goto DownloadError
-%SystemRoot%\System32\findstr.exe /L /I /G:"%TEMP%\SupersedingRevisionIds.txt" "%TEMP%\ValidUpdateRevisionIds.txt" >"%TEMP%\ValidSupersedingRevisionIds.txt"
-del "%TEMP%\ValidUpdateRevisionIds.txt"
-del "%TEMP%\SupersedingRevisionIds.txt"
-%CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractSupersededUpdateRelations.xsl "%TEMP%\SupersededUpdateRelations.txt"
-if errorlevel 1 goto DownloadError
-%SystemRoot%\System32\findstr.exe /L /I /G:"%TEMP%\ValidSupersedingRevisionIds.txt" "%TEMP%\SupersededUpdateRelations.txt" >"%TEMP%\ValidSupersededUpdateRelations.txt"
-del "%TEMP%\SupersededUpdateRelations.txt"
-del "%TEMP%\ValidSupersedingRevisionIds.txt"
-%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\ValidSupersededUpdateRelations.txt" "%TEMP%\ValidSupersededRevisionIds.txt" /firstonly
-del "%TEMP%\ValidSupersededUpdateRelations.txt"
-%CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractUpdateRevisionAndFileIds.xsl "%TEMP%\UpdateRevisionAndFileIds.txt"
-if errorlevel 1 goto DownloadError
-set REVISION_ID=
-for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\UpdateRevisionAndFileIds.txt") do (
-  if "%%j"=="" (
-    set REVISION_ID=%%i
-    echo %%i>>"%TEMP%\BundledUpdateRevisionAndFileIds.txt"
-  ) else (
-    echo %%i,%%j;!REVISION_ID!>>"%TEMP%\BundledUpdateRevisionAndFileIds.txt"
-  )
-)
-set REVISION_ID=
-del "%TEMP%\UpdateRevisionAndFileIds.txt"
-%SystemRoot%\System32\findstr.exe /L /I /G:"%TEMP%\ValidSupersededRevisionIds.txt" "%TEMP%\BundledUpdateRevisionAndFileIds.txt" >"%TEMP%\SupersededRevisionAndFileIds.txt"
+rem *** Revised part for determination of superseded updates starts here ***
+rem *** First step ***
+echo Extracting file 1...
+%CSCRIPT_PATH% //Nologo //B //E:vbs ..\cmd\XSLT.vbs "%TEMP%\package.xml" ..\xslt\extract-existing-bundle-revision-ids.xsl "%TEMP%\existing-bundle-revision-ids.txt"
+..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\existing-bundle-revision-ids.txt" >"%TEMP%\existing-bundle-revision-ids-unique.txt"
+del "%TEMP%\existing-bundle-revision-ids.txt"
+echo Extracting file 2...
+%CSCRIPT_PATH% //Nologo //B //E:vbs ..\cmd\XSLT.vbs "%TEMP%\package.xml" ..\xslt\extract-superseding-and-superseded-revision-ids.xsl "%TEMP%\superseding-and-superseded-revision-ids.txt"
+..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\superseding-and-superseded-revision-ids.txt" >"%TEMP%\superseding-and-superseded-revision-ids-unique.txt"
+del "%TEMP%\superseding-and-superseded-revision-ids.txt"
+echo Joining files 1 and 2 to file 3...
+..\bin\join.exe -t "," -o "2.2" "%TEMP%\existing-bundle-revision-ids-unique.txt" "%TEMP%\superseding-and-superseded-revision-ids-unique.txt" >"%TEMP%\ValidSupersededRevisionIds.txt"
+del "%TEMP%\existing-bundle-revision-ids-unique.txt"
+del "%TEMP%\superseding-and-superseded-revision-ids-unique.txt"
+..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\ValidSupersededRevisionIds.txt" >"%TEMP%\ValidSupersededRevisionIds-unique.txt"
 del "%TEMP%\ValidSupersededRevisionIds.txt"
+
+rem *** Second step ***
+echo Extracting file 4...
+%CSCRIPT_PATH% //Nologo //B //E:vbs ..\cmd\XSLT.vbs "%TEMP%\package.xml" ..\xslt\extract-update-revision-and-file-ids.xsl "%TEMP%\BundledUpdateRevisionAndFileIds.txt"
+..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\BundledUpdateRevisionAndFileIds.txt" >"%TEMP%\BundledUpdateRevisionAndFileIds-unique.txt"
 del "%TEMP%\BundledUpdateRevisionAndFileIds.txt"
-%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\SupersededRevisionAndFileIds.txt" "%TEMP%\SupersededFileIds.txt" /secondonly
-del "%TEMP%\SupersededRevisionAndFileIds.txt"
-..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\SupersededFileIds.txt" >"%TEMP%\SupersededFileIdsUnique.txt"
+echo Joining files 3 and 4 to file 5...
+..\bin\join.exe -t "," -o "2.3" "%TEMP%\ValidSupersededRevisionIds-unique.txt" "%TEMP%\BundledUpdateRevisionAndFileIds-unique.txt" >"%TEMP%\SupersededFileIds.txt"
+del "%TEMP%\ValidSupersededRevisionIds-unique.txt"
+del "%TEMP%\BundledUpdateRevisionAndFileIds-unique.txt"
+..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\SupersededFileIds.txt" >"%TEMP%\SupersededFileIds-unique.txt"
 del "%TEMP%\SupersededFileIds.txt"
-%CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractUpdateCabExeIdsAndLocations.xsl "%TEMP%\UpdateCabExeIdsAndLocations.txt"
-if errorlevel 1 goto DownloadError
-%SystemRoot%\System32\findstr.exe /B /L /I /G:"%TEMP%\SupersededFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\SupersededCabExeIdsAndLocations.txt"
+
+rem *** Third step ***
+echo Extracting file 6...
+%CSCRIPT_PATH% //Nologo //B //E:vbs ..\cmd\XSLT.vbs "%TEMP%\package.xml" ..\xslt\extract-update-cab-exe-ids-and-locations.xsl "%TEMP%\UpdateCabExeIdsAndLocations.txt"
+..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\UpdateCabExeIdsAndLocations-unique.txt"
 del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
-del "%TEMP%\SupersededFileIdsUnique.txt"
-%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\SupersededCabExeIdsAndLocations.txt" "%TEMP%\ExcludeList-superseded-all.txt" /noids
-del "%TEMP%\SupersededCabExeIdsAndLocations.txt"
+echo Joining files 5 and 6 to file 7...
+..\bin\join.exe -t "," -o "2.2" "%TEMP%\SupersededFileIds-unique.txt" "%TEMP%\UpdateCabExeIdsAndLocations-unique.txt" >"%TEMP%\ExcludeListLocations-superseded-all.txt"
+del "%TEMP%\SupersededFileIds-unique.txt"
+del "%TEMP%\UpdateCabExeIdsAndLocations-unique.txt"
+..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\ExcludeListLocations-superseded-all.txt" >"%TEMP%\ExcludeListLocations-superseded-all-unique.txt"
+del "%TEMP%\ExcludeListLocations-superseded-all.txt"
+
+rem *** Apply ExcludeList-superseded-exclude.txt ***
 if exist ..\exclude\ExcludeList-superseded-exclude.txt copy /Y ..\exclude\ExcludeList-superseded-exclude.txt "%TEMP%\ExcludeList-superseded-exclude.txt" >nul
 if exist ..\exclude\custom\ExcludeList-superseded-exclude.txt (
   type ..\exclude\custom\ExcludeList-superseded-exclude.txt >>"%TEMP%\ExcludeList-superseded-exclude.txt"
 )
-for %%i in ("%TEMP%\ExcludeList-superseded-exclude.txt") do if %%~zi==0 del %%i
+rem *** Delete file if empty ***
 if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
-  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-superseded-exclude.txt" "%TEMP%\ExcludeList-superseded-all.txt" >..\exclude\ExcludeList-superseded.txt
-  del "%TEMP%\ExcludeList-superseded-all.txt"
+  for %%i in ("%TEMP%\ExcludeList-superseded-exclude.txt") do if %%~zi==0 del %%i
+)
+if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
+  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-superseded-exclude.txt" "%TEMP%\ExcludeListLocations-superseded-all-unique.txt" >..\exclude\ExcludeList-superseded.txt
+  del "%TEMP%\ExcludeListLocations-superseded-all-unique.txt"
   del "%TEMP%\ExcludeList-superseded-exclude.txt"
 ) else (
-  move /Y "%TEMP%\ExcludeList-superseded-all.txt" ..\exclude\ExcludeList-superseded.txt >nul
+  move /Y "%TEMP%\ExcludeListLocations-superseded-all-unique.txt" ..\exclude\ExcludeList-superseded.txt >nul
 )
 %SystemRoot%\System32\attrib.exe -A ..\client\wsus\wsusscn2.cab
 echo %TIME% - Done.
@@ -1240,28 +1244,44 @@ del "%TEMP%\package.xml"
 
 if not exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" goto DoDownload
 
+rem A left join of the files DynamicDownloadLinks.txt and
+rem ExcludeList-superseded.txt returns URLs, which are unique
+rem to the left side. The intermediate file will be called
+rem "DynamicDownloadLinks-pruned.txt".
+
+if exist ..\exclude\ExcludeList-superseded.txt (
+  rem As always, both input files must be sorted.
+  ..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\DynamicDownloadLinks-%1-%2.txt" >"%TEMP%\DynamicDownloadLinks-%1-%2-unique.txt"
+  del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
+  ..\bin\join.exe -v1 "%TEMP%\DynamicDownloadLinks-%1-%2-unique.txt" ..\exclude\ExcludeList-superseded.txt >"%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt"
+  del "%TEMP%\DynamicDownloadLinks-%1-%2-unique.txt"
+) else (
+  move /Y "%TEMP%\DynamicDownloadLinks-%1-%2.txt" "%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt" >nul
+)
+
+rem The remaining exclude lists are applied as before.
 if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
-if exist ..\exclude\ExcludeList-%1.txt copy /Y ..\exclude\ExcludeList-%1.txt "%TEMP%\ExcludeList-%1.txt" >nul
-if exist ..\exclude\custom\ExcludeList-%1.txt (
-  type ..\exclude\custom\ExcludeList-%1.txt >>"%TEMP%\ExcludeList-%1.txt"
+if exist ..\exclude\ExcludeList-%1-%3.txt (
+  copy /Y ..\exclude\ExcludeList-%1-%3.txt "%TEMP%\ExcludeList-%1.txt" >nul
+  if exist ..\exclude\custom\ExcludeList-%1-%3.txt (
+    type ..\exclude\custom\ExcludeList-%1-%3.txt >>"%TEMP%\ExcludeList-%1.txt"
+  )
+) else (
+  if exist ..\exclude\ExcludeList-%1.txt copy /Y ..\exclude\ExcludeList-%1.txt "%TEMP%\ExcludeList-%1.txt" >nul
+  if exist ..\exclude\custom\ExcludeList-%1.txt (
+    type ..\exclude\custom\ExcludeList-%1.txt >>"%TEMP%\ExcludeList-%1.txt"
+  )
 )
-if exist "%TEMP%\ExcludeList-%1.txt" goto ExcludeWindows
-if exist ..\exclude\ExcludeList-%1-%3.txt copy /Y ..\exclude\ExcludeList-%1-%3.txt "%TEMP%\ExcludeList-%1.txt" >nul
-if exist ..\exclude\custom\ExcludeList-%1-%3.txt (
-  type ..\exclude\custom\ExcludeList-%1-%3.txt >>"%TEMP%\ExcludeList-%1.txt"
-)
-:ExcludeWindows
 if exist ..\exclude\custom\ExcludeListForce-all.txt (
   type ..\exclude\custom\ExcludeListForce-all.txt >>"%TEMP%\ExcludeList-%1.txt"
 )
-if exist ..\exclude\ExcludeList-superseded.txt (
-  type ..\exclude\ExcludeList-superseded.txt >>"%TEMP%\ExcludeList-%1.txt"
+if exist "%TEMP%\ExcludeList-%1.txt" (
+  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt" >"%TEMP%\ValidDynamicLinks-%1-%2.txt"
+  del "%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt"
+  del "%TEMP%\ExcludeList-%1.txt"
+) else (
+  move /Y "%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt" "%TEMP%\ValidDynamicLinks-%1-%2.txt" >nul
 )
-if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" del "%TEMP%\ValidDynamicLinks-%1-%2.txt"
-%SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DynamicDownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDynamicLinks-%1-%2.txt"
-if not exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" ren "%TEMP%\DynamicDownloadLinks-%1-%2.txt" ValidDynamicLinks-%1-%2.txt
-if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
-if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
 echo %TIME% - Done.
 echo %DATE% %TIME% - Info: Determined dynamic update urls for %1 %2>>%DOWNLOAD_LOGFILE%
 goto DoDownload
@@ -1332,7 +1352,22 @@ if not exist ..\client\ofc\nul md ..\client\ofc
 %CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\UpdateTableURL-%1-%2.csv" ..\client\ofc\UpdateTable-%1-%2.csv
 del "%TEMP%\UpdateTableURL-%1-%2.csv"
 
-:ExcludeOffice
+rem A left join of the files DynamicDownloadLinks.txt and
+rem ExcludeList-superseded.txt returns URLs, which are unique
+rem to the left side. The intermediate file will be called
+rem "DynamicDownloadLinks-pruned.txt".
+
+if exist ..\exclude\ExcludeList-superseded.txt (
+  rem As always, both input files must be sorted.
+  ..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\DynamicDownloadLinks-%1-%2.txt" >"%TEMP%\DynamicDownloadLinks-%1-%2-unique.txt"
+  del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
+  ..\bin\join.exe -v1 "%TEMP%\DynamicDownloadLinks-%1-%2-unique.txt" ..\exclude\ExcludeList-superseded.txt >"%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt"
+  del "%TEMP%\DynamicDownloadLinks-%1-%2-unique.txt"
+) else (
+  move /Y "%TEMP%\DynamicDownloadLinks-%1-%2.txt" "%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt" >nul
+)
+
+rem The remaining exclude lists are applied as before.
 if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
 if exist ..\exclude\ExcludeList-%1.txt copy /Y ..\exclude\ExcludeList-%1.txt "%TEMP%\ExcludeList-%1.txt" >nul
 if exist ..\exclude\ExcludeList-%1-%2.txt (
@@ -1347,14 +1382,13 @@ if exist ..\exclude\custom\ExcludeList-%1-%2.txt (
 if exist ..\exclude\custom\ExcludeListForce-all.txt (
   type ..\exclude\custom\ExcludeListForce-all.txt >>"%TEMP%\ExcludeList-%1.txt"
 )
-if exist ..\exclude\ExcludeList-superseded.txt (
-  type ..\exclude\ExcludeList-superseded.txt >>"%TEMP%\ExcludeList-%1.txt"
+if exist "%TEMP%\ExcludeList-%1.txt" (
+  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt" >"%TEMP%\ValidDynamicLinks-%1-%2.txt"
+  del "%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt"
+  del "%TEMP%\ExcludeList-%1.txt"
+) else (
+  move /Y "%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt" "%TEMP%\ValidDynamicLinks-%1-%2.txt" >nul
 )
-if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" del "%TEMP%\ValidDynamicLinks-%1-%2.txt"
-%SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DynamicDownloadLinks-%1-%2.txt" >>"%TEMP%\ValidDynamicLinks-%1-%2.txt"
-if not exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" ren "%TEMP%\DynamicDownloadLinks-%1-%2.txt" ValidDynamicLinks-%1-%2.txt
-if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
-if exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
 echo %TIME% - Done.
 echo %DATE% %TIME% - Info: Determined dynamic update urls for %1 %2>>%DOWNLOAD_LOGFILE%
 

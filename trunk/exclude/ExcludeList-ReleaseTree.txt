@@ -9,6 +9,7 @@ ExtractUpdateFileIdsAndLocations.xsl
 CompileAutoItScripts.cmd
 ExtractDownloadLinks-all.cmd
 ExtractSupersededUpdates.cmd
+ExtractSupersededUpdates_old.cmd
 ExtractUpdateIdsAndDownloadLinks-ofc.cmd
 PrepareProductionTree.cmd
 PrepareReleaseTree.cmd
