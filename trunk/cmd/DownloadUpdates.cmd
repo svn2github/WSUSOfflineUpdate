@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.7b (r784)
+set WSUSOFFLINE_VERSION=10.7b (r785)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -1077,6 +1077,10 @@ if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
 %SystemRoot%\System32\expand.exe "%TEMP%\package.cab" "%TEMP%\package.xml" >nul
 del "%TEMP%\package.cab"
 rem *** Determine superseded updates ***
+if exist ..\exclude\ExcludeList-superseded.txt (
+  %SystemRoot%\System32\find.exe /I "http://" ..\exclude\ExcludeList-superseded.txt >nul 2>&1
+  if errorlevel 1 del ..\exclude\ExcludeList-superseded.txt
+)
 for %%i in (..\client\wsus\wsusscn2.cab) do echo %%~ai | %SystemRoot%\System32\find.exe /I "a" >nul 2>&1
 if not errorlevel 1 (
   if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
