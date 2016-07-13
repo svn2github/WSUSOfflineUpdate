@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.7b (r783)
+set WSUSOFFLINE_VERSION=10.7b (r784)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -857,7 +857,7 @@ if /i "%OS_ARCH%"=="x64" (
   if exist ..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\sxs\nul (
     if exist %SystemRoot%\Sysnative\Dism.exe (
       echo Enabling .NET Framework 3.5 feature...
-      %SystemRoot%\Sysnative\Dism.exe /Online /Quiet /NoRestart /Enable-Feature /FeatureName:NetFx3 /All /LimitAccess /Source:..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\sxs 
+      %SystemRoot%\Sysnative\Dism.exe /Online /Quiet /NoRestart /Enable-Feature /FeatureName:NetFx3 /All /LimitAccess /Source:..\%OS_NAME%-%OS_ARCH%\%OS_LANG%\sxs
       if errorlevel 1 (
         echo %DATE% %TIME% - Warning: Failed to enable .NET Framework 3.5 feature>>%UPDATE_LOGFILE%
       ) else (
@@ -1022,7 +1022,7 @@ if exist "%TEMP%\InstalledUpdateIds.txt" (
     del "%TEMP%\InstalledUpdateIds.txt"
   ) else (
     del "%TEMP%\InstalledUpdateIds.txt"
-    goto SkipPShInst    
+    goto SkipPShInst
   )
 ) else (
   echo %PSH_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"

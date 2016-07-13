@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.7b (r783)
+set WSUSOFFLINE_VERSION=10.7b (r784)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -1141,9 +1141,7 @@ if exist ..\exclude\custom\ExcludeList-superseded-exclude.txt (
   type ..\exclude\custom\ExcludeList-superseded-exclude.txt >>"%TEMP%\ExcludeList-superseded-exclude.txt"
 )
 rem *** Delete file if empty ***
-if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
-  for %%i in ("%TEMP%\ExcludeList-superseded-exclude.txt") do if %%~zi==0 del %%i
-)
+for %%i in ("%TEMP%\ExcludeList-superseded-exclude.txt") do if %%~zi==0 del %%i
 if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
   %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-superseded-exclude.txt" "%TEMP%\ExcludeListLocations-superseded-all-unique.txt" >..\exclude\ExcludeList-superseded.txt
   del "%TEMP%\ExcludeListLocations-superseded-all-unique.txt"
@@ -1275,6 +1273,7 @@ if exist ..\exclude\ExcludeList-%1-%3.txt (
 if exist ..\exclude\custom\ExcludeListForce-all.txt (
   type ..\exclude\custom\ExcludeListForce-all.txt >>"%TEMP%\ExcludeList-%1.txt"
 )
+for %%i in ("%TEMP%\ExcludeList-%1.txt") do if %%~zi==0 del %%i
 if exist "%TEMP%\ExcludeList-%1.txt" (
   %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt" >"%TEMP%\ValidDynamicLinks-%1-%2.txt"
   del "%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt"
@@ -1382,6 +1381,7 @@ if exist ..\exclude\custom\ExcludeList-%1-%2.txt (
 if exist ..\exclude\custom\ExcludeListForce-all.txt (
   type ..\exclude\custom\ExcludeListForce-all.txt >>"%TEMP%\ExcludeList-%1.txt"
 )
+for %%i in ("%TEMP%\ExcludeList-%1.txt") do if %%~zi==0 del %%i
 if exist "%TEMP%\ExcludeList-%1.txt" (
   %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt" >"%TEMP%\ValidDynamicLinks-%1-%2.txt"
   del "%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt"

@@ -65,9 +65,7 @@ if exist .\exclude\custom\ExcludeList-superseded-exclude.txt (
   type .\exclude\custom\ExcludeList-superseded-exclude.txt >>"%TEMP%\ExcludeList-superseded-exclude.txt"
 )
 rem *** Delete file if empty ***
-if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
-  for %%i in ("%TEMP%\ExcludeList-superseded-exclude.txt") do if %%~zi==0 del %%i
-)
+for %%i in ("%TEMP%\ExcludeList-superseded-exclude.txt") do if %%~zi==0 del %%i
 if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
   %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-superseded-exclude.txt" "%TEMP%\ExcludeListLocations-superseded-all-unique.txt" >"%TEMP%\ExcludeList-superseded.txt"
   rem del "%TEMP%\ExcludeListLocations-superseded-all-unique.txt"
