@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.7b (r785)
+set WSUSOFFLINE_VERSION=10.7b (r786)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -543,19 +543,12 @@ echo %DATE% %TIME% - Info: Downloaded/validated most recent Windows Update Agent
 if "%VERIFY_DL%" NEQ "1" goto SkipWSUS
 if not exist %SIGCHK_PATH% goto NoSigCheck
 echo Verifying digital file signatures of Windows Update Agent installation and catalog files...
-%SIGCHK_PATH% %SIGCHK_COPT% -s ..\client\wsus >"%TEMP%\sigcheck-wsus.txt"
-for /F "tokens=1 delims=," %%i in ('%SystemRoot%\System32\findstr.exe /I "Unsigned" "%TEMP%\sigcheck-wsus.txt"') do (
+for /F "skip=1 tokens=1 delims=," %%i in ('%SIGCHK_PATH% %SIGCHK_COPT% -s ..\client\wsus ^| %SystemRoot%\System32\findstr.exe /I /V "\"Signed\""') do (
   del %%i
   echo Warning: Deleted unsigned file %%i.
   echo %DATE% %TIME% - Warning: Deleted unsigned file %%i>>%DOWNLOAD_LOGFILE%
-  echo File signature verification failure >"%TEMP%\sigerror-wsus.txt"
 )
-if exist "%TEMP%\sigcheck-wsus.txt" del "%TEMP%\sigcheck-wsus.txt"
-if exist "%TEMP%\sigerror-wsus.txt" (
-  if exist ..\client\md\hashes-wsus.txt del ..\client\md\hashes-wsus.txt
-  del "%TEMP%\sigerror-wsus.txt"
-  goto SignatureError
-)
+if not exist ..\client\wsus\wsusscn2.cab goto SignatureError
 echo %DATE% %TIME% - Info: Verified digital file signatures of Windows Update Agent installation and catalog files>>%DOWNLOAD_LOGFILE%
 if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
 echo Creating integrity database for Windows Update Agent installation and catalog files...
@@ -638,13 +631,11 @@ if "%VERIFY_DL%" NEQ "1" goto SkipDotNet
 rem *** Verifying digital file signatures for .NET Frameworks' installation files ***
 if not exist %SIGCHK_PATH% goto NoSigCheck
 echo Verifying digital file signatures for .NET Frameworks' installation files...
-%SIGCHK_PATH% %SIGCHK_COPT% ..\client\dotnet >"%TEMP%\sigcheck-dotnet.txt"
-for /F "tokens=1 delims=," %%i in ('%SystemRoot%\System32\findstr.exe /I "Unsigned" "%TEMP%\sigcheck-dotnet.txt"') do (
+for /F "skip=1 tokens=1 delims=," %%i in ('%SIGCHK_PATH% %SIGCHK_COPT% -s ..\client\dotnet ^| %SystemRoot%\System32\findstr.exe /I /V "\"Signed\""') do (
   del %%i
   echo Warning: Deleted unsigned file %%i.
   echo %DATE% %TIME% - Warning: Deleted unsigned file %%i>>%DOWNLOAD_LOGFILE%
 )
-if exist "%TEMP%\sigcheck-dotnet.txt" del "%TEMP%\sigcheck-dotnet.txt"
 echo %DATE% %TIME% - Info: Verified digital file signatures for .NET Frameworks' installation files>>%DOWNLOAD_LOGFILE%
 if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
 echo Creating integrity database for .NET Frameworks' installation files...
@@ -735,13 +726,11 @@ if "%VERIFY_DL%" NEQ "1" goto SkipCPP
 rem *** Verifying digital file signatures for C++ Runtime Libraries' installation files ***
 if not exist %SIGCHK_PATH% goto NoSigCheck
 echo Verifying digital file signatures for C++ Runtime Libraries' installation files...
-%SIGCHK_PATH% %SIGCHK_COPT% ..\client\cpp >"%TEMP%\sigcheck-cpp.txt"
-for /F "tokens=1 delims=," %%i in ('%SystemRoot%\System32\findstr.exe /I "Unsigned" "%TEMP%\sigcheck-cpp.txt"') do (
+for /F "skip=1 tokens=1 delims=," %%i in ('%SIGCHK_PATH% %SIGCHK_COPT% -s ..\client\cpp ^| %SystemRoot%\System32\findstr.exe /I /V "\"Signed\""') do (
   del %%i
   echo Warning: Deleted unsigned file %%i.
   echo %DATE% %TIME% - Warning: Deleted unsigned file %%i>>%DOWNLOAD_LOGFILE%
 )
-if exist "%TEMP%\sigcheck-cpp.txt" del "%TEMP%\sigcheck-cpp.txt"
 echo %DATE% %TIME% - Info: Verified digital file signatures for C++ Runtime Libraries' installation files>>%DOWNLOAD_LOGFILE%
 if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
 echo Creating integrity database for C++ Runtime Libraries' installation files...
@@ -837,13 +826,11 @@ if "%VERIFY_DL%" NEQ "1" goto SkipWLE
 rem *** Verifying digital file signatures for Windows Essentials 2012 installation files ***
 if not exist %SIGCHK_PATH% goto NoSigCheck
 echo Verifying digital file signatures for Windows Essentials 2012 installation files...
-%SIGCHK_PATH% %SIGCHK_COPT% -s ..\client\wle >"%TEMP%\sigcheck-wle-glb.txt"
-for /F "tokens=1 delims=," %%i in ('%SystemRoot%\System32\findstr.exe /I "Unsigned" "%TEMP%\sigcheck-wle-glb.txt"') do (
+for /F "skip=1 tokens=1 delims=," %%i in ('%SIGCHK_PATH% %SIGCHK_COPT% -s ..\client\wle ^| %SystemRoot%\System32\findstr.exe /I /V "\"Signed\""') do (
   del %%i
   echo Warning: Deleted unsigned file %%i.
   echo %DATE% %TIME% - Warning: Deleted unsigned file %%i>>%DOWNLOAD_LOGFILE%
 )
-if exist "%TEMP%\sigcheck-wle-glb.txt" del "%TEMP%\sigcheck-wle-glb.txt"
 echo %DATE% %TIME% - Info: Verified digital file signatures for Windows Essentials 2012 installation files>>%DOWNLOAD_LOGFILE%
 if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
 echo Creating integrity database for Windows Essentials 2012 installation files...
@@ -939,13 +926,11 @@ if "%VERIFY_DL%" NEQ "1" goto SkipMSSE
 rem *** Verifying digital file signatures for Microsoft Security Essentials files ***
 if not exist %SIGCHK_PATH% goto NoSigCheck
 echo Verifying digital file signatures for Microsoft Security Essentials files...
-%SIGCHK_PATH% %SIGCHK_COPT% -s ..\client\msse\%TARGET_ARCH%-glb >"%TEMP%\sigcheck-msse-%TARGET_ARCH%-glb.txt"
-for /F "tokens=1 delims=," %%i in ('%SystemRoot%\System32\findstr.exe /I "Unsigned" "%TEMP%\sigcheck-msse-%TARGET_ARCH%-glb.txt"') do (
+for /F "skip=1 tokens=1 delims=," %%i in ('%SIGCHK_PATH% %SIGCHK_COPT% -s ..\client\msse\%TARGET_ARCH%-glb ^| %SystemRoot%\System32\findstr.exe /I /V "\"Signed\""') do (
   del %%i
   echo Warning: Deleted unsigned file %%i.
   echo %DATE% %TIME% - Warning: Deleted unsigned file %%i>>%DOWNLOAD_LOGFILE%
 )
-if exist "%TEMP%\sigcheck-msse-%TARGET_ARCH%-glb.txt" del "%TEMP%\sigcheck-msse-%TARGET_ARCH%-glb.txt"
 echo %DATE% %TIME% - Info: Verified digital file signatures for Microsoft Security Essentials files>>%DOWNLOAD_LOGFILE%
 if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
 echo Creating integrity database for Microsoft Security Essentials files...
@@ -1002,13 +987,11 @@ rem *** Verifying digital file signatures for Windows Defender definition files 
 if "%VERIFY_DL%" NEQ "1" goto SkipWDDefs
 if not exist %SIGCHK_PATH% goto NoSigCheck
 echo Verifying digital file signatures for Windows Defender definition files...
-%SIGCHK_PATH% %SIGCHK_COPT% -s ..\client\wddefs\%TARGET_ARCH%-glb >"%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt"
-for /F "tokens=1 delims=," %%i in ('%SystemRoot%\System32\findstr.exe /I "Unsigned" "%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt"') do (
+for /F "skip=1 tokens=1 delims=," %%i in ('%SIGCHK_PATH% %SIGCHK_COPT% -s ..\client\wddefs\%TARGET_ARCH%-glb ^| %SystemRoot%\System32\findstr.exe /I /V "\"Signed\""') do (
   del %%i
   echo Warning: Deleted unsigned file %%i.
   echo %DATE% %TIME% - Warning: Deleted unsigned file %%i>>%DOWNLOAD_LOGFILE%
 )
-if exist "%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt" del "%TEMP%\sigcheck-wddefs-%TARGET_ARCH%-glb.txt"
 echo %DATE% %TIME% - Info: Verified digital file signatures for Windows Defender definition files>>%DOWNLOAD_LOGFILE%
 if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
 echo Creating integrity database for Windows Defender definition files...
@@ -1556,13 +1539,11 @@ if "%VERIFY_DL%" NEQ "1" goto RemoveHashes
 rem *** Verifying digital file signatures for %1 %2 ***
 if not exist %SIGCHK_PATH% goto NoSigCheck
 echo Verifying digital file signatures for %1 %2...
-%SIGCHK_PATH% %SIGCHK_COPT% -s ..\client\%1\%2 >"%TEMP%\sigcheck-%1-%2.txt"
-for /F "tokens=1 delims=," %%i in ('%SystemRoot%\System32\findstr.exe /I "Unsigned" "%TEMP%\sigcheck-%1-%2.txt"') do (
+for /F "skip=1 tokens=1 delims=," %%i in ('%SIGCHK_PATH% %SIGCHK_COPT% -s ..\client\%1\%2 ^| %SystemRoot%\System32\findstr.exe /I /V "\"Signed\""') do (
   del %%i
   echo Warning: Deleted unsigned file %%i.
   echo %DATE% %TIME% - Warning: Deleted unsigned file %%i>>%DOWNLOAD_LOGFILE%
 )
-if exist "%TEMP%\sigcheck-%1-%2.txt" del "%TEMP%\sigcheck-%1-%2.txt"
 echo %DATE% %TIME% - Info: Verified digital file signatures for %1 %2>>%DOWNLOAD_LOGFILE%
 rem *** Create integrity database for %1 %2 ***
 if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
@@ -1714,8 +1695,8 @@ goto Error
 
 :SignatureError
 echo.
-echo ERROR: File signature verification failure.
-echo %DATE% %TIME% - Error: File signature verification failure>>%DOWNLOAD_LOGFILE%
+echo ERROR: Catalog file ..\client\wsus\wsusscn2.cab signature verification failure.
+echo %DATE% %TIME% - Error: Catalog file ..\client\wsus\wsusscn2.cab signature verification failure>>%DOWNLOAD_LOGFILE%
 echo.
 goto Error
 
