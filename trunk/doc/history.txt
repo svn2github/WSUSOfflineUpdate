@@ -1178,3 +1178,4 @@ Version 10.7 -- ??.??.??
 - Fix: Adobe Flash Player updates for Windows 10 LTSB (build 10240) were erroneously attempted to be installed on Windows 10 TH2 (build 10586) systems and vice versa (Thanks to "DaffyDuck2", "aker", "boco" and "mAsTa")
 - Fix: Excluded cumulative update for Windows Server 2016 Technical Preview 5 (kb3158987) from download (Thanks to "aker")
 - Fix: Corrected WMF installation on Windows Vista and Server 2008 (x86/x64) systems
+- Fix: Duplicates in Office exclude lists (Thanks to "Denniss")
