@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 10.6.3
+WSUS Offline Update 10.7
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1165,7 +1165,7 @@ Version 10.6.3 -- 17.06.16
 - Fix: Replaced superseded Visio 2016 Security Update kb3114511 (MS16-004) by kb3115041 (MS16-070)
 - Fix: FAQs enhanced and corrected (Thanks to "jonas" and "aker")
 --------------------------------------------------------------------------------
-Version 10.7 -- ??.??.??
+Version 10.7 -- 15.07.16
 - Simplified, stabilized and speeded up determination of superseded updates (Special thanks to H. Buhrmester)
 - Strict verification of digital file signatures (Thanks to "Preyr")
 - Added June 2016 update rollup (kb3161608/kb3161606) for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2 to update scan prerequisites (Thanks to "harry" and "jonas")
@@ -1181,3 +1181,4 @@ Version 10.7 -- ??.??.??
 - Fix: Corrected WMF installation on Windows Vista and Server 2008 (x86/x64) systems
 - Fix: Replaced superseded Outlook 2010 Security Update kb3114883 (MS16-029) by kb3115246 (MS16-088)
 - Fix: Duplicates in Office exclude lists (Thanks to "Denniss")
+--------------------------------------------------------------------------------

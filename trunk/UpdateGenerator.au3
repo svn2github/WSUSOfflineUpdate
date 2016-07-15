@@ -1,4 +1,4 @@
-; ***  WSUS Offline Update 10.7b - Generator  ***
+; ***  WSUS Offline Update 10.7 - Generator  ***
 ; ***       Author: T. Wittrock, Kiel        ***
 ; ***     USB-Option added by Ch. Riedel     ***
 ; ***   Dialog scaling added by Th. Baisch   ***
@@ -6,7 +6,7 @@
 #include <GUIConstants.au3>
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Generator")
-#pragma compile(FileVersion, 10.7.0.788)
+#pragma compile(FileVersion, 10.7.0.790)
 #pragma compile(InternalName, "Generator")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateGenerator.exe)

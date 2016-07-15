@@ -1,4 +1,4 @@
-; ***  WSUS Offline Update 10.7b - Installer  ***
+; ***  WSUS Offline Update 10.7 - Installer  ***
 ; ***       Author: T. Wittrock, Kiel        ***
 ; ***   Dialog scaling added by Th. Baisch   ***
 
@@ -6,7 +6,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 10.7.0.788)
+#pragma compile(FileVersion, 10.7.0.790)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
