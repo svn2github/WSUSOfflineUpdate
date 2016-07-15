@@ -1175,7 +1175,9 @@ Version 10.7 -- ??.??.??
 - Microsoft Silverlight updated to v. 5.1.50428.00 (Thanks to "mAsTa")
 - UpdateInstaller script won't any longer show IE installation info popup if IE is recent (Thanks to "aker")
 - DownloadUpdates.cmd script will now also support x64 variant of Sysinternals' Streams tool v. 2.52+
+- Fix: CleanupRecall.cmd script did not restore previously configured Autologon (Thanks to A. Schönbach)
 - Fix: Adobe Flash Player updates for Windows 10 LTSB (build 10240) were erroneously attempted to be installed on Windows 10 TH2 (build 10586) systems and vice versa (Thanks to "DaffyDuck2", "aker", "boco" and "mAsTa")
 - Fix: Excluded cumulative update for Windows Server 2016 Technical Preview 5 (kb3158987) from download (Thanks to "aker")
 - Fix: Corrected WMF installation on Windows Vista and Server 2008 (x86/x64) systems
+- Fix: Replaced superseded Outlook 2010 Security Update kb3114883 (MS16-029) by kb3115246 (MS16-088)
 - Fix: Duplicates in Office exclude lists (Thanks to "Denniss")

@@ -24,6 +24,24 @@ if "%CSCRIPT_PATH%"=="" (
 )
 if not exist %CSCRIPT_PATH% goto NoCScript
 
+echo Unregistering recall...
+%REG_PATH% DELETE "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v WSUSOfflineUpdate /f >nul 2>&1
+if errorlevel 1 (
+  echo Warning: Deregistration of recall failed.
+  echo %DATE% %TIME% - Warning: Deregistration of recall failed>>%UPDATE_LOGFILE%
+) else (
+  echo %DATE% %TIME% - Info: Unregistered recall>>%UPDATE_LOGFILE%
+)
+
+echo Disabling autologon...
+%REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v AutoAdminLogon /t REG_SZ /d "0" /f >nul 2>&1
+if errorlevel 1 (
+  echo Warning: Disabling of autologon failed.
+  echo %DATE% %TIME% - Warning: Disabling of autologon failed>>%UPDATE_LOGFILE%
+) else (
+  echo %DATE% %TIME% - Info: Disabled autologon>>%UPDATE_LOGFILE%
+)
+
 if exist %SystemRoot%\woubak-winlogon.reg (
   echo Restoring Winlogon registry hive...
   %REG_PATH% DELETE "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /va /f >nul 2>&1
@@ -43,24 +61,6 @@ if exist %SystemRoot%\woubak-system-policies.reg (
     del %SystemRoot%\woubak-system-policies.reg
     echo %DATE% %TIME% - Info: Restored System policies registry hive>>%UPDATE_LOGFILE%
   )
-)
-
-echo Unregistering recall...
-%REG_PATH% DELETE "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v WSUSOfflineUpdate /f >nul 2>&1
-if errorlevel 1 (
-  echo Warning: Deregistration of recall failed.
-  echo %DATE% %TIME% - Warning: Deregistration of recall failed>>%UPDATE_LOGFILE%
-) else (
-  echo %DATE% %TIME% - Info: Unregistered recall>>%UPDATE_LOGFILE%
-)
-
-echo Disabling autologon...
-%REG_PATH% ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v AutoAdminLogon /t REG_SZ /d "0" /f >nul 2>&1
-if errorlevel 1 (
-  echo Warning: Disabling of autologon failed.
-  echo %DATE% %TIME% - Warning: Disabling of autologon failed>>%UPDATE_LOGFILE%
-) else (
-  echo %DATE% %TIME% - Info: Disabled autologon>>%UPDATE_LOGFILE%
 )
 
 echo Deleting WOUTempAdmin account...
