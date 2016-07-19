@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.7+ (r791)
+set WSUSOFFLINE_VERSION=10.7+ (r792)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -554,7 +554,10 @@ for /F "skip=1 tokens=1 delims=," %%i in ('%SIGCHK_PATH% %SIGCHK_COPT% -s ..\cli
 if exist ..\client\wsus\wsusscn2.cab (
   if exist ..\client\wsus\wsusscn2.bak del ..\client\wsus\wsusscn2.bak
 ) else (
-  if exist ..\client\wsus\wsusscn2.bak (ren ..\client\wsus\wsusscn2.bak wsusscn2.cab) else (goto SignatureError)
+  if not exist ..\client\wsus\wsusscn2.bak goto SignatureError
+  ren ..\client\wsus\wsusscn2.bak wsusscn2.cab
+  %SystemRoot%\System32\attrib.exe -A ..\client\wsus\wsusscn2.cab
+  echo %DATE% %TIME% - Info: Restored preexisting catalog file ..\client\wsus\wsusscn2.cab>>%DOWNLOAD_LOGFILE%
 )
 echo %DATE% %TIME% - Info: Verified digital file signatures of Windows Update Agent installation and catalog files>>%DOWNLOAD_LOGFILE%
 if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
