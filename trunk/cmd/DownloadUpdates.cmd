@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.7
+set WSUSOFFLINE_VERSION=10.7+ (r791)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -537,6 +537,9 @@ if exist ..\client\md\hashes-wsus.txt (
 :DownloadWSUS
 if exist ..\client\md\hashes-wsus.txt del ..\client\md\hashes-wsus.txt
 echo Downloading/validating most recent Windows Update Agent installation and catalog files...
+if exist ..\client\wsus\wsusscn2.cab (
+  copy /Y ..\client\wsus\wsusscn2.cab ..\client\wsus\wsusscn2.bak >nul
+)
 %DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\static\StaticDownloadLinks-wsus.txt %DLDR_POPT% ..\client\wsus
 if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded/validated most recent Windows Update Agent installation and catalog files>>%DOWNLOAD_LOGFILE%
@@ -548,7 +551,11 @@ for /F "skip=1 tokens=1 delims=," %%i in ('%SIGCHK_PATH% %SIGCHK_COPT% -s ..\cli
   echo Warning: Deleted unsigned file %%i.
   echo %DATE% %TIME% - Warning: Deleted unsigned file %%i>>%DOWNLOAD_LOGFILE%
 )
-if not exist ..\client\wsus\wsusscn2.cab goto SignatureError
+if exist ..\client\wsus\wsusscn2.cab (
+  if exist ..\client\wsus\wsusscn2.bak del ..\client\wsus\wsusscn2.bak
+) else (
+  if exist ..\client\wsus\wsusscn2.bak (ren ..\client\wsus\wsusscn2.bak wsusscn2.cab) else (goto SignatureError)
+)
 echo %DATE% %TIME% - Info: Verified digital file signatures of Windows Update Agent installation and catalog files>>%DOWNLOAD_LOGFILE%
 if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
 echo Creating integrity database for Windows Update Agent installation and catalog files...

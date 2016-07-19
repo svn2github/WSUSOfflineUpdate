@@ -1182,3 +1182,5 @@ Version 10.7 -- 15.07.16
 - Fix: Replaced superseded Outlook 2010 Security Update kb3114883 (MS16-029) by kb3115246 (MS16-088)
 - Fix: Duplicates in Office exclude lists (Thanks to "Denniss")
 --------------------------------------------------------------------------------
+Version ??.? -- ??.??.??
+- DownloadUpdates.cmd script will now backup and restore known good catalog file wsusscn2.cab
