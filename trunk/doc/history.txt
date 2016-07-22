@@ -1184,3 +1184,4 @@ Version 10.7 -- 15.07.16
 --------------------------------------------------------------------------------
 Version ??.? -- ??.??.??
 - DownloadUpdates.cmd script will now backup and restore known good catalog file wsusscn2.cab
+- Replaced superseded June 2016 update rollup (kb3161608/kb3161606) for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2 by July 2016 update rollup (kb3172605/kb3172614) (Thanks to "harry")
