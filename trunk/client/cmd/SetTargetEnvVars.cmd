@@ -4,10 +4,10 @@ rem *** Author: T. Wittrock, Kiel ***
 if "%OS_RAM_GB%"=="" (
   set UPDATES_PER_STAGE=80
 ) else (
-  set /A UPDATES_PER_STAGE=OS_RAM_GB*50
+  set /A UPDATES_PER_STAGE=OS_RAM_GB*40
 )
 if exist .\custom\SetUpdatesPerStage.cmd call .\custom\SetUpdatesPerStage.cmd
-if %UPDATES_PER_STAGE% LSS 50 set UPDATES_PER_STAGE=50
+if %UPDATES_PER_STAGE% LSS 40 set UPDATES_PER_STAGE=40
 
 set WUA_VER_TARGET_MAJOR=7
 set WUA_VER_TARGET_MINOR=4

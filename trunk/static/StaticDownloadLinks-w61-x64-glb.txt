@@ -20,5 +20,4 @@ http://download.windowsupdate.com/windowsupdate/redist/standalone/7.6.7600.320/W
 http://download.microsoft.com/download/B/7/C/B7CD3A70-1EA7-486A-9585-F6814663F1A9/Windows6.1-KB3138612-x64.msu
 http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x64-MultiPkg.msu
 http://download.microsoft.com/download/2/C/6/2C6E1B4A-EBE5-48A6-B225-2D2058A9CEFB/Win7AndW2K8R2-KB3134760-x64.msu
-http://download.microsoft.com/download/5/D/0/5D0821EB-A92D-4CA2-9020-EC41D56B074F/Windows6.1-KB3020369-x64.msu
-http://download.windowsupdate.com/d/msdownload/update/software/updt/2016/07/windows6.1-kb3172605-x64_26f4cc7831a0d76393445b7b0a1a3ed5cd5b4047.msu
+http://download.microsoft.com/download/5/6/0/560504D4-F91A-4DEB-867F-C713F7821374/Windows6.1-KB3172605-x64.msu

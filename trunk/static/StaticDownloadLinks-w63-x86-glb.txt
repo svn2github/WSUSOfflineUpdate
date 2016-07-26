@@ -7,4 +7,4 @@ http://download.microsoft.com/download/4/5/2/4523ACEE-9CF5-4209-AE2D-52BA993A1CD
 http://download.microsoft.com/download/9/6/4/964EE585-03DC-441A-AA99-6A39BA731869/Windows8.1-KB3138615-x86.msu
 http://download.microsoft.com/download/2/C/6/2C6E1B4A-EBE5-48A6-B225-2D2058A9CEFB/Win8.1-KB3134758-x86.msu
 http://download.microsoft.com/download/2/B/8/2B832205-A313-45A4-9356-DF5E47B70663/Windows8.1-KB3021910-x86.msu
-http://download.windowsupdate.com/c/msdownload/update/software/updt/2016/07/windows8.1-kb3172614-x86_d11c233c8598b734de72665e0d0a3f2ef007b91f.msu
+http://download.microsoft.com/download/E/5/8/E5864645-6391-4D75-BB2C-7D7F05EF7D13/Windows8.1-KB3172614-x86.msu
