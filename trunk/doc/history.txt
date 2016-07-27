@@ -1185,6 +1185,7 @@ Version 10.7 -- 15.07.16
 Version ??.? -- ??.??.??
 - DownloadUpdates.cmd script will now backup and restore known good catalog file wsusscn2.cab
 - Replaced superseded June 2016 update rollup (kb3161608/kb3161606) for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2 by July 2016 update rollup (kb3172605/kb3172614) (Thanks to "harry")
+- Replaced superseded April 2015 servicing stack update for Windows 8.1 / Server 2012 R2 (kb3021910) by July 2016 servicing stack update (kb3173424) (Thanks to "jonas")
+- Added July 2016 servicing stack update (kb3173426) and July 2016 update rollup (kb3172615) for Windows Server 2012 to update scan prerequisites
 - Fix: Decreased minimum installation stage size from 50 to 40 updates (Thanks to "sbawo")
-- Fix: Removed obsolete April 2015 servicing stack update for Windows 7 / Server 2008 R2 (kb3020369) from scan prerequisites (Thanks to "jonas")
 - Fix: Removed obsolete Update for Microsoft Update client for Windows Server 2012 (kb2937636) from scan prerequisites
