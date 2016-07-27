@@ -5,9 +5,6 @@ setlocal enabledelayedexpansion
 
 if not exist "%TEMP%\wsusscn2.cab" (
   .\bin\wget.exe -N -i .\static\StaticDownloadLinks-wsus.txt -P "%TEMP%"
-  if exist "%TEMP%\wuredist.cab" del "%TEMP%\wuredist.cab"
-  if exist "%TEMP%\WindowsUpdateAgent30-x64.exe" del "%TEMP%\WindowsUpdateAgent30-x64.exe"
-  if exist "%TEMP%\WindowsUpdateAgent30-x86.exe" del "%TEMP%\WindowsUpdateAgent30-x86.exe"
 )
 if exist "%TEMP%\package.cab" del "%TEMP%\package.cab"
 if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"

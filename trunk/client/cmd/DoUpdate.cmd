@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.7+ (r795)
+set WSUSOFFLINE_VERSION=10.7+ (r796)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -411,48 +411,6 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
 )
 :SPw100
 :SkipSPInst
-
-rem *** Install Windows Update Agent ***
-echo Checking Windows Update Agent version...
-if %WUA_VER_MAJOR% LSS %WUA_VER_TARGET_MAJOR% goto InstallWUA
-if %WUA_VER_MAJOR% GTR %WUA_VER_TARGET_MAJOR% goto SkipWUAInst
-if %WUA_VER_MINOR% LSS %WUA_VER_TARGET_MINOR% goto InstallWUA
-if %WUA_VER_MINOR% GTR %WUA_VER_TARGET_MINOR% goto SkipWUAInst
-if %WUA_VER_BUILD% LSS %WUA_VER_TARGET_BUILD% goto InstallWUA
-if %WUA_VER_BUILD% GTR %WUA_VER_TARGET_BUILD% goto SkipWUAInst
-if %WUA_VER_REVIS% GEQ %WUA_VER_TARGET_REVIS% goto SkipWUAInst
-:InstallWUA
-if "%OS_NAME%"=="w61" (
-  if /i "%OS_ARCH%"=="x64" (
-    set WUA_FILENAME=..\%OS_NAME%-%OS_ARCH%\glb\WindowsUpdateAgent*-%OS_ARCH%.exe
-  ) else (
-    set WUA_FILENAME=..\%OS_NAME%\glb\WindowsUpdateAgent*-%OS_ARCH%.exe
-  )
-) else (
-  set WUA_FILENAME=..\wsus\WindowsUpdateAgent*-%OS_ARCH%.exe
-)
-dir /B %WUA_FILENAME% >nul 2>&1
-if errorlevel 1 (
-  echo Warning: File %WUA_FILENAME% not found.
-  echo %DATE% %TIME% - Warning: File %WUA_FILENAME% not found>>%UPDATE_LOGFILE%
-  goto SkipWUAInst
-)
-echo Installing most recent Windows Update Agent...
-for /F %%i in ('dir /B %WUA_FILENAME%') do (
-  if "%OS_NAME%"=="w61" (
-    if /i "%OS_ARCH%"=="x64" (
-      call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /norestart /norestartforapi
-    ) else (
-      call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /ignoreerrors /quiet /norestart /norestartforapi
-    )
-  ) else (
-    call InstallOSUpdate.cmd ..\wsus\%%i %VERIFY_MODE% /ignoreerrors /wuforce /quiet /norestart
-  )
-  if errorlevel 1 goto InstError
-  set REBOOT_REQUIRED=1
-)
-set WUA_FILENAME=
-:SkipWUAInst
 
 rem *** Install Windows Installer ***
 echo Checking Windows Installer version...

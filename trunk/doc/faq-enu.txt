@@ -19,7 +19,6 @@ Once again you have to make a difference between statically defined and dynamica
 a) Statically defined updates
 The statically defined updates (latest version each) are:
 - Service Pack (SP)
-- Windows Update Agent (WUA)
 - Microsoft Installer (MSI)
 - Windows Script Host (WSH)
 - Internet Explorer (IE)

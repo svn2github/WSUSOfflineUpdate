@@ -17,7 +17,6 @@ Beim Ausschluss von Updates von der Installation muss ebenfalls zwischen statisc
   a) Statisch definierte Updates
     Die für die Installation statisch definierten Updates sind in Ihrer jeweils aktuellen Version:
     - Service Pack (SP)
-    - Windows Update Agent (WUA)
     - Microsoft Installer (MSI)
     - Windows Script Host (WSH)
     - Internet Explorer (IE)
