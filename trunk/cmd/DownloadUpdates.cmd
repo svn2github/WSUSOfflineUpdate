@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.7+ (r797)
+set WSUSOFFLINE_VERSION=10.7+ (r798)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -427,11 +427,11 @@ if exist ..\client\md\hashes-mssedefs.txt del ..\client\md\hashes-mssedefs.txt
 rem *** Windows Update Agent stuff ***
 if exist ..\client\wsus\WindowsUpdateAgent30-x64.exe (
   del ..\client\wsus\WindowsUpdateAgent30-x64.exe
-  if exist ..\client\wsus\hashes-wsus.txt del ..\client\wsus\hashes-wsus.txt
+  if exist ..\client\md\hashes-wsus.txt del ..\client\md\hashes-wsus.txt
 )
 if exist ..\client\wsus\WindowsUpdateAgent30-x86.exe (
   del ..\client\wsus\WindowsUpdateAgent30-x86.exe
-  if exist ..\client\wsus\hashes-wsus.txt del ..\client\wsus\hashes-wsus.txt
+  if exist ..\client\md\hashes-wsus.txt del ..\client\md\hashes-wsus.txt
 )
 
 rem *** Update static download definitions ***
