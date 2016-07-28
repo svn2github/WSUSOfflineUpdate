@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.7+ (r796)
+set WSUSOFFLINE_VERSION=10.7+ (r797)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1374,9 +1374,10 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
   if not errorlevel 1 (
     if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
     echo. >%SystemRoot%\Temp\wou_wupre_tried.txt
-    set REBOOT_REQUIRED=1
+    set RECALL_REQUIRED=1
   )
 )
+if "%RECALL_REQUIRED%"=="1" goto Installed
 
 :ListMissingIds
 rem *** Adjust service 'Windows Update' ***

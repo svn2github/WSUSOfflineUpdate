@@ -2,6 +2,9 @@ F: Wie kann ich "WSUS Offline Update" selbst aktualisieren?
 A: Sofern in den "release notes" oder Installationshinweisen nicht anders angegeben, können Sie das Archiv (.zip) einer neuen Version einfach in eine bestehende Installationsstruktur hinein entpacken, wenn Sie existierende Dateien überschreiben lassen.
 Natürlich können Sie auch die automatische Selbstaktualisierung nutzen.
 --------------------------------------------------------------------------------
+F: Wo werden die heruntergeladenen Update-Dateien abgelegt?
+A: Alle für den Installationsteil erforderlichen Dateien werden im Unterverzeichnis "client" abgelegt.
+--------------------------------------------------------------------------------
 F: Kann ich Updates vom Download und/oder der Installation ausschließen?
 A: Ja, Sie haben die Möglichkeit, das Verhalten der Download- und Update-Skripte Ihren Bedürfnissen entsprechend anzupassen, indem Sie Updates vom Download oder der Installation ausschließen oder hinzufügen. Zum Ausschluss von Updates gehen Sie bitte wie folgt vor:
 
@@ -27,10 +30,6 @@ Beim Ausschluss von Updates von der Installation muss ebenfalls zwischen statisc
     - kb816093 (Sicherheitsupdate für Microsoft VM)
     - kb951847 (.NET Framework 3.5 SP1 Family Update (wird ggf. explizit installiert)) 
     - kb890830 (Windows-Tool zum Entfernen bösartiger Software (MSRT))
-    - kb931125 (Trusted Root Certificates (wird ggf. explizit aktualisiert))
-    - kb2917500 (Revoked Root Certificates (wird ggf. explizit aktualisiert))
-    - kb926874 (Internet Explorer 7 (wird ggf. explizit installiert))
-    - kb940767 (Internet Explorer 7 (wird ggf. explizit installiert))
     - kb944036 (Internet Explorer 8 (wird ggf. explizit installiert))
     - kb982861 (Internet Explorer 9 (wird ggf. explizit installiert))
     - kb2718695 (Internet Explorer 10 (wird ggf. explizit installiert))

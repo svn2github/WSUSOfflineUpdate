@@ -2,6 +2,9 @@ Q: How can I update "WSUS Offline Update" itself?
 A: As long as release notes or installation hints don't recommend other, you may unpack a new version's archive (.zip) over/into an existing structure, if you let existing files be overwritten.
 Of course you may use the automatic self update functionality instead.
 --------------------------------------------------------------------------------
+Q: Where are the downloaded update files stored?
+A: Every file which is required for the installation part is stored in the "client" subdirectory.
+--------------------------------------------------------------------------------
 Q: Can I exclude patches from download and/or installation?
 A: Yes, that's possible through customizing the download- and update scripts according to your requirements. You may add new patches or exclude existing ones. Please follow this guide:
 
@@ -30,10 +33,6 @@ The following updates are already excluded:
 - kb816093 (Security update for Microsoft VM)
 - kb951847 (.NET Framework 3.5 SP1 Family Update (will be explicitly installed if selected)) 
 - kb890830 (Windows Malicious Software Removal Tool (MSRT))
-- kb931125 (Trusted Root Certificates (will be explicitly updated if selected))
-- kb2917500 (Revoked Root Certificates (will be explicitly updated if selected))
-- kb926874 (Internet Explorer 7 (will be explicitly installed if selected))
-- kb940767 (Internet Explorer 7 (will be explicitly installed if selected))
 - kb944036 (Internet Explorer 8 (will be explicitly installed if selected))
 - kb982861 (Internet Explorer 9 (will be explicitly installed if selected))
 - kb2718695 (Internet Explorer 10 (will be explicitly installed if selected))
