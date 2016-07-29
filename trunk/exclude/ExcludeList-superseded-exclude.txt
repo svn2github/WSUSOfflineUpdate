@@ -1,10 +1,6 @@
-kb2536276
-kb2813347
-kb2835361
 windows6.0-kb2535512
 windows6.0-kb2973201
 windows6.1-kb2552343
-windows6.1-kb2644615
 windows6.1-kb3031432
 windows6.1-kb3004375
 windows8.1-kb3032663

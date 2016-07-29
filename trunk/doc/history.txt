@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 10.7
+WSUS Offline Update 10.7.1
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1182,7 +1182,7 @@ Version 10.7 -- 15.07.16
 - Fix: Replaced superseded Outlook 2010 Security Update kb3114883 (MS16-029) by kb3115246 (MS16-088)
 - Fix: Duplicates in Office exclude lists (Thanks to "Denniss")
 --------------------------------------------------------------------------------
-Version ??.? -- ??.??.??
+Version 10.7.1 -- 29.07.16
 - DownloadUpdates.cmd script will now backup and restore known good catalog file wsusscn2.cab
 - Replaced superseded June 2016 update rollup (kb3161608/kb3161606) for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2 by July 2016 update rollup (kb3172605/kb3172614) (Thanks to "harry")
 - Replaced superseded April 2015 servicing stack update for Windows 8.1 / Server 2012 R2 (kb3021910) by July 2016 servicing stack update (kb3173424) (Thanks to "jonas")
@@ -1194,3 +1194,5 @@ Version ??.? -- ??.??.??
 - Fix: Removed obsolete Update for Microsoft Update client for Windows Server 2012 (kb2937636) from scan prerequisites
 - Fix: Download part missed kb2978042 (MS14-057) and kb3035489 (MS15-048) for Server 2012
 - Fix: On Server 2008 R2 / 2012 systems, kb2992611 (MS14-066) was repeatedly offered for installation (Thanks to A. Schönbach)
+- Fix: Cleaned up ExcludeList-superseded-exclude.txt
+--------------------------------------------------------------------------------
