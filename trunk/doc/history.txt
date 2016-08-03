@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 10.7.1
+WSUS Offline Update 10.7.2
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1195,4 +1195,7 @@ Version 10.7.1 -- 29.07.16
 - Fix: Download part missed kb2978042 (MS14-057) and kb3035489 (MS15-048) for Server 2012
 - Fix: On Server 2008 R2 / 2012 systems, kb2992611 (MS14-066) was repeatedly offered for installation (Thanks to A. Schönbach)
 - Fix: Cleaned up ExcludeList-superseded-exclude.txt
+--------------------------------------------------------------------------------
+Version 10.7.2 -- 03.08.16
+- .NET Framework 4 updated to v. 4.6.2 (Thanks to "boco" and "harry")
 --------------------------------------------------------------------------------

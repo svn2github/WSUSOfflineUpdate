@@ -1,3 +1,1 @@
-ndp1.1sp1-kb867460
 capicom
-vcredist

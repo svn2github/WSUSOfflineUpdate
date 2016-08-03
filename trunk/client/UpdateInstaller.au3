@@ -1,4 +1,4 @@
-; ***  WSUS Offline Update 10.7.1 - Installer  ***
+; ***  WSUS Offline Update 10.7.2 - Installer  ***
 ; ***        Author: T. Wittrock, Kiel         ***
 ; ***    Dialog scaling added by Th. Baisch    ***
 
@@ -6,14 +6,14 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 10.7.1.800)
+#pragma compile(FileVersion, 10.7.2.802)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
 #pragma compile(ProductName, "WSUS Offline Update")
-#pragma compile(ProductVersion, 10.7.1)
+#pragma compile(ProductVersion, 10.7.2)
 
-Dim Const $caption                    = "WSUS Offline Update 10.7.1 - Installer"
+Dim Const $caption                    = "WSUS Offline Update 10.7.2 - Installer"
 Dim Const $wou_hostname               = "www.wsusoffline.net"
 Dim Const $donationURL                = "http://www.wsusoffline.net/donate.html"
 
@@ -276,9 +276,9 @@ EndFunc
 
 Func DotNet4TargetVersion()
   If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) Then
-    Return "4.6.00"
+    Return "4.6.000"
   Else
-    Return "4.6.01"
+    Return "4.6.015"
   EndIf
 EndFunc
 
@@ -286,7 +286,7 @@ Func DotNet4DisplayVersion()
   If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) Then
     Return "4.6"
   Else
-    Return "4.6.1"
+    Return "4.6.2"
   EndIf
 EndFunc
 
@@ -534,7 +534,7 @@ If ShowGUIInGerman() Then
 Else
   $dotnet4 = GUICtrlCreateCheckbox("Install .NET Framework " & DotNet4DisplayVersion(), $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (StringLeft(DotNet4Version(), 6) = DotNet4TargetVersion()) OR (NOT DotNet4InstPresent($scriptdir)) ) Then
+If ( (StringLeft(DotNet4Version(), 7) = DotNet4TargetVersion()) OR (NOT DotNet4InstPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If MyIniRead($ini_section_installation, $ini_value_dotnet4, $disabled) = $enabled Then

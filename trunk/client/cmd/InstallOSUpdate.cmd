@@ -172,8 +172,8 @@ echo ERROR: No command extensions available.
 goto Error
 
 :NoParam
-echo ERROR: Invalid parameter. Usage: %~n0 ^<filename^> [/selectoptions] [/errorsaswarnings] [switches]
-echo %DATE% %TIME% - Error: Invalid parameter. Usage: %~n0 ^<filename^> [/selectoptions] [/errorsaswarnings] [switches]>>%UPDATE_LOGFILE%
+echo ERROR: Invalid parameter. Usage: %~n0 ^<filename^> [/selectoptions] [/verify] [/errorsaswarnings] [/ignoreerrors] [switches]
+echo %DATE% %TIME% - Error: Invalid parameter. Usage: %~n0 ^<filename^> [/selectoptions] [/verify] [/errorsaswarnings] [/ignoreerrors] [switches]>>%UPDATE_LOGFILE%
 goto Error
 
 :InvalidParam
