@@ -1200,4 +1200,4 @@ Version 10.7.2 -- 03.08.16
 - .NET Framework 4 updated to v. 4.6.2 (Thanks to "boco" and "harry")
 --------------------------------------------------------------------------------
 Version ??.? -- ??.??.??
-- Replaced superseded scan prerequisite update kb3168965 (MS16-090) by kb3177725 (MS16-098) (Thanks to "harry" and "Dalai")
+- Added scan prerequisite update kb3177725 (MS16-098) (Thanks to "Dalai")
