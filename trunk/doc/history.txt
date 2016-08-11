@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 10.7.2
+WSUS Offline Update 10.7.3
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1199,5 +1199,19 @@ Version 10.7.1 -- 29.07.16
 Version 10.7.2 -- 03.08.16
 - .NET Framework 4 updated to v. 4.6.2 (Thanks to "boco" and "harry")
 --------------------------------------------------------------------------------
-Version ??.? -- ??.??.??
+Version 10.7.3 -- 11.08.16
 - Added scan prerequisite update kb3177725 (MS16-098) (Thanks to "Dalai")
+- Aria2 download utility updated to v. 1.25.0 (Thanks to "harry")
+- Fix: Rearranged scan prerequisites' installation sequence in order to avoid repeated installation of kb3172605 (July 2016 update rollup for Windows 7 / Server 2008 R2)
+- Fix: Replaced superseded Office 2007 Security Update kb3085620 (MS15-099) by kb3114442 (MS16-099)
+- Fix: Replaced superseded Office 2010 Security Update kb3085560 (MS15-099) by kb3114400 (MS16-099)
+- Fix: Replaced superseded OneNote 2010 Security Update kb3054978 (MS15-116) by kb3114885 (MS16-099)
+- Fix: Replaced superseded Outlook 2010 Security Update kb3115246 (MS16-088) by kb3115474 (MS16-099)
+- Fix: Replaced superseded Office 2013 Security Update kb3085572 (MS15-099) by kb3114340 (MS16-099)
+- Fix: Download part missed Lync 2013 Security Update kb3039779 (MS15-044)
+- Fix: Replaced superseded Lync 2013 Security Update kb3114944 (MS16-039) by kb3115431 (MS16-097)
+- Fix: Replaced superseded Skype for Business 2016 Security Update kb3114960 (MS16-039) by kb3115408 (MS16-097)
+- Fix: Removed obsolete Outlook 2007 Security Update kb2880510 (MS16-029)
+- Fix: Removed obsolete Outlook 2013 Security Update kb3114829 (MS16-029)
+- Fix: Removed obsolete Outlook 2016 Security Update kb3114861 (MS16-029)
+--------------------------------------------------------------------------------

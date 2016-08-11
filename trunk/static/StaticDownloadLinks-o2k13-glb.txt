@@ -1,4 +1,4 @@
 http://download.microsoft.com/download/F/2/5/F2552D54-7B97-44CD-A0E7-6E4E20A2FED7/proofloc2013-kb2880463-fullfile-x86-glb.exe
-http://download.microsoft.com/download/B/B/F/BBFBBCBA-F6C4-44E6-B078-EC060E3071DE/conv2013-kb3085572-fullfile-x86-glb.exe
-http://download.microsoft.com/download/3/B/B/3BBB7FEF-D9FD-4794-9306-AF1558E3CD7C/lync2013-kb3114944-fullfile-x86-glb.exe
-http://download.microsoft.com/download/E/A/D/EAD71AF3-DA0F-45FF-92C7-4583DE483EDC/outlook2013-kb3114829-fullfile-x86-glb.exe
+http://download.microsoft.com/download/1/F/8/1F83314F-6517-4F07-ABF7-FF2B25ADDF8E/conv2013-kb3114340-fullfile-x86-glb.exe
+http://download.microsoft.com/download/E/2/8/E286C608-76FF-40C4-B509-23F94E4BA655/lyncmso2013-kb3039779-fullfile-x86-glb.exe
+http://download.microsoft.com/download/C/5/B/C5B4F463-925D-402D-BFEE-D55E28E6BE33/lync2013-kb3115431-fullfile-x86-glb.exe
