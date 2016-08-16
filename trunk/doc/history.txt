@@ -1215,3 +1215,5 @@ Version 10.7.3 -- 11.08.16
 - Fix: Removed obsolete Outlook 2013 Security Update kb3114829 (MS16-029)
 - Fix: Removed obsolete Outlook 2016 Security Update kb3114861 (MS16-029)
 --------------------------------------------------------------------------------
+Version ??.? -- ??.??.??
+- Removed redundant static download definitions for July 2016 servicing stack update for Windows 8.1 / Server 2012(R2) (kb3173424/kb3173426)
