@@ -1216,4 +1216,5 @@ Version 10.7.3 -- 11.08.16
 - Fix: Removed obsolete Outlook 2016 Security Update kb3114861 (MS16-029)
 --------------------------------------------------------------------------------
 Version ??.? -- ??.??.??
-- Removed redundant static download definitions for July 2016 servicing stack update for Windows 8.1 / Server 2012(R2) (kb3173424/kb3173426)
+- Fix: Added static installation definition for July 2016 Servicing stack update for Windows 10 (kb3173427/kb3173428) to avoid repeated installation attempts of kb3172729 (Security update for Secure Boot) (Thanks to "Moopere" and "aker")
+- Fix: Removed redundant static download definitions for July 2016 servicing stack update for Windows 8.1 / Server 2012(R2) (kb3173424/kb3173426)

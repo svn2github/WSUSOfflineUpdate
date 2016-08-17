@@ -128,6 +128,7 @@ for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
 goto InstFailure
 
 :InstCab
+if exist %SystemRoot%\Sysnative\Dism.exe goto InstDism
 if exist %SystemRoot%\System32\Dism.exe goto InstDism
 echo Installing %1...
 set ERR_LEVEL=0

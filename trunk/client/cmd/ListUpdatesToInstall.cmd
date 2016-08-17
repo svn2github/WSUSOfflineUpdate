@@ -81,7 +81,6 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
         ) else (
           call ListUpdateFile.cmd ie%IE_VER_MAJOR%-*%%i ..\%%k\%%l
         )
-        call ListUpdateFile.cmd windows6*%%i ..\%%k\%%l /searchleftmost
         call ListUpdateFile.cmd windows*%%i ..\%%k\%%l /searchleftmost
         call ListUpdateFile.cmd %%i ..\%%k\%%l
       )
