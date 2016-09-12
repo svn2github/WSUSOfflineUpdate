@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.7.3+ (r810)
+set WSUSOFFLINE_VERSION=10.7.3+ (r811)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -35,7 +35,7 @@ echo %DATE% %TIME% - Info: Used path "%~dp0" on %COMPUTERNAME% (user: %USERNAME%
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/verify /skipieinst /updatecpp /instmssl /instdotnet35 /instdotnet4 /instpsh /instwmf /instmsse /updatetsc /instofv /instwle /instmsi /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
+for %%i in (/verify /skipieinst /updatecpp /instmssl /instdotnet35 /instdotnet4 /instpsh /instwmf /instmsse /skipdefs /updatetsc /instofv /instwle /instmsi /autoreboot /shutdown /showlog /all /excludestatics /skipdynamic) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected>>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/verify" set VERIFY_MODE=/verify
@@ -47,6 +47,7 @@ if /i "%1"=="/instdotnet4" set INSTALL_DOTNET4=/instdotnet4
 if /i "%1"=="/instpsh" set INSTALL_PSH=/instpsh
 if /i "%1"=="/instwmf" set INSTALL_WMF=/instwmf
 if /i "%1"=="/instmsse" set INSTALL_MSSE=/instmsse
+if /i "%1"=="/skipdefs" set SKIP_DEFS=/skipdefs
 if /i "%1"=="/updatetsc" set UPDATE_TSC=/updatetsc
 if /i "%1"=="/instofv" set INSTALL_OFV=/instofv
 if /i "%1"=="/instwle" set INSTALL_WLE=/instwle
@@ -1086,6 +1087,7 @@ rem *** Update Windows Defender definitions ***
 echo Checking Windows Defender installation state...
 if "%WD_INSTALLED%" NEQ "1" goto SkipWDInst
 if "%WD_DISABLED%"=="1" goto SkipWDInst
+if "%SKIP_DEFS%"=="/skipdefs" goto SkipWDInst
 if "%OS_NAME%"=="w62" goto WDmpam
 if "%OS_NAME%"=="w63" goto WDmpam
 if "%OS_NAME%"=="w100" goto WDmpam
@@ -1478,6 +1480,7 @@ call InstallOSUpdate.cmd %MSSE_FILENAME% %VERIFY_MODE% /ignoreerrors /s /runwgac
 set MSSE_FILENAME=
 set REBOOT_REQUIRED=1
 :CheckMSSEDefs
+if "%SKIP_DEFS%"=="/skipdefs" goto SkipMSSEInst
 set MSSE_VER_TARGET_MAJOR=
 set MSSE_VER_TARGET_MINOR=
 set MSSE_VER_TARGET_BUILD=
@@ -1634,7 +1637,7 @@ if "%RECALL_REQUIRED%"=="1" (
     )
     if "%USERNAME%" NEQ "WOUTempAdmin" (
       echo Preparing automatic recall...
-      call PrepareRecall.cmd "%~f0" %VERIFY_MODE% %SKIP_IEINST% %UPDATE_CPP% %INSTALL_MSSL% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_WMF% %INSTALL_MSSE% %UPDATE_TSC% %INSTALL_OFV% %INSTALL_WLE% %INSTALL_MSI% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES% %SKIP_DYNAMIC%
+      call PrepareRecall.cmd "%~f0" %VERIFY_MODE% %SKIP_IEINST% %UPDATE_CPP% %INSTALL_MSSL% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_WMF% %INSTALL_MSSE% %SKIP_DEFS% %UPDATE_TSC% %INSTALL_OFV% %INSTALL_WLE% %INSTALL_MSI% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES% %SKIP_DYNAMIC%
     )
     if exist %SystemRoot%\System32\bcdedit.exe (
       echo Adjusting boot sequence for next reboot...

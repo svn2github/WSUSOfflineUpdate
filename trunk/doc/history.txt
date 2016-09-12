@@ -1219,6 +1219,8 @@ Version ??.? -- ??.??.??
 - C++ 2015 Redistributable Runtime Libraries updated to v. 14.0.24212.0 (Thanks to "jamielightfoot", "danahis" and "boco")
 - Removed scan prerequisite updates kb3078601, kb3109094, kb3145739, kb3164033, kb3168965 and kb3177725 for Windows 7 (x86/x64) and Server 2008 R2 (Thanks to M. zu Klampen)
 - Removed Windows Update Client March 2016 (kb3138612/kb3138615) from update scan prerequisites for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2
+- DoUpdate.cmd script will now support "/skipdefs" switch to avoid mandatory installation of most recent Windows Defender and Microsoft Security Essentials definition files
+- UpdateInstaller.ini file will now support "skipdefs" setting in [Installation] to control "/skipdefs" switch for DoUpdate.cmd script
 - Aria2 download utility updated to v. 1.26.1 (Thanks to "harry")
 - UpdateGenerator script will now show release info (modifications) when found a new version (Thanks to L. Opitz)
 - DoUpdate.cmd script will now install custom static definitions before built-in ones

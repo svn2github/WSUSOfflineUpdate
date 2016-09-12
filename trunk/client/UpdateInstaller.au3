@@ -6,7 +6,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 10.7.3.810)
+#pragma compile(FileVersion, 10.7.3.811)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -56,6 +56,7 @@ Dim Const $ini_value_dotnet4          = "instdotnet4"
 Dim Const $ini_value_psh              = "instpsh"
 Dim Const $ini_value_wmf              = "instwmf"
 Dim Const $ini_value_msse             = "instmsse"
+Dim Const $ini_value_skipdefs         = "skipdefs"
 Dim Const $ini_value_tsc              = "updatetsc"
 Dim Const $ini_value_ofv              = "instofv"
 Dim Const $ini_value_all              = "all"
@@ -1110,6 +1111,9 @@ While 1
       EndIf
       If IsCheckBoxChecked($msse) Then
         $options = $options & " /instmsse"
+      EndIf
+      If MyIniRead($ini_section_installation, $ini_value_skipdefs, $disabled) = $enabled Then
+        $options = $options & " /skipdefs"
       EndIf
       If IsCheckBoxChecked($tsc) Then
         $options = $options & " /updatetsc"
