@@ -1217,6 +1217,11 @@ Version 10.7.3 -- 11.08.16
 --------------------------------------------------------------------------------
 Version ??.? -- ??.??.??
 - C++ 2015 Redistributable Runtime Libraries updated to v. 14.0.24212.0 (Thanks to "jamielightfoot", "danahis" and "boco")
+- Removed scan prerequisite updates kb3078601, kb3109094, kb3145739, kb3164033, kb3168965 and kb3177725 for Windows 7 (x86/x64) and Server 2008 R2 (Thanks to M. zu Klampen)
+- Removed Windows Update Client March 2016 (kb3138612/kb3138615) from update scan prerequisites for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2
+- Aria2 download utility updated to v. 1.26.1 (Thanks to "harry")
+- UpdateGenerator script will now show release info (modifications) when found a new version (Thanks to L. Opitz)
+- DoUpdate.cmd script will now install custom static definitions before built-in ones
 - Fix: Added static installation definition for July 2016 Servicing stack update for Windows 10 (kb3173427/kb3173428) to avoid repeated installation attempts of kb3172729 (Security update for Secure Boot) (Thanks to "Moopere" and "aker")
 - Fix: Removed redundant static download definitions for July 2016 servicing stack update for Windows 8.1 / Server 2012(R2) (kb3173424/kb3173426)
 - Fix: Excluded updates for Windows Server 2016 Technical Preview 5 (kb3172989/kb3174060) from download (Thanks to "aker")

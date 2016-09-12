@@ -6,7 +6,7 @@
 #include <GUIConstants.au3>
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Generator")
-#pragma compile(FileVersion, 10.7.3.809)
+#pragma compile(FileVersion, 10.7.3.810)
 #pragma compile(InternalName, "Generator")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateGenerator.exe)
@@ -16,6 +16,7 @@
 Dim Const $caption                  = "WSUS Offline Update 10.7.3"
 Dim Const $title                    = $caption & " - Generator"
 Dim Const $donationURL              = "http://www.wsusoffline.net/donate.html"
+Dim Const $downloadURL              = "http://download.wsusoffline.net/"
 Dim Const $downloadLogFile          = "download.log"
 Dim Const $runAllFile               = "RunAll.cmd"
 
@@ -2446,9 +2447,11 @@ While 1
         If (IniRead($inifilename, $ini_section_misc, $misc_token_chkver, $enabled) = $enabled) Then
           Switch RunVersionCheck(AuthProxy($proxy, $proxypwd))
             Case -1 ; Yes
+              Run(@ComSpec & " /D /C start " & $downloadURL)
               RunSelfUpdate(AuthProxy($proxy, $proxypwd))
               ExitLoop
             Case 1  ; Cancel / Close
+              Run(@ComSpec & " /D /C start " & $downloadURL)
               ContinueLoop
           EndSwitch
         EndIf
