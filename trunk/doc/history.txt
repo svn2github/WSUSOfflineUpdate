@@ -1217,6 +1217,7 @@ Version 10.7.3 -- 11.08.16
 --------------------------------------------------------------------------------
 Version ??.? -- ??.??.??
 - C++ 2015 Redistributable Runtime Libraries updated to v. 14.0.24212.0 (Thanks to "jamielightfoot", "danahis" and "boco")
+- Microsoft Silverlight updated to v. 5.1.50709.0 (Thanks to "harry")
 - Removed scan prerequisite updates kb3078601, kb3109094, kb3145739, kb3164033, kb3168965 and kb3177725 for Windows 7 (x86/x64) and Server 2008 R2 (Thanks to M. zu Klampen)
 - Removed Windows Update Client March 2016 (kb3138612/kb3138615) from update scan prerequisites for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2
 - Static installation definitions for Windows 10 (x86/x64) and Server 2016 systems will now distinguish between OS build numbers (Thanks to "aker")
