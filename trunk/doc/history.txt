@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 10.7.3
+WSUS Offline Update 10.7.4
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1215,17 +1215,21 @@ Version 10.7.3 -- 11.08.16
 - Fix: Removed obsolete Outlook 2013 Security Update kb3114829 (MS16-029)
 - Fix: Removed obsolete Outlook 2016 Security Update kb3114861 (MS16-029)
 --------------------------------------------------------------------------------
-Version ??.? -- ??.??.??
+Version 10.7.4 -- 15.09.16
+- NOTE: This version will be the last one supporting Windows Essentials 2012 (see https://support.microsoft.com/en-gb/help/17779/download-windows-essentials and https://support.microsoft.com/en-gb/help/13785/windows-essentials-2012-release-notes)
 - C++ 2015 Redistributable Runtime Libraries updated to v. 14.0.24212.0 (Thanks to "jamielightfoot", "danahis" and "boco")
 - Microsoft Silverlight updated to v. 5.1.50709.0 (Thanks to "harry")
+- Aria2 download utility updated to v. 1.26.1 (Thanks to "harry")
 - Removed scan prerequisite updates kb3078601, kb3109094, kb3145739, kb3164033, kb3168965 and kb3177725 for Windows 7 (x86/x64) and Server 2008 R2 (Thanks to M. zu Klampen)
 - Removed Windows Update Client March 2016 (kb3138612/kb3138615) from update scan prerequisites for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2
 - Static installation definitions for Windows 10 (x86/x64) and Server 2016 systems will now distinguish between OS build numbers (Thanks to "aker")
 - DoUpdate.cmd script will now support "/skipdefs" switch to avoid mandatory installation of most recent Windows Defender and Microsoft Security Essentials definition files
 - UpdateInstaller.ini file will now support "skipdefs" setting in [Installation] to control "/skipdefs" switch for DoUpdate.cmd script
-- Aria2 download utility updated to v. 1.26.1 (Thanks to "harry")
-- UpdateGenerator script will now show release info (modifications) when found a new version (Thanks to L. Opitz)
+- Self update will now preserve custom language removals (Thanks to "negg")
 - DoUpdate.cmd script will now install custom static definitions before built-in ones
+- UpdateGenerator script will now show release info (modifications) when found a new version (Thanks to L. Opitz)
 - Fix: Added static installation definition for July 2016 Servicing stack update for Windows 10 (kb3173427/kb3173428) to avoid repeated installation attempts of kb3172729 (Security update for Secure Boot) (Thanks to "Moopere" and "aker")
 - Fix: Removed redundant static download definitions for July 2016 servicing stack update for Windows 8.1 / Server 2012(R2) (kb3173424/kb3173426)
 - Fix: Excluded updates for Windows Server 2016 Technical Preview 5 (kb3172989/kb3174060) from download (Thanks to "aker")
+- Fix: Replaced superseded Outlook 2010 Security Update kb3115474 (MS16-099) by kb3118313 (MS16-107)
+--------------------------------------------------------------------------------

@@ -69,15 +69,24 @@ for /F %%i in (..\static\StaticDownloadLink-recent.txt) do (
   echo %DATE% %TIME% - Info: Deleted %%~ni_hashes.txt>>%DOWNLOAD_LOGFILE%
 )
 echo Preserving custom language additions...
-set CUST_LANG=
-if exist ..\static\custom\StaticDownloadLinks-wle-glb.txt (
-  for %%i in (fra esn jpn kor rus ptg ptb nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (
-    %SystemRoot%\System32\find.exe /I "%%i" ..\static\custom\StaticDownloadLinks-wle-glb.txt >nul 2>&1
-    if not errorlevel 1 set CUST_LANG=%%i !CUST_LANG!
-  )
+set REMOVE_CMD=
+%SystemRoot%\System32\find.exe /I "us." ..\static\StaticDownloadLinks-w61-x86-glb.txt >nul 2>&1
+if errorlevel 1 (
+  set REMOVE_CMD=RemoveEnglishLanguageSupport.cmd !REMOVE_CMD!
 )
-if "%CUST_LANG%" NEQ "" (
-  for %%i in (%CUST_LANG%) do call RemoveCustomLanguageSupport.cmd %%i /quiet
+%SystemRoot%\System32\find.exe /I "de." ..\static\StaticDownloadLinks-w61-x86-glb.txt >nul 2>&1
+if errorlevel 1 (
+  set REMOVE_CMD=RemoveGermanLanguageSupport.cmd !REMOVE_CMD!
+)
+set CUST_LANG=
+if exist ..\static\custom\StaticDownloadLinks-dotnet.txt (
+  for %%i in (fra esn jpn kor rus ptg ptb nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (
+    %SystemRoot%\System32\find.exe /I "%%i" ..\static\custom\StaticDownloadLinks-dotnet.txt >nul 2>&1
+    if not errorlevel 1 (
+      set CUST_LANG=%%i !CUST_LANG!
+      call RemoveCustomLanguageSupport.cmd %%i /quiet
+    )
+  )
 )
 set OX64_LANG=
 for %%i in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (
@@ -92,6 +101,9 @@ echo Updating WSUS Offline Update...
 rd /S /Q ..\wsusoffline
 echo %DATE% %TIME% - Info: Updated WSUS Offline Update>>%DOWNLOAD_LOGFILE%
 echo Updating custom language additions...
+if "%REMOVE_CMD%" NEQ "" (
+  for %%i in (%REMOVE_CMD%) do call %%i /quiet
+)
 if "%CUST_LANG%" NEQ "" (
   for %%i in (%CUST_LANG%) do call AddCustomLanguageSupport.cmd %%i /quiet
 )
