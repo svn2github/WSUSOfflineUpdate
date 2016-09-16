@@ -1,1 +1,0 @@
-http://wl.dlservice.microsoft.com/download/0/C/E/0CE5ED43-2254-487B-B50C-DF4F3AE1C751/nl/wlsetup-all.exe,wlsetup-all-nld.exe

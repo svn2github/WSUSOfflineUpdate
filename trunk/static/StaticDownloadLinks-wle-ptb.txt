@@ -1,1 +1,0 @@
-http://wl.dlservice.microsoft.com/download/7/E/2/7E2793CE-A566-47E7-8E98-2FC1FC07E7AE/pt-br/wlsetup-all.exe,wlsetup-all-ptb.exe

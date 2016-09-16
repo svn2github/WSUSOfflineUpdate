@@ -1,1 +1,0 @@
-http://wl.dlservice.microsoft.com/download/7/1/3/713CE7CB-4421-4435-ABAC-497B15B79DA3/pt-pt/wlsetup-all.exe,wlsetup-all-ptg.exe

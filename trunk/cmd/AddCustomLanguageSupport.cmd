@@ -40,11 +40,6 @@ for %%i in (x86 x64) do (
     type ..\static\StaticDownloadLinks-msse-%%i-%1.txt >>..\static\custom\StaticDownloadLinks-msse-%%i-glb.txt
   )
 )
-rem *** Add support for %1 to WLE custom URL files ***
-if /i "%2" NEQ "/quiet" echo Adding support for %1 to WLE custom URL files...
-if exist ..\static\StaticDownloadLinks-wle-%1.txt (
-  type ..\static\StaticDownloadLinks-wle-%1.txt >>..\static\custom\StaticDownloadLinks-wle-glb.txt
-)
 goto EoF
 
 :NoExtensions

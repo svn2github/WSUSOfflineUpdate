@@ -1,1 +1,0 @@
-http://wl.dlservice.microsoft.com/download/A/C/2/AC2AD70B-BDE2-45AA-9553-C65661EA749F/es/wlsetup-all.exe,wlsetup-all-esn.exe

@@ -177,8 +177,8 @@ Q: After installation of patches using the WSUS Offline Update finished, an empt
 A: It's uncertain at this time what causes this behavior. Please login as "Administrator" and check if the Windows registry key "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" contains a value named "WSUSOfflineUpdate", or if the key "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" contains values named "DeleteWOUTempAdminProfile" or "ShowOfflineUpdateLogFile". If they exist, delete them.
 Should these entries do not exist in the registry, this behavior was not caused by the Offline Updater. The WSUS Offline Updater team welcomes further hints concerning this problem.
 --------------------------------------------------------------------------------
-Q: I miss IEx, .NET, MSSE and WLE installation files for my language. Why aren't they downloaded and what can I do to have them downloaded?
-A: Since Service Packs and updates for Windows Vista / 7 / Server 2008(R2) are multilingual, there's no 24-language selection table for these platforms, so by default, only the English and German versions of those localized installation packages for IEx, .NET, MSSE and WLE will be downloaded.
+Q: I miss IEx, .NET and MSSE installation files for my language. Why aren't they downloaded and what can I do to have them downloaded?
+A: Since Service Packs and updates for Windows Vista / 7 / Server 2008(R2) are multilingual, there's no 24-language selection table for these platforms, so by default, only the English and German versions of those localized installation packages for IEx, .NET and MSSE will be downloaded.
 To have your favorite locale(s) downloaded in addition, you may use the ...\cmd\AddCustomLanguageSupport.cmd script. 
 --------------------------------------------------------------------------------
 Q: The determination of "superseded updates" takes more than 15 minutes. How can I speed it up?
@@ -187,7 +187,7 @@ A: Some Anti-Virus-Scanners (especially "Microsoft Security Essentials" (MSSE)) 
 Q: I miss the x64 versions of Office 2010 Service Pack 2 and Office 2013 Service Pack 1. How can I have them downloaded?
 A: Please call ...\cmd\AddOffice2010x64Support.cmd {lng} once to add their URLs to your custom static download definitions (see directory ...\static\custom).
 --------------------------------------------------------------------------------
-Q: I don't need the German installation files for IEx, .NET, MSSE and WLE. How can I disable their downloads?
+Q: I don't need the German installation files for IEx, .NET and MSSE. How can I disable their downloads?
 A: Please call ...\cmd\RemoveGermanLanguageSupport.cmd once to remove their URLs from the static download definitions.
 --------------------------------------------------------------------------------
 Q: Before the update installation, the system is checked to determine how many updates to be installed in one run max. Is there a parameter to specify this value?

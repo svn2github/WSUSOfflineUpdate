@@ -1,1 +1,0 @@
-http://wl.dlservice.microsoft.com/download/7/0/0/700CB50E-C1CB-4550-B513-A6B8A184D98D/zh-tw/wlsetup-all.exe,wlsetup-all-cht.exe

@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 10.7.4
+WSUS Offline Update 10.8b
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1233,3 +1233,7 @@ Version 10.7.4 -- 15.09.16
 - Fix: Excluded updates for Windows Server 2016 Technical Preview 5 (kb3172989/kb3174060) from download (Thanks to "aker")
 - Fix: Replaced superseded Outlook 2010 Security Update kb3115474 (MS16-099) by kb3118313 (MS16-107)
 --------------------------------------------------------------------------------
+Version 10.8 -- ??.??.16
+- Support removed for Windows Essentials 2012 (see https://support.microsoft.com/en-gb/help/17779/download-windows-essentials and https://support.microsoft.com/en-gb/help/13785/windows-essentials-2012-release-notes)
+- Default value for 'Include C++ Runtime Libraries and .NET Frameworks' download option changed to 'enabled'
+- Fix: Microsoft renewed July 2016 update rollup (kb3172605) for Windows 7 (x86/x64) and Server 2012 R2 (Thanks to "harry")

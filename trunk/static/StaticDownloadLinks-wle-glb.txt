@@ -1,2 +1,0 @@
-http://wl.dlservice.microsoft.com/download/C/1/B/C1BA42D6-6A50-4A4A-90E5-FA9347E9360C/en/wlsetup-all.exe,wlsetup-all-enu.exe
-http://wl.dlservice.microsoft.com/download/C/7/2/C72B0D56-35D2-4ABF-84AC-907A20C265C6/de/wlsetup-all.exe,wlsetup-all-deu.exe

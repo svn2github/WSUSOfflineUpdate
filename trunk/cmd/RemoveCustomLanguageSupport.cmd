@@ -63,18 +63,6 @@ for %%i in (x86 x64) do (
     for %%j in (..\static\custom\StaticDownloadLinks-msse-%%i-glb.txt) do if %%~zj==0 del %%j
   )
 )
-rem *** Remove support for %1 from WLE custom URL files ***
-if /i "%2" NEQ "/quiet" echo Removing support for %1 from WLE custom URL files...
-if exist ..\static\StaticDownloadLinks-wle-%1.txt (
-  for /F %%j in (..\static\StaticDownloadLinks-wle-%1.txt) do (
-    if exist ..\static\custom\StaticDownloadLinks-wle-glb.txt (
-      ren ..\static\custom\StaticDownloadLinks-wle-glb.txt StaticDownloadLinks-wle-glb.tmp
-      %SystemRoot%\System32\findstr.exe /L /I /V "%%~nxj" ..\static\custom\StaticDownloadLinks-wle-glb.tmp>..\static\custom\StaticDownloadLinks-wle-glb.txt
-      del ..\static\custom\StaticDownloadLinks-wle-glb.tmp
-    )
-  )
-  for %%j in (..\static\custom\StaticDownloadLinks-wle-glb.txt) do if %%~zj==0 del %%j
-)
 goto EoF
 
 :NoExtensions

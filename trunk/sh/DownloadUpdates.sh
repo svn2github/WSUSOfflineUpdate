@@ -2,7 +2,7 @@
 
 #########################################################################
 ###         WSUS Offline Update Downloader for Linux systems          ###
-###                             v. 10.7.4                             ###
+###                          v. 10.8b (r816)                          ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Tobias Breitling, Stefan Joehnke, Walter Schiessberg   ###
@@ -277,15 +277,6 @@ if [ "$addwddefs" == "y" ]; then
 fi
 }
 
-getwle()
-{
-wle="0"
-read -p "Download Windows Essentials? [y/n] " addwle
-if [ "$addwle" == "y" ]; then
-  wle="1"
-  param8="/wle"
-fi
-}
 getproxy()
 {
 read -p "Please specify your proxy (default: none, http://[username:password@]<server>:<port>]) " http_proxy
@@ -330,10 +321,6 @@ down_msse_cpp() {
 	Zielverz=$Vz
 	Datei=$Vz-${OS_ARCH}-glb
 	;;
-	wle)
-	Zielverz=$Vz
-	Datei=$Vz-glb
-	;;
 	msse|wddefs)
 	Zielverz=$Vz/${OS_ARCH}-glb
         Datei=$Vz-${OS_ARCH}-glb
@@ -349,7 +336,7 @@ down_msse_cpp() {
    while read x
     do
     case $Vz in
-	cpp|msse|wle|dotnet)
+	cpp|msse|dotnet)
 	grep -q ',' <<< "$x" && {
       oldname=${x%,*}
       newname=${x#*,}
@@ -405,7 +392,6 @@ else
   getdotnet
   getmsse
   getwddefs
-  getwle
   getproxy
   makeiso
 fi
@@ -423,7 +409,6 @@ mkdir -p ../client
 mkdir -p ../client/wsus
 mkdir -p ../client/msse
 mkdir -p ../client/cpp
-mkdir -p ../client/wle
 mkdir -p ../temp
 rm -f ../temp/*
 
@@ -433,7 +418,7 @@ cat << END
   Your choice
   System: $sys
   Language: $Origlang
-  Parameter: $param1 $param2 $param3 $param4 $param5 $param7 $param8
+  Parameter: $param1 $param2 $param3 $param4 $param5 $param7
   Proxy: $http_proxy
 END
 
@@ -475,7 +460,7 @@ esac
 test "$Liste" && {
   for OS in $Liste
     do
-    /bin/bash DownloadUpdates.sh $OS $Origlang $param2 $param3 $param4 $param5 $param6 $param7 $param8
+    /bin/bash DownloadUpdates.sh $OS $Origlang $param2 $param3 $param4 $param5 $param6 $param7
     done
     if [ "$param1" == "/makeiso" ]; then
 	/bin/bash ./CreateISOImage.sh $sys $Origlang $param2 $param3
@@ -571,12 +556,6 @@ if [ "$msse" == "1" ]; then
     Vz=msse
     cat ../$Pfad/StaticDownloadLinks-$Vz-${OS_ARCH}-glb.txt >> ../temp/StaticUrls-$Vz-${OS_ARCH}-glb.txt 2>/dev/null
     cat ../$Pfad/StaticDownloadLinks-$Vz-${OS_ARCH}-$Origlang.txt >> ../temp/StaticUrls-$Vz-${OS_ARCH}-glb.txt 2>/dev/null
-fi
-
-if [ "$wle" == "1" ]; then
-    Vz=wle
-    cat ../$Pfad/StaticDownloadLinks-$Vz-glb.txt >> ../temp/StaticUrls-$Vz-glb.txt 2>/dev/null
-    cat ../$Pfad/StaticDownloadLinks-$Vz-$Origlang.txt >> ../temp/StaticUrls-$Vz-glb.txt 2>/dev/null
 fi
 
 done # Pfad
@@ -852,7 +831,6 @@ cat ../temp/StaticUrls-dotnet.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-dotnet-${OS_ARCH}-${lang}.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-cpp-${OS_ARCH}-glb.txt >> ../temp/urls.txt
 cat ../temp/StaticUrls-msse-${OS_ARCH}-glb.txt >> ../temp/urls.txt
-cat ../temp/StaticUrls-wle-${OS_ARCH}-glb.txt >> ../temp/urls.txt 2>/dev/null
 cat ../temp/StaticUrls-wddefs-${OS_ARCH}-glb.txt >> ../temp/urls.txt
 test "$sys_old" && {
     cat ../temp/StaticUrls-${sys_old}-${lang}.txt >> ../temp/urls.txt
@@ -941,13 +919,6 @@ fi
 if [ "$wddefs" == "1" ]; then
     Vz=wddefs
     Txt="Windows Defender definition"
-    down_msse_cpp
-fi
-
-# WLE
-if [ "$wle" == "1" ]; then
-    Vz=wle
-    Txt="Windows Essentials"
     down_msse_cpp
 fi
 
@@ -1060,7 +1031,7 @@ echo "Writing builddate.txt file..."
 date +%d.%m.%Y > ../client/builddate.txt
 
 if [ "$createiso" == "1" ]; then
-  bash ./CreateISOImage.sh $sys $Origlang $param2 $param3 $param5 $param7 $param8
+  bash ./CreateISOImage.sh $sys $Origlang $param2 $param3 $param5 $param7
 fi
 
 exit 0
@@ -1070,7 +1041,10 @@ exit 0
 # ========================================================================
 # $Id: DownloadUpdates.sh,v 1.2 2015-11-19 18:27:23+01 HHullen Exp $
 # $Log: DownloadUpdates.sh,v $
-# Revision 1.2  2015-11-19 18:27:23+01  HHullen
+# Revision 1.19  2016-09-16 15:10:00+02  twittrock
+# wle entfernt
+#
+# Revision 1.18  2015-11-19 18:27:23+01  HHullen
 # MIAL-Änderungen überarbeitet
 #
 # Revision 1.17  2015-08-20 15:10:00+02  twittrock

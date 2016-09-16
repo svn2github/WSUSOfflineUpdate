@@ -1,19 +1,19 @@
-; ***  WSUS Offline Update 10.7.4 - Installer  ***
-; ***        Author: T. Wittrock, Kiel         ***
-; ***    Dialog scaling added by Th. Baisch    ***
+; ***  WSUS Offline Update 10.8b - Installer  ***
+; ***       Author: T. Wittrock, Kiel        ***
+; ***   Dialog scaling added by Th. Baisch   ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 10.7.4.815)
+#pragma compile(FileVersion, 10.8.0.816)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
 #pragma compile(ProductName, "WSUS Offline Update")
-#pragma compile(ProductVersion, 10.7.4)
+#pragma compile(ProductVersion, 10.8.0)
 
-Dim Const $caption                    = "WSUS Offline Update 10.7.4 - Installer"
+Dim Const $caption                    = "WSUS Offline Update 10.8b - Installer"
 Dim Const $wou_hostname               = "www.wsusoffline.net"
 Dim Const $donationURL                = "http://www.wsusoffline.net/donate.html"
 
@@ -40,7 +40,6 @@ Dim Const $reg_val_applieddpi         = "AppliedDPI"
 Dim Const $reg_val_wustatusserver     = "WUStatusServer"
 
 ; Defaults
-Dim Const $wlemax                     = 7
 Dim Const $msimax                     = 14
 Dim Const $default_logpixels          = 96
 Dim Const $target_version_dotnet35    = "3.5.30729"
@@ -72,7 +71,6 @@ Dim Const $ini_section_messaging      = "Messaging"
 Dim Const $ini_value_showlog          = "showlog"
 Dim Const $ini_value_showieinfo       = "showieinfo"
 
-Dim Const $ini_section_wle            = "Essentials"
 Dim Const $ini_section_msi            = "MSI"
 
 Dim Const $ini_section_misc           = "Miscellaneous"
@@ -94,13 +92,11 @@ Dim Const $path_rel_instdotnet4       = "\dotnet\NDP46*.exe"
 Dim Const $path_rel_ofc_glb           = "\ofc\glb\"
 Dim Const $path_rel_msse_x86          = "\msse\x86-glb\MSEInstall-x86-*.exe"
 Dim Const $path_rel_msse_x64          = "\msse\x64-glb\MSEInstall-x64-*.exe"
-Dim Const $path_rel_wle               = "\wle\wlsetup-all-*.exe"
-Dim Const $path_rel_wle_cmd           = "\Temp\wouinstwle.cmd"
 Dim Const $path_rel_msi_all           = "\wouallmsi.txt"
 Dim Const $path_rel_msi_selected      = "\Temp\wouselmsi.txt"
 
 Dim $maindlg, $scriptdir, $mapped, $tabitemfocused, $cpp, $mssl, $dotnet35, $dotnet4, $psh, $wmf, $msse, $tsc, $ofv, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_donate, $btn_exit, $options, $builddate
-Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos, $wleall, $wlepacks[$wlemax], $wlecount, $wlecmdfile, $msiall, $msipacks[$msimax], $msicount, $msilistfile, $line, $i
+Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos, $msiall, $msipacks[$msimax], $msicount, $msilistfile, $line, $i
 
 Func ShowGUIInGerman()
   If $CmdLine[0] > 0 Then
@@ -193,10 +189,6 @@ Dim $ini_src, $ini_dest, $i
   IniWrite($ini_dest, $ini_section_control, $ini_value_autoreboot, CheckBoxStateToString($autoreboot))
   IniWrite($ini_dest, $ini_section_control, $ini_value_shutdown, CheckBoxStateToString($shutdown))
   IniWrite($ini_dest, $ini_section_messaging, $ini_value_showlog, CheckBoxStateToString($showlog))
-
-  For $i = 0 To $wlecount - 1
-    IniWrite($ini_dest, $ini_section_wle, GUICtrlRead($wlepacks[$i], 1), CheckBoxStateToString($wlepacks[$i]))
-  Next
 
   For $i = 0 To $msicount - 1
     IniWrite($ini_dest, $ini_section_msi, GUICtrlRead($msipacks[$i], 1), CheckBoxStateToString($msipacks[$i]))
@@ -348,10 +340,6 @@ EndFunc
 
 Func MSSEPresent($basepath)
   Return (FileExists($basepath & $path_rel_msse_x86) OR FileExists($basepath & $path_rel_msse_x64))
-EndFunc
-
-Func WLEPresent($basepath)
-  Return FileExists($basepath & $path_rel_wle)
 EndFunc
 
 Func ListMSIPackages()
@@ -702,83 +690,6 @@ Else
   EndIf
 EndIf
 
-;  Essentials Tab
-$wlecount = 1
-If ( ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") _
-    OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") ) _
- AND WLEPresent($scriptdir) ) Then
-  GuiCtrlCreateTabItem("Essentials")
-
-  ; Select all
-  $txtxpos = 2 * $txtxoffset
-  $txtypos = 3.5 * $txtyoffset + 1.5 * $txtheight
-  If ShowGUIInGerman() Then
-    $wleall = GUICtrlCreateCheckbox("Alle auswählen", $txtxpos, $txtypos, $txtwidth, $txtheight)
-  Else
-    $wleall = GUICtrlCreateCheckbox("Select all", $txtxpos, $txtypos, $txtwidth, $txtheight)
-  EndIf
-  If ( (DotNet35Version() <> $target_version_dotnet35) AND (NOT IsCheckBoxChecked($dotnet35)) ) _
-  OR ( (DotNet4MainVersion() <> "4.5") AND (DotNet4MainVersion() <> "4.6") AND (NOT IsCheckBoxChecked($dotnet4)) ) Then
-    GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
-  EndIf
-  ;  WLE packages' group
-  $txtypos = $txtypos + $txtheight
-  If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) Then
-    $wlecount = $wlemax
-  Else
-    $wlecount = $wlemax - 1
-  EndIf
-  GUICtrlCreateGroup("Windows Essentials 2012", $txtxpos, $txtypos, $groupwidth, (BitShift($wlecount + 1, 1) + 1) * $txtheight)
-  $txtxpos = 3 * $txtxoffset
-  $txtypos = $txtypos + 1.5 * $txtyoffset
-  For $i = 0 To $wlecount - 1
-    Switch $i
-      Case 0
-        $wlepacks[$i] = GUICtrlCreateCheckbox("OneDrive", $txtxpos + Mod($i, 2) * $txtwidth, $txtypos + BitShift($i, 1) * $txtheight, $txtwidth, $txtheight)
-      Case 1
-        $wlepacks[$i] = GUICtrlCreateCheckbox("Messenger", $txtxpos + Mod($i, 2) * $txtwidth, $txtypos + BitShift($i, 1) * $txtheight, $txtwidth, $txtheight)
-      Case 2
-        $wlepacks[$i] = GUICtrlCreateCheckbox("Mail", $txtxpos + Mod($i, 2) * $txtwidth, $txtypos + BitShift($i, 1) * $txtheight, $txtwidth, $txtheight)
-      Case 3
-        $wlepacks[$i] = GUICtrlCreateCheckbox("Outlook Connector Pack", $txtxpos + Mod($i, 2) * $txtwidth, $txtypos + BitShift($i, 1) * $txtheight, $txtwidth, $txtheight)
-      Case 4
-        $wlepacks[$i] = GUICtrlCreateCheckbox("Photo Gallery and Movie Maker", $txtxpos + Mod($i, 2) * $txtwidth, $txtypos + BitShift($i, 1) * $txtheight, $txtwidth, $txtheight)
-      Case 5
-        $wlepacks[$i] = GUICtrlCreateCheckbox("Writer", $txtxpos + Mod($i, 2) * $txtwidth, $txtypos + BitShift($i, 1) * $txtheight, $txtwidth, $txtheight)
-      Case 6
-        $wlepacks[$i] = GUICtrlCreateCheckbox("Family Safety", $txtxpos + Mod($i, 2) * $txtwidth, $txtypos + BitShift($i, 1) * $txtheight, $txtwidth, $txtheight)
-    EndSwitch
-    If ( (DotNet35Version() <> $target_version_dotnet35) AND (NOT IsCheckBoxChecked($dotnet35)) ) _
-    OR ( (DotNet4MainVersion() <> "4.5") AND (DotNet4MainVersion() <> "4.6") AND (NOT IsCheckBoxChecked($dotnet4)) ) Then
-      GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
-    Else
-      If MyIniRead($ini_section_wle, GUICtrlRead(-1, 1), $disabled) = $enabled Then
-        GUICtrlSetState(-1, $GUI_CHECKED)
-      EndIf
-    EndIf
-  Next
-  $txtxpos = 2 * $txtxoffset
-  $txtypos = $txtypos + BitShift($wlecount + 1, 1) * $txtheight + 0.5 * $txtyoffset
-  If ShowGUIInGerman() Then
-    GUICtrlCreateGroup("Systemvoraussetzungen", $txtxpos, $txtypos, $groupwidth, 3 * $txtheight)
-  Else
-    GUICtrlCreateGroup("Prerequisites", $txtxpos, $txtypos, $groupwidth, 3 * $txtheight)
-  EndIf
-  $txtxpos = 3 * $txtxoffset
-  $txtypos = $txtypos + 1.5 * $txtyoffset
-  If ShowGUIInGerman() Then
-    GUICtrlCreateLabel("Windows Essentials 2012 erfordern sowohl .NET Framework 3.5 als auch 4.x." _
-               & @LF & "Wenn die Optionen auf dieser Seite deaktiviert sind," _
-               & @LF & "wählen Sie bitte die entsprechende(n) Installationsoption(en) unter 'Aktualisierung'.", _
-               $txtxpos, $txtypos, 3 * $groupwidth - 2 * $txtxoffset, 3 * $txtheight)
-  Else
-    GUICtrlCreateLabel("Windows Essentials 2012 require both .NET Frameworks 3.5 and 4.x." _
-               & @LF & "If options are grayed out on this tab," _
-               & @LF & "please select the corresponding installation option(s) on the 'Updating' tab.", _
-               $txtxpos, $txtypos, 3 * $groupwidth - 2 * $txtxoffset, 3 * $txtheight)
-  EndIf
-EndIf
-
 ;  Software Tab
 $msicount = 1
 ListMSIPackages()
@@ -968,18 +879,6 @@ While 1
       Else
         GUICtrlSetState($wmf, $GUI_UNCHECKED + $GUI_DISABLE)
       EndIf
-      If ( ( (IsCheckBoxChecked($dotnet4)) OR (DotNet4MainVersion() = "4.5") OR (DotNet4MainVersion() = "4.6") ) _
-       AND ( (IsCheckBoxChecked($dotnet35)) OR (DotNet35Version() = $target_version_dotnet35) ) ) Then
-        GUICtrlSetState($wleall, $GUI_ENABLE)
-        For $i = 0 To $wlecount - 1
-          GUICtrlSetState($wlepacks[$i], $GUI_ENABLE)
-        Next
-      Else
-        GUICtrlSetState($wleall, $GUI_UNCHECKED + $GUI_DISABLE)
-        For $i = 0 To $wlecount - 1
-          GUICtrlSetState($wlepacks[$i], $GUI_UNCHECKED + $GUI_DISABLE)
-        Next
-      EndIf
 
     Case $msse                 ; Microsoft Security Essentials check box toggled
       If IsCheckBoxChecked($msse) Then
@@ -1043,25 +942,6 @@ While 1
       Else
         GUICtrlSetState($showlog, $GUI_ENABLE)
       EndIf
-
-    Case $wleall             ; Select all check box toggled
-      If IsCheckBoxChecked($wleall) Then
-        For $i = 0 To $wlecount - 1
-          GUICtrlSetState($wlepacks[$i], $GUI_CHECKED)
-        Next
-      Else
-        For $i = 0 To $wlecount - 1
-          GUICtrlSetState($wlepacks[$i], $GUI_UNCHECKED)
-        Next
-      EndIf
-
-    Case $wlepacks[0] To $wlepacks[$wlecount - 1]
-      For $i = 0 To $wlecount - 1
-        If NOT IsCheckBoxChecked($wlepacks[$i]) Then
-          GUICtrlSetState($wleall, $GUI_UNCHECKED)
-          ExitLoop
-        EndIf
-      Next
 
     Case $msiall             ; Select all check box toggled
       If IsCheckBoxChecked($msiall) Then
@@ -1144,47 +1024,6 @@ While 1
       EndIf
       If MyIniRead($ini_section_installation, $ini_value_skipdynamic, $disabled) = $enabled Then
         $options = $options & " /skipdynamic"
-      EndIf
-      If IsCheckBoxChecked($wleall) Then
-        $line = "%1 /AppSelect:All /noToolbarCEIP /noSearch /noHomepage /noMU /noLaunch /q"
-        $wlecmdfile = FileOpen(@WindowsDir & $path_rel_wle_cmd, 10)
-      Else
-        $wlecmdfile = -1
-        For $i = 0 To $wlecount - 1
-          If IsCheckBoxChecked($wlepacks[$i]) Then
-            $wlecmdfile = FileOpen(@WindowsDir & $path_rel_wle_cmd, 10)
-            ExitLoop
-          EndIf
-        Next
-        If $wlecmdfile <> -1 Then
-          $line = "%1 /AppSelect:"
-          For $i = 0 To $wlecount - 1
-            If IsCheckBoxChecked($wlepacks[$i]) Then
-              Switch $i
-                Case 0  ; OneDrive
-                  $line = $line & "wlsync,"
-                Case 1  ; Messenger
-                  $line = $line & "messenger,"
-                Case 2  ; Mail
-                  $line = $line & "mail,"
-                Case 3  ; Outlook Connector Pack
-                  $line = $line & "olc,"
-                Case 4  ; Photo Gallery and Movie Maker
-                  $line = $line & "moviemaker,"
-                Case 5  ; Writer
-                  $line = $line & "writer,"
-                Case 6  ; Family Safety
-                  $line = $line & "familysafety,"
-              EndSwitch
-            EndIf
-          Next
-          $line = StringLeft($line, StringLen($line) - 1) & " /noToolbarCEIP /noSearch /noHomepage /noMU /noLaunch /q"
-        EndIf
-      EndIf
-      If $wlecmdfile <> -1 Then
-        FileWriteLine($wlecmdfile, $line)
-        FileWriteLine($wlecmdfile, "echo %DATE% %TIME% - Info: Installed Windows Essentials 2012 (" & $line & ")>>%UPDATE_LOGFILE%")
-        FileClose($wlecmdfile)
       EndIf
       $msilistfile = FileOpen(@WindowsDir & $path_rel_msi_selected, 10)
       If $msilistfile <> -1 Then

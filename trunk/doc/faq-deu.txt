@@ -175,8 +175,8 @@ F: Nach der Installation von Patches mit dem Offline Update erscheint bei jedem 
 A: Die Ursache dieses seltenen Verhaltens ist noch unklar. Bitte melden Sie sich als Administrator an, prüfen Sie, ob in der Windows-Registrierung unter "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" ein Wert namens "WSUSOfflineUpdate" oder unter "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" Werte namens "DeleteWOUTempAdminProfile" oder "ShowOfflineUpdateLogFile" zu finden sind und löschen sie diese gegebenenfalls.
 Finden Sie die genannten Einträge nicht, ist dieser Effekt nicht direkt auf das Offline Update zurückzuführen. Für weitere Hinweise ist das Team dankbar.    
 --------------------------------------------------------------------------------
-F: Ich vermisse die Installationspakete für IEx, .NET, MSSE und WLE in meiner Sprache. Warum werden sie nicht heruntergeladen und was kann ich tun, um sie herunterzuladen?
-A: Da Service Packs und Updates für Windows Vista / 7 / Server 2008(R2) mehrsprachig sind, gibt es für diese Systeme keine 24sprachige Auswahltabelle, so dass voreingestellt nur die englisch- und deutschsprachigen Versionen der Installationspakete für IEx, .NET, MSSE und WLE heruntergeladen werden.
+F: Ich vermisse die Installationspakete für IEx, .NET und MSSE in meiner Sprache. Warum werden sie nicht heruntergeladen und was kann ich tun, um sie herunterzuladen?
+A: Da Service Packs und Updates für Windows Vista / 7 / Server 2008(R2) mehrsprachig sind, gibt es für diese Systeme keine 24sprachige Auswahltabelle, so dass voreingestellt nur die englisch- und deutschsprachigen Versionen der Installationspakete für IEx, .NET und MSSE heruntergeladen werden.
 Um die Sprachversionen Ihrer Wahl zusätzlich herunterladen zu lassen, können Sie das Skript ...\cmd\AddCustomLanguageSupport.cmd verwenden.
 --------------------------------------------------------------------------------
 F: Die Ermittlung ersetzter Aktualisierungen ("superseded updates") dauert sehr lange (mehr als 15 Minuten). Wie kann ich dies beschleunigen?
@@ -185,7 +185,7 @@ A: Manche Anti-Viren-Scanner (insbesondere die "Microsoft Security Essentials" (
 F: Ich vermisse die x64-Versionen des Service Packs 2 für Office 2010 und des Service Packs 1 für Office 2013. Wie bekomme ich sie heruntergeladen?
 A: Bitte führen Sie einmalig ...\cmd\AddOffice2010x64Support.cmd {lng} aus, um die URLs der Pakete Ihren benutzerspezifischen Download-Definitionen hinzuzufügen (siehe Verzeichnis ...\static\custom).
 --------------------------------------------------------------------------------
-F: Ich benötige die deutschsprachigen Installationspakete für IEx, .NET, MSSE und WLE nicht. Wie kann ich deren Download deaktivieren?
+F: Ich benötige die deutschsprachigen Installationspakete für IEx, .NET und MSSE nicht. Wie kann ich deren Download deaktivieren?
 A: Bitte führen Sie einmalig das Skript ...\cmd\RemoveGermanLanguageSupport.cmd aus, um die URLs der Pakete aus den statischen Download-Definitionen zu entfernen.
 --------------------------------------------------------------------------------
 F: Vor der Updateinstallation wird das System geprüft um festzulegen, wieviele Updates in einem Lauf max. installiert werden. Gibt es einen Parameter, um diesen Wert vorzugeben?

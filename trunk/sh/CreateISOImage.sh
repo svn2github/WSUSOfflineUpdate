@@ -2,7 +2,7 @@
 
 #########################################################################
 ###          WSUS Offline Update ISO maker for Linux systems          ###
-###                              v. 10.7.4                            ###
+###                           v. 10.8b (r816)                         ###
 ###                                                                   ###
 ###   http://www.wsusoffline.net/                                     ###
 ###   Authors: Stefan Joehnke, Walter Schiessberg                     ###
@@ -134,9 +134,6 @@ if [ "$msse" != "1" ]; then
 fi
 if [ "$wddefs" != "1" ]; then
   echo "wddefs/*" >> ../temp/ExcludeListISO-${sys}.txt
-fi
-if [ "$wle" != "1" ]; then
-  echo "wle/*" >> ../temp/ExcludeListISO-${sys}.txt
 fi
 
 for skip in $langlist
