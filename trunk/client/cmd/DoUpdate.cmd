@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.8b (r817)
+set WSUSOFFLINE_VERSION=10.8b (r818)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1036,11 +1036,11 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
   echo %DATE% %TIME% - Warning: Windows Management Framework installation file ^(kb%WMF_TARGET_ID%^) not found>>%UPDATE_LOGFILE%
   goto SkipWMFInst
 )
-if "%WMF_TARGET_ID%"=="2819745" (set RECALL_REQUIRED=1) else (set REBOOT_REQUIRED=1)
-if "%RECALL_REQUIRED%"=="1" (
+if "%WMF_TARGET_ID%"=="2819745" (
   if exist %SystemRoot%\Temp\wou_wmf_tried.txt del %SystemRoot%\Temp\wou_wmf_tried.txt
-  goto Installed
 )
+set RECALL_REQUIRED=1
+goto Installed
 :SkipWMFInst
 
 rem *** Install most recent Remote Desktop Client ***

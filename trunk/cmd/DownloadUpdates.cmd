@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.8b (r817)
+set WSUSOFFLINE_VERSION=10.8b (r818)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -444,11 +444,26 @@ if exist ..\client\md\hashes-wle.txt del ..\client\md\hashes-wle.txt
 
 rem *** Update static download definitions ***
 if "%SKIP_SDD%"=="1" goto SkipSDD
+echo Preserving custom language removals...
+set REMOVE_CMD=
+%SystemRoot%\System32\find.exe /I "us." ..\static\StaticDownloadLinks-w61-x86-glb.txt >nul 2>&1
+if errorlevel 1 (
+  set REMOVE_CMD=RemoveEnglishLanguageSupport.cmd !REMOVE_CMD!
+)
+%SystemRoot%\System32\find.exe /I "de." ..\static\StaticDownloadLinks-w61-x86-glb.txt >nul 2>&1
+if errorlevel 1 (
+  set REMOVE_CMD=RemoveGermanLanguageSupport.cmd !REMOVE_CMD!
+)
 echo Updating static download and update definitions...
 %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\static %DLDR_LOPT% http://download.wsusoffline.net/StaticDownloadFiles-modified.txt
 %DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\static\StaticDownloadFiles-modified.txt %DLDR_POPT% ..\static
 %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\client\static %DLDR_LOPT% http://download.wsusoffline.net/StaticUpdateFiles-modified.txt
 %DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\client\static\StaticUpdateFiles-modified.txt %DLDR_POPT% ..\client\static
+echo Restoring custom language removals...
+if "%REMOVE_CMD%" NEQ "" (
+  for %%i in (%REMOVE_CMD%) do call %%i /quiet
+)
+set REMOVE_CMD=
 echo %DATE% %TIME% - Info: Updated static download and update definitions>>%DOWNLOAD_LOGFILE%
 :SkipSDD
 
