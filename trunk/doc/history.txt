@@ -1242,3 +1242,4 @@ Version 10.8 -- ??.??.16
 - Additional reboot/recall entered after installation of Windows Management Framework in order to get properly installed July 2016 update rollup (kb3172605)
 - Fix: Microsoft renewed July 2016 update rollup (kb3172605) for Windows 7 (x86/x64) and Server 2012 R2 (Thanks to "harry")
 - Fix: Custom language removals weren't preserved during dynamic updating of static download definitions (Thanks to "hbuhrmester")
+- Fix: Download part erroneously excluded security update for Windows authentication methods kb3167679 (MS16-101) for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2

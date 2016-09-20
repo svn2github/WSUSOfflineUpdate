@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.8b (r818)
+set WSUSOFFLINE_VERSION=10.8b (r819)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
