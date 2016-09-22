@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.8b (r820)
+set WSUSOFFLINE_VERSION=10.8b (r821)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1343,6 +1343,7 @@ call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   call :EnableWUSvc
+  call :AdjustWUSvc
   echo Installing Windows Update scan prerequisites...
   call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /ignoreerrors
   if not errorlevel 1 (
