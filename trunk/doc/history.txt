@@ -1243,6 +1243,7 @@ Version 10.8 -- ??.??.16
 - C++ 2015 Redistributable Runtime Libraries updated to v. 14.0.24215.1 (Thanks to "Denniss")
 - Aria2 download utility updated to v. 1.27.1 (Thanks to "harry")
 - Default value for 'Include C++ Runtime Libraries and .NET Frameworks' download option changed to 'enabled'
+- Removed GUI option 'Install Office File Validation' from UpdateInstaller script (only relevant for legacy Office 2007)
 - Additional reboot/recall entered after installation of Windows Management Framework in order to get properly installed July 2016 update rollup (kb3172605)
 - Fix: Microsoft renewed July 2016 update rollup (kb3172605) for Windows 7 (x86/x64) and Server 2012 R2 (Thanks to "harry")
 - Fix: Custom language removals weren't preserved during dynamic updating of static download definitions (Thanks to "hbuhrmester")

@@ -6,7 +6,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 10.8.0.822)
+#pragma compile(FileVersion, 10.8.0.823)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -40,7 +40,7 @@ Dim Const $reg_val_applieddpi         = "AppliedDPI"
 Dim Const $reg_val_wustatusserver     = "WUStatusServer"
 
 ; Defaults
-Dim Const $msimax                     = 14
+Dim Const $msimax                     = 12
 Dim Const $default_logpixels          = 96
 Dim Const $target_version_dotnet35    = "3.5.30729"
 Dim Const $target_version_psh         = "2.0"
@@ -95,7 +95,7 @@ Dim Const $path_rel_msse_x64          = "\msse\x64-glb\MSEInstall-x64-*.exe"
 Dim Const $path_rel_msi_all           = "\wouallmsi.txt"
 Dim Const $path_rel_msi_selected      = "\Temp\wouselmsi.txt"
 
-Dim $maindlg, $scriptdir, $mapped, $tabitemfocused, $cpp, $mssl, $dotnet35, $dotnet4, $psh, $wmf, $msse, $tsc, $ofv, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_donate, $btn_exit, $options, $builddate
+Dim $maindlg, $scriptdir, $mapped, $tabitemfocused, $cpp, $mssl, $dotnet35, $dotnet4, $psh, $wmf, $msse, $tsc, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_donate, $btn_exit, $options, $builddate
 Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos, $msiall, $msipacks[$msimax], $msicount, $msilistfile, $line, $i
 
 Func ShowGUIInGerman()
@@ -183,7 +183,6 @@ Dim $ini_src, $ini_dest, $i
   IniWrite($ini_dest, $ini_section_installation, $ini_value_wmf, CheckBoxStateToString($wmf))
   IniWrite($ini_dest, $ini_section_installation, $ini_value_msse, CheckBoxStateToString($msse))
   IniWrite($ini_dest, $ini_section_installation, $ini_value_tsc, CheckBoxStateToString($tsc))
-  IniWrite($ini_dest, $ini_section_installation, $ini_value_ofv, CheckBoxStateToString($ofv))
 
   IniWrite($ini_dest, $ini_section_control, $ini_value_verify, CheckBoxStateToString($verify))
   IniWrite($ini_dest, $ini_section_control, $ini_value_autoreboot, CheckBoxStateToString($autoreboot))
@@ -597,24 +596,6 @@ Else
   EndIf
 EndIf
 
-; Install Office File Validation
-$txtxpos = 3 * $txtxoffset
-$txtypos = $txtypos + $txtheight
-If ShowGUIInGerman() Then
-  $ofv = GUICtrlCreateCheckbox("Office-Dateiüberprüfung installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
-Else
-  $ofv = GUICtrlCreateCheckbox("Install Office File Validation", $txtxpos, $txtypos, $txtwidth, $txtheight)
-EndIf
-If OfcGlbPresent($scriptdir) Then
-  If MyIniRead($ini_section_installation, $ini_value_ofv, $disabled) = $enabled Then
-    GUICtrlSetState(-1, $GUI_CHECKED)
-  Else
-    GUICtrlSetState(-1, $GUI_UNCHECKED)
-  EndIf
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
-EndIf
-
 ;  Control group
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
@@ -998,7 +979,7 @@ While 1
       If IsCheckBoxChecked($tsc) Then
         $options = $options & " /updatetsc"
       EndIf
-      If IsCheckBoxChecked($ofv) Then
+      If MyIniRead($ini_section_installation, $ini_value_ofv, $disabled) = $enabled Then
         $options = $options & " /instofv"
       EndIf
       If IsCheckBoxChecked($verify) Then
