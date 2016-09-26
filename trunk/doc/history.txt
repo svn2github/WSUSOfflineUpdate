@@ -1236,6 +1236,9 @@ Version 10.7.4 -- 15.09.16
 Version 10.8 -- ??.??.16
 - Support removed for Windows Essentials 2012 (see https://support.microsoft.com/en-gb/help/17779/download-windows-essentials and https://support.microsoft.com/en-gb/help/13785/windows-essentials-2012-release-notes)
 - Replaced superseded scan prerequisite update kb3177725 (MS16-098) by kb3185911 (MS16-106) for Windows Vista and Server 2008 (x86/x64) (Thanks to "Dalai")
+- Replaced superseded scan prerequisite servicing stack update kb3020369 by kb3177467 for Windows 7 (x86/x64) and Server 2008 R2 (Thanks to "aker")
+- Replaced superseded July 2016 Servicing stack update (kb3173428) by September 2016 Servicing stack update (kb3181403) for Windows 10 Version 1511
+- Added static download and installation definitions for August 2016 Servicing stack update for Windows 10 Version 1607 (kb3176936)
 - Service 'Windows Update' (wuauserv) will now also be adjusted before installing Windows Update scan prerequisites
 - C++ 2015 Redistributable Runtime Libraries updated to v. 14.0.24215.1 (Thanks to "Denniss")
 - Aria2 download utility updated to v. 1.27.1 (Thanks to "harry")
