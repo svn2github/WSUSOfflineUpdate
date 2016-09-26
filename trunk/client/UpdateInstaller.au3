@@ -1,4 +1,4 @@
-; ***  WSUS Offline Update 10.8b - Installer  ***
+; ***  WSUS Offline Update 10.8 - Installer  ***
 ; ***       Author: T. Wittrock, Kiel        ***
 ; ***   Dialog scaling added by Th. Baisch   ***
 
@@ -6,14 +6,14 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 10.8.0.823)
+#pragma compile(FileVersion, 10.8.0.825)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
 #pragma compile(ProductName, "WSUS Offline Update")
 #pragma compile(ProductVersion, 10.8.0)
 
-Dim Const $caption                    = "WSUS Offline Update 10.8b - Installer"
+Dim Const $caption                    = "WSUS Offline Update 10.8 - Installer"
 Dim Const $wou_hostname               = "www.wsusoffline.net"
 Dim Const $donationURL                = "http://www.wsusoffline.net/donate.html"
 
@@ -366,7 +366,7 @@ Func CalcGUISize()
   If ($reg_val = "") Then
     $reg_val = $default_logpixels
   EndIf
-  $dlgheight = 300 * $reg_val / $default_logpixels
+  $dlgheight = 280 * $reg_val / $default_logpixels
   If ShowGUIInGerman() Then
     $txtwidth = 240 * $reg_val / $default_logpixels
   Else
@@ -430,7 +430,7 @@ EndIf
 ;  Installation group
 $txtxpos = 2 * $txtxoffset
 $txtypos = 3.5 * $txtyoffset + 1.5 * $txtheight
-GUICtrlCreateGroup("Installation", $txtxpos, $txtypos, $groupwidth, 6 * $txtheight)
+GUICtrlCreateGroup("Installation", $txtxpos, $txtypos, $groupwidth, 5 * $txtheight)
 
 ; Update C++ Runtime Libraries
 $txtxpos = 3 * $txtxoffset

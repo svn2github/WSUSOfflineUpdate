@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 10.8b
+WSUS Offline Update 10.8
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1233,7 +1233,7 @@ Version 10.7.4 -- 15.09.16
 - Fix: Excluded updates for Windows Server 2016 Technical Preview 5 (kb3172989/kb3174060) from download (Thanks to "aker")
 - Fix: Replaced superseded Outlook 2010 Security Update kb3115474 (MS16-099) by kb3118313 (MS16-107)
 --------------------------------------------------------------------------------
-Version 10.8 -- ??.??.16
+Version 10.8 -- 26.09.16
 - Support removed for Windows Essentials 2012 (see https://support.microsoft.com/en-gb/help/17779/download-windows-essentials and https://support.microsoft.com/en-gb/help/13785/windows-essentials-2012-release-notes)
 - Replaced superseded scan prerequisite update kb3177725 (MS16-098) by kb3185911 (MS16-106) for Windows Vista and Server 2008 (x86/x64) (Thanks to "Dalai")
 - Replaced superseded scan prerequisite servicing stack update kb3020369 by kb3177467 for Windows 7 (x86/x64) and Server 2008 R2 (Thanks to "aker")
@@ -1248,3 +1248,4 @@ Version 10.8 -- ??.??.16
 - Fix: Microsoft renewed July 2016 update rollup (kb3172605) for Windows 7 (x86/x64) and Server 2012 R2 (Thanks to "harry")
 - Fix: Custom language removals weren't preserved during dynamic updating of static download definitions (Thanks to "hbuhrmester")
 - Fix: Download part erroneously excluded security update for Windows authentication methods kb3167679 (MS16-101) for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2
+--------------------------------------------------------------------------------
