@@ -1249,3 +1249,8 @@ Version 10.8 -- 26.09.16
 - Fix: Custom language removals weren't preserved during dynamic updating of static download definitions (Thanks to "hbuhrmester")
 - Fix: Download part erroneously excluded security update for Windows authentication methods kb3167679 (MS16-101) for Windows 7 / 8.1 (x86/x64) and Server 2008/2012 R2
 --------------------------------------------------------------------------------
+Version ??.? -- ??.??.??
+- Microsoft Silverlight updated to v. 5.1.50901.0 (Thanks to "harry")
+- Fix: Replaced superseded scan prerequisite update kb3185911 (MS16-106) by kb3191203 (MS16-120 and MS16-123) for Windows Vista and Server 2008 (x86/x64) (Thanks to "boco", "harry" and "Dalai")
+- Fix: Replaced superseded Skype for Business 2015 Security Update kb3115431 (MS16-097) by kb3118348 (MS16-120) (Thanks to "Gerby")
+- Fix: Replaced superseded Skype for Business 2016 Security Update kb3115408 (MS16-097) by kb3118327 (MS16-120)
