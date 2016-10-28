@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.8+ (r828)
+set WSUSOFFLINE_VERSION=10.8+ (r829)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -262,6 +262,7 @@ if exist DetermineAutoDaylightTimeSet.vbs del DetermineAutoDaylightTimeSet.vbs
 if exist ExtractUniqueFromSorted.vbs del ExtractUniqueFromSorted.vbs
 if exist CheckTRCerts.cmd del CheckTRCerts.cmd
 if exist ..\doc\faq.txt del ..\doc\faq.txt
+if exist ..\client\Autorun.inf del ..\client\Autorun.inf
 if exist ..\client\cmd\DetermineServiceState.vbs del ..\client\cmd\DetermineServiceState.vbs
 if exist ..\client\cmd\Reboot.vbs del ..\client\cmd\Reboot.vbs
 if exist ..\client\cmd\Shutdown.vbs del ..\client\cmd\Shutdown.vbs
@@ -1546,10 +1547,16 @@ verify >nul
 goto :eof
 
 :RemindDate
-rem *** Remind build date ***
 if "%SKIP_DL%"=="1" goto EoF
+rem *** Remind build date ***
 echo Reminding build date...
 echo %DATE:~-11%>..\client\builddate.txt
+rem *** Create autorun.inf file ***
+echo Creating autorun.inf file...
+echo [autorun]>..\client\autorun.inf
+echo open=UpdateInstaller.exe>>..\client\autorun.inf
+echo icon=UpdateInstaller.exe,0 >>..\client\autorun.inf
+echo action=Run WSUS Offline Update v. %WSUSOFFLINE_VERSION% (%DATE:~-11%)>>..\client\autorun.inf
 goto EoF
 
 :NoExtensions

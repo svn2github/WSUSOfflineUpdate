@@ -1252,6 +1252,7 @@ Version 10.8 -- 26.09.16
 Version ??.? -- ??.??.??
 - Microsoft Silverlight updated to v. 5.1.50901.0 (Thanks to "harry")
 - Aria2 download utility updated to v. 1.28.0 (Thanks to "harry")
+- Improved autorun.inf file (Thanks to "dsca", "psj" and "aker")
 - Fix: Added scan prerequisite update kb3183431 (MS16-123) for Windows Vista and Server 2008 (x86/x64) (Thanks to "Dalai")
 - Fix: Replaced superseded scan prerequisite update kb3185911 (MS16-106) by kb3191203 (MS16-120 and MS16-123) for Windows Vista and Server 2008 (x86/x64) (Thanks to "boco", "harry" and "Dalai")
 - Fix: Excluded outdated initial revision of kb3167679 for Windows Vista and Server 2008 (x86/x64)
