@@ -604,12 +604,12 @@ For Each strProduct In objInstaller.Products
     Case "{196BB40D-1578-3D01-B289-BEFC77A11A1E}", "{F0C3E5D1-1ADE-321E-8167-68EF0DE699A5}"
       cpp2010_x86_old = True
       For Each strPatch In objInstaller.Patches(strProduct)
-        If UCase(strPatch) = "{6F8500D2-A80F-3347-9081-B41E71C8592B}" Then cpp2010_x86_new = True
+        If UCase(strPatch) = "{F11DB03E-9EFF-3E33-8D0D-827AB22DAB1B}" Then cpp2010_x86_new = True
       Next
     Case "{DA5E371C-6333-3D8A-93A4-6FD5B20BCC6E}", "{1D8E6291-B0D5-35EC-8441-6616F567A0F7}"
       cpp2010_x64_old = True
       For Each strPatch In objInstaller.Patches(strProduct)
-        If UCase(strPatch) = "{C67045D4-F4DE-3AB5-B2DB-E3F5DAC14D9C}" Then cpp2010_x64_new = True
+        If UCase(strPatch) = "{45C1B2E6-FE51-3FDA-81C6-5C8602F9B025}" Then cpp2010_x64_new = True
       Next
     Case "{2F73A7B2-E50E-39A6-9ABC-EF89E4C62E36}", "{FDB30193-FDA0-3DAA-ACCA-A75EEFE53607}", _
          "{E824E81C-80A4-3DFF-B5F9-4842A9FF5F7F}", "{6C772996-BFF3-3C8C-860B-B3D48FF05D65}", _

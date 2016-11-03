@@ -10,6 +10,8 @@ windows6.0-kb3145739
 windows6.0-kb3164033
 windows6.0-kb3168965
 windows6.0-kb3183431
+windows6.0-kb3188726
+windows6.0-kb3188735
 windows6.0-kb3191203
 kb3167679
 kb3018238

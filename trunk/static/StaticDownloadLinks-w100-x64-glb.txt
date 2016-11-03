@@ -1,2 +1,2 @@
-http://download.windowsupdate.com/c/msdownload/update/software/crup/2016/08/windows10.0-kb3176936-x64_795777f8a7f8cd1a4c96ee030848f9f888490555.msu
+http://download.windowsupdate.com/c/msdownload/update/software/crup/2016/10/windows10.0-kb3199986-x64_5d4678c30de2de2bd7475073b061d0b3b2e5c3be.msu
 http://download.windowsupdate.com/d/msdownload/update/software/crup/2016/08/windows10.0-kb3181403-x64_6d9c9524471412a0ed566f739a403cd9a35649ed.msu
