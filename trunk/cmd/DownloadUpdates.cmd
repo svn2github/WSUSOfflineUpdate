@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.8+ (r830)
+set WSUSOFFLINE_VERSION=10.8+ (r831)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -579,7 +579,7 @@ if errorlevel 1 goto DownloadError
 echo %DATE% %TIME% - Info: Downloaded/validated most recent Windows Update catalog file>>%DOWNLOAD_LOGFILE%
 if "%VERIFY_DL%" NEQ "1" goto SkipWSUS
 if not exist %SIGCHK_PATH% goto NoSigCheck
-echo Verifying digital file signatures of Windows Update catalog file...
+echo Verifying digital file signature of Windows Update catalog file...
 for /F "skip=1 tokens=1 delims=," %%i in ('%SIGCHK_PATH% %SIGCHK_COPT% -s ..\client\wsus ^| %SystemRoot%\System32\findstr.exe /I /V "\"Signed\""') do (
   del %%i
   echo Warning: Deleted unsigned file %%i.
@@ -593,7 +593,7 @@ if exist ..\client\wsus\wsusscn2.cab (
   %SystemRoot%\System32\attrib.exe -A ..\client\wsus\wsusscn2.cab
   echo %DATE% %TIME% - Info: Restored preexisting catalog file ..\client\wsus\wsusscn2.cab>>%DOWNLOAD_LOGFILE%
 )
-echo %DATE% %TIME% - Info: Verified digital file signatures of Windows Update catalog file>>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Verified digital file signature of Windows Update catalog file>>%DOWNLOAD_LOGFILE%
 if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
 echo Creating integrity database for Windows Update catalog file...
 if not exist ..\client\md\nul md ..\client\md
