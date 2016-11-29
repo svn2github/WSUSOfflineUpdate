@@ -1254,6 +1254,7 @@ Version ??.? -- ??.??.??
 - Microsoft Silverlight updated to v. 5.1.50901.0 (Thanks to "harry")
 - Aria2 download utility updated to v. 1.28.0 (Thanks to "harry")
 - Improved autorun.inf file (Thanks to "dsca", "psj" and "aker")
+- Exclude definitions for download and update may be updated while downloading (Thanks to "aker")
 - Replaced superseded August 2016 Servicing stack update (kb3176936) by October 2016 Servicing stack update (kb3199986) for Windows 10 Version 1607 (Thanks to "aker")
 - Fix: Revised list of scan prerequisite updates for Windows Vista and Server 2008 (x86/x64) (Thanks to "lmacri", "Dalai", "boco", "harry" and the community)
 - Fix: Excluded outdated initial revision of kb3167679 for Windows Vista and Server 2008 (x86/x64)

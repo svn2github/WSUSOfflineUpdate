@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.8+ (r832)
+set WSUSOFFLINE_VERSION=10.8+ (r833)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -455,17 +455,21 @@ if errorlevel 1 (
 if errorlevel 1 (
   set REMOVE_CMD=RemoveGermanLanguageSupport.cmd !REMOVE_CMD!
 )
-echo Updating static download and update definitions...
+echo Updating static and exclude definitions for download and update...
 %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\static %DLDR_LOPT% http://download.wsusoffline.net/StaticDownloadFiles-modified.txt
 %DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\static\StaticDownloadFiles-modified.txt %DLDR_POPT% ..\static
+%DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\exclude %DLDR_LOPT% http://download.wsusoffline.net/ExcludeDownloadFiles-modified.txt
+%DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\exclude\ExcludeDownloadFiles-modified.txt %DLDR_POPT% ..\exclude
 %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\client\static %DLDR_LOPT% http://download.wsusoffline.net/StaticUpdateFiles-modified.txt
 %DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\client\static\StaticUpdateFiles-modified.txt %DLDR_POPT% ..\client\static
+%DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\client\exclude %DLDR_LOPT% http://download.wsusoffline.net/ExcludeUpdateFiles-modified.txt
+%DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\client\exclude\ExcludeUpdateFiles-modified.txt %DLDR_POPT% ..\client\exclude
 echo Restoring custom language removals...
 if "%REMOVE_CMD%" NEQ "" (
   for %%i in (%REMOVE_CMD%) do call %%i /quiet
 )
 set REMOVE_CMD=
-echo %DATE% %TIME% - Info: Updated static download and update definitions>>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Updated static and exclude definitions for download and update>>%DOWNLOAD_LOGFILE%
 :SkipSDD
 
 rem *** Download mkisofs tool ***
@@ -1012,13 +1016,15 @@ for %%i in (..\client\wsus\wsusscn2.cab) do echo %%~ai | %SystemRoot%\System32\f
 if not errorlevel 1 (
   if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
 )
-copy /Y ..\exclude\ExcludeList-superseded-exclude.txt ..\exclude\ExcludeList-superseded-exclude.ori >nul
-%DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\exclude %DLDR_LOPT% http://download.wsusoffline.net/ExcludeList-superseded-exclude.txt
-echo n | %SystemRoot%\System32\comp.exe ..\exclude\ExcludeList-superseded-exclude.txt ..\exclude\ExcludeList-superseded-exclude.ori /A /L /C >nul 2>&1
-if errorlevel 1 (
-  if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
+if "%SKIP_SDD%" NEQ "1" (
+  copy /Y ..\exclude\ExcludeList-superseded-exclude.txt ..\exclude\ExcludeList-superseded-exclude.ori >nul
+  %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\exclude %DLDR_LOPT% http://download.wsusoffline.net/ExcludeList-superseded-exclude.txt
+  echo n | %SystemRoot%\System32\comp.exe ..\exclude\ExcludeList-superseded-exclude.txt ..\exclude\ExcludeList-superseded-exclude.ori /A /L /C >nul 2>&1
+  if errorlevel 1 (
+    if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
+  )
+  del ..\exclude\ExcludeList-superseded-exclude.ori
 )
-del ..\exclude\ExcludeList-superseded-exclude.ori
 if exist ..\exclude\ExcludeList-superseded.txt (
   echo Found valid list of superseded updates.
   echo %DATE% %TIME% - Info: Found valid list of superseded updates>>%DOWNLOAD_LOGFILE%
