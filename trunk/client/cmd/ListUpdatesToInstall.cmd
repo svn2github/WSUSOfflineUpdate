@@ -17,46 +17,60 @@ if "%OS_ARCH%"=="" goto NoOSArch
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
+if /i "%1"=="/seconly" set SECONLY=1
 if /i "%1"=="/excludestatics" set EXC_STATICS=1
 if /i "%1"=="/ignoreblacklist" set IGNORE_BL=1
 shift /1
 goto EvalParams
 
 :EvalStatics
-if exist %1 (
-  if exist "%TEMP%\InstalledUpdateIds.txt" (
-    %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\InstalledUpdateIds.txt" %1 >>"%TEMP%\MissingUpdateIds.txt"
+if not exist %1 goto :eof
+if exist "%TEMP%\StaticUpdateIds.txt" del "%TEMP%\StaticUpdateIds.txt"
+for /F "tokens=1* delims=kbKB,;" %%i in (%1) do (
+  if exist "%TEMP%\MissingUpdateIds.txt" (
+    %SystemRoot%\System32\find.exe /I "%%i" "%TEMP%\MissingUpdateIds.txt" >nul 2>&1
+    if errorlevel 1 echo %%i>>"%TEMP%\StaticUpdateIds.txt"
   ) else (
-    type %1 >>"%TEMP%\MissingUpdateIds.txt"
+    echo %%i>>"%TEMP%\StaticUpdateIds.txt"
   )
 )
+if exist "%TEMP%\InstalledUpdateIds.txt" (
+  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\InstalledUpdateIds.txt" "%TEMP%\StaticUpdateIds.txt" >>"%TEMP%\MissingUpdateIds.txt"
+) else (
+  type "%TEMP%\StaticUpdateIds.txt" >>"%TEMP%\MissingUpdateIds.txt"
+)
+del "%TEMP%\StaticUpdateIds.txt"
 goto :eof
 
 :NoMoreParams
 rem *** Add statically defined update ids ***
 if "%EXC_STATICS%"=="1" goto ListFiles
 if "%OS_NAME%"=="w100" (
-  if exist ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_VER_BUILD%-%OS_ARCH%.txt call :EvalStatics ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_VER_BUILD%-%OS_ARCH%.txt
-  if exist ..\static\StaticUpdateIds-%OS_NAME%-%OS_VER_BUILD%-%OS_ARCH%.txt call :EvalStatics ..\static\StaticUpdateIds-%OS_NAME%-%OS_VER_BUILD%-%OS_ARCH%.txt
+  call :EvalStatics ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_VER_BUILD%-%OS_ARCH%.txt
+  call :EvalStatics ..\static\StaticUpdateIds-%OS_NAME%-%OS_VER_BUILD%-%OS_ARCH%.txt
 ) else (
-  if exist ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt call :EvalStatics ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt
-  if exist ..\static\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt call :EvalStatics ..\static\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt
+  call :EvalStatics ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt
+  call :EvalStatics ..\static\StaticUpdateIds-%OS_NAME%-%OS_ARCH%.txt
+)
+if "%SECONLY%"=="1" (
+  call :EvalStatics ..\static\custom\StaticUpdateIds-%OS_NAME%-seconly.txt
+  call :EvalStatics ..\static\StaticUpdateIds-%OS_NAME%-seconly.txt
 )
 if "%O2K7_VER_MAJOR%" NEQ "" (
-  if exist ..\static\custom\StaticUpdateIds-o2k7.txt call :EvalStatics ..\static\custom\StaticUpdateIds-o2k7.txt
-  if exist ..\static\StaticUpdateIds-o2k7.txt call :EvalStatics ..\static\StaticUpdateIds-o2k7.txt
+  call :EvalStatics ..\static\custom\StaticUpdateIds-o2k7.txt
+  call :EvalStatics ..\static\StaticUpdateIds-o2k7.txt
 )
 if "%O2K10_VER_MAJOR%" NEQ "" (
-  if exist ..\static\custom\StaticUpdateIds-o2k10.txt call :EvalStatics ..\static\custom\StaticUpdateIds-o2k10.txt
-  if exist ..\static\StaticUpdateIds-o2k10.txt call :EvalStatics ..\static\StaticUpdateIds-o2k10.txt
+  call :EvalStatics ..\static\custom\StaticUpdateIds-o2k10.txt
+  call :EvalStatics ..\static\StaticUpdateIds-o2k10.txt
 )
 if "%O2K13_VER_MAJOR%" NEQ "" (
-  if exist ..\static\custom\StaticUpdateIds-o2k13.txt call :EvalStatics ..\static\custom\StaticUpdateIds-o2k13.txt
-  if exist ..\static\StaticUpdateIds-o2k13.txt call :EvalStatics ..\static\StaticUpdateIds-o2k13.txt
+  call :EvalStatics ..\static\custom\StaticUpdateIds-o2k13.txt
+  call :EvalStatics ..\static\StaticUpdateIds-o2k13.txt
 )
 if "%O2K16_VER_MAJOR%" NEQ "" (
-  if exist ..\static\custom\StaticUpdateIds-o2k16.txt call :EvalStatics ..\static\custom\StaticUpdateIds-o2k16.txt
-  if exist ..\static\StaticUpdateIds-o2k16.txt call :EvalStatics ..\static\StaticUpdateIds-o2k16.txt
+  call :EvalStatics ..\static\custom\StaticUpdateIds-o2k16.txt
+  call :EvalStatics ..\static\StaticUpdateIds-o2k16.txt
 )
 
 :ListFiles

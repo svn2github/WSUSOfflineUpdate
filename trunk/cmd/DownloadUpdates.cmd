@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.8.1
+set WSUSOFFLINE_VERSION=10.8.1+ (r836)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -141,13 +141,14 @@ goto EvalParams
 
 :EvalParams
 if "%3"=="" goto NoMoreParams
-for %%i in (/excludesp /excludestatics /excludewinglb /includedotnet /includemsse /includewddefs /nocleanup /verify /exitonerror /skipsdd /skiptz /skipdownload /skipdynamic /proxy /wsus /wsusonly /wsusbyproxy) do (
+for %%i in (/excludesp /excludestatics /excludewinglb /includedotnet /seconly /includemsse /includewddefs /nocleanup /verify /exitonerror /skipsdd /skiptz /skipdownload /skipdynamic /proxy /wsus /wsusonly /wsusbyproxy) do (
   if /i "%3"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected>>%DOWNLOAD_LOGFILE%
 )
 if /i "%3"=="/excludesp" set EXC_SP=1
 if /i "%3"=="/excludestatics" set EXC_STATICS=1
 if /i "%3"=="/excludewinglb" set EXC_WINGLB=1
 if /i "%3"=="/includedotnet" set INC_DOTNET=1
+if /i "%3"=="/seconly" set SECONLY=1
 if /i "%3"=="/includemsse" set INC_MSSE=1
 if /i "%3"=="/includewddefs" (
   echo %1 | %SystemRoot%\System32\find.exe /I "w62" >nul 2>&1
@@ -1077,6 +1078,21 @@ if exist ..\exclude\ExcludeList-superseded-exclude.txt copy /Y ..\exclude\Exclud
 if exist ..\exclude\custom\ExcludeList-superseded-exclude.txt (
   type ..\exclude\custom\ExcludeList-superseded-exclude.txt >>"%TEMP%\ExcludeList-superseded-exclude.txt"
 )
+if "%SECONLY%"=="1" (
+  for %%i in (w61 w62 w63) do (
+    if exist ..\client\static\StaticUpdateIds-%%i-seconly.txt (
+      for /F "tokens=1* delims=,;" %%j in (..\client\static\StaticUpdateIds-%%i-seconly.txt) do (
+        echo %%j>>"%TEMP%\ExcludeList-superseded-exclude.txt"
+      )
+    )
+    if exist ..\client\static\custom\StaticUpdateIds-%%i-seconly.txt (
+      for /F "tokens=1* delims=,;" %%j in (..\client\static\custom\StaticUpdateIds-%%i-seconly.txt) do (
+        echo %%j>>"%TEMP%\ExcludeList-superseded-exclude.txt"
+      )
+    )
+  )
+)
+
 rem *** Delete file if empty ***
 for %%i in ("%TEMP%\ExcludeList-superseded-exclude.txt") do if %%~zi==0 del %%i
 if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
@@ -1205,6 +1221,18 @@ if exist ..\exclude\ExcludeList-%1-%3.txt (
   if exist ..\exclude\ExcludeList-%1.txt copy /Y ..\exclude\ExcludeList-%1.txt "%TEMP%\ExcludeList-%1.txt" >nul
   if exist ..\exclude\custom\ExcludeList-%1.txt (
     type ..\exclude\custom\ExcludeList-%1.txt >>"%TEMP%\ExcludeList-%1.txt"
+  )
+)
+if "%SECONLY%"=="1" (
+  if exist ..\client\exclude\HideList-seconly.txt (
+    for /F "tokens=1* delims=,;" %%i in (..\client\exclude\HideList-seconly.txt) do (
+      echo %%i>>"%TEMP%\ExcludeList-%1.txt"
+    )
+  )
+  if exist ..\client\exclude\custom\HideList-seconly.txt (
+    for /F "tokens=1* delims=,;" %%i in (..\client\exclude\custom\HideList-seconly.txt) do (
+      echo %%i>>"%TEMP%\ExcludeList-%1.txt"
+    )
   )
 )
 if exist ..\exclude\custom\ExcludeListForce-all.txt (
@@ -1435,6 +1463,29 @@ if "%WSUS_URL%"=="" (
 )
 echo %DATE% %TIME% - Info: Downloaded/validated %LINES_COUNT% dynamically determined updates for %1 %2>>%DOWNLOAD_LOGFILE%
 
+echo Adjusting UpdateInstaller.ini file...
+if exist ..\client\UpdateInstaller.ini (
+  if exist ..\client\UpdateInstaller.ori del ..\client\UpdateInstaller.ori
+  ren ..\client\UpdateInstaller.ini UpdateInstaller.ori
+  for /F "tokens=1* delims==" %%i in (..\client\UpdateInstaller.ori) do (
+    if /i "%%i"=="seconly" (
+      if "%SECONLY%"=="1" (
+        echo seconly=Enabled>>..\client\UpdateInstaller.ini
+      ) else (
+        echo seconly=Disabled>>..\client\UpdateInstaller.ini
+      )
+    ) else (
+      if "%%j"=="" (
+        echo %%i>>..\client\UpdateInstaller.ini
+      ) else (
+        echo %%i=%%j>>..\client\UpdateInstaller.ini
+      )
+    )
+  )
+  del ..\client\UpdateInstaller.ori
+)
+echo %DATE% %TIME% - Info: Adjusted UpdateInstaller.ini file>>%DOWNLOAD_LOGFILE%
+
 :CleanupDownload
 rem *** Clean up client directory for %1 %2 ***
 if not exist ..\client\%1\%2\nul goto RemoveHashes
@@ -1574,8 +1625,8 @@ exit /b 1
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %*
-echo Usage1: %~n0 {o2k7 ^| o2k10 ^| o2k13} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/excludewinglb] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
-echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| w62-x64 ^| w63 ^| w63-x64 ^| w100 ^| w100-x64 ^| ofc ^| o2k16} {glb} [/excludesp ^| /excludestatics] [/excludewinglb] [/includedotnet] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
+echo Usage1: %~n0 {o2k7 ^| o2k10 ^| o2k13} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/excludewinglb] [/includedotnet] [/seconly] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
+echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| w62-x64 ^| w63 ^| w63-x64 ^| w100 ^| w100-x64 ^| ofc ^| o2k16} {glb} [/excludesp ^| /excludestatics] [/excludewinglb] [/includedotnet] [/seconly] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
 echo %DATE% %TIME% - Error: Invalid parameter: %*>>%DOWNLOAD_LOGFILE%
 echo.
 goto Error

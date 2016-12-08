@@ -1,0 +1,9 @@
+kb3185330,October 2016 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb3185332,October 2016 Security Monthly Quality Rollup for Windows Server 2012
+kb3185331,October 2016 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb3188740,October 2016 Security and Quality Rollup for .NET Framework 3.5.1 on Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb3188741,October 2016 Security and Quality Rollup for .NET Framework 3.5 on Windows Server 2012
+kb3188743,October 2016 Security and Quality Rollup for .NET Framework 3.5 on Windows 8.1 and Windows Server 2012 R2
+kb3197868,November 2016 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb3197877,November 2016 Security Monthly Quality Rollup for Windows Server 2012
+kb3197874,November 2016 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2

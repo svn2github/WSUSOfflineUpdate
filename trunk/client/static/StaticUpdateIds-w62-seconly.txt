@@ -1,0 +1,3 @@
+kb3192393,October 2016 Security Only Quality Update for Windows Server 2012
+kb3188731,October 2016 Security Update for .NET Framework 3.5 on Windows Server 2012
+kb3197876,November 2016 Security Only Quality Update for Windows Server 2012

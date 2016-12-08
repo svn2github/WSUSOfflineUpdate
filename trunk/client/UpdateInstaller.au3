@@ -6,7 +6,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 10.8.1.835)
+#pragma compile(FileVersion, 10.8.1.836)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -59,6 +59,7 @@ Dim Const $ini_value_skipdefs         = "skipdefs"
 Dim Const $ini_value_tsc              = "updatetsc"
 Dim Const $ini_value_ofv              = "instofv"
 Dim Const $ini_value_all              = "all"
+Dim Const $ini_value_seconly          = "seconly"
 Dim Const $ini_value_excludestatics   = "excludestatics"
 Dim Const $ini_value_skipdynamic      = "skipdynamic"
 
@@ -158,13 +159,15 @@ Func CheckBoxStateToString($chkbox)
 EndFunc
 
 Func MyIniRead($section, $key, $default)
-Dim $inifilepath
+Dim $inifilepath, $result
 
+  $inifilepath = $scriptdir & "\" & StringLeft(@ScriptName, StringInStr(@ScriptName, ".", 0, -1)) & "ini"
+  $result = IniRead($inifilepath, $section, $key, $default)
   $inifilepath = @TempDir & "\" & StringLeft(@ScriptName, StringInStr(@ScriptName, ".", 0, -1)) & "ini"
-  If NOT FileExists($inifilepath) Then
-    $inifilepath = $scriptdir & "\" & StringLeft(@ScriptName, StringInStr(@ScriptName, ".", 0, -1)) & "ini"
+  If FileExists($inifilepath) Then
+    $result = IniRead($inifilepath, $section, $key, $result)
   EndIf
-  Return IniRead($inifilepath, $section, $key, $default)
+  Return $result
 EndFunc
 
 Func IniCopy()
@@ -999,6 +1002,9 @@ While 1
       EndIf
       If MyIniRead($ini_section_installation, $ini_value_all, $disabled) = $enabled Then
         $options = $options & " /all"
+      EndIf
+      If MyIniRead($ini_section_installation, $ini_value_seconly, $disabled) = $enabled Then
+        $options = $options & " /seconly"
       EndIf
       If MyIniRead($ini_section_installation, $ini_value_excludestatics, $disabled) = $enabled Then
         $options = $options & " /excludestatics"

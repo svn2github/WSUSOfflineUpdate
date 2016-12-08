@@ -1,0 +1,3 @@
+kb3192391,October 2016 Security Only Quality Update for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb3188730,October 2016 Security Update for .NET Framework 3.5.1 on Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb3197867,November 2016 Security Only Quality Update for Windows 7 SP1 and Windows Server 2008 R2 SP1
