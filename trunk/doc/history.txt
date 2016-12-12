@@ -1266,3 +1266,4 @@ Version 10.8.1 -- 01.12.16
 Version ??.? -- ??.??.??
 - C++ 2013 Redistributable Runtime Libraries updated to v. 12.0.40660.0 (Thanks to "epguy9")
 - Ability added to use 'security only updates' instead of 'quality rollups' for Windows 7, 8.1 and Server 2008/2012 (R2) (x86/x64) systems (Thanks to the mods)
+- Fix: Corrected adjustment of service 'Windows Update' (wuauserv)
