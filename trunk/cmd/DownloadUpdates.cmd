@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.8.1+ (r840)
+set WSUSOFFLINE_VERSION=10.8.1+ (r841)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -1000,7 +1000,7 @@ if "%SECONLY%"=="1" (
   set SUSED_LIST=..\exclude\ExcludeList-superseded-seconly.txt
 ) else (
   set SUSED_LIST=..\exclude\ExcludeList-superseded.txt
-) 
+)
 if "%4"=="/skipdynamic" (
   echo Skipping unneeded determination of superseded updates.
   echo %DATE% %TIME% - Info: Skipped unneeded determination of superseded updates>>%DOWNLOAD_LOGFILE%
@@ -1083,29 +1083,31 @@ if exist ..\exclude\ExcludeList-superseded-exclude.txt copy /Y ..\exclude\Exclud
 if exist ..\exclude\custom\ExcludeList-superseded-exclude.txt (
   type ..\exclude\custom\ExcludeList-superseded-exclude.txt >>"%TEMP%\ExcludeList-superseded-exclude.txt"
 )
-if "%SECONLY%"=="1" (
-  for %%i in (w61 w62 w63) do (
-    if exist ..\client\static\StaticUpdateIds-%%i-seconly.txt (
-      for /F "tokens=1* delims=,;" %%j in (..\client\static\StaticUpdateIds-%%i-seconly.txt) do (
-        echo %%j>>"%TEMP%\ExcludeList-superseded-exclude.txt"
-      )
+for %%i in ("%TEMP%\ExcludeList-superseded-exclude.txt") do if %%~zi==0 del %%i
+if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
+  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-superseded-exclude.txt" "%TEMP%\ExcludeListLocations-superseded-all-unique.txt" >..\exclude\ExcludeList-superseded.txt
+) else (
+  copy /Y "%TEMP%\ExcludeListLocations-superseded-all-unique.txt" ..\exclude\ExcludeList-superseded.txt >nul
+)
+for %%i in (w61 w62 w63) do (
+  if exist ..\client\static\StaticUpdateIds-%%i-seconly.txt (
+    for /F "tokens=1* delims=,;" %%j in (..\client\static\StaticUpdateIds-%%i-seconly.txt) do (
+      echo %%j>>"%TEMP%\ExcludeList-superseded-exclude.txt"
     )
-    if exist ..\client\static\custom\StaticUpdateIds-%%i-seconly.txt (
-      for /F "tokens=1* delims=,;" %%j in (..\client\static\custom\StaticUpdateIds-%%i-seconly.txt) do (
-        echo %%j>>"%TEMP%\ExcludeList-superseded-exclude.txt"
-      )
+  )
+  if exist ..\client\static\custom\StaticUpdateIds-%%i-seconly.txt (
+    for /F "tokens=1* delims=,;" %%j in (..\client\static\custom\StaticUpdateIds-%%i-seconly.txt) do (
+      echo %%j>>"%TEMP%\ExcludeList-superseded-exclude.txt"
     )
   )
 )
-
-rem *** Delete file if empty ***
 for %%i in ("%TEMP%\ExcludeList-superseded-exclude.txt") do if %%~zi==0 del %%i
 if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
-  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-superseded-exclude.txt" "%TEMP%\ExcludeListLocations-superseded-all-unique.txt" >%SUSED_LIST%
+  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-superseded-exclude.txt" "%TEMP%\ExcludeListLocations-superseded-all-unique.txt" >..\exclude\ExcludeList-superseded-seconly.txt
   del "%TEMP%\ExcludeListLocations-superseded-all-unique.txt"
   del "%TEMP%\ExcludeList-superseded-exclude.txt"
 ) else (
-  move /Y "%TEMP%\ExcludeListLocations-superseded-all-unique.txt" %SUSED_LIST% >nul
+  move /Y "%TEMP%\ExcludeListLocations-superseded-all-unique.txt" ..\exclude\ExcludeList-superseded-seconly.txt >nul
 )
 %SystemRoot%\System32\attrib.exe -A ..\client\wsus\wsusscn2.cab
 echo %TIME% - Done.
