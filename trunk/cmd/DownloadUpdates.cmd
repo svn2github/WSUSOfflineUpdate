@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.8.1+ (r838)
+set WSUSOFFLINE_VERSION=10.8.1+ (r839)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -996,6 +996,11 @@ rem *** Determine update urls for %1 %2 ***
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo.
 
+if "%SECONLY%"=="1" (
+  set SUSED_LIST=..\exclude\ExcludeList-superseded-seconly.txt
+) else (
+  set SUSED_LIST=..\exclude\ExcludeList-superseded.txt
+) 
 if "%4"=="/skipdynamic" (
   echo Skipping unneeded determination of superseded updates.
   echo %DATE% %TIME% - Info: Skipped unneeded determination of superseded updates>>%DOWNLOAD_LOGFILE%
@@ -1009,24 +1014,24 @@ if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
 %SystemRoot%\System32\expand.exe "%TEMP%\package.cab" "%TEMP%\package.xml" >nul
 del "%TEMP%\package.cab"
 rem *** Determine superseded updates ***
-if exist ..\exclude\ExcludeList-superseded.txt (
-  %SystemRoot%\System32\find.exe /I "http://" ..\exclude\ExcludeList-superseded.txt >nul 2>&1
-  if errorlevel 1 del ..\exclude\ExcludeList-superseded.txt
+if exist %SUSED_LIST% (
+  %SystemRoot%\System32\find.exe /I "http://" %SUSED_LIST% >nul 2>&1
+  if errorlevel 1 del %SUSED_LIST%
 )
 for %%i in (..\client\wsus\wsusscn2.cab) do echo %%~ai | %SystemRoot%\System32\find.exe /I "a" >nul 2>&1
 if not errorlevel 1 (
-  if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
+  if exist %SUSED_LIST% del %SUSED_LIST%
 )
 if "%SKIP_SDD%" NEQ "1" (
   copy /Y ..\exclude\ExcludeList-superseded-exclude.txt ..\exclude\ExcludeList-superseded-exclude.ori >nul
   %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\exclude %DLDR_LOPT% http://download.wsusoffline.net/ExcludeList-superseded-exclude.txt
   echo n | %SystemRoot%\System32\comp.exe ..\exclude\ExcludeList-superseded-exclude.txt ..\exclude\ExcludeList-superseded-exclude.ori /A /L /C >nul 2>&1
   if errorlevel 1 (
-    if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
+    if exist %SUSED_LIST% del %SUSED_LIST%
   )
   del ..\exclude\ExcludeList-superseded-exclude.ori
 )
-if exist ..\exclude\ExcludeList-superseded.txt (
+if exist %SUSED_LIST% (
   echo Found valid list of superseded updates.
   echo %DATE% %TIME% - Info: Found valid list of superseded updates>>%DOWNLOAD_LOGFILE%
   goto SkipSuperseded
@@ -1096,11 +1101,11 @@ if "%SECONLY%"=="1" (
 rem *** Delete file if empty ***
 for %%i in ("%TEMP%\ExcludeList-superseded-exclude.txt") do if %%~zi==0 del %%i
 if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
-  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-superseded-exclude.txt" "%TEMP%\ExcludeListLocations-superseded-all-unique.txt" >..\exclude\ExcludeList-superseded.txt
+  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-superseded-exclude.txt" "%TEMP%\ExcludeListLocations-superseded-all-unique.txt" >%SUSED_LIST%
   del "%TEMP%\ExcludeListLocations-superseded-all-unique.txt"
   del "%TEMP%\ExcludeList-superseded-exclude.txt"
 ) else (
-  move /Y "%TEMP%\ExcludeListLocations-superseded-all-unique.txt" ..\exclude\ExcludeList-superseded.txt >nul
+  move /Y "%TEMP%\ExcludeListLocations-superseded-all-unique.txt" %SUSED_LIST% >nul
 )
 %SystemRoot%\System32\attrib.exe -A ..\client\wsus\wsusscn2.cab
 echo %TIME% - Done.
@@ -1124,8 +1129,8 @@ if exist ..\client\md\hashes-%1-%2.txt (
   echo %DATE% %TIME% - Info: Verified integrity of existing updates for %1 %2>>%DOWNLOAD_LOGFILE%
   for %%i in (..\client\md\hashes-%1-%2.txt) do echo _%%~ti | %SystemRoot%\System32\find.exe "_%DATE:~-10%" >nul 2>&1
   if not errorlevel 1 (
-    if exist ..\exclude\ExcludeList-superseded.txt (
-      for %%i in (..\exclude\ExcludeList-superseded.txt) do echo _%%~ti | %SystemRoot%\System32\find.exe "_%DATE:~-10%" >nul 2>&1
+    if exist %SUSED_LIST% (
+      for %%i in (%SUSED_LIST%) do echo _%%~ti | %SystemRoot%\System32\find.exe "_%DATE:~-10%" >nul 2>&1
       if errorlevel 1 (
         echo Skipping download/validation of %1 %2 due to 'same day' rule.
         echo %DATE% %TIME% - Info: Skipped download/validation of %1 %2 due to 'same day' rule>>%DOWNLOAD_LOGFILE%
@@ -1160,6 +1165,7 @@ if exist ..\exclude\custom\ExcludeListForce-all.txt copy /Y ..\exclude\custom\Ex
 if "%EXC_SP%"=="1" (
   type ..\exclude\ExcludeList-SPs.txt >>"%TEMP%\ExcludeListStatic.txt"
 )
+if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" del "%TEMP%\ValidStaticLinks-%1-%2.txt"
 if exist "%TEMP%\ExcludeListStatic.txt" (
   %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeListStatic.txt" "%TEMP%\StaticDownloadLinks-%1-%2.txt" >"%TEMP%\ValidStaticLinks-%1-%2.txt"
   del "%TEMP%\ExcludeListStatic.txt"
@@ -1200,11 +1206,11 @@ rem ExcludeList-superseded.txt returns URLs, which are unique
 rem to the left side. The intermediate file will be called
 rem "DynamicDownloadLinks-pruned.txt".
 
-if exist ..\exclude\ExcludeList-superseded.txt (
+if exist %SUSED_LIST% (
   rem As always, both input files must be sorted.
   ..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\DynamicDownloadLinks-%1-%2.txt" >"%TEMP%\DynamicDownloadLinks-%1-%2-unique.txt"
   del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
-  ..\bin\join.exe -v1 "%TEMP%\DynamicDownloadLinks-%1-%2-unique.txt" ..\exclude\ExcludeList-superseded.txt >"%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt"
+  ..\bin\join.exe -v1 "%TEMP%\DynamicDownloadLinks-%1-%2-unique.txt" %SUSED_LIST% >"%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt"
   del "%TEMP%\DynamicDownloadLinks-%1-%2-unique.txt"
 ) else (
   move /Y "%TEMP%\DynamicDownloadLinks-%1-%2.txt" "%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt" >nul
@@ -1321,11 +1327,11 @@ rem ExcludeList-superseded.txt returns URLs, which are unique
 rem to the left side. The intermediate file will be called
 rem "DynamicDownloadLinks-pruned.txt".
 
-if exist ..\exclude\ExcludeList-superseded.txt (
+if exist %SUSED_LIST% (
   rem As always, both input files must be sorted.
   ..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\DynamicDownloadLinks-%1-%2.txt" >"%TEMP%\DynamicDownloadLinks-%1-%2-unique.txt"
   del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
-  ..\bin\join.exe -v1 "%TEMP%\DynamicDownloadLinks-%1-%2-unique.txt" ..\exclude\ExcludeList-superseded.txt >"%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt"
+  ..\bin\join.exe -v1 "%TEMP%\DynamicDownloadLinks-%1-%2-unique.txt" %SUSED_LIST% >"%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt"
   del "%TEMP%\DynamicDownloadLinks-%1-%2-unique.txt"
 ) else (
   move /Y "%TEMP%\DynamicDownloadLinks-%1-%2.txt" "%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt" >nul

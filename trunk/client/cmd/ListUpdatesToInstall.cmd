@@ -34,6 +34,7 @@ for /F "tokens=1* delims=kbKB,;" %%i in (%1) do (
     echo %%i>>"%TEMP%\StaticUpdateIds.txt"
   )
 )
+if not exist "%TEMP%\StaticUpdateIds.txt" goto :eof
 if exist "%TEMP%\InstalledUpdateIds.txt" (
   %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\InstalledUpdateIds.txt" "%TEMP%\StaticUpdateIds.txt" >>"%TEMP%\MissingUpdateIds.txt"
 ) else (
