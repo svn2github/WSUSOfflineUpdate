@@ -6,7 +6,7 @@
 #include <GUIConstants.au3>
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Generator")
-#pragma compile(FileVersion, 10.8.1.839)
+#pragma compile(FileVersion, 10.8.1.840)
 #pragma compile(InternalName, "Generator")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateGenerator.exe)
@@ -532,14 +532,13 @@ EndFunc
 
 Func EnableGUI()
   SwitchDownloadTargets($GUI_ENABLE)
-  If ( (IniRead($inifilename, $ini_section_misc, $misc_token_skipdownload, $disabled) = $disabled) _
-   AND (NOT IsCheckBoxChecked($imageonly)) ) Then
-    GUICtrlSetState($verifydownloads, $GUI_ENABLE)
-  EndIf
   GUICtrlSetState($dotnet, $GUI_ENABLE)
   If IniRead($inifilename, $ini_section_misc, $misc_token_skipdownload, $disabled) = $disabled Then
+    If NOT IsCheckBoxChecked($imageonly) Then
+      GUICtrlSetState($verifydownloads, $GUI_ENABLE)
+      GUICtrlSetState($seconly, $GUI_ENABLE)
+    EndIf
     GUICtrlSetState($includesp, $GUI_ENABLE)
-    GUICtrlSetState($seconly, $GUI_ENABLE)
     GUICtrlSetState($msse, $GUI_ENABLE)
     GUICtrlSetState($wddefs, $GUI_ENABLE)
     GUICtrlSetState($cdiso, $GUI_ENABLE)
@@ -2297,6 +2296,7 @@ While 1
         GUICtrlSetState($imageonly, $GUI_UNCHECKED + $GUI_DISABLE)
         If IniRead($inifilename, $ini_section_misc, $misc_token_skipdownload, $disabled) = $disabled Then
           GUICtrlSetState($verifydownloads, $GUI_ENABLE)
+          GUICtrlSetState($seconly, $GUI_ENABLE)
           GUICtrlSetState($shutdown, $GUI_ENABLE)
         EndIf
       EndIf
@@ -2308,6 +2308,7 @@ While 1
         GUICtrlSetState($imageonly, $GUI_UNCHECKED + $GUI_DISABLE)
         If IniRead($inifilename, $ini_section_misc, $misc_token_skipdownload, $disabled) = $disabled Then
           GUICtrlSetState($verifydownloads, $GUI_ENABLE)
+          GUICtrlSetState($seconly, $GUI_ENABLE)
           GUICtrlSetState($shutdown, $GUI_ENABLE)
         EndIf
       EndIf
@@ -2328,6 +2329,7 @@ While 1
         GUICtrlSetState($imageonly, $GUI_UNCHECKED + $GUI_DISABLE)
         If IniRead($inifilename, $ini_section_misc, $misc_token_skipdownload, $disabled) = $disabled Then
           GUICtrlSetState($verifydownloads, $GUI_ENABLE)
+          GUICtrlSetState($seconly, $GUI_ENABLE)
           GUICtrlSetState($shutdown, $GUI_ENABLE)
         EndIf
       EndIf
@@ -2368,6 +2370,7 @@ While 1
             GUICtrlSetState($imageonly, $GUI_UNCHECKED)
           Else
             GUICtrlSetState($verifydownloads, $GUI_DISABLE)
+            GUICtrlSetState($seconly, $GUI_DISABLE)
             GUICtrlSetState($shutdown, $GUI_UNCHECKED + $GUI_DISABLE)
           EndIf
         Else
@@ -2377,12 +2380,14 @@ While 1
             GUICtrlSetState($imageonly, $GUI_UNCHECKED)
           Else
             GUICtrlSetState($verifydownloads, $GUI_DISABLE)
+            GUICtrlSetState($seconly, $GUI_DISABLE)
             GUICtrlSetState($shutdown, $GUI_UNCHECKED + $GUI_DISABLE)
           EndIf
         EndIf
       Else
         If IniRead($inifilename, $ini_section_misc, $misc_token_skipdownload, $disabled) = $disabled Then
           GUICtrlSetState($verifydownloads, $GUI_ENABLE)
+          GUICtrlSetState($seconly, $GUI_ENABLE)
           GUICtrlSetState($shutdown, $GUI_ENABLE)
         EndIf
       EndIf
