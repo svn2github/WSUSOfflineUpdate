@@ -1,5 +1,8 @@
+kb3042553,Vulnerability in HTTP.sys could allow remote code execution
+kb3123479,Deprecation of SHA-1 hashing algorithm for Microsoft root certificate program
+kb3163247,Security update for the .NET Framework 3.5 in Windows 8.1 and Windows Server 2012 R2
 kb3192392,October 2016 Security Only Quality Update for Windows 8.1 and Windows Server 2012 R2
 kb3188732,October 2016 Security Update for .NET Framework 3.5 on Windows 8.1 and Windows Server 2012 R2
 kb3197873,November 2016 Security Only Quality Update for Windows 8.1 and Windows Server 2012 R2
 kb3205400,December 2016 Security Only Quality Update for Windows 8.1 and Windows Server 2012 R2
-kb3205410,December 2016 Security Only Update for the .NET Framework 4.6.2 on Windows 8.1 and Windows Server 2012 R2
+kb3204802,December 2016 Security Only Update for the .NET Framework 4.6.2 on Windows 8.1 and Windows Server 2012 R2

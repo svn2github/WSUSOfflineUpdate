@@ -1,5 +1,9 @@
+kb3005607,Vulnerability in Windows Audio Service could cause Elevation of Privilege
+kb3033929,Availability of SHA-2 code signing support for Windows 7 and Windows Server 2008 R2
+kb3138962,Security Update for Windows Media
+kb3168965,Security Update for Windows kernel-mode drivers
 kb3192391,October 2016 Security Only Quality Update for Windows 7 SP1 and Windows Server 2008 R2 SP1
 kb3188730,October 2016 Security Update for .NET Framework 3.5.1 on Windows 7 SP1 and Windows Server 2008 R2 SP1
 kb3197867,November 2016 Security Only Quality Update for Windows 7 SP1 and Windows Server 2008 R2 SP1
 kb3205394,December 2016 Security Only Quality Update for Windows 7 SP1 and Windows Server 2008 R2 SP1
-kb3205406,December 2016 Security Only Update for .NET Framework 4.6.2 on Windows 7 and Windows Server 2008 R2
+kb3204805,December 2016 Security Only Update for .NET Framework 4.6.2 on Windows 7 and Windows Server 2008 R2
