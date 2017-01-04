@@ -100,7 +100,7 @@ echo Updating WSUS Offline Update...
 %SystemRoot%\System32\xcopy.exe ..\wsusoffline .. /S /Q /Y
 rd /S /Q ..\wsusoffline
 echo %DATE% %TIME% - Info: Updated WSUS Offline Update>>%DOWNLOAD_LOGFILE%
-echo Updating custom language additions...
+echo Restoring custom language additions...
 if "%REMOVE_CMD%" NEQ "" (
   for %%i in (%REMOVE_CMD%) do call %%i /quiet
 )
@@ -110,9 +110,13 @@ if "%CUST_LANG%" NEQ "" (
 if "%OX64_LANG%" NEQ "" (
   for %%i in (%OX64_LANG%) do call AddOffice2010x64Support.cmd %%i /quiet
 )
-echo %DATE% %TIME% - Info: Updated custom language additions>>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Restored custom language additions>>%DOWNLOAD_LOGFILE%
+if exist ..\exclude\ExcludeList-superseded.txt (
+  del ..\exclude\ExcludeList-superseded.txt
+  echo %DATE% %TIME% - Info: Deleted deprecated list of superseded updates>>%DOWNLOAD_LOGFILE%
+)
+echo %DATE% %TIME% - Info: Ending WSUS Offline Update self update>>%DOWNLOAD_LOGFILE%
 if "%RESTART_GENERATOR%"=="1" (
-  echo %DATE% %TIME% - Info: Ending WSUS Offline Update self update>>%DOWNLOAD_LOGFILE%
   cd ..
   start UpdateGenerator.exe
   start http://www.wsusoffline.net/donate.html
@@ -169,6 +173,5 @@ echo.
 goto EoF
 
 :EoF
-echo %DATE% %TIME% - Info: Ending WSUS Offline Update self update>>%DOWNLOAD_LOGFILE%
 title %ComSpec%
 endlocal

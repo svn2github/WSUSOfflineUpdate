@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.8.1+ (r844)
+set WSUSOFFLINE_VERSION=10.8.1+ (r845)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -463,8 +463,7 @@ echo Updating static and exclude definitions for download and update...
 %DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\exclude\ExcludeDownloadFiles-modified.txt %DLDR_POPT% ..\exclude
 %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\client\static %DLDR_LOPT% http://download.wsusoffline.net/StaticUpdateFiles-modified.txt
 %DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\client\static\StaticUpdateFiles-modified.txt %DLDR_POPT% ..\client\static
-%DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\client\exclude %DLDR_LOPT% http://download.wsusoffline.net/ExcludeUpdateFiles-modified.txt
-%DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\client\exclude\ExcludeUpdateFiles-modified.txt %DLDR_POPT% ..\client\exclude
+if exist ..\client\exclude\ExcludeUpdateFiles-modified.txt del ..\client\exclude\ExcludeUpdateFiles-modified.txt
 echo Restoring custom language removals...
 if "%REMOVE_CMD%" NEQ "" (
   for %%i in (%REMOVE_CMD%) do call %%i /quiet
@@ -1033,6 +1032,13 @@ if "%SKIP_SDD%" NEQ "1" (
     if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
   )
   del ..\exclude\ExcludeList-superseded-exclude.ori
+  copy /Y ..\client\exclude\HideList-seconly.txt ..\client\exclude\HideList-seconly.ori >nul
+  %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\client\exclude %DLDR_LOPT% http://download.wsusoffline.net/HideList-seconly.txt
+  echo n | %SystemRoot%\System32\comp.exe ..\client\exclude\HideList-seconly.txt ..\client\exclude\HideList-seconly.ori /A /L /C >nul 2>&1
+  if errorlevel 1 (
+    if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
+  )
+  del ..\client\exclude\HideList-seconly.ori
 )
 if exist ..\exclude\ExcludeList-superseded.txt (
   echo Found valid list of superseded updates.
