@@ -1,6 +1,5 @@
-3078601
-3109094
-3185911
-3191203
-3204723
-3203859
+kb3191203,October 2016 security update for kernel-mode drivers
+kb3203859,November 2016 security update for Microsoft graphics component
+kb3204723,December 2016 security update for Windows kernel-mode drivers
+kb3204724,December 2016 security update for Microsoft graphics component
+kb3205638,December 2016 security update for Microsoft graphics component

@@ -1,2 +1,3 @@
-3188726
-3188735
+kb3078601,August 2015 security update for Windows
+kb3210129,December 2016 Security and Quality Rollup for the .NET Framework 2.0 Service Pack 2 for Windows Vista SP2 and Windows Server 2008 SP2
+kb3210136,December 2016 Security and Quality Rollup for the .NET Framework 4.6 for Windows Vista SP2 and Windows Server 2008 SP2
