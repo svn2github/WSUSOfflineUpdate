@@ -1268,5 +1268,6 @@ Version ??.? -- ??.??.??
 - Ability added to use 'security only updates' instead of 'quality rollups' for Windows 7, 8.1 and Server 2008/2012 (R2) (x86/x64) systems (Thanks to the mods)
 - Fix: Revised list of scan prerequisite updates for Windows Vista and Server 2008 (x86/x64) (Thanks to "Dalai", "lmacri", "SIW2" and the community)
 - Fix: Revised ExcludeList-superseded-exclude.txt
+- Fix: Revised ...\client\exclude\ExcludeList.txt
 - Fix: Corrected adjustment of service 'Windows Update' (wuauserv)
 - Fix: Download part erroneously excluded Security Update kb3163246 (MS16-091) for Microsoft .NET Framework 3.5 on Windows Server 2012
