@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 10.8.1
+WSUS Offline Update 10.9
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1263,7 +1263,7 @@ Version 10.8.1 -- 01.12.16
 - Fix: Replaced superseded Skype for Business 2016 Security Update kb3115408 (MS16-097) by kb3118327 (MS16-120)
 - Fix: ISO and USB images for Windows Vista and Server 2008 (x86/x64) contained unused installation packages for .NET Framework 4.6.2
 --------------------------------------------------------------------------------
-Version ??.? -- ??.??.??
+Version 10.9 -- 06.01.17
 - C++ 2013 Redistributable Runtime Libraries updated to v. 12.0.40660.0 (Thanks to "epguy9")
 - Ability added to use 'security only updates' instead of 'quality rollups' for Windows 7, 8.1 and Server 2008/2012 (R2) (x86/x64) systems (Thanks to the mods)
 - Fix: Revised list of scan prerequisite updates for Windows Vista and Server 2008 (x86/x64) (Thanks to "Dalai", "lmacri", "SIW2" and the community)
@@ -1271,3 +1271,4 @@ Version ??.? -- ??.??.??
 - Fix: Revised ...\client\exclude\ExcludeList.txt
 - Fix: Corrected adjustment of service 'Windows Update' (wuauserv)
 - Fix: Download part erroneously excluded Security Update kb3163246 (MS16-091) for Microsoft .NET Framework 3.5 on Windows Server 2012
+--------------------------------------------------------------------------------
