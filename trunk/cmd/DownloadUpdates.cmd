@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.9+ (r852)
+set WSUSOFFLINE_VERSION=10.9+ (r853)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -1428,6 +1428,8 @@ for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /N $ "%TE
       if exist ..\client\%1\%2\%%~nxk del ..\client\%1\%2\%%~nxk
       echo Warning: Download of %%k failed.
       echo %DATE% %TIME% - Warning: Download of %%k failed>>%DOWNLOAD_LOGFILE%
+    ) else (
+      echo %DATE% %TIME% - Info: Downloaded/validated %%k to ..\client\%1\%2>>%DOWNLOAD_LOGFILE%
     )
     if "%%l" NEQ "" (
       if exist ..\client\%1\%2\%%~nxk (
@@ -1448,10 +1450,12 @@ for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /N $ "%TE
 if "%WSUS_URL%"=="" (
   for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /N $ "%TEMP%\ValidDynamicLinks-%1-%2.txt"') do (
     echo Downloading/validating update %%i of %LINES_COUNT%...
-    %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\client\%1\%2 %DLDR_LOPT% %%j
+    %DLDR_PATH% %DLDR_COPT% %DLDR_POPT% ..\client\%1\%2 %%j
     if errorlevel 1 (
       echo Warning: Download of %%j failed.
       echo %DATE% %TIME% - Warning: Download of %%j failed>>%DOWNLOAD_LOGFILE%
+    ) else (
+      echo %DATE% %TIME% - Info: Downloaded/validated %%j to ..\client\%1\%2>>%DOWNLOAD_LOGFILE%
     )
   )
 ) else (
@@ -1463,10 +1467,12 @@ if "%WSUS_URL%"=="" (
     echo Downloading/validating update %%i of %LINES_COUNT%...
     for /F "tokens=1-3 delims=," %%k in ("%%j") do (
       if "%%m"=="" (
-        %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\client\%1\%2 %DLDR_LOPT% %%l
+        %DLDR_PATH% %DLDR_COPT% %DLDR_POPT% ..\client\%1\%2 %%l
         if errorlevel 1 (
-          echo Warning: Download of %%j failed.
-          echo %DATE% %TIME% - Warning: Download of %%j failed>>%DOWNLOAD_LOGFILE%
+          echo Warning: Download of %%l failed.
+          echo %DATE% %TIME% - Warning: Download of %%l failed>>%DOWNLOAD_LOGFILE%
+        ) else (
+          echo %DATE% %TIME% - Info: Downloaded/validated %%l to ..\client\%1\%2>>%DOWNLOAD_LOGFILE%
         )
       ) else (
         if exist ..\client\%1\%2\%%k (
@@ -1489,10 +1495,12 @@ if "%WSUS_URL%"=="" (
             echo Warning: Download of %%l ^(%%k^) failed.
             echo %DATE% %TIME% - Warning: Download of %%l ^(%%k^) failed>>%DOWNLOAD_LOGFILE%
           ) else (
-            %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\client\%1\%2 %DLDR_LOPT% %%m
+            %DLDR_PATH% %DLDR_COPT% %DLDR_POPT% ..\client\%1\%2 %%m
             if errorlevel 1 (
               echo Warning: Download of %%m failed.
               echo %DATE% %TIME% - Warning: Download of %%m failed>>%DOWNLOAD_LOGFILE%
+            ) else (
+              echo %DATE% %TIME% - Info: Downloaded/validated %%m to ..\client\%1\%2>>%DOWNLOAD_LOGFILE%
             )
           )
         ) else (

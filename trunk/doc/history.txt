@@ -1275,4 +1275,5 @@ Version 10.9 -- 06.01.17
 Version ??.? -- ??.??.??
 - Aria2 download utility updated to v. 1.31.0 (Thanks to "harry" and "Rush")
 - January 2017 updates added to 'security only' lists for Windows 7 and Server 2012 R2 (x86/x64) systems (Thanks to "hbuhrmester" and "boco")
+- Progress bar will also be shown during download of dynamically determined updates (Thanks to "bigwave")
 - Fix: Custom language and architecture additions weren't correctly preserved during dynamic updating of static download definitions (Thanks to "hbuhrmester")
