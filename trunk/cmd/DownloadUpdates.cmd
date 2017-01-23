@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.9+ (r851)
+set WSUSOFFLINE_VERSION=10.9+ (r852)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -446,7 +446,7 @@ if exist ..\client\md\hashes-wle.txt del ..\client\md\hashes-wle.txt
 
 rem *** Update static download definitions ***
 if "%SKIP_SDD%"=="1" goto SkipSDD
-echo Preserving custom language removals...
+echo Preserving custom language and architecture additions and removals...
 set REMOVE_CMD=
 %SystemRoot%\System32\find.exe /I "us." ..\static\StaticDownloadLinks-w61-x86-glb.txt >nul 2>&1
 if errorlevel 1 (
@@ -456,6 +456,25 @@ if errorlevel 1 (
 if errorlevel 1 (
   set REMOVE_CMD=RemoveGermanLanguageSupport.cmd !REMOVE_CMD!
 )
+set CUST_LANG=
+if exist ..\static\custom\StaticDownloadLinks-dotnet.txt (
+  for %%i in (fra esn jpn kor rus ptg ptb nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (
+    %SystemRoot%\System32\find.exe /I "%%i" ..\static\custom\StaticDownloadLinks-dotnet.txt >nul 2>&1
+    if not errorlevel 1 (
+      set CUST_LANG=%%i !CUST_LANG!
+      call RemoveCustomLanguageSupport.cmd %%i /quiet
+    )
+  )
+)
+set OX64_LANG=
+for %%i in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (
+  if exist ..\static\custom\StaticDownloadLinks-o2k13-%%i.txt (
+    set OX64_LANG=%%i !OX64_LANG!
+    call RemoveOffice2010x64Support.cmd %%i /quiet
+  )
+)
+echo %DATE% %TIME% - Info: Preserved custom language and architecture additions and removals>>%DOWNLOAD_LOGFILE%
+
 echo Updating static and exclude definitions for download and update...
 %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\static %DLDR_LOPT% http://download.wsusoffline.net/StaticDownloadFiles-modified.txt
 %DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\static\StaticDownloadFiles-modified.txt %DLDR_POPT% ..\static
@@ -463,13 +482,22 @@ echo Updating static and exclude definitions for download and update...
 %DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\exclude\ExcludeDownloadFiles-modified.txt %DLDR_POPT% ..\exclude
 %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\client\static %DLDR_LOPT% http://download.wsusoffline.net/StaticUpdateFiles-modified.txt
 %DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\client\static\StaticUpdateFiles-modified.txt %DLDR_POPT% ..\client\static
-if exist ..\client\exclude\ExcludeUpdateFiles-modified.txt del ..\client\exclude\ExcludeUpdateFiles-modified.txt
-echo Restoring custom language removals...
+echo %DATE% %TIME% - Info: Updated static and exclude definitions for download and update>>%DOWNLOAD_LOGFILE%
+
+echo Restoring custom language and architecture additions and removals...
 if "%REMOVE_CMD%" NEQ "" (
   for %%i in (%REMOVE_CMD%) do call %%i /quiet
 )
+if "%CUST_LANG%" NEQ "" (
+  for %%i in (%CUST_LANG%) do call AddCustomLanguageSupport.cmd %%i /quiet
+)
+if "%OX64_LANG%" NEQ "" (
+  for %%i in (%OX64_LANG%) do call AddOffice2010x64Support.cmd %%i /quiet
+)
 set REMOVE_CMD=
-echo %DATE% %TIME% - Info: Updated static and exclude definitions for download and update>>%DOWNLOAD_LOGFILE%
+set CUST_LANG=
+set OX64_LANG=
+echo %DATE% %TIME% - Info: Restored custom language and architecture additions and removals>>%DOWNLOAD_LOGFILE%
 :SkipSDD
 
 rem *** Download mkisofs tool ***

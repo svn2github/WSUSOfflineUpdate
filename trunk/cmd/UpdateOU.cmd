@@ -68,7 +68,7 @@ for /F %%i in (..\static\StaticDownloadLink-recent.txt) do (
   del ..\%%~ni_hashes.txt
   echo %DATE% %TIME% - Info: Deleted %%~ni_hashes.txt>>%DOWNLOAD_LOGFILE%
 )
-echo Preserving custom language additions...
+echo Preserving custom language and architecture additions and removals...
 set REMOVE_CMD=
 %SystemRoot%\System32\find.exe /I "us." ..\static\StaticDownloadLinks-w61-x86-glb.txt >nul 2>&1
 if errorlevel 1 (
@@ -95,12 +95,12 @@ for %%i in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve 
     call RemoveOffice2010x64Support.cmd %%i /quiet
   )
 )
-echo %DATE% %TIME% - Info: Preserved custom language additions>>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Preserved custom language and architecture additions and removals>>%DOWNLOAD_LOGFILE%
 echo Updating WSUS Offline Update...
 %SystemRoot%\System32\xcopy.exe ..\wsusoffline .. /S /Q /Y
 rd /S /Q ..\wsusoffline
 echo %DATE% %TIME% - Info: Updated WSUS Offline Update>>%DOWNLOAD_LOGFILE%
-echo Restoring custom language additions...
+echo Restoring custom language and architecture additions and removals...
 if "%REMOVE_CMD%" NEQ "" (
   for %%i in (%REMOVE_CMD%) do call %%i /quiet
 )
@@ -110,7 +110,7 @@ if "%CUST_LANG%" NEQ "" (
 if "%OX64_LANG%" NEQ "" (
   for %%i in (%OX64_LANG%) do call AddOffice2010x64Support.cmd %%i /quiet
 )
-echo %DATE% %TIME% - Info: Restored custom language additions>>%DOWNLOAD_LOGFILE%
+echo %DATE% %TIME% - Info: Restored custom language and architecture additions and removals>>%DOWNLOAD_LOGFILE%
 if exist ..\exclude\ExcludeList-superseded.txt (
   del ..\exclude\ExcludeList-superseded.txt
   echo %DATE% %TIME% - Info: Deleted deprecated list of superseded updates>>%DOWNLOAD_LOGFILE%
