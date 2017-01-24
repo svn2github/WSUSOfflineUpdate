@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.9.1b (r855)
+set WSUSOFFLINE_VERSION=10.9.1b (r856)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1001,18 +1001,13 @@ set REBOOT_REQUIRED=1
 
 rem *** Install Windows Management Framework ***
 if "%INSTALL_WMF%" NEQ "/instwmf" goto SkipWMFInst
+if "%OS_NAME%"=="w100" goto SkipWMFInst
+if "%OS_NAME%"=="w60" (if %OS_DOMAIN_ROLE% LSS 2 goto SkipWMFInst)
 if %DOTNET4_VER_MAJOR% LSS %DOTNET4_VER_TARGET_MAJOR% (
   echo Warning: Missing Windows Management Framework prerequisite .NET Framework 4.
   echo %DATE% %TIME% - Warning: Missing Windows Management Framework prerequisite .NET Framework ^4>>%UPDATE_LOGFILE%
   goto SkipWMFInst
 )
-if "%OS_NAME%"=="w60" (if %OS_DOMAIN_ROLE% GEQ 2 goto CheckWMF)
-if "%OS_NAME%"=="w61" goto CheckWMF
-if "%OS_NAME%"=="w62" (if %OS_DOMAIN_ROLE% GEQ 2 goto CheckWMF)
-if "%OS_NAME%"=="w63" goto CheckWMF
-if "%OS_NAME%"=="w100" goto CheckWMF
-goto SkipWMFInst
-:CheckWMF
 echo Checking Windows Management Framework installation state...
 if %WMF_VER_MAJOR% LSS %WMF_VER_TARGET_MAJOR% goto InstallWMF
 if %WMF_VER_MAJOR% GTR %WMF_VER_TARGET_MAJOR% goto SkipWMFInst

@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.9.1b (r855)
+set WSUSOFFLINE_VERSION=10.9.1b (r856)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -1287,6 +1287,9 @@ if "%SECONLY%"=="1" (
 if exist ..\exclude\custom\ExcludeListForce-all.txt (
   type ..\exclude\custom\ExcludeListForce-all.txt >>"%TEMP%\ExcludeList-%1.txt"
 )
+if "%EXC_SP%"=="1" (
+  type ..\exclude\ExcludeList-SPs.txt >>"%TEMP%\ExcludeList-%1.txt"
+)
 for %%i in ("%TEMP%\ExcludeList-%1.txt") do if %%~zi==0 del %%i
 if exist "%TEMP%\ExcludeList-%1.txt" (
   %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt" >"%TEMP%\ValidDynamicLinks-%1-%2.txt"
@@ -1394,6 +1397,9 @@ if exist ..\exclude\custom\ExcludeList-%1-%2.txt (
 )
 if exist ..\exclude\custom\ExcludeListForce-all.txt (
   type ..\exclude\custom\ExcludeListForce-all.txt >>"%TEMP%\ExcludeList-%1.txt"
+)
+if "%EXC_SP%"=="1" (
+  type ..\exclude\ExcludeList-SPs.txt >>"%TEMP%\ExcludeList-%1.txt"
 )
 for %%i in ("%TEMP%\ExcludeList-%1.txt") do if %%~zi==0 del %%i
 if exist "%TEMP%\ExcludeList-%1.txt" (
