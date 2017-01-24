@@ -81,6 +81,8 @@ echo %1 | %SystemRoot%\System32\find.exe /I ".msi" >nul 2>&1
 if not errorlevel 1 goto InstMsi
 echo %1 | %SystemRoot%\System32\find.exe /I ".msu" >nul 2>&1
 if not errorlevel 1 goto InstMsu
+echo %1 | %SystemRoot%\System32\find.exe /I ".zip" >nul 2>&1
+if not errorlevel 1 goto InstZip
 echo %1 | %SystemRoot%\System32\find.exe /I ".cab" >nul 2>&1
 if not errorlevel 1 goto InstCab
 goto UnsupType
@@ -123,6 +125,23 @@ goto InstFailure
 echo Installing %1...
 %SystemRoot%\System32\wusa.exe %1 /quiet /norestart
 set ERR_LEVEL=%errorlevel%
+if "%IGNORE_ERRORS%"=="1" goto InstSuccess
+for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
+goto InstFailure
+
+:InstZip
+if not exist ..\bin\unzip.exe goto NoUnZip
+echo Unpacking %1 to "%TEMP%\%~n1.msu"...
+..\bin\unzip.exe -o -d "%TEMP%" %1 %~n1.msu
+if not exist "%TEMP%\%~n1.msu" (
+  echo ERROR: Installation file "%TEMP%\%~n1.msu" not found.
+  echo %DATE% %TIME% - Error: Installation file "%TEMP%\%~n1.msu" not found>>%UPDATE_LOGFILE%
+  goto InstFailure
+)
+echo Installing "%TEMP%\%~n1.msu"...
+%SystemRoot%\System32\wusa.exe "%TEMP%\%~n1.msu" /quiet /norestart
+set ERR_LEVEL=%errorlevel%
+del "%TEMP%\%~n1.msu"
 if "%IGNORE_ERRORS%"=="1" goto InstSuccess
 for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
 goto InstFailure
@@ -195,6 +214,11 @@ goto Error
 :UnsupType
 echo ERROR: Unsupported file type (%1).
 echo %DATE% %TIME% - Error: Unsupported file type (%1)>>%UPDATE_LOGFILE%
+goto InstFailure
+
+:NoUnZip
+echo ERROR: Utility ..\bin\unzip.exe not found.
+echo %DATE% %TIME% - Error: Utility ..\bin\unzip.exe not found>>%UPDATE_LOGFILE%
 goto InstFailure
 
 :IntegrityError

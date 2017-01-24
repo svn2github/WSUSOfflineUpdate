@@ -1,19 +1,19 @@
-; ***  WSUS Offline Update 10.9 - Installer  ***
-; ***       Author: T. Wittrock, Kiel        ***
-; ***   Dialog scaling added by Th. Baisch   ***
+; ***  WSUS Offline Update 10.9.1b - Installer  ***
+; ***        Author: T. Wittrock, Kiel         ***
+; ***    Dialog scaling added by Th. Baisch    ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 10.9.0.853)
+#pragma compile(FileVersion, 10.9.1.854)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
 #pragma compile(ProductName, "WSUS Offline Update")
-#pragma compile(ProductVersion, 10.9.0)
+#pragma compile(ProductVersion, 10.9.1)
 
-Dim Const $caption                    = "WSUS Offline Update 10.9 - Installer"
+Dim Const $caption                    = "WSUS Offline Update 10.9.1b - Installer"
 Dim Const $wou_hostname               = "www.wsusoffline.net"
 Dim Const $donationURL                = "http://www.wsusoffline.net/donate.html"
 
@@ -296,7 +296,7 @@ EndFunc
 Func WMFTargetVersion()
   If ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") OR (@OSVersion = "WIN_2012") _
     OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") ) Then
-    Return "5.0"
+    Return "5.1"
   Else
     Return "3.0"
   EndIf
@@ -544,7 +544,7 @@ Else
 EndIf
 If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") _
   OR ( (DotNet4MainVersion() <> "4.5") AND (DotNet4MainVersion() <> "4.6") AND (NOT IsCheckBoxChecked($dotnet4)) ) _
-  OR (WMFMainVersion() = WMFTargetVersion()) ) Then
+  OR (WMFMainVersion() = WMFTargetVersion()) OR (WMFMainVersion() = "3.0") ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If MyIniRead($ini_section_installation, $ini_value_wmf, $disabled) = $enabled Then
@@ -858,7 +858,7 @@ While 1
     Case $dotnet4              ; .NET 4 check box toggled
       If ( ( (IsCheckBoxChecked($dotnet4)) OR (DotNet4MainVersion() = "4.5") OR (DotNet4MainVersion() = "4.6") ) _
        AND (@OSVersion <> "WIN_VISTA") AND (@OSVersion <> "WIN_10") AND (@OSVersion <> "WIN_2016") _
-       AND (WMFMainVersion() <> WMFTargetVersion()) ) Then
+       AND (WMFMainVersion() <> WMFTargetVersion()) AND (WMFMainVersion() <> "3.0") ) Then
         GUICtrlSetState($wmf, $GUI_ENABLE)
       Else
         GUICtrlSetState($wmf, $GUI_UNCHECKED + $GUI_DISABLE)

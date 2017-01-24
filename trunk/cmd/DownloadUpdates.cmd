@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.9+ (r853)
+set WSUSOFFLINE_VERSION=10.9.1b (r854)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -223,6 +223,7 @@ if exist custom\SetAria2EnvVars.cmd (call custom\SetAria2EnvVars.cmd) else (
 )
 if not exist %DLDR_PATH% goto NoDLdr
 if not exist ..\bin\unzip.exe goto NoUnZip
+if not exist ..\client\bin\unzip.exe copy ..\bin\unzip.exe ..\client\bin >nul
 if /i "%PROCESSOR_ARCHITECTURE%"=="AMD64" (set HASHDEEP_EXE=hashdeep64.exe) else (
   if /i "%PROCESSOR_ARCHITEW6432%"=="AMD64" (set HASHDEEP_EXE=hashdeep64.exe) else (set HASHDEEP_EXE=hashdeep.exe)
 )
@@ -1594,9 +1595,11 @@ rem *** Verifying digital file signatures for %1 %2 ***
 if not exist %SIGCHK_PATH% goto NoSigCheck
 echo Verifying digital file signatures for %1 %2...
 for /F "skip=1 tokens=1 delims=," %%i in ('%SIGCHK_PATH% %SIGCHK_COPT% -s ..\client\%1\%2 ^| %SystemRoot%\System32\findstr.exe /I /V "\"Signed\""') do (
-  del %%i
-  echo Warning: Deleted unsigned file %%i.
-  echo %DATE% %TIME% - Warning: Deleted unsigned file %%i>>%DOWNLOAD_LOGFILE%
+  if /i "%%~xi" NEQ ".zip" (
+    del %%i
+    echo Warning: Deleted unsigned file %%i.
+    echo %DATE% %TIME% - Warning: Deleted unsigned file %%i>>%DOWNLOAD_LOGFILE%
+  )
 )
 echo %DATE% %TIME% - Info: Verified digital file signatures for %1 %2>>%DOWNLOAD_LOGFILE%
 rem *** Create integrity database for %1 %2 ***

@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.9+ (r853)
+set WSUSOFFLINE_VERSION=10.9.1b (r854)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1026,6 +1026,13 @@ if "%WMF_TARGET_ID%"=="" (
   echo %DATE% %TIME% - Warning: Environment variable WMF_TARGET_ID not set>>%UPDATE_LOGFILE%
   goto SkipWMFInst
 )
+if "%OS_NAME%"=="w61" (
+  if %WMF_VER_MAJOR% EQU 3 (
+    echo Warning: WMF 5.1 must not be installed over WMF 3.0. Please uninstall WMF 3.0 first.
+    echo %DATE% %TIME% - Warning: WMF 5.1 must not be installed over WMF 3.0. Please uninstall WMF 3.0 first.>>%UPDATE_LOGFILE%
+    goto SkipWMFInst
+  )
+)
 echo %WMF_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
@@ -1036,9 +1043,6 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Warning: Windows Management Framework installation file ^(kb%WMF_TARGET_ID%^) not found.
   echo %DATE% %TIME% - Warning: Windows Management Framework installation file ^(kb%WMF_TARGET_ID%^) not found>>%UPDATE_LOGFILE%
   goto SkipWMFInst
-)
-if "%WMF_TARGET_ID%"=="2819745" (
-  if exist %SystemRoot%\Temp\wou_wmf_tried.txt del %SystemRoot%\Temp\wou_wmf_tried.txt
 )
 set RECALL_REQUIRED=1
 goto Installed
