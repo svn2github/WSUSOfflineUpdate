@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.9.1b (r854)
+set WSUSOFFLINE_VERSION=10.9.1b (r855)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -213,7 +213,10 @@ if exist ..\doc\history.txt (
 )
 set CSCRIPT_PATH=%SystemRoot%\System32\cscript.exe
 if not exist %CSCRIPT_PATH% goto NoCScript
-if exist custom\SetAria2EnvVars.cmd (call custom\SetAria2EnvVars.cmd) else (
+if exist custom\SetAria2EnvVars.cmd (
+  call ActivateAria2Downloads.cmd /reload
+  call custom\SetAria2EnvVars.cmd
+) else (
   set DLDR_PATH=..\bin\wget.exe
   set DLDR_COPT=-N
   set DLDR_LOPT=-a %DOWNLOAD_LOGFILE%

@@ -6,7 +6,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 10.9.1.854)
+#pragma compile(FileVersion, 10.9.1.855)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -543,8 +543,9 @@ Else
   $wmf = GUICtrlCreateCheckbox("Install Management Framework " & WMFTargetVersion(), $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
 If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") _
+  OR ( ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) AND (WMFMainVersion() = "3.0") ) _
   OR ( (DotNet4MainVersion() <> "4.5") AND (DotNet4MainVersion() <> "4.6") AND (NOT IsCheckBoxChecked($dotnet4)) ) _
-  OR (WMFMainVersion() = WMFTargetVersion()) OR (WMFMainVersion() = "3.0") ) Then
+  OR (WMFMainVersion() = WMFTargetVersion()) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If MyIniRead($ini_section_installation, $ini_value_wmf, $disabled) = $enabled Then
@@ -858,7 +859,8 @@ While 1
     Case $dotnet4              ; .NET 4 check box toggled
       If ( ( (IsCheckBoxChecked($dotnet4)) OR (DotNet4MainVersion() = "4.5") OR (DotNet4MainVersion() = "4.6") ) _
        AND (@OSVersion <> "WIN_VISTA") AND (@OSVersion <> "WIN_10") AND (@OSVersion <> "WIN_2016") _
-       AND (WMFMainVersion() <> WMFTargetVersion()) AND (WMFMainVersion() <> "3.0") ) Then
+       AND ( ( (@OSVersion <> "WIN_7") AND (@OSVersion <> "WIN_2008R2") ) OR (WMFMainVersion() <> "3.0") ) _
+       AND (WMFMainVersion() <> WMFTargetVersion()) ) Then
         GUICtrlSetState($wmf, $GUI_ENABLE)
       Else
         GUICtrlSetState($wmf, $GUI_UNCHECKED + $GUI_DISABLE)
