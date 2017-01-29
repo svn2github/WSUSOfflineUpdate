@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.9.1b (r857)
+set WSUSOFFLINE_VERSION=10.9.1b (r858)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1329,7 +1329,10 @@ goto :eof
 :UpdateSystem
 rem *** Determine and install missing Microsoft updates ***
 if exist %SystemRoot%\Temp\WOUpdatesToInstall.txt (
-  move /Y %SystemRoot%\Temp\WOUpdatesToInstall.txt "%TEMP%\UpdatesToInstall.txt" >nul 2>&1
+  for %%i in ("%SystemRoot%\Temp\WOUpdatesToInstall.txt") do if %%~zi==0 del %%i
+  if exist %SystemRoot%\Temp\WOUpdatesToInstall.txt (
+    move /Y %SystemRoot%\Temp\WOUpdatesToInstall.txt "%TEMP%\UpdatesToInstall.txt" >nul 2>&1
+  )
   goto InstallUpdates
 )
 if "%SKIP_DYNAMIC%"=="/skipdynamic" (
@@ -1425,6 +1428,11 @@ set WUSVC_STOPPED=1
 echo Installing updates...
 call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /errorsaswarnings
 if errorlevel 1 goto InstError
+if "%USERNAME%"=="WOUTempAdmin" (
+  if "%FINISH_MODE%"=="/shutdown" (
+    if not exist %SystemRoot%\Temp\WOUpdatesToInstall.txt echo.>nul 2>%SystemRoot%\Temp\WOUpdatesToInstall.txt
+  )
+)
 if exist %SystemRoot%\Temp\WOUpdatesToInstall.txt (set RECALL_REQUIRED=1) else (set REBOOT_REQUIRED=1)
 if "%RECALL_REQUIRED%"=="1" goto Installed
 :SkipUpdates
