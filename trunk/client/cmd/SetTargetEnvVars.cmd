@@ -2,9 +2,9 @@
 rem *** Author: T. Wittrock, Kiel ***
 
 if "%OS_RAM_GB%"=="" (
-  set UPDATES_PER_STAGE=80
+  if /i "%OS_ARCH%"=="x86" (set UPDATES_PER_STAGE=60) else (set UPDATES_PER_STAGE=40)
 ) else (
-  set /A UPDATES_PER_STAGE=OS_RAM_GB*40
+  if /i "%OS_ARCH%"=="x86" (set /A UPDATES_PER_STAGE=OS_RAM_GB*60) else (set /A UPDATES_PER_STAGE=OS_RAM_GB*40)
 )
 if exist .\custom\SetUpdatesPerStage.cmd call .\custom\SetUpdatesPerStage.cmd
 if %UPDATES_PER_STAGE% LSS 40 set UPDATES_PER_STAGE=40

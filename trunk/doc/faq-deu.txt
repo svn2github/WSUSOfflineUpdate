@@ -189,5 +189,5 @@ F: Ich benötige die deutschsprachigen Installationspakete für IEx, .NET und MSSE
 A: Bitte führen Sie einmalig das Skript ...\cmd\RemoveGermanLanguageSupport.cmd aus, um die URLs der Pakete aus den statischen Download-Definitionen zu entfernen.
 --------------------------------------------------------------------------------
 F: Vor der Updateinstallation wird das System geprüft um festzulegen, wieviele Updates in einem Lauf max. installiert werden. Gibt es einen Parameter, um diesen Wert vorzugeben?
-A: Der Parameter kann in der Datei ...\client\cmd\custom\SetUpdatesPerStage.cmdt vorgegeben werden. Er sollte nicht kleiner als 50 sein. Kleinere Werte werden automatisch auf 50 korrigiert. Nach Vorgabe des Stage-Limits muss die Datei in SetUpdatesPerStage.cmd (cmd ohne t) umbenannt werden!
+A: Der Parameter kann in der Datei ...\client\cmd\custom\SetUpdatesPerStage.cmdt vorgegeben werden. Er sollte nicht kleiner sein als der Parameter "UPDATES_PER_STAGE" in der Datei \client\cmd\SetTargetEnvVars.cmd (derzeit 40). Kleinere Werte werden automatisch korrigiert. Nach Vorgabe des Stage-Limits muss die Datei in SetUpdatesPerStage.cmd (cmd ohne t) umbenannt werden!
 --------------------------------------------------------------------------------

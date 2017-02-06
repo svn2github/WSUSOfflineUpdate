@@ -1283,3 +1283,6 @@ Version 10.9.1 -- 29.01.17
 - Fix: Custom language and architecture additions weren't correctly preserved during dynamic updating of static download definitions (Thanks to "hbuhrmester")
 - Fix: ExcludeList-SPs.txt file didn't affect dynamically determined updates (Thanks to "negg" and "hbuhrmester")
 --------------------------------------------------------------------------------
+Version ??.? -- ??.??.??
+- Default installation stage size made architecture dependent (Thanks to "aker")
+- Fix: FAQs corrected (Thanks to "jonas")

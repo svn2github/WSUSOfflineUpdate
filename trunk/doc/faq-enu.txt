@@ -191,5 +191,5 @@ Q: I don't need the German installation files for IEx, .NET and MSSE. How can I 
 A: Please call ...\cmd\RemoveGermanLanguageSupport.cmd once to remove their URLs from the static download definitions.
 --------------------------------------------------------------------------------
 Q: Before the update installation, the system is checked to determine how many updates to be installed in one run max. Is there a parameter to specify this value?
-A: The parameters can be specified in the file ...\client\cmd\custom\SetUpdatesPerStage.cmdt. It should not be less than the 50. Smaller values are automatically corrected to 50. After setting the stage limits, the file SetUpdatesPerStage.cmd must be renamed (cmd without t)!
+A: The parameters can be specified in the file ...\client\cmd\custom\SetUpdatesPerStage.cmdt. It should not be less than the parameter "UPDATES_PER_STAGE" in the file \client\cmd\SetTargetEnvVars.cmd (currently 40). Smaller values are automatically corrected. After setting the stage limits, the file SetUpdatesPerStage.cmd must be renamed (cmd without t)!
 --------------------------------------------------------------------------------
