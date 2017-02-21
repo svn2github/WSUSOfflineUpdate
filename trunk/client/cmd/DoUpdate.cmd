@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.9.1+ (r861)
+set WSUSOFFLINE_VERSION=10.9.1+ (r862)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1040,7 +1040,6 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
   goto SkipWMFInst
 )
 set RECALL_REQUIRED=1
-goto Installed
 :SkipWMFInst
 
 rem *** Install most recent Remote Desktop Client ***
@@ -1079,8 +1078,9 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
   echo %DATE% %TIME% - Warning: Remote Desktop Client installation file^(s^) not found>>%UPDATE_LOGFILE%
   goto SkipTSCInst
 )
-set REBOOT_REQUIRED=1
+set RECALL_REQUIRED=1
 :SkipTSCInst
+if "%RECALL_REQUIRED%"=="1" goto Installed
 
 rem *** Update Windows Defender definitions ***
 echo Checking Windows Defender installation state...
