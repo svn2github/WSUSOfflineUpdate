@@ -1285,5 +1285,6 @@ Version 10.9.1 -- 29.01.17
 --------------------------------------------------------------------------------
 Version ??.? -- ??.??.??
 - Default installation stage size made architecture dependent (Thanks to "aker")
+- C++ 2015 Redistributable Runtime Libraries (v. 14.0.24212.x) replaced by C++ 2017 Redistributable Runtime Libraries v. 14.10.25008.0 (Thanks to "harry" and "boco")
 - Fix: Installation of scan prerequisite updates failed after updating Remote Desktop Client on Windows Vista / 7 and Server 2008(R2) (x86/x64) systems (Thanks to "aker")
 - Fix: FAQs corrected (Thanks to "jonas")

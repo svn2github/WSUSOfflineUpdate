@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.9.1+ (r862)
+set WSUSOFFLINE_VERSION=10.9.1+ (r863)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -653,13 +653,13 @@ if "%CPP_2013_x64%"=="1" (
     echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2013_x64.exe not found>>%UPDATE_LOGFILE%
   )
 )
-if "%CPP_2015_x64%"=="1" (
-  if exist ..\cpp\vcredist2015_x64.exe (
-    echo Installing most recent C++ 2015 x64 Runtime Library...
-    call InstallOSUpdate.cmd ..\cpp\vcredist2015_x64.exe %VERIFY_MODE% /errorsaswarnings /q /norestart
+if "%CPP_2017_x64%"=="1" (
+  if exist ..\cpp\vcredist2017_x64.exe (
+    echo Installing most recent C++ 2017 x64 Runtime Library...
+    call InstallOSUpdate.cmd ..\cpp\vcredist2017_x64.exe %VERIFY_MODE% /errorsaswarnings /q /norestart
   ) else (
-    echo Warning: File ..\cpp\vcredist2015_x64.exe not found.
-    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2015_x64.exe not found>>%UPDATE_LOGFILE%
+    echo Warning: File ..\cpp\vcredist2017_x64.exe not found.
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2017_x64.exe not found>>%UPDATE_LOGFILE%
   )
 )
 :CPPInstx86
@@ -708,13 +708,13 @@ if "%CPP_2013_x86%"=="1" (
     echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2013_x86.exe not found>>%UPDATE_LOGFILE%
   )
 )
-if "%CPP_2015_x86%"=="1" (
-  if exist ..\cpp\vcredist2015_x86.exe (
-    echo Installing most recent C++ 2015 x86 Runtime Library...
-    call InstallOSUpdate.cmd ..\cpp\vcredist2015_x86.exe %VERIFY_MODE% /errorsaswarnings /q /norestart
+if "%CPP_2017_x86%"=="1" (
+  if exist ..\cpp\vcredist2017_x86.exe (
+    echo Installing most recent C++ 2017 x86 Runtime Library...
+    call InstallOSUpdate.cmd ..\cpp\vcredist2017_x86.exe %VERIFY_MODE% /errorsaswarnings /q /norestart
   ) else (
-    echo Warning: File ..\cpp\vcredist2015_x86.exe not found.
-    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2015_x86.exe not found>>%UPDATE_LOGFILE%
+    echo Warning: File ..\cpp\vcredist2017_x86.exe not found.
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2017_x86.exe not found>>%UPDATE_LOGFILE%
   )
 )
 :SkipCPPInst
