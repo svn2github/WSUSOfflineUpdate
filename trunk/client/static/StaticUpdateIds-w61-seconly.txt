@@ -8,3 +8,4 @@ kb3197867,November 2016 Security Only Quality Update for Windows 7 SP1 and Windo
 kb3205394,December 2016 Security Only Quality Update for Windows 7 SP1 and Windows Server 2008 R2 SP1
 kb3204805,December 2016 Security Only Update for .NET Framework 4.6.2 on Windows 7 and Windows Server 2008 R2
 kb3212642,January 2017 Security Only Quality Update for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4012212,March 2017 Security Only Quality Update for Windows 7 SP1 and Windows Server 2008 R2 SP1

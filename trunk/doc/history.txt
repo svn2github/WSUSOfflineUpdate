@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 10.9.1
+WSUS Offline Update 10.9.2
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1283,8 +1283,17 @@ Version 10.9.1 -- 29.01.17
 - Fix: Custom language and architecture additions weren't correctly preserved during dynamic updating of static download definitions (Thanks to "hbuhrmester")
 - Fix: ExcludeList-SPs.txt file didn't affect dynamically determined updates (Thanks to "negg" and "hbuhrmester")
 --------------------------------------------------------------------------------
-Version ??.? -- ??.??.??
+Version 10.9.2 -- 19.03.17
+- NOTE: This version will be the last one supporting Windows Vista (see https://support.microsoft.com/en-us/help/22882/windows-vista-end-of-support)
 - Default installation stage size made architecture dependent (Thanks to "aker")
 - C++ 2015 Redistributable Runtime Libraries (v. 14.0.24212.x) replaced by C++ 2017 Redistributable Runtime Libraries v. 14.10.25008.0 (Thanks to "harry" and "boco")
+- March 2017 updates added to 'security only' lists for Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems (Thanks to "hbuhrmester")
+- Replaced superseded January 2017 Servicing stack update (kb3211320) by March 2017 Servicing stack update (kb4013418) for Windows 10 Version 1607 (Thanks to "aker")
+- Microsoft Silverlight updated to v. 5.1.50905.0 (Thanks to "harry")
+- Excluded several obsolete dynamic updates for Office XP (Thanks to "Denniss")
 - Fix: Installation of scan prerequisite updates failed after updating Remote Desktop Client on Windows Vista / 7 and Server 2008(R2) (x86/x64) systems (Thanks to "aker")
+- Fix: Revised list of scan prerequisite updates for Windows Vista and Server 2008 (x86/x64) (Thanks to "Dalai", "lmacri", "Volume Z" and the community)
+- Fix: Replaced superseded Skype for Business 2015 Security Update kb3118348 (MS16-120) by kb3172539 (MS17-013) (Thanks to "Gerby")
+- Fix: Replaced superseded Skype for Business 2016 Security Update kb3118327 (MS16-120) by kb3178656 (MS17-013)
 - Fix: FAQs corrected (Thanks to "jonas")
+--------------------------------------------------------------------------------

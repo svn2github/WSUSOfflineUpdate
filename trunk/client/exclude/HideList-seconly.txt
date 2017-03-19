@@ -14,3 +14,6 @@ kb3205402,December 2016 Security and Quality Rollup for .NET Framework 3.5, 4.5.
 kb3205403,December 2016 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, and 4.6.2 on Windows Server 2012
 kb3205404,December 2016 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, and 4.6.2 on Windows 8.1 and Windows Server 2012 R2
 kb3212646,January 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4012215,March 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4012217,March 2017 Security Monthly Quality Rollup for Windows Server 2012
+kb4012216,March 2017 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
