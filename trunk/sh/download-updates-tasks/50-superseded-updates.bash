@@ -1,0 +1,265 @@
+# This file will be sourced by the shell bash.
+#
+# Filename: 50-superseded-updates.bash
+# Version: 1.0-beta-3
+# Release date: 2017-03-30
+# Intended compatibility: WSUS Offline Update Version 10.9.1 - 10.9.2
+#
+# Copyright (C) 2016-2017 Hartmut Buhrmester
+#                         <zo3xaiD8-eiK1iawa@t-online.de>
+#
+# License
+#
+#     This file is free software: you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published
+#     by the Free Software Foundation, either version 3 of the License,
+#     or (at your option) any later version.
+#
+#     This file is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#     General Public License for more details.
+#
+#     You should have received a copy of the GNU General
+#     Public License along with this program.  If not, see
+#     <http://www.gnu.org/licenses/>.
+#
+# Description
+#
+#     This task calculates superseded updates.
+
+# ========== Functions ====================================================
+
+function unpack_wsus_catalog ()
+{
+    rm -f "${temp_dir}/package.cab"
+    rm -f "${temp_dir}/package.xml"
+
+    # cabextract sometimes warns about "possible extra bytes at end
+    # of file".  These warnings, as well as the result code, can be
+    # ignored. This could be done by redirecting all output to /dev/null,
+    # but then any real error messages would also be suppressed. So,
+    # an inverted grep is used to just filter this specific error message.
+    #
+    # Some more workarounds seem to be needed for the shell option
+    # errexit and traps on ERR.
+    log_info_message "Extracting Microsoft's update catalog file package.xml ..."
+    cabextract -q -d "${temp_dir}" -F "package.cab" "../client/wsus/wsusscn2.cab" 2>&1 |
+        grep -F -v "extra bytes at end of file." || true
+    cabextract -q -d "${temp_dir}" -F "package.xml" "${temp_dir}/package.cab" || true
+    return 0
+}
+
+
+# The file ../exclude/ExcludeList-superseded.txt will be deleted, if
+# one of the following three files has changed:
+#
+# ../exclude/ExcludeList-superseded-exclude.txt
+# ../client/exclude/HideList-seconly.txt
+# ../client/wsus/wsusscn2.cab
+#
+# The function check_superseded_updates does some more tests and then
+# tests, if the file ../exclude/ExcludeList-superseded.txt still exists.
+function check_superseded_updates ()
+{
+    # The file ../exclude/ExcludeList-superseded-seconly.txt is new in
+    # WSUS Offline Update 10.9. If it doesn't exist yet, both files need
+    # to be rebuilt.
+    if [[ ! -f ../exclude/ExcludeList-superseded-seconly.txt ]]; then
+        rm -f ../exclude/ExcludeList-superseded.txt
+    fi
+    # The file ExcludeList-superseded.txt originally contained the
+    # file names only, but in recent versions of WSUS Offline Update,
+    # it contains the complete URLs.
+    if [[ -f ../exclude/ExcludeList-superseded.txt ]]; then
+        if ! grep -F -i -q 'http://' ../exclude/ExcludeList-superseded.txt; then
+            rm -f ../exclude/ExcludeList-superseded.txt
+        fi
+    fi
+    # If the file ../exclude/ExcludeList-superseded.txt does not exist
+    # anymore, it needs to be rebuilt.
+    if [[ -f "../exclude/ExcludeList-superseded.txt" ]]; then
+        log_info_message "Found valid list of superseded updates"
+    else
+        rebuild_superseded_updates
+    fi
+    return 0
+}
+
+
+# The function rebuild_superseded_updates calculates two alternate files
+# with superseded updates:
+#
+# ../exclude/ExcludeList-superseded.txt
+# ../exclude/ExcludeList-superseded-seconly.txt
+function rebuild_superseded_updates ()
+{
+    # Preconditions
+    require_file "${temp_dir}/package.xml" || fail "The required file package.xml is missing"
+
+    # Create a new file ExcludeList-superseded.txt from package.xml and
+    # ExcludeList-superseded-exclude.txt
+    log_info_message "Determining superseded updates (please be patient, this will take a while)..."
+
+    # *** First step: Calculate superseded revision ids ***
+    #
+    # Superseded bundle records can be recognized by an element of type
+    # "SupersededBy" with one or more "RevisionIds". Some of these
+    # RevisionIds may not be valid, though. For example, the bundle
+    # records for some Windows 7 updates include the element:
+    #
+    #  <SupersededBy>
+    #    <Revision Id="13941260"/>
+    #    <Revision Id="16506826"/>
+    #  </SupersededBy>
+    #
+    # but both RevisionIds don't seem to exist. The page
+    # "https://support.microsoft.com/en-us/kb/2604114" for the update
+    # files doesn't indicate, that these updates are outdated. Therefore,
+    # it is necessary to extract all existing bundle RevisionIds and
+    # compare this list to the supposed superseding RevisionIds.
+
+    log_info_message "Extracting file 1..."
+    # Extract all existing bundle RevisionIds
+    ${xmlstarlet} transform \
+        ../xslt/extract-existing-bundle-revision-ids.xsl \
+        "${temp_dir}/package.xml" \
+        > "${temp_dir}/existing-bundle-revision-ids.txt"
+    sort_in_place "${temp_dir}/existing-bundle-revision-ids.txt"
+
+    log_info_message "Extracting file 2..."
+    # Extract all superseding RevisionIds and the superseded RevisionIds
+    # of the bundle records, to which they belong
+    ${xmlstarlet} transform \
+        ../xslt/extract-superseding-and-superseded-revision-ids.xsl \
+        "${temp_dir}/package.xml" \
+        > "${temp_dir}/superseding-and-superseded-revision-ids.txt"
+    sort_in_place "${temp_dir}/superseding-and-superseded-revision-ids.txt"
+
+    log_info_message "Joining files 1 and 2 to file 3..."
+    # Get valid superseded RevisionIds by verifying, that the superseding
+    # RevisionIds actually exist.
+
+    # Field order:
+    # File 1: existing-bundle-revision-ids.txt
+    # - Field 1: existing bundle RevisionIds
+    # File 2: superseding-and-superseded-revision-ids.txt
+    # - Field 1: superseding RevisionIds
+    # - Field 2: superseded RevisionIds (not verified)
+
+    # Write verified, superseded RevisionIds
+    join -t ',' -o 2.2 \
+        "${temp_dir}/existing-bundle-revision-ids.txt" \
+        "${temp_dir}/superseding-and-superseded-revision-ids.txt" \
+        > "${temp_dir}/ValidSupersededRevisionIds.txt"
+    sort_in_place "${temp_dir}/ValidSupersededRevisionIds.txt"
+
+    # *** Second step: Calculate superseded file ids ***
+
+    log_info_message "Extracting file 4..."
+    # Extract three connected fields from the same Update records:
+    # - the Bundle RevisionId from the field "BundledBy"
+    # - the RevisionId of the Update record itself
+    # - the File-Id of the Payload File
+    ${xmlstarlet} transform \
+        ../xslt/extract-update-revision-and-file-ids.xsl \
+        "${temp_dir}/package.xml" \
+        > "${temp_dir}/BundledUpdateRevisionAndFileIds.txt"
+    sort_in_place "${temp_dir}/BundledUpdateRevisionAndFileIds.txt"
+
+    log_info_message "Joining files 3 and 4 to file 5..."
+    # Get superseded File-Ids of the PayloadFiles. Since the superseded
+    # Bundle RevisionIds are verified, this join will also verify the
+    # FileIds. This means: if there are Bundle RevisionIds in the second
+    # file, which don't really exist, they won't be matched by this join.
+
+    # Revised field order:
+    # File 1: ValidSupersededRevisionIds.txt
+    # - Field 1: superseded Bundle RevisionId (verified)
+    # File 2: BundledUpdateRevisionAndFileIds.txt
+    # - Field 1: Bundle RevisionId
+    # - Field 2: Update RevisionId (not really needed, but useful for
+    #            debugging)
+    # - Field 3: FileId
+
+    # Write FileIds only
+    join -t ',' -o 2.3 \
+        "${temp_dir}/ValidSupersededRevisionIds.txt" \
+        "${temp_dir}/BundledUpdateRevisionAndFileIds.txt" \
+        > "${temp_dir}/SupersededFileIds.txt"
+    sort_in_place "${temp_dir}/SupersededFileIds.txt"
+
+    # *** Third step: Calculate superseded file locations (URLs) ***
+
+    log_info_message "Extracting file 6..."
+    ${xmlstarlet} transform \
+        ../xslt/extract-update-cab-exe-ids-and-locations.xsl \
+        "${temp_dir}/package.xml" \
+        > "${temp_dir}/UpdateCabExeIdsAndLocations.txt"
+    sort_in_place "${temp_dir}/UpdateCabExeIdsAndLocations.txt"
+
+    log_info_message "Joining files 5 and 6 to file 7..."
+    # Field order:
+    # File 1: SupersededFileIds.txt
+    # - Field 1: FileId
+    # File 2: UpdateCabExeIdsAndLocations.txt
+    # - Field 1: FileId
+    # - Field 2: Location (URL)
+
+    # Write superseded File Locations
+    join -t ',' -o 2.2 \
+        "${temp_dir}/SupersededFileIds.txt" \
+        "${temp_dir}/UpdateCabExeIdsAndLocations.txt" \
+        > "${temp_dir}/ExcludeListLocations-superseded-all.txt"
+    sort_in_place "${temp_dir}/ExcludeListLocations-superseded-all.txt"
+
+    # *** Apply ExcludeList-superseded-exclude.txt ***
+    #
+    # The file ExcludeList-superseded-exclude.txt contains KB
+    # numbers of updates, which are marked as superseded by
+    # Microsoft, but which should be downloaded and installed
+    # nonetheless. Therefore, theses KB numbers are removed from the
+    # file ExcludeListLocations-superseded-all.txt again.
+    apply_exclude_lists \
+        "${temp_dir}/ExcludeListLocations-superseded-all.txt" \
+        "../exclude/ExcludeList-superseded.txt" \
+        "${temp_dir}/ExcludeList-superseded-exclude.txt" \
+        "../exclude/ExcludeList-superseded-exclude.txt" \
+        "../exclude/custom/ExcludeList-superseded-exclude.txt"
+    sort_in_place "../exclude/ExcludeList-superseded.txt"
+
+    # The file ../exclude/ExcludeList-superseded-seconly.txt" is new in
+    # WSUS Offline Update 10.9. It is created by applying six additional
+    # exclude lists.
+    apply_exclude_lists \
+        "${temp_dir}/ExcludeListLocations-superseded-all.txt" \
+        "../exclude/ExcludeList-superseded-seconly.txt" \
+        "${temp_dir}/ExcludeList-superseded-exclude-seconly.txt" \
+        "../exclude/ExcludeList-superseded-exclude.txt" \
+        "../exclude/custom/ExcludeList-superseded-exclude.txt" \
+        "../client/static/StaticUpdateIds-w61-seconly.txt" \
+        "../client/static/StaticUpdateIds-w62-seconly.txt" \
+        "../client/static/StaticUpdateIds-w63-seconly.txt" \
+        "../client/static/custom/StaticUpdateIds-w61-seconly.txt" \
+        "../client/static/custom/StaticUpdateIds-w62-seconly.txt" \
+        "../client/static/custom/StaticUpdateIds-w63-seconly.txt"
+    sort_in_place "../exclude/ExcludeList-superseded-seconly.txt"
+
+    # After recalculating superseded updates, all dynamic updates must
+    # be recalculated as well.
+    reevaluate_dynamic_updates
+
+    if ensure_non_empty_file "../exclude/ExcludeList-superseded.txt"; then
+        log_info_message "Created file ExcludeList-superseded.txt"
+    else
+        fail "File ExcludeList-superseded.txt was not created"
+    fi
+    return 0
+}
+
+# ========== Commands =====================================================
+
+unpack_wsus_catalog
+check_superseded_updates
+echo ""
+return 0

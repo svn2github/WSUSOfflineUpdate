@@ -59,7 +59,7 @@ set OS_NAME=w2k3
 goto SetOfficeName
 
 :Windows6.0
-rem *** Windows Vista / Server 2008 ***
+rem *** Windows Server 2008 ***
 set OS_NAME=w60
 set MSI_VER_TARGET_MAJOR=4
 set MSI_VER_TARGET_MINOR=5

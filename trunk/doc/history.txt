@@ -1297,3 +1297,6 @@ Version 10.9.2 -- 19.03.17
 - Fix: Replaced superseded Skype for Business 2016 Security Update kb3118327 (MS16-120) by kb3178656 (MS17-013)
 - Fix: FAQs corrected (Thanks to "jonas")
 --------------------------------------------------------------------------------
+Version ??.? -- ??.??.??
+- Included complete rewrite of the Linux scripts version 1.0-beta-3 (Special thanks to H. Buhrmester)
+- Support removed for Windows Vista since Microsoft discontinued support for it on April 11, 2017 (see https://support.microsoft.com/en-us/help/22882/windows-vista-end-of-support)

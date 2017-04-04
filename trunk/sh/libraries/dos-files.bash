@@ -1,0 +1,90 @@
+# This file will be sourced by the shell bash.
+#
+# Filename: dos-files.bash
+# Version: 1.0-beta-3
+# Release date: 2017-03-30
+# Intended compatibility: WSUS Offline Update Version 10.9.1 - 10.9.2
+#
+# Copyright (C) 2016-2017 Hartmut Buhrmester
+#                         <zo3xaiD8-eiK1iawa@t-online.de>
+#
+# License
+#
+#     This file is free software: you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published
+#     by the Free Software Foundation, either version 3 of the License,
+#     or (at your option) any later version.
+#
+#     This file is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#     General Public License for more details.
+#
+#     You should have received a copy of the GNU General
+#     Public License along with this program.  If not, see
+#     <http://www.gnu.org/licenses/>.
+#
+# Description
+#
+#     This file provides simple wrapper functions for cat, cut, grep
+#     and tail. They remove any carriage returns from the result. With
+#     these wrapper functions, the download script can use the file in
+#     the static and exclude directory directly, without changing them
+#     to the Linux format first.
+#
+#     These wrapper functions were introduced as a workaround for old
+#     versions of wget: wget downloads all files again, if the file
+#     size changes, regardless of the file modification date. Because
+#     removing carriage returns changes the file size, timestamping does
+#     not work for files in the static and exclude directories, if they
+#     are replaced with the "update of static download definitions".
+#
+#     Wget 1.17 and later use a better method for timestamping, and then
+#     all files could be changed on the first run of the script. Then
+#     such workarounds are not necessary anymore. However, wget 1.17 is
+#     not yet available in Debian 8 stable/Jessie.
+#
+#     On the other side, the Linux scripts may change the configuration
+#     files in the static and exclude directories, because these are
+#     not used for the installation. But the configuration files in
+#     the client/static and client/exclude directories should not be
+#     changed. These files are used since WSUS Offline Update version
+#     10.9 to handle security-only updates. Then the wrapper functions
+#     to read DOS files are still needed.
+
+
+function cat_dos ()
+{
+    cat "$@" | tr -d '\r'
+}
+
+function cut_dos ()
+{
+    cut "$@" | tr -d '\r'
+}
+
+function grep_dos ()
+{
+    grep "$@" | tr -d '\r'
+}
+
+function tail_dos ()
+{
+    tail "$@" | tr -d '\r'
+}
+
+# filter_cr and unquote can be used as filters in pipes,
+# for example:
+#
+# cat ../doc/coverage.txt | filter_cr | less -U
+function filter_cr ()
+{
+    tr -d '\r'
+}
+
+function unquote ()
+{
+    tr -d '"'
+}
+
+return 0

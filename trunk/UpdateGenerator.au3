@@ -6,7 +6,7 @@
 #include <GUIConstants.au3>
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Generator")
-#pragma compile(FileVersion, 10.9.2.865)
+#pragma compile(FileVersion, 10.9.2.866)
 #pragma compile(InternalName, "Generator")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateGenerator.exe)
@@ -152,7 +152,7 @@ Dim $o2k7_dan, $o2k10_dan, $o2k13_dan   ; Danish
 Dim $o2k7_nor, $o2k10_nor, $o2k13_nor   ; Norwegian
 Dim $o2k7_fin, $o2k10_fin, $o2k13_fin   ; Finnish
 Dim $o2k16_glb                          ; Office 2016 (global)
-Dim $w60_glb, $w60_x64_glb              ; Windows Vista / Server 2008 (global)
+Dim $w60_glb, $w60_x64_glb              ; Windows Server 2008 (global)
 Dim $w61_glb, $w61_x64_glb              ; Windows 7 / Server 2008 R2 (global)
 Dim $w62_x64_glb                        ; Windows Server 2012 (global)
 Dim $w63_glb, $w63_x64_glb              ; Windows 8.1 / Server 2012 R2 (global)
@@ -934,7 +934,7 @@ EndFunc
 
 Func SaveSettings()
 
-;  Windows Vista / Server 2008 group
+;  Windows Server 2008 group
   IniWrite($inifilename, $ini_section_w60, $lang_token_glb, CheckBoxStateToString($w60_glb))
   IniWrite($inifilename, $ini_section_w60_x64, $lang_token_glb, CheckBoxStateToString($w60_x64_glb))
 
@@ -1669,11 +1669,11 @@ Else
   GuiCtrlCreateTabItem("Legacy products")
 EndIf
 
-;  Windows Vista / Server 2008 group
+;  Windows Server 2008 group
 $txtxpos = 2 * $txtxoffset
 $txtypos = 3.5 * $txtyoffset + $txtheight
-GUICtrlCreateGroup("Windows Vista / Server 2008 (w60 / w60-x64)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
-;  Windows Vista / Server 2008 global
+GUICtrlCreateGroup("Windows Server 2008 (w60 / w60-x64)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
+;  Windows Server 2008 global
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = 3 * $txtxoffset
 If ShowGUIInGerman() Then
@@ -1686,7 +1686,7 @@ If IniRead($inifilename, $ini_section_w60, $lang_token_glb, $disabled) = $enable
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
-;  Windows Vista / Server 2008 x64 global
+;  Windows Server 2008 x64 global
 $txtxpos = $txtxpos + $groupwidth / 2 - $txtxoffset
 If ShowGUIInGerman() Then
   $w60_x64_glb = GUICtrlCreateCheckbox("x64 Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
@@ -1911,9 +1911,9 @@ EndIf
 $txtypos = $txtypos + 2 * $txtyoffset
 $txtxpos = 3 * $txtxoffset
 If ShowGUIInGerman() Then
-  GUICtrlCreateLabel("Diese Produkte wurden von Microsoft abgekündigt zum 11.04.2017 (Windows Vista / Server 2008) bzw. 10.10.2017 (Office 2007).", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
+  GUICtrlCreateLabel("Diese Produkte wurden von Microsoft abgekündigt zum 14.01.2020 (Windows Server 2008) bzw. 10.10.2017 (Office 2007).", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
 Else
-  GUICtrlCreateLabel("Microsoft will discontinue these products on 04/11/2017 (Windows Vista / Server 2008) resp. 10/10/2017 (Office 2007).", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
+  GUICtrlCreateLabel("Microsoft will discontinue these products on 1/14/2020 (Windows Server 2008) resp. 10/10/2017 (Office 2007).", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
 EndIf
 
 ;  End Tab item definition

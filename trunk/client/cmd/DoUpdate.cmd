@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.9.2
+set WSUSOFFLINE_VERSION=10.9.2+ (r866)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -329,11 +329,11 @@ goto SP%OS_NAME%
 :SPw62
 if "%BOOT_MODE%" NEQ "/autoreboot" goto SPw6Now
 if "%USERNAME%"=="WOUTempAdmin" goto SPw6Now
-echo %DATE% %TIME% - Info: Preparing installation of most recent Service Pack for Windows Vista / ^7>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Preparing installation of most recent Service Pack>>%UPDATE_LOGFILE%
 set RECALL_REQUIRED=1
 goto Installed
 :SPw6Now
-echo %DATE% %TIME% - Info: Installing most recent Service Pack for Windows Vista / ^7>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Installing most recent Service Pack>>%UPDATE_LOGFILE%
 call InstallListedUpdates.cmd %VERIFY_MODE% /unattend /forcerestart
 if errorlevel 1 goto InstError
 set RECALL_REQUIRED=1
