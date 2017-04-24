@@ -7,3 +7,6 @@ kb3197873,November 2016 Security Only Quality Update for Windows 8.1 and Windows
 kb3205400,December 2016 Security Only Quality Update for Windows 8.1 and Windows Server 2012 R2
 kb3204802,December 2016 Security Only Update for the .NET Framework 4.6.2 on Windows 8.1 and Windows Server 2012 R2
 kb4012213,March 2017 Security Only Quality Update for Windows 8.1 and Windows Server 2012 R2
+kb4015547,April 2017 Security Only Quality Update for Windows 8.1 and Windows Server 2012 R2
+kb4014574,April 2017 Security Update for .NET Framework 3.5.1 on Windows 8.1 and Windows Server 2012 R2
+kb4014550,April 2017 Security Update for .NET Framework 4.6.2 on Windows 8.1 and Windows Server 2012 R2

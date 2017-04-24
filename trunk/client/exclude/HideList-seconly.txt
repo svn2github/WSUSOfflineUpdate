@@ -17,3 +17,12 @@ kb3212646,January 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Win
 kb4012215,March 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
 kb4012217,March 2017 Security Monthly Quality Rollup for Windows Server 2012
 kb4012216,March 2017 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4015549,April 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4015551,April 2017 Security Monthly Quality Rollup for Windows Server 2012
+kb4015550,April 2017 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4014565,April 2017 Security and Quality Rollup for .NET Framework 3.5.1 on Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4014563,April 2017 Security and Quality Rollup for .NET Framework 3.5.1 on Windows Server 2012
+kb4014567,April 2017 Security and Quality Rollup for .NET Framework 3.5.1 on Windows 8.1 and Windows Server 2012 R2
+kb4014547,April 2017 Security and Quality Rollup for .NET Framework 4.6.2 on Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4014545,April 2017 Security and Quality Rollup for .NET Framework 4.6.2 on Windows Server 2012
+kb4014546,April 2017 Security and Quality Rollup for .NET Framework 4.6.2 on Windows 8.1 and Windows Server 2012 R2

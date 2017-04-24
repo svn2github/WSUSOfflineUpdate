@@ -1300,3 +1300,6 @@ Version 10.9.2 -- 19.03.17
 Version ??.? -- ??.??.??
 - Included complete rewrite of the Linux scripts version 1.0-beta-3 (Special thanks to H. Buhrmester)
 - Support removed for Windows Vista since Microsoft discontinued support for it on April 11, 2017 (see https://support.microsoft.com/en-us/help/22882/windows-vista-end-of-support)
+- April 2017 updates added to 'security only' lists for Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems
+- Microsoft Silverlight updated to v. 5.1.50906.0 (Thanks to "harry")
+- Fix: Revised list of scan prerequisite updates for Windows Vista and Server 2008 (x86/x64) (Thanks to "Dalai", "lmacri" and the community)
