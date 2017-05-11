@@ -2,3 +2,4 @@ kb3205638,December 2016 security update for Microsoft graphics component
 kb4012583,March 2017 security update for Microsoft graphics component
 kb4015195,April 2017 security update for the Win32k information disclosure vulnerability
 kb4015380,April 2017 security update for the ATMFD.dll information disclosure vulnerability
+kb4018271,May 2017 Cumulative security update for Internet Explorer

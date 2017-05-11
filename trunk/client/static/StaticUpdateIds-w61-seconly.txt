@@ -12,3 +12,6 @@ kb4012212,March 2017 Security Only Quality Update for Windows 7 SP1 and Windows 
 kb4015546,April 2017 Security Only Quality Update for Windows 7 SP1 and Windows Server 2008 R2 SP1
 kb4014573,April 2017 Security Update for .NET Framework 3.5.1 on Windows 7 SP1 and Windows Server 2008 R2 SP1
 kb4014552,April 2017 Security Update for .NET Framework 4.6.2 on Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4019263,May 2017 Security Only Quality Update for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4014579,May 2017 Security Update for .NET Framework 3.5.1 on Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4014588,May 2017 Security Update for .NET Framework 4.6.2 on Windows 7 SP1 and Windows Server 2008 R2 SP1
