@@ -1,3 +1,3 @@
 http://download.microsoft.com/download/9/2/3/9233791d-a020-4320-b3c7-e1520397e80f/dotnetfx35langpack_x86hu.exe
 http://download.microsoft.com/download/5/A/8/5A830BE6-552C-4D66-A647-12112D8521CA/NDP46-KB3045557-x86-x64-AllOS-HUN.exe
-http://download.microsoft.com/download/D/C/3/DC399822-3C64-4A11-B57B-836F2DAA25D5/NDP462-KB3151800-x86-x64-AllOS-HUN.exe
+http://download.microsoft.com/download/B/A/9/BA92F957-AD26-4FD0-ABF1-A7337BB692BD/NDP47-KB3186497-x86-x64-AllOS-HUN.exe

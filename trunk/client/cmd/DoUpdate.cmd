@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=10.9.2+ (r870)
+set WSUSOFFLINE_VERSION=10.9.2+ (r871)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -774,6 +774,7 @@ if %DOTNET35_VER_BUILD% GTR %DOTNET35_VER_TARGET_BUILD% goto SkipDotNet35Inst
 if %DOTNET35_VER_REVIS% GEQ %DOTNET35_VER_TARGET_REVIS% goto SkipDotNet35Inst
 :InstallDotNet35
 if exist %SystemRoot%\Temp\wou_net35_tried.txt goto SkipDotNet35Inst
+if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
 echo. >%SystemRoot%\Temp\wou_net35_tried.txt
 if "%OS_NAME%"=="w62" goto InstallDotNet35%OS_NAME%
 if "%OS_NAME%"=="w63" goto InstallDotNet35%OS_NAME%
@@ -868,6 +869,9 @@ set REBOOT_REQUIRED=1
 
 rem *** Install .NET Framework 4 ***
 if "%INSTALL_DOTNET4%" NEQ "/instdotnet4" goto SkipDotNet4Inst
+if "%OS_NAME%"=="w100" (
+  if %OS_VER_BUILD% LSS 14393 goto SkipDotNet4Inst
+)
 echo Checking .NET Framework 4 installation state...
 if %DOTNET4_VER_MAJOR% LSS %DOTNET4_VER_TARGET_MAJOR% goto InstallDotNet4
 if %DOTNET4_VER_MAJOR% GTR %DOTNET4_VER_TARGET_MAJOR% goto SkipDotNet4Inst
@@ -875,14 +879,44 @@ if %DOTNET4_VER_MINOR% LSS %DOTNET4_VER_TARGET_MINOR% goto InstallDotNet4
 if %DOTNET4_VER_MINOR% GTR %DOTNET4_VER_TARGET_MINOR% goto SkipDotNet4Inst
 if %DOTNET4_VER_BUILD% GEQ %DOTNET4_VER_TARGET_BUILD% goto SkipDotNet4Inst
 :InstallDotNet4
+if "%DOTNET4_PREREQ_ID%"=="" goto InstallDotNet4Main
+if exist %SystemRoot%\Temp\wou_net4pre_tried.txt goto SkipDotNet4Inst
+if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
+echo. >%SystemRoot%\Temp\wou_net4pre_tried.txt
+echo Checking .NET Framework 4 prerequisite...
+%CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
+if exist "%TEMP%\InstalledUpdateIds.txt" (
+  %SystemRoot%\System32\find.exe /I "%DOTNET4_PREREQ_ID%" "%TEMP%\InstalledUpdateIds.txt" >nul 2>&1
+  if errorlevel 1 (
+    echo %DOTNET4_PREREQ_ID%>"%TEMP%\MissingUpdateIds.txt"
+    del "%TEMP%\InstalledUpdateIds.txt"
+  ) else (
+    del "%TEMP%\InstalledUpdateIds.txt"
+    goto InstallDotNet4Main
+  )
+) else (
+  echo %DOTNET4_PREREQ_ID%>"%TEMP%\MissingUpdateIds.txt"
+)
+call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
+if errorlevel 1 goto ListError
+if exist "%TEMP%\UpdatesToInstall.txt" (
+  echo Installing .NET Framework 4 prerequisite...
+  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /errorsaswarnings
+) else (
+  echo Warning: .NET Framework 4 prerequisite installation file ^(kb%DOTNET4_PREREQ_ID%^) not found.
+  echo %DATE% %TIME% - Warning: .NET Framework 4 prerequisite installation file ^(kb%DOTNET4_PREREQ_ID%^) not found>>%UPDATE_LOGFILE%
+  goto SkipDotNet4Inst
+)
+:InstallDotNet4Main
 if exist %SystemRoot%\Temp\wou_net4_tried.txt goto SkipDotNet4Inst
+if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
 echo. >%SystemRoot%\Temp\wou_net4_tried.txt
 if "%OS_NAME%"=="w60" (
   set DOTNET4_FILENAME=..\dotnet\NDP46-KB3045557-x86-x64-AllOS-ENU.exe
   set DOTNET4LP_FILENAME=..\dotnet\NDP46-KB3045557-x86-x64-AllOS-%OS_LANG%.exe
 ) else (
-  set DOTNET4_FILENAME=..\dotnet\NDP462-KB3151800-x86-x64-AllOS-ENU.exe
-  set DOTNET4LP_FILENAME=..\dotnet\NDP462-KB3151800-x86-x64-AllOS-%OS_LANG%.exe
+  set DOTNET4_FILENAME=..\dotnet\NDP47-KB3186497-x86-x64-AllOS-ENU.exe
+  set DOTNET4LP_FILENAME=..\dotnet\NDP47-KB3186497-x86-x64-AllOS-%OS_LANG%.exe
 )
 if "%OS_SRV_CORE%"=="1" (
   set DOTNET4_INSTOPTS=/q /norestart
@@ -890,19 +924,19 @@ if "%OS_SRV_CORE%"=="1" (
   set DOTNET4_INSTOPTS=/passive /norestart
 )
 if not exist %DOTNET4_FILENAME% (
-  echo Warning: .NET Framework 4.6.x installation file ^(%DOTNET4_FILENAME%^) not found.
-  echo %DATE% %TIME% - Warning: .NET Framework 4.6.x installation file ^(%DOTNET4_FILENAME%^) not found>>%UPDATE_LOGFILE%
+  echo Warning: .NET Framework 4 installation file ^(%DOTNET4_FILENAME%^) not found.
+  echo %DATE% %TIME% - Warning: .NET Framework 4 installation file ^(%DOTNET4_FILENAME%^) not found>>%UPDATE_LOGFILE%
   goto SkipDotNet4Inst
 )
-echo Installing .NET Framework 4.6.x...
+echo Installing .NET Framework 4...
 call InstallOSUpdate.cmd %DOTNET4_FILENAME% %VERIFY_MODE% /errorsaswarnings %DOTNET4_INSTOPTS% /lcid 1033
 if "%OS_LANG%" NEQ "enu" (
   if exist %DOTNET4LP_FILENAME% (
-    echo Installing .NET Framework 4.6.x Language Pack...
+    echo Installing .NET Framework 4 Language Pack...
     for /F %%i in ('dir /B %DOTNET4LP_FILENAME%') do call InstallOSUpdate.cmd ..\dotnet\%%i %VERIFY_MODE% /errorsaswarnings %DOTNET4_INSTOPTS%
   ) else (
-    echo Warning: .NET Framework 4.6.x Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found.
-    echo %DATE% %TIME% - Warning: .NET Framework 4.6.x Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found>>%UPDATE_LOGFILE%
+    echo Warning: .NET Framework 4 Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found.
+    echo %DATE% %TIME% - Warning: .NET Framework 4 Language Pack installation file ^(%DOTNET4LP_FILENAME%^) not found>>%UPDATE_LOGFILE%
   )
 )
 set RECALL_REQUIRED=1
@@ -1015,6 +1049,7 @@ if %WMF_VER_MINOR% LSS %WMF_VER_TARGET_MINOR% goto InstallWMF
 if %WMF_VER_MINOR% GEQ %WMF_VER_TARGET_MINOR% goto SkipWMFInst
 :InstallWMF
 if exist %SystemRoot%\Temp\wou_wmf_tried.txt goto SkipWMFInst
+if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
 echo. >%SystemRoot%\Temp\wou_wmf_tried.txt
 if "%WMF_TARGET_ID%"=="" (
   echo Warning: Environment variable WMF_TARGET_ID not set.
@@ -1572,6 +1607,7 @@ if exist %SystemRoot%\Temp\wou_w63upd2_tried.txt del %SystemRoot%\Temp\wou_w63up
 if exist %SystemRoot%\Temp\wou_iepre_tried.txt del %SystemRoot%\Temp\wou_iepre_tried.txt
 if exist %SystemRoot%\Temp\wou_ie_tried.txt del %SystemRoot%\Temp\wou_ie_tried.txt
 if exist %SystemRoot%\Temp\wou_net35_tried.txt del %SystemRoot%\Temp\wou_net35_tried.txt
+if exist %SystemRoot%\Temp\wou_net4pre_tried.txt del %SystemRoot%\Temp\wou_net4pre_tried.txt
 if exist %SystemRoot%\Temp\wou_net4_tried.txt del %SystemRoot%\Temp\wou_net4_tried.txt
 if exist %SystemRoot%\Temp\wou_wmf_tried.txt del %SystemRoot%\Temp\wou_wmf_tried.txt
 if exist %SystemRoot%\Temp\wou_wupre_tried.txt del %SystemRoot%\Temp\wou_wupre_tried.txt

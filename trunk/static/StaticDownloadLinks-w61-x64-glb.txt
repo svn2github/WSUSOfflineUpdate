@@ -19,3 +19,4 @@ http://download.microsoft.com/download/2/1/C/21C5BF29-634B-4D37-803D-AA565C267B1
 http://download.microsoft.com/download/6/F/5/6F5FF66C-6775-42B0-86C4-47D41F2DA187/Win7AndW2K8R2-KB3191566-x64.zip
 http://download.microsoft.com/download/2/4/7/247BDD8A-6AAE-4466-B137-3B2918D0CEAB/Windows6.1-KB3177467-x64.msu
 http://download.windowsupdate.com/d/msdownload/update/software/updt/2016/09/windows6.1-kb3172605-x64_2bb9bc55f347eee34b1454b50c436eb6fd9301fc.msu
+http://download.microsoft.com/download/2/F/4/2F4F48F4-D980-43AA-906A-8FFF40BCB832/Windows6.1-KB4019990-x64.msu

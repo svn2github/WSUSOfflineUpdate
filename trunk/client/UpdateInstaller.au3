@@ -6,7 +6,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 10.9.2.870)
+#pragma compile(FileVersion, 10.9.2.871)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -89,7 +89,8 @@ Dim Const $path_rel_hashes            = "\md\"
 Dim Const $path_rel_autologon         = "\bin\Autologon.exe"
 Dim Const $path_rel_silverlight       = "\win\glb\Silverlight*.exe"
 Dim Const $path_rel_cpp               = "\cpp\vcredist*.exe"
-Dim Const $path_rel_instdotnet4       = "\dotnet\NDP46*.exe"
+Dim Const $path_rel_instdotnet46      = "\dotnet\NDP46*.exe"
+Dim Const $path_rel_instdotnet47      = "\dotnet\NDP47*.exe"
 Dim Const $path_rel_ofc_glb           = "\ofc\glb\"
 Dim Const $path_rel_msse_x86          = "\msse\x86-glb\MSEInstall-x86-*.exe"
 Dim Const $path_rel_msse_x64          = "\msse\x64-glb\MSEInstall-x64-*.exe"
@@ -273,7 +274,7 @@ Func DotNet4TargetVersion()
   If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) Then
     Return "4.6.000"
   Else
-    Return "4.6.015"
+    Return "4.7.020"
   EndIf
 EndFunc
 
@@ -281,7 +282,7 @@ Func DotNet4DisplayVersion()
   If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) Then
     Return "4.6"
   Else
-    Return "4.6.2"
+    Return "4.7"
   EndIf
 EndFunc
 
@@ -333,7 +334,11 @@ Func CPPPresent($basepath)
 EndFunc
 
 Func DotNet4InstPresent($basepath)
-  Return FileExists($basepath & $path_rel_instdotnet4)
+  If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) Then
+    Return FileExists($basepath & $path_rel_instdotnet46)
+  Else
+    Return FileExists($basepath & $path_rel_instdotnet47)
+  EndIf
 EndFunc
 
 Func OfcGlbPresent($basepath)
@@ -544,7 +549,7 @@ Else
 EndIf
 If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") _
   OR ( ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) AND (WMFMainVersion() = "3.0") ) _
-  OR ( (DotNet4MainVersion() <> "4.5") AND (DotNet4MainVersion() <> "4.6") AND (NOT IsCheckBoxChecked($dotnet4)) ) _
+  OR ( (DotNet4MainVersion() <> "4.5") AND (DotNet4MainVersion() <> "4.6") AND (DotNet4MainVersion() <> "4.7") AND (NOT IsCheckBoxChecked($dotnet4)) ) _
   OR (WMFMainVersion() = WMFTargetVersion()) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
@@ -857,7 +862,7 @@ While 1
       EndIf
 
     Case $dotnet4              ; .NET 4 check box toggled
-      If ( ( (IsCheckBoxChecked($dotnet4)) OR (DotNet4MainVersion() = "4.5") OR (DotNet4MainVersion() = "4.6") ) _
+      If ( ( (IsCheckBoxChecked($dotnet4)) OR (DotNet4MainVersion() = "4.5") OR (DotNet4MainVersion() = "4.6") OR (DotNet4MainVersion() = "4.7") ) _
        AND (@OSVersion <> "WIN_VISTA") AND (@OSVersion <> "WIN_10") AND (@OSVersion <> "WIN_2016") _
        AND ( ( (@OSVersion <> "WIN_7") AND (@OSVersion <> "WIN_2008R2") ) OR (WMFMainVersion() <> "3.0") ) _
        AND (WMFMainVersion() <> WMFTargetVersion()) ) Then
