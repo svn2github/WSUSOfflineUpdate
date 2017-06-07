@@ -1310,3 +1310,6 @@ Version ??.? -- ??.??.??
 - Fix: Download part erroneously excluded Security Update kb3149090 (MS16-047) for SAM and LSAD remote protocols
 - Fix: Replaced superseded Outlook 2010 Security Update kb3118313 (MS16-107) by kb3118388 (April 2017)
 - Fix: Replaced superseded Office 2010 Security Update kb3114400 (MS16-099) by kb3118310 (May 2017)
+- Fix: Replaced superseded Office 2013 Security Update kb3114340 (MS16-099) by kb3172458 (May 2017)
+- Fix: Replaced superseded Skype for Business 2016 Security Update kb3178656 (MS17-013) by kb3191858 (May 2017)
+- Fix: Replaced superseded Office 2016 Security Update kb3085635 (MS15-099) by kb3114375 (May 2017)
