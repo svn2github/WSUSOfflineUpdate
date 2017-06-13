@@ -10,3 +10,4 @@ kb4014549,April 2017 Security Update for .NET Framework 4.6.2 on Windows Server 
 kb4019214,May 2017 Security Only Quality Update for Windows Server 2012
 kb4014577,May 2017 Security Update for .NET Framework 3.5.1 on Windows Server 2012
 kb4014586,May 2017 Security Update for .NET Framework 4.6.2 on Windows Server 2012
+kb4022718,June 2017 Security Only Quality Update for Windows Server 2012

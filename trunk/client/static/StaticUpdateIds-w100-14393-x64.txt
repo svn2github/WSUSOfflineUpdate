@@ -1,1 +1,1 @@
-kb4013418,March 2017 Servicing stack update for Windows 10 Version 1607
+kb4023834,June 2017 Servicing stack update for Windows 10 Version 1607

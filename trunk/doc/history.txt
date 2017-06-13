@@ -1302,8 +1302,11 @@ Version ??.? -- ??.??.??
 - Support removed for Windows Vista since Microsoft discontinued support for it on April 11, 2017 (see https://support.microsoft.com/en-us/help/22882/windows-vista-end-of-support)
 - April 2017 updates added to 'security only' lists for Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems
 - May 2017 updates added to 'security only' lists for Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems
+- June 2017 updates added to 'security only' lists for Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems
+- Replaced superseded March 2017 Servicing stack update (kb4013418) by June 2017 Servicing stack update (kb4023834) for Windows 10 Version 1607 (Thanks to "aker")
+- Added June 2017 Servicing stack update (kb4022405) for Windows 10 Version 1703 (Thanks to "aker")
 - .NET Framework 4 updated to v. 4.7 (Thanks to "harry" and "aker")
-- Microsoft Silverlight updated to v. 5.1.50906.0 (Thanks to "harry")
+- Microsoft Silverlight updated to v. 5.1.50907.0
 - Aria2 download utility updated to v. 1.32.0
 - Installallation part will now show time stamps while installing updates (Thanks to "negg" and "aker")
 - Fix: Revised list of scan prerequisite updates for Windows Server 2008 (x86/x64) (Thanks to "Dalai", "lmacri", "Denniss" and the community)
