@@ -56,6 +56,15 @@ if "%OS_NAME%"=="w100" (
 if "%SECONLY%"=="1" (
   call :EvalStatics ..\static\custom\StaticUpdateIds-%OS_NAME%-seconly.txt
   call :EvalStatics ..\static\StaticUpdateIds-%OS_NAME%-seconly.txt
+  call :EvalStatics ..\static\custom\StaticUpdateIds-%OS_NAME%-dotnet%DOTNET35_VER_MAJOR%%DOTNET35_VER_MINOR%-seconly.txt
+  call :EvalStatics ..\static\StaticUpdateIds-%OS_NAME%-dotnet%DOTNET35_VER_MAJOR%%DOTNET35_VER_MINOR%-seconly.txt
+  call :EvalStatics ..\static\custom\StaticUpdateIds-%OS_NAME%-dotnet4-%DOTNET4_RELEASE%-seconly.txt
+  call :EvalStatics ..\static\StaticUpdateIds-%OS_NAME%-dotnet4-%DOTNET4_RELEASE%-seconly.txt
+) else (
+  call :EvalStatics ..\static\custom\StaticUpdateIds-%OS_NAME%-dotnet%DOTNET35_VER_MAJOR%%DOTNET35_VER_MINOR%.txt
+  call :EvalStatics ..\static\StaticUpdateIds-%OS_NAME%-dotnet%DOTNET35_VER_MAJOR%%DOTNET35_VER_MINOR%.txt
+  call :EvalStatics ..\static\custom\StaticUpdateIds-%OS_NAME%-dotnet4-%DOTNET4_RELEASE%.txt
+  call :EvalStatics ..\static\StaticUpdateIds-%OS_NAME%-dotnet4-%DOTNET4_RELEASE%.txt
 )
 if "%O2K7_VER_MAJOR%" NEQ "" (
   call :EvalStatics ..\static\custom\StaticUpdateIds-o2k7.txt

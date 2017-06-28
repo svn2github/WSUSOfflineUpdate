@@ -1,16 +1,12 @@
+kb3038936,August 2015 anti-malware platform update for Windows Defender in Windows 8.1
 kb3042553,Vulnerability in HTTP.sys could allow remote code execution
 kb3123479,Deprecation of SHA-1 hashing algorithm for Microsoft root certificate program
-kb3163247,Security update for the .NET Framework 3.5 in Windows 8.1 and Windows Server 2012 R2
+kb3149090,April 2016 Security Update for SAM and LSAD remote protocols
+kb3174644,Updated support for Diffie-Hellman Key Exchange
 kb3192392,October 2016 Security Only Quality Update for Windows 8.1 and Windows Server 2012 R2
-kb3188732,October 2016 Security Update for .NET Framework 3.5 on Windows 8.1 and Windows Server 2012 R2
 kb3197873,November 2016 Security Only Quality Update for Windows 8.1 and Windows Server 2012 R2
 kb3205400,December 2016 Security Only Quality Update for Windows 8.1 and Windows Server 2012 R2
-kb3204802,December 2016 Security Only Update for the .NET Framework 4.6.2 on Windows 8.1 and Windows Server 2012 R2
 kb4012213,March 2017 Security Only Quality Update for Windows 8.1 and Windows Server 2012 R2
 kb4015547,April 2017 Security Only Quality Update for Windows 8.1 and Windows Server 2012 R2
-kb4014574,April 2017 Security Update for .NET Framework 3.5.1 on Windows 8.1 and Windows Server 2012 R2
-kb4014550,April 2017 Security Update for .NET Framework 4.6.2 on Windows 8.1 and Windows Server 2012 R2
 kb4019213,May 2017 Security Only Quality Update for Windows 8.1 and Windows Server 2012 R2
-kb4014581,May 2017 Security Update for .NET Framework 3.5.1 on Windows 8.1 and Windows Server 2012 R2
-kb4014587,May 2017 Security Update for .NET Framework 4.6.2 on Windows 8.1 and Windows Server 2012 R2
 kb4022717,June 2017 Security Only Quality Update for Windows 8.1 and Windows Server 2012 R2

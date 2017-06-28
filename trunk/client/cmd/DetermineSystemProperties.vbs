@@ -18,6 +18,7 @@ Private Const strRegKeyWDPolicy               = "HKLM\Software\Policies\Microsof
 Private Const strRegKeyWDDefs                 = "HKLM\Software\Microsoft\Windows Defender\Signature Updates\"
 Private Const strRegKeyPowerCfg               = "HKCU\Control Panel\PowerCfg\"
 Private Const strRegValVersion                = "Version"
+Private Const strRegValRelease                = "Release"
 Private Const strRegValDisplayVersion         = "DisplayVersion"
 Private Const strRegValBuildLabEx             = "BuildLabEx"
 Private Const strRegValInstallationType       = "InstallationType"
@@ -464,6 +465,7 @@ End If
 ' Determine Microsoft .NET Framework 3.5 SP1 installation state
 WriteVersionToFile objCmdFile, "DOTNET35_VER", RegRead(wshShell, strRegKeyDotNet35 & strRegValVersion)
 WriteVersionToFile objCmdFile, "DOTNET4_VER", RegRead(wshShell, strRegKeyDotNet4 & strRegValVersion)
+objCmdFile.WriteLine("set DOTNET4_RELEASE=" & RegRead(wshShell, strRegKeyDotNet4 & strRegValRelease))
 
 ' Determine Windows PowerShell version
 WriteVersionToFile objCmdFile, "PSH_VER", RegRead(wshShell, strRegKeyPowerShell & strRegValPShVersion)

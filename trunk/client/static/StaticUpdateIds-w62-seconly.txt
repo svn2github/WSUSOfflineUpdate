@@ -1,13 +1,8 @@
+kb3149090,April 2016 Security Update for SAM and LSAD remote protocols
 kb3192393,October 2016 Security Only Quality Update for Windows Server 2012
-kb3188731,October 2016 Security Update for .NET Framework 3.5 on Windows Server 2012
 kb3197876,November 2016 Security Only Quality Update for Windows Server 2012
 kb3205408,December 2016 Security Only Quality Update for Windows Server 2012
-kb3204801,December 2016 Security Only Update for the .NET Framework 4.6.2 on Windows Server 2012
 kb4012214,March 2017 Security Only Quality Update for Windows Server 2012
 kb4015548,April 2017 Security Only Quality Update for Windows Server 2012
-kb4014572,April 2017 Security Update for .NET Framework 3.5.1 on Windows Server 2012
-kb4014549,April 2017 Security Update for .NET Framework 4.6.2 on Windows Server 2012
 kb4019214,May 2017 Security Only Quality Update for Windows Server 2012
-kb4014577,May 2017 Security Update for .NET Framework 3.5.1 on Windows Server 2012
-kb4014586,May 2017 Security Update for .NET Framework 4.6.2 on Windows Server 2012
 kb4022718,June 2017 Security Only Quality Update for Windows Server 2012

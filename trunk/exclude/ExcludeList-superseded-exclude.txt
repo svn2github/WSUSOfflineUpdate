@@ -27,6 +27,8 @@ windows6.1-kb3032655
 windows6.1-kb3163245
 windows8-rt-kb3163246
 windows8-rt-kb3018238
+windows8-rt-kb3035486
 windows8-rt-kb3173426
+windows8.1-kb3035487
 windows8.1-kb3173424
 kb3149090

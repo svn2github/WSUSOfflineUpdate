@@ -1,19 +1,19 @@
-; ***  WSUS Offline Update 10.9.2 - Installer  ***
-; ***        Author: T. Wittrock, Kiel         ***
-; ***    Dialog scaling added by Th. Baisch    ***
+; ***  WSUS Offline Update 11.0 - Installer  ***
+; ***       Author: T. Wittrock, Kiel        ***
+; ***   Dialog scaling added by Th. Baisch   ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 10.9.2.878)
+#pragma compile(FileVersion, 11.0.0.880)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
 #pragma compile(ProductName, "WSUS Offline Update")
-#pragma compile(ProductVersion, 10.9.2)
+#pragma compile(ProductVersion, 11.0.0)
 
-Dim Const $caption                    = "WSUS Offline Update 10.9.2 - Installer"
+Dim Const $caption                    = "WSUS Offline Update 11.0 - Installer"
 Dim Const $wou_hostname               = "www.wsusoffline.net"
 Dim Const $donationURL                = "http://www.wsusoffline.net/donate.html"
 
