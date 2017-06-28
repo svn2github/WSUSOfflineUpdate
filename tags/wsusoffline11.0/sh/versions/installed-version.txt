@@ -1,0 +1,1 @@
+1.0-beta-3 http://downloads.hartmut-buhrmester.de/sh-new-1.0-beta-3.tar.gz http://downloads.hartmut-buhrmester.de/hashes-sh-new-1.0-beta-3.txt sh-new-1.0-beta-3

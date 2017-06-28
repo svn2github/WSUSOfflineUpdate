@@ -1,0 +1,2 @@
+kb4014558,April 2017 Security update for the .NET Framework 4.6 and 4.6.1 for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4014591,May 2017 Security only update for the .NET Framework 4.6 and 4.6.1 for Windows 7 SP1 and Windows Server 2008 R2 SP1

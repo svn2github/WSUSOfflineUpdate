@@ -1,0 +1,98 @@
+download-updates.bash: Download updates for Microsoft Windows and Office
+
+Usage: ./download-updates.bash <update> <language> [<options>...]
+
+<update>
+    w60 | w60-x64 | w61 | w61-x64 | w62-x64 | w63 | w63-x64 | w100 | w100-x64 |
+    o2k7 | o2k10 | o2k10-x64 | o2k13 | o2k13-x64 | o2k16 | o2k16-x64
+
+<language>
+    deu | enu | ara | chs | cht | csy | dan | nld | fin | fra | ell | heb |
+    hun | ita | jpn | kor | nor | plk | ptg | ptb | rus | esn | sve | trk
+
+<options>
+  * for Windows Vista (w60 | w60-x64):
+    -includesp -includecpp -includedotnet -includewddef -includemsse
+  * for Windows 7 (w61 | w61-x64):
+    -includesp -includecpp -includedotnet -includewddef -includemsse
+  * for Windows 8 - 10 (w62-x64 | w63 | w63-x64 | w100 | w100-x64):
+    -includesp -includecpp -includedotnet -includewddefs8
+  * for all Office updates:
+    -includesp
+
+
+Description of the parameter <update>
+
+    Parameter    Description
+    w60          Windows Vista, 32-bit
+    w60-x64      Windows Vista / Server 2008, 64-bit
+    w61          Windows 7, 32-bit
+    w61-x64      Windows 7 / Server 2008 R2, 64-bit
+    w62-x64      Windows Server 2012, 64-bit
+    w63          Windows 8.1, 32-bit
+    w63-x64      Windows 8.1 / Server 2012 R2, 64-bit
+    w100         Windows 10, 32-bit
+    w100-x64     Windows 10 / Server 2016, 64-bit
+    o2k7         Office 2007, 32-bit
+    o2k10        Office 2010, 32-bit
+    o2k10-x64    Office 2010, 32-bit and 64-bit
+    o2k13        Office 2013, 32-bit
+    o2k13-x64    Office 2013, 32-bit and 64-bit
+    o2k16        Office 2016, 32-bit
+    o2k16-x64    Office 2016, 32-bit and 64-bit
+
+
+Description of the parameter <language>
+
+    Parameter  Locale  Language
+    deu        de      German
+    enu        en      English
+    ara        ar      Arabic
+    chs        zh-cn   Chinese (Simplified)
+    cht        zh-tw   Chinese (Traditional)
+    csy        cs      Czech
+    dan        da      Danish
+    nld        nl      Dutch
+    fin        fi      Finnish
+    fra        fr      French
+    ell        el      Greek
+    heb        he      Hebrew
+    hun        hu      Hungarian
+    ita        it      Italian
+    jpn        ja      Japanese
+    kor        ko      Korean
+    nor        no      Norwegian
+    plk        pl      Polish
+    ptg        pt      Portuguese
+    ptb        pt-br   Portuguese (Brazil)
+    rus        ru      Russian
+    esn        es      Spanish
+    sve        sv      Swedish
+    trk        tr      Turkish
+
+
+Description of the download options
+
+   -includesp
+        Include Service Packs
+
+   -includecpp
+        Include Visual C++ runtime libraries
+
+   -includedotnet
+        Include .NET Frameworks: localized installation files and updates
+
+   -includewddefs
+        Virus definition files for Windows Vista and 7. These virus
+        definition updates are only for the original Windows Defender,
+        which was included in Windows Vista and 7.
+
+   -includemsse
+        Microsoft Security Essentials: localized installation files and
+        virus definition updates. Microsoft Security Essentials is an
+        optional installation for Windows Vista and 7.
+
+   -includewddefs8
+        Virus definition files for Windows 8 and higher. These are
+        the same virus definition updates as for Microsoft Security
+        Essentials, but without the localized installers.
