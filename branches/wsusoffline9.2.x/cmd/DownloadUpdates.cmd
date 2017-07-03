@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.2.1
+set WSUSOFFLINE_VERSION=9.2.2
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -436,7 +436,7 @@ if exist "%TEMP%\SetFileVersion.cmd" (
   call "%TEMP%\SetFileVersion.cmd"
   del "%TEMP%\SetFileVersion.cmd"
 ) else (set SIGCHK_VER_MAJOR=2)
-if %SIGCHK_VER_MAJOR% GEQ 2 (set SIGCHK_COPT=/accepteula -q -c) else (set SIGCHK_COPT=/accepteula -q -v)
+if %SIGCHK_VER_MAJOR% GEQ 2 (set SIGCHK_COPT=/accepteula -q -c -nobanner) else (set SIGCHK_COPT=/accepteula -q -v)
 echo %DATE% %TIME% - Info: Found sigcheck.exe version %SIGCHK_VER_MAJOR%.%SIGCHK_VER_MINOR%.%SIGCHK_VER_BUILD%.%SIGCHK_VER_REVIS% (common options: %SIGCHK_COPT%)>>%DOWNLOAD_LOGFILE%
 set SIGCHK_VER_MAJOR=
 set SIGCHK_VER_MINOR=
@@ -987,13 +987,6 @@ for %%i in (..\client\wsus\wsusscn2.cab) do echo %%~ai | %SystemRoot%\System32\f
 if not errorlevel 1 (
   if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
 )
-copy /Y ..\exclude\ExcludeList-superseded-exclude.txt ..\exclude\ExcludeList-superseded-exclude.ori >nul
-%DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\exclude %DLDR_LOPT% http://download.wsusoffline.net/ExcludeList-superseded-exclude.txt
-echo n | %SystemRoot%\System32\comp.exe ..\exclude\ExcludeList-superseded-exclude.txt ..\exclude\ExcludeList-superseded-exclude.ori /A /L /C >nul 2>&1
-if errorlevel 1 (
-  if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
-)
-del ..\exclude\ExcludeList-superseded-exclude.ori
 if exist ..\exclude\ExcludeList-superseded.txt (
   echo Found valid list of superseded updates.
   echo %DATE% %TIME% - Info: Found valid list of superseded updates>>%DOWNLOAD_LOGFILE%

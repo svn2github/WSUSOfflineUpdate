@@ -2,3 +2,13 @@ http://www.download.windowsupdate.com/msdownload/update/software/dflt/2008/02/wi
 http://download.microsoft.com/download/c/f/8/cf847bc0-a16b-4bb9-a06b-d232f6da437a/WindowsServer2003-KB925876-v2-x86-CSY.exe
 http://download.microsoft.com/download/F/0/8/F0827E66-ED6C-4C08-B794-6876CC5F1AE8/WindowsServer2003-KB968930-x86-CSY.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-cs-cz-kb2564958_91e70cdb3e8b333ea1ae5f5ce6f161953fd37ad3.exe
+http://download.microsoft.com/download/8/9/F/89F0D493-ACDA-4D0A-8E0A-5A8A81C5C672/WindowsServer2003-KB3011780-x86-CSY.exe
+http://download.microsoft.com/download/F/0/B/F0B06767-C154-4667-8AA3-6CC5AA9DC326/WindowsServer2003-KB4012598-x86-custom-CSY.exe
+http://download.microsoft.com/download/1/3/2/132CA77D-0A70-4A0E-93EC-A76339DE42F1/WindowsServer2003-KB4012583-x86-custom-CSY.exe
+http://download.microsoft.com/download/7/7/0/770E0A76-B7AD-4945-BBA9-9B66ADF4F071/WindowsServer2003-KB4022747-x86-custom-CSY.exe
+http://download.microsoft.com/download/1/8/A/18AF1247-0AA5-439D-A230-370AAE5DF9F3/WindowsServer2003-KB4018466-x86-custom-CSY.exe
+http://download.microsoft.com/download/5/D/A/5DAE0118-F065-4132-9579-1C3E82ACD590/WindowsServer2003-KB3197835-x86-custom-CSY.exe
+http://download.microsoft.com/download/2/A/9/2A931C94-712F-481A-BC85-8AEE239871F8/WindowsServer2003-KB4024323-x86-custom-CSY.exe
+http://download.microsoft.com/download/3/5/D/35D8364F-899A-4790-8A72-70DF0F983F04/WindowsServer2003-KB4025218-x86-custom-CSY.exe
+http://download.microsoft.com/download/B/2/E/B2EF20FD-D602-4EF1-9F75-BDC62823B0EA/WindowsServer2003-KB4024402-x86-custom-CSY.exe
+http://download.microsoft.com/download/2/2/E/22E927D6-33CF-4121-979F-C1D12BC8DFB6/WindowsServer2003-KB4019204-x86-custom-CSY.exe

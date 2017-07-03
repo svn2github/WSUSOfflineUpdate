@@ -2,3 +2,13 @@ http://www.download.windowsupdate.com/msdownload/update/software/dflt/2008/02/wi
 http://download.microsoft.com/download/2/d/f/2df64da0-49b1-4585-ac31-fca4135fbb25/WindowsServer2003-KB925876-v2-x86-TRK.exe
 http://download.microsoft.com/download/4/8/F/48F07D70-5BD7-4E91-9BAA-32840AE368F9/WindowsServer2003-KB968930-x86-TRK.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-tr-tr-kb2564958_e150277d2a5908f304552dd85c32f7f491631512.exe
+http://download.microsoft.com/download/7/7/4/774AA91F-6AA0-477A-AD49-E545D7A3B883/WindowsServer2003-KB3011780-x86-TRK.exe
+http://download.microsoft.com/download/6/8/D/68D14D3B-6B43-4812-8E3A-83C395CA6C06/WindowsServer2003-KB4012598-x86-custom-TRK.exe
+http://download.microsoft.com/download/5/7/D/57D47B1F-3BFC-43A0-9A52-0299F4DB45B9/WindowsServer2003-KB4012583-x86-custom-TRK.exe
+http://download.microsoft.com/download/4/E/9/4E981B31-88FF-4CDD-BD7F-41362FAA4535/WindowsServer2003-KB4022747-x86-custom-TRK.exe
+http://download.microsoft.com/download/2/9/B/29B856D9-FEE2-4525-AC71-B4FAC7D44DB8/WindowsServer2003-KB4018466-x86-custom-TRK.exe
+http://download.microsoft.com/download/C/B/0/CB0CE941-AC83-4201-B4C6-179C938FAB36/WindowsServer2003-KB3197835-x86-custom-TRK.exe
+http://download.microsoft.com/download/4/1/9/4196456B-C3C9-4FB7-B715-8039C4FCC19E/WindowsServer2003-KB4024323-x86-custom-TRK.exe
+http://download.microsoft.com/download/0/0/9/0091C6A6-8D7D-430B-B77D-3BF96AAE6CE9/WindowsServer2003-KB4025218-x86-custom-TRK.exe
+http://download.microsoft.com/download/4/E/E/4EE8A416-3ECD-45A0-83DC-5443889AC8CE/WindowsServer2003-KB4024402-x86-custom-TRK.exe
+http://download.microsoft.com/download/8/1/2/81214559-4142-45E4-B0BA-EA4250FFF95D/WindowsServer2003-KB4019204-x86-custom-TRK.exe

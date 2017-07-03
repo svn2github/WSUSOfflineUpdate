@@ -1,5 +1,4 @@
 http://xpsp.dlservice.microsoft.com/download/e/4/a/e4a9e704-eea9-452e-bef2-79f29cbe116e/WindowsXP-KB936929-SP3-x86-JPN.exe
-http://download.microsoft.com/download/5/5/7/557E16D5-C18B-431C-BD1A-50597E1178BE/WindowsXP-KB969084-x86-jpn.exe
 http://download.microsoft.com/download/8/6/1/861B32F3-C1D0-424D-8DE5-3ECB4AEE15C0/WindowsXP-KB968930-x86-JPN.exe
 http://download.microsoft.com/download/8/b/3/8b35bfa0-374b-4563-8c12-d778268f6680/wmp11-windowsxp-x86-ja-jp.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-ja-jp-kb2564958_ed298eecfed026268696364723e47d798bb313f4.exe

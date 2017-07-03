@@ -3,3 +3,13 @@ http://download.microsoft.com/download/6/8/c/68c3b075-319c-4ac0-a28c-fadf411ceb6
 http://download.microsoft.com/download/0/C/1/0C1DDEBF-AD4F-4016-99DF-C8C60CE56F62/WindowsServer2003-KB968930-x86-ESN.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-es-es-kb2564958_6d4f9ac807368ded8678c41361d72e4f6e644e13.exe
 http://download.microsoft.com/download/f/f/1/ff178bb1-da91-48ed-89e5-478a99387d4f/wic_x86_esn.exe
+http://download.microsoft.com/download/F/D/6/FD667890-D2CD-4DED-8B31-6B8FD9C9959F/WindowsServer2003-KB3011780-x86-ESN.exe
+http://download.microsoft.com/download/0/C/C/0CC808F5-2A52-494D-BCD7-D648C9B19DBE/WindowsServer2003-KB4012598-x86-custom-ESN.exe
+http://download.microsoft.com/download/8/4/E/84E430E1-0405-4E8D-BBC8-9D9BA6BDEDED/WindowsServer2003-KB4012583-x86-custom-ESN.exe
+http://download.microsoft.com/download/B/4/1/B41C029A-14A7-4DB5-B32F-8E1818AF2CD2/WindowsServer2003-KB4022747-x86-custom-ESN.exe
+http://download.microsoft.com/download/9/B/5/9B579946-3C19-43B5-8337-24287F38CADA/WindowsServer2003-KB4018466-x86-custom-ESN.exe
+http://download.microsoft.com/download/A/F/F/AFF3A7A5-A73E-4F1E-BB00-A00B1DF0F273/WindowsServer2003-KB3197835-x86-custom-ESN.exe
+http://download.microsoft.com/download/0/4/D/04DBBA05-F170-4812-A8F4-B1D0C7620E81/WindowsServer2003-KB4024323-x86-custom-ESN.exe
+http://download.microsoft.com/download/6/B/5/6B502514-6C9F-49B2-99B7-E87B5D04AE77/WindowsServer2003-KB4025218-x86-custom-ESN.exe
+http://download.microsoft.com/download/C/6/7/C6785492-99C8-42C9-AC37-A43B295C2E54/WindowsServer2003-KB4024402-x86-custom-ESN.exe
+http://download.microsoft.com/download/6/3/8/638C7B61-82EC-4255-A84D-E5B65A5EAD57/WindowsServer2003-KB4019204-x86-custom-ESN.exe

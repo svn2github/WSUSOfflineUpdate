@@ -1,5 +1,14 @@
 http://xpsp.dlservice.microsoft.com/download/c/3/e/c3ea9fa6-d8e6-4832-8795-06dd27be9bc9/WindowsXP-KB936929-SP3-x86-FRA.exe
-http://download.microsoft.com/download/A/E/6/AE6315AC-A4C7-4B5F-B075-29EF7836FD69/WindowsXP-KB969084-x86-fra.exe
 http://download.microsoft.com/download/E/F/C/EFCF6616-2240-4464-865A-77C91E154614/WindowsXP-KB968930-x86-FRA.exe
 http://download.microsoft.com/download/5/0/e/50ed0224-a888-4ad4-808b-d63cb71b08e0/wmp11-windowsxp-x86-FR-FR.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-fr-fr-kb2564958_542a9a2adc8fd7a40aa6deb756f156da1562b767.exe
+http://download.microsoft.com/download/3/8/9/389FC096-C119-4A60-807D-4BC29F3593BD/WindowsXP-KB4012598-x86-Custom-FRA.exe
+http://download.microsoft.com/download/3/6/8/368871A7-833E-41B9-8705-2C3FAFAEAC02/WindowsXP-KB4012583-x86-Custom-FRA.exe
+http://download.microsoft.com/download/1/C/8/1C8B2A4D-04F6-464D-8F1F-A9F1BEADD5A1/WindowsXP-KB4022747-x86-Custom-FRA.exe
+http://download.microsoft.com/download/C/E/B/CEB1A145-8F79-4D65-A0A3-974F713AC6AF/IE8-WindowsXP-KB4018271-x86-Custom-FRA.exe
+http://download.microsoft.com/download/A/D/5/AD5E198E-B2B1-49C3-BBB2-E1C4A2D444A4/WindowsXP-KB4018466-x86-Custom-FRA.exe
+http://download.microsoft.com/download/3/D/0/3D03DF99-60BE-47BC-A50A-EDD747D38BE6/WindowsXP-KB3197835-x86-Custom-FRA.exe
+http://download.microsoft.com/download/9/3/8/9380A2C3-E51B-4FB2-87D9-B3F8D6DFEC3A/WindowsXP-KB4024323-x86-Custom-FRA.exe
+http://download.microsoft.com/download/0/F/2/0F232F67-B303-4E85-AFD7-F58935479483/WindowsXP-KB4025218-x86-Custom-FRA.exe
+http://download.microsoft.com/download/D/2/4/D24ACB54-187B-4C72-929A-8B9071F8CC30/WindowsXP-KB4024402-x86-Custom-FRA.exe
+http://download.microsoft.com/download/1/0/9/109B62EB-DAAE-45EE-B018-A9BBADB1024A/WindowsXP-KB4019204-x86-Custom-FRA.exe

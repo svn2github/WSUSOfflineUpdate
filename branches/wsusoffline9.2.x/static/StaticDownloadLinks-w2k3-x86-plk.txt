@@ -2,3 +2,13 @@ http://www.download.windowsupdate.com/msdownload/update/software/dflt/2008/02/wi
 http://download.microsoft.com/download/d/3/6/d36d7436-e820-49ae-91c1-23d220765fda/WindowsServer2003-KB925876-v2-x86-PLK.exe
 http://download.microsoft.com/download/2/2/6/226138F6-7A6B-4944-9EFA-63CD26AFF7AD/WindowsServer2003-KB968930-x86-PLK.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-pl-pl-kb2564958_56802553baaa3bdb8ef40b3e6c81ecff16690729.exe
+http://download.microsoft.com/download/D/1/0/D10E2948-A1EC-4CB2-9E35-FE3E59BF57D9/WindowsServer2003-KB3011780-x86-PLK.exe
+http://download.microsoft.com/download/4/9/0/490F6C3B-76EA-4D37-AD44-017B5245A2B2/WindowsServer2003-KB4012598-x86-custom-PLK.exe
+http://download.microsoft.com/download/4/4/1/44108904-5302-4B7F-929C-C06DF094A1C9/WindowsServer2003-KB4012583-x86-custom-PLK.exe
+http://download.microsoft.com/download/7/0/D/70D28658-6313-4EEA-957F-FBEC8CA15914/WindowsServer2003-KB4022747-x86-custom-PLK.exe
+http://download.microsoft.com/download/D/7/5/D75AF3B4-C016-4205-9205-FE97D4041F6F/WindowsServer2003-KB4018466-x86-custom-PLK.exe
+http://download.microsoft.com/download/9/4/C/94C23F6E-55C6-4020-89B7-03BD3B903321/WindowsServer2003-KB3197835-x86-custom-PLK.exe
+http://download.microsoft.com/download/6/2/5/625008A4-0B2A-4403-A4B7-25019C273C35/WindowsServer2003-KB4024323-x86-custom-PLK.exe
+http://download.microsoft.com/download/8/2/D/82DB507F-16B3-40F5-A27A-6D387977CBC3/WindowsServer2003-KB4025218-x86-custom-PLK.exe
+http://download.microsoft.com/download/A/D/9/AD9CD52D-5CC8-42F1-8628-7967D23D63F1/WindowsServer2003-KB4024402-x86-custom-PLK.exe
+http://download.microsoft.com/download/D/6/4/D64CD5A9-A153-4883-8270-92D9779A9626/WindowsServer2003-KB4019204-x86-custom-PLK.exe

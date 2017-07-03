@@ -3,3 +3,13 @@ http://download.microsoft.com/download/7/e/0/7e06883b-8c99-4d50-be97-0e1d54a0a1d
 http://download.microsoft.com/download/0/D/7/0D795C09-9690-4187-88E0-076D30FBA5D4/WindowsServer2003-KB968930-x86-NLD.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-nl-nl-kb2564958_1e3f4044761c7950cdd09ffa36e8570184759175.exe
 http://download.microsoft.com/download/f/f/1/ff178bb1-da91-48ed-89e5-478a99387d4f/wic_x86_nld.exe
+http://download.microsoft.com/download/3/7/9/3793A0E8-FB45-4A1E-AB4A-7128C0E0CE98/WindowsServer2003-KB3011780-x86-NLD.exe
+http://download.microsoft.com/download/2/2/E/22E64E45-9462-4D74-9616-1C14FF720734/WindowsServer2003-KB4012598-x86-custom-NLD.exe
+http://download.microsoft.com/download/E/9/A/E9A2714D-2B48-4680-B2DE-7C5D6AEB5920/WindowsServer2003-KB4012583-x86-custom-NLD.exe
+http://download.microsoft.com/download/C/3/7/C378A99B-C609-49E4-8AB9-7FC0BDC36EA9/WindowsServer2003-KB4022747-x86-custom-NLD.exe
+http://download.microsoft.com/download/4/0/2/4023DA78-7438-47EE-B465-F8A6B6B43E2A/WindowsServer2003-KB4018466-x86-custom-NLD.exe
+http://download.microsoft.com/download/A/C/0/AC03C1A0-5597-4F9E-BB2E-F64BFEE52120/WindowsServer2003-KB3197835-x86-custom-NLD.exe
+http://download.microsoft.com/download/E/4/9/E49525F0-D58F-4199-8EC0-48A010B75B47/WindowsServer2003-KB4024323-x86-custom-NLD.exe
+http://download.microsoft.com/download/6/A/E/6AE87231-7BEB-4C90-81DE-1EC9FE50A09F/WindowsServer2003-KB4025218-x86-custom-NLD.exe
+http://download.microsoft.com/download/5/C/7/5C749D9F-7D38-459A-A78E-C7D56811933F/WindowsServer2003-KB4024402-x86-custom-NLD.exe
+http://download.microsoft.com/download/1/4/6/1464E016-2AEE-4F1C-8C5C-1852CB523810/WindowsServer2003-KB4019204-x86-custom-NLD.exe

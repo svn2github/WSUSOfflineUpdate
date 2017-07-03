@@ -1,5 +1,14 @@
 http://xpsp.dlservice.microsoft.com/download/7/9/a/79aaf123-878f-4945-933c-7b13c64576ab/WindowsXP-KB936929-SP3-x86-KOR.exe
-http://download.microsoft.com/download/B/3/2/B3268015-52FD-4C27-8E0B-521CA958B96B/WindowsXP-KB969084-x86-kor.exe
 http://download.microsoft.com/download/9/5/1/95189CFD-43A6-4F03-B1A4-DB4CE2292F5D/WindowsXP-KB968930-x86-KOR.exe
 http://download.microsoft.com/download/6/a/2/6a2ca6a3-41b1-442a-baeb-47c56fa23c82/wmp11-windowsxp-x86-ko-kr.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-ko-kr-kb2564958_3e113be021705ef6e691b434f0d53fdcea88c8fd.exe
+http://download.microsoft.com/download/E/6/E/E6EFC7B3-C36F-4145-BE87-E83C88790860/WindowsXP-KB4012598-x86-Custom-KOR.exe
+http://download.microsoft.com/download/C/D/8/CD8AD248-E25B-49A7-959C-475BBE74E883/WindowsXP-KB4012583-x86-Custom-KOR.exe
+http://download.microsoft.com/download/0/0/C/00C1856B-62EC-4CFF-9BFB-08607743AD8A/WindowsXP-KB4022747-x86-Custom-KOR.exe
+http://download.microsoft.com/download/6/A/7/6A7507F3-BD13-439B-8AE3-9A563F4C899C/IE8-WindowsXP-KB4018271-x86-Custom-KOR.exe
+http://download.microsoft.com/download/3/3/A/33A48AFD-7F27-46D7-B2C9-8F5AAF5B3ED9/WindowsXP-KB4018466-x86-Custom-KOR.exe
+http://download.microsoft.com/download/3/A/E/3AE7B762-9BD5-4066-A4C5-ADA7B9CF8C80/WindowsXP-KB3197835-x86-Custom-KOR.exe
+http://download.microsoft.com/download/1/B/F/1BF0B93B-FCB9-461F-A79A-EECE2D1C5C78/WindowsXP-KB4024323-x86-Custom-KOR.exe
+http://download.microsoft.com/download/5/9/3/593E10D7-912C-42EC-BBEF-9FDD4C8BDE7B/WindowsXP-KB4025218-x86-Custom-KOR.exe
+http://download.microsoft.com/download/E/C/3/EC3F8BA5-E3CA-4328-8A3F-D64E70508172/WindowsXP-KB4024402-x86-Custom-KOR.exe
+http://download.microsoft.com/download/2/3/4/23483CB1-0945-4319-912E-4B24F23555A2/WindowsXP-KB4019204-x86-Custom-KOR.exe

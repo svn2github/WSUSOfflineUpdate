@@ -1,11 +1,11 @@
-; ***  WSUS Offline Update 9.2.1 - Generator  ***
+; ***  WSUS Offline Update 9.2.2 - Generator  ***
 ; ***       Author: T. Wittrock, Kiel         ***
 ; ***     USB-Option added by Ch. Riedel      ***
 ; ***   Dialog scaling added by Th. Baisch    ***
 
 #include <GUIConstants.au3>
 
-Dim Const $caption                  = "WSUS Offline Update 9.2.1"
+Dim Const $caption                  = "WSUS Offline Update 9.2.2"
 Dim Const $title                    = $caption & " - Generator"
 Dim Const $donationURL              = "http://www.wsusoffline.net/donate.html"
 Dim Const $downloadLogFile          = "download.log"
@@ -3274,7 +3274,7 @@ While 1
             ContinueLoop
           EndIf
         EndIf
-        If (IniRead($inifilename, $ini_section_misc, $misc_token_chkver, $enabled) = $enabled) Then
+        If (IniRead($inifilename, $ini_section_misc, $misc_token_chkver, $disabled) = $enabled) Then
           Switch RunVersionCheck(AuthProxy($proxy, $proxypwd))
             Case -1 ; Yes
               RunSelfUpdate(AuthProxy($proxy, $proxypwd))

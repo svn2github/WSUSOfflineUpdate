@@ -1,3 +1,13 @@
 http://download.microsoft.com/download/3/6/E/36E79530-6378-4BCD-AD6D-DF4BA55545EE/WindowsServer2003-KB968930-x64-RUS.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-ru-ru-kb2564958_be6d93fb80c649c77356c9d35038abc7ff52d919.exe
 http://download.microsoft.com/download/6/4/5/645fed5f-a6e7-44d9-9d10-fe83348796b0/wic_x64_rus.exe
+http://download.microsoft.com/download/0/5/0/050CF421-7CB7-406F-BBC6-185DACD15F63/WindowsServer2003-KB3011780-x64-RUS.exe
+http://download.microsoft.com/download/C/8/B/C8B0D799-E83E-47B6-A26E-54441C7ED5FA/WindowsServer2003-KB4012598-x64-custom-RUS.exe
+http://download.microsoft.com/download/8/B/9/8B9877C1-D1CE-4D97-8F0C-C950B84E3344/WindowsServer2003-KB4012583-x64-custom-RUS.exe
+http://download.microsoft.com/download/2/3/A/23A80287-8C2A-4DB9-A05E-3EC6957F7CAC/WindowsServer2003-KB4022747-x64-custom-RUS.exe
+http://download.microsoft.com/download/D/0/A/D0AF16A3-A569-4C83-85AC-4EAB8E5EE17F/WindowsServer2003-KB4018466-x64-custom-RUS.exe
+http://download.microsoft.com/download/3/2/3/32357363-FD4A-467A-BB44-B437DBE18767/WindowsServer2003-KB3197835-x64-custom-RUS.exe
+http://download.microsoft.com/download/A/A/F/AAF4A026-9556-4E24-BCE9-179DE40895CE/WindowsServer2003-KB4024323-x64-custom-RUS.exe
+http://download.microsoft.com/download/D/1/F/D1F06A2C-C3A9-430E-BA0E-D51D8F8C80D8/WindowsServer2003-KB4025218-x64-custom-RUS.exe
+http://download.microsoft.com/download/2/2/F/22F7DCF3-44CB-460E-86A0-135DB2156BBC/WindowsServer2003-KB4024402-x64-custom-RUS.exe
+http://download.microsoft.com/download/8/2/5/825E152E-4C63-4EC5-BBBF-EDCA8BDE5C7F/WindowsServer2003-KB4019204-x64-custom-RUS.exe

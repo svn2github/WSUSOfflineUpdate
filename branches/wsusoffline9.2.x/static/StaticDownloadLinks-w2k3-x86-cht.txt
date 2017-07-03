@@ -2,3 +2,13 @@ http://www.download.windowsupdate.com/msdownload/update/software/dflt/2008/02/wi
 http://download.microsoft.com/download/b/e/c/bec0d568-0014-4f7c-9550-5131f34427f1/WindowsServer2003-KB925876-v2-x86-CHT.exe
 http://download.microsoft.com/download/B/3/5/B35F8BE6-05E0-4A9B-9F93-6ACA3B85D9CE/WindowsServer2003-KB968930-x86-CHT.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-zh-tw-kb2564958_12e8e5315609e92c0d08d01c2494ba8110c6db6a.exe
+http://download.microsoft.com/download/0/1/6/0160F85B-21B9-475A-857E-417463C363DD/WindowsServer2003-KB3011780-x86-CHT.exe
+http://download.microsoft.com/download/8/A/A/8AAA6DDD-EBD7-4E72-8FEA-CF0715B96937/WindowsServer2003-KB4012598-x86-custom-CHT.exe
+http://download.microsoft.com/download/2/D/A/2DA4F2BF-7AA3-4A7A-AE72-B3814CA44619/WindowsServer2003-KB4012583-x86-custom-CHT.exe
+http://download.microsoft.com/download/4/6/7/467A041D-8E51-4D7E-A9CB-A282EADA4890/WindowsServer2003-KB4022747-x86-custom-CHT.exe
+http://download.microsoft.com/download/1/0/6/106A34EF-8C97-4465-9A7A-A90205A811FE/WindowsServer2003-KB4018466-x86-custom-CHT.exe
+http://download.microsoft.com/download/7/A/0/7A0BC0DF-E1FE-47EC-BBC4-5F04AC5711F7/WindowsServer2003-KB3197835-x86-custom-CHT.exe
+http://download.microsoft.com/download/D/8/F/D8F91E77-F352-4E1B-9786-32EB9F14AA8E/WindowsServer2003-KB4024323-x86-custom-CHT.exe
+http://download.microsoft.com/download/A/C/D/ACDF3EA9-F23B-48E7-B1EE-9D84E9480BDE/WindowsServer2003-KB4025218-x86-custom-CHT.exe
+http://download.microsoft.com/download/D/D/1/DD12CD9A-F935-4434-AAF4-00295D33B02C/WindowsServer2003-KB4024402-x86-custom-CHT.exe
+http://download.microsoft.com/download/F/C/F/FCFC87E2-2749-4FE5-8AF4-949C4F7303B1/WindowsServer2003-KB4019204-x86-custom-CHT.exe

@@ -5,15 +5,15 @@
 <xsl:template match="*">
   <xsl:choose>
     <xsl:when test="name()='FileLocation'">
-      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/windowsxp') and (not(contains(@Url, '-custom-')) or contains(@Url, '/2014/')) and contains(@Url, '-dan') and contains(@Url, '.exe')">
+      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/windowsxp') and not(contains(@Url, '-custom-') or contains(@Url, '-embedded-')) and contains(@Url, '-dan') and contains(@Url, '.exe')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>
-      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/ie7') and contains(@Url, 'windowsxp') and contains(@Url, '-x86-') and contains(@Url, '-dan') and contains(@Url, '.exe')">
+      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/ie7') and contains(@Url, 'windowsxp') and contains(@Url, '-x86-') and not(contains(@Url, '-embedded-')) and contains(@Url, '-dan') and contains(@Url, '.exe')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>
-      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/ie8') and contains(@Url, 'windowsxp') and contains(@Url, '-x86-') and contains(@Url, '-dan') and contains(@Url, '.exe')">
+      <xsl:if test="contains(@Url, 'http://') and contains(@Url, '/ie8') and contains(@Url, 'windowsxp') and contains(@Url, '-x86-') and not(contains(@Url, '-embedded-')) and contains(@Url, '-dan') and contains(@Url, '.exe')">
         <xsl:value-of select="@Url"/>
         <xsl:text>&#10;</xsl:text>
       </xsl:if>

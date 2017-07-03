@@ -1,3 +1,13 @@
 http://download.microsoft.com/download/B/2/4/B2490B2C-0E5F-434B-A82E-98F0241F27F5/WindowsServer2003-KB968930-x64-DEU.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-de-de-kb2564958_6076b09190f6d88f478b3051561547e5c76940a7.exe
 http://download.microsoft.com/download/6/4/5/645fed5f-a6e7-44d9-9d10-fe83348796b0/wic_x64_deu.exe
+http://download.microsoft.com/download/2/7/7/277462E0-266D-4BD4-B2D8-AB359936CEE7/WindowsServer2003-KB3011780-x64-DEU.exe
+http://download.microsoft.com/download/D/9/B/D9B8FEFD-FD45-4CFD-87C9-4D908CB0026D/WindowsServer2003-KB4012598-x64-custom-DEU.exe
+http://download.microsoft.com/download/D/F/8/DF8B73E4-FC2C-4E6E-B04C-B130252AF7E1/WindowsServer2003-KB4012583-x64-custom-DEU.exe
+http://download.microsoft.com/download/4/6/C/46C94CDE-230C-4F31-9648-34004AA9EBA4/WindowsServer2003-KB4022747-x64-custom-DEU.exe
+http://download.microsoft.com/download/7/C/A/7CA76D0C-0EED-479D-A229-C784E98DA5CB/WindowsServer2003-KB4018466-x64-custom-DEU.exe
+http://download.microsoft.com/download/7/A/F/7AFDA651-B1CE-43E4-AC37-9D5CA989B09F/WindowsServer2003-KB3197835-x64-custom-DEU.exe
+http://download.microsoft.com/download/2/7/1/27168440-6267-4B73-98FE-395CBEF2791A/WindowsServer2003-KB4024323-x64-custom-DEU.exe
+http://download.microsoft.com/download/0/0/E/00ECEEA5-FD1B-46A0-B439-72CD530E2EC9/WindowsServer2003-KB4025218-x64-custom-DEU.exe
+http://download.microsoft.com/download/B/1/0/B1048357-340C-4236-AB9C-A31C3AEE53F1/WindowsServer2003-KB4024402-x64-custom-DEU.exe
+http://download.microsoft.com/download/9/F/D/9FDEC634-D39B-46CE-B41B-99C8F622DCCE/WindowsServer2003-KB4019204-x64-custom-DEU.exe

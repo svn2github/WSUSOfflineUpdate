@@ -1,3 +1,13 @@
 http://download.microsoft.com/download/A/3/5/A358EDF0-88BD-451A-B225-F2D444ABCEF4/WindowsServer2003-KB968930-x64-ITA.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-it-it-kb2564958_32091f31c9ee567b790de90778504a85023a4b03.exe
 http://download.microsoft.com/download/6/4/5/645fed5f-a6e7-44d9-9d10-fe83348796b0/wic_x64_ita.exe
+http://download.microsoft.com/download/2/7/9/2792877E-7C5D-4539-8FD5-08780C12B6D6/WindowsServer2003-KB3011780-x64-ITA.exe
+http://download.microsoft.com/download/4/8/F/48F2AFBE-62AA-4116-BE44-D2091050E6B4/WindowsServer2003-KB4012598-x64-custom-ITA.exe
+http://download.microsoft.com/download/3/2/E/32E3CC4F-F7E2-4D10-A5C4-6701C1E97952/WindowsServer2003-KB4012583-x64-custom-ITA.exe
+http://download.microsoft.com/download/1/1/8/118DAC14-FC52-4BFD-8CB5-E9C9FFCBCC64/WindowsServer2003-KB4022747-x64-custom-ITA.exe
+http://download.microsoft.com/download/A/A/0/AA0E5B3E-A39F-4086-AF76-63507890FD9F/WindowsServer2003-KB4018466-x64-custom-ITA.exe
+http://download.microsoft.com/download/4/F/D/4FD981FE-75A5-41C9-BEA8-45261CBF2C46/WindowsServer2003-KB3197835-x64-custom-ITA.exe
+http://download.microsoft.com/download/7/F/8/7F8AE1AF-14E9-47D5-99FB-7F4EBA00E495/WindowsServer2003-KB4024323-x64-custom-ITA.exe
+http://download.microsoft.com/download/6/C/F/6CF91EF9-5A99-41C7-8BC9-2FA75C46DC6F/WindowsServer2003-KB4025218-x64-custom-ITA.exe
+http://download.microsoft.com/download/2/B/E/2BE66620-6063-44AD-B7A5-24D8FFDBD2E5/WindowsServer2003-KB4024402-x64-custom-ITA.exe
+http://download.microsoft.com/download/E/5/D/E5DCEED0-CB81-463A-B357-A5B0D06F816E/WindowsServer2003-KB4019204-x64-custom-ITA.exe

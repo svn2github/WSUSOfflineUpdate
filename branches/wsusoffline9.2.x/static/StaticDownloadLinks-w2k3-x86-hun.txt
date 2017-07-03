@@ -2,3 +2,13 @@ http://www.download.windowsupdate.com/msdownload/update/software/dflt/2008/02/wi
 http://download.microsoft.com/download/6/1/8/618dd087-d492-4dea-a5d8-9ecfa6d61b55/WindowsServer2003-KB925876-v2-x86-HUN.exe
 http://download.microsoft.com/download/2/0/D/20D1733B-593A-4C00-9D4C-003EE826659C/WindowsServer2003-KB968930-x86-HUN.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-hu-hu-kb2564958_b91b82b7b01cd92e6cacf54e2bca526e2309ac5b.exe
+http://download.microsoft.com/download/8/5/D/85D01806-7612-4422-9F2D-CFBA60A036E7/WindowsServer2003-KB3011780-x86-HUN.exe
+http://download.microsoft.com/download/F/8/F/F8FAC9B7-AE22-4236-B5AE-C113C0579687/WindowsServer2003-KB4012598-x86-custom-HUN.exe
+http://download.microsoft.com/download/D/4/0/D40AF133-55EC-4AA8-A042-780BAB1CD504/WindowsServer2003-KB4012583-x86-custom-HUN.exe
+http://download.microsoft.com/download/3/5/4/354B6D2C-9517-4F60-9607-58560AD9B9C3/WindowsServer2003-KB4022747-x86-custom-HUN.exe
+http://download.microsoft.com/download/3/8/A/38A821C9-BE8E-4A0F-BE49-2D34E672932E/WindowsServer2003-KB4018466-x86-custom-HUN.exe
+http://download.microsoft.com/download/7/6/9/769AC918-5F24-4C50-94F1-94CE24734346/WindowsServer2003-KB3197835-x86-custom-HUN.exe
+http://download.microsoft.com/download/F/2/A/F2A45A31-9EA3-470C-9FFB-1EDB42D68B89/WindowsServer2003-KB4024323-x86-custom-HUN.exe
+http://download.microsoft.com/download/7/B/0/7B0E06F3-95FC-42D7-AE29-3469ABA9AA8B/WindowsServer2003-KB4025218-x86-custom-HUN.exe
+http://download.microsoft.com/download/6/5/9/659FA3D9-2C40-4D91-905A-5695CFC5A343/WindowsServer2003-KB4024402-x86-custom-HUN.exe
+http://download.microsoft.com/download/7/B/D/7BDE8164-3885-43C6-B49D-8FD5D422F7F7/WindowsServer2003-KB4019204-x86-custom-HUN.exe

@@ -10,3 +10,9 @@ http://download.microsoft.com/download/0/E/D/0ED4ED7C-9FD8-4162-8024-F0643843B8E
 http://download.microsoft.com/download/0/8/7/08768091-35BC-48E0-9F7F-B9802A0EE2D6/IE9-WindowsVista-x86-enu.exe
 http://download.microsoft.com/download/1/E/9/1E9DE3C7-0C84-41C8-BBED-997EB0C98CCA/IE9-WindowsVista-x86-deu.exe
 http://download.microsoft.com/download/E/7/6/E76850B8-DA6E-4FF5-8CCE-A24FC513FD16/Windows6.0-KB2506146-x86.msu
+http://download.windowsupdate.com/d/msdownload/update/software/secu/2017/02/windows6.0-kb4012598-x86_13e9b3d77ba5599764c296075a796c16a85c745c.msu
+http://download.microsoft.com/download/8/F/6/8F609D84-1D1D-4F64-8015-5D7898AAA670/IE9-Windows6.0-KB4018271-x86-custom.msu
+http://download.windowsupdate.com/c/csa/csa/secu/2017/04/windows6.0-kb4018466-x86-custom_ff895d127be20344a0905d8f5bac2712b15d5c42.msu
+http://download.microsoft.com/download/9/0/4/904B8B74-7C59-4349-BE83-F9E8EC3E731B/Windows6.0-KB4021903-x86.msu
+http://download.windowsupdate.com/c/msdownload/update/software/secu/2017/06/windows6.0-kb4024402-x86-custom_fd416b75f530305df455c1ea9098eccd48acb103.msu
+http://download.microsoft.com/download/4/5/2/452438F6-05CC-440C-B959-164A1C060E33/Windows6.0-KB4019204-x86-custom.msu

@@ -1,4 +1,13 @@
 http://xpsp.dlservice.microsoft.com/download/d/3/0/d30e32d8-418a-469d-b600-f32ce3edf42d/WindowsXP-KB936929-SP3-x86-ENU.exe
-http://download.microsoft.com/download/A/D/B/ADB61C11-6705-437A-ACAD-CAA9C0200C4C/WindowsXP-KB969084-x86-enu.exe
 http://download.microsoft.com/download/0/9/5/0953e553-3bb6-44b1-8973-106f1b7e5049/wmp11-windowsxp-x86-enu.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-en-us-kb2564958_65c98e33d275c4410dd2dec71cf39e4e81bf530a.exe
+http://download.microsoft.com/download/D/B/4/DB4B0C90-0A7D-46C9-8988-8A5BE95B44A6/WindowsXP-KB4012598-x86-Custom-ENU.exe
+http://download.microsoft.com/download/A/F/1/AF111875-ECC2-4C62-B284-2D4BBAB62E1F/WindowsXP-KB4012583-x86-Custom-ENU.exe
+http://download.microsoft.com/download/C/B/E/CBE92B14-906C-4B8C-AF6E-62C0A702C519/WindowsXP-KB4022747-x86-Custom-ENU.exe
+http://download.microsoft.com/download/1/D/4/1D494784-7A1F-42E3-9B9F-BC9E36317346/IE8-WindowsXP-KB4018271-x86-Custom-ENU.exe
+http://download.microsoft.com/download/E/2/6/E26CA120-4E62-4DFF-8473-1330155FA3CD/WindowsXP-KB4018466-x86-Custom-ENU.exe
+http://download.microsoft.com/download/6/0/E/60E5DA58-750B-44C8-9F69-D134E64BC581/WindowsXP-KB3197835-x86-Custom-ENU.exe
+http://download.microsoft.com/download/2/F/3/2F39FD59-E765-45C6-A2E4-38BA5E1F2151/WindowsXP-KB4024323-x86-Custom-ENU.exe
+http://download.microsoft.com/download/C/5/A/C5A5C106-13EC-4BCE-8CA4-CAD5950E6B38/WindowsXP-KB4025218-x86-Custom-ENU.exe
+http://download.microsoft.com/download/9/3/4/934514F3-FA99-454A-9EE3-8472BBAD1869/WindowsXP-KB4024402-x86-Custom-ENU.exe
+http://download.microsoft.com/download/1/5/4/154AE651-B0C1-4D4C-A482-84C9AA3EA4EE/WindowsXP-KB4019204-x86-Custom-ENU.exe

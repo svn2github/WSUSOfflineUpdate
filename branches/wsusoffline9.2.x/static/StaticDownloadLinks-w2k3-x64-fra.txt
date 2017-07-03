@@ -1,3 +1,13 @@
 http://download.microsoft.com/download/8/3/4/834F7CE3-EFF5-4610-83E6-448FEA26AFA3/WindowsServer2003-KB968930-x64-FRA.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-fr-fr-kb2564958_16f1c69224ef33d75007b5a80a621eeaf7919cb2.exe
 http://download.microsoft.com/download/6/4/5/645fed5f-a6e7-44d9-9d10-fe83348796b0/wic_x64_fra.exe
+http://download.microsoft.com/download/1/A/7/1A76C80F-7DF1-4BBE-89A4-3C0059C48FFA/WindowsServer2003-KB3011780-x64-FRA.exe
+http://download.microsoft.com/download/E/D/0/ED02B021-50BB-42E6-9B25-C754A37BF84A/WindowsServer2003-KB4012598-x64-custom-FRA.exe
+http://download.microsoft.com/download/F/E/E/FEE839C4-FB29-4F61-91D8-5C247CA8946F/WindowsServer2003-KB4012583-x64-custom-FRA.exe
+http://download.microsoft.com/download/7/D/4/7D430648-FFA6-4D84-A7EF-A7C2C53516BA/WindowsServer2003-KB4022747-x64-custom-FRA.exe
+http://download.microsoft.com/download/4/8/5/48533442-34A9-4A39-9475-0D5D3C8080F6/WindowsServer2003-KB4018466-x64-custom-FRA.exe
+http://download.microsoft.com/download/3/0/5/3052FEE4-0147-4E6C-9F29-EE676F520C89/WindowsServer2003-KB3197835-x64-custom-FRA.exe
+http://download.microsoft.com/download/A/D/3/AD3E5F40-4571-4FE0-8CDF-F20AF7A8B412/WindowsServer2003-KB4024323-x64-custom-FRA.exe
+http://download.microsoft.com/download/0/8/8/088C4C1D-B325-4B94-8416-2DABCCAB124B/WindowsServer2003-KB4025218-x64-custom-FRA.exe
+http://download.microsoft.com/download/D/C/4/DC4C1BAF-FC65-4A8F-8271-1A9CAF6FC068/WindowsServer2003-KB4024402-x64-custom-FRA.exe
+http://download.microsoft.com/download/2/D/C/2DC91DBC-2F02-486D-920F-D0632851E818/WindowsServer2003-KB4019204-x64-custom-FRA.exe

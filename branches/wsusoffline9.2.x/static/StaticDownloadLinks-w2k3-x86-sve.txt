@@ -2,3 +2,13 @@ http://www.download.windowsupdate.com/msdownload/update/software/dflt/2008/02/wi
 http://download.microsoft.com/download/1/f/d/1fd4be49-1830-40c8-ae57-79feb9a30b1c/WindowsServer2003-KB925876-v2-x86-SVE.exe
 http://download.microsoft.com/download/C/8/7/C870A6EB-E257-4237-A490-A00AC0A95908/WindowsServer2003-KB968930-x86-SVE.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-sv-se-kb2564958_81d8964705432436b3ece4f1a7992a3c8cb31f28.exe
+http://download.microsoft.com/download/6/C/1/6C11406B-045A-4827-B572-812EE9031132/WindowsServer2003-KB3011780-x86-SVE.exe
+http://download.microsoft.com/download/1/5/D/15D49A07-A40C-4B2D-8678-7BCC3AFBA867/WindowsServer2003-KB4012598-x86-custom-SVE.exe
+http://download.microsoft.com/download/E/D/7/ED7F6DAA-95FB-4FAD-83F4-A8FDF99CF73B/WindowsServer2003-KB4012583-x86-custom-SVE.exe
+http://download.microsoft.com/download/0/3/5/03594F4C-67F1-4CB5-8744-6CB4C5D23FE8/WindowsServer2003-KB4022747-x86-custom-SVE.exe
+http://download.microsoft.com/download/A/C/C/ACC9EEA5-9448-4B8B-BBE8-3D9E4376498A/WindowsServer2003-KB4018466-x86-custom-SVE.exe
+http://download.microsoft.com/download/A/0/C/A0C75E8F-D9B6-48CD-B4F2-857CCA2F7F6F/WindowsServer2003-KB3197835-x86-custom-SVE.exe
+http://download.microsoft.com/download/F/5/1/F512F1CF-704C-4450-AF8F-41BF3E26A893/WindowsServer2003-KB4024323-x86-custom-SVE.exe
+http://download.microsoft.com/download/A/9/8/A981A553-3FF7-4DEF-B9F3-0DCE532F6658/WindowsServer2003-KB4025218-x86-custom-SVE.exe
+http://download.microsoft.com/download/F/B/7/FB7C0113-12FF-463C-926C-D2C2012EE72F/WindowsServer2003-KB4024402-x86-custom-SVE.exe
+http://download.microsoft.com/download/2/5/A/25A79F76-4BE2-4DA6-B550-A52C88B9EE9B/WindowsServer2003-KB4019204-x86-custom-SVE.exe

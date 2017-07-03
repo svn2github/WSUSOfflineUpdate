@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 9.2.1
+WSUS Offline Update 9.2.2
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -892,4 +892,17 @@ Version 9.2.1 -- 05.05.14
 - Fix: Microsoft corrected Windows 8.1 Update 1 (kb2919355) by adding kb2959977 (Thanks to "harry")
 - Fix: Microsoft now delivers Windows 8.1 Update 1 installation files through catalog file wsusscn2.cab (Thanks to "psj")
 - Fix: DetermineSystemProperties.vbs script did not detect Microsoft Silverlight x86 installations under x64 Operating Systems (Thanks to "rbr555")
+--------------------------------------------------------------------------------
+Version 9.2.2 -- 03.07.17
+- NOTE: This is an extended support release for older platforms (Windows XP, Server 2003, Vista and 8)
+- NOTE: Don't mix this release with recent versions (10.x or newer). Use a dedicated path instead (e.g. C:\wsusoffline9.2.x).
+- NOTE: Don't use one of the deprecated platforms for downloading. Use a supported platform instead.
+- Static definitions added for Windows XP, Server 2003, Vista and 8 according to Microsoft's security advisory 4025685 (https://support.microsoft.com/en-us/help/4025687/microsoft-security-advisory-4025685-guidance-for-older-platforms)
+- Disabled WOU version check by default
+- Removed dynamic updating of ExcludeList-superseded-exclude.txt
+- Excluded '-embedded-' updates
+- Excluded obsolete October 2013 Cumulative security update kb2879017 (MS13-080) for Internet Explorer 7
+- Fix: Adjusted sigcheck.exe parameters to work with most recent version 2.55
+- Fix: Removed unavailable static download links for kb953356, kb969084, rootsupd.exe and rvkroots.exe
+- Fix: Download part erroneously excluded Security Updates kb958644, kb2378111, kb2478971 and kb2712808
 --------------------------------------------------------------------------------

@@ -1,5 +1,14 @@
 http://xpsp.dlservice.microsoft.com/download/1/e/7/1e758534-7b22-400c-9c46-d19d24ec7374/WindowsXP-KB936929-SP3-x86-DEU.exe
-http://download.microsoft.com/download/F/1/0/F10A6EDD-28EA-4F87-A74E-CB2E304FF48B/WindowsXP-KB969084-x86-deu.exe
 http://download.microsoft.com/download/4/0/9/40952D8D-6DAF-424D-88A0-F75E0A4F8569/WindowsXP-KB968930-x86-DEU.exe
 http://download.microsoft.com/download/a/0/c/a0c1c543-c1d7-4c3c-a22b-42ef668e33c4/wmp11-windowsxp-x86-DE-DE.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-de-de-kb2564958_8ae021f34b5b17a6322fc51754bf82be541b8a75.exe
+http://download.microsoft.com/download/B/7/8/B78348C3-DE52-46AC-9077-C6BADBCFF20D/WindowsXP-KB4012598-x86-Custom-DEU.exe
+http://download.microsoft.com/download/6/5/7/657B55F4-7F5C-48AF-BFCF-7990189939C7/WindowsXP-KB4012583-x86-Custom-DEU.exe
+http://download.microsoft.com/download/A/4/F/A4F2D3DE-26C7-4F99-8A7F-5758A93EC200/WindowsXP-KB4022747-x86-Custom-DEU.exe
+http://download.microsoft.com/download/E/1/A/E1A2FEFE-5E6D-419D-9CBD-A5D7A21ED5A2/IE8-WindowsXP-KB4018271-x86-Custom-DEU.exe
+http://download.microsoft.com/download/1/9/F/19FF9ED2-C9DF-4962-9F4C-23E2745A6ACA/WindowsXP-KB4018466-x86-Custom-DEU.exe
+http://download.microsoft.com/download/E/2/E/E2E4D75B-5E3B-46CB-BA11-CB0620D6249A/WindowsXP-KB3197835-x86-Custom-DEU.exe
+http://download.microsoft.com/download/E/B/F/EBF52EE5-EEAB-4A0B-92E3-731D2D3BBDCE/WindowsXP-KB4024323-x86-Custom-DEU.exe
+http://download.microsoft.com/download/3/6/0/360406F9-02FA-4514-9C42-0CFDCE8BDD65/WindowsXP-KB4025218-x86-Custom-DEU.exe
+http://download.microsoft.com/download/F/3/8/F384EFB5-C856-40AC-9843-8C80A4FD245E/WindowsXP-KB4024402-x86-Custom-DEU.exe
+http://download.microsoft.com/download/3/5/3/353ADE75-3B70-4F78-A3C7-B5F255DA0856/WindowsXP-KB4019204-x86-Custom-DEU.exe

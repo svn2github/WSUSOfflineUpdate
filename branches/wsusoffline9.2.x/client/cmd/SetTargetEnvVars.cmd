@@ -56,7 +56,6 @@ goto SetOfficeName
 rem *** Windows XP ***
 set OS_NAME=wxp
 set OS_SP_VER_TARGET_MAJOR=3
-if 2 EQU %OS_SP_VER_MAJOR% set OS_SP_PREREQ_ID=953356
 set OS_SP_TARGET_ID=936929
 set MSI_VER_TARGET_MAJOR=4
 set MSI_VER_TARGET_MINOR=5
@@ -125,7 +124,7 @@ if /i "%OS_ARCH%"=="x64" (
     )
     del "%TEMP%\wou_ie_kbids_sorted.txt"
   ) else (
-    set WUSCN_PREREQ_ID=kb2898785
+    set WUSCN_PREREQ_ID=kb2909921
   )
   set WOU_ENDLESS=4
 )

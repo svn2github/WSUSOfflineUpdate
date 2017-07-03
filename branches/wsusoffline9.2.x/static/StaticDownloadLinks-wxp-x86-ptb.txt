@@ -1,5 +1,14 @@
 http://xpsp.dlservice.microsoft.com/download/d/c/c/dccd3e5b-aef9-4f61-bfc4-d973396282aa/WindowsXP-KB936929-SP3-x86-PTB.exe
-http://download.microsoft.com/download/2/7/F/27F94727-6E49-4D63-B309-7E9554679BAA/WindowsXP-KB969084-x86-ptb.exe
 http://download.microsoft.com/download/F/F/A/FFACBA08-260A-43E7-9596-8378C85469E2/WindowsXP-KB968930-x86-PTB.exe
 http://download.microsoft.com/download/e/b/2/eb20c6d8-1e81-4f37-8fc8-47c0f97d743e/wmp11-windowsxp-x86-pt-br.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-pt-br-kb2564958_9f4c5c7e6b20a44fd0f9f0e8e87872936cbb291d.exe
+http://download.microsoft.com/download/F/D/E/FDE6402B-8C5D-47B5-AD9D-E528A8F97AE5/WindowsXP-KB4012598-x86-Custom-PTB.exe
+http://download.microsoft.com/download/F/2/4/F2411158-6881-48CC-A37C-73CC5E6B5FDB/WindowsXP-KB4012583-x86-Custom-PTB.exe
+http://download.microsoft.com/download/C/2/8/C28B87C0-3057-4F77-AB02-3A197176A6E6/WindowsXP-KB4022747-x86-Custom-PTB.exe
+http://download.microsoft.com/download/C/F/A/CFAA4A33-37FB-412E-B79F-5C23B673184D/IE8-WindowsXP-KB4018271-x86-Custom-PTB.exe
+http://download.microsoft.com/download/9/3/6/936EA655-18B9-4FDA-B1CB-DFCA35B931DA/WindowsXP-KB4018466-x86-Custom-PTB.exe
+http://download.microsoft.com/download/3/9/E/39E4E30F-BF4F-4FC7-B159-C254EB990FEE/WindowsXP-KB3197835-x86-Custom-PTB.exe
+http://download.microsoft.com/download/7/5/5/755477FD-4770-4708-A2A5-FEB0F3447BA9/WindowsXP-KB4024323-x86-Custom-PTB.exe
+http://download.microsoft.com/download/9/4/D/94DCB3D1-8D26-49D5-98C8-41257B92117D/WindowsXP-KB4025218-x86-Custom-PTB.exe
+http://download.microsoft.com/download/6/1/D/61D82AFE-4110-4B69-BB17-38BE553501CE/WindowsXP-KB4024402-x86-Custom-PTB.exe
+http://download.microsoft.com/download/5/B/B/5BBB0B82-EA68-4921-9611-190E7FFC5B16/WindowsXP-KB4019204-x86-Custom-PTB.exe

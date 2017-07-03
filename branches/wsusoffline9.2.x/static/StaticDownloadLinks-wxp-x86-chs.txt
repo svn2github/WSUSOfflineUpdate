@@ -1,5 +1,14 @@
 http://xpsp.dlservice.microsoft.com/download/e/d/9/ed9b7861-4e43-4c62-a007-4e93aa109602/WindowsXP-KB936929-SP3-x86-CHS.exe
-http://download.microsoft.com/download/D/7/C/D7C23570-F10E-4F1B-BD44-52CBA2D97252/WindowsXP-KB969084-x86-chs.exe
 http://download.microsoft.com/download/4/D/F/4DF6A154-443D-468F-B37A-3B13D2DB50B4/WindowsXP-KB968930-x86-CHS.exe
 http://download.microsoft.com/download/3/9/6/39691b06-7bfa-4736-89e4-2738e6023b6c/wmp11-windowsxp-x86-zh-cn.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-zh-cn-kb2564958_2fa3610df66fd668b67b9d6d30da008741903c67.exe
+http://download.microsoft.com/download/4/1/B/41B4AFF6-C3BC-48E6-9A99-4C483BD098D5/WindowsXP-KB4012598-x86-Custom-CHS.exe
+http://download.microsoft.com/download/9/C/3/9C362C92-47BE-4FE6-B5E5-A3E500C39026/WindowsXP-KB4012583-x86-Custom-CHS.exe
+http://download.microsoft.com/download/B/A/C/BAC50F1A-3E8E-4315-A3CD-76793C9B756C/WindowsXP-KB4022747-x86-Custom-CHS.exe
+http://download.microsoft.com/download/3/F/E/3FE2A7D7-2631-4098-BECA-77CAAAB0D99F/IE8-WindowsXP-KB4018271-x86-Custom-CHS.exe
+http://download.microsoft.com/download/B/0/B/B0BCC7A3-32DD-4173-A03D-BDDCDF3D1729/WindowsXP-KB4018466-x86-Custom-CHS.exe
+http://download.microsoft.com/download/F/B/2/FB28B95E-D268-4E6C-A073-0DA6A8F3FBE7/WindowsXP-KB3197835-x86-Custom-CHS.exe
+http://download.microsoft.com/download/7/E/B/7EBC11E5-0D7F-4983-BF67-93A01CBFD3CF/WindowsXP-KB4024323-x86-Custom-CHS.exe
+http://download.microsoft.com/download/A/3/5/A35B4BBB-2540-495F-B97F-BA07D9A26899/WindowsXP-KB4025218-x86-Custom-CHS.exe
+http://download.microsoft.com/download/6/A/3/6A3C639B-0413-4485-8B16-83143A9590C7/WindowsXP-KB4024402-x86-Custom-CHS.exe
+http://download.microsoft.com/download/C/A/E/CAE22287-C3D5-42B4-BBC7-C09FC179BDA8/WindowsXP-KB4019204-x86-Custom-CHS.exe

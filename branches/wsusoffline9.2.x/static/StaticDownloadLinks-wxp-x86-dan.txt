@@ -1,5 +1,14 @@
 http://xpsp.dlservice.microsoft.com/download/9/8/2/982c99b3-d968-4a5c-973e-12e97a38bbf9/WindowsXP-KB936929-SP3-x86-DAN.exe
-http://download.microsoft.com/download/6/C/7/6C7378B7-9CFC-4656-8A68-12FA18D8B22A/WindowsXP-KB969084-x86-dan.exe
 http://download.microsoft.com/download/7/B/2/7B2F3C3E-2ED9-4467-A8EC-98CEC318FDE3/WindowsXP-KB968930-x86-DAN.exe
 http://download.microsoft.com/download/6/f/b/6fb0c238-92f0-4828-9601-022d65ff8cc2/wmp11-windowsxp-x86-DA-DK.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-da-dk-kb2564958_1dd556474f9b4d098e3a01237c9017d97d7cd3df.exe
+http://download.microsoft.com/download/2/D/9/2D9EC76E-AEC0-4294-AD46-6CF1BB9107CE/WindowsXP-KB4012598-x86-Custom-DAN.exe
+http://download.microsoft.com/download/9/2/9/9291D679-C538-4A9B-A095-83056140E5A5/WindowsXP-KB4012583-x86-Custom-DAN.exe
+http://download.microsoft.com/download/5/E/8/5E8046F0-1D9D-4F65-878F-12DD8DD059F8/WindowsXP-KB4022747-x86-Custom-DAN.exe
+http://download.microsoft.com/download/C/B/5/CB582EF9-4252-44A4-96A5-CCF341E8ADBC/IE8-WindowsXP-KB4018271-x86-Custom-DAN.exe
+http://download.microsoft.com/download/F/1/C/F1C19F04-B1BF-4538-900D-C9E1FFB354BE/WindowsXP-KB4018466-x86-Custom-DAN.exe
+http://download.microsoft.com/download/1/B/4/1B4DC324-00DA-4387-8B9F-717A4A39B7CE/WindowsXP-KB3197835-x86-Custom-DAN.exe
+http://download.microsoft.com/download/C/F/0/CF0C3A97-91B2-444B-B914-1D5EF24BA577/WindowsXP-KB4024323-x86-Custom-DAN.exe
+http://download.microsoft.com/download/C/7/A/C7A9C2C5-9B46-4C70-81F8-EE3B90BEF401/WindowsXP-KB4025218-x86-Custom-DAN.exe
+http://download.microsoft.com/download/F/C/D/FCDBD791-27C1-4444-8BD9-68F62418E26D/WindowsXP-KB4024402-x86-Custom-DAN.exe
+http://download.microsoft.com/download/A/D/A/ADA58CE9-3045-453F-840D-220C4ECF24E5/WindowsXP-KB4019204-x86-Custom-DAN.exe

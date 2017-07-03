@@ -1,5 +1,14 @@
 http://xpsp.dlservice.microsoft.com/download/5/0/4/5046394b-32df-4628-a300-64209a719db6/WindowsXP-KB936929-SP3-x86-CSY.exe
-http://download.microsoft.com/download/A/7/0/A70AF463-2641-4FA9-999D-53F6E6D78824/WindowsXP-KB969084-x86-csy.exe
 http://download.microsoft.com/download/4/3/C/43CA5981-5004-4097-9655-F7DBBD47E0CF/WindowsXP-KB968930-x86-CSY.exe
 http://download.microsoft.com/download/f/5/f/f5fd0791-da73-4d29-a5ee-8f60132b4940/wmp11-windowsxp-x86-CS-CZ.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-cs-cz-kb2564958_0a3a9da838c98679f3b2fb8490d08bfa6d42ffaf.exe
+http://download.microsoft.com/download/1/E/B/1EB1DCCA-41E6-4FA0-AF4F-9BFE74071D45/WindowsXP-KB4012598-x86-Custom-CSY.exe
+http://download.microsoft.com/download/9/3/D/93D5CCC6-85F5-4136-866F-36F36BAA1189/WindowsXP-KB4012583-x86-Custom-CSY.exe
+http://download.microsoft.com/download/1/3/4/134BED62-D7D9-4E31-8648-51320126ED19/WindowsXP-KB4022747-x86-Custom-CSY.exe
+http://download.microsoft.com/download/E/E/F/EEF2D914-1974-4765-9814-C433E199C154/IE8-WindowsXP-KB4018271-x86-Custom-CSY.exe
+http://download.microsoft.com/download/1/8/2/182F3315-7F1B-4563-81C6-4D341489DE1B/WindowsXP-KB4018466-x86-Custom-CSY.exe
+http://download.microsoft.com/download/4/F/B/4FB4FC4C-014E-4C4F-A84B-CC63C1EF70C3/WindowsXP-KB3197835-x86-Custom-CSY.exe
+http://download.microsoft.com/download/2/4/8/248FF6C6-990B-4C8A-A736-5110B13E8292/WindowsXP-KB4024323-x86-Custom-CSY.exe
+http://download.microsoft.com/download/D/E/4/DE421FC7-2E33-411B-89F7-B52D02033E57/WindowsXP-KB4025218-x86-Custom-CSY.exe
+http://download.microsoft.com/download/2/0/6/2068B132-82A9-43C7-8752-238B1F4DC83A/WindowsXP-KB4024402-x86-Custom-CSY.exe
+http://download.microsoft.com/download/6/D/C/6DCD2429-BBD3-43E9-AAD0-CBB3BE02B213/WindowsXP-KB4019204-x86-Custom-CSY.exe

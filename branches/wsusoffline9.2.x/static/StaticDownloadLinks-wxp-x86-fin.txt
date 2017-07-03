@@ -1,5 +1,14 @@
 http://xpsp.dlservice.microsoft.com/download/4/7/4/474e6c1a-fd6d-464e-bf50-65e928fd2d1b/WindowsXP-KB936929-SP3-x86-FIN.exe
-http://download.microsoft.com/download/F/2/8/F288C00C-A109-48D6-92C4-2EB5D273B4DF/WindowsXP-KB969084-x86-fin.exe
 http://download.microsoft.com/download/8/0/8/808E6B2D-02B2-43F1-BB17-A2BDE211812A/WindowsXP-KB968930-x86-FIN.exe
 http://download.microsoft.com/download/9/7/f/97f1d243-01f8-4738-8b05-fe512e68489d/wmp11-windowsxp-x86-FI-FI.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-fi-fi-kb2564958_8fff29379187e88bbcc0972ec2009f77d9ded948.exe
+http://download.microsoft.com/download/D/7/E/D7EF7F76-6A7A-49B9-96AC-5B6D9AB9281D/WindowsXP-KB4012598-x86-Custom-FIN.exe
+http://download.microsoft.com/download/5/6/B/56B851DA-A825-48E5-B1D9-AE5B4385FEDD/WindowsXP-KB4012583-x86-Custom-FIN.exe
+http://download.microsoft.com/download/F/E/5/FE58DB7C-53C1-4270-A191-7574CE652477/WindowsXP-KB4022747-x86-Custom-FIN.exe
+http://download.microsoft.com/download/3/C/3/3C380BF6-4A43-4C15-A2AC-0D853082E10B/IE8-WindowsXP-KB4018271-x86-Custom-FIN.exe
+http://download.microsoft.com/download/A/D/F/ADF74A4C-D6ED-40E0-9045-C5AFCBD28BFE/WindowsXP-KB4018466-x86-Custom-FIN.exe
+http://download.microsoft.com/download/4/F/D/4FD28ABE-D641-4C22-B61C-76BDF4E4AD20/WindowsXP-KB3197835-x86-Custom-FIN.exe
+http://download.microsoft.com/download/0/E/D/0ED4B780-FB2E-4E06-836E-66959AE00EFA/WindowsXP-KB4024323-x86-Custom-FIN.exe
+http://download.microsoft.com/download/F/7/D/F7D421EA-1C15-4805-9A8F-82140F75F0BA/WindowsXP-KB4025218-x86-Custom-FIN.exe
+http://download.microsoft.com/download/F/B/9/FB9E5CFF-179B-4CF2-9837-507B8C0ECD8D/WindowsXP-KB4024402-x86-Custom-FIN.exe
+http://download.microsoft.com/download/3/5/3/3531C437-8621-42B4-9C3E-901D9DC52E36/WindowsXP-KB4019204-x86-Custom-FIN.exe

@@ -2,3 +2,13 @@ http://www.download.windowsupdate.com/msdownload/update/software/dflt/2008/02/wi
 http://download.microsoft.com/download/3/b/2/3b2683ea-70f1-47ba-b28f-157ad272ecfd/WindowsServer2003-KB925876-v2-x86-KOR.exe
 http://download.microsoft.com/download/E/6/9/E693BDE0-B3C6-4277-8B21-2FC322755962/WindowsServer2003-KB968930-x86-KOR.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-ko-kr-kb2564958_cbba78e1b7ffa9ba95b2bb385bde1a3b93b080ce.exe
+http://download.microsoft.com/download/8/9/2/8929F220-F457-4792-BE53-9199C104DF5E/WindowsServer2003-KB3011780-x86-KOR.exe
+http://download.microsoft.com/download/2/7/9/279D191F-F842-45DE-888F-28C540F53B98/WindowsServer2003-KB4012598-x86-custom-KOR.exe
+http://download.microsoft.com/download/A/6/F/A6FEE10D-9C87-49A9-B045-7ECEF602806B/WindowsServer2003-KB4012583-x86-custom-KOR.exe
+http://download.microsoft.com/download/C/F/7/CF7ADCE9-B0F4-4205-92A4-AD5521907F3A/WindowsServer2003-KB4022747-x86-custom-KOR.exe
+http://download.microsoft.com/download/7/C/C/7CC7E5EB-1A36-42D4-A812-0F9C1D94BA2D/WindowsServer2003-KB4018466-x86-custom-KOR.exe
+http://download.microsoft.com/download/8/1/8/81898FD5-87F7-40EB-9B7B-C5191EF41747/WindowsServer2003-KB3197835-x86-custom-KOR.exe
+http://download.microsoft.com/download/5/6/7/56737052-0AFB-475F-87A8-71A4367A86FD/WindowsServer2003-KB4024323-x86-custom-KOR.exe
+http://download.microsoft.com/download/0/F/5/0F505F3B-9A2F-4EC5-9699-B71B58B16439/WindowsServer2003-KB4025218-x86-custom-KOR.exe
+http://download.microsoft.com/download/3/6/F/36FDBBD4-14FF-4BAE-9473-D63CA8E0F3EE/WindowsServer2003-KB4024402-x86-custom-KOR.exe
+http://download.microsoft.com/download/9/C/4/9C4985C5-B3FD-4FFB-B854-22F2D45AEAAD/WindowsServer2003-KB4019204-x86-custom-KOR.exe

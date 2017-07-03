@@ -1,2 +1,7 @@
 http://download.microsoft.com/download/5/5/4/554460AC-68BF-4879-A48E-21AE3F73A60E/Windows8-RT-KB2769165-x64.msu
 http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows8-RT-KB2799888-x64.msu
+http://download.microsoft.com/download/D/7/1/D7162EEF-0F67-4AB1-90B9-CF47BCAC568E/Windows8-RT-KB4012598-x64-custom.msu
+http://download.windowsupdate.com/c/msdownload/update/software/secu/2017/06/windows8-rt-kb4012583-x64_c8a11c6ee4b2a50f1a98d1395435bf3515d8b0a4.msu
+http://download.microsoft.com/download/3/9/1/391BAC04-D5BA-4FDE-AA5E-F0073752D92C/Windows8-RT-KB4018271-x64-custom.msu
+http://download.windowsupdate.com/c/csa/csa/secu/2017/05/windows8-rt-kb4019623-v2-x64-custom_720c00e9baf8c68497518694ab7db43466959044.msu
+http://download.microsoft.com/download/C/D/8/CD8A5FB6-D770-46DE-9076-4125C63D9033/Windows8-RT-KB4022839-x64-custom.msu

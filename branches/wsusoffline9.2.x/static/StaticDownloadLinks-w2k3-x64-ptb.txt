@@ -1,3 +1,13 @@
 http://download.microsoft.com/download/6/E/4/6E486D3B-3AEB-4908-8754-6F54EF231C97/WindowsServer2003-KB968930-x64-PTB.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-pt-br-kb2564958_c25a3c154a2db129ea9f338cec1e6210be6aaeb0.exe
 http://download.microsoft.com/download/6/4/5/645fed5f-a6e7-44d9-9d10-fe83348796b0/wic_x64_ptb.exe
+http://download.microsoft.com/download/2/4/7/24713310-7391-4124-945F-5817D371EDE7/WindowsServer2003-KB3011780-x64-PTB.exe
+http://download.microsoft.com/download/F/A/5/FA59B4C3-6FEB-4157-9988-5B58D0C6ED44/WindowsServer2003-KB4012598-x64-custom-PTB.exe
+http://download.microsoft.com/download/D/2/F/D2F28EC4-5D27-4F75-8B95-A0A1EABE68F4/WindowsServer2003-KB4012583-x64-custom-PTB.exe
+http://download.microsoft.com/download/2/F/7/2F7CA654-DE5B-4D6F-AE01-216EF66F347D/WindowsServer2003-KB4022747-x64-custom-PTB.exe
+http://download.microsoft.com/download/A/9/8/A9893C09-CC4C-461E-8493-2898FDD51F0B/WindowsServer2003-KB4018466-x64-custom-PTB.exe
+http://download.microsoft.com/download/C/B/D/CBDE550E-6CD9-48A3-8DE9-95521FD6971C/WindowsServer2003-KB3197835-x64-custom-PTB.exe
+http://download.microsoft.com/download/3/9/8/398F39AB-9FF3-48F8-8FB4-5DE113D235A9/WindowsServer2003-KB4024323-x64-custom-PTB.exe
+http://download.microsoft.com/download/E/D/4/ED4FCB92-C8CE-4BAD-8AD6-5062CB9521C5/WindowsServer2003-KB4025218-x64-custom-PTB.exe
+http://download.microsoft.com/download/C/4/7/C4783754-1082-4E55-9557-7F9FEB353A1A/WindowsServer2003-KB4024402-x64-custom-PTB.exe
+http://download.microsoft.com/download/B/3/1/B31AE7A4-7368-4B8A-961E-529D595D3265/WindowsServer2003-KB4019204-x64-custom-PTB.exe

@@ -1,5 +1,14 @@
 http://xpsp.dlservice.microsoft.com/download/b/6/3/b633eaca-8fc7-4471-a459-577df014c99f/WindowsXP-KB936929-SP3-x86-PTG.exe
-http://download.microsoft.com/download/B/8/A/B8A20DD7-3C81-4733-803C-85594BF923D5/WindowsXP-KB969084-x86-ptg.exe
 http://download.microsoft.com/download/A/6/4/A64B09B6-11E4-4202-848B-F86A4F6AF770/WindowsXP-KB968930-x86-PTG.exe
 http://download.microsoft.com/download/5/f/a/5fa9e431-a21e-4e66-a730-ab7e436c1d8e/wmp11-windowsxp-x86-PT-PT.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-pt-pt-kb2564958_1be65fc21ea6078c1581b34abcaa0aca15cdbd83.exe
+http://download.microsoft.com/download/4/4/A/44A1960F-7DF6-48BA-ACBA-B351FA358DC1/WindowsXP-KB4012598-x86-Custom-PTG.exe
+http://download.microsoft.com/download/8/E/5/8E5AF7D2-5A96-4EA2-B807-6AFB0BD0C11D/WindowsXP-KB4012583-x86-Custom-PTG.exe
+http://download.microsoft.com/download/1/D/1/1D12B050-3FBB-4744-870C-E5843E426226/WindowsXP-KB4022747-x86-Custom-PTG.exe
+http://download.microsoft.com/download/6/5/7/657EF3C1-BB0F-44DC-A3E8-2085B74C5F7C/IE8-WindowsXP-KB4018271-x86-Custom-PTG.exe
+http://download.microsoft.com/download/2/E/8/2E88681E-59F6-40FC-8682-B845ADAEAEB9/WindowsXP-KB4018466-x86-Custom-PTG.exe
+http://download.microsoft.com/download/7/C/F/7CFFE6E3-DF90-4213-B300-0B796540DED7/WindowsXP-KB3197835-x86-Custom-PTG.exe
+http://download.microsoft.com/download/3/4/3/3432ABC6-0909-436D-9CE3-53D8EE326588/WindowsXP-KB4024323-x86-Custom-PTG.exe
+http://download.microsoft.com/download/A/3/E/A3E1012C-FED9-4919-BB52-F67AF98E37CD/WindowsXP-KB4025218-x86-Custom-PTG.exe
+http://download.microsoft.com/download/4/2/3/4230BCE4-EB85-49DE-BC78-D7C79A6FBCB7/WindowsXP-KB4024402-x86-Custom-PTG.exe
+http://download.microsoft.com/download/0/E/B/0EBC5954-31BF-42A9-87D9-290AA8170519/WindowsXP-KB4019204-x86-Custom-PTG.exe

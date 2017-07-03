@@ -2,3 +2,13 @@ http://www.download.windowsupdate.com/msdownload/update/software/dflt/2008/02/wi
 http://download.microsoft.com/download/4/6/2/46283b55-1754-47b1-b2ca-97cdfa13a00f/WindowsServer2003-KB925876-v2-x86-PTG.exe
 http://download.microsoft.com/download/8/F/A/8FAD9D19-E3D9-41AA-81B1-A5BC8C7A0C83/WindowsServer2003-KB968930-x86-PTG.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-pt-pt-kb2564958_3852c8dd630d3fef1bae83a80b08a204c6bdc41d.exe
+http://download.microsoft.com/download/3/0/6/306175D3-B10D-461E-AA1E-A7430B16A0E9/WindowsServer2003-KB3011780-x86-PTG.exe
+http://download.microsoft.com/download/3/D/A/3DA85818-9EFE-4B7F-B87C-5DBCB3CE9DB0/WindowsServer2003-KB4012598-x86-custom-PTG.exe
+http://download.microsoft.com/download/A/5/E/A5E6BF1B-A5FA-4F0B-AAAD-605D7D24A4AF/WindowsServer2003-KB4012583-x86-custom-PTG.exe
+http://download.microsoft.com/download/4/A/5/4A53158A-B817-46F9-8DAE-60166CC3BAA7/WindowsServer2003-KB4022747-x86-custom-PTG.exe
+http://download.microsoft.com/download/D/C/6/DC623C52-1015-43C0-BB96-B6BD35F59D6B/WindowsServer2003-KB4018466-x86-custom-PTG.exe
+http://download.microsoft.com/download/5/0/4/504903D0-9E94-4983-A729-C369E242DBE1/WindowsServer2003-KB3197835-x86-custom-PTG.exe
+http://download.microsoft.com/download/0/E/8/0E8B6A0E-DA6D-4C21-A26E-2E5CDE54B38F/WindowsServer2003-KB4024323-x86-custom-PTG.exe
+http://download.microsoft.com/download/E/D/0/ED0D494D-DD28-48E9-AD1B-C47005BE574F/WindowsServer2003-KB4025218-x86-custom-PTG.exe
+http://download.microsoft.com/download/2/8/6/286C9088-B235-4D97-8B2B-EBB187B767F9/WindowsServer2003-KB4024402-x86-custom-PTG.exe
+http://download.microsoft.com/download/C/A/C/CAC1C5AA-15B3-4A0E-93A4-5E5CAECE8E96/WindowsServer2003-KB4019204-x86-custom-PTG.exe

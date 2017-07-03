@@ -1,5 +1,14 @@
 http://xpsp.dlservice.microsoft.com/download/4/7/9/4797a8f7-bf89-45ae-ad3d-900d0714096e/WindowsXP-KB936929-SP3-x86-TRK.exe
-http://download.microsoft.com/download/E/9/C/E9C87DF9-75C1-4B60-82DA-A07DA824D6F1/WindowsXP-KB969084-x86-trk.exe
 http://download.microsoft.com/download/0/D/7/0D718509-9CB6-4C17-B804-C1A9FAD58294/WindowsXP-KB968930-x86-TRK.exe
 http://download.microsoft.com/download/c/0/6/c0691e20-5317-43e8-a9c1-ff0cb9f79053/wmp11-windowsxp-x86-TR-TR.exe
 http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-tr-tr-kb2564958_32fe96064c84b31f90cca39d4d3680eede516d51.exe
+http://download.microsoft.com/download/5/3/D/53DF39B6-88F5-4DDA-838B-BADA6DB10AD1/WindowsXP-KB4012598-x86-Custom-TRK.exe
+http://download.microsoft.com/download/D/6/8/D684CCEC-6458-481E-AA25-83616498CFC5/WindowsXP-KB4012583-x86-Custom-TRK.exe
+http://download.microsoft.com/download/3/2/F/32F7F338-43E3-4981-B81E-914E55F3FD6A/WindowsXP-KB4022747-x86-Custom-TRK.exe
+http://download.microsoft.com/download/8/8/F/88F3628E-B652-45A5-9530-60DA5C6E67EF/IE8-WindowsXP-KB4018271-x86-Custom-TRK.exe
+http://download.microsoft.com/download/F/B/3/FB38D482-ACB1-4620-8E47-E883E93E645C/WindowsXP-KB4018466-x86-Custom-TRK.exe
+http://download.microsoft.com/download/0/A/F/0AFC7F86-43EA-41A0-9B06-2A0BADDB4F4E/WindowsXP-KB3197835-x86-Custom-TRK.exe
+http://download.microsoft.com/download/9/2/6/926CE187-2472-44B1-B884-DD9ED19F2E50/WindowsXP-KB4024323-x86-Custom-TRK.exe
+http://download.microsoft.com/download/0/9/C/09C98907-E647-4A57-AD89-9006FEB2CDA8/WindowsXP-KB4025218-x86-Custom-TRK.exe
+http://download.microsoft.com/download/2/6/B/26B42F78-FB97-4AB2-A223-39ED90EAC09D/WindowsXP-KB4024402-x86-Custom-TRK.exe
+http://download.microsoft.com/download/2/7/3/2734852E-A9BA-4166-B5AB-AD4402F03DA2/WindowsXP-KB4019204-x86-Custom-TRK.exe
