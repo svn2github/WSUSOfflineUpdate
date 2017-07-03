@@ -1,0 +1,6 @@
+http://download.microsoft.com/download/5/B/7/5B78A8E8-3E47-4F4F-97DF-BF9362D9679C/Windows8-RT-KB2769165-x86.msu
+http://download.microsoft.com/download/1/D/3/1D38C957-CE2B-45A8-B2B5-A548AFC80E1D/Windows8-RT-KB4012598-x86-custom.msu
+http://download.windowsupdate.com/c/msdownload/update/software/secu/2017/06/windows8-rt-kb4012583-x86_a20e2c7aef00ed8fededea734a1ab1ec016a1a88.msu
+http://download.microsoft.com/download/E/F/D/EFD8B5D8-2EFE-4FFF-895B-C8A2A51AD17E/Windows8-RT-KB4018271-x86-custom.msu
+http://download.windowsupdate.com/c/csa/csa/secu/2017/05/windows8-rt-kb4019623-v2-x86-custom_a6d9194e7964334d173db156c12affcedf6e7c10.msu
+http://download.microsoft.com/download/7/E/E/7EEAE4A9-C93A-42BB-99A7-079D8D729D04/Windows8-RT-KB4022839-x86-custom.msu

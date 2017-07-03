@@ -1,0 +1,13 @@
+http://xpsp.dlservice.microsoft.com/download/1/5/9/159e6818-dca3-40ba-9c15-a7f546d00888/WindowsXP-KB936929-SP3-x86-HEB.exe
+http://download.microsoft.com/download/e/a/1/ea109f95-ecda-41a5-b355-af18edc1ec6b/wmp11-windowsxp-x86-HE-IL.exe
+http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-he-il-kb2564958_e9c6b57c023e886ddd558c9bfecaab0b9d159cac.exe
+http://download.microsoft.com/download/E/D/D/EDDE25F6-487B-48F4-8689-1AFE3413A490/WindowsXP-KB4012598-x86-Custom-HEB.exe
+http://download.microsoft.com/download/6/5/9/65918A4A-BF61-4900-ABBA-B69D8B349DA0/WindowsXP-KB4012583-x86-Custom-HEB.exe
+http://download.microsoft.com/download/3/F/4/3F434E69-D680-4D0C-859A-E937F371DEAB/WindowsXP-KB4022747-x86-Custom-HEB.exe
+http://download.microsoft.com/download/1/C/1/1C1FC0BD-4B30-434F-A20B-D26274401DA1/IE8-WindowsXP-KB4018271-x86-Custom-HEB.exe
+http://download.microsoft.com/download/0/6/7/06759CC5-D6D4-43F9-82BC-6FDF5EFCF73C/WindowsXP-KB4018466-x86-Custom-HEB.exe
+http://download.microsoft.com/download/4/B/3/4B3BF634-7905-4169-B187-7B2A7B59E8AC/WindowsXP-KB3197835-x86-Custom-HEB.exe
+http://download.microsoft.com/download/D/3/2/D325ACB4-1909-4258-8E5D-D2FE76CD6CF1/WindowsXP-KB4024323-x86-Custom-HEB.exe
+http://download.microsoft.com/download/4/0/B/40B260D8-D7F3-493B-9B88-B16EC66EC856/WindowsXP-KB4025218-x86-Custom-HEB.exe
+http://download.microsoft.com/download/8/F/7/8F7CBE62-5CE3-47B4-9A18-702FBAC505DE/WindowsXP-KB4024402-x86-Custom-HEB.exe
+http://download.microsoft.com/download/E/7/F/E7F910BB-E3F6-4F6A-85FC-510E21FC2F89/WindowsXP-KB4019204-x86-Custom-HEB.exe

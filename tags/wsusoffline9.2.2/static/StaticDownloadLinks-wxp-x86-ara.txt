@@ -1,0 +1,13 @@
+http://xpsp.dlservice.microsoft.com/download/2/b/5/2b5d286e-6536-4d12-b01d-c28b2be88431/WindowsXP-KB936929-SP3-x86-ARA.exe
+http://download.microsoft.com/download/d/4/a/d4a0f11f-cf77-418c-97b2-00d15062c313/wmp11-windowsxp-x86-AR-SA.exe
+http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-ar-sa-kb2564958_0ef2d160530e4213b0688ce02b06bec204f2ae1d.exe
+http://download.microsoft.com/download/7/5/8/75830B25-C27C-458E-8B8A-9D24E55E9070/WindowsXP-KB4012598-x86-Custom-ARA.exe
+http://download.microsoft.com/download/A/D/4/AD403C18-2AD3-4D8B-9735-C1063710B308/WindowsXP-KB4012583-x86-Custom-ARA.exe
+http://download.microsoft.com/download/5/6/6/566AEFCA-24F5-4E55-B85D-FD5AFC2233DA/WindowsXP-KB4022747-x86-Custom-ARA.exe
+http://download.microsoft.com/download/3/2/7/3278057C-6264-49DA-AE76-5E3E799612BC/IE8-WindowsXP-KB4018271-x86-Custom-ARA.exe
+http://download.microsoft.com/download/5/0/A/50A4CB2C-AD47-4BF5-BC0B-9792C68FEA46/WindowsXP-KB4018466-x86-Custom-ARA.exe
+http://download.microsoft.com/download/8/7/3/873F98BA-F1ED-451A-ACC8-094F37DF0B20/WindowsXP-KB3197835-x86-Custom-ARA.exe
+http://download.microsoft.com/download/E/C/F/ECFE9BFF-200F-49E1-8FC2-5F37704561D0/WindowsXP-KB4024323-x86-Custom-ARA.exe
+http://download.microsoft.com/download/8/9/8/898D220F-538F-4A6F-8DDB-616F6C78CDDD/WindowsXP-KB4025218-x86-Custom-ARA.exe
+http://download.microsoft.com/download/6/8/D/68D1E66F-EC22-434F-B029-7713B39E24E0/WindowsXP-KB4024402-x86-Custom-ARA.exe
+http://download.microsoft.com/download/7/E/D/7ED2ECD2-2EA1-4666-9CAC-E6BCD17A2A50/WindowsXP-KB4019204-x86-Custom-ARA.exe
