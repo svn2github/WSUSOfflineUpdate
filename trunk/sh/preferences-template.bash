@@ -1,9 +1,9 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: preferences-template.bash
-# Version: 1.0-beta-3
-# Release date: 2017-03-30
-# Intended compatibility: WSUS Offline Update Version 10.9.1 - 10.9.2
+# Version: 1.0-beta-4
+# Release date: 2017-06-23
+# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -29,7 +29,7 @@
 #     This file allows to change some options for the download
 #     script. The default values of these options are defined in the
 #     scripts download-updates.bash and update-generator.bash, but they
-#     should not be edited there.
+#     should not be edited in these files.
 #
 #     To make changes, rename the file preferences-template.bash to
 #     preferences.bash. This way, the configuration won't be overwritten
@@ -40,7 +40,9 @@
 supported_downloaders="wget aria2c"
 
 # Proxy servers should be entered in the format
+#
 # [http://][username:password@]server[:port]
+#
 # If in doubt, refer to the manual pages of wget and aria2c.
 #
 # Proxy server for unencrypted connections
@@ -76,18 +78,19 @@ check_for_self_updates="enabled"
 #
 # New versions are reported to the user and then the script waits for
 # confirmation to install them. This dialog automatically selects "no"
-# after 30 seconds, to let the script continue if nobody is watching.
+# after 30 seconds, to let the script continue if nobody is watching. This
+# also means, that new versions may be missed.
 #
 # Setting the variable unattended_updates to "enabled" changes this
 # behavior: New versions are still reported to the user, but the dialog
 # automatically selects "yes" after 30 seconds. This will install all
-# updates automatically. After all, the script download-updates.bash is
-# meant to be used in automated tasks like cron jobs.
+# updates automatically. This makes the script download-updates.bash
+# better suited for automated tasks like cron jobs.
 unattended_updates="disabled"
 
 # In recent versions of WSUS Offline Update, the directory
 # ../client/win/glb only contains two installers for Silverlight. If you
-# don't need Silverlight, you may change the option include_win_glb to
+# don't need Silverlight, you can change the option include_win_glb to
 # "disabled".
 include_win_glb="enabled"
 
@@ -136,7 +139,7 @@ use_integrity_database="enabled"
 # unexpected problems.
 use_cleanup_function="enabled"
 
-# Create more output for debugging. This is only used for development.
+# Create more output for debugging. This is only meant for development.
 debug="disabled"
 
 return 0

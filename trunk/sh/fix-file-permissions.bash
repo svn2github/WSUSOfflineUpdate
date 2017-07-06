@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #
 # Filename: fix-file-permissions.bash
-# Version: 1.0-beta-3
-# Release date: 2017-03-30
-# Intended compatibility: WSUS Offline Update Version 10.9.1 - 10.9.2
+# Version: 1.0-beta-4
+# Release date: 2017-06-23
+# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -30,15 +30,14 @@
 #     Update archive, then they don't need any special installation. But
 #     zip archives, which are created on Windows, won't preserve Linux
 #     file permissions. Therefore, these scripts may not be executable
-#     at first.
+#     initially.
 #
 #     This script is meant to correct the missing file permissions.
 #
 # Usage
 #
-#     Initially, this script will not be executable itself, if it is
-#     extracted from a zip archive, which was created on Windows. Then
-#     change to the installation directory sh-new and run the script as:
+#     Since this script will also be affected by this problem, you should
+#     change to the installation directory sh and run the script as:
 #
 #     bash fix-file-permissions.bash
 #

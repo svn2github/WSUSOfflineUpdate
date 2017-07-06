@@ -1,0 +1,139 @@
+Installationsanleitung für die Linux-Download-Skripte, Version 1.0-beta-4
+=========================================================================
+Folgen Sie dieser Anleitung, um die benötigten Pakete zu installieren,
+und um WSUS Offline Update und die Linux-Skripte herunterzuladen und
+zu installieren.
+
+Die nächste Version von WSUS Offline Update wird die neuen
+Linux-Skripte enthalten. In der Entwicklerversion "trunk" (
+http://trac.wsusoffline.net/browser/trunk ) sind sie bereits
+seit Changeset 866 ( http://trac.wsusoffline.net/changeset/866 )
+enthalten. Dann brauchen Sie die Linux-Skripte nicht mehr zusätzlich zu
+installieren. Sie sollten aber die benötigten Linux-Pakete überprüfen.
+
+
+Installieren Sie die benötigten und empfohlenen Pakete
+------------------------------------------------------
+Für Debian und von Debian abgeleitete Distributionen müssen Sie zwischen
+den Paketen md5deep und hashdeep unterscheiden.
+
+Die Entwickler sind mit ihrem Projekt von SourceForge nach GitHub
+umgezogen, und sie haben ihr Projekt von md5deep in hashdeep umbenannt:
+
+http://md5deep.sourceforge.net/
+https://github.com/jessek/hashdeep/
+
+Debian hat diesen Schritt nachvollzogen und das Paket md5deep in
+hashdeep umbenannt. Dieser Wechsel erfolgte im Sommer 2015 mit den
+Debian 8 Jessie-Backports. Die allgemeine Regel für Debian und von
+Debian abgeleitete Distributionen lautet deshalb: Installieren Sie das
+Paket md5deep, wenn die Distribution älter ist als 2015. Installieren
+Sie das Paket hashdeep in allen aktuellen Distributionen.
+
+* Für Debian 7 Wheezy:
+
+  su -
+  aptitude install cabextract md5deep wget xmlstarlet trash-cli
+
+
+* Für Debian 8 Jessie-Backports und neuer:
+
+  su -
+  aptitude install cabextract hashdeep wget xmlstarlet trash-cli
+
+
+* Für Ubuntu 14.04LTS Trusty:
+
+  sudo apt-get install cabextract md5deep wget xmlstarlet trash-cli
+
+
+* Für Ubuntu 16.04LTS Xenial und neuer:
+
+  sudo apt-get install cabextract hashdeep wget xmlstarlet trash-cli
+
+
+Andere Distributionen, die nicht auf Debian basieren, scheinen den
+Paketnamen md5deep beizubehalten.
+
+Beachten Sie, dass beide Pakete md5deep und hashdeep eine Reihe von
+ähnlichen Anwendungen installieren: hashdeep, md5deep, sha1deep,
+sha256deep, tigerdeep und whirlpooldeep. In den nächsten Schritten
+müssen Sie immer die Anwendung "hashdeep" verwenden, unabhängig vom
+Paketnamen.
+
+
+Laden Sie das wsusoffline-Archiv herunter und entpacken Sie es
+--------------------------------------------------------------
+Die Linux-Download-Skripte benötigen die Konfigurationsdateien der
+WSUS-Offline-Update-Installation, um die statischen und dynamischen
+Update-Listen zu erstellen. Dies sind die Dateien in den Verzeichnissen
+static, exclude, client/static, client/exclude und xslt.
+
+Außerdem können die Linux-Download-Skripte nur den Download-Teil von
+WSUS Offline Update ersetzen. Um die Updates zu installieren, benötigen
+Sie auf jeden Fall den UpdateInstaller.exe und die anderen Dateien im
+Unterverzeichnis client.
+
+In vorherigen Versionen der Linux-Download-Skripte war es nötig,
+zuerst das wsusoffline-Archiv herunterzuladen. In der Version 1.0-beta-4
+können Sie diesen Schritt überspringen und die Erstinstallation des
+wsusoffline-Archivs den Linux-Skripten selber überlassen.
+
+
+Laden Sie das Archiv für die Linux-Skripte herunter und entpacken Sie es
+------------------------------------------------------------------------
+
+* Erstellen Sie ein Verzeichnis "wsusoffline" und wechseln Sie in dieses
+  Verzeichnis. Dieses Verzeichnis wird sowohl die Linux-Download-Skripte
+  als auch den Inhalt des wsusoffline-Archivs enthalten.
+
+  Wenn Sie das wsusoffline-Archiv bereits heruntergeladen und entpackt
+  haben, wechseln Sie einfach in das Verzeichnis "wsusoffline".
+
+  mkdir wsusoffline
+  cd wsusoffline
+
+
+* Laden Sie das Archiv und die Prüfsummendatei in das Verzeichnis
+  wsusoffline herunter:
+
+  wget http://downloads.hartmut-buhrmester.de/sh-new-1.0-beta-4.tar.gz
+  wget http://downloads.hartmut-buhrmester.de/hashes-sh-new-1.0-beta-4.txt
+
+
+* Überprüfen Sie die Integrität des Archivs:
+
+  hashdeep -a -v -v -l -k hashes-sh-new-1.0-beta-4.txt sh-new-1.0-beta-4.tar.gz
+
+
+* Entpacken Sie das Archiv im Verzeichnis wsusoffline:
+
+  tar xvzf sh-new-1.0-beta-4.tar.gz
+
+
+  Dadurch wird ein neues Verzeichnis "sh-new-1.0-beta-4" erzeugt.
+
+
+* Wechseln Sie in das Verzeichnis sh-new-1.0-beta-4 und rufen Sie
+  das Skript update-generator.bash auf. Dieses Skript wird zunächst
+  einige Tests durchführen. Wenn das Skript die benötigten Dateien
+  des wsusoffline-Archivs nicht findet, wird es vorschlagen, diese
+  Archiv selber herunterzuladen und zu installieren. Bestätigen Sie
+  diese Anfrage.
+
+  Nachdem das Skript das wsusoffline-Archiv installiert hat, zeigt es
+  die Auswahlmenüs zum Herunterladen der Windows- und Office-Updates
+  und der optionalen Downloads.
+
+  cd sh-new-1.0-beta-4
+  ./update-generator.bash
+
+
+Wenn Sie den Installationsordner kopieren oder verschieben wollen,
+achten Sie bitte darauf, dass das Änderungsdatum aller Dateien erhalten
+bleibt. Anstelle "cp" können Sie "cp --archive" oder "cp --preserve"
+verwenden. Dies ist wichtig, damit das Update der Konfigurationsdateien
+von WSUS Offline Update richtig funktioniert.
+
+Hinweis: Die vollständige Dokumentation befindet sich im Unterverzeichnis
+"documentation".

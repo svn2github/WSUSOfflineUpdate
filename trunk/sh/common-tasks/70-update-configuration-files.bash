@@ -1,9 +1,9 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 70-update-configuration-files.bash
-# Version: 1.0-beta-3
-# Release date: 2017-03-30
-# Intended compatibility: WSUS Offline Update Version 10.9.1 - 10.9.2
+# Version: 1.0-beta-4
+# Release date: 2017-06-23
+# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -36,6 +36,18 @@
 
 # ========== Functions ====================================================
 
+function no_pending_updates ()
+{
+    local result_code=1
+
+    if [[ -f "../static/StaticDownloadLink-this.txt" && -f "../static/StaticDownloadLink-recent.txt" ]]; then
+        if diff "../static/StaticDownloadLink-this.txt" "../static/StaticDownloadLink-recent.txt" > /dev/null; then
+            result_code=0
+        fi
+    fi
+    return $result_code
+}
+
 # The configuration files in the directories exclude, static,
 # client/exclude and client/static can be updated individually using a
 # mechanism known as the update of static download definitions (SDD).
@@ -61,14 +73,15 @@
 function run_update_configuration_files ()
 {
     local timestamp_file="${timestamp_dir}/update-configuration-files.txt"
+    local -i interval_length="${interval_length_configuration_files}"
+    local interval_description="${interval_description_configuration_files}"
     local -i initial_errors="${runtime_errors}"
 
     if [[ "${check_for_self_updates}" == "disabled" ]]; then
-        log_info_message "The update of configuration files is disabled in preferences.bash"
-    elif same_day "${timestamp_file}"; then
-        log_info_message "Skipped update of configuration files, because it has already been done in the last 24 hours"
-    elif diff "../static/StaticDownloadLink-this.txt" \
-              "../static/StaticDownloadLink-recent.txt" > /dev/null; then
+        log_info_message "The update of configuration files for WSUS Offline Update is disabled in preferences.bash"
+    elif same_day "${timestamp_file}" "${interval_length}"; then
+        log_info_message "Skipped update of configuration files for WSUS Offline Update, because it has already been done less than ${interval_description} ago"
+    elif no_pending_updates; then
         remove_obsolete_files
         update_configuration_files
 
@@ -89,7 +102,7 @@ function remove_obsolete_files ()
     local -a file_list=()
     local current_file=""
 
-    log_info_message "Removing obsolete files from previous versions ..."
+    log_info_message "Removing obsolete files from previous versions of WSUS Offline Update..."
     # Only changes since WSUS Offline Update version 9.5.3 are considered.
 
     # Dummy files are inserted, because zip archives can not include empty
@@ -172,37 +185,10 @@ function remove_obsolete_files ()
     if [[ -d ../client/wle ]]; then
         log_warning_message "Windows Live Essentials are no longer supported"
     fi
+
+    return 0
 }
 
-# Download a single file and track changes to that file. If the file
-# changes, all updates should be reevaluated.
-function download_single_file_tracking ()
-{
-    local download_dir="$1"
-    local download_link="$2"
-    local filename="${download_link##*/}"
-    local previous_file_date="not-available"
-    local current_file_date="not-available"
-    local initial_errors="${runtime_errors}"
-
-    if [[ -f "${download_dir}/${filename}" ]]; then
-        previous_file_date="$(date -R -r "${download_dir}/${filename}")"
-    fi
-    download_single_file "$download_dir" "$download_link"
-    if (( runtime_errors == initial_errors )); then
-        if [[ -f "${download_dir}/${filename}" ]]; then
-            current_file_date="$(date -R -r "${download_dir}/${filename}")"
-        fi
-        if [[ "${previous_file_date}" != "${current_file_date}" ]]; then
-            log_info_message "The file ${filename} was updated. All updates will be reevaluated."
-            log_debug_message "- Previous file modification date: $previous_file_date"
-            log_debug_message "- Current file modification date:  $current_file_date"
-            reevaluate_all_updates
-            rm -f "../exclude/ExcludeList-superseded.txt"
-            rm -f "../exclude/ExcludeList-superseded-seconly.txt"
-        fi
-    fi
-}
 
 # Download a file and then all URLs within that file. This is used for
 # the "update of static download definitions".
@@ -213,7 +199,7 @@ function recursive_download ()
     local filename="${download_link##*/}"
     local initial_errors="${runtime_errors}"
 
-    download_single_file_tracking "$download_dir" "$download_link"
+    download_single_file "$download_dir" "$download_link"
     if (( runtime_errors == initial_errors )); then
         # The downloaded file may be empty, which is actually the default
         # state for the "update of static download definitions". These
@@ -222,6 +208,8 @@ function recursive_download ()
         if [[ -s "${download_dir}/${filename}" ]]; then
             download_multiple_files "$download_dir" "${download_dir}/${filename}"
         fi
+    else
+        log_warning_message "The download of ${filename} failed."
     fi
     return 0
 }
@@ -231,10 +219,10 @@ function recursive_download ()
 # ../client/exclude/ExcludeUpdateFiles-modified.txt.
 function update_configuration_files ()
 {
-    log_info_message "Updating static and exclude definitions for download and update ..."
+    log_info_message "Updating static and exclude definitions for download and update..."
 
-    download_single_file_tracking "../exclude" "http://download.wsusoffline.net/ExcludeList-superseded-exclude.txt"
-    download_single_file_tracking "../client/exclude" "http://download.wsusoffline.net/HideList-seconly.txt"
+    download_single_file "../exclude" "http://download.wsusoffline.net/ExcludeList-superseded-exclude.txt"
+    download_single_file "../client/exclude" "http://download.wsusoffline.net/HideList-seconly.txt"
     recursive_download "../static" "http://download.wsusoffline.net/StaticDownloadFiles-modified.txt"
     recursive_download "../exclude" "http://download.wsusoffline.net/ExcludeDownloadFiles-modified.txt"
     recursive_download "../client/static" "http://download.wsusoffline.net/StaticUpdateFiles-modified.txt"

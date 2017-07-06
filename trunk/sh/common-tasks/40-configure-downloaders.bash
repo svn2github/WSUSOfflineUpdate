@@ -1,9 +1,9 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 40-configure-downloaders.bash
-# Version: 1.0-beta-3
-# Release date: 2017-03-30
-# Intended compatibility: WSUS Offline Update Version 10.9.1 - 10.9.2
+# Version: 1.0-beta-4
+# Release date: 2017-06-23
+# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -111,7 +111,9 @@ readonly aria2c_connection_test_b="--dry-run=true --log-level=info   --max-tries
 # and "download.microsoft.com". These servers may respond with "503
 # Service Unavailable" or "403 Forbidden", if only the domain name
 # is used.
-readonly connection_test_urls="http://www.wsusoffline.net/ http://download.windowsupdate.com/microsoftupdate/v6/wsusscan/wsusscn2.cab"
+
+readonly connection_test_urls="http://download.windowsupdate.com/microsoftupdate/v6/wsusscan/wsusscn2.cab"
+#readonly connection_test_urls="http://www.wsusoffline.net/ http://download.windowsupdate.com/microsoftupdate/v6/wsusscan/wsusscn2.cab"
 
 # ========== Global variables =============================================
 
@@ -221,7 +223,7 @@ function download_static_files ()
     require_non_empty_file "${input_file}" || return 0
     number_of_links="$(wc -l < "${input_file}")"
 
-    log_info_message "Downloading/validating ${number_of_links} links from input file ${input_file##*/} ..."
+    log_info_message "Downloading/validating ${number_of_links} link(s) from input file ${input_file##*/} ..."
 
     # Setting IFS to a comma and space removes spurious spaces at the
     # end of the line. These may be found in some files created by the
@@ -250,29 +252,55 @@ function download_static_files ()
     done < <(cat_dos "${input_file}")
 
     if (( runtime_errors == initial_errors )); then
-        log_info_message "Downloaded/validated ${number_of_links} links"
+        log_info_message "Downloaded/validated ${number_of_links} link(s)"
     else
         log_warning_message "There were $(( runtime_errors - initial_errors )) runtime errors while downloading/validating links from input file ${input_file##*/}. See the download log for details"
     fi
     return 0
 }
 
+
 function download_single_file ()
 {
     local download_dir="$1"
     local download_link="$2"
-    local remote_filename="${download_link##*/}"
+    local filename="${download_link##*/}"
+    local pathname="${download_dir}/${filename}"
 
-    case "$remote_filename" in
-        wsusscn2.cab | mpam-fe.exe | mpam-fex64.exe | mpas-fe.exe | mpas-feX64.exe)
+    case "$filename" in
+        # Virus definition files
+        mpam-fe.exe | mpam-fex64.exe | mpas-fe.exe | mpas-feX64.exe)
+            create_backup_copy "${pathname}"
             download_single_file_failsafe "$@"
+            restore_backup_copy "${pathname}" # If necessary
         ;;
+        # WSUS catalog file
+        wsusscn2.cab)
+            set_timestamp "${pathname}"
+            create_backup_copy "${pathname}"
+            download_single_file_failsafe "$@"
+            verify_cabinet_file "${pathname}" # May delete the file, if the test fails
+            restore_backup_copy "${pathname}" # If necessary
+            compare_timestamp "${pathname}"
+            if ! require_file "${pathname}"; then
+                log_error_message "The download or the integrity test of the WSUS catalog file wsusscn2.cab failed. Without this file, the script cannot continue."
+                exit 1
+            fi
+        ;;
+        # WSUS Offline Update configuration files
+        ExcludeList-superseded-exclude.txt | HideList-seconly.txt | StaticDownloadFiles-modified.txt | ExcludeDownloadFiles-modified.txt | StaticUpdateFiles-modified.txt)
+            set_timestamp "${pathname}"
+            download_single_file_optimized "$@"
+            compare_timestamp "${pathname}"
+        ;;
+        # All other downloads
         *)
             download_single_file_optimized "$@"
         ;;
     esac
     return 0
 }
+
 
 # The function download_single_file_optimized is optimized for files,
 # which don't change on the server.
@@ -281,7 +309,7 @@ function download_single_file_optimized ()
 {
     local download_dir="$1"
     local download_link="$2"
-    local remote_filename="${download_link##*/}"
+    local filename="${download_link##*/}"
     mkdir -p "$download_dir"
 
     if "${downloader}" ${common_options} ${optimized_options} \
@@ -289,14 +317,15 @@ function download_single_file_optimized ()
         "${download_dir_prefix}${download_dir}" \
         "${download_link}"
     then
-        log_debug_message "Download/validation of ${remote_filename} succeeded"
+        log_debug_message "Download/validation of ${filename} succeeded"
     else
-        log_error_message "Download/validation of ${remote_filename} failed"
+        log_error_message "Download/validation of ${filename} failed"
         runtime_errors="$(( runtime_errors + 1 ))"
     fi
 
     return 0
 }
+
 
 # The function download_single_file_failsafe is optimized for a reliable
 # download of the files wsusscn2.cab and the four virus definition files.
@@ -317,37 +346,26 @@ function download_single_file_failsafe ()
 {
     local download_dir="$1"
     local download_link="$2"
-    local remote_filename="${download_link##*/}"
-    mkdir -p "$download_dir"
-
-    # Make a backup copy of an existing file, preserving the file
-    # modification date and other metadata
-    #
-    # TODO: For Wget, this copy could actually be a hard link. Wget can
-    # delete existing files first with the option --unlink, which is
-    # explicitly meant for directories with hard links.
-    if [[ -f "${download_dir}/${remote_filename}" ]]; then
-        cp -a "${download_dir}/${remote_filename}" "${download_dir}/${remote_filename}.bak"
-    fi
-
+    local filename="${download_link##*/}"
     local result_code=1
     local try_count=1
     local max_tries=10
     local wait_time=10
+    mkdir -p "$download_dir"
 
     until (( result_code == 0 )) || (( try_count > max_tries )); do
 
-        log_info_message "Downloading/validating ${remote_filename}, try $try_count ..."
+        log_info_message "Downloading/validating ${filename}, try $try_count ..."
         if "${downloader}" ${common_options} ${failsafe_options} \
             "${logfile_prefix}${logfile}" \
             "${download_dir_prefix}${download_dir}" \
             "${download_link}"
         then
             result_code=0
-            log_debug_message "Download/validation of ${remote_filename} succeeded"
+            log_debug_message "Download/validation of ${filename} succeeded"
         else
             result_code="$?"
-            log_error_message "Download/validation of ${remote_filename} failed with result code $result_code"
+            log_error_message "Download/validation of ${filename} failed with result code $result_code"
 
             if (( try_count < max_tries )); then
                 log_info_message "Restarting download in $(( try_count * wait_time )) seconds ..."
@@ -358,25 +376,16 @@ function download_single_file_failsafe ()
                 # If the download failed after 10 attempts, then the
                 # downloaded file (if any) is most probably damaged and
                 # should be deleted.
-                rm -f "${download_dir}/${remote_filename}"
+                rm -f "${download_dir}/${filename}"
             fi
         fi
 
         try_count=$(( try_count + 1 ))
     done
 
-    # Restore the backup copy, if the download failed
-    if [[ -f "${download_dir}/${remote_filename}.bak" ]]; then
-        if [[ -f "${download_dir}/${remote_filename}" ]]; then
-            rm "${download_dir}/${remote_filename}.bak"
-        else
-            log_info_message "Restoring backup file of ${remote_filename}"
-            mv "${download_dir}/${remote_filename}.bak" "${download_dir}/${remote_filename}"
-        fi
-    fi
-
     return 0
 }
+
 
 # The function download_multiple_files uses a text file with URLs as
 # input. This function is used for dynamic updates and for the recursive
@@ -395,14 +404,14 @@ function download_multiple_files ()
     # directories.
     mkdir -p "$download_dir"
 
-    log_info_message "Downloading/validating ${number_of_links} links from input file ${input_file##*/} ..."
+    log_info_message "Downloading/validating ${number_of_links} link(s) from input file ${input_file##*/} ..."
 
     if "${downloader}" ${common_options} ${optimized_options} \
         "${logfile_prefix}${logfile}" \
         "${download_dir_prefix}${download_dir}" \
         "${inputfile_prefix}$input_file"
     then
-        log_info_message "Downloaded/validated ${number_of_links} links"
+        log_info_message "Downloaded/validated ${number_of_links} link(s)"
     else
         log_error_message "Some downloads from input file ${input_file##*/} failed -- see the download log for details"
         runtime_errors="$(( runtime_errors + 1 ))"
@@ -410,6 +419,56 @@ function download_multiple_files ()
 
     return 0
 }
+
+
+# function download_and_verify
+#
+# Download an archive and the accompanying hashes file, and use the
+# hashes file to verify the archive. This is used for the self update
+# of WSUS Offline Update and the Linux scripts.
+
+function download_and_verify ()
+{
+    local download_dir="$1"
+    local archive_link="$2"
+    local hashes_link="$3"
+    local archive_filename="${archive_link##*/}"
+    local hashes_filename="${hashes_link##*/}"
+    local -i initial_errors="${runtime_errors}"
+
+    log_info_message "Downloading archive and accompanying hashes file..."
+    download_single_file "${download_dir}" "${archive_link}"
+    (( runtime_errors == initial_errors )) || exit 1
+    download_single_file "${download_dir}" "${hashes_link}"
+    (( runtime_errors == initial_errors )) || exit 1
+
+    log_info_message "Searching downloaded files..."
+    if [[ -f "${download_dir}/${archive_filename}" ]]; then
+        log_info_message "Found archive:     ${download_dir}/${archive_filename}"
+    else
+        log_error_message "Archive ${archive_filename} was not found"
+        exit 1
+    fi
+    if [[ -f "${download_dir}/${hashes_filename}" ]]; then
+        log_info_message "Found hashes file: ${download_dir}/${hashes_filename}"
+    else
+        log_error_message "Hashes file ${hashes_filename} was not found"
+        exit 1
+    fi
+
+    # Validate the archive using hashdeep in audit mode (-a). The bare
+    # mode (-b) removes any leading directory information. This enables
+    # us to check files without changing directories with pushd/popd.
+    log_info_message "Verifying the integrity of the archive ${archive_filename} ..."
+    if hashdeep -a -b -v -v -k "${download_dir}/${hashes_filename}" "${download_dir}/${archive_filename}"; then
+        log_info_message "Validated archive ${archive_filename}"
+    else
+        log_error_message "Validation failed"
+        exit 1
+    fi
+    return 0
+}
+
 
 # Do a two step connection test.
 #
@@ -423,13 +482,14 @@ function test_internet_connection ()
     log_info_message "Wake up sleeping DSL modems and routers..."
 
     # The first test sometimes fails with the error message "ping: unknown
-    # host www.wsusoffline.net". Then the Internet router was too slow
-    # to connect, but the subsequent connections tests should succeed.
-    (ping -c 4 -q www.wsusoffline.net 2>&1 | tee -a "${logfile}") || true
+    # host www.wsusoffline.net". Then the Internet router was too slow to
+    # connect to its Internet Service Provider, but subsequent connection
+    # tests should succeed.
+    (ping -c 4 -q download.windowsupdate.com 2>&1 | tee -a "${logfile}") || true
     echo ""
     sleep 4
 
-    log_info_message "Testing the internet connection..."
+    log_info_message "Testing the Internet connection..."
     if "${downloader}" ${connection_test_a} \
         "${logfile_prefix}${logfile}" \
         ${connection_test_urls}
@@ -444,12 +504,13 @@ function test_internet_connection ()
         then
             log_info_message "Connection test succeeded"
         else
-            log_error_message "The internet connection could not be established. See download log for details."
+            log_error_message "The Internet connection could not be established. See download log for details."
             exit 1
         fi
     fi
     return 0
 }
+
 
 # Proxy servers should not be set on the command line. The complete
 # command line of all running applications may be revealed with tools

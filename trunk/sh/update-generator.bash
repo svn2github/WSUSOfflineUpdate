@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #
 # Filename: update-generator.bash
-# Version: 1.0-beta-3
-# Release date: 2017-03-30
-# Intended compatibility: WSUS Offline Update Version 10.9.1 - 10.9.2
+# Version: 1.0-beta-4
+# Release date: 2017-06-23
+# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -57,12 +57,13 @@
 # customization. They are considered read-only. Other global variables
 # are defined in the next section below.
 
-readonly script_version="1.0-beta-3"
-readonly release_date="2017-03-30"
+readonly script_version="1.0-beta-4"
+readonly release_date="2017-06-23"
 readonly temp_dir="/tmp/wsusoffline_temp"
 readonly timestamp_dir="../timestamps"
 readonly log_dir="../log"
 readonly logfile="${log_dir}/download.log"
+readonly cache_dir="../cache"
 
 # Note: files and directories are defined here, but they are created
 # later after setting the working directory.
@@ -102,7 +103,7 @@ home_directory=""
 command_line="$0 $*"
 declare -ag command_line_parameters=("$@")
 
-# The version of WSUS Offline Update as defined in the script
+# The version of WSUS Offline Update is read from the script
 # DownloadUpdates.cmd.
 wou_version=""
 
@@ -116,6 +117,10 @@ declare -ig runtime_errors=0
 # standard locale C. Messages are printed in American English. It is not
 # necessary to set the environment variable LANG, and this may actually
 # cause an error. See "man grep" for a description.
+#
+# LC_ALL and LC_COLLATE influence the sort order of GNU sort and join. To
+# stabilize the sort order of some files, a traditional sort order using
+# byte values should be used by setting LC_ALL=C.
 export LC_ALL=C
 
 # Try to get the height and width of the terminal window. These
@@ -175,12 +180,13 @@ function exit_handler ()
             echo "Cleaning up temporary files ..."
             rm -r "${temp_dir}"
         fi
-        echo "Exiting ..."
+        echo "Exiting..."
     else
         # Keep temporary files for debugging
         printf '%s\n' "Exiting with error code $result_code ..."
     fi
 
+    echo ""
     exit "$result_code"
 } 1>&2
 trap exit_handler EXIT
@@ -237,7 +243,7 @@ function setup_working_directory ()
             fi
         ;;
         *)
-            echo "Unknown operating system"
+            echo "Unknown operating system ${kernel_name}, ${OSTYPE}"
             exit 1
         ;;
     esac
@@ -252,6 +258,7 @@ function setup_working_directory ()
     mkdir -p "$temp_dir"
     mkdir -p "$timestamp_dir"
     mkdir -p "$log_dir"
+    mkdir -p "$cache_dir"
     return 0
 }
 

@@ -1,9 +1,9 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 20-start-logging.bash
-# Version: 1.0-beta-3
-# Release date: 2017-03-30
-# Intended compatibility: WSUS Offline Update Version 10.9.1 - 10.9.2
+# Version: 1.0-beta-4
+# Release date: 2017-06-23
+# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -35,10 +35,12 @@
 # from the file DownloadUpdates.cmd.
 function set_wou_version ()
 {
-    if  wou_version="$(grep_dos -F -- "set WSUSOFFLINE_VERSION=" ../cmd/DownloadUpdates.cmd)"; then
-        wou_version="${wou_version/set WSUSOFFLINE_VERSION=/}"
-    else
-        wou_version="not-available"
+    wou_version="not-available"
+
+    if require_non_empty_file "../cmd/DownloadUpdates.cmd"; then
+        if  wou_version="$(grep_dos -F -- "set WSUSOFFLINE_VERSION=" ../cmd/DownloadUpdates.cmd)"; then
+            wou_version="${wou_version/set WSUSOFFLINE_VERSION=/}"
+        fi
     fi
     return 0
 }
@@ -61,9 +63,11 @@ function print_info_block ()
 {
     local linux_details=""
 
-    echo ""
     log_info_message "Starting $script_name $script_version ($release_date)"
-    log_info_message "Running on WSUS Offline Update version $wou_version"
+    log_info_message "Command line: ${command_line}"
+    if [[ "$wou_version" != "not-available" ]]; then
+        log_info_message "Running on WSUS Offline Update version $wou_version"
+    fi
     if [[ -f ../client/builddate.txt ]]; then
         log_info_message "Repository last updated on $(cat_dos ../client/builddate.txt)"
     fi
@@ -81,10 +85,12 @@ function print_info_block ()
     # The logfile includes an info block about the Kernel, Linux
     # distribution and environment. This is only for reference and not
     # displayed in the terminal window.
+    #
+    # $OSTYPE is an environment variable, which is set by the bash itself.
     {
-        printf '%s\n' "Local time:     $(date -R)"     # RFC 2822 format
-        printf '%s\n' "OS type:        ${OSTYPE}"      # as identified by bash and exported as an environment variable
-        printf '%s\n' "Kernel name:    ${kernel_name}" # as identified by uname
+        printf '%s\n' "Local time:     $(date -R)"  # RFC 2822 format
+        printf '%s\n' "OS type:        ${OSTYPE}"
+        printf '%s\n' "Kernel name:    ${kernel_name}"
         printf '%s\n' "Kernel details: ${kernel_details}"
         echo ""
         printf '%s\n' "Linux distribution" "${linux_details}"
@@ -93,11 +99,13 @@ function print_info_block ()
                       "LC_COLLATE=${LC_COLLATE:-}" "LC_CTYPE=${LC_CTYPE:-}" \
                       "LC_MESSAGES=${LC_MESSAGES:-}" "LANG=${LANG:-}"
         echo ""
-        printf '%s\n' "Command line:      ${command_line}"
+        printf '%s\n' "Resolution of the installation directory"
         printf '%s\n' "Canonical name:    ${canonical_name}"
         printf '%s\n' "Script name:       ${script_name}"
         printf '%s\n' "Home directory:    ${home_directory}"
         printf '%s\n' "Working directory: $(pwd)"
+        echo ""
+        printf '%s\n' "Configuration variables from the preferences file"
         printf '%s\n' "prefer_seconly:    ${prefer_seconly}"
     } >> "${logfile}"
     return 0

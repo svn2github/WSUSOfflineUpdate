@@ -1,9 +1,9 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 10-remove-obsolete-scripts.bash
-# Version: 1.0-beta-3
-# Release date: 2017-03-30
-# Intended compatibility: WSUS Offline Update Version 10.9.1 - 10.9.2
+# Version: 1.0-beta-4
+# Release date: 2017-06-23
+# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -36,7 +36,17 @@
 
 function remove_obsolete_scripts ()
 {
-    # Obsolete scripts from version 1.0-beta-2
+    # Remove the obsolete script DownloadUpdates.sh and related files.
+    #
+    # The new Linux scripts are included in the main WSUS Offline Update
+    # archive in changeset 866 http://trac.wsusoffline.net/changeset/866 ,
+    # but then the old scripts in the same directory need to be removed.
+    rm -f ./commonparts.inc
+    rm -f ./CreateISOImage.sh
+    rm -f ./DownloadUpdates.sh
+    rm -f ./RemoveGermanAndEnglishLanguageSupport.sh
+
+    # Remove obsolete scripts from version 1.0-beta-2
     #
     # The directory common-tasks was refactored in version 1.0-beta-3:
     # A new script 10-remove-obsolete-scripts.bash (this one) was added,

@@ -1,9 +1,9 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 50-superseded-updates.bash
-# Version: 1.0-beta-3
-# Release date: 2017-03-30
-# Intended compatibility: WSUS Offline Update Version 10.9.1 - 10.9.2
+# Version: 1.0-beta-4
+# Release date: 2017-06-23
+# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -30,23 +30,45 @@
 
 # ========== Functions ====================================================
 
-function unpack_wsus_catalog ()
-{
-    rm -f "${temp_dir}/package.cab"
-    rm -f "${temp_dir}/package.xml"
+# The WSUS catalog file package.xml is only extracted from the archive
+# wsusscn2.cab, if this file changes. Otherwise, a cached copy of
+# package.xml is used.
+#
+# The file package.xml contains just one long line without any line
+# breaks. This is the most compact form of XML files and similar formats
+# like JSON. In this form, it can be parsed by applications, but it cannot
+# be displayed in a text editor nor searched with grep. For convenience,
+# the script also creates a pretty-printed copy of the file with the
+# name package-formated.xml.
 
-    # cabextract sometimes warns about "possible extra bytes at end
-    # of file".  These warnings, as well as the result code, can be
-    # ignored. This could be done by redirecting all output to /dev/null,
-    # but then any real error messages would also be suppressed. So,
-    # an inverted grep is used to just filter this specific error message.
-    #
-    # Some more workarounds seem to be needed for the shell option
-    # errexit and traps on ERR.
-    log_info_message "Extracting Microsoft's update catalog file package.xml ..."
-    cabextract -q -d "${temp_dir}" -F "package.cab" "../client/wsus/wsusscn2.cab" 2>&1 |
-        grep -F -v "extra bytes at end of file." || true
-    cabextract -q -d "${temp_dir}" -F "package.xml" "${temp_dir}/package.cab" || true
+function unpack_wsus_catalog_file ()
+{
+    if require_file "${cache_dir}/package.xml"; then
+        log_info_message "Found cached update catalog file package.xml"
+    else
+        # Remove formated copy of the file
+        rm -f "${cache_dir}/package-formated.xml"
+
+        # cabextract sometimes warns about "possible extra bytes at
+        # end of file". These warnings, as well as the result code, can
+        # (and must) be ignored.
+        #
+        # Compared to version 1.0-beta-3, this warning is not filtered
+        # anymore, because it required a redirection of the error output
+        # to standard output, to be filtered with grep.
+        if [[ -f "../client/wsus/wsusscn2.cab" ]]; then
+            mkdir -p "${cache_dir}"
+            log_info_message "Extracting Microsoft's update catalog file package.xml (ignore any warnings about extra bytes at end of file)..."
+            cabextract -q -d "${temp_dir}" -F "package.cab" "../client/wsus/wsusscn2.cab" || true
+            cabextract -q -d "${cache_dir}" -F "package.xml" "${temp_dir}/package.cab" || true
+            xmlstarlet format "${cache_dir}/package.xml" > "${cache_dir}/package-formated.xml"
+        else
+            log_error_message "The required file wsusscn2.cab was not found. The script cannot continue without this file. Please rerun the download to get this file."
+            rm -f "${timestamp_dir}/timestamp-wsus-all-glb.txt"
+            exit 1
+        fi
+    fi
+    echo ""
     return 0
 }
 
@@ -95,7 +117,7 @@ function check_superseded_updates ()
 function rebuild_superseded_updates ()
 {
     # Preconditions
-    require_file "${temp_dir}/package.xml" || fail "The required file package.xml is missing"
+    require_file "${cache_dir}/package.xml" || fail "The required file package.xml is missing"
 
     # Create a new file ExcludeList-superseded.txt from package.xml and
     # ExcludeList-superseded-exclude.txt
@@ -123,7 +145,7 @@ function rebuild_superseded_updates ()
     # Extract all existing bundle RevisionIds
     ${xmlstarlet} transform \
         ../xslt/extract-existing-bundle-revision-ids.xsl \
-        "${temp_dir}/package.xml" \
+        "${cache_dir}/package.xml" \
         > "${temp_dir}/existing-bundle-revision-ids.txt"
     sort_in_place "${temp_dir}/existing-bundle-revision-ids.txt"
 
@@ -132,7 +154,7 @@ function rebuild_superseded_updates ()
     # of the bundle records, to which they belong
     ${xmlstarlet} transform \
         ../xslt/extract-superseding-and-superseded-revision-ids.xsl \
-        "${temp_dir}/package.xml" \
+        "${cache_dir}/package.xml" \
         > "${temp_dir}/superseding-and-superseded-revision-ids.txt"
     sort_in_place "${temp_dir}/superseding-and-superseded-revision-ids.txt"
 
@@ -163,7 +185,7 @@ function rebuild_superseded_updates ()
     # - the File-Id of the Payload File
     ${xmlstarlet} transform \
         ../xslt/extract-update-revision-and-file-ids.xsl \
-        "${temp_dir}/package.xml" \
+        "${cache_dir}/package.xml" \
         > "${temp_dir}/BundledUpdateRevisionAndFileIds.txt"
     sort_in_place "${temp_dir}/BundledUpdateRevisionAndFileIds.txt"
 
@@ -194,7 +216,7 @@ function rebuild_superseded_updates ()
     log_info_message "Extracting file 6..."
     ${xmlstarlet} transform \
         ../xslt/extract-update-cab-exe-ids-and-locations.xsl \
-        "${temp_dir}/package.xml" \
+        "${cache_dir}/package.xml" \
         > "${temp_dir}/UpdateCabExeIdsAndLocations.txt"
     sort_in_place "${temp_dir}/UpdateCabExeIdsAndLocations.txt"
 
@@ -259,7 +281,7 @@ function rebuild_superseded_updates ()
 
 # ========== Commands =====================================================
 
-unpack_wsus_catalog
+unpack_wsus_catalog_file
 check_superseded_updates
 echo ""
 return 0

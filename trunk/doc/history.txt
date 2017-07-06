@@ -1323,3 +1323,6 @@ Version 11.0 -- 28.06.17
 - Fix: Replaced superseded Office 2016 Security Update kb3085635 (MS15-099) by kb3203383 (June 2017)
 - Fix: Replaced superseded Skype for Business 2016 Security Update kb3178656 (MS17-013) by kb3203382 (June 2017)
 --------------------------------------------------------------------------------
+Version 11.0.1 -- ??.??.17
+- Included complete rewrite of the Linux scripts version 1.0-beta-4 (Special thanks to H. Buhrmester)
+- Fix: Incorrect calculation of ExcludeList-superseded-seconly.txt

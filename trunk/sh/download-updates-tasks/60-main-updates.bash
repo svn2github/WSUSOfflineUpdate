@@ -1,9 +1,9 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 60-main-updates.bash
-# Version: 1.0-beta-3
-# Release date: 2017-03-30
-# Intended compatibility: WSUS Offline Update Version 10.9.1 - 10.9.2
+# Version: 1.0-beta-4
+# Release date: 2017-06-23
+# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -31,7 +31,7 @@
 #
 #     Global variables from other files
 #     - runtime_errors is defined in the file download-updates.bash
-#     - update_name, update_architecture and language_name are defined
+#     - update_name, update_architecture and language_list are defined
 #       in the file 10-parse-command-line.bash
 
 # ========== Global variables =============================================
@@ -46,6 +46,8 @@ fi
 
 function get_main_updates ()
 {
+    local current_lang=""
+
     case "$update_name" in
         w60 | w60-x64 | w61 | w61-x64 | w62-x64 | w63 | w63-x64 | w100 | w100-x64)
             if [[ "$include_win_glb" == "enabled" ]]; then
@@ -54,13 +56,13 @@ function get_main_updates ()
                 log_info_message "Skipped processing of \"win glb\" due to preferences settings"
                 echo ""
             fi
-            process_main_update "${update_name/-x64/}" "$update_architecture" glb
+            process_main_update "${update_name/-x64/}" "${update_architecture}" glb
         ;;
         o2k7 | o2k10 | o2k10-x64 | o2k13 | o2k13-x64)
-            process_main_update ofc x86 glb
-            process_main_update ofc x86 "${language_name}"
-            process_main_update "${update_name/-x64/}" "$update_architecture" glb
-            process_main_update "${update_name/-x64/}" "$update_architecture" "${language_name}"
+            for current_lang in glb ${language_list//,/ }; do
+                process_main_update ofc x86 "${current_lang}"
+                process_main_update "${update_name/-x64/}" "${update_architecture}" "${current_lang}"
+            done
         ;;
         o2k16 | o2k16-x64)
             process_main_update ofc x86 glb
@@ -87,17 +89,21 @@ function process_main_update ()
     local lang="$3"
     local initial_errors="${runtime_errors}"
 
-    # Create naming scheme. The names for the hashes_file, hashed_dir
-    # and download_dir must be synchronized with the Windows script
-    # DownloadUpdates.cmd.
+    # Create naming scheme.
     #
-    # Timestamp files have the general name:
-    # timestamp-${name}-${arch}-${lang}.txt
+    # The variable $timestamp_pattern is used to create temporary files
+    # like the timestamp files and the static and dynamic download
+    # lists. It is also used in messages to identify the download task.
     #
-    # The timestamp files for Windows Vista, Windows 7 amd .Net Frameworks
-    # use the original language as set on the command-line, to keep track
-    # of localized downloads for Internet Explorer and .Net Framework
-    # language packs.
+    # The timestamp pattern is usually composed of the first three
+    # positional parameters of this function:
+    #
+    # ${name}-${arch}-${lang}
+    #
+    # The timestamp pattern for Windows Vista, Windows 7 and .Net
+    # Frameworks uses the original language as set on the command-line
+    # of the download script, to keep track of localized downloads for
+    # Internet Explorer and .Net Framework language packs.
     #
     # 64-bit Office updates for o2k10, o2k13 and o2k16 always
     # include 32-bit updates, and they are downloaded to the same
@@ -105,6 +111,9 @@ function process_main_update ()
     # it is not necessary to download 32-bit updates again. The timestamp
     # files should still be different, to make sure, that the additional
     # 64-bit downloads are always included.
+    #
+    # The names for the hashes_file, hashed_dir and download_dir must
+    # be synchronized with the Windows script DownloadUpdates.cmd.
 
     local timestamp_pattern="not-available"
     local hashes_file="not-available"
@@ -114,6 +123,8 @@ function process_main_update ()
     local valid_static_links="not-available"
     local valid_dynamic_links="not-available"
     local valid_links="not-available"
+    local -i interval_length="${interval_length_dependent_files}"
+    local interval_description="${interval_description_dependent_files}"
 
     case "${name}" in
         win | w62 | w63 | w100)
@@ -129,7 +140,7 @@ function process_main_update ()
             fi
         ;;
         w60 | w61)
-            timestamp_pattern="${name}-${arch}-${language_name}"
+            timestamp_pattern="${name}-${arch}-${language_list}"
             if [[ "${arch}" == "x86" ]]; then
                 hashes_file="../client/md/hashes-${name}-${lang}.txt"
                 hashed_dir="../client/${name}/${lang}"
@@ -147,7 +158,7 @@ function process_main_update ()
             download_dir="../client/${name}/${lang}"
         ;;
         dotnet)
-            timestamp_pattern="${name}-${arch}-${language_name}"
+            timestamp_pattern="${name}-${arch}-${language_list}"
             hashes_file="../client/md/hashes-${name}-${arch}-${lang}.txt"
             hashed_dir="../client/${name}/${arch}-${lang}"
             download_dir="../client/${name}/${arch}-${lang}"
@@ -156,15 +167,20 @@ function process_main_update ()
             fail "${FUNCNAME[0]} - Unknown update name: ${name}"
         ;;
     esac
+
     # The download results are influenced by the options to include
-    # Service Packs and prefer security-only updates. If these options
+    # Service Packs and to prefer security-only updates. If these options
     # change, then the affected downloads should be reevaluated. Including
-    # the values of these two options in the timestamp is a simple way
-    # to achieve that much.
+    # the values of these two options in the name of the timestamp file
+    # is a simple way to achieve that much.
     #
-    # Somehow, the results for w60 are affected by the option
+    # Somehow, the results for w60 are also affected by the option
     # prefer_seconly, although there is no special configuration for
     # Windows Vista.
+    #
+    # TODO: Maybe this should be done differently, but this would
+    # require the script to read and write preferences and to detect
+    # changed settings.
     case "${name}" in
         w60 | w61 | w62 | w63 | dotnet)
             timestamp_file="${timestamp_dir}/timestamp-${timestamp_pattern}-${include_service_packs}-${prefer_seconly}.txt"
@@ -177,8 +193,8 @@ function process_main_update ()
     valid_dynamic_links="${temp_dir}/ValidDynamicLinks-${timestamp_pattern}.txt"
     valid_links="${temp_dir}/ValidLinks-${timestamp_pattern}.txt"
 
-    if same_day "$timestamp_file"; then
-        log_info_message "Skipped processing of \"${timestamp_pattern//-/ }\", because it has already been done in the last 24 hours"
+    if same_day "$timestamp_file" "${interval_length}"; then
+        log_info_message "Skipped processing of \"${timestamp_pattern//-/ }\", because it has already been done less than ${interval_description} ago"
     else
         log_info_message "Start processing of \"${timestamp_pattern//-/ }\" ..."
 
@@ -212,6 +228,7 @@ function calculate_static_updates ()
     local lang="$3"
     local valid_static_links="$4"
     local current_dir=""
+    local current_lang=""
     local -a exclude_lists_static=()
 
     # Usually, there should be a non-empty file with one of the names:
@@ -273,27 +290,35 @@ function calculate_static_updates ()
         # AddCustomLanguageSupport.cmd
         #
         # There are no global installation files for Internet
-        # Explorer. Global static download files for dotnet are already
-        # included in the patterns above.
+        # Explorer. Static download links for "dotnet ${arch} glb"
+        # are already included in the patterns above. This means, that
+        # glb does not need to be prepended to the language list at
+        # this point.
         case "${name}" in
             w60)
-                if [[ -s "${current_dir}/StaticDownloadLinks-ie8-w60-${arch}-${language_name}.txt" ]]; then
-                    cat_dos "${current_dir}/StaticDownloadLinks-ie8-w60-${arch}-${language_name}.txt" \
-                        >> "${temp_dir}/StaticDownloadLinks-${name}-${arch}-${lang}.txt"
-                fi
+                for current_lang in ${language_list//,/ }; do
+                    if [[ -s "${current_dir}/StaticDownloadLinks-ie8-w60-${arch}-${current_lang}.txt" ]]; then
+                        cat_dos "${current_dir}/StaticDownloadLinks-ie8-w60-${arch}-${current_lang}.txt" \
+                            >> "${temp_dir}/StaticDownloadLinks-${name}-${arch}-${lang}.txt"
+                    fi
+                done
             ;;
             w61)
-                if [[ -s "${current_dir}/StaticDownloadLinks-ie9-w61-${arch}-${language_name}.txt" ]]; then
-                    cat_dos "${current_dir}/StaticDownloadLinks-ie9-w61-${arch}-${language_name}.txt" \
-                        >> "${temp_dir}/StaticDownloadLinks-${name}-${arch}-${lang}.txt"
-                fi
+                for current_lang in ${language_list//,/ }; do
+                    if [[ -s "${current_dir}/StaticDownloadLinks-ie9-w61-${arch}-${current_lang}.txt" ]]; then
+                        cat_dos "${current_dir}/StaticDownloadLinks-ie9-w61-${arch}-${current_lang}.txt" \
+                            >> "${temp_dir}/StaticDownloadLinks-${name}-${arch}-${lang}.txt"
+                    fi
+                done
             ;;
             dotnet)
-                if [[ -s "${current_dir}/StaticDownloadLinks-dotnet-${arch}-${language_name}.txt" ]]; then
-                    grep_dos -F -i "dotnetfx35langpack_${arch}" \
-                        "${current_dir}/StaticDownloadLinks-dotnet-${arch}-${language_name}.txt" \
-                        >> "${temp_dir}/StaticDownloadLinks-${name}-${arch}-${lang}.txt" || true
-                fi
+                for current_lang in ${language_list//,/ }; do
+                    if [[ -s "${current_dir}/StaticDownloadLinks-dotnet-${arch}-${current_lang}.txt" ]]; then
+                        grep_dos -F -i "dotnetfx35langpack_${arch}" \
+                            "${current_dir}/StaticDownloadLinks-dotnet-${arch}-${current_lang}.txt" \
+                            >> "${temp_dir}/StaticDownloadLinks-${name}-${arch}-${lang}.txt" || true
+                    fi
+                done
             ;;
         esac
     done
@@ -359,7 +384,7 @@ function calculate_dynamic_windows_updates ()
 
     require_non_empty_file "../xslt/ExtractDownloadLinks-${name}-${arch}-${lang}.xsl" || return 0
     require_non_empty_file "../exclude/ExcludeList-superseded.txt" || fail "The required file ExcludeList-superseded.txt is missing"
-    require_non_empty_file "${temp_dir}/package.xml" || fail "The required file package.xml is missing"
+    require_non_empty_file "${cache_dir}/package.xml" || fail "The required file package.xml is missing"
 
     log_info_message "Determining dynamic update links ..."
 
@@ -368,7 +393,7 @@ function calculate_dynamic_windows_updates ()
 
     # Extract dynamic download links
     ${xmlstarlet} tr "../xslt/ExtractDownloadLinks-${name}-${arch}-${lang}.xsl" \
-        "${temp_dir}/package.xml" \
+        "${cache_dir}/package.xml" \
         > "${temp_dir}/DynamicDownloadLinks-${name}-${arch}-${lang}.txt"
     sort_in_place "${temp_dir}/DynamicDownloadLinks-${name}-${arch}-${lang}.txt"
 
@@ -433,6 +458,7 @@ function calculate_dynamic_office_updates ()
     local arch="$2"
     local lang="$3"
     local valid_dynamic_links="$4"
+    local language_locale=""
     local line=""
     local -a exclude_lists_office=()
 
@@ -453,15 +479,18 @@ function calculate_dynamic_office_updates ()
     # Preconditions
     [[ "$name" == ofc ]] || return 0
     require_non_empty_file "../exclude/ExcludeList-superseded.txt" || fail "The required file ExcludeList-superseded.txt is missing"
-    require_non_empty_file "${temp_dir}/package.xml" || fail "The required file package.xml is missing"
+    require_non_empty_file "${cache_dir}/package.xml" || fail "The required file package.xml is missing"
 
     log_info_message "Determining dynamic update links ..."
+
+    # Convert language names like deu and enu to their locales de and en.
+    language_locale="$(language_name_to_locale "${lang}")"
 
     # Reset existing files
     > "${valid_dynamic_links}"
 
     ${xmlstarlet} tr ../xslt/ExtractUpdateCategoriesAndFileIds.xsl \
-        "${temp_dir}/package.xml" \
+        "${cache_dir}/package.xml" \
         > "${temp_dir}/UpdateCategoriesAndFileIds.txt"
 
     # The XSLT transformation reads through the file package.xml and
@@ -538,8 +567,7 @@ function calculate_dynamic_office_updates ()
                         fi
                     else
                         # For localized updates, the update language and
-                        # the locale, which is derived from the global
-                        # language name, must match.
+                        # the locale must match.
                         if [[ "${update_language}" == "${language_locale}" ]]; then
                             printf '%s\n' "${payload_file_id},${bundle_update_id}"
                         fi
@@ -558,12 +586,17 @@ function calculate_dynamic_office_updates ()
     # they are matched with join later. But the FileId has a fixed
     # length, and then the files OfficeFileAndUpdateIds.txt and
     # UpdateCabExeIdsAndLocations.txt can be sorted by the whole line.
+    #
+    # Similarly, appending a hash "#" to the end of a number field
+    # stabilizes the search, if the numbers have different lengths,
+    # because the hash comes before all alphanumerical characters in a
+    # traditional C sort using native byte values (LC_ALL=C).
     sort_in_place "${temp_dir}/OfficeFileAndUpdateIds.txt"
     cut -d ',' -f 1 "${temp_dir}/OfficeFileAndUpdateIds.txt" > "${temp_dir}/OfficeFileIds.txt"
     remove_duplicates "${temp_dir}/OfficeFileIds.txt"
 
     ${xmlstarlet} tr ../xslt/ExtractUpdateCabExeIdsAndLocations.xsl \
-        "${temp_dir}/package.xml" \
+        "${cache_dir}/package.xml" \
         > "${temp_dir}/UpdateCabExeIdsAndLocations.txt"
     sort_in_place "${temp_dir}/UpdateCabExeIdsAndLocations.txt"
 

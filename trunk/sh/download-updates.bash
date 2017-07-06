@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #
 # Filename: download-updates.bash
-# Version: 1.0-beta-3
-# Release date: 2017-03-30
-# Intended compatibility: WSUS Offline Update Version 10.9.1 - 10.9.2
+# Version: 1.0-beta-4
+# Release date: 2017-06-23
+# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -40,33 +40,12 @@
 #     The interactive setup is done by the accompanying script
 #     setup-downloads.bash .
 #
-# Usage
+#     USAGE
+#        ./download-updates.bash UPDATE LANGUAGE[,LANGUAGE...] [OPTIONS]
 #
-#     ./download-updates.bash <update> <language> [<options>...]
-#
-#     <update>
-#         w60 | w60-x64 | w61 | w61-x64 | w62-x64 | w63 | w63-x64 | w100 | w100-x64 |
-#         o2k7 | o2k10 | o2k10-x64 | o2k13 | o2k13-x64 | o2k16 | o2k16-x64
-#
-#     <language>
-#         deu | enu | ara | chs | cht | csy | dan | nld | fin | fra | ell | heb |
-#         hun | ita | jpn | kor | nor | plk | ptg | ptb | rus | esn | sve | trk
-#
-#     <options>
-#       * for Windows Vista (w60 | w60-x64):
-#         -includesp -includecpp -includedotnet -includewddef -includemsse
-#       * for Windows 7 (w61 | w61-x64):
-#         -includesp -includecpp -includedotnet -includewddef -includemsse
-#       * for Windows 8 - 10 (w62-x64 | w63 | w63-x64 | w100 | w100-x64):
-#         -includesp -includecpp -includedotnet -includewddefs8
-#       * for all Office updates:
-#         -includesp
-#
-#     Description of the parameter <update>
-#
-#         Parameter    Description
-#         w60          Windows Vista, 32-bit
-#         w60-x64      Windows Vista / Server 2008, 64-bit
+#     UPDATE
+#         w60          Windows Server 2008, 32-bit
+#         w60-x64      Windows Server 2008, 64-bit
 #         w61          Windows 7, 32-bit
 #         w61-x64      Windows 7 / Server 2008 R2, 64-bit
 #         w62-x64      Windows Server 2012, 64-bit
@@ -82,36 +61,36 @@
 #         o2k16        Office 2016, 32-bit
 #         o2k16-x64    Office 2016, 32-bit and 64-bit
 #
-#     Description of the parameter <language>
+#     LANGUAGE
+#         deu    German
+#         enu    English
+#         ara    Arabic
+#         chs    Chinese (Simplified)
+#         cht    Chinese (Traditional)
+#         csy    Czech
+#         dan    Danish
+#         nld    Dutch
+#         fin    Finnish
+#         fra    French
+#         ell    Greek
+#         heb    Hebrew
+#         hun    Hungarian
+#         ita    Italian
+#         jpn    Japanese
+#         kor    Korean
+#         nor    Norwegian
+#         plk    Polish
+#         ptg    Portuguese
+#         ptb    Portuguese (Brazil)
+#         rus    Russian
+#         esn    Spanish
+#         sve    Swedish
+#         trk    Turkish
 #
-#         Parameter  Locale  Language
-#         deu        de      German
-#         enu        en      English
-#         ara        ar      Arabic
-#         chs        zh-cn   Chinese (Simplified)
-#         cht        zh-tw   Chinese (Traditional)
-#         csy        cs      Czech
-#         dan        da      Danish
-#         nld        nl      Dutch
-#         fin        fi      Finnish
-#         fra        fr      French
-#         ell        el      Greek
-#         heb        he      Hebrew
-#         hun        hu      Hungarian
-#         ita        it      Italian
-#         jpn        ja      Japanese
-#         kor        ko      Korean
-#         nor        no      Norwegian
-#         plk        pl      Polish
-#         ptg        pt      Portuguese
-#         ptb        pt-br   Portuguese (Brazil)
-#         rus        ru      Russian
-#         esn        es      Spanish
-#         sve        sv      Swedish
-#         trk        tr      Turkish
+#         Note: Multiple languages can be joined to a comma-separated
+#         list like "deu,enu".
 #
-#     Description of the download options
-#
+#     OPTIONS
 #        -includesp
 #             Include Service Packs
 #
@@ -123,9 +102,9 @@
 #             and updates
 #
 #        -includewddefs
-#             Virus definition files for Windows Vista and 7. These
-#             virus definition updates are only for the original Windows
-#             Defender, which was included in Windows Vista and 7.
+#             Virus definition files for Windows Vista and 7. These virus
+#             definition files are only compatible with the original
+#             Windows Defender, which was included in Windows Vista and 7.
 #
 #        -includemsse
 #             Microsoft Security Essentials: localized installation files
@@ -136,6 +115,7 @@
 #             Virus definition files for Windows 8 and higher. These
 #             are the same virus definition updates as for Microsoft
 #             Security Essentials, but without the localized installers.
+
 
 # ========== Formatting ===================================================
 
@@ -155,12 +135,13 @@
 # customization. They are considered read-only. Other global variables
 # are defined in the next section below.
 
-readonly script_version="1.0-beta-3"
-readonly release_date="2017-03-30"
+readonly script_version="1.0-beta-4"
+readonly release_date="2017-06-23"
 readonly temp_dir="/tmp/wsusoffline_temp"
 readonly timestamp_dir="../timestamps"
 readonly log_dir="../log"
 readonly logfile="${log_dir}/download.log"
+readonly cache_dir="../cache"
 
 # Note: files and directories are defined here, but they are created
 # later after setting the working directory.
@@ -200,7 +181,7 @@ home_directory=""
 command_line="$0 $*"
 declare -ag command_line_parameters=("$@")
 
-# The version of WSUS Offline Update as defined in the script
+# The version of WSUS Offline Update is read from the script
 # DownloadUpdates.cmd.
 wou_version=""
 
@@ -214,6 +195,10 @@ declare -ig runtime_errors=0
 # standard locale C. Messages are printed in American English. It is not
 # necessary to set the environment variable LANG, and this may actually
 # cause an error. See "man grep" for a description.
+#
+# LC_ALL and LC_COLLATE influence the sort order of GNU sort and join. To
+# stabilize the sort order of some files, a traditional sort order using
+# byte values should be used by setting LC_ALL=C.
 export LC_ALL=C
 
 # Try to get the height and width of the terminal window. These
@@ -273,12 +258,13 @@ function exit_handler ()
             echo "Cleaning up temporary files ..."
             rm -r "${temp_dir}"
         fi
-        echo "Exiting ..."
+        echo "Exiting..."
     else
         # Keep temporary files for debugging
         printf '%s\n' "Exiting with error code $result_code ..."
     fi
 
+    echo ""
     exit "$result_code"
 } 1>&2
 trap exit_handler EXIT
@@ -335,7 +321,7 @@ function setup_working_directory ()
             fi
         ;;
         *)
-            echo "Unknown operating system"
+            echo "Unknown operating system ${kernel_name}, ${OSTYPE}"
             exit 1
         ;;
     esac
@@ -350,6 +336,7 @@ function setup_working_directory ()
     mkdir -p "$temp_dir"
     mkdir -p "$timestamp_dir"
     mkdir -p "$log_dir"
+    mkdir -p "$cache_dir"
     return 0
 }
 

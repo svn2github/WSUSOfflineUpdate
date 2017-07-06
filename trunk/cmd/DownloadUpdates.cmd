@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=11.0
+set WSUSOFFLINE_VERSION=11.0+ (r884)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -1131,14 +1131,14 @@ if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
   copy /Y "%TEMP%\ExcludeListLocations-superseded-all-unique.txt" ..\exclude\ExcludeList-superseded.txt >nul
 )
 for %%i in (w61 w62 w63) do (
-  if exist ..\client\static\StaticUpdateIds-%%i-seconly.txt (
-    for /F "tokens=1* delims=,;" %%j in (..\client\static\StaticUpdateIds-%%i-seconly.txt) do (
-      echo %%j>>"%TEMP%\ExcludeList-superseded-exclude.txt"
+  for /F %%j in ('dir /B ..\client\static\StaticUpdateIds-%%i*-seconly.txt 2^>nul') do (
+    for /F "tokens=1* delims=,;" %%k in (..\client\static\%%j) do (
+      echo %%k>>"%TEMP%\ExcludeList-superseded-exclude.txt"
     )
   )
-  if exist ..\client\static\custom\StaticUpdateIds-%%i-seconly.txt (
-    for /F "tokens=1* delims=,;" %%j in (..\client\static\custom\StaticUpdateIds-%%i-seconly.txt) do (
-      echo %%j>>"%TEMP%\ExcludeList-superseded-exclude.txt"
+  for /F %%j in ('dir /B ..\client\static\custom\StaticUpdateIds-%%i*-seconly.txt 2^>nul') do (
+    for /F "tokens=1* delims=,;" %%k in (..\client\static\custom\%%j) do (
+      echo %%k>>"%TEMP%\ExcludeList-superseded-exclude.txt"
     )
   )
 )

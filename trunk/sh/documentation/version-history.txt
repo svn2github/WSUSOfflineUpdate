@@ -64,3 +64,36 @@ Version history
       scripts executable again, should they loose their file permissions.
 
     See the file release_notes_1.0-beta-3.txt for more details.
+
+1.0-beta-4
+
+    Release date: 2017-06-23
+    Intended compatibility: WSUS Offline Update version 10.9.2 and newer
+
+    Changes in this version:
+
+    - The obsolete script DownloadUpdates.sh and related files will
+      be deleted, if they are found in the same directory as the new
+      Linux scripts.
+
+    - The Linux scripts can do an initial installation of the WSUS
+      Offline Update archive.
+
+    - The integrity of the WSUS catalog file wsusscn2.cab is tested
+      with cabextract.
+
+    - The download script caches the file package.xml.
+
+    - The same_day function uses three different time intervals for
+      different tasks.
+
+    - Languages can be joined to a comma-separated list on the command
+      line.
+
+    - Windows Vista was removed from selection dialogs.
+
+    - unzip is copied to the client directory.
+
+    - Added support for .Net Framework 4.7.
+
+    See the file release_notes_1.0-beta-4.txt for details.

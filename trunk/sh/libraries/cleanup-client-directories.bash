@@ -1,9 +1,9 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: cleanup-client-directories.bash
-# Version: 1.0-beta-3
-# Release date: 2017-03-30
-# Intended compatibility: WSUS Offline Update Version 10.9.1 - 10.9.2
+# Version: 1.0-beta-4
+# Release date: 2017-06-23
+# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -75,11 +75,11 @@ function cleanup_client_directory ()
         return 0
     fi
     if ! require_directory "${download_dir}"; then
-        log_warning_message "Aborted cleanup of client directory, because the directory \"${download_dir}\" does not exist"
+        log_warning_message "Aborted cleanup of client directory, because the directory ${download_dir} does not exist"
         return 0
     fi
 
-    log_info_message "Cleaning up download directory \"${download_dir}\" ..."
+    log_info_message "Cleaning up download directory ${download_dir} ..."
 
     # For the included downloads, there are no dynamic links, and
     # $valid_links is the same as $valid_static_links
@@ -111,6 +111,10 @@ function cleanup_client_directory ()
         # removed and the empty directory should be deleted. This may
         # happen for some static downloads, if the option -include_sp
         # is not used. Then this is not an error.
+        #
+        # However, as long as service packs are referenced from the
+        # static directory, they will be treated as "valid static files"
+        # and not deleted.
     fi
 
     # Building file list as suggested in
@@ -160,14 +164,10 @@ function cleanup_client_directory ()
 
     if (( ${#file_list[@]} == 0 )); then
         rmdir "${download_dir}"
-        log_warning_message "Deleted download directory \"${download_dir}\", because it was empty"
+        log_warning_message "Deleted download directory ${download_dir}, because it was empty"
     else
         log_info_message "Cleaned up download directory"
     fi
     return 0
 }
-
-# TODO: The test for "valid static files" could be more precise, to keep
-# only localized files.
-
 return 0

@@ -1,31 +1,11 @@
 download-updates.bash: Download updates for Microsoft Windows and Office
 
-Usage: ./download-updates.bash <update> <language> [<options>...]
+USAGE
+   ./download-updates.bash UPDATE LANGUAGE[,LANGUAGE...] [OPTIONS]
 
-<update>
-    w60 | w60-x64 | w61 | w61-x64 | w62-x64 | w63 | w63-x64 | w100 | w100-x64 |
-    o2k7 | o2k10 | o2k10-x64 | o2k13 | o2k13-x64 | o2k16 | o2k16-x64
-
-<language>
-    deu | enu | ara | chs | cht | csy | dan | nld | fin | fra | ell | heb |
-    hun | ita | jpn | kor | nor | plk | ptg | ptb | rus | esn | sve | trk
-
-<options>
-  * for Windows Vista (w60 | w60-x64):
-    -includesp -includecpp -includedotnet -includewddef -includemsse
-  * for Windows 7 (w61 | w61-x64):
-    -includesp -includecpp -includedotnet -includewddef -includemsse
-  * for Windows 8 - 10 (w62-x64 | w63 | w63-x64 | w100 | w100-x64):
-    -includesp -includecpp -includedotnet -includewddefs8
-  * for all Office updates:
-    -includesp
-
-
-Description of the parameter <update>
-
-    Parameter    Description
-    w60          Windows Vista, 32-bit
-    w60-x64      Windows Vista / Server 2008, 64-bit
+UPDATE
+    w60          Windows Server 2008, 32-bit
+    w60-x64      Windows Server 2008, 64-bit
     w61          Windows 7, 32-bit
     w61-x64      Windows 7 / Server 2008 R2, 64-bit
     w62-x64      Windows Server 2012, 64-bit
@@ -41,38 +21,36 @@ Description of the parameter <update>
     o2k16        Office 2016, 32-bit
     o2k16-x64    Office 2016, 32-bit and 64-bit
 
+LANGUAGE
+    deu    German
+    enu    English
+    ara    Arabic
+    chs    Chinese (Simplified)
+    cht    Chinese (Traditional)
+    csy    Czech
+    dan    Danish
+    nld    Dutch
+    fin    Finnish
+    fra    French
+    ell    Greek
+    heb    Hebrew
+    hun    Hungarian
+    ita    Italian
+    jpn    Japanese
+    kor    Korean
+    nor    Norwegian
+    plk    Polish
+    ptg    Portuguese
+    ptb    Portuguese (Brazil)
+    rus    Russian
+    esn    Spanish
+    sve    Swedish
+    trk    Turkish
 
-Description of the parameter <language>
+    Note: Multiple languages can be joined to a comma-separated list like
+    "deu,enu".
 
-    Parameter  Locale  Language
-    deu        de      German
-    enu        en      English
-    ara        ar      Arabic
-    chs        zh-cn   Chinese (Simplified)
-    cht        zh-tw   Chinese (Traditional)
-    csy        cs      Czech
-    dan        da      Danish
-    nld        nl      Dutch
-    fin        fi      Finnish
-    fra        fr      French
-    ell        el      Greek
-    heb        he      Hebrew
-    hun        hu      Hungarian
-    ita        it      Italian
-    jpn        ja      Japanese
-    kor        ko      Korean
-    nor        no      Norwegian
-    plk        pl      Polish
-    ptg        pt      Portuguese
-    ptb        pt-br   Portuguese (Brazil)
-    rus        ru      Russian
-    esn        es      Spanish
-    sve        sv      Swedish
-    trk        tr      Turkish
-
-
-Description of the download options
-
+OPTIONS
    -includesp
         Include Service Packs
 
@@ -84,8 +62,8 @@ Description of the download options
 
    -includewddefs
         Virus definition files for Windows Vista and 7. These virus
-        definition updates are only for the original Windows Defender,
-        which was included in Windows Vista and 7.
+        definition files are only compatible with the original Windows
+        Defender, which was included in Windows Vista and 7.
 
    -includemsse
         Microsoft Security Essentials: localized installation files and
@@ -96,3 +74,64 @@ Description of the download options
         Virus definition files for Windows 8 and higher. These are
         the same virus definition updates as for Microsoft Security
         Essentials, but without the localized installers.
+
+COMPATIBILITY
+  - The option -includesp can be used with all updates.
+
+  - The options -includecpp and -includedotnet can be used with all
+    Windows updates.
+
+  - The options -includewddefs and -includemsse can be used with Windows
+    7, Windows Server 2008 and 2008 R2 (w60, w60-x64, w61, w61-x64).
+
+  - The option -includewddefs8 can be used with Windows 8.1 and 10,
+    Windows Server 2012, 2012 R2 and 2016 (w62-x64, w63, w63-x64, w100,
+    w100-x64).
+
+NOTES
+    Windows Vista and higher are multilingual, but WSUS Offline Update
+    still needs the correct language settings to get:
+    - localized installers for Internet Explorer on Windows 7, Windows
+      Server 2008 and 2008 R2
+    - language packs for .Net Frameworks, for languages other than English
+    - localized installers for Microsoft Security Essentials
+
+    In the Linux download scripts, all needed languages must be given on
+    the command-line. For convenience, you can join several languages
+    to a comma-separated list, to allow a faster evaluation of Windows
+    7, Windows Server 2008 and 2008 R2, .Net Frameworks, and Microsoft
+    Security Essentials.
+
+EXAMPLES
+    To get updates for Windows 7 with all optional downloads in German
+    and English, you could either use:
+
+    ./download-updates.bash w61 deu -includesp -includecpp \
+                -includedotnet -includewddefs -includemsse
+    ./download-updates.bash w61 enu -includesp -includecpp \
+                -includedotnet -includewddefs -includemsse
+
+    or:
+
+    ./download-updates.bash w61 deu,enu -includesp -includecpp \
+                -includedotnet -includewddefs -includemsse
+
+    This should get the same updates as the Windows version in its
+    default configuration, using the default languages German and English.
+
+    To get updates for Windows 8.1 with all optional downloads in French
+    and Spanish, you could use:
+
+    ./download-updates.bash w63 fra,esn -includesp -includecpp \
+                -includedotnet -includewddefs8
+
+    To get the same results with the Windows version, you need to run
+    four additional scripts first:
+
+    RemoveGermanLanguageSupport.cmd
+    RemoveEnglishLanguageSupport.cmd
+    AddCustomLanguageSupport.cmd fra
+    AddCustomLanguageSupport.cmd esn
+
+    See the script get-all-updates.bash for more examples. This script
+    may also serve as a template for customization.

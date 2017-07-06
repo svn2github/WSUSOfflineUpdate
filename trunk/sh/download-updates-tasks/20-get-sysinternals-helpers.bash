@@ -1,9 +1,9 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 20-get-sysinternals-helpers.bash
-# Version: 1.0-beta-3
-# Release date: 2017-03-30
-# Intended compatibility: WSUS Offline Update Version 10.9.1 - 10.9.2
+# Version: 1.0-beta-4
+# Release date: 2017-06-23
+# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -83,6 +83,7 @@ function get_sysinternals_helpers ()
         else
             log_error_message "Download of Autologon.exe failed"
         fi
+        echo ""
     fi
 
     # Get Sysinternals Sigcheck
@@ -101,6 +102,7 @@ function get_sysinternals_helpers ()
         else
             log_error_message "Download of sigcheck.exe failed"
         fi
+        echo ""
     fi
     return 0
 }

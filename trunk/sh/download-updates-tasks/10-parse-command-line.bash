@@ -1,9 +1,9 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 10-parse-command-line.bash
-# Version: 1.0-beta-3
-# Release date: 2017-03-30
-# Intended compatibility: WSUS Offline Update Version 10.9.1 - 10.9.2
+# Version: 1.0-beta-4
+# Release date: 2017-06-23
+# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -30,9 +30,7 @@
 update_name=""
 update_description=""
 update_architecture=""
-language_name=""
-language_locale=""
-language_description=""
+language_list=""
 include_service_packs="disabled"
 declare -ag included_downloads=("wsus")
 
@@ -43,7 +41,7 @@ function wrong_parameter ()
     log_error_message "$@"
     show_usage
     exit 1
-}
+} 1>&2
 
 
 function validate_first_parameter ()
@@ -65,15 +63,30 @@ function validate_first_parameter ()
 
 function validate_second_parameter ()
 {
+    local current_language=""
     local language_record=""
+    local language_name=""
+    local language_locale=""
+    local language_description=""
 
-    if language_record="$(grep -- "^$2 " <<< "$languages_table")"; then
-        read -r language_name language_locale language_description <<< "$language_record"
-    else
-        wrong_parameter "The language $2 is not recognized."
-    fi
+    # The second parameter can be parsed as a comma-separated list of
+    # language names.
+    for current_language in ${2//,/ }; do
+        if language_record="$(grep -- "^$current_language " <<< "$languages_table")"; then
+            read -r language_name language_locale language_description <<< "$language_record"
+            log_info_message "Found language: ${language_name}, ${language_locale}, ${language_description}"
+        else
+            wrong_parameter "The language $current_language was not found."
+        fi
+    done
 
-    log_info_message "Found language: ${language_name}, ${language_description}"
+    # After validating all parts of the comma-separated list, the global
+    # variable $language_list is set to the second positional parameter.
+    language_list="$2"
+    # TODO: the language list could also be defined as an indexed array,
+    # which seems to be the preferred format for the shell, but so far,
+    # the original comma-separated list is still needed to create the
+    # timestamp files.
     return 0
 }
 

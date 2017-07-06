@@ -1,9 +1,9 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 70-synchronize-with-target.bash
-# Version: 1.0-beta-3
-# Release date: 2017-03-30
-# Intended compatibility: WSUS Offline Update Version 10.9.1 - 10.9.2
+# Version: 1.0-beta-4
+# Release date: 2017-06-23
+# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -27,7 +27,7 @@
 # Description
 #
 #     This task synchronizes the client directory with a target
-#     directory. It uses the command rsync to only copy new or modified
+#     directory. It uses the command rsync to copy only new or modified
 #     files. Unused files, which don't exist in the source directory
 #     anymore, will be deleted.
 #
@@ -41,9 +41,9 @@
 
 # ========== Configuration ================================================
 
-# For rsync, the source directory should end with a slash, but the target
-# directory should not. This will avoid creating another directory at
-# the target.
+# For rsync, the source directory should end with a slash, but the
+# target directory should not. This prevents creating another directory
+# at the target.
 
 source_directory="../client/"
 target_directory="not-available" # without trailing slash

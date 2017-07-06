@@ -1,9 +1,9 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: dos-files.bash
-# Version: 1.0-beta-3
-# Release date: 2017-03-30
-# Intended compatibility: WSUS Offline Update Version 10.9.1 - 10.9.2
+# Version: 1.0-beta-4
+# Release date: 2017-06-23
+# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -55,6 +55,9 @@
 
 function cat_dos ()
 {
+    # The tool shellcheck calls this a useless cat, but it is actually
+    # needed, if several files are used as input. A simple input
+    # redirection will not handle this case.
     cat "$@" | tr -d '\r'
 }
 

@@ -1,9 +1,9 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 90-finalization.bash
-# Version: 1.0-beta-3
-# Release date: 2017-03-30
-# Intended compatibility: WSUS Offline Update Version 10.9.1 - 10.9.2
+# Version: 1.0-beta-4
+# Release date: 2017-06-23
+# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -32,8 +32,21 @@
 
 # ========== Functions ====================================================
 
+# unzip is needed by the installation part of WSUS Offline Update,
+# to unpack two archives for Windows 7:
+#
+# ../client/w61/glb/Win7-KB3191566-x86.zip
+# ../client/w61-x64/glb/Win7AndW2K8R2-KB3191566-x64.zip
+
+function copy_unzip ()
+{
+    cp -u "../bin/unzip.exe" "../client/bin/"
+}
+
+
 # Change the line endings of the hashes files from Linux to DOS style
 # (carriage return/line feed)
+
 function convert_to_dos ()
 {
     local -a file_list=()
@@ -147,9 +160,11 @@ function print_summary ()
 
 # ========== Commands =====================================================
 
+copy_unzip
 convert_to_dos
 remind_build_date
 adjust_update_installer_preferences
 print_disk_usage
 print_summary
+
 return 0

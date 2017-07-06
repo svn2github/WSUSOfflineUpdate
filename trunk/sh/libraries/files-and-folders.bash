@@ -1,9 +1,9 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: files-and-folders.bash
-# Version: 1.0-beta-3
-# Release date: 2017-03-30
-# Intended compatibility: WSUS Offline Update Version 10.9.1 - 10.9.2
+# Version: 1.0-beta-4
+# Release date: 2017-06-23
+# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -74,13 +74,13 @@ function require_directory ()
     local pathname="$1"
     local result_code=0
 
-    if [[ -z "$pathname" ]]; then
+    if [[ -z "${pathname}" ]]; then
         log_debug_message "${FUNCNAME[1]}: The pathname is empty"
         result_code=1
-    elif [[ "$pathname" == "not-available" ]]; then
+    elif [[ "${pathname}" == "not-available" ]]; then
         log_debug_message "${FUNCNAME[1]}: The pathname is set to \"not-available\""
         result_code=1
-    elif [[ -d "$pathname" ]]; then
+    elif [[ -d "${pathname}" ]]; then
         log_debug_message "${FUNCNAME[1]}: Found directory \"${pathname}\""
         result_code=0
     else
@@ -100,13 +100,13 @@ function require_file ()
     local pathname="$1"
     local result_code=0
 
-    if [[ -z "$pathname" ]]; then
+    if [[ -z "${pathname}" ]]; then
         log_debug_message "${FUNCNAME[1]}: The pathname is empty"
         result_code=1
-    elif [[ "$pathname" == "not-available" ]]; then
+    elif [[ "${pathname}" == "not-available" ]]; then
         log_debug_message "${FUNCNAME[1]}: The pathname is set to \"not-available\""
         result_code=1
-    elif [[ -f "$pathname" ]]; then
+    elif [[ -f "${pathname}" ]]; then
         log_debug_message "${FUNCNAME[1]}: Found file \"${pathname}\""
         result_code=0
     else
@@ -127,16 +127,16 @@ function require_non_empty_file ()
     local pathname="$1"
     local result_code=0
 
-    if [[ -z "$pathname" ]]; then
+    if [[ -z "${pathname}" ]]; then
         log_debug_message "${FUNCNAME[1]}: The pathname is empty"
         result_code=1
-    elif [[ "$pathname" == "not-available" ]]; then
+    elif [[ "${pathname}" == "not-available" ]]; then
         log_debug_message "${FUNCNAME[1]}: The pathname is set to \"not-available\""
         result_code=1
-    elif [[ -s "$pathname" ]]; then
+    elif [[ -s "${pathname}" ]]; then
         log_debug_message "${FUNCNAME[1]}: Found non-empty file \"${pathname}\""
         result_code=0
-    elif [[ -f "$pathname" ]]; then
+    elif [[ -f "${pathname}" ]]; then
         log_debug_message "${FUNCNAME[1]}: Found empty file \"${pathname}\""
         result_code=1
     else
@@ -158,19 +158,19 @@ function ensure_non_empty_file ()
     local pathname="$1"
     local result_code=0
 
-    if [[ -z "$pathname" ]]; then
+    if [[ -z "${pathname}" ]]; then
         log_debug_message "${FUNCNAME[1]}: The pathname is empty"
         result_code=1
-    elif [[ "$pathname" == "not-available" ]]; then
+    elif [[ "${pathname}" == "not-available" ]]; then
         log_debug_message "${FUNCNAME[1]}: The pathname is set to \"not-available\""
         result_code=1
-    elif [[ -s "$pathname" ]]; then
+    elif [[ -s "${pathname}" ]]; then
         log_debug_message "${FUNCNAME[1]}: Found non-empty file \"${pathname}\""
         result_code=0
-    elif [[ -f "$pathname" ]]; then
+    elif [[ -f "${pathname}" ]]; then
         log_debug_message "${FUNCNAME[1]}: Deleted file \"${pathname##*/}\", because it was empty"
         log_warning_message "Deleted file \"${pathname##*/}\", because it was empty"
-        rm "$pathname"
+        rm "${pathname}"
         result_code=1
     else
         log_debug_message "${FUNCNAME[1]}: File \"${pathname}\" was not found"
@@ -248,6 +248,128 @@ function apply_exclude_lists ()
     # directories for Office 2007, 2010 and 2013, e.g. client/o2k7/deu/
     # or client/o2k7/enu/.
     ensure_non_empty_file "$output_file" || true
+    return 0
+}
+
+
+# The function verify_cabinet_file uses cabextract -t, to ensure that all
+# archive contents can be extracted. If some files could not extracted,
+# cabextract will report checksum errors and set the result code to 1.
+
+function verify_cabinet_file ()
+{
+    local pathname="$1"
+    local filename="${pathname##*/}"
+
+    log_info_message "Testing the integrity of the cabinet file $filename (ignore any warnings about extra bytes at end of file)..."
+    if [[ -f "$pathname" ]]; then
+        echo ""
+        if cabextract -t "$pathname"; then
+            log_info_message "Integrity test of cabinet file $filename succeeded."
+        else
+            trash_file "$pathname"
+            log_error_message "The cabinet file $filename was deleted, because testing the file integrity with cabextract failed."
+        fi
+    else
+        log_warning_message "The cabinet file $pathname was not found."
+    fi
+    return 0
+}
+
+
+# The function create_backup_copy makes a backup copy of an existing file,
+# preserving the file modification date and other metadata.
+#
+# TODO: For Wget, this copy could actually be a hard link. Wget can delete
+# existing files first with the option --unlink, which is explicitly
+# meant for directories with hard links. Aria 2 also has different
+# options for the allocation of files.
+
+function create_backup_copy ()
+{
+    local pathname="$1"
+
+    if [[ -f "${pathname}" ]]; then
+        log_info_message "Creating a backup copy of ${pathname##*/} ..."
+        cp -a "${pathname}" "${pathname}.bak"
+    else
+        # The file may not exist yet, it the download is running for
+        # the first time. This is not an error.
+        log_debug_message "create_backup_copy: The file ${pathname} was not found."
+    fi
+    return 0
+}
+
+
+# The function restore_backup_copy restores the backup copy, if the
+# original file does not exist.
+#
+# If both files exist, then the modification date will be compared and
+# the newer file will be kept.
+#
+# Otherwise, the backup copy (if any) will be deleted.
+#
+# Usually, the newly downloaded file is expected to be the newer file,
+# but this is not necessarily true for the virus definition files, if
+# they are downloaded with old versions of GNU Wget: These files change
+# every two hours, and there may be up to three different versions in
+# the Microsoft delivery network.
+#
+# This is not handled well by GNU Wget up to version 1.16:
+#
+# - GNU Wget 1.16 always use two server requests, HEAD and GET, for
+#   timestamping. The first request is used to get the file headers
+#   and to compare the file length and modification dates. The second
+#   request is used to download the file. But in a content delivery
+#   network, different servers may give different answers. The first
+#   server may offer a newer file, but when Wget tries to download it,
+#   it may get a different version: sometimes an older file, or it may
+#   just download the existing file again.
+# - GNU Wget 1.16 will always download a file, whenever the file size
+#   changes, regardless of the file modification date. This may replace
+#   a newer file with an older version of the same file.
+#
+# This is only a problem with the specific combination of the virus
+# definition files and old versions of GNU Wget, if these downloads are
+# retried within a few hours.
+#
+# GNU Wget 1.18 and late use a single server request for timestamping,
+# a GET query with the conditional header If-Modified-Since. Then the
+# server can decide, if the file needs to be downloaded. (I never tried
+# GNU Wget 1.17, since this version was never used by Debian Linux).
+
+function restore_backup_copy ()
+{
+    local pathname="$1"
+
+    if [[ -f "${pathname}.bak" ]]; then
+        # According to the bash manual, the operator -nt is true, if file1
+        # is newer than file2, or if file1 exists and file2 does not.
+        if [[ "${pathname}.bak" -nt "${pathname}" ]]; then
+            log_info_message "Restoring backup copy of ${pathname##*/}"
+            mv "${pathname}.bak" "${pathname}"
+        else
+            rm "${pathname}.bak"
+        fi
+    fi
+    return 0
+}
+
+
+# The function restart_script is called after a successful self update
+# of WSUS Offline Update or the Linux scripts.
+
+function restart_script ()
+{
+    log_info_message "Restarting script ${script_name} ..."
+    echo ""
+    echo "--------------------------------------------------------------------------------"
+    echo ""
+    if (( ${#command_line_parameters[@]} > 0 )); then
+        exec "./${script_name}" "${command_line_parameters[@]}"
+    else
+        exec "./${script_name}"
+    fi
     return 0
 }
 
