@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 11.0
+WSUS Offline Update 11.0.1
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1323,8 +1323,9 @@ Version 11.0 -- 28.06.17
 - Fix: Replaced superseded Office 2016 Security Update kb3085635 (MS15-099) by kb3203383 (June 2017)
 - Fix: Replaced superseded Skype for Business 2016 Security Update kb3178656 (MS17-013) by kb3203382 (June 2017)
 --------------------------------------------------------------------------------
-Version 11.0.1 -- ??.??.17
+Version 11.0.1 -- 14.07.17
 - Included complete rewrite of the Linux scripts version 1.0-beta-4 (Special thanks to H. Buhrmester)
 - July 2017 updates added to 'security only' lists for Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems
 - Fix: Replaced obsolete Security Update for Office 2010 kb2956073 (MS15-012) by kb3203468 (July 2017)
 - Fix: Incorrect calculation of ExcludeList-superseded-seconly.txt
+--------------------------------------------------------------------------------
