@@ -1,0 +1,16 @@
+.svn\
+ico\
+Include\
+Aut2Exe.exe
+upx.exe
+ExcludeList-ProductionTree.txt
+ExcludeList-ReleaseTree.txt
+ExtractUpdateFileIdsAndLocations.xsl
+CompileAutoItScripts.cmd
+ExtractDownloadLinks-all.cmd
+ExtractSupersededUpdates.cmd
+ExtractSupersededUpdates_old.cmd
+ExtractUpdateIdsAndDownloadLinks-ofc.cmd
+PrepareProductionTree.cmd
+PrepareReleaseTree.cmd
+MakeRelease.cmd

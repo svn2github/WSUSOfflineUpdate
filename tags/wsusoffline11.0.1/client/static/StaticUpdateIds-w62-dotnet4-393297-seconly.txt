@@ -1,0 +1,2 @@
+kb4014560,April 2017 Security update for the .NET Framework 4.6 and 4.6.1 for Windows Server 2012
+kb4014589,May 2017 Security only update for the .NET Framework 4.6 and 4.6.1 for Windows Server 2012
