@@ -1,0 +1,2 @@
+http://download.microsoft.com/download/3/9/A/39A9BC06-AB8C-4097-80D7-755012D9B9C3/office2007spuninstall.exe
+http://download.microsoft.com/download/6/5/1/6511CAC1-530B-47F6-BBE5-22021F612072/convloc2007-kb2760415-fullfile-x86-glb.exe

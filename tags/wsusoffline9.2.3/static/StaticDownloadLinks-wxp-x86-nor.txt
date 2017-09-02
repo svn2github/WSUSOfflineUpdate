@@ -1,0 +1,14 @@
+http://xpsp.dlservice.microsoft.com/download/7/f/6/7f6b9393-ebba-4837-a765-e6efbbf921d1/WindowsXP-KB936929-SP3-x86-NOR.exe
+http://download.microsoft.com/download/3/8/2/3828B2DF-26D2-44D0-9F5F-DCF0A2DB7C4C/WindowsXP-KB968930-x86-NOR.exe
+http://download.microsoft.com/download/9/4/1/9414785e-ccd5-49ff-a7da-9429d27a2b43/wmp11-windowsxp-x86-NB-NO.exe
+http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-nb-no-kb2564958_e6fb799574a0f4b8b6db1a40f7f42141f9265089.exe
+http://download.microsoft.com/download/1/E/F/1EF82C23-E015-475A-8DE2-AF32D96997FB/WindowsXP-KB4012598-x86-Custom-NOR.exe
+http://download.microsoft.com/download/C/4/D/C4D1A4A6-61B6-41F4-9B2B-6CD046D82C9E/WindowsXP-KB4012583-x86-Custom-NOR.exe
+http://download.microsoft.com/download/5/8/9/58908E47-3144-4C78-BB93-070D26DC72D3/WindowsXP-KB4022747-x86-Custom-NOR.exe
+http://download.microsoft.com/download/6/E/B/6EB0CCDC-78EB-4D35-99FA-698715565BFF/IE8-WindowsXP-KB4018271-x86-Custom-NOR.exe
+http://download.microsoft.com/download/2/A/4/2A4B8CC7-82DC-4036-A5C2-A52EA06F3724/WindowsXP-KB4018466-x86-Custom-NOR.exe
+http://download.microsoft.com/download/C/E/3/CE351FED-446E-40B6-BA2B-AED4C45F66AE/WindowsXP-KB3197835-x86-Custom-NOR.exe
+http://download.microsoft.com/download/F/4/C/F4C646D2-2709-4DFA-A6D0-5AE52DB1D2F4/WindowsXP-KB4024323-x86-Custom-NOR.exe
+http://download.microsoft.com/download/2/0/2/20203860-4E7E-4E0B-99A1-0EF46F10F2AD/WindowsXP-KB4025218-x86-Custom-NOR.exe
+http://download.microsoft.com/download/C/B/B/CBB49677-2FB4-43B0-9BAE-4809B6525C5E/WindowsXP-KB4024402-x86-Custom-NOR.exe
+http://download.microsoft.com/download/B/8/E/B8EA11D7-3DDD-4FDD-8A29-7EEF82C66F70/WindowsXP-KB4019204-x86-Custom-NOR.exe

@@ -1,0 +1,4 @@
+http://download.microsoft.com/download/b/3/b/b3bd1060-0b3c-442e-a38c-fc81ba9fde9f/Office2003SP3-KB923618-FullFile-ESN.exe
+http://download.microsoft.com/download/c/c/f/ccfb0605-f2be-493b-b07a-0072bc1c772a/WordViewer2003SP3-KB934736-FullFile-ESN.exe
+http://download.microsoft.com/download/6/9/2/692D8FF9-34B4-4BB4-A252-DFBD2B44CC1D/office2003-KB975051-FullFile-ESN.exe
+http://download.microsoft.com/download/8/A/F/8AFF8037-D83B-4609-8D4F-F46281C17C5D/office2003-KB2760494-FullFile-ESN.exe

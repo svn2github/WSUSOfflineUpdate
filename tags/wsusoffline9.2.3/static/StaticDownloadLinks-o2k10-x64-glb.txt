@@ -1,0 +1,3 @@
+http://download.microsoft.com/download/4/1/C/41CADC65-8F27-4387-A1FF-1A7A3AF03F0F/office2010-kb2553065-fullfile-x64-glb.exe
+http://download.microsoft.com/download/2/E/4/2E4699DC-BE57-4A03-B136-9635D92624C1/convloc2010-kb2553284-fullfile-x64-glb.exe
+http://download.microsoft.com/download/D/3/6/D36138C2-4EC5-4078-9371-A4E2F9A641DD/proofloc2010-kb2760781-fullfile-x64-glb.exe

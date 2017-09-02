@@ -1,0 +1,14 @@
+http://xpsp.dlservice.microsoft.com/download/0/7/7/077a5aa5-07d6-41a1-bed5-680f84898439/WindowsXP-KB936929-SP3-x86-HUN.exe
+http://download.microsoft.com/download/B/0/3/B033D5EF-933F-4E8F-A04D-2C0CDC0C9731/WindowsXP-KB968930-x86-HUN.exe
+http://download.microsoft.com/download/1/4/1/1416dc2b-5365-40af-aa1a-c00abe4c186d/wmp11-windowsxp-x86-HU-HU.exe
+http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-hu-hu-kb2564958_cee49e4add9e76f962812a2f4ca727f807d8a382.exe
+http://download.microsoft.com/download/C/8/F/C8F0F81F-3BA9-4EB4-8F7B-DB7372908243/WindowsXP-KB4012598-x86-Custom-HUN.exe
+http://download.microsoft.com/download/A/2/1/A218CFF8-37D7-45C5-B1A7-3AFC28493491/WindowsXP-KB4012583-x86-Custom-HUN.exe
+http://download.microsoft.com/download/D/7/5/D75B17EB-A677-4969-867E-B00B687EBD1A/WindowsXP-KB4022747-x86-Custom-HUN.exe
+http://download.microsoft.com/download/B/4/5/B4501F00-730A-4AE3-B739-AAA91DD07589/IE8-WindowsXP-KB4018271-x86-Custom-HUN.exe
+http://download.microsoft.com/download/C/5/6/C565F4D0-8249-4B41-86E5-D751F95FBF2C/WindowsXP-KB4018466-x86-Custom-HUN.exe
+http://download.microsoft.com/download/1/B/8/1B8D591D-BEFA-4B97-9EA7-CB1060F748BA/WindowsXP-KB3197835-x86-Custom-HUN.exe
+http://download.microsoft.com/download/7/0/D/70D49123-35E5-4857-8873-43EFF3E6D813/WindowsXP-KB4024323-x86-Custom-HUN.exe
+http://download.microsoft.com/download/9/E/4/9E4D12FD-51DC-4D70-966F-8077D148954A/WindowsXP-KB4025218-x86-Custom-HUN.exe
+http://download.microsoft.com/download/6/D/6/6D698981-11F0-4CE2-8434-1CB506470192/WindowsXP-KB4024402-x86-Custom-HUN.exe
+http://download.microsoft.com/download/8/0/4/804D1DE4-5F0A-43BD-A892-E0B3192050FA/WindowsXP-KB4019204-x86-Custom-HUN.exe

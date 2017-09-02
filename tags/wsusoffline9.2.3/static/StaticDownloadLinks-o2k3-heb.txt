@@ -1,0 +1,4 @@
+http://download.microsoft.com/download/7/7/f/77f4cbeb-eed0-496f-a318-46e9fa5e4ea6/Office2003SP3-KB923618-FullFile-HEB.exe
+http://download.microsoft.com/download/9/4/8/948a51b1-d61e-4894-8aa7-0b368f49c74c/WordViewer2003SP3-KB934736-FullFile-HEB.exe
+http://download.microsoft.com/download/2/A/3/2A3A506E-AE67-4CFB-9BE6-692F55FBF29D/office2003-KB975051-FullFile-HEB.exe
+http://download.microsoft.com/download/0/3/5/035EDA0A-55F7-41F0-ABA3-883D7E5620A1/office2003-KB2760494-FullFile-HEB.exe
