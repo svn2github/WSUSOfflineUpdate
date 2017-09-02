@@ -1,9 +1,9 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 10-remove-obsolete-scripts.bash
-# Version: 1.0-beta-4
-# Release date: 2017-06-23
-# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
+# Version: 1.0-beta-5
+# Release date: 2017-08-25
+# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -58,6 +58,13 @@ function remove_obsolete_scripts ()
     rm -f ./common-tasks/20-check-needed-applications.bash
     rm -f ./common-tasks/30-configure-downloaders.bash
     rm -f ./common-tasks/40-check-for-self-updates.bash
+
+    # Remove old documentation files from version 1.0-beta-3
+    #
+    # These files were renamed in version 1.0-beta-4 to
+    # Installation_Guide.txt and Installationsanleitung.txt.
+    rm -f ./documentation/Quick_installation_guide.txt
+    rm -f ./documentation/Kurzinstallationsanleitung.txt
 }
 
 # ========== Commands =====================================================

@@ -97,3 +97,27 @@ Version history
     - Added support for .Net Framework 4.7.
 
     See the file release_notes_1.0-beta-4.txt for details.
+
+1.0-beta-5
+
+    Release date: 2017-08-25
+    Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
+
+    Changes in this version:
+
+    - The documentation files Quick_installation_guide.txt
+      and Kurzinstallationsanleitung.txt were renamed in version
+      1.0-beta-4. If the old files are still present, they are removed
+      now.
+
+    - The environment variables $LINES and $COLUMNS are set to 24x80,
+      if the script runs as a cron job.
+
+    - The calculation of the file ExcludeList-superseded-seconly.txt
+      was simplified.
+
+    - A new function seconly_safety_guard tries to make sure, that the
+      configuration files for security only updates are updated after
+      the official patch day, to prevent unwanted side effect.
+
+    See the file release_notes_1.0-beta-5.txt for details.

@@ -1,9 +1,9 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 50-superseded-updates.bash
-# Version: 1.0-beta-4
-# Release date: 2017-06-23
-# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
+# Version: 1.0-beta-5
+# Release date: 2017-08-25
+# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -116,6 +116,9 @@ function check_superseded_updates ()
 # ../exclude/ExcludeList-superseded-seconly.txt
 function rebuild_superseded_updates ()
 {
+    local -a excludelist_overrides=()
+    local -a excludelist_overrides_seconly=()
+
     # Preconditions
     require_file "${cache_dir}/package.xml" || fail "The required file package.xml is missing"
 
@@ -242,29 +245,36 @@ function rebuild_superseded_updates ()
     # Microsoft, but which should be downloaded and installed
     # nonetheless. Therefore, theses KB numbers are removed from the
     # file ExcludeListLocations-superseded-all.txt again.
+    #
+    # The file ../exclude/ExcludeList-superseded-seconly.txt" is new
+    # in WSUS Offline Update 10.9. It is created by applying additional
+    # exclude lists with security-only updates.
+    excludelist_overrides=(
+        ../exclude/ExcludeList-superseded-exclude.txt
+        ../exclude/custom/ExcludeList-superseded-exclude.txt
+    )
+
+    shopt -s nullglob
+    excludelist_overrides_seconly=(
+        ../exclude/ExcludeList-superseded-exclude.txt
+        ../exclude/custom/ExcludeList-superseded-exclude.txt
+        ../client/static/StaticUpdateIds-*-seconly.txt
+        ../client/static/custom/StaticUpdateIds-*-seconly.txt
+    )
+    shopt -u nullglob
+
     apply_exclude_lists \
         "${temp_dir}/ExcludeListLocations-superseded-all.txt" \
         "../exclude/ExcludeList-superseded.txt" \
         "${temp_dir}/ExcludeList-superseded-exclude.txt" \
-        "../exclude/ExcludeList-superseded-exclude.txt" \
-        "../exclude/custom/ExcludeList-superseded-exclude.txt"
+        "${excludelist_overrides[@]}"
     sort_in_place "../exclude/ExcludeList-superseded.txt"
 
-    # The file ../exclude/ExcludeList-superseded-seconly.txt" is new in
-    # WSUS Offline Update 10.9. It is created by applying six additional
-    # exclude lists.
     apply_exclude_lists \
         "${temp_dir}/ExcludeListLocations-superseded-all.txt" \
         "../exclude/ExcludeList-superseded-seconly.txt" \
         "${temp_dir}/ExcludeList-superseded-exclude-seconly.txt" \
-        "../exclude/ExcludeList-superseded-exclude.txt" \
-        "../exclude/custom/ExcludeList-superseded-exclude.txt" \
-        "../client/static/StaticUpdateIds-w61-seconly.txt" \
-        "../client/static/StaticUpdateIds-w62-seconly.txt" \
-        "../client/static/StaticUpdateIds-w63-seconly.txt" \
-        "../client/static/custom/StaticUpdateIds-w61-seconly.txt" \
-        "../client/static/custom/StaticUpdateIds-w62-seconly.txt" \
-        "../client/static/custom/StaticUpdateIds-w63-seconly.txt"
+        "${excludelist_overrides_seconly[@]}"
     sort_in_place "../exclude/ExcludeList-superseded-seconly.txt"
 
     # After recalculating superseded updates, all dynamic updates must

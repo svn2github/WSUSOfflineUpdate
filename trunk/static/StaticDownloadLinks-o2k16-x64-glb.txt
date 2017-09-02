@@ -1,3 +1,4 @@
 http://download.microsoft.com/download/2/2/6/2265313C-0AED-44AA-8112-A2C106EB455A/conv2016-kb3203383-fullfile-x64-glb.exe
 http://download.microsoft.com/download/1/C/B/1CB45E2B-77DE-42C6-930A-8B7768C5F668/visio2016-kb3115041-fullfile-x64-glb.exe
 http://download.microsoft.com/download/C/F/E/CFEFB6F1-4543-48D1-A095-029BFEFBB584/lync2016-kb3203382-fullfile-x64-glb.exe
+http://download.microsoft.com/download/D/8/A/D8A557A7-CFEF-41A1-A7E0-8E88AD1AEF02/outlook2016-kb4011052-fullfile-x64-glb.exe

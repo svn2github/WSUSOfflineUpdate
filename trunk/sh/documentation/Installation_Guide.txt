@@ -1,14 +1,11 @@
-Installation guide for the Linux download scripts, version 1.0-beta-4
+Installation guide for the Linux download scripts, version 1.0-beta-5
 =====================================================================
 Follow this guide to install the required packages and to download and
 install WSUS Offline Update and the new Linux scripts.
 
-The next release of WSUS Offline Update will include the new Linux
-download scripts. They are already included in the development version
-"trunk" ( http://trac.wsusoffline.net/browser/trunk ) since changeset 866
-( http://trac.wsusoffline.net/changeset/866 ). Then you don't need to
-install the Linux scripts separately, but you still need to review the
-needed packages.
+WSUS Offline Update now includes the new Linux download scripts. Then
+you don't need to install the Linux scripts separately, but you should
+still review the needed packages from your Linux distribution.
 
 
 Install the required and recommended packages
@@ -92,24 +89,24 @@ Download and unpack the archive for the new Linux scripts
 
 * Download the archive and the hashes file to the directory wsusoffline:
 
-  wget http://downloads.hartmut-buhrmester.de/sh-new-1.0-beta-4.tar.gz
-  wget http://downloads.hartmut-buhrmester.de/hashes-sh-new-1.0-beta-4.txt
+  wget http://downloads.hartmut-buhrmester.de/sh-new-1.0-beta-5.tar.gz
+  wget http://downloads.hartmut-buhrmester.de/hashes-sh-new-1.0-beta-5.txt
 
 
 * Verify the integrity of the archive:
 
-  hashdeep -a -v -v -l -k hashes-sh-new-1.0-beta-4.txt sh-new-1.0-beta-4.tar.gz
+  hashdeep -a -v -v -l -k hashes-sh-new-1.0-beta-5.txt sh-new-1.0-beta-5.tar.gz
 
 
 * Unpack the archive in the directory wsusoffline:
 
-  tar xvzf sh-new-1.0-beta-4.tar.gz
+  tar xvzf sh-new-1.0-beta-5.tar.gz
 
 
-  This will create a new directory "sh-new-1.0-beta-4".
+  This will create a new directory "sh-new-1.0-beta-5".
 
 
-* Change to the directory sh-new-1.0-beta-4 and run the script
+* Change to the directory sh-new-1.0-beta-5 and run the script
   update-generator.bash. This script will do a few tests first. If the
   script does not find the necessary files of the wsusoffline archive,
   it will offer to download and install this archive itself. Just
@@ -119,7 +116,7 @@ Download and unpack the archive for the new Linux scripts
   the selection menus for the Windows and Office updates and optional
   downloads to fetch.
 
-  cd sh-new-1.0-beta-4
+  cd sh-new-1.0-beta-5
   ./update-generator.bash
 
 
@@ -127,5 +124,3 @@ If you need to copy or move the installation directory, please be sure
 to keep the modification date of all files. You could use "cp --archive"
 or "cp --preserve" instead of just "cp". This is important for the update
 of the configuration files of WSUS Offline Update.
-
-Note: the complete documentation is in the subdirectory "documentation".

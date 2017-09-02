@@ -1,9 +1,9 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 60-check-script-version.bash
-# Version: 1.0-beta-4
-# Release date: 2017-06-23
-# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
+# Version: 1.0-beta-5
+# Release date: 2017-08-25
+# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -214,8 +214,11 @@ function sh_self_update ()
 
     # The tar.gz archive should be unpacked to a new directory; any
     # existing directories are removed first
+    #
+    # Both directory names must be set
+
     if [[ -d "${temp_dir}/${sh_expanded_dirname}" ]]; then
-        rm -r "${temp_dir}/${sh_expanded_dirname}"
+        rm -r "${temp_dir:?variable_not_set}/${sh_expanded_dirname:?variable_not_set}"
     fi
 
     log_info_message "Unpacking tar.gz archive..."

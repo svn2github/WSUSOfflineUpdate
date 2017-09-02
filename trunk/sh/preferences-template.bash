@@ -1,9 +1,9 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: preferences-template.bash
-# Version: 1.0-beta-4
-# Release date: 2017-06-23
-# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
+# Version: 1.0-beta-5
+# Release date: 2017-08-25
+# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -141,5 +141,38 @@ use_cleanup_function="enabled"
 
 # Create more output for debugging. This is only meant for development.
 debug="disabled"
+
+# The download and installation of security only update rollups for
+# Windows 7, 8, 8.1 and the corresponding server versions depends on
+# the configuration files:
+#
+# - wsusoffline/client/exclude/HideList-seconly.txt
+# - wsusoffline/client/static/StaticUpdateIds-w61-seconly.txt
+# - wsusoffline/client/static/StaticUpdateIds-w62-seconly.txt
+# - wsusoffline/client/static/StaticUpdateIds-w63-seconly.txt
+#
+# These files should be updated after the official patch day, which
+# is the second Tuesday each month. This is done by the maintainer
+# of WSUS Offline Update, and new configuration files are downloaded
+# automatically.
+#
+# In the meantime, the function seconly_safety_guard compares the
+# modification dates of the configuration files to the official patch
+# day. The script will exit and postpone the download, if the files are
+# not yet updated. This is done to prevent serious side effects.
+#
+# Otherwise, WSUS Offline Update will default to download and install the
+# latest full quality update rollup. Since these updates are cumulative,
+# this will likely spoil an installation, which was meant to get security
+# only updates instead.
+#
+# The configuration files can also be updated manually. This is described
+# in the forum at:
+#
+# - http://forums.wsusoffline.net/viewtopic.php?f=4&t=6897&start=10#p23708
+#
+# If the configuration files have been updated and verified manually, you
+# can change the variable exit_on_configuration_problems to "disabled".
+exit_on_configuration_problems="enabled"
 
 return 0

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #
 # Filename: download-updates.bash
-# Version: 1.0-beta-4
-# Release date: 2017-06-23
-# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
+# Version: 1.0-beta-5
+# Release date: 2017-08-25
+# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -135,8 +135,8 @@
 # customization. They are considered read-only. Other global variables
 # are defined in the next section below.
 
-readonly script_version="1.0-beta-4"
-readonly release_date="2017-06-23"
+readonly script_version="1.0-beta-5"
+readonly release_date="2017-08-25"
 readonly temp_dir="/tmp/wsusoffline_temp"
 readonly timestamp_dir="../timestamps"
 readonly log_dir="../log"
@@ -167,6 +167,7 @@ use_file_signature_verification="disabled"
 use_integrity_database="enabled"
 use_cleanup_function="enabled"
 debug="disabled"
+exit_on_configuration_problems="enabled"
 
 # ========== Global variables =============================================
 
@@ -199,18 +200,27 @@ declare -ig runtime_errors=0
 # LC_ALL and LC_COLLATE influence the sort order of GNU sort and join. To
 # stabilize the sort order of some files, a traditional sort order using
 # byte values should be used by setting LC_ALL=C.
+#
+# LC_TIME is needed to get locale independent time strings.
 export LC_ALL=C
+export LC_TIME=C
 
 # Try to get the height and width of the terminal window. These
 # environment variables are usually available in interactive sessions,
 # but they are not inherited by scripts.
-if type -P tput > /dev/null; then
-    COLUMNS="$(tput cols)"
-    LINES="$(tput lines)"
-else
-    COLUMNS=80
-    LINES=24
+#
+# If the script is running within a terminal emulator window, then tput
+# can be used to query its dimensions. This does not work within a cron
+# job, though.
+if [[ "${TERM}" != "dumb" ]] && type -P tput  > /dev/null; then
+    COLUMNS="$(tput cols)" || true
+    LINES="$(tput lines)"  || true
 fi
+
+# If the variables could not be set with tput, they will be set to
+# default values.
+COLUMNS="${COLUMNS:-80}"
+LINES="${LINES:-24}"
 export COLUMNS
 export LINES
 

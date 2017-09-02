@@ -1,9 +1,9 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 60-main-updates.bash
-# Version: 1.0-beta-4
-# Release date: 2017-06-23
-# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
+# Version: 1.0-beta-5
+# Release date: 2017-08-25
+# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -198,6 +198,7 @@ function process_main_update ()
     else
         log_info_message "Start processing of \"${timestamp_pattern//-/ }\" ..."
 
+        seconly_safety_guard "${name}"
         verify_integrity_database "$hashed_dir" "$hashes_file"
         calculate_static_updates "${name}" "${arch}" "${lang}" "$valid_static_links"
         calculate_dynamic_updates "${name}" "${arch}" "${lang}" "$valid_dynamic_links"
@@ -686,6 +687,160 @@ function calculate_dynamic_office_updates ()
     else
         log_warning_message "No dynamic updates found for ${name} ${arch} ${lang}"
     fi
+    return 0
+}
+
+# Safety guard for security only updates for Windows 7, 8, 8.1 and the
+# corresponding server versions.
+#
+# The download and installation of security only updates depends on the
+# correct configuration of the files:
+#
+# - wsusoffline/client/exclude/HideList-seconly.txt
+# - wsusoffline/client/static/StaticUpdateIds-w61-seconly.txt
+# - wsusoffline/client/static/StaticUpdateIds-w62-seconly.txt
+# - wsusoffline/client/static/StaticUpdateIds-w63-seconly.txt
+#
+# These files must be updated after the official patch day, which
+# is the second Tuesday each month. This is done by the maintainer
+# of WSUS Offline Update, and new configuration files are downloaded
+# automatically.
+#
+# In the meantime, the safety guard compares the file modification date
+# of the configuration files to the date of the official patch day,
+# which is the second Tuesday each month.
+#
+# If the configuration files have not yet been updated after the official
+# patch day, the download will be stopped, to prevent unwanted side
+# effects.
+
+function seconly_safety_guard ()
+{
+    local name="$1"
+
+    # Preconditions
+    if [[ "${prefer_seconly}" != "enabled" ]]; then
+        log_debug_message "Option prefer_seconly is not enabled"
+        return 0
+    fi
+    case "${name}" in
+        w61 | w62 | w63)
+            log_debug_message "Recognized Windows 7, 8, 8.1"
+        ;;
+        *)
+            log_debug_message "Not an affected Windows version"
+            return 0
+        ;;
+    esac
+
+    # A crude attempt to get the official patch day, which is the second
+    # Tuesday each month. The comparison with "Tuesday" requires,
+    # that LC_TIME is set to "C", to get locale independent date
+    # strings. This is done by the calling scripts update-generator.bash
+    # and download-updates.bash, since they are responsible for setting
+    # up the environment.
+
+    local this_month=""
+    this_month="$(date '+%Y-%m')"      # for example 2017-08
+
+    local i=""
+    local current_date=""              # ISO format: 2017-08-08
+    local day_of_week=""               # weekday names: Monday, Tuesday...
+    local second_tuesday=""            # for example 2017-08-08
+    local -i second_tuesday_seconds=0  # seconds since 1970-01-01
+    for i in 08 09 10 11 12 13 14; do
+        current_date="${this_month}-${i}"
+        day_of_week="$(date -d "${current_date}" '+%A')"
+        if [[ "$day_of_week" == "Tuesday" ]]; then
+            second_tuesday="${current_date}"
+            second_tuesday_seconds="$(date -d "${current_date}" '+%s')"
+        fi
+    done
+
+    # The safety guard should run each month, starting at the official
+    # patch day, and then until the end of the month.
+
+    local -i this_day_seconds=0
+    this_day_seconds="$(date '+%s')"
+    if (( this_day_seconds < second_tuesday_seconds )); then
+        return 0
+    fi
+
+    log_info_message "Running safety guard for security only update rollups"
+
+    # Create a list of configuration files for the correct handling of
+    # security only update rollups. This list only includes the default
+    # files of WSUS Offline Update, not user-created files in the custom
+    # subdirectories.
+    #
+    # Appending an asterisk will remove the files from the list, if they
+    # cannot be found anymore.
+
+    local -a configuration_files=()
+    shopt -s nullglob
+    configuration_files=(
+        ../client/exclude/HideList-seconly.txt*
+        ../client/static/StaticUpdateIds-w61-seconly.txt*
+        ../client/static/StaticUpdateIds-w62-seconly.txt*
+        ../client/static/StaticUpdateIds-w63-seconly.txt*
+    )
+    shopt -u nullglob
+
+    # The configuration files are usually updated after the official patch
+    # day. The script displays a warning, if the modification date of
+    # a configuration file is before the official patch day of the month.
+
+    local current_file=""
+    local modification_date=""            # ISO format for display
+    local -i modification_date_seconds=0  # seconds since 1970-01-01
+    local -i misconfiguration=0
+    for current_file in "${configuration_files[@]}"; do
+        modification_date="$(date -r "$current_file" --iso-8601)"
+        modification_date_seconds="$(date -r "$current_file" '+%s')"
+        if (( modification_date_seconds < second_tuesday_seconds )); then
+            log_warning_message "The configuration file ${current_file} was last modified on ${modification_date}, which is before the official patch day ${second_tuesday} of this month."
+            misconfiguration=1
+        fi
+    done
+
+    if (( misconfiguration == 1 )); then
+        log_warning_message "\
+The correct handling of security only update rollups for both download
+and installation depends on the configuration files:
+
+- wsusoffline/client/exclude/HideList-seconly.txt
+- wsusoffline/client/static/StaticUpdateIds-w61-seconly.txt
+- wsusoffline/client/static/StaticUpdateIds-w62-seconly.txt
+- wsusoffline/client/static/StaticUpdateIds-w63-seconly.txt
+
+These files should be updated after the official patch day, which is the
+second Tuesday each month. This is done by the maintainer of WSUS Offline
+Update, but it may take some days. New versions of the configuration
+files are downloaded automatically.
+
+If these files have not been updated yet, the download and installation
+of security only updates should be postponed, to prevent unwanted side
+effects.
+
+If necessary, you could also update the configuration files yourself. See
+the discussion in the forum for details:
+
+- http://forums.wsusoffline.net/viewtopic.php?f=4&t=6897&start=10#p23708
+
+If you have manually updated and verified the configuration files, you
+can set the variable exit_on_configuration_problems to disabled in the
+preferences file.
+"
+        if [[ "${exit_on_configuration_problems}" == "enabled" ]]; then
+            log_error_message "The script will exit now, to prevent unwanted side effects with the download and installation of security only updates for Windows 7, 8, and 8.1. Setting the variable exit_on_configuration_problems to disabled in the preferences file will let the script continue, regardless of possible configuration problems."
+            exit 0
+        else
+            log_warning_message "There are configuration problems with the download of security only updates for Windows 7, 8, and 8.1. Proceed with caution to prevent unwanted side effects."
+        fi
+    else
+        log_info_message "No problems found"
+    fi
+
     return 0
 }
 

@@ -1,9 +1,9 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: digital-file-signatures.bash
-# Version: 1.0-beta-4
-# Release date: 2017-06-23
-# Intended compatibility: WSUS Offline Update Version 10.9.2 and newer
+# Version: 1.0-beta-5
+# Release date: 2017-08-25
+# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
 # Copyright (C) 2016-2017 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -71,8 +71,10 @@
 #
 #     TODO: Two zip archives for Windows 7 are not digitally signed.
 #
-#     TODO: Some updates for the Windows 10, released in April 2017,
-#     had expired digital file signatures. See the forum thread:
+#     TODO: Some updates for the Windows 10, released in April 2017, had
+#     expired digital file signatures. This is not really an error. See
+#     the discussion in the forum:
+#
 #     http://forums.wsusoffline.net/viewtopic.php?f=3&t=6540
 
 function verify_digital_file_signatures ()
