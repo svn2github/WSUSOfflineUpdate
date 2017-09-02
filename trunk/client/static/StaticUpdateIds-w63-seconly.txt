@@ -11,3 +11,4 @@ kb4015547,April 2017 Security Only Quality Update for Windows 8.1 and Windows Se
 kb4019213,May 2017 Security Only Quality Update for Windows 8.1 and Windows Server 2012 R2
 kb4022717,June 2017 Security Only Quality Update for Windows 8.1 and Windows Server 2012 R2
 kb4025333,July 2017 Security Only Quality Update for Windows 8.1 and Windows Server 2012 R2
+kb4034672,August 2017 Security Only Quality Update for Windows 8.1 and Windows Server 2012 R2

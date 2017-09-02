@@ -35,3 +35,6 @@ kb4022726,June 2017 Security Monthly Quality Rollup for Windows 8.1 and Windows 
 kb4025341,July 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
 kb4025331,July 2017 Security Monthly Quality Rollup for Windows Server 2012
 kb4025336,July 2017 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4034664,August 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4034665,August 2017 Security Monthly Quality Rollup for Windows Server 2012
+kb4034681,August 2017 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
