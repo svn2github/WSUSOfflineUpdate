@@ -19,5 +19,6 @@ w61-x64\
 w62-x64\
 w63-x64\
 dotnetfx40*
+NDP462-*
 Silverlight_x64*
 .au3

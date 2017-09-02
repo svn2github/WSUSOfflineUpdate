@@ -7,7 +7,7 @@
 */*/x64-glb/*
 *windowsxp*
 *-x64*
-*NDP451*
+*NDP46*
 *vcredist*_x64*
 *Silverlight_x64*
 *.au3

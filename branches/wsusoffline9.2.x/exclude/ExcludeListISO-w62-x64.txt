@@ -14,5 +14,6 @@
 */*/x86-glb/*
 *dotnetfx35*
 *dotNetFx40*
+*NDP46-*
 *MSEInstall*
 *.au3

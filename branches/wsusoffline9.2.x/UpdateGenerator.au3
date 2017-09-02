@@ -1,11 +1,11 @@
-; ***  WSUS Offline Update 9.2.2 - Generator  ***
+; ***  WSUS Offline Update 9.2.3 - Generator  ***
 ; ***       Author: T. Wittrock, Kiel         ***
 ; ***     USB-Option added by Ch. Riedel      ***
 ; ***   Dialog scaling added by Th. Baisch    ***
 
 #include <GUIConstants.au3>
 
-Dim Const $caption                  = "WSUS Offline Update 9.2.2"
+Dim Const $caption                  = "WSUS Offline Update 9.2.3"
 Dim Const $title                    = $caption & " - Generator"
 Dim Const $donationURL              = "http://www.wsusoffline.net/donate.html"
 Dim Const $downloadLogFile          = "download.log"
@@ -141,10 +141,8 @@ Dim $wxp_heb, $w2k3_heb, $o2k3_heb, $o2k7_heb, $o2k10_heb, $o2k13_heb ; Hebrew
 Dim $wxp_dan, $w2k3_dan, $o2k3_dan, $o2k7_dan, $o2k10_dan, $o2k13_dan ; Danish
 Dim $wxp_nor, $w2k3_nor, $o2k3_nor, $o2k7_nor, $o2k10_nor, $o2k13_nor ; Norwegian
 Dim $wxp_fin, $w2k3_fin, $o2k3_fin, $o2k7_fin, $o2k10_fin, $o2k13_fin ; Finnish
-Dim $w60_glb, $w60_x64_glb                                ; Windows Vista / Server 2008 (global)
-Dim $w61_glb, $w61_x64_glb                                ; Windows 7 / Server 2008 R2 (global)
-Dim $w62_glb, $w62_x64_glb                                ; Windows 8 / Server 2012 (global)
-Dim $w63_glb, $w63_x64_glb                                ; Windows 8.1 / Server 2012 R2 (global)
+Dim $w60_glb, $w60_x64_glb                                ; Windows Vista (global)
+Dim $w62_glb, $w62_x64_glb                                ; Windows 8 (global)
 
 Dim $dlgheight, $groupwidth, $groupheight_lng, $groupheight_glb, $txtwidth, $txtheight, $slimheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos, $runany
 
@@ -460,12 +458,8 @@ Func SwitchDownloadTargets($state)
 ;  GUICtrlSetState($w2k3_fin, $state)
   GUICtrlSetState($w60_glb, $state)
   GUICtrlSetState($w60_x64_glb, $state)
-  GUICtrlSetState($w61_glb, $state)
-  GUICtrlSetState($w61_x64_glb, $state)
   GUICtrlSetState($w62_glb, $state)
   GUICtrlSetState($w62_x64_glb, $state)
-  GUICtrlSetState($w63_glb, $state)
-  GUICtrlSetState($w63_x64_glb, $state)
 
   GUICtrlSetState($o2k3_enu, $state)
   GUICtrlSetState($o2k7_enu, $state)
@@ -1092,21 +1086,13 @@ Func SaveSettings()
   IniWrite($inifilename, $ini_section_w2k3_x64, $lang_token_ptb, CheckBoxStateToString($w2k3_x64_ptb))
   IniWrite($inifilename, $ini_section_w2k3_x64, $lang_token_deu, CheckBoxStateToString($w2k3_x64_deu))
 
-;  Windows Vista / Server 2008 group
+;  Windows Vista group
   IniWrite($inifilename, $ini_section_w60, $lang_token_glb, CheckBoxStateToString($w60_glb))
   IniWrite($inifilename, $ini_section_w60_x64, $lang_token_glb, CheckBoxStateToString($w60_x64_glb))
 
-;  Windows 7 / Server 2008 R2 group
-  IniWrite($inifilename, $ini_section_w61, $lang_token_glb, CheckBoxStateToString($w61_glb))
-  IniWrite($inifilename, $ini_section_w61_x64, $lang_token_glb, CheckBoxStateToString($w61_x64_glb))
-
-;  Windows 8 / Server 2012 group
+;  Windows 8 group
   IniWrite($inifilename, $ini_section_w62, $lang_token_glb, CheckBoxStateToString($w62_glb))
   IniWrite($inifilename, $ini_section_w62_x64, $lang_token_glb, CheckBoxStateToString($w62_x64_glb))
-
-;  Windows 8.1 / Server 2012 R2 group
-  IniWrite($inifilename, $ini_section_w63, $lang_token_glb, CheckBoxStateToString($w63_glb))
-  IniWrite($inifilename, $ini_section_w63_x64, $lang_token_glb, CheckBoxStateToString($w63_x64_glb))
 
 ;  Office 2003 group
   IniWrite($inifilename, $ini_section_o2k3, $lang_token_enu, CheckBoxStateToString($o2k3_enu))
@@ -1306,9 +1292,209 @@ GuiCtrlCreateTab($txtxpos, $txtypos, $groupwidth + 2 * $txtxoffset, $groupheight
 ;  Operating Systems' Tab
 $tabitemfocused = GuiCtrlCreateTabItem("Windows")
 
-;  Windows Server 2003 group
+;  Windows XP group
 $txtxpos = 2 * $txtxoffset
 $txtypos = 3.5 * $txtyoffset + $txtheight
+GUICtrlCreateGroup("Windows XP (wxp)", $txtxpos, $txtypos, $groupwidth, $groupheight_lng)
+;  Windows XP English
+$txtypos = $txtypos + 1.5 * $txtyoffset
+$txtxpos = 3 * $txtxoffset
+$wxp_enu = GUICtrlCreateCheckbox(LanguageCaption($lang_token_enu, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_enu, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows XP French
+$txtxpos = $txtxpos + $txtwidth - 5
+$wxp_fra = GUICtrlCreateCheckbox(LanguageCaption($lang_token_fra, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 10, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_fra, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows XP Spanish
+$txtxpos = $txtxpos + $txtwidth + 10
+$wxp_esn = GUICtrlCreateCheckbox(LanguageCaption($lang_token_esn, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_esn, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows XP Japanese
+$txtxpos = $txtxpos + $txtwidth - 5
+$wxp_jpn = GUICtrlCreateCheckbox(LanguageCaption($lang_token_jpn, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_jpn, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows XP Korean
+$txtxpos = $txtxpos + $txtwidth
+$wxp_kor = GUICtrlCreateCheckbox(LanguageCaption($lang_token_kor, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_kor, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows XP Russian
+$txtxpos = $txtxpos + $txtwidth + 5
+$wxp_rus = GUICtrlCreateCheckbox(LanguageCaption($lang_token_rus, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 10, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_rus, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows XP Portuguese
+$txtxpos = $txtxpos + $txtwidth - 10
+$wxp_ptg = GUICtrlCreateCheckbox(LanguageCaption($lang_token_ptg, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_ptg, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows XP Brazilian
+$txtxpos = $txtxpos + $txtwidth + 5
+$wxp_ptb = GUICtrlCreateCheckbox(LanguageCaption($lang_token_ptb, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_ptb, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows XP German
+$txtxpos = 3 * $txtxoffset
+$txtypos = $txtypos + $txtheight
+$wxp_deu = GUICtrlCreateCheckbox(LanguageCaption($lang_token_deu, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_deu, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows XP Dutch
+$txtxpos = $txtxpos + $txtwidth - 5
+$wxp_nld = GUICtrlCreateCheckbox(LanguageCaption($lang_token_nld, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 10, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_nld, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows XP Italian
+$txtxpos = $txtxpos + $txtwidth + 10
+$wxp_ita = GUICtrlCreateCheckbox(LanguageCaption($lang_token_ita, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_ita, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows XP Chinese simplified
+$txtxpos = $txtxpos + $txtwidth - 5
+$wxp_chs = GUICtrlCreateCheckbox(LanguageCaption($lang_token_chs, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_chs, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows XP Chinese traditional
+$txtxpos = $txtxpos + $txtwidth
+$wxp_cht = GUICtrlCreateCheckbox(LanguageCaption($lang_token_cht, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_cht, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows XP Polish
+$txtxpos = $txtxpos + $txtwidth + 5
+$wxp_plk = GUICtrlCreateCheckbox(LanguageCaption($lang_token_plk, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 10, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_plk, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows XP Hungarian
+$txtxpos = $txtxpos + $txtwidth - 10
+$wxp_hun = GUICtrlCreateCheckbox(LanguageCaption($lang_token_hun, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_hun, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows XP Czech
+$txtxpos = $txtxpos + $txtwidth + 5
+$wxp_csy = GUICtrlCreateCheckbox(LanguageCaption($lang_token_csy, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_csy, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows XP Swedish
+$txtxpos = 3 * $txtxoffset
+$txtypos = $txtypos + $txtheight
+$wxp_sve = GUICtrlCreateCheckbox(LanguageCaption($lang_token_sve, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_sve, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows XP Turkish
+$txtxpos = $txtxpos + $txtwidth - 5
+$wxp_trk = GUICtrlCreateCheckbox(LanguageCaption($lang_token_trk, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 10, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_trk, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows XP Greek
+$txtxpos = $txtxpos + $txtwidth + 10
+$wxp_ell = GUICtrlCreateCheckbox(LanguageCaption($lang_token_ell, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_ell, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows XP Arabic
+$txtxpos = $txtxpos + $txtwidth - 5
+$wxp_ara = GUICtrlCreateCheckbox(LanguageCaption($lang_token_ara, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_ara, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows XP Hebrew
+$txtxpos = $txtxpos + $txtwidth
+$wxp_heb = GUICtrlCreateCheckbox(LanguageCaption($lang_token_heb, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_heb, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows XP Danish
+$txtxpos = $txtxpos + $txtwidth + 5
+$wxp_dan = GUICtrlCreateCheckbox(LanguageCaption($lang_token_dan, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 10, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_dan, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows XP Norwegian
+$txtxpos = $txtxpos + $txtwidth - 10
+$wxp_nor = GUICtrlCreateCheckbox(LanguageCaption($lang_token_nor, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_nor, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+;  Windows XP Finnish
+$txtxpos = $txtxpos + $txtwidth + 5
+$wxp_fin = GUICtrlCreateCheckbox(LanguageCaption($lang_token_fin, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
+If IniRead($inifilename, $ini_section_wxp, $lang_token_fin, $disabled) = $enabled Then
+  GUICtrlSetState(-1, $GUI_CHECKED)
+Else
+  GUICtrlSetState(-1, $GUI_UNCHECKED)
+EndIf
+
+;  Windows Server 2003 group
+$txtxpos = 2 * $txtxoffset
+$txtypos = $txtypos + 2.5 * $txtyoffset
 GUICtrlCreateGroup("Windows Server 2003 (w2k3)", $txtxpos, $txtypos, $groupwidth, $groupheight_lng)
 ;  Windows Server 2003 English
 $txtypos = $txtypos + 1.5 * $txtyoffset
@@ -1562,11 +1748,11 @@ Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
 
-;  Windows Vista / Server 2008 group
+;  Windows Vista group
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
-GUICtrlCreateGroup("Windows Vista / Server 2008 (w60 / w60-x64)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
-;  Windows Vista / Server 2008 global
+GUICtrlCreateGroup("Windows Vista (w60 / w60-x64)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
+;  Windows Vista global
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = 3 * $txtxoffset
 If ShowGUIInGerman() Then
@@ -1579,7 +1765,7 @@ If IniRead($inifilename, $ini_section_w60, $lang_token_glb, $disabled) = $enable
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
-;  Windows Vista / Server 2008 x64 global
+;  Windows Vista x64 global
 $txtxpos = $txtxpos + $groupwidth / 2 - $txtxoffset
 If ShowGUIInGerman() Then
   $w60_x64_glb = GUICtrlCreateCheckbox("x64 Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
@@ -1592,40 +1778,10 @@ Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
 
-;  Windows 7 / Server 2008 R2 group
+;  Windows 8 group
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
-GUICtrlCreateGroup("Windows 7 / Server 2008 R2 (w61 / w61-x64)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
-;  Windows 7 global
-$txtypos = $txtypos + 1.5 * $txtyoffset
-$txtxpos = 3 * $txtxoffset
-If ShowGUIInGerman() Then
-  $w61_glb = GUICtrlCreateCheckbox("x86 Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
-Else
-  $w61_glb = GUICtrlCreateCheckbox("x86 Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
-EndIf
-If IniRead($inifilename, $ini_section_w61, $lang_token_glb, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 7 / Server 2008 R2 x64 global
-$txtxpos = $txtxpos + $groupwidth / 2 - $txtxoffset
-If ShowGUIInGerman() Then
-  $w61_x64_glb = GUICtrlCreateCheckbox("x64 Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
-Else
-  $w61_x64_glb = GUICtrlCreateCheckbox("x64 Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
-EndIf
-If IniRead($inifilename, $ini_section_w61_x64, $lang_token_glb, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-
-;  Windows 8 / Server 2012 group
-$txtxpos = 2 * $txtxoffset
-$txtypos = $txtypos + 2.5 * $txtyoffset
-GUICtrlCreateGroup("Windows 8 / Server 2012 (w62 / w62-x64)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
+GUICtrlCreateGroup("Windows 8 (w62 / w62-x64)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
 ;  Windows 8 global
 $txtypos = $txtypos + 1.5 * $txtyoffset
 $txtxpos = 3 * $txtxoffset
@@ -1639,7 +1795,7 @@ If IniRead($inifilename, $ini_section_w62, $lang_token_glb, $disabled) = $enable
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
 EndIf
-;  Windows 8 / Server 2012 x64 global
+;  Windows 8 x64 global
 $txtxpos = $txtxpos + $groupwidth / 2 - $txtxoffset
 If ShowGUIInGerman() Then
   $w62_x64_glb = GUICtrlCreateCheckbox("x64 Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
@@ -1647,36 +1803,6 @@ Else
   $w62_x64_glb = GUICtrlCreateCheckbox("x64 Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
 EndIf
 If IniRead($inifilename, $ini_section_w62_x64, $lang_token_glb, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-
-;  Windows 8.1 / Server 2012 R2 group
-$txtxpos = 2 * $txtxoffset
-$txtypos = $txtypos + 2.5 * $txtyoffset
-GUICtrlCreateGroup("Windows 8.1 / Server 2012 R2 (w63 / w63-x64)", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
-;  Windows 8.1 global
-$txtypos = $txtypos + 1.5 * $txtyoffset
-$txtxpos = 3 * $txtxoffset
-If ShowGUIInGerman() Then
-  $w63_glb = GUICtrlCreateCheckbox("x86 Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
-Else
-  $w63_glb = GUICtrlCreateCheckbox("x86 Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
-EndIf
-If IniRead($inifilename, $ini_section_w63, $lang_token_glb, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows 8.1 / Server 2012 R2 x64 global
-$txtxpos = $txtxpos + $groupwidth / 2 - $txtxoffset
-If ShowGUIInGerman() Then
-  $w63_x64_glb = GUICtrlCreateCheckbox("x64 Global (mehrsprachige Updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
-Else
-  $w63_x64_glb = GUICtrlCreateCheckbox("x64 Global (multilingual updates)", $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
-EndIf
-If IniRead($inifilename, $ini_section_w63_x64, $lang_token_glb, $disabled) = $enabled Then
   GUICtrlSetState(-1, $GUI_CHECKED)
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -2298,216 +2424,12 @@ Else
   GUICtrlCreateLabel("If you select an Office product above, dynamically determined Updates for Office 2003 - 2010 will be included automatically.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
 EndIf
 
-;  Legacy products' Tab
-If ShowGUIInGerman() Then
-  GuiCtrlCreateTabItem("Altprodukte")
-Else
-  GuiCtrlCreateTabItem("Legacy products")
-EndIf
-
-;  Windows XP group
-$txtxpos = 2 * $txtxoffset
-$txtypos = 3.5 * $txtyoffset + $txtheight
-GUICtrlCreateGroup("Windows XP (wxp)", $txtxpos, $txtypos, $groupwidth, $groupheight_lng)
-;  Windows XP English
-$txtypos = $txtypos + 1.5 * $txtyoffset
-$txtxpos = 3 * $txtxoffset
-$wxp_enu = GUICtrlCreateCheckbox(LanguageCaption($lang_token_enu, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_enu, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows XP French
-$txtxpos = $txtxpos + $txtwidth - 5
-$wxp_fra = GUICtrlCreateCheckbox(LanguageCaption($lang_token_fra, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 10, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_fra, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows XP Spanish
-$txtxpos = $txtxpos + $txtwidth + 10
-$wxp_esn = GUICtrlCreateCheckbox(LanguageCaption($lang_token_esn, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_esn, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows XP Japanese
-$txtxpos = $txtxpos + $txtwidth - 5
-$wxp_jpn = GUICtrlCreateCheckbox(LanguageCaption($lang_token_jpn, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_jpn, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows XP Korean
-$txtxpos = $txtxpos + $txtwidth
-$wxp_kor = GUICtrlCreateCheckbox(LanguageCaption($lang_token_kor, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_kor, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows XP Russian
-$txtxpos = $txtxpos + $txtwidth + 5
-$wxp_rus = GUICtrlCreateCheckbox(LanguageCaption($lang_token_rus, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 10, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_rus, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows XP Portuguese
-$txtxpos = $txtxpos + $txtwidth - 10
-$wxp_ptg = GUICtrlCreateCheckbox(LanguageCaption($lang_token_ptg, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_ptg, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows XP Brazilian
-$txtxpos = $txtxpos + $txtwidth + 5
-$wxp_ptb = GUICtrlCreateCheckbox(LanguageCaption($lang_token_ptb, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_ptb, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows XP German
-$txtxpos = 3 * $txtxoffset
-$txtypos = $txtypos + $txtheight
-$wxp_deu = GUICtrlCreateCheckbox(LanguageCaption($lang_token_deu, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_deu, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows XP Dutch
-$txtxpos = $txtxpos + $txtwidth - 5
-$wxp_nld = GUICtrlCreateCheckbox(LanguageCaption($lang_token_nld, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 10, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_nld, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows XP Italian
-$txtxpos = $txtxpos + $txtwidth + 10
-$wxp_ita = GUICtrlCreateCheckbox(LanguageCaption($lang_token_ita, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_ita, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows XP Chinese simplified
-$txtxpos = $txtxpos + $txtwidth - 5
-$wxp_chs = GUICtrlCreateCheckbox(LanguageCaption($lang_token_chs, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_chs, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows XP Chinese traditional
-$txtxpos = $txtxpos + $txtwidth
-$wxp_cht = GUICtrlCreateCheckbox(LanguageCaption($lang_token_cht, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_cht, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows XP Polish
-$txtxpos = $txtxpos + $txtwidth + 5
-$wxp_plk = GUICtrlCreateCheckbox(LanguageCaption($lang_token_plk, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 10, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_plk, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows XP Hungarian
-$txtxpos = $txtxpos + $txtwidth - 10
-$wxp_hun = GUICtrlCreateCheckbox(LanguageCaption($lang_token_hun, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_hun, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows XP Czech
-$txtxpos = $txtxpos + $txtwidth + 5
-$wxp_csy = GUICtrlCreateCheckbox(LanguageCaption($lang_token_csy, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_csy, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows XP Swedish
-$txtxpos = 3 * $txtxoffset
-$txtypos = $txtypos + $txtheight
-$wxp_sve = GUICtrlCreateCheckbox(LanguageCaption($lang_token_sve, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_sve, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows XP Turkish
-$txtxpos = $txtxpos + $txtwidth - 5
-$wxp_trk = GUICtrlCreateCheckbox(LanguageCaption($lang_token_trk, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 10, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_trk, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows XP Greek
-$txtxpos = $txtxpos + $txtwidth + 10
-$wxp_ell = GUICtrlCreateCheckbox(LanguageCaption($lang_token_ell, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 5, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_ell, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows XP Arabic
-$txtxpos = $txtxpos + $txtwidth - 5
-$wxp_ara = GUICtrlCreateCheckbox(LanguageCaption($lang_token_ara, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_ara, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows XP Hebrew
-$txtxpos = $txtxpos + $txtwidth
-$wxp_heb = GUICtrlCreateCheckbox(LanguageCaption($lang_token_heb, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_heb, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows XP Danish
-$txtxpos = $txtxpos + $txtwidth + 5
-$wxp_dan = GUICtrlCreateCheckbox(LanguageCaption($lang_token_dan, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth - 10, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_dan, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows XP Norwegian
-$txtxpos = $txtxpos + $txtwidth - 10
-$wxp_nor = GUICtrlCreateCheckbox(LanguageCaption($lang_token_nor, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth + 5, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_nor, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-;  Windows XP Finnish
-$txtxpos = $txtxpos + $txtwidth + 5
-$wxp_fin = GUICtrlCreateCheckbox(LanguageCaption($lang_token_fin, ShowGUIInGerman()), $txtxpos, $txtypos, $txtwidth, $txtheight)
-If IniRead($inifilename, $ini_section_wxp, $lang_token_fin, $disabled) = $enabled Then
-  GUICtrlSetState(-1, $GUI_CHECKED)
-Else
-  GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
+;  Office 2003 Tab
+GuiCtrlCreateTabItem("Office 2003")
 
 ;  Office 2003 group
 $txtxpos = 2 * $txtxoffset
-$txtypos = $txtypos + 2.5 * $txtyoffset
+$txtypos = 3.5 * $txtyoffset + $txtheight
 GUICtrlCreateGroup("Office 2003 (o2k3)", $txtxpos, $txtypos, $groupwidth, $groupheight_lng)
 ;  Office 2003 English
 $txtypos = $txtypos + 1.5 * $txtyoffset
@@ -2703,23 +2625,6 @@ If IniRead($inifilename, $ini_section_o2k3, $lang_token_fin, $disabled) = $enabl
   GUICtrlSetState(-1, $GUI_CHECKED)
 Else
   GUICtrlSetState(-1, $GUI_UNCHECKED)
-EndIf
-
-;  Product Lifecycle group
-$txtxpos = 2 * $txtxoffset
-$txtypos = $txtypos + 2.5 * $txtyoffset
-If ShowGUIInGerman() Then
-  GUICtrlCreateGroup("Produkt-Lebenszyklus-Informationen", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
-Else
-  GUICtrlCreateGroup("Product lifecycle information", $txtxpos, $txtypos, $groupwidth, $groupheight_glb)
-EndIf
-;  Product Lifecycle label
-$txtypos = $txtypos + 2 * $txtyoffset
-$txtxpos = 3 * $txtxoffset
-If ShowGUIInGerman() Then
-  GUICtrlCreateLabel("Diese Produkte wurden von Microsoft zum 08. April 2014 abgekündigt.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
-Else
-  GUICtrlCreateLabel("Microsoft will discontinue support for these products on April 8th, 2014.", $txtxpos, $txtypos, $groupwidth - 2 * $txtxoffset, $txtheight)
 EndIf
 
 ;  End Tab item definition
@@ -3310,16 +3215,6 @@ While 1
           ContinueLoop
         EndIf
       EndIf
-      If IsCheckBoxChecked($w61_glb) Then
-        If RunScripts("w61 glb", IsCheckBoxChecked($imageonly), DetermineDownloadSwitches($includesp, $dotnet, $msse, $wddefs, $cleanupdownloads, $verifydownloads, AuthProxy($proxy, $proxypwd), $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse, $wddefs, $usbclean), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If IsCheckBoxChecked($w61_x64_glb) Then
-        If RunScripts("w61-x64 glb", IsCheckBoxChecked($imageonly), DetermineDownloadSwitches($includesp, $dotnet, $msse, $wddefs, $cleanupdownloads, $verifydownloads, AuthProxy($proxy, $proxypwd), $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse, $wddefs, $usbclean), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
       If IsCheckBoxChecked($w62_glb) Then
         If RunScripts("w62 glb", IsCheckBoxChecked($imageonly), DetermineDownloadSwitches($includesp, $dotnet, $msse, $wddefs, $cleanupdownloads, $verifydownloads, AuthProxy($proxy, $proxypwd), $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse, $wddefs, $usbclean), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
@@ -3327,16 +3222,6 @@ While 1
       EndIf
       If IsCheckBoxChecked($w62_x64_glb) Then
         If RunScripts("w62-x64 glb", IsCheckBoxChecked($imageonly), DetermineDownloadSwitches($includesp, $dotnet, $msse, $wddefs, $cleanupdownloads, $verifydownloads, AuthProxy($proxy, $proxypwd), $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse, $wddefs, $usbclean), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If IsCheckBoxChecked($w63_glb) Then
-        If RunScripts("w63 glb", IsCheckBoxChecked($imageonly), DetermineDownloadSwitches($includesp, $dotnet, $msse, $wddefs, $cleanupdownloads, $verifydownloads, AuthProxy($proxy, $proxypwd), $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse, $wddefs, $usbclean), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
-          ContinueLoop
-        EndIf
-      EndIf
-      If IsCheckBoxChecked($w63_x64_glb) Then
-        If RunScripts("w63-x64 glb", IsCheckBoxChecked($imageonly), DetermineDownloadSwitches($includesp, $dotnet, $msse, $wddefs, $cleanupdownloads, $verifydownloads, AuthProxy($proxy, $proxypwd), $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse, $wddefs, $usbclean), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
       EndIf

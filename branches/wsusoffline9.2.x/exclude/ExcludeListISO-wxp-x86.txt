@@ -5,7 +5,7 @@
 *w6*
 */*/x64-glb/*
 *-x64*
-*NDP451*
+*NDP46*
 *vcredist*_x64*
 *Silverlight_x64*
 *.au3

@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=9.2.2
+set WSUSOFFLINE_VERSION=9.2.3
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -786,6 +786,24 @@ if "%CPP_2012_x64%"=="1" (
     echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2012_x64.exe not found>>%UPDATE_LOGFILE%
   )
 )
+if "%CPP_2013_x64%"=="1" (
+  if exist ..\cpp\vcredist2013_x64.exe (
+    echo Installing most recent C++ 2013 x64 Runtime Library...
+    call InstallOSUpdate.cmd ..\cpp\vcredist2013_x64.exe %VERIFY_MODE% /errorsaswarnings /q /norestart
+  ) else (
+    echo Warning: File ..\cpp\vcredist2013_x64.exe not found.
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2013_x64.exe not found>>%UPDATE_LOGFILE%
+  )
+)
+if "%CPP_2017_x64%"=="1" (
+  if exist ..\cpp\vcredist2017_x64.exe (
+    echo Installing most recent C++ 2017 x64 Runtime Library...
+    call InstallOSUpdate.cmd ..\cpp\vcredist2017_x64.exe %VERIFY_MODE% /errorsaswarnings /q /norestart
+  ) else (
+    echo Warning: File ..\cpp\vcredist2017_x64.exe not found.
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2017_x64.exe not found>>%UPDATE_LOGFILE%
+  )
+)
 :CPPInstx86
 if "%CPP_2005_x86%"=="1" (
   if exist ..\cpp\vcredist2005_x86.exe (
@@ -821,6 +839,24 @@ if "%CPP_2012_x86%"=="1" (
   ) else (
     echo Warning: File ..\cpp\vcredist2012_x86.exe not found.
     echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2012_x86.exe not found>>%UPDATE_LOGFILE%
+  )
+)
+if "%CPP_2013_x86%"=="1" (
+  if exist ..\cpp\vcredist2013_x86.exe (
+    echo Installing most recent C++ 2013 x86 Runtime Library...
+    call InstallOSUpdate.cmd ..\cpp\vcredist2013_x86.exe %VERIFY_MODE% /errorsaswarnings /q /norestart
+  ) else (
+    echo Warning: File ..\cpp\vcredist2013_x86.exe not found.
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2013_x86.exe not found>>%UPDATE_LOGFILE%
+  )
+)
+if "%CPP_2017_x86%"=="1" (
+  if exist ..\cpp\vcredist2017_x86.exe (
+    echo Installing most recent C++ 2017 x86 Runtime Library...
+    call InstallOSUpdate.cmd ..\cpp\vcredist2017_x86.exe %VERIFY_MODE% /errorsaswarnings /q /norestart
+  ) else (
+    echo Warning: File ..\cpp\vcredist2017_x86.exe not found.
+    echo %DATE% %TIME% - Warning: File ..\cpp\vcredist2017_x86.exe not found>>%UPDATE_LOGFILE%
   )
 )
 :SkipCPPInst
@@ -1000,8 +1036,13 @@ if %DOTNET4_VER_TARGET_MINOR% EQU 0 (
   set DOTNET4_FILENAME=..\dotnet\dotNetFx40_Full_x86_x64.exe
   set DOTNET4LP_FILENAME=..\dotnet\dotNetFx40LP_Full_x86_x64%OS_LANG_SHORT%.exe
 ) else (
-  set DOTNET4_FILENAME=..\dotnet\NDP451-KB2858728-x86-x64-AllOS-ENU.exe
-  set DOTNET4LP_FILENAME=..\dotnet\NDP451-KB2858728-x86-x64-AllOS-%OS_LANG%.exe
+  if "%OS_NAME%"=="w60" (
+    set DOTNET4_FILENAME=..\dotnet\NDP46-KB3045557-x86-x64-AllOS-ENU.exe
+    set DOTNET4LP_FILENAME=..\dotnet\NDP46-KB3045557-x86-x64-AllOS-%OS_LANG%.exe
+  ) else (
+    set DOTNET4_FILENAME=..\dotnet\NDP462-KB3151800-x86-x64-AllOS-ENU.exe
+    set DOTNET4LP_FILENAME=..\dotnet\NDP462-KB3151800-x86-x64-AllOS-%OS_LANG%.exe
+  )
 )
 if not exist %DOTNET4_FILENAME% (
   echo Warning: .NET Framework 4 installation file ^(%DOTNET4_FILENAME%^) not found.

@@ -1,11 +1,11 @@
-; ***  WSUS Offline Update 9.2.2 - Installer  ***
+; ***  WSUS Offline Update 9.2.3 - Installer  ***
 ; ***       Author: T. Wittrock, Kiel         ***
 ; ***   Dialog scaling added by Th. Baisch    ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 
-Dim Const $caption                    = "WSUS Offline Update 9.2.2 - Installer"
+Dim Const $caption                    = "WSUS Offline Update 9.2.3 - Installer"
 Dim Const $wou_hostname               = "www.wsusoffline.net"
 Dim Const $donationURL                = "http://www.wsusoffline.net/donate.html"
 
@@ -35,8 +35,6 @@ Dim Const $reg_val_wustatusserver     = "WUStatusServer"
 Dim Const $msimax                     = 22
 Dim Const $default_logpixels          = 96
 Dim Const $target_version_dotnet35    = "3.5.30729"
-Dim Const $target_version_dotnet40    = "4.0.30319"
-Dim Const $target_version_dotnet45    = "4.5.50938"
 Dim Const $target_version_psh         = "2.0"
 
 ; INI file constants
@@ -91,7 +89,7 @@ Dim Const $path_rel_win_glb           = "\win\glb\"
 Dim Const $path_rel_cpp               = "\cpp\vcredist*.exe"
 Dim Const $path_rel_instdotnet35      = "\dotnet\dotnetfx35.exe"
 Dim Const $path_rel_instdotnet40      = "\dotnet\dotNetFx40*.exe"
-Dim Const $path_rel_instdotnet45      = "\dotnet\NDP451-KB2858728-x86-x64-AllOS*.exe"
+Dim Const $path_rel_instdotnet46      = "\dotnet\NDP46*.exe"
 Dim Const $path_rel_ofc_glb           = "\ofc\glb\"
 Dim Const $path_rel_msse_x86          = "\msse\x86-glb\MSEInstall-x86-*.exe"
 Dim Const $path_rel_msse_x64          = "\msse\x64-glb\MSEInstall-x64-*.exe"
@@ -276,11 +274,19 @@ Func DotNet4Version()
   Return RegRead($reg_key_dotnet4, $reg_val_version)
 EndFunc
 
+Func DotNet4MainVersion()
+  Return StringLeft(DotNet4Version(), 3)
+EndFunc
+
 Func DotNet4TargetVersion()
   If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") ) Then
-    Return $target_version_dotnet40
+    Return "4.0.303"
   Else
-    Return $target_version_dotnet45
+    If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) Then
+      Return "4.6.000"
+    Else
+      Return "4.6.015"
+    EndIf
   EndIf
 EndFunc
 
@@ -335,7 +341,7 @@ Func DotNet35InstPresent($basepath)
 EndFunc
 
 Func DotNet4InstPresent($basepath)
-  Return (FileExists($basepath & $path_rel_instdotnet40) OR FileExists($basepath & $path_rel_instdotnet45))
+  Return (FileExists($basepath & $path_rel_instdotnet40) OR FileExists($basepath & $path_rel_instdotnet46))
 EndFunc
 
 Func OfcGlbPresent($basepath)
@@ -713,7 +719,7 @@ If ShowGUIInGerman() Then
 Else
   $dotnet4 = GUICtrlCreateCheckbox("Install .NET Framework 4.x", $txtxpos, $txtypos, $txtwidth, $txtheight)
 EndIf
-If ( (DotNet4Version() = DotNet4TargetVersion()) OR (NOT DotNet4InstPresent($scriptdir)) ) Then
+If ( (StringLeft(DotNet4Version(), 7) = DotNet4TargetVersion()) OR (NOT DotNet4InstPresent($scriptdir)) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
   If MyIniRead($ini_section_installation, $ini_value_dotnet4, $disabled) = $enabled Then
@@ -732,7 +738,7 @@ Else
 EndIf
 If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_VISTA") _
   OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") _
-  OR ( (DotNet4Version() <> DotNet4TargetVersion()) AND (NOT IsCheckBoxChecked($dotnet4)) ) _
+  OR ( (DotNet4MainVersion() <> "4.5") AND (DotNet4MainVersion() <> "4.6") AND (NOT IsCheckBoxChecked($dotnet4)) ) _
   OR (ManagementFrameworkVersion() = WMFTargetVersion()) ) Then
   GUICtrlSetState(-1, $GUI_UNCHECKED + $GUI_DISABLE)
 Else
@@ -1218,7 +1224,7 @@ While 1
       EndIf
 
     Case $dotnet4              ; .NET 4 check box toggled
-      If ( (IsCheckBoxChecked($dotnet4)) _
+      If ( ( (IsCheckBoxChecked($dotnet4)) OR (DotNet4MainVersion() = "4.5") OR (DotNet4MainVersion() = "4.6") ) _
        AND (@OSVersion <> "WIN_XP") AND (@OSVersion <> "WIN_2003") AND (@OSVersion <> "WIN_VISTA") _
        AND (@OSVersion <> "WIN_8") OR (@OSVersion <> "WIN_81") OR (@OSVersion <> "WIN_2012R2") _
        AND (ManagementFrameworkVersion() <> WMFTargetVersion()) ) Then

@@ -18,6 +18,6 @@ w60-x64\
 w61-x64\
 w62-x64\
 w63-x64\
-NDP451*
+NDP46*
 Silverlight_x64*
 .au3

@@ -23,6 +23,6 @@ w61-x64\
 w62-x64\
 wddefs\
 dotnetfx*
-NDP451*
+NDP46-*
 MSEInstall*
 .au3

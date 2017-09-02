@@ -61,6 +61,7 @@ Dim cpp2008_x86_old, cpp2008_x86_new, cpp2008_x64_old, cpp2008_x64_new
 Dim cpp2010_x86_old, cpp2010_x86_new, cpp2010_x64_old, cpp2010_x64_new
 Dim cpp2012_x86_old, cpp2012_x86_new, cpp2012_x64_old, cpp2012_x64_new
 Dim cpp2013_x86_old, cpp2013_x86_new, cpp2013_x64_old, cpp2013_x64_new
+Dim cpp2017_x86_old, cpp2017_x86_new, cpp2017_x64_old, cpp2017_x64_new
 
 Private Function RegExists(objShell, strName)
 Dim dummy
@@ -611,6 +612,10 @@ cpp2013_x86_old = False
 cpp2013_x86_new = False
 cpp2013_x64_old = False
 cpp2013_x64_new = False
+cpp2017_x86_old = False
+cpp2017_x86_new = False
+cpp2017_x64_old = False
+cpp2017_x64_new = False
 Set objInstaller = CreateObject("WindowsInstaller.Installer")
 For Each strProduct In objInstaller.Products
   Select Case UCase(strProduct)
@@ -650,12 +655,12 @@ For Each strProduct In objInstaller.Products
     Case "{196BB40D-1578-3D01-B289-BEFC77A11A1E}", "{F0C3E5D1-1ADE-321E-8167-68EF0DE699A5}"
       cpp2010_x86_old = True
       For Each strPatch In objInstaller.Patches(strProduct)
-        If UCase(strPatch) = "{6F8500D2-A80F-3347-9081-B41E71C8592B}" Then cpp2010_x86_new = True
+        If UCase(strPatch) = "{F11DB03E-9EFF-3E33-8D0D-827AB22DAB1B}" Then cpp2010_x86_new = True
       Next
     Case "{DA5E371C-6333-3D8A-93A4-6FD5B20BCC6E}", "{1D8E6291-B0D5-35EC-8441-6616F567A0F7}"
       cpp2010_x64_old = True
       For Each strPatch In objInstaller.Patches(strProduct)
-        If UCase(strPatch) = "{C67045D4-F4DE-3AB5-B2DB-E3F5DAC14D9C}" Then cpp2010_x64_new = True
+        If UCase(strPatch) = "{45C1B2E6-FE51-3FDA-81C6-5C8602F9B025}" Then cpp2010_x64_new = True
       Next
     Case "{2F73A7B2-E50E-39A6-9ABC-EF89E4C62E36}", "{FDB30193-FDA0-3DAA-ACCA-A75EEFE53607}", _
          "{E824E81C-80A4-3DFF-B5F9-4842A9FF5F7F}", "{6C772996-BFF3-3C8C-860B-B3D48FF05D65}", _
@@ -669,12 +674,36 @@ For Each strProduct In objInstaller.Products
       cpp2012_x64_old = True
     Case "{CF2BEA3C-26EA-32F8-AA9B-331F7E34BA97}", "{37B8F9C7-03FB-3253-8781-2517C99D7C00}"
       cpp2012_x64_new = True
-    Case "{13A4EE12-23EA-3371-91EE-EFB36DDFFF3E}", "{F8CFEB22-A2E7-3971-9EDA-4B11EDEFC185}"
+    Case "{13A4EE12-23EA-3371-91EE-EFB36DDFFF3E}", "{F8CFEB22-A2E7-3971-9EDA-4B11EDEFC185}", _
+         "{DEA7F8E3-B7B9-3C3C-945B-7F8CE9041748}", "{A8589745-51BC-3963-B4E9-201CF8693538}"
       cpp2013_x86_old = True
+    Case "{E30D8B21-D82D-3211-82CC-0F0A5D1495E8}", "{7DAD0258-515C-3DD4-8964-BD714199E0F7}"
       cpp2013_x86_new = True
-    Case "{A749D8E6-B613-3BE3-8F5F-045C84EBA29B}", "{929FBD26-9020-399B-9A7A-751D61F0B942}"
+    Case "{A749D8E6-B613-3BE3-8F5F-045C84EBA29B}", "{929FBD26-9020-399B-9A7A-751D61F0B942}", _
+         "{ABB19BB4-838D-3082-BDA4-87C6604181A2}", "{20C1086D-C843-36B1-B678-990089D1BD44}"
       cpp2013_x64_old = True
+    Case "{CB0836EC-B072-368D-82B2-D3470BF95707}", "{5740BD44-B58D-321A-AFC0-6D3D4556DD6C}"
       cpp2013_x64_new = True
+    Case "{A2563E55-3BEC-3828-8D67-E5E8B9E8B675}", "{BE960C1C-7BAD-3DE6-8B1A-2616FE532845}", "{74d0e5db-b326-4dae-a6b2-445b9de1836e}", _
+         "{65AD78AD-D23D-3A1E-9305-3AE65CD522C2}", "{1045AB6F-6151-3634-8C2C-EE308AA1A6A7}", "{23daf363-3020-4059-b3ae-dc4ad39fed19}", _
+         "{B5FC62F5-A367-37A5-9FD2-A6E137C0096F}", "{BD9CFD69-EB91-354E-9C98-D439E6091932}", _
+         "{8FD71E98-EE44-3844-9DAD-9CB0BBBC603C}", "{D8C8656B-0BD8-39C3-B741-F889B7C144E5}", _
+         "{37B55901-995A-3650-80B1-BBFD047E2911}", "{844ECB74-9B63-3D5C-958C-30BD23F19EE4}", _
+         "{BBF2AC74-720C-3CB3-8291-5E34039232FA}", "{69BCE4AC-9572-3271-A2FB-9423BDA36A43}", _
+         "{C6CDA568-CD91-3CA0-9EDE-DAD98A13D6E1}", "{E6222D59-608C-3018-B86B-69BD241ACDE5}"
+      cpp2017_x86_old = True
+    Case "{0D3E9E15-DE7A-300B-96F1-B4AF12B96488}", "{BC958BD2-5DAC-3862-BB1A-C1BE0790438D}", "{e46eca4f-393b-40df-9f49-076faf788d83}", _
+         "{A1C31BA5-5438-3A07-9EEE-A5FB2D0FDE36}", "{B0B194F8-E0CE-33FE-AA11-636428A4B73D}", "{3ee5e5bb-b7cc-4556-8861-a00a82977d6c}", _
+         "{7B50D081-E670-3B43-A460-0E2CDB5CE984}", "{DFFEB619-5455-3697-B145-243D936DB95B}", _
+         "{C0B2C673-ECAA-372D-94E5-E89440D087AD}", "{95265B86-188E-3F62-9CDB-60FCE59EC721}", _
+         "{FAAD7243-0141-3987-AA2F-E56B20F80E41}", "{F20396E5-D84E-3505-A7A8-7358F0155F6C}", _
+         "{50A2BC33-C9CD-3BF1-A8FF-53C10A0B183C}", "{EF1EC6A9-17DE-3DA9-B040-686A1E8A8B04}", _
+         "{8D50D8C6-1E3D-3BAB-B2B7-A5399EA1EBD1}", "{C668F044-4825-330D-8F9F-3CBFC9F2AB89}"
+      cpp2017_x64_old = True
+    Case "{029DA848-1A80-34D3-BFC1-A6447BFC8E7F}", "{568CD07E-0824-3EEB-AEC1-8FD51F3C85CF}"
+      cpp2017_x86_new = True
+    Case "{B0037450-526D-3448-A370-CACBD87769A0}", "{B13B3E11-1555-353F-A63A-8933EE104FBD}"
+      cpp2017_x64_new = True
   End Select
 Next
 
@@ -688,6 +717,8 @@ If (cpp2012_x86_old) And (Not cpp2012_x86_new) Then objCmdFile.WriteLine("set CP
 If (cpp2012_x64_old) And (Not cpp2012_x64_new) Then objCmdFile.WriteLine("set CPP_2012_x64=1")
 If (cpp2013_x86_old) And (Not cpp2013_x86_new) Then objCmdFile.WriteLine("set CPP_2013_x86=1")
 If (cpp2013_x64_old) And (Not cpp2013_x64_new) Then objCmdFile.WriteLine("set CPP_2013_x64=1")
+If (cpp2017_x86_old) And (Not cpp2017_x86_new) Then objCmdFile.WriteLine("set CPP_2017_x86=1")
+If (cpp2017_x64_old) And (Not cpp2017_x64_new) Then objCmdFile.WriteLine("set CPP_2017_x64=1")
 
 objCmdFile.Close
 WScript.Quit(0)

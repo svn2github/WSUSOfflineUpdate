@@ -6,6 +6,6 @@
 */w2k3/*
 *w6*
 */*/x86-glb/*
-*NDP451*
+*NDP46*
 *Silverlight_x64*
 *.au3

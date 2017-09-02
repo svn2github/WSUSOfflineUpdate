@@ -9,5 +9,6 @@
 *w63*
 */*/x86-glb/*
 *dotNetFx40*
+*NDP462-*
 *Silverlight_x64*
 *.au3

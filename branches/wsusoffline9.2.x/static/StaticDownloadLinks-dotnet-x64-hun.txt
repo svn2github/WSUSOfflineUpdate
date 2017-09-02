@@ -1,3 +1,4 @@
 http://download.microsoft.com/download/9/2/3/9233791d-a020-4320-b3c7-e1520397e80f/dotnetfx35langpack_x64hu.exe
 http://download.microsoft.com/download/3/1/F/31FE3F19-79E1-40F0-A6AF-82462FDB4B45/dotNetFx40LP_Full_x86_x64hu.exe
-http://download.microsoft.com/download/9/2/A/92A96B77-38F0-4D36-8F11-CA3AFC84F91F/NDP451-KB2858728-x86-x64-AllOS-HUN.exe
+http://download.microsoft.com/download/5/A/8/5A830BE6-552C-4D66-A647-12112D8521CA/NDP46-KB3045557-x86-x64-AllOS-HUN.exe
+http://download.microsoft.com/download/D/C/3/DC399822-3C64-4A11-B57B-836F2DAA25D5/NDP462-KB3151800-x86-x64-AllOS-HUN.exe

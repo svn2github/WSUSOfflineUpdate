@@ -12,6 +12,7 @@
 */w63-x64/*
 */*/x64-glb/*
 *dotNetFx40*
+*NDP462-*
 *vcredist*_x64*
 *Silverlight_x64*
 *.au3

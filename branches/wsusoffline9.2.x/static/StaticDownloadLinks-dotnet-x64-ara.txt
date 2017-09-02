@@ -1,3 +1,4 @@
 http://download.microsoft.com/download/6/6/4/66488d18-e069-4b3e-a0b5-5be3af0702bd/dotnetfx35langpack_x64ar.exe
 http://download.microsoft.com/download/9/1/8/9184AB10-C291-4BF5-B244-06EBE0A15F41/dotNetFx40LP_Full_x86_x64ar.exe
-http://download.microsoft.com/download/A/F/0/AF0DDBB9-918E-42BA-AFB6-65EDF7CA4339/NDP451-KB2858728-x86-x64-AllOS-ARA.exe
+http://download.microsoft.com/download/B/B/B/BBBA772C-8E15-4528-BD70-C490AD255B3D/NDP46-KB3045557-x86-x64-AllOS-ARA.exe
+http://download.microsoft.com/download/0/E/6/0E6760EB-890F-4886-9A60-0D12E96CD333/NDP462-KB3151800-x86-x64-AllOS-ARA.exe
