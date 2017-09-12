@@ -38,3 +38,9 @@ kb4025336,July 2017 Security Monthly Quality Rollup for Windows 8.1 and Windows 
 kb4034664,August 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
 kb4034665,August 2017 Security Monthly Quality Rollup for Windows Server 2012
 kb4034681,August 2017 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4038777,September 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4038799,September 2017 Security Monthly Quality Rollup for Windows Server 2012
+kb4038792,September 2017 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4041083,September 2017 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7 on Windows 7 and Windows Server 2008 R2
+kb4041084,September 2017 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7 on Windows Server 2012
+kb4041085,September 2017 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7 on Windows 8.1 and Windows Server 2012 R2
