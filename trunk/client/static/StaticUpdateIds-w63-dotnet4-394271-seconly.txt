@@ -1,2 +1,3 @@
 kb4014556,April 2017 Security update for the .NET Framework 4.6 and 4.6.1 for Windows 8.1 and Windows Server 2012 R2
 kb4014590,May 2017 Security only update for the .NET Framework 4.6 and 4.6.1 for Windows 8.1 and Windows Server 2012 R2
+kb4040956,September 2017 Security Only update for the .NET Framework 4.6, 4.6.1, 4.6.2 and 4.7 for Windows 8.1 and Windows Server 2012 R2

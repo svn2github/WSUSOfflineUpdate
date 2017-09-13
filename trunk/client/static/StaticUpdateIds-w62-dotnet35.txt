@@ -1,1 +1,1 @@
-kb4014503,May 2017 Security and Quality Rollup for the .NET Framework 3.5 Service Pack 1 for Windows Server 2012
+kb4040979,September 2017 Security and Quality Rollup for the .NET Framework 3.5 Service Pack 1 for Windows Server 2012

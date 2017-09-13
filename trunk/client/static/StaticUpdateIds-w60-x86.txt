@@ -2,3 +2,6 @@ kb3078601,August 2015 security update for Windows
 kb4014502,May 2017 Security and Quality Rollup for the .NET Framework 2.0 Service Pack 2 for Windows Server 2008 SP2
 kb4014514,May 2017 Security and Quality Rollup for the .NET Framework 4.5.2 for Windows Server 2008 SP2
 kb4014511,May 2017 Security and Quality Rollup for the .NET Framework 4.6 for Windows Server 2008 SP2
+kb4040978,September 2017 Security and Quality Rollup for the .NET Framework 2.0 Service Pack 2 for Windows Server 2008 SP2
+kb4040977,September 2017 Security and Quality Rollup for the .NET Framework 4.5.2 for Windows Server 2008 SP2
+kb4040973,September 2017 Security and Quality Rollup for the .NET Framework 4.6 for Windows Server 2008 SP2
