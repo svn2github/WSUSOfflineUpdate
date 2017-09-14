@@ -1334,5 +1334,11 @@ Version 11.0.2 -- ??.??.??
 - September 2017 updates added to 'security only' lists for Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems
 - Included complete rewrite of the Linux scripts version 1.0-beta-5 (Special thanks to H. Buhrmester)
 - C++ 2017 Redistributable Runtime Libraries updated to v. 14.11.25325.0 (Thanks to "harry")
-- Fix: Replaced superseded Outlook 2010 Security Update kb3203467 (June 2017) by kb2956078 (July 2017)
 - Fix: Added missing Outlook 2016 Security Update kb4011052 (July 2017) (Thanks to "arturk77")
+- Fix: Replaced superseded Outlook 2010 Security Update kb2956078 (July 2017) by kb4011089 (September 2017)
+- Fix: Replaced superseded Office 2010 Security Update kb3203461 (June 2017) by kb3213626 (September 2017)
+- Fix: Replaced superseded Office 2013 Security Update kb3203392 (June 2017) by kb3213564 (September 2017)
+- Fix: Replaced superseded Skype for Business 2015 Security Update kb3191937 (June 2017) by kb3213568 (September 2017)
+- Fix: Replaced superseded Skype for Business 2015 Security Update kb3191939 (June 2017) by kb4011107 (September 2017)
+- Fix: Replaced superseded Office 2016 Security Update kb3203383 (June 2017) by kb3213551 (September 2017)
+- Fix: Replaced superseded Skype for Business 2016 Security Update kb3203382 (June 2017) by kb4011040 (September 2017)
