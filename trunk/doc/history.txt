@@ -1334,6 +1334,8 @@ Version 11.0.2 -- ??.??.??
 - September 2017 updates added to 'security only' lists for Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems
 - Included complete rewrite of the Linux scripts version 1.0-beta-5 (Special thanks to H. Buhrmester)
 - C++ 2017 Redistributable Runtime Libraries updated to v. 14.11.25325.0 (Thanks to "harry")
+- UpdateGenerator script will now use default text editor for displaying download log file (Thanks to "bpit")
+- DoUpdate.cmd script will now signal errors by setting environment variable ERROR_OCCURRED (Thanks to "sklaes")
 - Fix: Added missing Outlook 2016 Security Update kb4011052 (July 2017) (Thanks to "arturk77")
 - Fix: Replaced superseded Outlook 2010 Security Update kb2956078 (July 2017) by kb4011089 (September 2017)
 - Fix: Replaced superseded Office 2010 Security Update kb3203461 (June 2017) by kb3213626 (September 2017)

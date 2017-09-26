@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=11.0.1+ (r895)
+set WSUSOFFLINE_VERSION=11.0.1+ (r896)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1717,127 +1717,112 @@ echo.
 echo ERROR: Environment variable TEMP not set.
 echo %DATE% %TIME% - Error: Environment variable TEMP not set>>%UPDATE_LOGFILE%
 echo.
-call :Cleanup
-goto EoF
+goto Error
 
 :NoTempDir
 echo.
 echo ERROR: Directory "%TEMP%" not found.
 echo %DATE% %TIME% - Error: Directory "%TEMP%" not found>>%UPDATE_LOGFILE%
 echo.
-call :Cleanup
-goto EoF
+goto Error
 
 :NoCScript
 echo.
 echo ERROR: VBScript interpreter %CSCRIPT_PATH% not found.
 echo %DATE% %TIME% - Error: VBScript interpreter %CSCRIPT_PATH% not found>>%UPDATE_LOGFILE%
 echo.
-call :Cleanup
-goto EoF
+goto Error
 
 :NoReg
 echo.
 echo ERROR: Registry tool %REG_PATH% not found.
 echo %DATE% %TIME% - Error: Registry tool %REG_PATH% not found>>%UPDATE_LOGFILE%
 echo.
-call :Cleanup
-goto EoF
+goto Error
 
 :NoSc
 echo.
 echo ERROR: Service control utility %SC_PATH% not found.
 echo %DATE% %TIME% - Error: Service control utility %SC_PATH% not found>>%UPDATE_LOGFILE%
 echo.
-call :Cleanup
-goto EoF
+goto Error
 
 :EndlessLoop
 echo.
 echo ERROR: Potentially endless reboot/recall loop detected.
 echo %DATE% %TIME% - Error: Potentially endless reboot/recall loop detected>>%UPDATE_LOGFILE%
 echo.
-call :Cleanup
-goto EoF
+goto Error
 
 :NoIfAdmin
 echo.
 echo ERROR: File ..\bin\IfAdmin.exe not found.
 echo %DATE% %TIME% - Error: File ..\bin\IfAdmin.exe not found>>%UPDATE_LOGFILE%
 echo.
-call :Cleanup
-goto EoF
+goto Error
 
 :NoAdmin
 echo.
 echo ERROR: User %USERNAME% does not have administrative privileges.
 echo %DATE% %TIME% - Error: User %USERNAME% does not have administrative privileges>>%UPDATE_LOGFILE%
 echo.
-goto EoF
+goto Error
 
 :NoSysEnvVars
 echo.
 echo ERROR: Determination of OS properties failed.
 echo %DATE% %TIME% - Error: Determination of OS properties failed>>%UPDATE_LOGFILE%
 echo.
-call :Cleanup
-goto EoF
+goto Error
 
 :UnsupOS
 echo.
 echo ERROR: Unsupported Operating System (%OS_NAME% %OS_ARCH%).
 echo %DATE% %TIME% - Error: Unsupported Operating System (%OS_NAME% %OS_ARCH%)>>%UPDATE_LOGFILE%
 echo.
-call :Cleanup
-goto EoF
+goto Error
 
 :UnsupArch
 echo.
 echo ERROR: Unsupported Operating System architecture (%OS_ARCH%).
 echo %DATE% %TIME% - Error: Unsupported Operating System architecture (%OS_ARCH%)>>%UPDATE_LOGFILE%
 echo.
-call :Cleanup
-goto EoF
+goto Error
 
 :UnsupLang
 echo.
 echo ERROR: Unsupported Operating System language.
 echo %DATE% %TIME% - Error: Unsupported Operating System language>>%UPDATE_LOGFILE%
 echo.
-call :Cleanup
-goto EoF
+goto Error
 
 :InvalidMedium
 echo.
 echo ERROR: Medium neither supports your Windows nor your Office version.
 echo %DATE% %TIME% - Error: Medium neither supports your Windows nor your Office version>>%UPDATE_LOGFILE%
 echo.
-call :Cleanup
-goto EoF
+goto Error
 
 :NoSPTargetId
 echo.
 echo ERROR: Environment variable OS_SP_TARGET_ID not set.
 echo %DATE% %TIME% - Error: Environment variable OS_SP_TARGET_ID not set>>%UPDATE_LOGFILE%
 echo.
-call :Cleanup
-goto EoF
+goto Error
 
 :NoCatalog
 echo.
 echo ERROR: File ..\wsus\wsusscn2.cab not found.
 echo %DATE% %TIME% - Error: File ..\wsus\wsusscn2.cab not found>>%UPDATE_LOGFILE%
 echo.
-call :Cleanup
-goto EoF
+goto Error
 
 :CatalogIntegrityError
 echo.
 echo ERROR: File hash does not match stored value (file: ..\wsus\wsusscn2.cab).
 echo %DATE% %TIME% - Error: File hash does not match stored value (file: ..\wsus\wsusscn2.cab)>>%UPDATE_LOGFILE%
 echo.
-call :Cleanup
-goto EoF
+goto Error
 
 :NoUpdates
 echo.
@@ -1857,14 +1842,17 @@ echo.
 echo ERROR: Listing of update files failed.
 echo %DATE% %TIME% - Error: Listing of update files failed>>%UPDATE_LOGFILE%
 echo.
-call :Cleanup
-goto EoF
+goto Error
 
 :InstError
 echo.
 echo ERROR: Installation failed.
 echo %DATE% %TIME% - Error: Installation failed>>%UPDATE_LOGFILE%
 echo.
+goto Error
+
+:Error
+set ERROR_OCCURRED=1
 call :Cleanup
 goto EoF
 

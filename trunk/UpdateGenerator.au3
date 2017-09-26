@@ -6,7 +6,7 @@
 #include <GUIConstants.au3>
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Generator")
-#pragma compile(FileVersion, 11.0.1.895)
+#pragma compile(FileVersion, 11.0.1.896)
 #pragma compile(InternalName, "Generator")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateGenerator.exe)
@@ -679,7 +679,7 @@ Dim $result = ""
 EndFunc
 
 Func ShowLogFile()
-  Run("notepad.exe " & $downloadLogFile, @ScriptDir & "\log")
+  ShellExecute($downloadLogFile, "", @ScriptDir & "\log", "open")
 EndFunc
 
 Func ShowRunAll()
