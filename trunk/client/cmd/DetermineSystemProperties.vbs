@@ -428,6 +428,10 @@ For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_ComputerSy
   objCmdFile.WriteLine("set OS_DOMAIN_ROLE=" & objQueryItem.DomainRole)
   objCmdFile.WriteLine("set OS_RAM_GB=" & CInt(CDbl(objQueryItem.TotalPhysicalMemory) / 1073741824))
 Next
+' Documentation: https://msdn.microsoft.com/en-us/library/aa394418(v=vs.85).aspx
+For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_Service Where Name = 'wuauserv'")
+  objCmdFile.WriteLine("set WU_START_MODE=" & objQueryItem.StartMode)
+Next
 ' Documentation: http://msdn.microsoft.com/en-us/library/hww8txat(v=VS.85).aspx
 objCmdFile.WriteLine("set FS_TYPE=" & objFileSystem.GetDrive(objFileSystem.GetDriveName(wshShell.CurrentDirectory)).FileSystem)
 

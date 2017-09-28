@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=11.0.1+ (r896)
+set WSUSOFFLINE_VERSION=11.0.1+ (r897)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1256,23 +1256,21 @@ goto UpdateSystem
 if "%WUSVC_ENABLED%"=="1" goto :eof
 for /F "tokens=3" %%i in ('%REG_PATH% QUERY HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start 2^>nul ^| %SystemRoot%\System32\find.exe /I "Start"') do set WUSVC_STVAL=%%i
 for /F "tokens=3" %%i in ('%REG_PATH% QUERY HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart 2^>nul ^| %SystemRoot%\System32\find.exe /I "DelayedAutoStart"') do set WUSVC_STDEL=%%i
-for /F "tokens=4" %%i in ('%SystemRoot%\System32\sc.exe qc wuauserv 2^>nul ^| %SystemRoot%\System32\find.exe /I "START_TYPE"') do (
-  if /i "%%i"=="DISABLED" (
-    echo Enabling service 'Windows Update' ^(wuauserv^) - previous state will be recovered later...
-    echo %DATE% %TIME% - Info: Enabling service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
-    %SC_PATH% config wuauserv start= demand >nul 2>&1
-    if errorlevel 1 (
-      echo Warning: Enabling of service 'Windows Update' ^(wuauserv^) failed.
-      echo %DATE% %TIME% - Warning: Enabling of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
-    ) else (
-      echo %DATE% %TIME% - Info: Enabled service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
-      set WUSVC_ENABLED=1
-      if "%WUSVC_STVAL%" NEQ "" (
-        %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start /t REG_DWORD /d %WUSVC_STVAL% /f >nul 2>&1
-      )
-      if "%WUSVC_STDEL%" NEQ "" (
-        %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart /t REG_DWORD /d %WUSVC_STDEL% /f >nul 2>&1
-      )
+if /i "%WU_START_MODE%"=="Disabled" (
+  echo Enabling service 'Windows Update' ^(wuauserv^) - previous state will be recovered later...
+  echo %DATE% %TIME% - Info: Enabling service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
+  %SC_PATH% config wuauserv start= demand >nul 2>&1
+  if errorlevel 1 (
+    echo Warning: Enabling of service 'Windows Update' ^(wuauserv^) failed.
+    echo %DATE% %TIME% - Warning: Enabling of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
+  ) else (
+    echo %DATE% %TIME% - Info: Enabled service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
+    set WUSVC_ENABLED=1
+    if "%WUSVC_STVAL%" NEQ "" (
+      %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v Start /t REG_DWORD /d %WUSVC_STVAL% /f >nul 2>&1
+    )
+    if "%WUSVC_STDEL%" NEQ "" (
+      %REG_PATH% ADD HKLM\SYSTEM\CurrentControlSet\services\wuauserv /v DelayedAutoStart /t REG_DWORD /d %WUSVC_STDEL% /f >nul 2>&1
     )
   )
 )
@@ -1285,7 +1283,7 @@ echo Waiting for service '%1' to reach state '%2' (timeout: %3s)...
 echo %DATE% %TIME% - Info: Waiting for service '%1' to reach state '%2' (timeout: %3s)>>%UPDATE_LOGFILE%
 echo WScript.Sleep(2000)>"%TEMP%\Sleep2Seconds.vbs"
 for /L %%i in (2,2,%3) do (
-  for /F "tokens=4" %%j in ('%SystemRoot%\System32\sc.exe query %1 2^>nul ^| %SystemRoot%\System32\find.exe /I "STAT"') do (
+  for /F %%j in ('%CSCRIPT_PATH% //Nologo //E:vbs DetermineServiceState.vbs %1') do (
     if /i "%%j"=="%2" (
       echo %DATE% %TIME% - Info: Service '%1' reached state '%2'>>%UPDATE_LOGFILE%
       del "%TEMP%\Sleep2Seconds.vbs"
@@ -1301,8 +1299,8 @@ verify other 2>nul
 goto :eof
 
 :StopWUSvc
-for /F "tokens=4" %%i in ('%SystemRoot%\System32\sc.exe query wuauserv 2^>nul ^| %SystemRoot%\System32\find.exe /I "STAT"') do (
-  if /i "%%i"=="STOPPED" goto :eof
+for /F %%i in ('%CSCRIPT_PATH% //Nologo //E:vbs DetermineServiceState.vbs wuauserv') do (
+  if /i "%%i"=="Stopped" goto :eof
 )
 echo Stopping service 'Windows Update' (wuauserv)...
 echo %DATE% %TIME% - Info: Stopping service 'Windows Update' (wuauserv)>>%UPDATE_LOGFILE%
@@ -1311,14 +1309,14 @@ if errorlevel 1 (
   echo Warning: Stopping of service 'Windows Update' ^(wuauserv^) failed.
   echo %DATE% %TIME% - Warning: Stopping of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
 ) else (
-  call :WaitService wuauserv STOPPED 180
+  call :WaitService wuauserv Stopped 180
   if not errorlevel 1 echo %DATE% %TIME% - Info: Stopped service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
 )
 goto :eof
 
 :StartWUSvc
-for /F "tokens=4" %%i in ('%SystemRoot%\System32\sc.exe query wuauserv 2^>nul ^| %SystemRoot%\System32\find.exe /I "STAT"') do (
-  if /i "%%i"=="RUNNING" goto :eof
+for /F %%i in ('%CSCRIPT_PATH% //Nologo //E:vbs DetermineServiceState.vbs wuauserv') do (
+  if /i "%%i"=="Running" goto :eof
 )
 echo Starting service 'Windows Update' (wuauserv)...
 echo %DATE% %TIME% - Info: Starting service 'Windows Update' (wuauserv)>>%UPDATE_LOGFILE%
@@ -1327,7 +1325,7 @@ if errorlevel 1 (
   echo Warning: Starting of service 'Windows Update' ^(wuauserv^) failed.
   echo %DATE% %TIME% - Warning: Starting of service 'Windows Update' ^(wuauserv^) failed>>%UPDATE_LOGFILE%
 ) else (
-  call :WaitService wuauserv RUNNING 60
+  call :WaitService wuauserv Running 60
   if not errorlevel 1 echo %DATE% %TIME% - Info: Started service 'Windows Update' ^(wuauserv^)>>%UPDATE_LOGFILE%
 )
 goto :eof
