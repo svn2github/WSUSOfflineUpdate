@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 11.0.1
+WSUS Offline Update 11.0.2
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1329,7 +1329,8 @@ Version 11.0.1 -- 14.07.17
 - Fix: Replaced obsolete Security Update for Office 2010 kb2956073 (MS15-012) by kb3203468 (July 2017)
 - Fix: Incorrect calculation of ExcludeList-superseded-seconly.txt
 --------------------------------------------------------------------------------
-Version 11.0.2 -- ??.??.??
+Version 11.0.2 -- 07.10.17
+- NOTE: This version will be the last one supporting Office 2007 (see https://support.microsoft.com/en-us/help/3198497/office-2007-approaching-end-of-extended-support)
 - August 2017 updates added to 'security only' lists for Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems (Thanks to "hbuhrmester" and "Dalai")
 - September 2017 updates added to 'security only' lists for Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems
 - Included complete rewrite of the Linux scripts version 1.0-beta-5 (Special thanks to H. Buhrmester)
@@ -1347,3 +1348,4 @@ Version 11.0.2 -- ??.??.??
 - Fix: Replaced superseded Skype for Business 2015 Security Update kb3191939 (June 2017) by kb4011107 (September 2017)
 - Fix: Replaced superseded Office 2016 Security Update kb3203383 (June 2017) by kb3213551 (September 2017)
 - Fix: Replaced superseded Skype for Business 2016 Security Update kb3203382 (June 2017) by kb4011040 (September 2017)
+--------------------------------------------------------------------------------

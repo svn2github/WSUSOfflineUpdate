@@ -4,6 +4,7 @@ kb982861,Internet Explorer 9
 kb2841134,Internet Explorer 11
 kb976002,Browser Choice
 kb2526086,Office 2007 Service Pack 3
+kb4011086,Outlook 2007 Security Update September 12, 2017
 kb2687455,Office 2010 Service Pack 2
 kb2817430,Office 2013 Service Pack 1
 kb936330,Windows Server 2008 Service Pack 1
