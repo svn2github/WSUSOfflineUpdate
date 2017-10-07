@@ -1,0 +1,10 @@
+http://download.microsoft.com/download/3/a/9/3a9b72c2-527d-4694-8a49-84c056d4c34d/Windows6.0-KB936330-X86-wave0.exe
+http://download.microsoft.com/download/E/7/7/E77CBA41-0B6B-4398-BBBF-EE121EEC0535/Windows6.0-KB948465-X86.exe
+http://download.microsoft.com/download/A/7/5/A75BC017-63CE-47D6-8FA4-AFB5C21BAC54/Windows6.0-KB968930-x86.msu
+http://download.microsoft.com/download/3/9/8/398298E8-2FBB-4AD0-9B81-A5DE0131BB66/Windows6.0-KB969084-x86.msu
+http://download.microsoft.com/download/5/5/B/55BAB264-02AB-40C0-8B59-438FA4AC22A0/Windows6.0-KB2416470-x86.msu
+http://download.microsoft.com/download/B/A/F/BAF2D238-529A-4C54-AD31-BAFFE001F91E/Windows6.0-KB971512-x86.msu
+http://download.microsoft.com/download/0/E/D/0ED4ED7C-9FD8-4162-8024-F0643843B8EE/Windows6.0-KB2117917-x86.msu
+http://download.microsoft.com/download/0/8/7/08768091-35BC-48E0-9F7F-B9802A0EE2D6/IE9-WindowsVista-x86-enu.exe
+http://download.microsoft.com/download/1/E/9/1E9DE3C7-0C84-41C8-BBED-997EB0C98CCA/IE9-WindowsVista-x86-deu.exe
+http://download.microsoft.com/download/E/7/6/E76850B8-DA6E-4FF5-8CCE-A24FC513FD16/Windows6.0-KB2506146-x86.msu
