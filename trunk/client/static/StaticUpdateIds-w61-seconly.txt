@@ -14,3 +14,4 @@ kb4022722,June 2017 Security Only Quality Update for Windows 7 SP1 and Windows S
 kb4025337,July 2017 Security Only Quality Update for Windows 7 SP1 and Windows Server 2008 R2 SP1
 kb4034679,August 2017 Security Only Quality Update for Windows 7 SP1 and Windows Server 2008 R2 SP1
 kb4038779,September 2017 Security Only Quality Update for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4041678,October 2017 Security Only Quality Update for Windows 7 SP1 and Windows Server 2008 R2 SP1
