@@ -1349,3 +1349,6 @@ Version 11.0.2 -- 07.10.17
 - Fix: Replaced superseded Office 2016 Security Update kb3203383 (June 2017) by kb3213551 (September 2017)
 - Fix: Replaced superseded Skype for Business 2016 Security Update kb3203382 (June 2017) by kb4011040 (September 2017)
 --------------------------------------------------------------------------------
+Version ??.? -- ??.??.??
+- Replaced superseded September 2016 Servicing stack update (kb3181403) by August 2017 Servicing stack update (kb4035632) for Windows 10 Version 1511 (Thanks to "aker")
+- Replaced superseded June 2017 Servicing stack update (kb4023834) by August 2017 Servicing stack update (kb4035631) for Windows 10 Version 1607 (Thanks to "aker")

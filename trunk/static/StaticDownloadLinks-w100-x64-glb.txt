@@ -1,4 +1,4 @@
-http://download.windowsupdate.com/c/msdownload/update/software/crup/2017/06/windows10.0-kb4022405-x64_cb1286f2547dd21a06f1ec5b9a55769a7227b371.msu
-http://download.windowsupdate.com/c/msdownload/update/software/crup/2017/06/windows10.0-kb4023834-x64_1f2af418b6f9dafb593f5ce89b4e0783057102b2.msu
-http://download.windowsupdate.com/d/msdownload/update/software/crup/2016/08/windows10.0-kb3181403-x64_6d9c9524471412a0ed566f739a403cd9a35649ed.msu
 http://download.windowsupdate.com/d/msdownload/update/software/crup/2016/06/windows10.0-kb3173427-x64_e3da65fe753d24a1759cdd029028cde743a62a23.msu
+http://download.windowsupdate.com/d/msdownload/update/software/crup/2017/08/windows10.0-kb4035632-x64_ea26f11d518e5e363fe9681b290a56a6afe15a81.msu
+http://download.windowsupdate.com/d/msdownload/update/software/crup/2017/08/windows10.0-kb4035631-x64_59af92716539d98ed86622d6fea5a69ab90a4e76.msu
+http://download.windowsupdate.com/c/msdownload/update/software/crup/2017/06/windows10.0-kb4022405-x64_cb1286f2547dd21a06f1ec5b9a55769a7227b371.msu
