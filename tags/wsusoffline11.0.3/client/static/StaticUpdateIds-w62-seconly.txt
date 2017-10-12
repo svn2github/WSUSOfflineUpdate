@@ -1,0 +1,12 @@
+kb3149090,April 2016 Security Update for SAM and LSAD remote protocols
+kb3192393,October 2016 Security Only Quality Update for Windows Server 2012
+kb3197876,November 2016 Security Only Quality Update for Windows Server 2012
+kb3205408,December 2016 Security Only Quality Update for Windows Server 2012
+kb4012214,March 2017 Security Only Quality Update for Windows Server 2012
+kb4015548,April 2017 Security Only Quality Update for Windows Server 2012
+kb4019214,May 2017 Security Only Quality Update for Windows Server 2012
+kb4022718,June 2017 Security Only Quality Update for Windows Server 2012
+kb4025343,July 2017 Security Only Quality Update for Windows Server 2012
+kb4034666,August 2017 Security Only Quality Update for Windows Server 2012
+kb4038786,September 2017 Security Only Quality Update for Windows Server 2012
+kb4041679,October 2017 Security Only Quality Update for Windows Server 2012
