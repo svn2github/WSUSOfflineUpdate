@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=11.0.2+ (r902)
+set WSUSOFFLINE_VERSION=11.0.3
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1292,8 +1292,8 @@ for /L %%i in (2,2,%3) do (
   )
   %CSCRIPT_PATH% //Nologo //B //E:vbs "%TEMP%\Sleep2Seconds.vbs"
 )
-echo Warning: Service '%1' did not reach state '%2' (timeout occured)
-echo %DATE% %TIME% - Warning: Service '%1' did not reach state '%2' (timeout occured)>>%UPDATE_LOGFILE%
+echo Warning: Service '%1' did not reach state '%2' in time
+echo %DATE% %TIME% - Warning: Service '%1' did not reach state '%2' in time>>%UPDATE_LOGFILE%
 del "%TEMP%\Sleep2Seconds.vbs"
 verify other 2>nul
 goto :eof

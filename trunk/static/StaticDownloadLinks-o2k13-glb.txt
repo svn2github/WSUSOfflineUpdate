@@ -1,5 +1,5 @@
 http://download.microsoft.com/download/F/2/5/F2552D54-7B97-44CD-A0E7-6E4E20A2FED7/proofloc2013-kb2880463-fullfile-x86-glb.exe
 http://download.microsoft.com/download/D/D/E/DDE271AF-6A34-45AF-B439-6D573F04EE2E/conv2013-kb3213564-fullfile-x86-glb.exe
 http://download.microsoft.com/download/E/2/8/E286C608-76FF-40C4-B509-23F94E4BA655/lyncmso2013-kb3039779-fullfile-x86-glb.exe
-http://download.microsoft.com/download/9/A/B/9AB81BE6-D94A-413B-AA8E-286146224104/lynchelploc2013-kb3213568-fullfile-x86-glb.exe
-http://download.microsoft.com/download/F/6/1/F61D53B5-A0FD-40C0-ACE0-044974D14ED9/lync2013-kb4011107-fullfile-x86-glb.exe
+http://download.microsoft.com/download/E/A/7/EA7AD42D-D34E-4D54-8F1A-F9B598E2B398/lynchelploc2013-kb3191937-fullfile-x86-glb.exe
+http://download.microsoft.com/download/9/8/A/98A4074D-E80C-4DA0-956A-50F53846783B/lync2013-kb4011179-fullfile-x86-glb.exe
