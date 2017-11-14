@@ -1360,3 +1360,8 @@ Version 11.0.3 -- 12.10.17
 - Fix: Replaced superseded Skype for Business 2015 Security Update kb4011107 (September 2017) by kb4011179 (October 2017)
 - Fix: Replaced superseded Skype for Business 2016 Security Update kb4011040 (September 2017) by kb4011159 (October 2017)
 --------------------------------------------------------------------------------
+Version ??.? -- ??.??.17
+- .NET Framework 4 updated to v. 4.7.1 (Thanks to "Rush", "harry" and "aker")
+- Removed obsolete .NET Framework 4 prerequisite installation file kb4019990 (Thanks to "jonas")
+- Aria2 download utility updated to v. 1.33.1 (Thanks to "Rush")
+- Added static update definition files for Windows 10 Version 1709 (build 16299) (Thanks to "aker", "boco" and "Rush")
