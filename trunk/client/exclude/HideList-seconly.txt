@@ -47,3 +47,6 @@ kb4041085,September 2017 Security and Quality Rollup for .NET Framework 3.5, 4.5
 kb4041681,October 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
 kb4041690,October 2017 Security Monthly Quality Rollup for Windows Server 2012
 kb4041693,October 2017 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4048957,November 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4048959,November 2017 Security Monthly Quality Rollup for Windows Server 2012
+kb4048958,November 2017 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2

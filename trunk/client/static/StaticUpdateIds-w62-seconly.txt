@@ -10,3 +10,4 @@ kb4025343,July 2017 Security Only Quality Update for Windows Server 2012
 kb4034666,August 2017 Security Only Quality Update for Windows Server 2012
 kb4038786,September 2017 Security Only Quality Update for Windows Server 2012
 kb4041679,October 2017 Security Only Quality Update for Windows Server 2012
+kb4048962,November 2017 Security Only Quality Update for Windows Server 2012
