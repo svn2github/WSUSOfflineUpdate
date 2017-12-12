@@ -1366,3 +1366,7 @@ Version ??.? -- ??.??.17
 - Removed obsolete .NET Framework 4 prerequisite installation file kb4019990 (Thanks to "jonas")
 - Aria2 download utility updated to v. 1.33.1 (Thanks to "Rush")
 - Added static update definition files for Windows 10 Version 1709 (build 16299) (Thanks to "aker", "boco" and "Rush")
+- Replaced superseded August 2017 Servicing stack update (kb4035631) by November 2017 Servicing stack update (kb4049065) for Windows 10 Version 1607 (Thanks to "harry")
+- Replaced superseded June 2017 Servicing stack update (kb4022405) by November 2017 Servicing stack update (kb4049011) for Windows 10 Version 1703 (Thanks to "harry")
+- Added November 2017 Servicing stack update (kb4054022) for Windows 10 Version 1709 (Thanks to "harry")
+- Fix: ListInstalledUpdateIds.vbs script didn't list patches from Wow6432Node (Thanks to "random")
