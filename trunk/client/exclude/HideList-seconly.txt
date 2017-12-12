@@ -50,3 +50,6 @@ kb4041693,October 2017 Security Monthly Quality Rollup for Windows 8.1 and Windo
 kb4048957,November 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
 kb4048959,November 2017 Security Monthly Quality Rollup for Windows Server 2012
 kb4048958,November 2017 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4054518,December 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4054520,December 2017 Security Monthly Quality Rollup for Windows Server 2012
+kb4054519,December 2017 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
