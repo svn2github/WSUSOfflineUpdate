@@ -1364,6 +1364,7 @@ Version ??.? -- ??.??.17
 - November 2017 updates added to 'security only' lists for Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems
 - .NET Framework 4 updated to v. 4.7.1 (Thanks to "Rush", "harry" and "aker")
 - Removed obsolete .NET Framework 4 prerequisite installation file kb4019990 (Thanks to "jonas")
+- C++ 2017 Redistributable Runtime Libraries updated to v. 14.12.25810.0 (Thanks to "harry")
 - Aria2 download utility updated to v. 1.33.1 (Thanks to "Rush")
 - Added static update definition files for Windows 10 Version 1709 (build 16299) (Thanks to "aker", "boco" and "Rush")
 - Replaced superseded August 2017 Servicing stack update (kb4035631) by November 2017 Servicing stack update (kb4049065) for Windows 10 Version 1607 (Thanks to "harry")
