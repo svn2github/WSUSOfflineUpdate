@@ -1,3 +1,4 @@
+eqnedt32
 fullfile
 lync
 project

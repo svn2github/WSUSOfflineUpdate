@@ -1,19 +1,19 @@
-; ***  WSUS Offline Update 11.0.3 - Installer  ***
-; ***        Author: T. Wittrock, Kiel         ***
-; ***    Dialog scaling added by Th. Baisch    ***
+; ***  WSUS Offline Update 11.1b - Installer  ***
+; ***       Author: T. Wittrock, Kiel        ***
+; ***   Dialog scaling added by Th. Baisch   ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 11.0.3.909)
+#pragma compile(FileVersion, 11.1.0.910)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
 #pragma compile(ProductName, "WSUS Offline Update")
-#pragma compile(ProductVersion, 11.0.3)
+#pragma compile(ProductVersion, 11.1.0)
 
-Dim Const $caption                    = "WSUS Offline Update 11.0.3 - Installer"
+Dim Const $caption                    = "WSUS Offline Update 11.1b - Installer"
 Dim Const $wou_hostname               = "www.wsusoffline.net"
 Dim Const $donationURL                = "http://www.wsusoffline.net/donate.html"
 
@@ -57,7 +57,6 @@ Dim Const $ini_value_wmf              = "instwmf"
 Dim Const $ini_value_msse             = "instmsse"
 Dim Const $ini_value_skipdefs         = "skipdefs"
 Dim Const $ini_value_tsc              = "updatetsc"
-Dim Const $ini_value_ofv              = "instofv"
 Dim Const $ini_value_all              = "all"
 Dim Const $ini_value_seconly          = "seconly"
 Dim Const $ini_value_excludestatics   = "excludestatics"
@@ -988,9 +987,6 @@ While 1
       EndIf
       If IsCheckBoxChecked($tsc) Then
         $options = $options & " /updatetsc"
-      EndIf
-      If MyIniRead($ini_section_installation, $ini_value_ofv, $disabled) = $enabled Then
-        $options = $options & " /instofv"
       EndIf
       If IsCheckBoxChecked($verify) Then
         $options = $options & " /verify"

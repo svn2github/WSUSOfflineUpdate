@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=11.0.3+ (r909)
+set WSUSOFFLINE_VERSION=11.1b (r910)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -36,7 +36,7 @@ for %%i in (w60 w60-x64 w61 w61-x64 w62-x64 w63 w63-x64 w100 w100-x64 ofc o2k16)
     if /i "%2"=="glb" goto EvalParams
   )
 )
-for %%i in (o2k7 o2k10 o2k13) do (
+for %%i in (o2k10 o2k13) do (
   if /i "%1"=="%%i" (
     for %%j in (enu fra esn jpn kor rus ptg ptb deu nld ita chs cht plk hun csy sve trk ell ara heb dan nor fin) do (if /i "%2"=="%%j" goto Lang_%%j)
   )
@@ -382,6 +382,10 @@ del /Q ..\static\*oxp-*.* >nul 2>&1
 rem *** Office 2003 stuff ***
 if exist ..\client\static\StaticUpdateIds-o2k3.txt del ..\client\static\StaticUpdateIds-o2k3.txt
 del /Q ..\static\*o2k3-*.* >nul 2>&1
+
+rem *** Office 2007 stuff ***
+if exist ..\client\static\StaticUpdateIds-o2k7.txt del ..\client\static\StaticUpdateIds-o2k7.txt
+del /Q ..\static\*o2k7-*.* >nul 2>&1
 
 rem *** CPP restructuring stuff ***
 if exist ..\client\md\hashes-cpp-x64-glb.txt del ..\client\md\hashes-cpp-x64-glb.txt
@@ -997,7 +1001,7 @@ for %%i in (w60 w60-x64 w61 w61-x64 w62-x64 w63 w63-x64 w100 w100-x64) do (
   )
 )
 :SkipWinGlb
-for %%i in (o2k7 o2k10 o2k13) do (
+for %%i in (o2k10 o2k13) do (
   if /i "%1"=="%%i" (
     call :DownloadCore ofc %2 %TARGET_ARCH% %SKIP_PARAM%
     if errorlevel 1 goto Error
@@ -1689,7 +1693,7 @@ exit /b 1
 :InvalidParams
 echo.
 echo ERROR: Invalid parameter: %*
-echo Usage1: %~n0 {o2k7 ^| o2k10 ^| o2k13} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/excludewinglb] [/includedotnet] [/seconly] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
+echo Usage1: %~n0 {o2k10 ^| o2k13} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/excludewinglb] [/includedotnet] [/seconly] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
 echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| w62-x64 ^| w63 ^| w63-x64 ^| w100 ^| w100-x64 ^| ofc ^| o2k16} {glb} [/excludesp ^| /excludestatics] [/excludewinglb] [/includedotnet] [/seconly] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
 echo %DATE% %TIME% - Error: Invalid parameter: %*>>%DOWNLOAD_LOGFILE%
 echo.

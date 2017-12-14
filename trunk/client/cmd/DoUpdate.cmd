@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=11.0.3+ (r909)
+set WSUSOFFLINE_VERSION=11.1b (r910)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -35,7 +35,7 @@ echo %DATE% %TIME% - Info: Used path "%~dp0" on %COMPUTERNAME% (user: %USERNAME%
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/verify /skipieinst /updatecpp /instmssl /instdotnet35 /instdotnet4 /instpsh /instwmf /instmsse /skipdefs /updatetsc /instofv /instmsi /autoreboot /shutdown /showlog /all /seconly /excludestatics /skipdynamic) do (
+for %%i in (/verify /skipieinst /updatecpp /instmssl /instdotnet35 /instdotnet4 /instpsh /instwmf /instmsse /skipdefs /updatetsc /instmsi /autoreboot /shutdown /showlog /all /seconly /excludestatics /skipdynamic) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected>>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/verify" set VERIFY_MODE=/verify
@@ -49,7 +49,6 @@ if /i "%1"=="/instwmf" set INSTALL_WMF=/instwmf
 if /i "%1"=="/instmsse" set INSTALL_MSSE=/instmsse
 if /i "%1"=="/skipdefs" set SKIP_DEFS=/skipdefs
 if /i "%1"=="/updatetsc" set UPDATE_TSC=/updatetsc
-if /i "%1"=="/instofv" set INSTALL_OFV=/instofv
 if /i "%1"=="/instmsi" set INSTALL_MSI=/instmsi
 if /i "%1"=="/autoreboot" set BOOT_MODE=/autoreboot
 if /i "%1"=="/shutdown" set FINISH_MODE=/shutdown
@@ -171,9 +170,6 @@ rem echo Found Microsoft Security Essentials version: %MSSE_VER_MAJOR%.%MSSE_VER
 rem echo Found Microsoft Security Essentials definitions version: %MSSEDEFS_VER_MAJOR%.%MSSEDEFS_VER_MINOR%.%MSSEDEFS_VER_BUILD%.%MSSEDEFS_VER_REVIS%
 rem echo Found Network Inspection System definitions version: %NISDEFS_VER_MAJOR%.%NISDEFS_VER_MINOR%.%NISDEFS_VER_BUILD%.%NISDEFS_VER_REVIS%
 rem echo Found Windows Defender definitions version: %WDDEFS_VER_MAJOR%.%WDDEFS_VER_MINOR%.%WDDEFS_VER_BUILD%.%WDDEFS_VER_REVIS%
-if "%O2K7_VER_MAJOR%" NEQ "" (
-  echo Found Microsoft Office 2007 %O2K7_VER_APP% version: %O2K7_VER_MAJOR%.%O2K7_VER_MINOR%.%O2K7_VER_BUILD%.%O2K7_VER_REVIS% ^(o2k7 %O2K7_LANG% sp%O2K7_SP_VER%^)
-)
 if "%O2K10_VER_MAJOR%" NEQ "" (
   echo Found Microsoft Office 2010 %O2K10_VER_APP% version: %O2K10_VER_MAJOR%.%O2K10_VER_MINOR%.%O2K10_VER_BUILD%.%O2K10_VER_REVIS% ^(o2k10 %O2K10_ARCH% %O2K10_LANG% sp%O2K10_SP_VER%^)
 )
@@ -208,9 +204,6 @@ echo %DATE% %TIME% - Info: Found Microsoft Security Essentials definitions versi
 echo %DATE% %TIME% - Info: Found Network Inspection System definitions version %NISDEFS_VER_MAJOR%.%NISDEFS_VER_MINOR%.%NISDEFS_VER_BUILD%.%NISDEFS_VER_REVIS%>>%UPDATE_LOGFILE%
 :SkipLogMSSEVer
 echo %DATE% %TIME% - Info: Found Windows Defender definitions version %WDDEFS_VER_MAJOR%.%WDDEFS_VER_MINOR%.%WDDEFS_VER_BUILD%.%WDDEFS_VER_REVIS%>>%UPDATE_LOGFILE%
-if "%O2K7_VER_MAJOR%" NEQ "" (
-  echo %DATE% %TIME% - Info: Found Microsoft Office 2007 %O2K7_VER_APP% version %O2K7_VER_MAJOR%.%O2K7_VER_MINOR%.%O2K7_VER_BUILD%.%O2K7_VER_REVIS% ^(o2k7 %O2K7_LANG% sp%O2K7_SP_VER%^)>>%UPDATE_LOGFILE%
-)
 if "%O2K10_VER_MAJOR%" NEQ "" (
   echo %DATE% %TIME% - Info: Found Microsoft Office 2010 %O2K10_VER_APP% version %O2K10_VER_MAJOR%.%O2K10_VER_MINOR%.%O2K10_VER_BUILD%.%O2K10_VER_REVIS% ^(o2k10 %O2K10_ARCH% %O2K10_LANG% sp%O2K10_SP_VER%^)>>%UPDATE_LOGFILE%
 )
@@ -1171,9 +1164,6 @@ if "%OFC_NAME%"=="" goto SkipOffice
 rem *** Check Office Service Pack versions ***
 echo Checking Office Service Pack versions...
 if exist "%TEMP%\MissingUpdateIds.txt" del "%TEMP%\MissingUpdateIds.txt"
-if "%O2K7_VER_MAJOR%"=="" goto SkipSPo2k7
-if %O2K7_SP_VER% LSS %O2K7_SP_VER_TARGET% echo %O2K7_SP_TARGET_ID%>>"%TEMP%\MissingUpdateIds.txt"
-:SkipSPo2k7
 if "%O2K10_VER_MAJOR%"=="" goto SkipSPo2k10
 if %O2K10_SP_VER% LSS %O2K10_SP_VER_TARGET% echo %O2K10_SP_TARGET_ID%>>"%TEMP%\MissingUpdateIds.txt"
 :SkipSPo2k10
@@ -1196,35 +1186,6 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
 )
 set REBOOT_REQUIRED=1
 :SkipSPOfc
-
-rem *** Check installation state of Office File Validation ***
-if "%INSTALL_OFV%" NEQ "/instofv" goto SkipOFVAL
-if "%O2K7_VER_MAJOR%" NEQ "" goto InstOFVAL
-goto SkipOFVAL
-
-:InstOFVAL
-echo Checking installation state of Office File Validation Add-In...
-if "%OFC_FILE_VALID%" NEQ "1" (
-  if exist ..\ofc\glb\OFV.exe (
-    echo Installing Office File Validation Add-In...
-    call InstallOfficeUpdate.cmd ..\ofc\glb\OFV.exe /selectoptions %VERIFY_MODE% /errorsaswarnings
-    echo %DATE% %TIME% - Info: Installed Office File Validation Add-In>>%UPDATE_LOGFILE%
-  ) else (
-    echo Warning: File ..\ofc\glb\OFV.exe not found.
-    echo %DATE% %TIME% - Warning: File ..\ofc\glb\OFV.exe not found>>%UPDATE_LOGFILE%
-  )
-  dir /B ..\ofc\glb\*kb2553065*.exe >nul 2>&1
-  if errorlevel 1 (
-    echo Warning: File ..\ofc\glb\*kb2553065*.exe not found.
-    echo %DATE% %TIME% - Warning: File ..\ofc\glb\*kb2553065*.exe not found>>%UPDATE_LOGFILE%
-  ) else (
-    for /F %%i in ('dir /B ..\ofc\glb\*kb2553065*.exe') do (
-      echo Installing Office File Validation update...
-      call InstallOfficeUpdate.cmd ..\ofc\glb\%%i /selectoptions %VERIFY_MODE% /errorsaswarnings
-    )
-  )
-)
-:SkipOFVAL
 :SkipOffice
 
 rem *** Install MSI packages and custom software ***

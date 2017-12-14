@@ -66,10 +66,6 @@ if "%SECONLY%"=="1" (
   call :EvalStatics ..\static\custom\StaticUpdateIds-%OS_NAME%-dotnet4-%DOTNET4_RELEASE%.txt
   call :EvalStatics ..\static\StaticUpdateIds-%OS_NAME%-dotnet4-%DOTNET4_RELEASE%.txt
 )
-if "%O2K7_VER_MAJOR%" NEQ "" (
-  call :EvalStatics ..\static\custom\StaticUpdateIds-o2k7.txt
-  call :EvalStatics ..\static\StaticUpdateIds-o2k7.txt
-)
 if "%O2K10_VER_MAJOR%" NEQ "" (
   call :EvalStatics ..\static\custom\StaticUpdateIds-o2k10.txt
   call :EvalStatics ..\static\StaticUpdateIds-o2k10.txt
@@ -116,7 +112,7 @@ for /F "usebackq tokens=1,2 delims=," %%i in ("%TEMP%\MissingUpdateIds.txt") do 
     )
     call ListUpdateFile.cmd ndp*%%i*-%OS_ARCH% ..\dotnet\%OS_ARCH%-glb /searchleftmost
     if not exist "%TEMP%\Update.txt" (
-      for %%k in (%OFC_NAME% ofc o2k7 o2k10 o2k13 o2k16) do (
+      for %%k in (%OFC_NAME% ofc o2k10 o2k13 o2k16) do (
         for %%l in (%OFC_LANG% %OS_LANG% glb) do (
           call ListUpdateFile.cmd %%i*%OFC_ARCH% ..\%%k\%%l
           call ListUpdateFile.cmd %%i ..\%%k\%%l
