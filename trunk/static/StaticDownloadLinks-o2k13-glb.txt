@@ -3,3 +3,4 @@ http://download.microsoft.com/download/D/D/E/DDE271AF-6A34-45AF-B439-6D573F04EE2
 http://download.microsoft.com/download/E/2/8/E286C608-76FF-40C4-B509-23F94E4BA655/lyncmso2013-kb3039779-fullfile-x86-glb.exe
 http://download.microsoft.com/download/E/A/7/EA7AD42D-D34E-4D54-8F1A-F9B598E2B398/lynchelploc2013-kb3191937-fullfile-x86-glb.exe
 http://download.microsoft.com/download/9/8/A/98A4074D-E80C-4DA0-956A-50F53846783B/lync2013-kb4011179-fullfile-x86-glb.exe
+http://download.microsoft.com/download/0/D/7/0D75840F-B65F-4CD3-BC47-9F6ECA4C74CA/eqnedt322013-kb3162047-fullfile-x86-glb.exe

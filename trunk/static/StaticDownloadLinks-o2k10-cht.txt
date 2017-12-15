@@ -1,2 +1,3 @@
 http://download.microsoft.com/download/F/5/1/F51D9028-A2F8-471F-9758-BB652D84F683/officesp2010-kb2687455-fullfile-x86-zh-tw.exe
 http://download.microsoft.com/download/2/D/B/2DB71951-CC53-49A9-A277-27F056023683/ppviewersp2010-kb2687456-fullfile-x86-zh-tw.exe
+http://download.microsoft.com/download/2/D/F/2DFCE406-3511-42F0-AE92-029784B143AE/eqnedt322010-kb4011618-fullfile-x86-zh-tw.exe
