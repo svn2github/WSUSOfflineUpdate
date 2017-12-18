@@ -1368,6 +1368,7 @@ Version 11.1 -- ??.12.17
 - Integrated .NET Framework November 2017 Security and Quality Rollups
 - C++ 2017 Redistributable Runtime Libraries updated to v. 14.12.25810.0 (Thanks to "harry")
 - Support removed for Office 2007 since Microsoft discontinued support for it on October 10th, 2017 (see https://support.microsoft.com/en-us/help/3198497/office-2007-approaching-end-of-extended-support)
+- Excluded several obsolete dynamic updates for Office XP, 2003 and 2007 (Thanks to "aker" and "Denniss")
 - Aria2 download utility updated to v. 1.33.1 (Thanks to "Rush")
 - Added static update definition files for Windows 10 Version 1709 (build 16299) (Thanks to "aker", "boco" and "Rush")
 - Replaced superseded August 2017 Servicing stack update (kb4035631) by November 2017 Servicing stack update (kb4049065) for Windows 10 Version 1607 (Thanks to "harry")
