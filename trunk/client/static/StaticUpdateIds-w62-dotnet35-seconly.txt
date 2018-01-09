@@ -4,3 +4,4 @@ kb3188731,October 2016 Security Update for Microsoft .NET Framework 3.5 on Windo
 kb4014572,April 2017 Security update for the .NET Framework 3.5 for Windows Server 2012
 kb4014577,May 2017 Security only update for the .NET Framework 3.5 SP1 for Windows Server 2012
 kb4040965,September 2017 Security only update for the .NET Framework 3.5 SP1 for Windows Server 2012
+kb4054175,January 2018 Security only update for the .NET Framework 3.5 SP1 for Windows Server 2012
