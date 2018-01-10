@@ -1379,3 +1379,18 @@ Version 11.1 -- 18.12.17
 Version ??.? -- ??.??.??
 - January 2018 updates added to 'security only' lists for Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems
 - Integrated .NET Framework January 2018 Security and Quality Rollups
+- Fix: Replaced superseded Office 2010 Security Update kb4011618 (November 2017) by kb4011610 (January 2018)
+- Fix: Replaced superseded Outlook 2010 Security Update kb4011196 (October 2017) by kb4011273 (January 2018)
+- Fix: Added missing Excel 2010 Security Update kb4011660 (January 2018)
+- Fix: Added missing Word 2010 Security Update kb4011659 (January 2018)
+- Fix: Added missing Office 2010 Security Update kb4011611 (January 2018)
+- Fix: Replaced superseded Office 2013 Security Update kb3162047 (November 2017) by kb4011580 (January 2018)
+- Fix: Added missing Outlook 2013 Security Update kb4011637 (January 2018)
+- Fix: Added missing Excel 2013 Security Update kb4011639 (January 2018)
+- Fix: Added missing Word 2013 Security Update kb4011651 (January 2018)
+- Fix: Added missing Office 2013 Security Update kb4011636 (January 2018)
+- Fix: Replaced superseded Office 2016 Security Update kb4011262 (November 2017) by kb4011574 (January 2018)
+- Fix: Replaced superseded Outlook 2016 Security Update kb4011052 (July 2017) by kb4011626 (January 2018)
+- Fix: Added missing Excel 2016 Security Update kb4011627 (January 2018)
+- Fix: Added missing Word 2016 Security Update kb4011643 (January 2018)
+- Fix: Added missing Office 2016 Security Updates kb4011622 and kb4011632 (January 2018)
