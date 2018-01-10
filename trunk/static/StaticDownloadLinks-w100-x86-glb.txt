@@ -2,4 +2,4 @@ http://download.windowsupdate.com/d/msdownload/update/software/crup/2016/06/wind
 http://download.windowsupdate.com/d/msdownload/update/software/crup/2017/08/windows10.0-kb4035632-x86_634071f6d2fad6da96c76513fe45c30aa914abd6.msu
 http://download.windowsupdate.com/d/msdownload/update/software/crup/2017/10/windows10.0-kb4049065-x86_f680d06952404dcae7719f2b9d713b7b9d2cd6a2.msu
 http://download.windowsupdate.com/d/msdownload/update/software/crup/2017/10/windows10.0-kb4049011-x86_8ea40b10d7ed23b10edbe2cd17a8dbc4bcf9dd56.msu
-http://download.windowsupdate.com/d/msdownload/update/software/crup/2017/11/windows10.0-kb4054022-x86_34a173ded76fed49fe28c7df87d8f05d4842e5b3.msu
+http://download.windowsupdate.com/d/msdownload/update/software/crup/2018/01/windows10.0-kb4058702-x86_ed49467e46cfbfee96880c415ca508c01c9cf486.msu
