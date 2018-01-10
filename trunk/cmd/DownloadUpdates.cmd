@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=11.1+ (r917)
+set WSUSOFFLINE_VERSION=11.1+ (r918)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -1043,4 +1043,761 @@ rem *** Extract Microsoft's update catalog file package.xml ***
 echo Extracting Microsoft's update catalog file package.xml...
 if exist "%TEMP%\package.cab" del "%TEMP%\package.cab"
 if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
-%Sÿ
+%SystemRoot%\System32\expand.exe ..\client\wsus\wsusscn2.cab -F:package.cab "%TEMP%" >nul
+%SystemRoot%\System32\expand.exe "%TEMP%\package.cab" "%TEMP%\package.xml" >nul
+del "%TEMP%\package.cab"
+rem *** Determine superseded updates ***
+if not exist ..\exclude\ExcludeList-superseded-seconly.txt (
+  if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
+)
+if exist ..\exclude\ExcludeList-superseded.txt (
+  %SystemRoot%\System32\find.exe /I "http://" ..\exclude\ExcludeList-superseded.txt >nul 2>&1
+  if errorlevel 1 del ..\exclude\ExcludeList-superseded.txt
+)
+for %%i in (..\client\wsus\wsusscn2.cab) do echo %%~ai | %SystemRoot%\System32\find.exe /I "a" >nul 2>&1
+if not errorlevel 1 (
+  if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
+)
+if "%SKIP_SDD%" NEQ "1" (
+  copy /Y ..\exclude\ExcludeList-superseded-exclude.txt ..\exclude\ExcludeList-superseded-exclude.ori >nul
+  %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\exclude %DLDR_LOPT% http://download.wsusoffline.net/ExcludeList-superseded-exclude.txt
+  echo n | %SystemRoot%\System32\comp.exe ..\exclude\ExcludeList-superseded-exclude.txt ..\exclude\ExcludeList-superseded-exclude.ori /A /L /C >nul 2>&1
+  if errorlevel 1 (
+    if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
+  )
+  del ..\exclude\ExcludeList-superseded-exclude.ori
+  copy /Y ..\client\exclude\HideList-seconly.txt ..\client\exclude\HideList-seconly.ori >nul
+  %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\client\exclude %DLDR_LOPT% http://download.wsusoffline.net/HideList-seconly.txt
+  echo n | %SystemRoot%\System32\comp.exe ..\client\exclude\HideList-seconly.txt ..\client\exclude\HideList-seconly.ori /A /L /C >nul 2>&1
+  if errorlevel 1 (
+    if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
+  )
+  del ..\client\exclude\HideList-seconly.ori
+)
+if exist ..\exclude\ExcludeList-superseded.txt (
+  echo Found valid list of superseded updates.
+  echo %DATE% %TIME% - Info: Found valid list of superseded updates>>%DOWNLOAD_LOGFILE%
+  goto SkipSuperseded
+)
+echo %TIME% - Determining superseded updates (please be patient, this will take a while)...
+rem *** Revised part for determination of superseded updates starts here ***
+rem *** First step ***
+echo Extracting file 1...
+%CSCRIPT_PATH% //Nologo //B //E:vbs ..\cmd\XSLT.vbs "%TEMP%\package.xml" ..\xslt\extract-existing-bundle-revision-ids.xsl "%TEMP%\existing-bundle-revision-ids.txt"
+..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\existing-bundle-revision-ids.txt" >"%TEMP%\existing-bundle-revision-ids-unique.txt"
+del "%TEMP%\existing-bundle-revision-ids.txt"
+echo Extracting file 2...
+%CSCRIPT_PATH% //Nologo //B //E:vbs ..\cmd\XSLT.vbs "%TEMP%\package.xml" ..\xslt\extract-superseding-and-superseded-revision-ids.xsl "%TEMP%\superseding-and-superseded-revision-ids.txt"
+..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\superseding-and-superseded-revision-ids.txt" >"%TEMP%\superseding-and-superseded-revision-ids-unique.txt"
+del "%TEMP%\superseding-and-superseded-revision-ids.txt"
+echo Joining files 1 and 2 to file 3...
+..\bin\join.exe -t "," -o "2.2" "%TEMP%\existing-bundle-revision-ids-unique.txt" "%TEMP%\superseding-and-superseded-revision-ids-unique.txt" >"%TEMP%\ValidSupersededRevisionIds.txt"
+del "%TEMP%\existing-bundle-revision-ids-unique.txt"
+del "%TEMP%\superseding-and-superseded-revision-ids-unique.txt"
+..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\ValidSupersededRevisionIds.txt" >"%TEMP%\ValidSupersededRevisionIds-unique.txt"
+del "%TEMP%\ValidSupersededRevisionIds.txt"
+
+rem *** Second step ***
+echo Extracting file 4...
+%CSCRIPT_PATH% //Nologo //B //E:vbs ..\cmd\XSLT.vbs "%TEMP%\package.xml" ..\xslt\extract-update-revision-and-file-ids.xsl "%TEMP%\BundledUpdateRevisionAndFileIds.txt"
+..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\BundledUpdateRevisionAndFileIds.txt" >"%TEMP%\BundledUpdateRevisionAndFileIds-unique.txt"
+del "%TEMP%\BundledUpdateRevisionAndFileIds.txt"
+echo Joining files 3 and 4 to file 5...
+..\bin\join.exe -t "," -o "2.3" "%TEMP%\ValidSupersededRevisionIds-unique.txt" "%TEMP%\BundledUpdateRevisionAndFileIds-unique.txt" >"%TEMP%\SupersededFileIds.txt"
+del "%TEMP%\ValidSupersededRevisionIds-unique.txt"
+del "%TEMP%\BundledUpdateRevisionAndFileIds-unique.txt"
+..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\SupersededFileIds.txt" >"%TEMP%\SupersededFileIds-unique.txt"
+del "%TEMP%\SupersededFileIds.txt"
+
+rem *** Third step ***
+echo Extracting file 6...
+%CSCRIPT_PATH% //Nologo //B //E:vbs ..\cmd\XSLT.vbs "%TEMP%\package.xml" ..\xslt\extract-update-cab-exe-ids-and-locations.xsl "%TEMP%\UpdateCabExeIdsAndLocations.txt"
+..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\UpdateCabExeIdsAndLocations-unique.txt"
+del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
+echo Joining files 5 and 6 to file 7...
+..\bin\join.exe -t "," -o "2.2" "%TEMP%\SupersededFileIds-unique.txt" "%TEMP%\UpdateCabExeIdsAndLocations-unique.txt" >"%TEMP%\ExcludeListLocations-superseded-all.txt"
+del "%TEMP%\SupersededFileIds-unique.txt"
+del "%TEMP%\UpdateCabExeIdsAndLocations-unique.txt"
+..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\ExcludeListLocations-superseded-all.txt" >"%TEMP%\ExcludeListLocations-superseded-all-unique.txt"
+del "%TEMP%\ExcludeListLocations-superseded-all.txt"
+
+rem *** Apply ExcludeList-superseded-exclude.txt ***
+if exist ..\exclude\ExcludeList-superseded-exclude.txt copy /Y ..\exclude\ExcludeList-superseded-exclude.txt "%TEMP%\ExcludeList-superseded-exclude.txt" >nul
+if exist ..\exclude\custom\ExcludeList-superseded-exclude.txt (
+  type ..\exclude\custom\ExcludeList-superseded-exclude.txt >>"%TEMP%\ExcludeList-superseded-exclude.txt"
+)
+for %%i in ("%TEMP%\ExcludeList-superseded-exclude.txt") do if %%~zi==0 del %%i
+if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
+  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-superseded-exclude.txt" "%TEMP%\ExcludeListLocations-superseded-all-unique.txt" >..\exclude\ExcludeList-superseded.txt
+) else (
+  copy /Y "%TEMP%\ExcludeListLocations-superseded-all-unique.txt" ..\exclude\ExcludeList-superseded.txt >nul
+)
+for %%i in (w61 w62 w63) do (
+  for /F %%j in ('dir /B ..\client\static\StaticUpdateIds-%%i*-seconly.txt 2^>nul') do (
+    for /F "tokens=1* delims=,;" %%k in (..\client\static\%%j) do (
+      echo %%k>>"%TEMP%\ExcludeList-superseded-exclude.txt"
+    )
+  )
+  for /F %%j in ('dir /B ..\client\static\custom\StaticUpdateIds-%%i*-seconly.txt 2^>nul') do (
+    for /F "tokens=1* delims=,;" %%k in (..\client\static\custom\%%j) do (
+      echo %%k>>"%TEMP%\ExcludeList-superseded-exclude.txt"
+    )
+  )
+)
+for %%i in ("%TEMP%\ExcludeList-superseded-exclude.txt") do if %%~zi==0 del %%i
+if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
+  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-superseded-exclude.txt" "%TEMP%\ExcludeListLocations-superseded-all-unique.txt" >..\exclude\ExcludeList-superseded-seconly.txt
+  del "%TEMP%\ExcludeListLocations-superseded-all-unique.txt"
+  del "%TEMP%\ExcludeList-superseded-exclude.txt"
+) else (
+  move /Y "%TEMP%\ExcludeListLocations-superseded-all-unique.txt" ..\exclude\ExcludeList-superseded-seconly.txt >nul
+)
+%SystemRoot%\System32\attrib.exe -A ..\client\wsus\wsusscn2.cab
+echo %TIME% - Done.
+echo %DATE% %TIME% - Info: Determined superseded updates>>%DOWNLOAD_LOGFILE%
+:SkipSuperseded
+
+rem *** Verify integrity of existing updates for %1 %2 ***
+if "%4"=="/skipdownload" goto SkipStatics
+if "%VERIFY_DL%" NEQ "1" goto SkipAudit
+if not exist ..\client\%1\%2\nul goto SkipAudit
+if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
+if exist ..\client\md\hashes-%1-%2.txt (
+  echo Verifying integrity of existing updates for %1 %2...
+  pushd ..\client\md
+  ..\bin\%HASHDEEP_EXE% -a -l -vv -k hashes-%1-%2.txt -r ..\%1\%2
+  if errorlevel 1 (
+    popd
+    goto IntegrityError
+  )
+  popd
+  echo %DATE% %TIME% - Info: Verified integrity of existing updates for %1 %2>>%DOWNLOAD_LOGFILE%
+  for %%i in (..\client\md\hashes-%1-%2.txt) do echo _%%~ti | %SystemRoot%\System32\find.exe "_%DATE:~-10%" >nul 2>&1
+  if not errorlevel 1 (
+    if exist %SUSED_LIST% (
+      for %%i in (%SUSED_LIST%) do echo _%%~ti | %SystemRoot%\System32\find.exe "_%DATE:~-10%" >nul 2>&1
+      if errorlevel 1 (
+        echo Skipping download/validation of %1 %2 due to 'same day' rule.
+        echo %DATE% %TIME% - Info: Skipped download/validation of %1 %2 due to 'same day' rule>>%DOWNLOAD_LOGFILE%
+        verify >nul
+        goto :eof
+      )
+    )
+  )
+) else (
+  echo Warning: Integrity database ..\client\md\hashes-%1-%2.txt not found.
+  echo %DATE% %TIME% - Warning: Integrity database ..\client\md\hashes-%1-%2.txt not found>>%DOWNLOAD_LOGFILE%
+)
+:SkipAudit
+if exist ..\client\md\hashes-%1-%2.txt del ..\client\md\hashes-%1-%2.txt
+
+rem *** Determine static update urls for %1 %2 ***
+if "%EXC_STATICS%"=="1" goto SkipStatics
+echo Determining static update urls for %1 %2...
+if exist ..\static\StaticDownloadLinks-%1-%2.txt copy /Y ..\static\StaticDownloadLinks-%1-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
+if exist ..\static\StaticDownloadLinks-%1-%3-%2.txt copy /Y ..\static\StaticDownloadLinks-%1-%3-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
+if exist ..\static\custom\StaticDownloadLinks-%1-%2.txt (
+  type ..\static\custom\StaticDownloadLinks-%1-%2.txt >>"%TEMP%\StaticDownloadLinks-%1-%2.txt"
+)
+if exist ..\static\custom\StaticDownloadLinks-%1-%3-%2.txt (
+  type ..\static\custom\StaticDownloadLinks-%1-%3-%2.txt >>"%TEMP%\StaticDownloadLinks-%1-%2.txt"
+)
+if not exist "%TEMP%\StaticDownloadLinks-%1-%2.txt" goto SkipStatics
+
+:EvalStatics
+if exist "%TEMP%\ExcludeListStatic.txt" del "%TEMP%\ExcludeListStatic.txt"
+if exist ..\exclude\custom\ExcludeListForce-all.txt copy /Y ..\exclude\custom\ExcludeListForce-all.txt "%TEMP%\ExcludeListStatic.txt" >nul
+if "%EXC_SP%"=="1" (
+  type ..\exclude\ExcludeList-SPs.txt >>"%TEMP%\ExcludeListStatic.txt"
+)
+if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" del "%TEMP%\ValidStaticLinks-%1-%2.txt"
+if exist "%TEMP%\ExcludeListStatic.txt" (
+  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeListStatic.txt" "%TEMP%\StaticDownloadLinks-%1-%2.txt" >"%TEMP%\ValidStaticLinks-%1-%2.txt"
+  del "%TEMP%\ExcludeListStatic.txt"
+  del "%TEMP%\StaticDownloadLinks-%1-%2.txt"
+) else (
+  ren "%TEMP%\StaticDownloadLinks-%1-%2.txt" ValidStaticLinks-%1-%2.txt
+)
+echo %DATE% %TIME% - Info: Determined static update urls for %1 %2>>%DOWNLOAD_LOGFILE%
+
+:SkipStatics
+if "%4"=="/skipdynamic" (
+  echo Skipping determination of dynamic update urls for %1 %2 on demand.
+  echo %DATE% %TIME% - Info: Skipped determination of dynamic update urls for %1 %2 on demand>>%DOWNLOAD_LOGFILE%
+  goto DoDownload
+)
+for %%i in (dotnet win w60 w60-x64 w61 w61-x64 w62-x64 w63 w63-x64 w100 w100-x64) do (if /i "%1"=="%%i" goto DetermineWindows)
+for %%i in (ofc) do (if /i "%1"=="%%i" goto DetermineOffice)
+if exist "%TEMP%\package.xml" del "%TEMP%\package.xml"
+goto DoDownload
+
+:DetermineWindows
+rem *** Determine dynamic update urls for %1 %2 ***
+echo %TIME% - Determining dynamic update urls for %1 %2...
+if exist ..\xslt\ExtractDownloadLinks-%1-%2.xsl (
+  %CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractDownloadLinks-%1-%2.xsl "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
+  if errorlevel 1 goto DownloadError
+)
+if exist ..\xslt\ExtractDownloadLinks-%1-%3-%2.xsl (
+  %CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractDownloadLinks-%1-%3-%2.xsl "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
+  if errorlevel 1 goto DownloadError
+)
+del "%TEMP%\package.xml"
+
+if not exist "%TEMP%\DynamicDownloadLinks-%1-%2.txt" goto DoDownload
+
+rem A left join of the files DynamicDownloadLinks.txt and
+rem ExcludeList-superseded.txt returns URLs, which are unique
+rem to the left side. The intermediate file will be called
+rem "DynamicDownloadLinks-pruned.txt".
+
+if exist %SUSED_LIST% (
+  rem As always, both input files must be sorted.
+  ..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\DynamicDownloadLinks-%1-%2.txt" >"%TEMP%\DynamicDownloadLinks-%1-%2-unique.txt"
+  del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
+  ..\bin\join.exe -v1 "%TEMP%\DynamicDownloadLinks-%1-%2-unique.txt" %SUSED_LIST% >"%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt"
+  del "%TEMP%\DynamicDownloadLinks-%1-%2-unique.txt"
+) else (
+  move /Y "%TEMP%\DynamicDownloadLinks-%1-%2.txt" "%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt" >nul
+)
+
+rem The remaining exclude lists are applied as before.
+if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
+if exist ..\exclude\ExcludeList-%1-%3.txt (
+  copy /Y ..\exclude\ExcludeList-%1-%3.txt "%TEMP%\ExcludeList-%1.txt" >nul
+  if exist ..\exclude\custom\ExcludeList-%1-%3.txt (
+    type ..\exclude\custom\ExcludeList-%1-%3.txt >>"%TEMP%\ExcludeList-%1.txt"
+  )
+) else (
+  if exist ..\exclude\ExcludeList-%1.txt copy /Y ..\exclude\ExcludeList-%1.txt "%TEMP%\ExcludeList-%1.txt" >nul
+  if exist ..\exclude\custom\ExcludeList-%1.txt (
+    type ..\exclude\custom\ExcludeList-%1.txt >>"%TEMP%\ExcludeList-%1.txt"
+  )
+)
+if "%SECONLY%"=="1" (
+  if exist ..\client\exclude\HideList-seconly.txt (
+    for /F "tokens=1* delims=,;" %%i in (..\client\exclude\HideList-seconly.txt) do (
+      echo %%i>>"%TEMP%\ExcludeList-%1.txt"
+    )
+  )
+  if exist ..\client\exclude\custom\HideList-seconly.txt (
+    for /F "tokens=1* delims=,;" %%i in (..\client\exclude\custom\HideList-seconly.txt) do (
+      echo %%i>>"%TEMP%\ExcludeList-%1.txt"
+    )
+  )
+)
+if exist ..\exclude\custom\ExcludeListForce-all.txt (
+  type ..\exclude\custom\ExcludeListForce-all.txt >>"%TEMP%\ExcludeList-%1.txt"
+)
+if "%EXC_SP%"=="1" (
+  type ..\exclude\ExcludeList-SPs.txt >>"%TEMP%\ExcludeList-%1.txt"
+)
+for %%i in ("%TEMP%\ExcludeList-%1.txt") do if %%~zi==0 del %%i
+if exist "%TEMP%\ExcludeList-%1.txt" (
+  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt" >"%TEMP%\ValidDynamicLinks-%1-%2.txt"
+  del "%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt"
+  del "%TEMP%\ExcludeList-%1.txt"
+) else (
+  move /Y "%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt" "%TEMP%\ValidDynamicLinks-%1-%2.txt" >nul
+)
+echo %TIME% - Done.
+echo %DATE% %TIME% - Info: Determined dynamic update urls for %1 %2>>%DOWNLOAD_LOGFILE%
+goto DoDownload
+
+:DetermineOffice
+rem *** Determine dynamic update urls for %1 %2 ***
+echo %TIME% - Determining dynamic update urls for %1 %2 (please be patient, this will take a while)...
+%CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractUpdateCategoriesAndFileIds.xsl "%TEMP%\UpdateCategoriesAndFileIds.txt"
+if errorlevel 1 goto DownloadError
+%CSCRIPT_PATH% //Nologo //B //E:vbs XSLT.vbs "%TEMP%\package.xml" ..\xslt\ExtractUpdateCabExeIdsAndLocations.xsl "%TEMP%\UpdateCabExeIdsAndLocations.txt"
+if errorlevel 1 goto DownloadError
+del "%TEMP%\package.xml"
+..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\UpdateCabExeIdsAndLocations.txt" >"%TEMP%\UpdateCabExeIdsAndLocationsUnique.txt"
+del "%TEMP%\UpdateCabExeIdsAndLocations.txt"
+
+if exist "%TEMP%\OfficeFileAndUpdateIds.txt" del "%TEMP%\OfficeFileAndUpdateIds.txt"
+set UPDATE_ID=
+set UPDATE_CATEGORY=
+set UPDATE_LANGUAGES=
+for /F "usebackq tokens=1,2 delims=;" %%i in ("%TEMP%\UpdateCategoriesAndFileIds.txt") do (
+  if "%%j"=="" (
+    if "!UPDATE_CATEGORY!"=="477b856e-65c4-4473-b621-a8b230bb70d9" (
+      for /F "tokens=1-3 delims=," %%k in ("%%i") do (
+        if "%%l" NEQ "" (
+          if /i "%2"=="glb" (
+            if "!UPDATE_LANGUAGES!_%%m"=="_" (
+              echo %%l,!UPDATE_ID!>>"%TEMP%\OfficeFileAndUpdateIds.txt"
+            )
+            if "!UPDATE_LANGUAGES!_%%m"=="en_en" (
+              echo %%l,!UPDATE_ID!>>"%TEMP%\OfficeFileAndUpdateIds.txt"
+            )
+          ) else (
+            if "%%m"=="%LANG_SHORT%" (
+              echo %%l,!UPDATE_ID!>>"%TEMP%\OfficeFileAndUpdateIds.txt"
+            )
+          )
+        )
+      )
+    )
+  ) else (
+    for /F "tokens=1 delims=," %%k in ("%%i") do (
+      set UPDATE_ID=%%k
+    )
+    for /F "tokens=1* delims=," %%k in ("%%j") do (
+      set UPDATE_CATEGORY=%%k
+      set UPDATE_LANGUAGES=%%l
+    )
+  )
+)
+set UPDATE_ID=
+set UPDATE_CATEGORY=
+set UPDATE_LANGUAGES=
+del "%TEMP%\UpdateCategoriesAndFileIds.txt"
+
+%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\OfficeFileAndUpdateIds.txt" "%TEMP%\OfficeFileIds.txt" /firstonly
+..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\OfficeFileIds.txt" >"%TEMP%\OfficeFileIdsUnique.txt"
+del "%TEMP%\OfficeFileIds.txt"
+..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\OfficeFileAndUpdateIds.txt" >"%TEMP%\OfficeFileAndUpdateIdsUnique.txt"
+del "%TEMP%\OfficeFileAndUpdateIds.txt"
+..\bin\join.exe -t "," "%TEMP%\OfficeFileIdsUnique.txt" "%TEMP%\UpdateCabExeIdsAndLocationsUnique.txt" >"%TEMP%\OfficeUpdateCabExeIdsAndLocationsUnique.txt"
+del "%TEMP%\OfficeFileIdsUnique.txt"
+del "%TEMP%\UpdateCabExeIdsAndLocationsUnique.txt"
+..\bin\join.exe -t "," -o "1.2" "%TEMP%\OfficeUpdateCabExeIdsAndLocationsUnique.txt" "%TEMP%\OfficeFileAndUpdateIdsUnique.txt" >"%TEMP%\DynamicDownloadLinks-%1-%2.txt"
+..\bin\join.exe -t "," -o "2.2,1.2" "%TEMP%\OfficeUpdateCabExeIdsAndLocationsUnique.txt" "%TEMP%\OfficeFileAndUpdateIdsUnique.txt" >"%TEMP%\UpdateTableURL-%1-%2.csv"
+del "%TEMP%\OfficeFileAndUpdateIdsUnique.txt"
+del "%TEMP%\OfficeUpdateCabExeIdsAndLocationsUnique.txt"
+if not exist ..\client\ofc\nul md ..\client\ofc
+%CSCRIPT_PATH% //Nologo //B //E:vbs ExtractIdsAndFileNames.vbs "%TEMP%\UpdateTableURL-%1-%2.csv" ..\client\ofc\UpdateTable-%1-%2.csv
+del "%TEMP%\UpdateTableURL-%1-%2.csv"
+
+rem A left join of the files DynamicDownloadLinks.txt and
+rem ExcludeList-superseded.txt returns URLs, which are unique
+rem to the left side. The intermediate file will be called
+rem "DynamicDownloadLinks-pruned.txt".
+
+if exist %SUSED_LIST% (
+  rem As always, both input files must be sorted.
+  ..\bin\gsort.exe -u -T "%TEMP%" "%TEMP%\DynamicDownloadLinks-%1-%2.txt" >"%TEMP%\DynamicDownloadLinks-%1-%2-unique.txt"
+  del "%TEMP%\DynamicDownloadLinks-%1-%2.txt"
+  ..\bin\join.exe -v1 "%TEMP%\DynamicDownloadLinks-%1-%2-unique.txt" %SUSED_LIST% >"%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt"
+  del "%TEMP%\DynamicDownloadLinks-%1-%2-unique.txt"
+) else (
+  move /Y "%TEMP%\DynamicDownloadLinks-%1-%2.txt" "%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt" >nul
+)
+
+rem The remaining exclude lists are applied as before.
+if exist "%TEMP%\ExcludeList-%1.txt" del "%TEMP%\ExcludeList-%1.txt"
+if exist ..\exclude\ExcludeList-%1.txt copy /Y ..\exclude\ExcludeList-%1.txt "%TEMP%\ExcludeList-%1.txt" >nul
+if exist ..\exclude\ExcludeList-%1-%2.txt (
+  type ..\exclude\ExcludeList-%1-%2.txt >>"%TEMP%\ExcludeList-%1.txt"
+)
+if exist ..\exclude\custom\ExcludeList-%1.txt (
+  type ..\exclude\custom\ExcludeList-%1.txt >>"%TEMP%\ExcludeList-%1.txt"
+)
+if exist ..\exclude\custom\ExcludeList-%1-%2.txt (
+  type ..\exclude\custom\ExcludeList-%1-%2.txt >>"%TEMP%\ExcludeList-%1.txt"
+)
+if exist ..\exclude\custom\ExcludeListForce-all.txt (
+  type ..\exclude\custom\ExcludeListForce-all.txt >>"%TEMP%\ExcludeList-%1.txt"
+)
+if "%EXC_SP%"=="1" (
+  type ..\exclude\ExcludeList-SPs.txt >>"%TEMP%\ExcludeList-%1.txt"
+)
+for %%i in ("%TEMP%\ExcludeList-%1.txt") do if %%~zi==0 del %%i
+if exist "%TEMP%\ExcludeList-%1.txt" (
+  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-%1.txt" "%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt" >"%TEMP%\ValidDynamicLinks-%1-%2.txt"
+  del "%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt"
+  del "%TEMP%\ExcludeList-%1.txt"
+) else (
+  move /Y "%TEMP%\DynamicDownloadLinks-%1-%2-pruned.txt" "%TEMP%\ValidDynamicLinks-%1-%2.txt" >nul
+)
+echo %TIME% - Done.
+echo %DATE% %TIME% - Info: Determined dynamic update urls for %1 %2>>%DOWNLOAD_LOGFILE%
+
+:DoDownload
+rem *** Download updates for %1 %2 ***
+if "%4"=="/skipdownload" (
+  echo Skipping download/validation of updates for %1 %2 on demand.
+  echo %DATE% %TIME% - Info: Skipped download/validation of updates for %1 %2 on demand>>%DOWNLOAD_LOGFILE%
+  goto EndDownload
+)
+if not exist "%TEMP%\ValidStaticLinks-%1-%2.txt" goto DownloadDynamicUpdates
+echo Downloading/validating statically defined updates for %1 %2...
+set LINES_COUNT=0
+for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /N $ "%TEMP%\ValidStaticLinks-%1-%2.txt"') do set LINES_COUNT=%%i
+for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /N $ "%TEMP%\ValidStaticLinks-%1-%2.txt"') do (
+  echo Downloading/validating update %%i of %LINES_COUNT%...
+  for /F "tokens=1,2 delims=," %%k in ("%%j") do (
+    if "%%l" NEQ "" (
+      if exist ..\client\%1\%2\%%l (
+        echo Renaming file ..\client\%1\%2\%%l to %%~nxk...
+        ren ..\client\%1\%2\%%l %%~nxk
+        echo %DATE% %TIME% - Info: Renamed file ..\client\%1\%2\%%l to %%~nxk>>%DOWNLOAD_LOGFILE%
+      )
+    )
+    %DLDR_PATH% %DLDR_COPT% %DLDR_POPT% ..\client\%1\%2 %%k
+    if errorlevel 1 (
+      if exist ..\client\%1\%2\%%~nxk del ..\client\%1\%2\%%~nxk
+      echo Warning: Download of %%k failed.
+      echo %DATE% %TIME% - Warning: Download of %%k failed>>%DOWNLOAD_LOGFILE%
+    ) else (
+      echo %DATE% %TIME% - Info: Downloaded/validated %%k to ..\client\%1\%2>>%DOWNLOAD_LOGFILE%
+    )
+    if "%%l" NEQ "" (
+      if exist ..\client\%1\%2\%%~nxk (
+        echo Renaming file ..\client\%1\%2\%%~nxk to %%l...
+        ren ..\client\%1\%2\%%~nxk %%l
+        echo %DATE% %TIME% - Info: Renamed file ..\client\%1\%2\%%~nxk to %%l>>%DOWNLOAD_LOGFILE%
+      )
+    )
+  )
+)
+echo %DATE% %TIME% - Info: Downloaded/validated %LINES_COUNT% statically defined updates for %1 %2>>%DOWNLOAD_LOGFILE%
+
+:DownloadDynamicUpdates
+if not exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" goto CleanupDownload
+echo Downloading/validating dynamically determined updates for %1 %2...
+set LINES_COUNT=0
+for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /N $ "%TEMP%\ValidDynamicLinks-%1-%2.txt"') do set LINES_COUNT=%%i
+if "%WSUS_URL%"=="" (
+  for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /N $ "%TEMP%\ValidDynamicLinks-%1-%2.txt"') do (
+    echo Downloading/validating update %%i of %LINES_COUNT%...
+    %DLDR_PATH% %DLDR_COPT% %DLDR_POPT% ..\client\%1\%2 %%j
+    if errorlevel 1 (
+      echo Warning: Download of %%j failed.
+      echo %DATE% %TIME% - Warning: Download of %%j failed>>%DOWNLOAD_LOGFILE%
+    ) else (
+      echo %DATE% %TIME% - Info: Downloaded/validated %%j to ..\client\%1\%2>>%DOWNLOAD_LOGFILE%
+    )
+  )
+) else (
+  echo Creating WSUS download table for %1 %2...
+  %CSCRIPT_PATH% //Nologo //B //E:vbs CreateDownloadTable.vbs "%TEMP%\ValidDynamicLinks-%1-%2.txt" %WSUS_URL%
+  if errorlevel 1 goto DownloadError
+  echo %DATE% %TIME% - Info: Created WSUS download table for %1 %2>>%DOWNLOAD_LOGFILE%
+  for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /N $ "%TEMP%\ValidDynamicLinks-%1-%2.csv"') do (
+    echo Downloading/validating update %%i of %LINES_COUNT%...
+    for /F "tokens=1-3 delims=," %%k in ("%%j") do (
+      if "%%m"=="" (
+        %DLDR_PATH% %DLDR_COPT% %DLDR_POPT% ..\client\%1\%2 %%l
+        if errorlevel 1 (
+          echo Warning: Download of %%l failed.
+          echo %DATE% %TIME% - Warning: Download of %%l failed>>%DOWNLOAD_LOGFILE%
+        ) else (
+          echo %DATE% %TIME% - Info: Downloaded/validated %%l to ..\client\%1\%2>>%DOWNLOAD_LOGFILE%
+        )
+      ) else (
+        if exist ..\client\%1\%2\%%k (
+          echo Renaming file ..\client\%1\%2\%%k to %%~nxl...
+          ren ..\client\%1\%2\%%k %%~nxl
+          echo %DATE% %TIME% - Info: Renamed file ..\client\%1\%2\%%k to %%~nxl>>%DOWNLOAD_LOGFILE%
+        )
+        if "%WSUS_BY_PROXY%"=="1" (
+          %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\client\%1\%2 %DLDR_LOPT% %%l
+        ) else (
+          %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% --no-proxy %DLDR_POPT% ..\client\%1\%2 %DLDR_LOPT% %%l
+        )
+        if errorlevel 1 (
+          if exist ..\client\%1\%2\%%~nxl (
+            echo Renaming file ..\client\%1\%2\%%~nxl to %%k...
+            ren ..\client\%1\%2\%%~nxl %%k
+            echo %DATE% %TIME% - Info: Renamed file ..\client\%1\%2\%%~nxl to %%k>>%DOWNLOAD_LOGFILE%
+          )
+          if "%WSUS_ONLY%"=="1" (
+            echo Warning: Download of %%l ^(%%k^) failed.
+            echo %DATE% %TIME% - Warning: Download of %%l ^(%%k^) failed>>%DOWNLOAD_LOGFILE%
+          ) else (
+            %DLDR_PATH% %DLDR_COPT% %DLDR_POPT% ..\client\%1\%2 %%m
+            if errorlevel 1 (
+              echo Warning: Download of %%m failed.
+              echo %DATE% %TIME% - Warning: Download of %%m failed>>%DOWNLOAD_LOGFILE%
+            ) else (
+              echo %DATE% %TIME% - Info: Downloaded/validated %%m to ..\client\%1\%2>>%DOWNLOAD_LOGFILE%
+            )
+          )
+        ) else (
+          if exist ..\client\%1\%2\%%~nxl (
+            echo Renaming file ..\client\%1\%2\%%~nxl to %%k...
+            ren ..\client\%1\%2\%%~nxl %%k
+            echo %DATE% %TIME% - Info: Renamed file ..\client\%1\%2\%%~nxl to %%k>>%DOWNLOAD_LOGFILE%
+          )
+        )
+      )
+    )
+  )
+)
+echo %DATE% %TIME% - Info: Downloaded/validated %LINES_COUNT% dynamically determined updates for %1 %2>>%DOWNLOAD_LOGFILE%
+
+echo Adjusting UpdateInstaller.ini file...
+if exist ..\client\UpdateInstaller.ini (
+  if exist ..\client\UpdateInstaller.ori del ..\client\UpdateInstaller.ori
+  ren ..\client\UpdateInstaller.ini UpdateInstaller.ori
+  for /F "tokens=1* delims==" %%i in (..\client\UpdateInstaller.ori) do (
+    if /i "%%i"=="seconly" (
+      if "%SECONLY%"=="1" (
+        echo seconly=Enabled>>..\client\UpdateInstaller.ini
+      ) else (
+        echo seconly=Disabled>>..\client\UpdateInstaller.ini
+      )
+    ) else (
+      if "%%j"=="" (
+        echo %%i>>..\client\UpdateInstaller.ini
+      ) else (
+        echo %%i=%%j>>..\client\UpdateInstaller.ini
+      )
+    )
+  )
+  del ..\client\UpdateInstaller.ori
+)
+echo %DATE% %TIME% - Info: Adjusted UpdateInstaller.ini file>>%DOWNLOAD_LOGFILE%
+
+:CleanupDownload
+rem *** Clean up client directory for %1 %2 ***
+if not exist ..\client\%1\%2\nul goto RemoveHashes
+if "%CLEANUP_DL%"=="0" goto VerifyDownload
+echo Cleaning up client directory for %1 %2...
+if exist "%TEMP%\ValidLinks-%1-%2.txt" del "%TEMP%\ValidLinks-%1-%2.txt"
+if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" (
+  type "%TEMP%\ValidStaticLinks-%1-%2.txt" >>"%TEMP%\ValidLinks-%1-%2.txt"
+)
+if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" (
+  type "%TEMP%\ValidDynamicLinks-%1-%2.txt" >>"%TEMP%\ValidLinks-%1-%2.txt"
+)
+for /F %%i in ('dir ..\client\%1\%2 /A:-D /B') do (
+  if exist "%TEMP%\ValidLinks-%1-%2.txt" (
+    %SystemRoot%\System32\find.exe /I "%%i" "%TEMP%\ValidLinks-%1-%2.txt" >nul 2>&1
+    if errorlevel 1 (
+      del ..\client\%1\%2\%%i
+      echo %DATE% %TIME% - Info: Deleted ..\client\%1\%2\%%i>>%DOWNLOAD_LOGFILE%
+    )
+  ) else (
+    del ..\client\%1\%2\%%i
+    echo %DATE% %TIME% - Info: Deleted ..\client\%1\%2\%%i>>%DOWNLOAD_LOGFILE%
+  )
+)
+if exist "%TEMP%\ValidLinks-%1-%2.txt" del "%TEMP%\ValidLinks-%1-%2.txt"
+dir ..\client\%1\%2 /A:-D >nul 2>&1
+if errorlevel 1 rd ..\client\%1\%2
+echo %DATE% %TIME% - Info: Cleaned up client directory for %1 %2>>%DOWNLOAD_LOGFILE%
+
+:VerifyDownload
+if not exist ..\client\%1\%2\nul goto RemoveHashes
+rem *** Remove NTFS alternate data streams for %1 %2 ***
+if exist %STRMS_PATH% (
+  %STRMS_PATH% /accepteula ..\client\%1\%2\*.* >nul 2>&1
+  if errorlevel 1 (
+    echo %DATE% %TIME% - Info: File system does not support streams>>%DOWNLOAD_LOGFILE%
+  ) else (
+    echo Removing NTFS alternate data streams for %1 %2...
+    %STRMS_PATH% /accepteula -s -d ..\client\%1\%2\*.* >nul 2>&1
+    if errorlevel 1 (
+      echo Warning: Unable to remove NTFS alternate data streams for %1 %2.
+      echo %DATE% %TIME% - Warning: Unable to remove NTFS alternate data streams for %1 %2>>%DOWNLOAD_LOGFILE%
+    ) else (
+      echo %DATE% %TIME% - Info: Removed NTFS alternate data streams for %1 %2>>%DOWNLOAD_LOGFILE%
+    )
+  )
+) else (
+  echo Warning: Sysinternals' NTFS alternate data stream handling tool %STRMS_PATH% not found.
+  echo %DATE% %TIME% - Warning: Sysinternals' NTFS alternate data stream handling tool %STRMS_PATH% not found>>%DOWNLOAD_LOGFILE%
+)
+if "%VERIFY_DL%" NEQ "1" goto RemoveHashes
+rem *** Verifying digital file signatures for %1 %2 ***
+if not exist %SIGCHK_PATH% goto NoSigCheck
+echo Verifying digital file signatures for %1 %2...
+for /F "skip=1 tokens=1 delims=," %%i in ('%SIGCHK_PATH% %SIGCHK_COPT% -s ..\client\%1\%2 ^| %SystemRoot%\System32\findstr.exe /I /V "\"Signed\""') do (
+  if /i "%%~xi" NEQ ".zip" (
+    del %%i
+    echo Warning: Deleted unsigned file %%i.
+    echo %DATE% %TIME% - Warning: Deleted unsigned file %%i>>%DOWNLOAD_LOGFILE%
+  )
+)
+echo %DATE% %TIME% - Info: Verified digital file signatures for %1 %2>>%DOWNLOAD_LOGFILE%
+rem *** Create integrity database for %1 %2 ***
+if not exist ..\client\bin\%HASHDEEP_EXE% goto NoHashDeep
+echo Creating integrity database for %1 %2...
+if not exist ..\client\md\nul md ..\client\md
+pushd ..\client\md
+..\bin\%HASHDEEP_EXE% -c md5,sha1,sha256 -l -r ..\%1\%2 >hashes-%1-%2.txt
+if errorlevel 1 (
+  popd
+  echo Warning: Error creating integrity database ..\client\md\hashes-%1-%2.txt.
+  echo %DATE% %TIME% - Warning: Error creating integrity database ..\client\md\hashes-%1-%2.txt>>%DOWNLOAD_LOGFILE%
+) else (
+  popd
+  echo %DATE% %TIME% - Info: Created integrity database for %1 %2>>%DOWNLOAD_LOGFILE%
+)
+for %%i in (..\client\md\hashes-%1-%2.txt) do if %%~zi==0 del %%i
+if not exist ..\client\md\hashes-%1-%2.txt goto EndDownload
+%SystemRoot%\System32\findstr.exe _[A-Fa-f0-9]*\.[A-Za-z0-9][A-Za-z0-9][A-Za-z0-9]$ ..\client\md\hashes-%1-%2.txt >"%TEMP%\sha1-%1-%2.txt"
+for /F "usebackq tokens=3,5 delims=," %%i in ("%TEMP%\sha1-%1-%2.txt") do (
+  for /F "tokens=2 delims=_" %%k in ("%%j") do (
+    for /F "tokens=1 delims=." %%l in ("%%k") do (
+      if "%%l" NEQ "%%i" (
+        pushd ..\client\md
+        del %%j
+        ren hashes-%1-%2.txt hashes-%1-%2.bak
+        %SystemRoot%\System32\findstr.exe /L /I /V "%%j" hashes-%1-%2.bak >hashes-%1-%2.txt
+        del hashes-%1-%2.bak
+        popd
+        echo Warning: Deleted file %%j due to mismatching SHA-1 message digest ^(%%i^).
+        echo %DATE% %TIME% - Warning: Deleted file %%j due to mismatching SHA-1 message digest ^(%%i^)>>%DOWNLOAD_LOGFILE%
+      )
+    )
+  )
+)
+del "%TEMP%\sha1-%1-%2.txt"
+goto EndDownload
+
+:RemoveHashes
+if exist ..\client\md\hashes-%1-%2.txt (
+  del ..\client\md\hashes-%1-%2.txt
+  echo %DATE% %TIME% - Info: Deleted integrity database for %1 %2>>%DOWNLOAD_LOGFILE%
+)
+:EndDownload
+if exist "%TEMP%\ValidStaticLinks-%1-%2.txt" del "%TEMP%\ValidStaticLinks-%1-%2.txt"
+if exist "%TEMP%\ValidDynamicLinks-%1-%2.csv" del "%TEMP%\ValidDynamicLinks-%1-%2.csv"
+if "%4"=="/skipdownload" (
+  for %%i in (win w60 w61 w62 w63 w100) do (
+    if /i "%1"=="%%i" (
+      if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" move /Y "%TEMP%\ValidDynamicLinks-%1-%2.txt" ..\static\custom\StaticDownloadLinks-%1-%3-%2.txt >nul
+    )
+  )
+  if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" move /Y "%TEMP%\ValidDynamicLinks-%1-%2.txt" ..\static\custom\StaticDownloadLinks-%1-%2.txt >nul
+) else (
+  if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" del "%TEMP%\ValidDynamicLinks-%1-%2.txt"
+)
+verify >nul
+goto :eof
+
+:RemindDate
+if "%SKIP_DL%"=="1" goto EoF
+rem *** Remind build date ***
+echo Reminding build date...
+echo %DATE:~-11%>..\client\builddate.txt
+rem *** Create autorun.inf file ***
+echo Creating autorun.inf file...
+echo [autorun]>..\client\autorun.inf
+echo open=UpdateInstaller.exe>>..\client\autorun.inf
+echo icon=UpdateInstaller.exe,0 >>..\client\autorun.inf
+echo action=Run WSUS Offline Update v. %WSUSOFFLINE_VERSION% (%DATE:~-11%)>>..\client\autorun.inf
+goto EoF
+
+:NoExtensions
+echo.
+echo ERROR: No command extensions / delayed variable expansion available.
+echo.
+exit /b 1
+
+:InvalidParams
+echo.
+echo ERROR: Invalid parameter: %*
+echo Usage1: %~n0 {o2k10 ^| o2k13} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludesp ^| /excludestatics] [/excludewinglb] [/includedotnet] [/seconly] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
+echo Usage2: %~n0 {w60 ^| w60-x64 ^| w61 ^| w61-x64 ^| w62-x64 ^| w63 ^| w63-x64 ^| w100 ^| w100-x64 ^| ofc ^| o2k16} {glb} [/excludesp ^| /excludestatics] [/excludewinglb] [/includedotnet] [/seconly] [/includemsse] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
+echo %DATE% %TIME% - Error: Invalid parameter: %*>>%DOWNLOAD_LOGFILE%
+echo.
+goto Error
+
+:NoTemp
+echo.
+echo ERROR: Environment variable TEMP not set.
+echo %DATE% %TIME% - Error: Environment variable TEMP not set>>%DOWNLOAD_LOGFILE%
+echo.
+goto Error
+
+:NoTempDir
+echo.
+echo ERROR: Directory "%TEMP%" not found.
+echo %DATE% %TIME% - Error: Directory "%TEMP%" not found>>%DOWNLOAD_LOGFILE%
+echo.
+goto Error
+
+:InsufficientRights
+echo ERROR: Insufficient file system rights.
+echo %DATE% %TIME% - Error: Insufficient file system rights>>%DOWNLOAD_LOGFILE%
+echo.
+goto Error
+
+:NoCScript
+echo.
+echo ERROR: VBScript interpreter %CSCRIPT_PATH% not found.
+echo %DATE% %TIME% - Error: VBScript interpreter %CSCRIPT_PATH% not found>>%DOWNLOAD_LOGFILE%
+echo.
+goto Error
+
+:NoDLdr
+echo.
+echo ERROR: Download utility %DLDR_PATH% not found.
+echo %DATE% %TIME% - Error: Download utility %DLDR_PATH% not found>>%DOWNLOAD_LOGFILE%
+echo.
+goto Error
+
+:NoUnZip
+echo.
+echo ERROR: Utility ..\bin\unzip.exe not found.
+echo %DATE% %TIME% - Error: Utility ..\bin\unzip.exe not found>>%DOWNLOAD_LOGFILE%
+echo.
+goto Error
+
+:NoHashDeep
+echo.
+echo ERROR: Hash computing/auditing utility ..\client\bin\%HASHDEEP_EXE% not found.
+echo %DATE% %TIME% - Error: Hash computing/auditing utility ..\client\bin\%HASHDEEP_EXE% not found>>%DOWNLOAD_LOGFILE%
+echo.
+goto Error
+
+:NoSigCheck
+echo.
+echo ERROR: Sysinternals' digital file signature verification tool %SIGCHK_PATH% not found.
+echo %DATE% %TIME% - Error: Sysinternals' digital file signature verification tool %SIGCHK_PATH% not found>>%DOWNLOAD_LOGFILE%
+echo.
+goto Error
+
+:DownloadError
+echo.
+echo ERROR: Download failure for %1 %2.
+echo %DATE% %TIME% - Error: Download failure for %1 %2>>%DOWNLOAD_LOGFILE%
+echo.
+goto Error
+
+:IntegrityError
+echo.
+echo ERROR: File integrity verification failure.
+echo %DATE% %TIME% - Error: File integrity verification failure>>%DOWNLOAD_LOGFILE%
+echo.
+goto Error
+
+:SignatureError
+echo.
+echo ERROR: Catalog file ..\client\wsus\wsusscn2.cab signature verification failure.
+echo %DATE% %TIME% - Error: Catalog file ..\client\wsus\wsusscn2.cab signature verification failure>>%DOWNLOAD_LOGFILE%
+echo.
+goto Error
+
+:Error
+if "%EXIT_ERR%"=="1" (
+  echo Note: To better help understanding this error, you can select and copy the last messages from this window using the context menu ^(right mouse click in the window^).
+  endlocal
+  pause
+  verify other 2>nul
+  exit
+) else (
+  title %ComSpec%
+  endlocal
+  verify other 2>nul
+  goto :eof
+)
+
+:EoF
+rem *** Execute custom finalization hook ***
+if exist .\custom\FinalizationHook.cmd (
+  echo Executing custom finalization hook...
+  pushd .\custom
+  call FinalizationHook.cmd
+  popd
+  echo %DATE% %TIME% - Info: Executed custom finalization hook ^(Errorlevel: %errorlevel%^)>>%DOWNLOAD_LOGFILE%
+)
+echo Done.
+echo %DATE% %TIME% - Info: Ending WSUS Offline Update download for %1 %2>>%DOWNLOAD_LOGFILE%
+title %ComSpec%
+endlocal
