@@ -2,8 +2,3 @@ http://download.microsoft.com/download/F/7/C/F7C4E06B-26A9-4A8B-8AD4-672FCF8355D
 http://download.microsoft.com/download/C/4/6/C46C4441-44AF-4841-A637-F0C0F49BE476/visio2016-kb3115041-fullfile-x86-glb.exe
 http://download.microsoft.com/download/C/0/3/C0367513-7F3E-4495-9104-328DB42E160B/lync2016-kb4011159-fullfile-x86-glb.exe
 http://download.microsoft.com/download/B/1/8/B1898198-4774-45DE-AA79-3089603F5BC4/eqnedt322016-kb4011574-fullfile-x86-glb.exe
-http://download.microsoft.com/download/D/2/2/D221A962-BAF7-494D-BFC2-7D985BCCF00D/msodll99l2016-kb4011622-fullfile-x86-glb.exe
-http://download.microsoft.com/download/7/B/9/7B9BE70F-633D-4F1E-AF2A-0DBEAC254571/outlook2016-kb4011626-fullfile-x86-glb.exe
-http://download.microsoft.com/download/E/D/E/EDEE277E-7EC1-469B-B683-CE480090EAC3/excel2016-kb4011627-fullfile-x86-glb.exe
-http://download.microsoft.com/download/0/7/2/07280F71-21B3-41B1-8DD7-89DCB32EBCA9/word2016-kb4011643-fullfile-x86-glb.exe
-http://download.microsoft.com/download/1/4/4/144941E8-0B32-468C-8EB3-61A39AD1C1E5/mso2016-kb4011632-fullfile-x86-glb.exe

@@ -4,7 +4,3 @@ http://download.microsoft.com/download/1/F/E/1FE178BA-B1C7-430F-9097-E5A873C076C
 http://download.microsoft.com/download/0/7/E/07E3B3F6-23D8-4BB8-A5E1-32171F6DD91C/lynchelploc2013-kb3191937-fullfile-x64-glb.exe
 http://download.microsoft.com/download/6/C/F/6CFAE0F9-E113-4DA2-AF3D-848F244A6CF7/lync2013-kb4011179-fullfile-x64-glb.exe
 http://download.microsoft.com/download/3/C/3/3C39EBC9-1AC9-4955-A606-E21235255DBC/eqnedt322013-kb4011580-fullfile-x64-glb.exe
-http://download.microsoft.com/download/B/B/D/BBDB8752-E862-4FEE-909E-439424E2137E/outlook2013-kb4011637-fullfile-x64-glb.exe
-http://download.microsoft.com/download/3/8/5/385BD4A1-952E-4324-A937-BE3CB5517615/excel2013-kb4011639-fullfile-x64-glb.exe
-http://download.microsoft.com/download/3/5/D/35DF544D-9AB3-43A1-A701-F2F87FC59359/word2013-kb4011651-fullfile-x64-glb.exe
-http://download.microsoft.com/download/7/E/D/7EDB8716-E9F0-4FB8-B4ED-17DB171C7662/mso2013-kb4011636-fullfile-x64-glb.exe

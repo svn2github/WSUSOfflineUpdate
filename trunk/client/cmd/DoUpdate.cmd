@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=11.1+ (r919)
+set WSUSOFFLINE_VERSION=11.1+ (r920)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -212,6 +212,19 @@ if "%O2K13_VER_MAJOR%" NEQ "" (
 )
 if "%O2K16_VER_MAJOR%" NEQ "" (
   echo %DATE% %TIME% - Info: Found Microsoft Office 2016 %O2K16_VER_APP% version %O2K16_VER_MAJOR%.%O2K16_VER_MINOR%.%O2K16_VER_BUILD%.%O2K16_VER_REVIS% ^(o2k16 %O2K16_ARCH% %O2K16_LANG% sp%O2K16_SP_VER%^)>>%UPDATE_LOGFILE%
+)
+
+rem ***  Check compatibility mode ***
+if "%__COMPAT_LAYER%"=="" goto NoCompatLayer
+if /i "%__COMPAT_LAYER%"=="ElevateCreateProcess" goto NoCompatLayer
+echo Warning: The compatibility mode is active (__COMPAT_LAYER=%__COMPAT_LAYER%).
+echo %DATE% %TIME% - Warning: The compatibility mode is active (__COMPAT_LAYER=%__COMPAT_LAYER%)>>%UPDATE_LOGFILE%
+:NoCompatLayer
+
+rem ***  Check quality compatibility registry value ***
+if "%QC_SET%"=="0" (
+  echo Warning: Quality compatibility registry value is not set.
+  echo %DATE% %TIME% - Warning: Quality compatibility registry value is not set>>%UPDATE_LOGFILE%
 )
 
 rem *** Check medium content ***

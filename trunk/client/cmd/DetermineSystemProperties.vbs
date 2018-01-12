@@ -16,7 +16,9 @@ Private Const strRegKeyMSSEDefs               = "HKLM\Software\Microsoft\Microso
 Private Const strRegKeyWD                     = "HKLM\Software\Microsoft\Windows Defender\"
 Private Const strRegKeyWDPolicy               = "HKLM\Software\Policies\Microsoft\Windows Defender\"
 Private Const strRegKeyWDDefs                 = "HKLM\Software\Microsoft\Windows Defender\Signature Updates\"
+Private Const strRegKeyQualityCompat          = "HKLM\Software\Microsoft\Windows\CurrentVersion\QualityCompat\cadca5fe-87d3-4b96-b7fb-a231484277cc"
 Private Const strRegKeyPowerCfg               = "HKCU\Control Panel\PowerCfg\"
+
 Private Const strRegValVersion                = "Version"
 Private Const strRegValRelease                = "Release"
 Private Const strRegValDisplayVersion         = "DisplayVersion"
@@ -513,6 +515,13 @@ If objFileSystem.FileExists(strTSCFileName) Then
   WriteVersionToFile objCmdFile, "TSC_VER", GetFileVersion(objFileSystem, strTSCFileName)
 Else
   WriteVersionToFile objCmdFile, "TSC_VER", ""
+End If
+
+' Check quality compatibility registry value
+If RegExists(wshShell, strRegKeyQualityCompat) Then
+  objCmdFile.WriteLine("set QC_SET=1")
+Else
+  objCmdFile.WriteLine("set QC_SET=0")
 End If
 
 ' Determine Office version
