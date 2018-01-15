@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 11.1
+WSUS Offline Update 11.1.1
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1376,12 +1376,13 @@ Version 11.1 -- 18.12.17
 - Added November 2017 Servicing stack update (kb4054022) for Windows 10 Version 1709 (Thanks to "harry")
 - Fix: ListInstalledUpdateIds.vbs script didn't list patches from Wow6432Node (Thanks to "random")
 --------------------------------------------------------------------------------
-Version ??.? -- ??.??.??
+Version 11.1.1 -- ??.??.??
 - January 2018 updates added to 'security only' lists for Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems
 - Integrated .NET Framework January 2018 Security and Quality Rollups
 - DoUpdate.cmd script will now show a warning if the compatibility mode is active (Thanks to "Dalai")
 - DoUpdate.cmd script will now show a warning if quality compatibility registry value is not set (Thanks to B. Schinkel-Momsen)
 - Replaced superseded servicing stack update for Windows 10 Version 1709 kb4054022 (November 2017) by kb4058702 (January 2018) (Thanks to "aker")
+- Excluded several obsolete dynamic updates for Office 2003 and 2007 (Thanks to "Denniss")
 - Fix: Replaced superseded Office 2010 Security Update kb4011618 (November 2017) by kb4011610 (January 2018)
 - Fix: Replaced superseded Outlook 2010 Security Update kb4011196 (October 2017) by kb4011273 (January 2018)
 - Fix: Replaced superseded Office 2013 Security Update kb3162047 (November 2017) by kb4011580 (January 2018)
