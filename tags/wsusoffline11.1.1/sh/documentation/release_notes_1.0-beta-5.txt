@@ -1,0 +1,50 @@
+Release Notes for Version 1.0-beta-5
+
+Release date: 2017-08-25
+Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
+
+This version offers the following changes:
+
+- The documentation files Quick_installation_guide.txt and
+  Kurzinstallationsanleitung.txt were renamed in version 1.0-beta-4. If
+  the old files are still present, they are removed now.
+
+- The environment variables $LINES and $COLUMNS are set to 24x80, if
+  the script runs as a cron job.
+
+  If the script runs within a terminal emulator window, it should get
+  the real window dimensions with tput.
+
+  This was reported by "mani" in
+  http://forums.wsusoffline.net/viewtopic.php?f=9&t=6180&start=20#p23381
+
+- The calculation of the file ExcludeList-superseded-seconly.txt was
+  simplified.
+
+  This calculation now respects the additional configuration files for
+  security only updates of the .NET Frameworks.
+
+- A new function seconly_safety_guard tries to make sure, that the
+  configuration files for security only updates are updated after the
+  official patch day.
+
+  The download and installation of security only updates depends on the
+  configuration files:
+
+  - wsusoffline/client/exclude/HideList-seconly.txt
+  - wsusoffline/client/static/StaticUpdateIds-w61-seconly.txt
+  - wsusoffline/client/static/StaticUpdateIds-w62-seconly.txt
+  - wsusoffline/client/static/StaticUpdateIds-w63-seconly.txt
+
+  These files must be updated after each official patch day, which is
+  the second Tuesday each month. They are needed to prevent WSUS Offline
+  Update from downloading and installing full quality update rollups
+  as well.
+
+  The function seconly_safety_guard compares the modification dates of
+  the configuration files to the date of the official patch day, to make
+  sure, that the files have been updated. Otherwise, the download will
+  be postponed.
+
+  This is discussed in the forum at:
+  http://forums.wsusoffline.net/viewtopic.php?f=4&t=6897

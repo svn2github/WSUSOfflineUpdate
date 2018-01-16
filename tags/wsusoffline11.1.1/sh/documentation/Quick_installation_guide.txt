@@ -1,0 +1,37 @@
+Quick installation guide
+
+Install the required and recommended packages...
+
+on Debian:
+
+su -
+aptitude install cabextract hashdeep wget xmlstarlet trash-cli
+
+on Ubuntu:
+
+sudo apt-get install cabextract hashdeep wget xmlstarlet trash-cli
+
+
+Download the archiv and the hashes file to the directory wsusoffline. This
+is the directory, where the Windows utility UpdateGenerator.exe resides.
+
+wget http://downloads.hartmut-buhrmester.de/sh-new-1.0-beta-3.tar.gz
+wget http://downloads.hartmut-buhrmester.de/hashes-sh-new-1.0-beta-3.txt
+
+
+Verify the integrity of the archive:
+
+hashdeep -a -v -v -l -k hashes-sh-new-1.0-beta-3.txt sh-new-1.0-beta-3.tar.gz
+
+
+Unpack the archive in the directory wsusoffline:
+
+tar xvzf sh-new-1.0-beta-3.tar.gz
+
+
+Change to the directory sh-new-1.0-beta-3 and run the script
+update-generator.bash, to interactively select the desired updates
+to fetch:
+
+cd sh-new-1.0-beta-3
+./update-generator.bash
