@@ -6,7 +6,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 11.1.1.923)
+#pragma compile(FileVersion, 11.1.1.924)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -374,7 +374,7 @@ Func CalcGUISize()
     $reg_val = $default_logpixels
   EndIf
   $dlgheight = 280 * $reg_val / $default_logpixels
-  If ShowGUIInGerman() Then
+  If $gergui Then
     $txtwidth = 240 * $reg_val / $default_logpixels
   Else
     $txtwidth = 220 * $reg_val / $default_logpixels
@@ -391,6 +391,7 @@ EndFunc
 AutoItSetOption("GUICloseOnESC", 0)
 AutoItSetOption("TrayAutoPause", 0)
 AutoItSetOption("TrayIconHide", 1)
+$gergui = ShowGUIInGerman()
 CalcGUISize()
 $groupwidth = 2 * $txtwidth + 2 * $txtxoffset
 $maindlg = GUICreate($caption, $groupwidth + 4 * $txtxoffset, $dlgheight)
@@ -401,7 +402,7 @@ $scriptdir = AssignScriptDirectory()
 ;  Label
 $txtxpos = $txtxoffset
 $txtypos = $txtyoffset
-If ShowGUIInGerman() Then
+If $gergui Then
   GUICtrlCreateLabel("Wählen Sie die gewünschten Optionen und klicken Sie auf 'Start'," & @LF & "um die fehlenden Microsoft-Updates auf Ihrem System zu installieren.", $txtxpos, $txtypos, 3 * $groupwidth / 4, 1.5 * $txtheight)
 Else
   GUICtrlCreateLabel("Select desired options and click 'Start'" & @LF & "to install missing Microsoft updates on your computer.", $txtxpos, $txtypos, 3 * $groupwidth / 4, 1.5 * $txtheight)
@@ -412,7 +413,7 @@ $builddate = MediumBuildDate($scriptdir)
 If ($builddate <> "") Then
   $txtxpos = 3 * $txtxoffset + 3 * $groupwidth / 4
   $txtypos = 0
-  If ShowGUIInGerman() Then
+  If $gergui Then
     GUICtrlCreateGroup("Medium-Info", $txtxpos, $txtypos, $groupwidth / 4, 2 * $txtheight)
   Else
     GUICtrlCreateGroup("Medium info", $txtxpos, $txtypos, $groupwidth / 4, 2 * $txtheight)
@@ -428,7 +429,7 @@ $txtypos = $txtyoffset + 1.5 * $txtheight
 GuiCtrlCreateTab($txtxpos, $txtypos, $groupwidth + 2 * $txtxoffset, $dlgheight - $btnheight - 1.5 * $txtheight - 3 * $txtyoffset)
 
 ;  Updating Tab
-If ShowGUIInGerman() Then
+If $gergui Then
   $tabitemfocused = GuiCtrlCreateTabItem("Aktualisierung")
 Else
   $tabitemfocused = GuiCtrlCreateTabItem("Updating")
@@ -442,7 +443,7 @@ GUICtrlCreateGroup("Installation", $txtxpos, $txtypos, $groupwidth, 5 * $txtheig
 ; Update C++ Runtime Libraries
 $txtxpos = 3 * $txtxoffset
 $txtypos = $txtypos + 1.5 * $txtyoffset
-If ShowGUIInGerman() Then
+If $gergui Then
   $cpp = GUICtrlCreateCheckbox("C++-Laufzeitbibliotheken aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
   $cpp = GUICtrlCreateCheckbox("Update C++ Runtime Libraries", $txtxpos, $txtypos, $txtwidth, $txtheight)
@@ -459,7 +460,7 @@ EndIf
 
 ; Install Microsoft Silverlight
 $txtxpos = $txtxpos + $txtwidth
-If ShowGUIInGerman() Then
+If $gergui Then
   If MSSLInstalled() Then
     $mssl = GUICtrlCreateCheckbox("Microsoft Silverlight aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
   Else
@@ -485,7 +486,7 @@ EndIf
 ; Install .NET Framework 3.5
 $txtxpos = 3 * $txtxoffset
 $txtypos = $txtypos + $txtheight
-If ShowGUIInGerman() Then
+If $gergui Then
   $dotnet35 = GUICtrlCreateCheckbox(".NET Framework 3.5 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
   $dotnet35 = GUICtrlCreateCheckbox("Install .NET Framework 3.5", $txtxpos, $txtypos, $txtwidth, $txtheight)
@@ -503,7 +504,7 @@ EndIf
 
 ; Install Windows PowerShell 2.0
 $txtxpos = $txtxpos + $txtwidth
-If ShowGUIInGerman() Then
+If $gergui Then
   $psh = GUICtrlCreateCheckbox("PowerShell 2.0 installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
   $psh = GUICtrlCreateCheckbox("Install PowerShell 2.0", $txtxpos, $txtypos, $txtwidth, $txtheight)
@@ -524,7 +525,7 @@ EndIf
 ; Install .NET Framework 4
 $txtxpos = 3 * $txtxoffset
 $txtypos = $txtypos + $txtheight
-If ShowGUIInGerman() Then
+If $gergui Then
   $dotnet4 = GUICtrlCreateCheckbox(".NET Framework " & DotNet4DisplayVersion() & " installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
   $dotnet4 = GUICtrlCreateCheckbox("Install .NET Framework " & DotNet4DisplayVersion(), $txtxpos, $txtypos, $txtwidth, $txtheight)
@@ -541,7 +542,7 @@ EndIf
 
 ; Install Windows Management Framework
 $txtxpos = $txtxpos + $txtwidth
-If ShowGUIInGerman() Then
+If $gergui Then
   $wmf = GUICtrlCreateCheckbox("Management Framework " & WMFTargetVersion() & " installieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
   $wmf = GUICtrlCreateCheckbox("Install Management Framework " & WMFTargetVersion(), $txtxpos, $txtypos, $txtwidth, $txtheight)
@@ -562,7 +563,7 @@ EndIf
 ; Install Microsoft Security Essentials
 $txtxpos = 3 * $txtxoffset
 $txtypos = $txtypos + $txtheight
-If ShowGUIInGerman() Then
+If $gergui Then
   If MSSEInstalled() Then
     $msse = GUICtrlCreateCheckbox("Microsoft Security Essentials aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
   Else
@@ -588,7 +589,7 @@ EndIf
 
 ; Update Windows Remote Desktop Client
 $txtxpos = $txtxpos + $txtwidth
-If ShowGUIInGerman() Then
+If $gergui Then
   $tsc = GUICtrlCreateCheckbox("Remote Desktop Client aktualisieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
   $tsc = GUICtrlCreateCheckbox("Update Remote Desktop Client", $txtxpos, $txtypos, $txtwidth, $txtheight)
@@ -607,7 +608,7 @@ EndIf
 ;  Control group
 $txtxpos = 2 * $txtxoffset
 $txtypos = $txtypos + 2.5 * $txtyoffset
-If ShowGUIInGerman() Then
+If $gergui Then
   GUICtrlCreateGroup("Steuerung", $txtxpos, $txtypos, $groupwidth, 3 * $txtheight)
 Else
   GUICtrlCreateGroup("Control", $txtxpos, $txtypos, $groupwidth, 3 * $txtheight)
@@ -616,7 +617,7 @@ EndIf
 ; Verify
 $txtxpos = 3 * $txtxoffset
 $txtypos = $txtypos + 1.5 * $txtyoffset
-If ShowGUIInGerman() Then
+If $gergui Then
   $verify = GUICtrlCreateCheckbox("Installationspakete verifizieren", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
   $verify = GUICtrlCreateCheckbox("Verify installation packages", $txtxpos, $txtypos, $txtwidth, $txtheight)
@@ -633,7 +634,7 @@ EndIf
 
 ;  Automatic reboot and recall
 $txtxpos = $txtxpos + $txtwidth
-If ShowGUIInGerman() Then
+If $gergui Then
   $autoreboot = GUICtrlCreateCheckbox("Automatisch neu starten und fortsetzen", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
   $autoreboot = GUICtrlCreateCheckbox("Automatic reboot and recall", $txtxpos, $txtypos, $txtwidth, $txtheight)
@@ -651,7 +652,7 @@ EndIf
 ;  Automatic shutdown
 $txtxpos = 3 * $txtxoffset
 $txtypos = $txtypos + $txtheight
-If ShowGUIInGerman() Then
+If $gergui Then
   $shutdown = GUICtrlCreateCheckbox("Herunterfahren nach Abschluss", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
   $shutdown = GUICtrlCreateCheckbox("Shut down on completion", $txtxpos, $txtypos, $txtwidth, $txtheight)
@@ -664,7 +665,7 @@ EndIf
 
 ; Show log file
 $txtxpos = $txtxpos + $txtwidth
-If ShowGUIInGerman() Then
+If $gergui Then
   $showlog = GUICtrlCreateCheckbox("Protokolldatei anzeigen", $txtxpos, $txtypos, $txtwidth, $txtheight)
 Else
   $showlog = GUICtrlCreateCheckbox("Show log file", $txtxpos, $txtypos, $txtwidth, $txtheight)
@@ -688,14 +689,14 @@ If FileExists(@TempDir & $path_rel_msi_all) Then
   ; Select all
   $txtxpos = 2 * $txtxoffset
   $txtypos = 3.5 * $txtyoffset + 1.5 * $txtheight
-  If ShowGUIInGerman() Then
+  If $gergui Then
     $msiall = GUICtrlCreateCheckbox("Alle auswählen", $txtxpos, $txtypos, $txtwidth, $txtheight)
   Else
     $msiall = GUICtrlCreateCheckbox("Select all", $txtxpos, $txtypos, $txtwidth, $txtheight)
   EndIf
   ;  MSI packages' group
   $txtypos = $txtypos + $txtheight
-  If ShowGUIInGerman() Then
+  If $gergui Then
     GUICtrlCreateGroup("MSI-Pakete", $txtxpos, $txtypos, $groupwidth, ($msimax / 2 + 1) * $txtheight)
   Else
     GUICtrlCreateGroup("MSI packages", $txtxpos, $txtypos, $groupwidth, ($msimax / 2 + 1) * $txtheight)
@@ -724,7 +725,7 @@ $btn_start = GUICtrlCreateButton("Start", $txtxoffset, $txtypos, $btnwidth, $btn
 GUICtrlSetResizing (-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM)
 
 ;  Donate button
-If ShowGUIInGerman() Then
+If $gergui Then
   $btn_donate = GUICtrlCreateButton("Spenden...", ($groupwidth - $btnwidth) / 2 + 2 * $txtxoffset, $txtypos, $btnwidth, $btnheight)
 Else
   $btn_donate = GUICtrlCreateButton("Donate...", ($groupwidth - $btnwidth) / 2 + 2 * $txtxoffset, $txtypos, $btnwidth, $btnheight)
@@ -735,7 +736,7 @@ If (MyIniRead($ini_section_misc, $ini_value_showdonate, $enabled) = $disabled) O
 EndIf
 
 ;  Exit button
-If ShowGUIInGerman() Then
+If $gergui Then
   $btn_exit = GUICtrlCreateButton("Ende", $groupwidth - $btnwidth + 3 * $txtxoffset, $txtypos, $btnwidth, $btnheight)
 Else
   $btn_exit = GUICtrlCreateButton("Exit", $groupwidth - $btnwidth + 3 * $txtxoffset, $txtypos, $btnwidth, $btnheight)
@@ -745,7 +746,7 @@ GUICtrlSetResizing (-1, $GUI_DOCKRIGHT + $GUI_DOCKBOTTOM)
 ; GUI message loop
 GUISetState()
 If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_8") ) Then
-  If ShowGUIInGerman() Then
+  If $gergui Then
     MsgBox(0x2010, "Fehler", "Nicht unterstütztes Betriebssystem: " & @OSVersion)
   Else
     MsgBox(0x2010, "Fehler", "Unsupported Operating System: " & @OSVersion)
@@ -753,7 +754,7 @@ If ( (@OSVersion = "WIN_XP") OR (@OSVersion = "WIN_2003") OR (@OSVersion = "WIN_
   Exit(1)
 EndIf
 If NOT WSHAvailable() Then
-  If ShowGUIInGerman() Then
+  If $gergui Then
     MsgBox(0x2010, "Fehler", "Der Windows Script Host ist deaktiviert. Bitte prüfen Sie die Registrierungswerte" _
                      & @LF & "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings\Enabled und" _
                      & @LF & "HKEY_CURRENT_USER\Software\Microsoft\Windows Script Host\Settings\Enabled")
@@ -765,7 +766,7 @@ If NOT WSHAvailable() Then
   Exit(1)
 EndIf
 If $scriptdir = "" Then
-  If ShowGUIInGerman() Then
+  If $gergui Then
     MsgBox(0x2010, "Fehler", "Dem Skript-Pfad " & @ScriptDir _
                      & @LF & "konnte kein Laufwerksbuchstabe zugewiesen werden.")
   Else
@@ -775,7 +776,7 @@ If $scriptdir = "" Then
   Exit(1)
 EndIf
 If NOT PathValid($scriptdir) Then
-  If ShowGUIInGerman() Then
+  If $gergui Then
     MsgBox(0x2010, "Fehler", "Der Skript-Pfad darf nicht mehr als " & $path_max_length & " Zeichen lang sein und" _
                      & @LF & "darf keines der folgenden Zeichen enthalten: " & $path_invalid_chars)
   Else
@@ -785,7 +786,7 @@ If NOT PathValid($scriptdir) Then
   Exit(1)
 EndIf
 If NOT PathValid(@TempDir) Then
-  If ShowGUIInGerman() Then
+  If $gergui Then
     MsgBox(0x2010, "Fehler", "Der %TEMP%-Pfad darf nicht mehr als " & $path_max_length & " Zeichen lang sein und" _
                      & @LF & "darf keines der folgenden Zeichen enthalten: " & $path_invalid_chars)
   Else
@@ -795,7 +796,7 @@ If NOT PathValid(@TempDir) Then
   Exit(1)
 EndIf
 If (StringRight(EnvGet("TEMP"), 1) = "\") OR (StringRight(EnvGet("TEMP"), 1) = ":") Then
-  If ShowGUIInGerman() Then
+  If $gergui Then
     MsgBox(0x2010, "Fehler", "Der %TEMP%-Pfad enthält einen abschließenden Backslash ('\')" _
                      & @LF & "oder einen abschließenden Doppelpunkt (':').")
   Else
@@ -809,7 +810,7 @@ If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) _
  AND ( (IEVersion() = "7") OR (IEVersion() = "8") ) _
  AND (MyIniRead($ini_section_installation, $ini_value_skipieinst, $disabled) = $disabled) _
  AND (MyIniRead($ini_section_messaging, $ini_value_showieinfo, $enabled) = $enabled) ) Then
-  If ShowGUIInGerman() Then
+  If $gergui Then
      MsgBox(0x2040, "Information", "Auf diesem System wird die neueste Version des Internet Explorers (IE9)" _
                            & @LF & "automatisch installiert, wenn Sie die Aktualisierung starten.")
   Else
@@ -822,7 +823,7 @@ If ( ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) _
  AND ( (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") ) _
  AND (MyIniRead($ini_section_installation, $ini_value_skipieinst, $disabled) = $disabled) _
  AND (MyIniRead($ini_section_messaging, $ini_value_showieinfo, $enabled) = $enabled) ) Then
-  If ShowGUIInGerman() Then
+  If $gergui Then
      MsgBox(0x2040, "Information", "Auf diesem System wird die neueste Version des Internet Explorers (IE11)" _
                            & @LF & "automatisch installiert, wenn Sie die Aktualisierung starten.")
   Else
@@ -872,7 +873,7 @@ While 1
 
     Case $msse                 ; Microsoft Security Essentials check box toggled
       If IsCheckBoxChecked($msse) Then
-        If ShowGUIInGerman() Then
+        If $gergui Then
           If MsgBox(0x2134, "Warnung", "Bei der Installation der Microsoft Security Essentials wird eine" _
                                & @LF & "obligate 'Windows Genuine Advantage' (WGA)-Prüfung durchgeführt." _
                                & @LF & "Möchten Sie fortsetzen?") = 7 Then
@@ -892,7 +893,7 @@ While 1
        AND ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") OR (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") _
           OR (@OSVersion = "WIN_8") OR (@OSVersion = "WIN_2012") OR (@OSVersion = "WIN_81") OR (@OSVersion = "WIN_2012R2") _
           OR (@OSVersion = "WIN_10") OR (@OSVersion = "WIN_2016") ) ) Then
-        If ShowGUIInGerman() Then
+        If $gergui Then
           If MsgBox(0x2134, "Warnung", "Die Option 'Automatisch neu starten und fortsetzen' deaktiviert" _
                                & @LF & "temporär die Benutzerkontensteuerung (UAC), falls erforderlich." _
                                & @LF & "Möchten Sie fortsetzen?") = 7 Then
@@ -907,7 +908,7 @@ While 1
         EndIf
       EndIf
       If ( (IsCheckBoxChecked($autoreboot)) AND (DriveGetType($scriptdir) = "Network") ) Then
-        If ShowGUIInGerman() Then
+        If $gergui Then
           If MsgBox(0x2134, "Warnung", @ScriptName & " wurde von einer Netzwerkfreigabe gestartet." _
                                & @LF & "Die Option 'Automatisch neu starten und fortsetzen'" _
                                & @LF & "funktioniert nur dann ohne Benutzereingriff," _
@@ -1031,7 +1032,7 @@ While 1
         DllCall("kernel32.dll", "int", "Wow64DisableWow64FsRedirection", "int", 1)
       EndIf
       If Run(@ComSpec & " /D /C Update.cmd" & $options, $scriptdir, @SW_HIDE) = 0 Then
-        If ShowGUIInGerman() Then
+        If $gergui Then
           MsgBox(0x2010, "Fehler", "Fehler #" & @error & " beim Aufruf von" _
                            & @LF & @ComSpec & " /D /C Update.cmd" & $options & " in" _
                            & @LF & $scriptdir & ".")

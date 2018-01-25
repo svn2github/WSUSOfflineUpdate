@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=11.1.1
+set WSUSOFFLINE_VERSION=11.1.1+ (r924)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -217,6 +217,7 @@ if "%O2K16_VER_MAJOR%" NEQ "" (
 rem ***  Check compatibility mode ***
 if "%__COMPAT_LAYER%"=="" goto NoCompatLayer
 if /i "%__COMPAT_LAYER%"=="ElevateCreateProcess" goto NoCompatLayer
+if /i "%__COMPAT_LAYER%"=="Installer" goto NoCompatLayer
 echo Warning: The compatibility mode is active (__COMPAT_LAYER=%__COMPAT_LAYER%).
 echo %DATE% %TIME% - Warning: The compatibility mode is active (__COMPAT_LAYER=%__COMPAT_LAYER%)>>%UPDATE_LOGFILE%
 :NoCompatLayer
