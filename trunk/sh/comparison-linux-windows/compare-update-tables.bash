@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
 #
 # Filename: compare-update-tables.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -46,8 +43,8 @@
 # ========== Configuration ================================================
 
 # Absolute paths to wsusoffline/client/ofc on Windows and Linux
-source_ofc_windows="/media/$(whoami)/SANDISK_3/wsusoffline-windows/client/ofc"
-source_ofc_linux="/home/$(whoami)/Projekte/wsusoffline/client/ofc"
+source_ofc_windows="/media/$(whoami)/System/wsusoffline_current/client/ofc"
+source_ofc_linux="/home/$(whoami)/Projekte/wsusoffline_current/client/ofc"
 
 # Paths to temporary directories
 temp_ofc_windows="/tmp/ofc-windows"
@@ -66,7 +63,8 @@ function create_diff_files ()
     local temp_directory="$2"
     local filename=""
 
-    if [[ -d "${source_directory}" ]]; then
+    if [[ -d "${source_directory}" ]]
+    then
         printf '%s\n' "Processing source directory: ${source_directory} ..."
     else
         printf '%s\n' "Source directory ${source_directory} is missing."
@@ -77,11 +75,13 @@ function create_diff_files ()
     rm -f "${temp_directory}"/*.csv
 
     pushd "${source_directory}" > /dev/null
-    for filename in ./*.csv; do
+    for filename in ./*.csv
+    do
         printf '%s\n' "Processing: ${filename}"
         tr -d '\r' < "${filename}" | sort > "${temp_directory}/${filename}"
         # Remove empty files
-        if [[ ! -s "${temp_directory}/${filename}" ]]; then
+        if [[ ! -s "${temp_directory}/${filename}" ]]
+        then
             rm -f "${temp_directory}/${filename}"
         fi
     done

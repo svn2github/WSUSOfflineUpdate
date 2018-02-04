@@ -121,3 +121,43 @@ Version history
       the official patch day, to prevent unwanted side effect.
 
     See the file release_notes_1.0-beta-5.txt for details.
+
+
+Version 1.0
+
+    Release date: 2018-01-19
+    Intended compatibility: WSUS Offline Update Version 11.1 and later
+
+    Changes in this version:
+
+    - After about one year in beta status, this version is now designated
+      version 1.0.
+
+    - Bugfix: The function download_single_file_failsafe was revised to
+      delete partial files between tries.
+
+    - Bugfix: The declaration of indexed arrays with "declare -ag"
+      was removed.
+
+    - The wget option --unlink was removed.
+
+    - A new standalone script rebuild-integrity-database.bash was added.
+
+    - Support for .NET Framework 4.7.1 was added.
+
+    - Support for Office 2007 was removed.
+
+    - Internal Changes:
+
+      The functions remove_german_language_support and
+      remove_english_language_support now keep the file modification date.
+
+      The new filter function todos_line_endings changes the output of
+      hashdeep to DOS line endings on the fly.
+
+      The functions trash_file and unpack_wsus_catalog_file were revised
+      to produce more output.
+
+    - The copyright was updated to 2018.
+
+    See the file release_notes_1.0.txt for details.

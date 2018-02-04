@@ -6,11 +6,14 @@
 #include "StructureConstants.au3"
 #include "TreeViewConstants.au3"
 #include "UDFGlobalID.au3"
-#include "WinAPI.au3"
+#include "WinAPIConv.au3"
+#include "WinAPIGdi.au3"
+#include "WinAPIRes.au3"
+#include "WinAPISysInternals.au3"
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: TreeView
-; AutoIt Version : 3.3.14.2
+; AutoIt Version : 3.3.14.3
 ; Language ......: English
 ; Description ...: Functions that assist with TreeView control management.
 ;                  A TreeView control is a window that displays a hierarchical list of items, such as the headings in a document,
@@ -36,7 +39,7 @@ Global Const $__TREEVIEWCONSTANT_DEFAULT_GUI_FONT = 17
 ; ===============================================================================================================================
 
 ; #NO_DOC_FUNCTION# =============================================================================================================
-; Not working/documented/implrmented at this time
+; Not working/documented/implemented at this time
 ;
 ; _GUICtrlTreeView_GetOverlayImageIndex
 ; _GUICtrlTreeView_MapAccIDToItem
@@ -1075,33 +1078,33 @@ Func _GUICtrlTreeView_GetItemParam($hWnd, $hItem = 0)
 	If IsHWnd($hWnd) Then
 		; get the handle to item selected
 		If $hItem = 0x00000000 Then $hItem = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CARET, 0, 0, "wparam", "lparam", "handle")
-		If $hItem = 0x00000000 Then Return False
+		If $hItem = 0x00000000 Then Return 0
 		DllStructSetData($tItem, "hItem", $hItem)
 		; get the item properties
 		If $bUnicode Then
-			If _SendMessage($hWnd, $TVM_GETITEMW, 0, $tItem, 0, "wparam", "struct*") = 0 Then Return False
+			If _SendMessage($hWnd, $TVM_GETITEMW, 0, $tItem, 0, "wparam", "struct*") = 0 Then Return 0
 		Else
-			If _SendMessage($hWnd, $TVM_GETITEMA, 0, $tItem, 0, "wparam", "struct*") = 0 Then Return False
+			If _SendMessage($hWnd, $TVM_GETITEMA, 0, $tItem, 0, "wparam", "struct*") = 0 Then Return 0
 		EndIf
 	Else
 		; get the handle to item selected
 		If $hItem = 0x00000000 Then
 			$hItem = Ptr(GUICtrlSendMsg($hWnd, $TVM_GETNEXTITEM, $TVGN_CARET, 0))
-			If $hItem = 0x00000000 Then Return False
+			If $hItem = 0x00000000 Then Return 0
 		Else
 			Local $hTempItem = GUICtrlGetHandle($hItem)
 			If $hTempItem <> 0x00000000 Then
 				$hItem = $hTempItem
 			Else
-				Return False
+				Return 0
 			EndIf
 		EndIf
 		DllStructSetData($tItem, "hItem", $hItem)
 		; get the item properties
 		If $bUnicode Then
-			If GUICtrlSendMsg($hWnd, $TVM_GETITEMW, 0, DllStructGetPtr($tItem)) = 0 Then Return False
+			If GUICtrlSendMsg($hWnd, $TVM_GETITEMW, 0, DllStructGetPtr($tItem)) = 0 Then Return 0
 		Else
-			If GUICtrlSendMsg($hWnd, $TVM_GETITEMA, 0, DllStructGetPtr($tItem)) = 0 Then Return False
+			If GUICtrlSendMsg($hWnd, $TVM_GETITEMA, 0, DllStructGetPtr($tItem)) = 0 Then Return 0
 		EndIf
 	EndIf
 
@@ -1241,7 +1244,7 @@ Func _GUICtrlTreeView_GetParentHandle($hWnd, $hItem = 0)
 	If $hItem = 0x00000000 Then
 		If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
 		$hItem = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CARET, 0, 0, "wparam", "handle", "handle")
-		If $hItem = 0x00000000 Then Return False
+		If $hItem = 0x00000000 Then Return 0
 	Else
 		If Not IsHWnd($hItem) Then $hItem = _GUICtrlTreeView_GetItemHandle($hWnd, $hItem)
 		If Not IsHWnd($hWnd) Then $hWnd = GUICtrlGetHandle($hWnd)
@@ -1267,7 +1270,7 @@ Func _GUICtrlTreeView_GetParentParam($hWnd, $hItem = 0)
 	If IsHWnd($hWnd) Then
 		; get the handle to item selected
 		If $hItem = 0x00000000 Then $hItem = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_CARET, 0, 0, "wparam", "handle", "handle")
-		If $hItem = 0x00000000 Then Return False
+		If $hItem = 0x00000000 Then Return 0
 		; get the handle of the parent item
 		$hParent = _SendMessage($hWnd, $TVM_GETNEXTITEM, $TVGN_PARENT, $hItem, 0, "wparam", "handle", "handle")
 		DllStructSetData($tTVITEM, "hItem", $hParent)
@@ -1277,20 +1280,20 @@ Func _GUICtrlTreeView_GetParentParam($hWnd, $hItem = 0)
 		; get the handle to item selected
 		If $hItem = 0x00000000 Then
 			$hItem = GUICtrlSendMsg($hWnd, $TVM_GETNEXTITEM, $TVGN_CARET, 0)
-			If $hItem = 0x00000000 Then Return False
+			If $hItem = 0x00000000 Then Return 0
 		Else
 			Local $hTempItem = GUICtrlGetHandle($hItem)
 			If $hTempItem <> 0x00000000 Then
 				$hItem = $hTempItem
 			Else
-				Return False
+				Return 0
 			EndIf
 		EndIf
 		; get the handle of the parent item
 		$hParent = GUICtrlSendMsg($hWnd, $TVM_GETNEXTITEM, $TVGN_PARENT, $hItem)
 		DllStructSetData($tTVITEM, "hItem", $hParent)
 		; get the item properties
-		If GUICtrlSendMsg($hWnd, $TVM_GETITEMA, 0, DllStructGetPtr($tTVITEM)) = 0 Then Return False
+		If GUICtrlSendMsg($hWnd, $TVM_GETITEMA, 0, DllStructGetPtr($tTVITEM)) = 0 Then Return 0
 	EndIf
 
 	Return DllStructGetData($tTVITEM, "Param")

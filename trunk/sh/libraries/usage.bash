@@ -1,11 +1,8 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: usage.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -52,7 +49,6 @@ UPDATE
     w63-x64      Windows 8.1 / Server 2012 R2, 64-bit
     w100         Windows 10, 32-bit
     w100-x64     Windows 10 / Server 2016, 64-bit
-    o2k7         Office 2007, 32-bit
     o2k10        Office 2010, 32-bit
     o2k10-x64    Office 2010, 32-bit and 64-bit
     o2k13        Office 2013, 32-bit

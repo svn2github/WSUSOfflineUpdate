@@ -1,11 +1,8 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: updates-and-languages.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -49,9 +46,9 @@
 # split the line into two fields, without needing any additional field
 # delimiters like commas or semicolons:
 #
-# read -r update_name   update_description   <<< "$line"
-# read -r language_name language_description <<< "$line"
-# read -r option_name   option_description   <<< "$line"
+# read -r update_name   update_description   <<< "${line}"
+# read -r language_name language_description <<< "${line}"
+# read -r option_name   option_description   <<< "${line}"
 
 # Windows Server 2008, based on Windows Vista, is available in both
 # 32-bit and 64-bit versions.
@@ -62,7 +59,7 @@
 # - https://en.wikipedia.org/wiki/Windows_Server_2008
 # - https://en.wikipedia.org/wiki/Windows_Server_2008_R2
 
-declare -ag updates_menu=(
+updates_menu=(
     "w60         Windows Server 2008, 32-bit"
     "w60-x64     Windows Server 2008, 64-bit"
     "w61         Windows 7, 32-bit"
@@ -72,7 +69,6 @@ declare -ag updates_menu=(
     "w63-x64     Windows 8.1 / Server 2012 R2, 64-bit"
     "w100        Windows 10, 32-bit"
     "w100-x64    Windows 10 / Server 2016, 64-bit"
-    "o2k7        Office 2007, 32-bit"
     "o2k10       Office 2010, 32-bit"
     "o2k10-x64   Office 2010, 32-bit and 64-bit"
     "o2k13       Office 2013, 32-bit"
@@ -81,7 +77,7 @@ declare -ag updates_menu=(
     "o2k16-x64   Office 2016, 32-bit and 64-bit"
 )
 
-declare -ag languages_menu=(
+languages_menu=(
     "deu   German"
     "enu   English"
     "ara   Arabic"
@@ -109,7 +105,7 @@ declare -ag languages_menu=(
 )
 
 # Options for Windows Vista and Windows 7
-declare -ag options_menu_windows_vista=(
+options_menu_windows_vista=(
     "-includesp        Service Packs"
     "-includecpp       Visual C++ Runtime Libraries"
     "-includedotnet    .NET Frameworks"
@@ -118,7 +114,7 @@ declare -ag options_menu_windows_vista=(
 )
 
 # Options for Windows 8, 8.1 and 10
-declare -ag options_menu_windows_8=(
+options_menu_windows_8=(
     "-includesp        Service Packs"
     "-includecpp       Visual C++ Runtime Libraries"
     "-includedotnet    .NET Frameworks"
@@ -126,7 +122,7 @@ declare -ag options_menu_windows_8=(
 )
 
 # Options for all Office versions
-declare -ag options_menu_office=(
+options_menu_office=(
     "-includesp        Service Packs"
 )
 
@@ -138,7 +134,7 @@ declare -ag options_menu_office=(
 # a trailing space to avoid ambiguities. For example, the first line
 # "w60" would be matched with:
 #
-# grep "^w60 " <<< "$updates_table"
+# grep "^w60 " <<< "${updates_table}"
 #
 # Each line can then be split into single fields with read -r as
 # described above.
@@ -153,7 +149,6 @@ w63         x86   Windows 8.1, 32-bit
 w63-x64     x64   Windows 8.1 / Server 2012 R2, 64-bit
 w100        x86   Windows 10, 32-bit
 w100-x64    x64   Windows 10 / Server 2016, 64-bit
-o2k7        x86   Office 2007, 32-bit
 o2k10       x86   Office 2010, 32-bit
 o2k10-x64   x64   Office 2010, 32-bit and 64-bit
 o2k13       x86   Office 2013, 32-bit
@@ -207,13 +202,15 @@ function language_name_to_locale ()
     local language_locale=""
     local ignored_field_2=""
 
-    if [[ "$language_name" == "glb" ]]; then
+    if [[ "${language_name}" == "glb" ]]
+    then
         echo "not-available"
-    elif language_record="$(grep -- "^$language_name " <<< "$languages_table")"; then
-        read -r ignored_field_1 language_locale ignored_field_2 <<< "$language_record"
-        echo "$language_locale"
+    elif language_record="$(grep -- "^${language_name} " <<< "${languages_table}")"
+    then
+        read -r ignored_field_1 language_locale ignored_field_2 <<< "${language_record}"
+        echo "${language_locale}"
     else
-        log_error_message "The language $language_name was not found."
+        log_error_message "The language ${language_name} was not found."
     fi
     return 0
 }

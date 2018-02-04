@@ -1,11 +1,8 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 70-synchronize-with-target.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -60,6 +57,7 @@ target_directory="not-available" # without trailing slash
 # drive, similar to the Windows script CopyToTarget.cmd. Therefore,
 # rsync doesn't use the option to create hard links.
 
-if [[ -d "${source_directory}" && -d "${target_directory}" ]]; then
+if [[ -d "${source_directory}" && -d "${target_directory}" ]]
+then
     rsync --archive --delete --verbose "${source_directory}" "${target_directory}"
 fi

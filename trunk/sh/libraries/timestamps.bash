@@ -1,11 +1,8 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: timestamps.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -132,18 +129,20 @@ interval_description_dependent_files="two days"
 function same_day ()
 {
     local timestamp_file="$1"
-    local -i interval_length="${2:-$interval_length_configuration_files}"
+    local -i interval_length="${2:-${interval_length_configuration_files}}"
     local -i result_code=1  # return "false" by default
     local -i current_date=0
     local -i file_modification_date=0
 
-    if [[ -f "$timestamp_file" ]]; then
+    if [[ -f "${timestamp_file}" ]]
+    then
         # Get date in seconds since 1970-01-01 UTC
         current_date="$(date '+%s')"
-        file_modification_date="$(date -r "$timestamp_file" '+%s')"
+        file_modification_date="$(date -r "${timestamp_file}" '+%s')"
         # Add the interval length in seconds
         file_modification_date=$(( file_modification_date + interval_length ))
-        if (( file_modification_date > current_date )); then
+        if (( file_modification_date > current_date ))
+        then
             result_code=0
         fi
     fi
@@ -172,7 +171,6 @@ function update_timestamp ()
             touch "${timestamp_dir}/timestamp-dotnet-all-enu.txt"
         ;;
         timestamp-dotnet-x86-*.txt)
-            # TODO: the variables should be removed from the timestamps
             touch "${timestamp_dir}/timestamp-dotnet-x86-enu-${include_service_packs}-${prefer_seconly}.txt"
         ;;
         timestamp-dotnet-x64-*.txt)
@@ -204,7 +202,8 @@ function set_timestamp ()
 {
     local pathname="$1"
 
-    if [[ -f "${pathname}" ]]; then
+    if [[ -f "${pathname}" ]]
+    then
         touch -r "${pathname}" "${pathname}.timestamp"
     else
         rm -f "${pathname}.timestamp"
@@ -224,11 +223,13 @@ function compare_timestamp ()
     local pathname="$1"
     local filename="${pathname##*/}"
 
-    if [[ -f "${pathname}" ]]; then
+    if [[ -f "${pathname}" ]]
+    then
         log_info_message "Comparing file modification dates for ${filename} ..."
         # According to the bash manual, the operator -nt is true, if file1
         # is newer than file2, or if file1 exists and file2 does not.
-        if [[ "${pathname}" -nt "${pathname}.timestamp" ]]; then
+        if [[ "${pathname}" -nt "${pathname}.timestamp" ]]
+        then
             case "${filename}" in
                 wsusscn2.cab)
                     log_info_message "The WSUS catalog file ${filename} was updated. Superseded and dynamic updates will be recalculated."
@@ -266,7 +267,8 @@ function reevaluate_dynamic_updates ()
     local -a file_list=()
     local pathname=""
 
-    if [[ -d "${timestamp_dir}" ]]; then
+    if [[ -d "${timestamp_dir}" ]]
+    then
         shopt -s nullglob
         file_list=(
             "${timestamp_dir}"/timestamp-w6*.txt
@@ -277,9 +279,11 @@ function reevaluate_dynamic_updates ()
         )
         shopt -u nullglob
 
-        if (( ${#file_list[@]} > 0 )); then
-            for pathname in "${file_list[@]}"; do
-                rm "$pathname"
+        if (( ${#file_list[@]} > 0 ))
+        then
+            for pathname in "${file_list[@]}"
+            do
+                rm "${pathname}"
             done
         fi
     fi
@@ -303,14 +307,17 @@ function reevaluate_all_updates ()
     local -a file_list=()
     local pathname=""
 
-    if [[ -d "${timestamp_dir}" ]]; then
+    if [[ -d "${timestamp_dir}" ]]
+    then
         shopt -s nullglob
         file_list=("${timestamp_dir}"/timestamp-*.txt)
         shopt -u nullglob
 
-        if (( ${#file_list[@]} > 0 )); then
-            for pathname in "${file_list[@]}"; do
-                rm "$pathname"
+        if (( ${#file_list[@]} > 0 ))
+        then
+            for pathname in "${file_list[@]}"
+            do
+                rm "${pathname}"
             done
         fi
     fi

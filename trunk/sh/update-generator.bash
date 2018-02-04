@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 #
 # Filename: update-generator.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
+# Version: 1.0
+# Release date: 2018-01-19
+# Intended compatibility: WSUS Offline Update Version 11.1 and later
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -57,8 +57,8 @@
 # customization. They are considered read-only. Other global variables
 # are defined in the next section below.
 
-readonly script_version="1.0-beta-5"
-readonly release_date="2017-08-25"
+readonly script_version="1.0"
+readonly release_date="2018-01-19"
 readonly temp_dir="/tmp/wsusoffline_temp"
 readonly timestamp_dir="../timestamps"
 readonly log_dir="../log"
@@ -102,7 +102,7 @@ canonical_name=""
 script_name=""
 home_directory=""
 command_line="$0 $*"
-declare -ag command_line_parameters=("$@")
+command_line_parameters=( "$@" )
 
 # The version of WSUS Offline Update is read from the script
 # DownloadUpdates.cmd.
@@ -134,7 +134,8 @@ export LC_TIME=C
 # If the script is running within a terminal emulator window, then tput
 # can be used to query its dimensions. This does not work within a cron
 # job, though.
-if [[ "${TERM}" != "dumb" ]] && type -P tput  > /dev/null; then
+if [[ "${TERM}" != "dumb" ]] && type -P tput  > /dev/null
+then
     COLUMNS="$(tput cols)" || true
     LINES="$(tput lines)"  || true
 fi
@@ -159,17 +160,18 @@ shopt -s nocasematch
 function error_handler ()
 {
     local result_code=$?
-    printf '%s\n' "Failure: unhandled error $result_code"
+    printf '%s\n' "Failure: unhandled error ${result_code}"
     printf '%s\n' "Backtrace: ${FUNCNAME[*]}"
 
     local output=""
     local depth=0
-    while output="$(caller $depth)"; do
-        printf '%s\n' "Caller $depth: $output"
+    while output="$(caller ${depth})"
+    do
+        printf '%s\n' "Caller ${depth}: ${output}"
         depth="$(( depth + 1 ))"
     done
 
-    exit "$result_code"
+    exit "${result_code}"
 } 1>&2
 trap error_handler ERR
 
@@ -177,7 +179,7 @@ function exception_handler ()
 {
     local result_code=$?
     echo "Quitting because of Ctrl-C or similar exception ..."
-    exit "$result_code"
+    exit "${result_code}"
 } 1>&2
 trap exception_handler SIGHUP SIGINT SIGPIPE SIGTERM
 
@@ -185,19 +187,21 @@ function exit_handler ()
 {
     local result_code=$?
 
-    if (( result_code == 0 )); then
-        if [[ -d "${temp_dir}" ]]; then
+    if (( result_code == 0 ))
+    then
+        if [[ -d "${temp_dir}" ]]
+        then
             echo "Cleaning up temporary files ..."
             rm -r "${temp_dir}"
         fi
         echo "Exiting..."
     else
         # Keep temporary files for debugging
-        printf '%s\n' "Exiting with error code $result_code ..."
+        printf '%s\n' "Exiting with error code ${result_code} ..."
     fi
 
     echo ""
-    exit "$result_code"
+    exit "${result_code}"
 } 1>&2
 trap exit_handler EXIT
 
@@ -231,7 +235,8 @@ function trace_off ()
 
 function setup_working_directory ()
 {
-    if type -P uname > /dev/null; then
+    if type -P uname > /dev/null
+    then
         kernel_name="$(uname -s)"
         kernel_details="$(uname -a)"
     else
@@ -239,14 +244,15 @@ function setup_working_directory ()
         exit 1
     fi
 
-    case "$kernel_name" in
+    case "${kernel_name}" in
         Linux | FreeBSD)
             canonical_name="$(readlink -f "$0")"
         ;;
         Darwin | NetBSD | OpenBSD)
             # Use greadlink = GNU readlink, if available; otherwise use
             # BSD readlink, which lacks the option -f
-            if type -P greadlink > /dev/null; then
+            if type -P greadlink > /dev/null
+            then
                 canonical_name="$(greadlink -f "$0")"
             else
                 canonical_name="$(readlink "$0")"
@@ -259,22 +265,23 @@ function setup_working_directory ()
     esac
 
     # Change to the home directory of the script
-    script_name="$(basename "$canonical_name")"
-    home_directory="$(dirname "$canonical_name")"
-    cd "$home_directory" || exit 1
+    script_name="$(basename "${canonical_name}")"
+    home_directory="$(dirname "${canonical_name}")"
+    cd "${home_directory}" || exit 1
 
     # Create other directories, which may be relative to the script
     # directory
-    mkdir -p "$temp_dir"
-    mkdir -p "$timestamp_dir"
-    mkdir -p "$log_dir"
-    mkdir -p "$cache_dir"
+    mkdir -p "${temp_dir}"
+    mkdir -p "${timestamp_dir}"
+    mkdir -p "${log_dir}"
+    mkdir -p "${cache_dir}"
     return 0
 }
 
 function read_preferences ()
 {
-    if [[ -f ./preferences.bash ]]; then
+    if [[ -f ./preferences.bash ]]
+    then
         source ./preferences.bash
     fi
     return 0
@@ -316,19 +323,23 @@ function run_scripts ()
     local -a file_list=()
     local current_script=""
 
-    if [[ -d ./"${script_directory}" ]]; then
+    if [[ -d ./"${script_directory}" ]]
+    then
         shopt -s nullglob
         file_list=(./"${script_directory}"/*.bash)
         shopt -u nullglob
 
-        if (( ${#file_list[@]} > 0 )); then
-            for current_script in "${file_list[@]}"; do
+        if (( ${#file_list[@]} > 0 ))
+        then
+            for current_script in "${file_list[@]}"
+            do
                 # A new script 10-remove-obsolete-scripts.bash was added
                 # to the directory common-tasks in version 1.0-beta-3. It
                 # may remove obsolete scripts from previous versions. This
                 # requires another check, if the files are still present.
-                if [[ -f "$current_script" ]]; then
-                    source "$current_script"
+                if [[ -f "${current_script}" ]]
+                then
+                    source "${current_script}"
                 fi
             done
         fi

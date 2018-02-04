@@ -1,11 +1,8 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: dos-files.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -76,10 +73,26 @@ function tail_dos ()
     tail "$@" | tr -d '\r'
 }
 
-# filter_cr and unquote can be used as filters in pipes,
-# for example:
+# Filter functions read from standard input and write to standard
+# output. They are typically used in pipes.
 #
-# cat ../doc/coverage.txt | filter_cr | less -U
+# The function todos_line_endings is used to convert the output of
+# hashdeep to DOS line endings on the fly.
+
+function todos_line_endings ()
+{
+    local line=""
+
+    # IFS is set to an empty string, to read a complete line including
+    # leading and trailing spaces.
+    while IFS="" read -r line
+    do
+        printf '%s\r\n' "${line}"
+    done
+
+    return 0
+}
+
 function filter_cr ()
 {
     tr -d '\r'

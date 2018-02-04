@@ -1,11 +1,8 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: files-and-folders.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -42,7 +39,8 @@
 
 function sort_in_place ()
 {
-    if [[ -f "$1" ]]; then
+    if [[ -f "$1" ]]
+    then
         sort -u "$1" > "$1.tmp" &&
         mv "$1.tmp" "$1"
     else
@@ -54,7 +52,8 @@ function sort_in_place ()
 
 function remove_duplicates ()
 {
-    if [[ -f "$1" ]]; then
+    if [[ -f "$1" ]]
+    then
         uniq "$1" > "$1.tmp" &&
         mv "$1.tmp" "$1"
     else
@@ -74,13 +73,16 @@ function require_directory ()
     local pathname="$1"
     local result_code=0
 
-    if [[ -z "${pathname}" ]]; then
+    if [[ -z "${pathname}" ]]
+    then
         log_debug_message "${FUNCNAME[1]}: The pathname is empty"
         result_code=1
-    elif [[ "${pathname}" == "not-available" ]]; then
+    elif [[ "${pathname}" == "not-available" ]]
+    then
         log_debug_message "${FUNCNAME[1]}: The pathname is set to \"not-available\""
         result_code=1
-    elif [[ -d "${pathname}" ]]; then
+    elif [[ -d "${pathname}" ]]
+    then
         log_debug_message "${FUNCNAME[1]}: Found directory \"${pathname}\""
         result_code=0
     else
@@ -100,13 +102,16 @@ function require_file ()
     local pathname="$1"
     local result_code=0
 
-    if [[ -z "${pathname}" ]]; then
+    if [[ -z "${pathname}" ]]
+    then
         log_debug_message "${FUNCNAME[1]}: The pathname is empty"
         result_code=1
-    elif [[ "${pathname}" == "not-available" ]]; then
+    elif [[ "${pathname}" == "not-available" ]]
+    then
         log_debug_message "${FUNCNAME[1]}: The pathname is set to \"not-available\""
         result_code=1
-    elif [[ -f "${pathname}" ]]; then
+    elif [[ -f "${pathname}" ]]
+    then
         log_debug_message "${FUNCNAME[1]}: Found file \"${pathname}\""
         result_code=0
     else
@@ -127,16 +132,20 @@ function require_non_empty_file ()
     local pathname="$1"
     local result_code=0
 
-    if [[ -z "${pathname}" ]]; then
+    if [[ -z "${pathname}" ]]
+    then
         log_debug_message "${FUNCNAME[1]}: The pathname is empty"
         result_code=1
-    elif [[ "${pathname}" == "not-available" ]]; then
+    elif [[ "${pathname}" == "not-available" ]]
+    then
         log_debug_message "${FUNCNAME[1]}: The pathname is set to \"not-available\""
         result_code=1
-    elif [[ -s "${pathname}" ]]; then
+    elif [[ -s "${pathname}" ]]
+    then
         log_debug_message "${FUNCNAME[1]}: Found non-empty file \"${pathname}\""
         result_code=0
-    elif [[ -f "${pathname}" ]]; then
+    elif [[ -f "${pathname}" ]]
+    then
         log_debug_message "${FUNCNAME[1]}: Found empty file \"${pathname}\""
         result_code=1
     else
@@ -158,16 +167,20 @@ function ensure_non_empty_file ()
     local pathname="$1"
     local result_code=0
 
-    if [[ -z "${pathname}" ]]; then
+    if [[ -z "${pathname}" ]]
+    then
         log_debug_message "${FUNCNAME[1]}: The pathname is empty"
         result_code=1
-    elif [[ "${pathname}" == "not-available" ]]; then
+    elif [[ "${pathname}" == "not-available" ]]
+    then
         log_debug_message "${FUNCNAME[1]}: The pathname is set to \"not-available\""
         result_code=1
-    elif [[ -s "${pathname}" ]]; then
+    elif [[ -s "${pathname}" ]]
+    then
         log_debug_message "${FUNCNAME[1]}: Found non-empty file \"${pathname}\""
         result_code=0
-    elif [[ -f "${pathname}" ]]; then
+    elif [[ -f "${pathname}" ]]
+    then
         log_debug_message "${FUNCNAME[1]}: Deleted file \"${pathname##*/}\", because it was empty"
         log_warning_message "Deleted file \"${pathname##*/}\", because it was empty"
         rm "${pathname}"
@@ -210,44 +223,48 @@ function apply_exclude_lists ()
     local combined_exclude_list="$3"
     local current_file=""
 
-    rm -f "$output_file"
-    rm -f "$combined_exclude_list"
-    require_non_empty_file "$input_file" || return 0
+    rm -f "${output_file}"
+    rm -f "${combined_exclude_list}"
+    require_non_empty_file "${input_file}" || return 0
 
     shift 3
-    if (( $# > 0 )); then
-        for current_file in "$@"; do
-            if [[ -s "${current_file}" ]]; then
-                log_debug_message "Appending ${current_file} to $combined_exclude_list"
+    if (( $# > 0 ))
+    then
+        for current_file in "$@"
+        do
+            if [[ -s "${current_file}" ]]
+            then
+                log_debug_message "Appending ${current_file} to ${combined_exclude_list}"
                 # Some input files, like StaticUpdateIds-w61-seconly.txt
                 # and HideList-seconly.txt, combine the kb number and a
                 # description, separated by a comma. In these files, only
                 # the first field is extracted. If there is no comma, the
                 # whole line is used. This is the default behavior of cut.
-                cut_dos -d ',' -f '1' "${current_file}" >> "$combined_exclude_list"
+                cut_dos -d ',' -f '1' "${current_file}" >> "${combined_exclude_list}"
             fi
         done
     fi
 
-    if [[ -s "$combined_exclude_list" ]]; then
+    if [[ -s "${combined_exclude_list}" ]]
+    then
         # Remove the combined exclude list from the input file using a
         # grep --inverted-match (grep -v). The result code of grep is
         # "1", if the output is empty. This must be masked to not cause
         # an error, if the shell option errexit or a trap on ERR is used.
-        grep -F -i -v -f "$combined_exclude_list" \
-            "$input_file" > "$output_file" || true
+        grep -F -i -v -f "${combined_exclude_list}" \
+            "${input_file}" > "${output_file}" || true
     else
         # Rename the input file to the output file
-        mv "$input_file" "$output_file"
+        mv "${input_file}" "${output_file}"
     fi
 
     # In some cases, the output file may be empty. For example,
     # static download links are typically used for service packs. If
     # service packs are excluded from download, then the list of valid
     # static links may be empty. This may happen with the localized
-    # directories for Office 2007, 2010 and 2013, e.g. client/o2k7/deu/
-    # or client/o2k7/enu/.
-    ensure_non_empty_file "$output_file" || true
+    # directories for Office 2010 and 2013, e.g. client/o2k10/deu/
+    # or client/o2k10/enu/.
+    ensure_non_empty_file "${output_file}" || true
     return 0
 }
 
@@ -261,17 +278,19 @@ function verify_cabinet_file ()
     local pathname="$1"
     local filename="${pathname##*/}"
 
-    log_info_message "Testing the integrity of the cabinet file $filename (ignore any warnings about extra bytes at end of file)..."
-    if [[ -f "$pathname" ]]; then
+    log_info_message "Testing the integrity of the cabinet file ${filename} (ignore any warnings about extra bytes at end of file)..."
+    if [[ -f "${pathname}" ]]
+    then
         echo ""
-        if cabextract -t "$pathname"; then
-            log_info_message "Integrity test of cabinet file $filename succeeded."
+        if cabextract -t "${pathname}"
+        then
+            log_info_message "The integrity test of cabinet file ${filename} succeeded."
         else
-            trash_file "$pathname"
-            log_error_message "The cabinet file $filename was deleted, because testing the file integrity with cabextract failed."
+            log_error_message "Trashing/deleting cabinet file ${filename}, because the integrity test failed."
+            trash_file "${pathname}"
         fi
     else
-        log_warning_message "The cabinet file $pathname was not found."
+        log_warning_message "The cabinet file ${pathname} was not found."
     fi
     return 0
 }
@@ -280,16 +299,18 @@ function verify_cabinet_file ()
 # The function create_backup_copy makes a backup copy of an existing file,
 # preserving the file modification date and other metadata.
 #
-# TODO: For Wget, this copy could actually be a hard link. Wget can delete
-# existing files first with the option --unlink, which is explicitly
-# meant for directories with hard links. Aria 2 also has different
+# TODO: For recent versions of Wget, this copy could actually be a hard
+# link. Wget can delete existing files first with the option --unlink,
+# which is explicitly meant for directories with hard links. But this
+# option is missing in older version of Wget. Aria 2 also has different
 # options for the allocation of files.
 
 function create_backup_copy ()
 {
     local pathname="$1"
 
-    if [[ -f "${pathname}" ]]; then
+    if [[ -f "${pathname}" ]]
+    then
         log_info_message "Creating a backup copy of ${pathname##*/} ..."
         cp -a "${pathname}" "${pathname}.bak"
     else
@@ -342,10 +363,12 @@ function restore_backup_copy ()
 {
     local pathname="$1"
 
-    if [[ -f "${pathname}.bak" ]]; then
+    if [[ -f "${pathname}.bak" ]]
+    then
         # According to the bash manual, the operator -nt is true, if file1
         # is newer than file2, or if file1 exists and file2 does not.
-        if [[ "${pathname}.bak" -nt "${pathname}" ]]; then
+        if [[ "${pathname}.bak" -nt "${pathname}" ]]
+        then
             log_info_message "Restoring backup copy of ${pathname##*/}"
             mv "${pathname}.bak" "${pathname}"
         else
@@ -365,7 +388,8 @@ function restart_script ()
     echo ""
     echo "--------------------------------------------------------------------------------"
     echo ""
-    if (( ${#command_line_parameters[@]} > 0 )); then
+    if (( ${#command_line_parameters[@]} > 0 ))
+    then
         exec "./${script_name}" "${command_line_parameters[@]}"
     else
         exec "./${script_name}"

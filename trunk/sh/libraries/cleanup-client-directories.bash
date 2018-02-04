@@ -1,11 +1,8 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: cleanup-client-directories.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -70,11 +67,13 @@ function cleanup_client_directory ()
     local filename=""
 
     # Preconditions
-    if [[ "${use_cleanup_function}" == "disabled" ]]; then
+    if [[ "${use_cleanup_function}" == "disabled" ]]
+    then
         log_info_message "Cleanup of client directories is disabled in preferences.bash"
         return 0
     fi
-    if ! require_directory "${download_dir}"; then
+    if ! require_directory "${download_dir}"
+    then
         log_warning_message "Aborted cleanup of client directory, because the directory ${download_dir} does not exist"
         return 0
     fi
@@ -82,30 +81,35 @@ function cleanup_client_directory ()
     log_info_message "Cleaning up download directory ${download_dir} ..."
 
     # For the included downloads, there are no dynamic links, and
-    # $valid_links is the same as $valid_static_links
+    # ${valid_links} is the same as ${valid_static_links}
     #
-    # For the main updates, $valid_links is the sum of $valid_static_links
-    # and $valid_dynamic_links. This is also called the "download set".
+    # For the main updates, ${valid_links} is the sum of
+    # ${valid_static_links} and ${valid_dynamic_links}. This is also
+    # called the "download set".
     #
     # Either of the input files may be empty:
     # - Static download links are mostly service packs and other
     #   installers, which may be excluded from the download.
     # - Dynamic update links are not calculated for some download targets.
 
-    if [[ "${valid_dynamic_links}" == "not-available" && "${valid_static_links}" == "${valid_links}" ]]; then
+    if [[ "${valid_dynamic_links}" == "not-available" && "${valid_static_links}" == "${valid_links}" ]]
+    then
         log_debug_message "Cleanup only static links"
     else
         log_debug_message "Cleanup both static and dynamic links"
         # Reset output file
         > "${valid_links}"
-        if require_non_empty_file "${valid_static_links}"; then
+        if require_non_empty_file "${valid_static_links}"
+        then
             cat "${valid_static_links}" >> "${valid_links}"
         fi
-        if require_non_empty_file "${valid_dynamic_links}"; then
+        if require_non_empty_file "${valid_dynamic_links}"
+        then
             cat "${valid_dynamic_links}" >> "${valid_links}"
         fi
     fi
-    if [[ ! -s "${valid_links}" ]]; then
+    if [[ ! -s "${valid_links}" ]]
+    then
         log_warning_message "The current download set is empty"
         # If the download set is empty, any existing files should be
         # removed and the empty directory should be deleted. This may
@@ -123,13 +127,17 @@ function cleanup_client_directory ()
     file_list=("${download_dir}"/*.*)
     shopt -u nullglob
 
-    if (( ${#file_list[@]} > 0 )); then
-        for pathname in "${file_list[@]}"; do
+    if (( ${#file_list[@]} > 0 ))
+    then
+        for pathname in "${file_list[@]}"
+        do
             filename="${pathname##*/}"
 
             # Keep files, which are in the current download set
-            if [[ -s "${valid_links}" ]]; then
-                if grep -F -i -q "${filename}" "${valid_links}"; then
+            if [[ -s "${valid_links}" ]]
+            then
+                if grep -F -i -q "${filename}" "${valid_links}"
+                then
                     continue
                 fi
             fi
@@ -143,15 +151,26 @@ function cleanup_client_directory ()
             # are downloaded to the same directory.
             #
             # Valid static files can only be deleted manually.
-            if grep -F -i -q -r "${filename}" "../static"; then
-                log_info_message "Kept valid static file ${filename}"
-                continue
+            if grep -F -i -q -r "${filename}" "../static"
+            then
+                if [[ "${pathname}" == "../client/ofc/glb/office2010-kb2553065-fullfile-x86-glb.exe" ]]
+                then
+                    # The file office2010-kb2553065-fullfile-x86-glb.exe
+                    # was moved from ../client/ofc/glb to
+                    # ../client/o2k10/glb in WSUS Offline Update 11.1. It
+                    # should be deleted from the former location, to
+                    # not appear twice.
+                    log_info_message "The file office2010-kb2553065-fullfile-x86-glb.exe will be deleted from directory ../client/ofc/glb"
+                else
+                    log_info_message "Kept valid static file ${filename}"
+                    continue
+                fi
             fi
 
             # Any remaining files are considered obsolete and will be
             # put into trash or deleted.
+            log_info_message "Trashing/deleting obsolete file ${filename} ..."
             trash_file "${pathname}"
-            log_info_message "Trashed/deleted obsolete file ${filename}"
         done
     fi
 
@@ -162,7 +181,8 @@ function cleanup_client_directory ()
     file_list=("${download_dir}"/*)
     shopt -u nullglob
 
-    if (( ${#file_list[@]} == 0 )); then
+    if (( ${#file_list[@]} == 0 ))
+    then
         rmdir "${download_dir}"
         log_warning_message "Deleted download directory ${download_dir}, because it was empty"
     else

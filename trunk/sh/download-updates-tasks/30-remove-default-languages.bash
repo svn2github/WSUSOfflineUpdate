@@ -1,11 +1,8 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 30-remove-default-languages.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -36,7 +33,7 @@
 
 # ========== Configuration ================================================
 
-declare -ag german_source_files=(
+german_source_files=(
     "../static/StaticDownloadLinks-dotnet.txt"
     "../static/StaticDownloadLinks-dotnet-x86-glb.txt"
     "../static/StaticDownloadLinks-dotnet-x64-glb.txt"
@@ -49,7 +46,7 @@ declare -ag german_source_files=(
 )
 
 
-declare -ag english_source_files=(
+english_source_files=(
     "../static/StaticDownloadLinks-msse-x86-glb.txt"
     "../static/StaticDownloadLinks-msse-x64-glb.txt"
     "../static/StaticDownloadLinks-w60-x86-glb.txt"
@@ -65,11 +62,15 @@ function remove_german_language_support ()
     local pathname=""
 
     log_debug_message "Removing German language support..."
-    for pathname in "${german_source_files[@]}"; do
-        if grep -F -i -q -e 'deu.' -e 'de.' "$pathname"; then
-            log_debug_message "Removing German installers from $pathname"
-            mv "$pathname" "${pathname}.bak"
-            grep -F -i -v -e 'deu.' -e 'de.' "${pathname}.bak" > "$pathname" || true
+    for pathname in "${german_source_files[@]}"
+    do
+        if grep -F -i -q -e 'deu.' -e 'de.' "${pathname}"
+        then
+            log_debug_message "Removing German installers from ${pathname}"
+            mv "${pathname}" "${pathname}.bak"
+            grep -F -i -v -e 'deu.' -e 'de.' "${pathname}.bak" > "${pathname}" || true
+            # Keep file modification date
+            touch -r "${pathname}.bak" "${pathname}"
             rm "${pathname}.bak"
         fi
     done
@@ -82,11 +83,15 @@ function remove_english_language_support ()
     local pathname=""
 
     log_debug_message "Removing English language support..."
-    for pathname in "${english_source_files[@]}"; do
-        if grep -F -i -q -e 'enu.' -e 'us.' "$pathname"; then
-            log_debug_message "Removing English installers from $pathname"
-            mv "$pathname" "${pathname}.bak"
-            grep -F -i -v -e 'enu.' -e 'us.' "${pathname}.bak" > "$pathname" || true
+    for pathname in "${english_source_files[@]}"
+    do
+        if grep -F -i -q -e 'enu.' -e 'us.' "${pathname}"
+        then
+            log_debug_message "Removing English installers from ${pathname}"
+            mv "${pathname}" "${pathname}.bak"
+            grep -F -i -v -e 'enu.' -e 'us.' "${pathname}.bak" > "${pathname}" || true
+            # Keep file modification date
+            touch -r "${pathname}.bak" "${pathname}"
             rm "${pathname}.bak"
         fi
     done

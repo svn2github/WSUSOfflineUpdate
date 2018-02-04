@@ -1,11 +1,8 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: messages.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -40,14 +37,14 @@
 # breaks within words.
 function show_message ()
 {
-    printf '%s\n' "$*" | fold -s -w "$COLUMNS"
+    printf '%s\n' "$*" | fold -s -w "${COLUMNS}"
     return 0
 }
 
 function log_message ()
 {
-    printf '%s\n' "$*" | fold -s -w "$COLUMNS"
-    printf '%s\n' "$(date "+%F %T") - $*" >> "$logfile"
+    printf '%s\n' "$*" | fold -s -w "${COLUMNS}"
+    printf '%s\n' "$(date "+%F %T") - $*" >> "${logfile}"
     return 0
 }
 
@@ -88,7 +85,8 @@ function fail ()
 # but this is only meant for development.
 function log_debug_message ()
 {
-    if [[ "$debug" == "enabled" ]]; then
+    if [[ "${debug}" == "enabled" ]]
+    then
         log_message "Debug: $*"
     fi
     return 0
@@ -106,8 +104,9 @@ function show_backtrace ()
 
     # The bash internal command "caller" is meant for the bash debugger,
     # but it can be used without one.
-    while output="$(caller $depth)"; do
-        printf '%s\n' "Caller $depth: $output"
+    while output="$(caller ${depth})"
+    do
+        printf '%s\n' "Caller ${depth}: ${output}"
         depth="$(( depth + 1 ))"
     done
 
@@ -131,11 +130,13 @@ function ask_question ()
     local answer=""
 
     show_message "${question}"
-    if [[ -n "${help_text}" ]]; then
+    if [[ -n "${help_text}" ]]
+    then
         show_message "${help_text}"
     fi
 
-    while true; do
+    while true
+    do
         read -r -p "[Y/n]: " answer
         # Assume "Yes", if only return is pressed
         case "${answer:-Y}" in

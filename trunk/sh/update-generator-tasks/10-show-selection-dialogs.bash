@@ -1,11 +1,8 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 10-show-selection-dialogs.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -37,35 +34,35 @@
 # ========== Global variables =============================================
 
 update_name=""
-declare -ag download_command=("./download-updates.bash")
+download_command=( "./download-updates.bash" )
 
 # ========== Functions ====================================================
 
 function show_selection_dialogs ()
 {
-    [[ "$debug" == "disabled" ]] && clear
+    [[ "${debug}" == "disabled" ]] && clear
     select_update
 
-    [[ "$debug" == "disabled" ]] && clear
+    [[ "${debug}" == "disabled" ]] && clear
     select_language
 
-    [[ "$debug" == "disabled" ]] && clear
-    case "$update_name" in
+    [[ "${debug}" == "disabled" ]] && clear
+    case "${update_name}" in
         w60 | w60-x64 | w61 | w61-x64)
             select_options "${options_menu_windows_vista[@]}"
         ;;
         w62-x64 | w63 | w63-x64 | w100 | w100-x64)
             select_options "${options_menu_windows_8[@]}"
         ;;
-        o2k7 | o2k10 | o2k10-x64 | o2k13 | o2k13-x64 | o2k16 | o2k16-x64)
+        o2k10 | o2k10-x64 | o2k13 | o2k13-x64 | o2k16 | o2k16-x64)
             select_options "${options_menu_office[@]}"
         ;;
         *)
-            fail "Update $update_name was not found."
+            fail "Update ${update_name} was not found."
         ;;
     esac
 
-    [[ "$debug" == "disabled" ]] && clear
+    [[ "${debug}" == "disabled" ]] && clear
     confirm_download_command "${download_command[@]}"
     return 0
 }
@@ -79,8 +76,10 @@ function select_update ()
     echo "Update selection"
     echo "----------------"
     PS3="Please select your update: "
-    select menu_selection in "${updates_menu[@]}"; do
-        if [[ -n "${menu_selection}" ]]; then
+    select menu_selection in "${updates_menu[@]}"
+    do
+        if [[ -n "${menu_selection}" ]]
+        then
             break
         else
             echo "Please try again!"
@@ -89,10 +88,10 @@ function select_update ()
     PS3=""
 
     read -r update_name update_description <<< "${menu_selection}"
-    download_command+=("$update_name")
+    download_command+=( "${update_name}" )
 
-    log_debug_message "Update name:  $update_name"
-    log_debug_message "Description:  $update_description"
+    log_debug_message "Update name:  ${update_name}"
+    log_debug_message "Description:  ${update_description}"
     log_debug_message "Command:      ${download_command[*]}"
     return 0
 }
@@ -107,8 +106,10 @@ function select_language ()
     echo "Language selection"
     echo "------------------"
     PS3="Please select your language: "
-    select menu_selection in "${languages_menu[@]}"; do
-        if [[ -n "${menu_selection}" ]]; then
+    select menu_selection in "${languages_menu[@]}"
+    do
+        if [[ -n "${menu_selection}" ]]
+        then
             break
         else
             echo "Please try again!"
@@ -117,10 +118,10 @@ function select_language ()
     PS3=""
 
     read -r language_name language_description <<< "${menu_selection}"
-    download_command+=("$language_name")
+    download_command+=( "${language_name}" )
 
-    log_debug_message "Language name: $language_name"
-    log_debug_message "Description:   $language_description"
+    log_debug_message "Language name: ${language_name}"
+    log_debug_message "Description:   ${language_description}"
     log_debug_message "Command line:  ${download_command[*]}"
     return 0
 }
@@ -135,10 +136,12 @@ function select_options ()
 
     echo "Optional downloads"
     echo "------------------"
-    while (( $# > 0 )); do
+    while (( $# > 0 ))
+    do
         read -r option_name option_description <<< "$1"
 
-        if ask_question "Include ${option_description}?"; then
+        if ask_question "Include ${option_description}?"
+        then
             download_command+=("${option_name}")
         fi
 
@@ -156,7 +159,8 @@ function confirm_download_command ()
     show_message "${download_command[*]}"
     echo ""
 
-    if ask_question "Do you wish to execute is now?"; then
+    if ask_question "Do you wish to execute is now?"
+    then
         exec "${download_command[@]}"
     fi
     return 0

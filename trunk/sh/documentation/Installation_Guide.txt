@@ -1,11 +1,9 @@
-Installation guide for the Linux download scripts, version 1.0-beta-5
-=====================================================================
-Follow this guide to install the required packages and to download and
-install WSUS Offline Update and the new Linux scripts.
-
-WSUS Offline Update now includes the new Linux download scripts. Then
-you don't need to install the Linux scripts separately, but you should
-still review the needed packages from your Linux distribution.
+Installation guide for the Linux download scripts, version 1.0
+==============================================================
+WSUS Offline Update already includes the new Linux download scripts. You
+don't need to install the Linux scripts separately, as it was necessary
+for the first beta versions, but you should review the needed packages
+from your Linux distribution.
 
 
 Install the required and recommended packages
@@ -52,75 +50,54 @@ package name md5deep.
 
 Note, that both packages md5deep and hashdeep install a series of
 related applications: hashdeep, md5deep, sha1deep, sha256deep, tigerdeep,
-and whirlpooldeep. For the next steps, you always need the application
-"hashdeep", regardless of the package name.
+and whirlpooldeep. Throughout WSUS Offline Update, you always need the
+application "hashdeep", regardless of the package name.
 
 
 Download and unpack the wsusoffline archive
 -------------------------------------------
-The new Linux download scripts still need the configuration files of
-the WSUS Offline Update installation, to calculate static and dynamic
-update lists. These are the files in the directories static, exclude,
-client/static, client/exclude, and xslt.
+Download the newest wsusoffline archive from the download page
+http://download.wsusoffline.net/ and unpack it. Note, that the zip archive
+comes with an accompanying hashes files. You can use it to verify the
+download with:
 
-Also, the Linux download scripts can only replace the download part
-of WSUS Offline Update. To install the updates, you surely need the
-UpdateInstaller.exe and all other files in the client subdirectory.
+  hashdeep -a -v -v -l -k wsusoffline1111_hashes.txt wsusoffline1111.zip
 
-In previous versions of the Linux download script, it was necessary
-to download the wsusoffline archive first. Starting with version
-1.0-beta-4, you can skip this part and let the Linux scripts do the
-initial installation of the wsusoffline archive.
+The new Linux scripts are included in the "sh" subdirectory. Due to
+the packaging on Windows, the scripts are not yet executable. Run the
+included script fix-file-permissions.bash once as:
 
+  bash fix-file-permissions.bash
 
-Download and unpack the archive for the new Linux scripts
----------------------------------------------------------
+to make the scripts update-generator.bash, download-updates.bash,
+get-all-updates.bash, and some others executable.
 
-* Create an enclosing directory "wsusoffline" and change to that
-  directory. This directory will receive both the Linux download scripts
-  and the contents of the wsusoffline archive.
+You can then use the script update-generator.bash to interactively select
+one update, language and the available options to download. This script
+doesn't allow multiple selections for update and language, though.
 
-  If you already downloaded the wsusoffline archive and unpacked it,
-  you can just change to the directory "wsusoffline".
-
-  mkdir wsusoffline
-  cd wsusoffline
+You can also use the script get-all-updates.bash as a template: This
+script downloads all updates with all available options for the default
+languages German and English. But it is also meant for customization
+– you can simply comment out or delete all items you don't need.
 
 
-* Download the archive and the hashes file to the directory wsusoffline:
+Notes
+-----
+The new Linux scripts don't work alone – they need the
+configuration files from the wsusoffline installation. Also, the
+Linux download scripts can only replace the Windows download scripts,
+e.g. DownloadUpdates.cmd. To install the updates, you surely need the
+files in the client directory, e.g. the application UpdateInstaller.exe.
 
-  wget http://downloads.hartmut-buhrmester.de/sh-new-1.0-beta-5.tar.gz
-  wget http://downloads.hartmut-buhrmester.de/hashes-sh-new-1.0-beta-5.txt
+Therefore, you should not download the Linux scripts separately, as it
+was necessary for the first beta versions. Just get the latest wsusoffline
+archive and find the Linux scripts in the "sh" subdirectory.
 
-
-* Verify the integrity of the archive:
-
-  hashdeep -a -v -v -l -k hashes-sh-new-1.0-beta-5.txt sh-new-1.0-beta-5.tar.gz
-
-
-* Unpack the archive in the directory wsusoffline:
-
-  tar xvzf sh-new-1.0-beta-5.tar.gz
-
-
-  This will create a new directory "sh-new-1.0-beta-5".
-
-
-* Change to the directory sh-new-1.0-beta-5 and run the script
-  update-generator.bash. This script will do a few tests first. If the
-  script does not find the necessary files of the wsusoffline archive,
-  it will offer to download and install this archive itself. Just
-  acknowledge this request.
-
-  After the script has installed the wsusoffline archive, it will show
-  the selection menus for the Windows and Office updates and optional
-  downloads to fetch.
-
-  cd sh-new-1.0-beta-5
-  ./update-generator.bash
-
-
-If you need to copy or move the installation directory, please be sure
+If you need to copy or move the wsusoffline directory, please make sure
 to keep the modification date of all files. You could use "cp --archive"
-or "cp --preserve" instead of just "cp". This is important for the update
-of the configuration files of WSUS Offline Update.
+or "cp --preserve" instead of just "cp". This is important for all files
+throughout WSUS Offline Update.
+
+You can find the complete documentation is in the subdirectory
+"documentation".

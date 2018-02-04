@@ -1,11 +1,8 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 20-start-logging.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -37,8 +34,10 @@ function set_wou_version ()
 {
     wou_version="not-available"
 
-    if require_non_empty_file "../cmd/DownloadUpdates.cmd"; then
-        if  wou_version="$(grep_dos -F -- "set WSUSOFFLINE_VERSION=" ../cmd/DownloadUpdates.cmd)"; then
+    if require_non_empty_file "../cmd/DownloadUpdates.cmd"
+    then
+        if  wou_version="$(grep_dos -F -- "set WSUSOFFLINE_VERSION=" ../cmd/DownloadUpdates.cmd)"
+        then
             wou_version="${wou_version/set WSUSOFFLINE_VERSION=/}"
         fi
     fi
@@ -47,14 +46,15 @@ function set_wou_version ()
 
 function create_logfile ()
 {
-    if [[ -f "$logfile" ]]; then
+    if [[ -f "${logfile}" ]]
+    then
         {
             echo ""
             echo "--------------------------------------------------------------------------------"
             echo ""
-        } >> "$logfile"
+        } >> "${logfile}"
     else
-        touch "$logfile"
+        touch "${logfile}"
     fi
     return 0
 }
@@ -63,12 +63,14 @@ function print_info_block ()
 {
     local linux_details=""
 
-    log_info_message "Starting $script_name $script_version ($release_date)"
+    log_info_message "Starting ${script_name} ${script_version} (${release_date})"
     log_info_message "Command line: ${command_line}"
-    if [[ "$wou_version" != "not-available" ]]; then
-        log_info_message "Running on WSUS Offline Update version $wou_version"
+    if [[ "${wou_version}" != "not-available" ]]
+    then
+        log_info_message "Running on WSUS Offline Update version ${wou_version}"
     fi
-    if [[ -f ../client/builddate.txt ]]; then
+    if [[ -f ../client/builddate.txt ]]
+    then
         log_info_message "Repository last updated on $(cat_dos ../client/builddate.txt)"
     fi
 
@@ -76,7 +78,8 @@ function print_info_block ()
     # lsb-release. Although the Linux Standard Base is not supported
     # anymore by Debian, lsb_release is still useful by itself, to get
     # information about the Linux distribution.
-    if type -P lsb_release > /dev/null; then
+    if type -P lsb_release > /dev/null
+    then
         linux_details="$(lsb_release --all 2> /dev/null)"
     else
         linux_details="not-available"
@@ -86,12 +89,14 @@ function print_info_block ()
     # distribution and environment. This is only for reference and not
     # displayed in the terminal window.
     #
-    # $OSTYPE is an environment variable, which is set by the bash itself.
+    # ${OSTYPE} is an environment variable, which is set by the bash
+    # itself.
     {
         printf '%s\n' "Local time:     $(date -R)"  # RFC 2822 format
         printf '%s\n' "OS type:        ${OSTYPE}"
         printf '%s\n' "Kernel name:    ${kernel_name}"
         printf '%s\n' "Kernel details: ${kernel_details}"
+        printf '%s\n' "Bash version:   ${BASH_VERSION}"
         echo ""
         printf '%s\n' "Linux distribution" "${linux_details}"
         echo ""

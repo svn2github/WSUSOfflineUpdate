@@ -1,11 +1,8 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 60-main-updates.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -36,7 +33,8 @@
 
 # ========== Global variables =============================================
 
-if [[ "$prefer_seconly" == enabled ]]; then
+if [[ "${prefer_seconly}" == enabled ]]
+then
     used_superseded_updates_list=../exclude/ExcludeList-superseded-seconly.txt
 else
     used_superseded_updates_list=../exclude/ExcludeList-superseded.txt
@@ -48,9 +46,10 @@ function get_main_updates ()
 {
     local current_lang=""
 
-    case "$update_name" in
+    case "${update_name}" in
         w60 | w60-x64 | w61 | w61-x64 | w62-x64 | w63 | w63-x64 | w100 | w100-x64)
-            if [[ "$include_win_glb" == "enabled" ]]; then
+            if [[ "${include_win_glb}" == "enabled" ]]
+            then
                 process_main_update win x86 glb
             else
                 log_info_message "Skipped processing of \"win glb\" due to preferences settings"
@@ -58,15 +57,16 @@ function get_main_updates ()
             fi
             process_main_update "${update_name/-x64/}" "${update_architecture}" glb
         ;;
-        o2k7 | o2k10 | o2k10-x64 | o2k13 | o2k13-x64)
-            for current_lang in glb ${language_list//,/ }; do
+        o2k10 | o2k10-x64 | o2k13 | o2k13-x64)
+            for current_lang in glb ${language_list//,/ }
+            do
                 process_main_update ofc x86 "${current_lang}"
                 process_main_update "${update_name/-x64/}" "${update_architecture}" "${current_lang}"
             done
         ;;
         o2k16 | o2k16-x64)
             process_main_update ofc x86 glb
-            process_main_update o2k16 "$update_architecture" glb
+            process_main_update o2k16 "${update_architecture}" glb
         ;;
         *)
             fail "${FUNCNAME[0]} - Unknown update name: ${name}"
@@ -75,8 +75,9 @@ function get_main_updates ()
 
     # Installers for .Net frameworks, which depend on the architecture,
     # and dynamic updates for .Net frameworks
-    if [[ "${included_downloads[*]}" == *dotnet* ]]; then
-        process_main_update dotnet "$update_architecture" glb
+    if [[ "${included_downloads[*]}" == *dotnet* ]]
+    then
+        process_main_update dotnet "${update_architecture}" glb
     fi
     return 0
 }
@@ -91,7 +92,7 @@ function process_main_update ()
 
     # Create naming scheme.
     #
-    # The variable $timestamp_pattern is used to create temporary files
+    # The variable ${timestamp_pattern} is used to create temporary files
     # like the timestamp files and the static and dynamic download
     # lists. It is also used in messages to identify the download task.
     #
@@ -129,7 +130,8 @@ function process_main_update ()
     case "${name}" in
         win | w62 | w63 | w100)
             timestamp_pattern="${name}-${arch}-${lang}"
-            if [[ "${arch}" == "x86" ]]; then
+            if [[ "${arch}" == "x86" ]]
+            then
                 hashes_file="../client/md/hashes-${name}-${lang}.txt"
                 hashed_dir="../client/${name}/${lang}"
                 download_dir="../client/${name}/${lang}"
@@ -141,7 +143,8 @@ function process_main_update ()
         ;;
         w60 | w61)
             timestamp_pattern="${name}-${arch}-${language_list}"
-            if [[ "${arch}" == "x86" ]]; then
+            if [[ "${arch}" == "x86" ]]
+            then
                 hashes_file="../client/md/hashes-${name}-${lang}.txt"
                 hashed_dir="../client/${name}/${lang}"
                 download_dir="../client/${name}/${lang}"
@@ -151,7 +154,7 @@ function process_main_update ()
                 download_dir="../client/${name}-${arch}/${lang}"
             fi
         ;;
-        ofc | o2k7 | o2k10 | o2k13 | o2k16)
+        ofc | o2k10 | o2k13 | o2k16)
             timestamp_pattern="${name}-${arch}-${lang}"
             hashes_file="../client/md/hashes-${name}-${lang}.txt"
             hashed_dir="../client/${name}/${lang}"
@@ -193,24 +196,26 @@ function process_main_update ()
     valid_dynamic_links="${temp_dir}/ValidDynamicLinks-${timestamp_pattern}.txt"
     valid_links="${temp_dir}/ValidLinks-${timestamp_pattern}.txt"
 
-    if same_day "$timestamp_file" "${interval_length}"; then
+    if same_day "${timestamp_file}" "${interval_length}"
+    then
         log_info_message "Skipped processing of \"${timestamp_pattern//-/ }\", because it has already been done less than ${interval_description} ago"
     else
         log_info_message "Start processing of \"${timestamp_pattern//-/ }\" ..."
 
         seconly_safety_guard "${name}"
-        verify_integrity_database "$hashed_dir" "$hashes_file"
-        calculate_static_updates "${name}" "${arch}" "${lang}" "$valid_static_links"
-        calculate_dynamic_updates "${name}" "${arch}" "${lang}" "$valid_dynamic_links"
-        download_static_files "$download_dir" "$valid_static_links"
-        download_multiple_files "$download_dir" "$valid_dynamic_links"
-        cleanup_client_directory "$download_dir" "$valid_static_links" "$valid_dynamic_links" "$valid_links"
-        verify_digital_file_signatures "$download_dir"
-        create_integrity_database "$hashed_dir" "$hashes_file"
-        verify_embedded_checksums "$hashed_dir" "$hashes_file"
+        verify_integrity_database "${hashed_dir}" "${hashes_file}"
+        calculate_static_updates "${name}" "${arch}" "${lang}" "${valid_static_links}"
+        calculate_dynamic_updates "${name}" "${arch}" "${lang}" "${valid_dynamic_links}"
+        download_static_files "${download_dir}" "${valid_static_links}"
+        download_multiple_files "${download_dir}" "${valid_dynamic_links}"
+        cleanup_client_directory "${download_dir}" "${valid_static_links}" "${valid_dynamic_links}" "${valid_links}"
+        verify_digital_file_signatures "${download_dir}"
+        create_integrity_database "${hashed_dir}" "${hashes_file}"
+        verify_embedded_checksums "${hashed_dir}" "${hashes_file}"
 
-        if (( runtime_errors == initial_errors )); then
-            update_timestamp "$timestamp_file"
+        if (( runtime_errors == initial_errors ))
+        then
+            update_timestamp "${timestamp_file}"
             log_info_message "Done processing of \"${timestamp_pattern//-/ }\""
         else
             log_warning_message "There were $(( runtime_errors - initial_errors )) runtime errors for \"${timestamp_pattern//-/ }\". See the download log for details."
@@ -257,7 +262,7 @@ function calculate_static_updates ()
             # original language from the command line.
             require_file "../static/StaticDownloadLinks-${name}-${arch}-${lang}.txt" || return 0
         ;;
-        ofc | o2k7)
+        ofc)
             # 32-bit downloads only
             require_non_empty_file "../static/StaticDownloadLinks-${name}-${lang}.txt" || return 0
         ;;
@@ -273,15 +278,18 @@ function calculate_static_updates ()
     # Reset output files
     > "${temp_dir}/StaticDownloadLinks-${name}-${arch}-${lang}.txt"
     > "${valid_static_links}"
-    for current_dir in ../static ../static/custom; do
+    for current_dir in ../static ../static/custom
+    do
         # Global "win" updates (since version 10.4), 32-bit Office updates
-        if [[ -s "${current_dir}/StaticDownloadLinks-${name}-${lang}.txt" ]]; then
+        if [[ -s "${current_dir}/StaticDownloadLinks-${name}-${lang}.txt" ]]
+        then
             cat_dos "${current_dir}/StaticDownloadLinks-${name}-${lang}.txt" \
                 >> "${temp_dir}/StaticDownloadLinks-${name}-${arch}-${lang}.txt"
         fi
         # Global updates for Windows and .NET Frameworks, 64-bit Office
         # updates
-        if [[ -s "${current_dir}/StaticDownloadLinks-${name}-${arch}-${lang}.txt" ]]; then
+        if [[ -s "${current_dir}/StaticDownloadLinks-${name}-${arch}-${lang}.txt" ]]
+        then
             cat_dos "${current_dir}/StaticDownloadLinks-${name}-${arch}-${lang}.txt" \
                 >> "${temp_dir}/StaticDownloadLinks-${name}-${arch}-${lang}.txt"
         fi
@@ -297,24 +305,30 @@ function calculate_static_updates ()
         # this point.
         case "${name}" in
             w60)
-                for current_lang in ${language_list//,/ }; do
-                    if [[ -s "${current_dir}/StaticDownloadLinks-ie8-w60-${arch}-${current_lang}.txt" ]]; then
+                for current_lang in ${language_list//,/ }
+                do
+                    if [[ -s "${current_dir}/StaticDownloadLinks-ie8-w60-${arch}-${current_lang}.txt" ]]
+                    then
                         cat_dos "${current_dir}/StaticDownloadLinks-ie8-w60-${arch}-${current_lang}.txt" \
                             >> "${temp_dir}/StaticDownloadLinks-${name}-${arch}-${lang}.txt"
                     fi
                 done
             ;;
             w61)
-                for current_lang in ${language_list//,/ }; do
-                    if [[ -s "${current_dir}/StaticDownloadLinks-ie9-w61-${arch}-${current_lang}.txt" ]]; then
+                for current_lang in ${language_list//,/ }
+                do
+                    if [[ -s "${current_dir}/StaticDownloadLinks-ie9-w61-${arch}-${current_lang}.txt" ]]
+                    then
                         cat_dos "${current_dir}/StaticDownloadLinks-ie9-w61-${arch}-${current_lang}.txt" \
                             >> "${temp_dir}/StaticDownloadLinks-${name}-${arch}-${lang}.txt"
                     fi
                 done
             ;;
             dotnet)
-                for current_lang in ${language_list//,/ }; do
-                    if [[ -s "${current_dir}/StaticDownloadLinks-dotnet-${arch}-${current_lang}.txt" ]]; then
+                for current_lang in ${language_list//,/ }
+                do
+                    if [[ -s "${current_dir}/StaticDownloadLinks-dotnet-${arch}-${current_lang}.txt" ]]
+                    then
                         grep_dos -F -i "dotnetfx35langpack_${arch}" \
                             "${current_dir}/StaticDownloadLinks-dotnet-${arch}-${current_lang}.txt" \
                             >> "${temp_dir}/StaticDownloadLinks-${name}-${arch}-${lang}.txt" || true
@@ -330,7 +344,8 @@ function calculate_static_updates ()
     # used, then Service Packs must be removed again using the file
     # ExcludeList-SPs.txt as a blacklist.
     exclude_lists_static=( "../exclude/custom/ExcludeListForce-all.txt" )
-    if [[ "$include_service_packs" == "disabled" ]]; then
+    if [[ "${include_service_packs}" == "disabled" ]]
+    then
         exclude_lists_static+=( "../exclude/ExcludeList-SPs.txt" )
     fi
     # The combined exclude list is the same for all static downloads;
@@ -344,7 +359,8 @@ function calculate_static_updates ()
     # Static downloads are mostly installers and service packs. If these
     # files are excluded from the download, then the download list may
     # be empty. This is not an error.
-    if ensure_non_empty_file "${valid_static_links}"; then
+    if ensure_non_empty_file "${valid_static_links}"
+    then
         log_info_message "Created file ${valid_static_links##*/}"
     else
         log_warning_message "No static updates found for ${name} ${arch} ${lang}"
@@ -368,7 +384,7 @@ function calculate_dynamic_updates ()
             calculate_dynamic_office_updates "$@"
         ;;
         *)
-            log_debug_message "${FUNCNAME[0]}: Dynamic updates are not available for $name"
+            log_debug_message "${FUNCNAME[0]}: Dynamic updates are not available for ${name}"
         ;;
     esac
     return 0
@@ -409,9 +425,10 @@ function calculate_dynamic_windows_updates ()
     #
     # join -v1 does a "left join" and writes lines, which are unique on
     # the left side.
-    if [[ -s "$used_superseded_updates_list" ]]; then
+    if [[ -s "${used_superseded_updates_list}" ]]
+    then
         join -v1 "${temp_dir}/DynamicDownloadLinks-${name}-${arch}-${lang}.txt" \
-            "$used_superseded_updates_list" \
+            "${used_superseded_updates_list}" \
             > "${temp_dir}/DynamicDownloadLinksPruned-${name}-${arch}-${lang}.txt"
     else
         mv "${temp_dir}/DynamicDownloadLinks-${name}-${arch}-${lang}.txt" \
@@ -425,13 +442,15 @@ function calculate_dynamic_windows_updates ()
         "../exclude/custom/ExcludeList-${name}-${arch}.txt"
         "../exclude/custom/ExcludeListForce-all.txt"
     )
-    if [[ "$prefer_seconly" == enabled ]]; then
+    if [[ "${prefer_seconly}" == enabled ]]
+    then
         exclude_lists_windows+=(
             "../client/exclude/HideList-seconly.txt"
             "../client/exclude/custom/HideList-seconly.txt"
         )
     fi
-    if [[ "$include_service_packs" == disabled ]]; then
+    if [[ "${include_service_packs}" == disabled ]]
+    then
         exclude_lists_windows+=( "../exclude/ExcludeList-SPs.txt" )
     fi
 
@@ -444,7 +463,8 @@ function calculate_dynamic_windows_updates ()
     # Dynamic updates should always be found, except for "win". But this
     # function should not be called with "win", so an empty output file
     # is unexpected.
-    if ensure_non_empty_file "${valid_dynamic_links}"; then
+    if ensure_non_empty_file "${valid_dynamic_links}"
+    then
         log_info_message "Created file ${valid_dynamic_links##*/}"
     else
         log_warning_message "No dynamic updates found for ${name} ${arch} ${lang}"
@@ -478,7 +498,7 @@ function calculate_dynamic_office_updates ()
     local skip_rest=""
 
     # Preconditions
-    [[ "$name" == ofc ]] || return 0
+    [[ "${name}" == ofc ]] || return 0
     require_non_empty_file "../exclude/ExcludeList-superseded.txt" || fail "The required file ExcludeList-superseded.txt is missing"
     require_non_empty_file "${cache_dir}/package.xml" || fail "The required file package.xml is missing"
 
@@ -552,24 +572,31 @@ function calculate_dynamic_office_updates ()
 
     while IFS=';' read -r first_half second_half skip_rest
     do
-        if [[ -z "${second_half}" ]]; then
+        if [[ -z "${second_half}" ]]
+        then
             # Parse an update record
-            if [[ "${bundle_category_id}" == "477b856e-65c4-4473-b621-a8b230bb70d9" ]]; then
+            if [[ "${bundle_category_id}" == "477b856e-65c4-4473-b621-a8b230bb70d9" ]]
+            then
                 IFS=',' read -r update_update_id payload_file_id update_language skip_rest <<< "${first_half}"
-                if [[ -n "${payload_file_id}" ]]; then
-                    if [[ "${lang}" == "glb" ]]; then
+                if [[ -n "${payload_file_id}" ]]
+                then
+                    if [[ "${lang}" == "glb" ]]
+                    then
                         # Updates are considered "global", if there is
                         # no language specified at all, or if English
                         # is the only available language.
-                        if [[ -z "${bundle_language_list}" && -z "${update_language}" ]]; then
+                        if [[ -z "${bundle_language_list}" && -z "${update_language}" ]]
+                        then
                             printf '%s\n' "${payload_file_id},${bundle_update_id}"
-                        elif [[ "${bundle_language_list}" == "en" && "${update_language}" == "en" ]]; then
+                        elif [[ "${bundle_language_list}" == "en" && "${update_language}" == "en" ]]
+                        then
                             printf '%s\n' "${payload_file_id},${bundle_update_id}"
                         fi
                     else
                         # For localized updates, the update language and
                         # the locale must match.
-                        if [[ "${update_language}" == "${language_locale}" ]]; then
+                        if [[ "${update_language}" == "${language_locale}" ]]
+                        then
                             printf '%s\n' "${payload_file_id},${bundle_update_id}"
                         fi
                     fi
@@ -637,7 +664,8 @@ function calculate_dynamic_office_updates ()
     # TODO: this should be done after removing superseded and excluded
     # updates, so that this file is more in sync with the actual downloads
     mkdir -p "../client/ofc"
-    while read -r line; do
+    while read -r line
+    do
         printf '%s\r\n' "${line%%,*},${line##*/}"
     done < "${temp_dir}/UpdateTableURL-${name}-${lang}.csv" \
          > "../client/ofc/UpdateTable-${name}-${lang}.csv"
@@ -654,9 +682,10 @@ function calculate_dynamic_office_updates ()
     # for Windows 7, 8 and 8.1 and the corresponding Windows Server
     # versions. For Office updates, the file ExcludeList-superseded.txt
     # could be used as before.
-    if [[ -s "$used_superseded_updates_list" ]]; then
+    if [[ -s "${used_superseded_updates_list}" ]]
+    then
         join -v1 "${temp_dir}/DynamicDownloadLinks-${name}-${lang}.txt" \
-            "$used_superseded_updates_list" \
+            "${used_superseded_updates_list}" \
             > "${temp_dir}/DynamicDownloadLinksPruned-${name}-${lang}.txt"
     else
         mv "${temp_dir}/DynamicDownloadLinks-${name}-${lang}.txt" \
@@ -671,7 +700,8 @@ function calculate_dynamic_office_updates ()
         "../exclude/custom/ExcludeList-ofc-${lang}.txt"
         "../exclude/custom/ExcludeListForce-all.txt"
     )
-    if [[ "$include_service_packs" == disabled ]]; then
+    if [[ "${include_service_packs}" == disabled ]]
+    then
         exclude_lists_office+=( "../exclude/ExcludeList-SPs.txt" )
     fi
 
@@ -682,7 +712,8 @@ function calculate_dynamic_office_updates ()
         "${exclude_lists_office[@]}"
 
     # Dynamic updates should always be found for "ofc".
-    if ensure_non_empty_file "${valid_dynamic_links}"; then
+    if ensure_non_empty_file "${valid_dynamic_links}"
+    then
         log_info_message "Created file ${valid_dynamic_links##*/}"
     else
         log_warning_message "No dynamic updates found for ${name} ${arch} ${lang}"
@@ -719,7 +750,8 @@ function seconly_safety_guard ()
     local name="$1"
 
     # Preconditions
-    if [[ "${prefer_seconly}" != "enabled" ]]; then
+    if [[ "${prefer_seconly}" != "enabled" ]]
+    then
         log_debug_message "Option prefer_seconly is not enabled"
         return 0
     fi
@@ -748,10 +780,12 @@ function seconly_safety_guard ()
     local day_of_week=""               # weekday names: Monday, Tuesday...
     local second_tuesday=""            # for example 2017-08-08
     local -i second_tuesday_seconds=0  # seconds since 1970-01-01
-    for i in 08 09 10 11 12 13 14; do
+    for i in 08 09 10 11 12 13 14
+    do
         current_date="${this_month}-${i}"
         day_of_week="$(date -d "${current_date}" '+%A')"
-        if [[ "$day_of_week" == "Tuesday" ]]; then
+        if [[ "${day_of_week}" == "Tuesday" ]]
+        then
             second_tuesday="${current_date}"
             second_tuesday_seconds="$(date -d "${current_date}" '+%s')"
         fi
@@ -762,7 +796,8 @@ function seconly_safety_guard ()
 
     local -i this_day_seconds=0
     this_day_seconds="$(date '+%s')"
-    if (( this_day_seconds < second_tuesday_seconds )); then
+    if (( this_day_seconds < second_tuesday_seconds ))
+    then
         return 0
     fi
 
@@ -794,16 +829,19 @@ function seconly_safety_guard ()
     local modification_date=""            # ISO format for display
     local -i modification_date_seconds=0  # seconds since 1970-01-01
     local -i misconfiguration=0
-    for current_file in "${configuration_files[@]}"; do
-        modification_date="$(date -r "$current_file" --iso-8601)"
-        modification_date_seconds="$(date -r "$current_file" '+%s')"
-        if (( modification_date_seconds < second_tuesday_seconds )); then
+    for current_file in "${configuration_files[@]}"
+    do
+        modification_date="$(date -r "${current_file}" --iso-8601)"
+        modification_date_seconds="$(date -r "${current_file}" '+%s')"
+        if (( modification_date_seconds < second_tuesday_seconds ))
+        then
             log_warning_message "The configuration file ${current_file} was last modified on ${modification_date}, which is before the official patch day ${second_tuesday} of this month."
             misconfiguration=1
         fi
     done
 
-    if (( misconfiguration == 1 )); then
+    if (( misconfiguration == 1 ))
+    then
         log_warning_message "\
 The correct handling of security only update rollups for both download
 and installation depends on the configuration files:
@@ -831,7 +869,8 @@ If you have manually updated and verified the configuration files, you
 can set the variable exit_on_configuration_problems to disabled in the
 preferences file.
 "
-        if [[ "${exit_on_configuration_problems}" == "enabled" ]]; then
+        if [[ "${exit_on_configuration_problems}" == "enabled" ]]
+        then
             log_error_message "The script will exit now, to prevent unwanted side effects with the download and installation of security only updates for Windows 7, 8, and 8.1. Setting the variable exit_on_configuration_problems to disabled in the preferences file will let the script continue, regardless of possible configuration problems."
             exit 0
         else

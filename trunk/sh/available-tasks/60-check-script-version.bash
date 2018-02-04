@@ -1,11 +1,8 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 60-check-script-version.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -99,9 +96,11 @@ function compare_sh_versions ()
     local interval_description="${interval_description_configuration_files}"
     local -i initial_errors="${runtime_errors}"
 
-    if [[ "${check_for_self_updates}" == "disabled" ]]; then
+    if [[ "${check_for_self_updates}" == "disabled" ]]
+    then
         log_info_message "Searching for new versions of the Linux scripts is disabled in preferences.bash"
-    elif same_day "${sh_timestamp_file}" "${interval_length}"; then
+    elif same_day "${sh_timestamp_file}" "${interval_length}"
+    then
         log_info_message "Skipped searching for new versions of the Linux scripts, because it has already been done less than ${interval_description} ago"
     else
         log_info_message "Searching for new versions of the Linux scripts..."
@@ -111,14 +110,17 @@ function compare_sh_versions ()
 
         # Search for the most recent version of the Linux scripts
         download_single_file "./versions" "http://downloads.hartmut-buhrmester.de/available-version.txt"
-        if (( runtime_errors == initial_errors )); then
-            if require_non_empty_file "./versions/available-version.txt"; then
+        if (( runtime_errors == initial_errors ))
+        then
+            if require_non_empty_file "./versions/available-version.txt"
+            then
                 # Appending the variable "ignored_fields" to the end
                 # allows future extensions of the file format.
                 read -r sh_available_version sh_available_archive sh_available_hashes sh_expanded_dirname ignored_fields < ./versions/available-version.txt
 
                 # Compare versions
-                if [[ "${sh_installed_version}" == "${sh_available_version}" ]]; then
+                if [[ "${sh_installed_version}" == "${sh_available_version}" ]]
+                then
                     log_info_message "No newer version of the Linux scripts found"
                     # The timestamp is updated here, to do the version check
                     # only once daily.
@@ -148,7 +150,8 @@ function confirm_sh_self_update ()
     local answer=""
 
     log_info_message "Do you want to install the new version now?"
-    if [[ "${unattended_updates:-disabled}" == enabled ]]; then
+    if [[ "${unattended_updates:-disabled}" == enabled ]]
+    then
         cat <<EOF
 ---------------------------------------------------------------------------
 Note: This question automatically selects "Yes" after 30 seconds, to
@@ -217,7 +220,8 @@ function sh_self_update ()
     #
     # Both directory names must be set
 
-    if [[ -d "${temp_dir}/${sh_expanded_dirname}" ]]; then
+    if [[ -d "${temp_dir}/${sh_expanded_dirname}" ]]
+    then
         rm -r "${temp_dir:?variable_not_set}/${sh_expanded_dirname:?variable_not_set}"
     fi
 
@@ -225,7 +229,8 @@ function sh_self_update ()
     tar -x -v -z -C "${temp_dir}" -f "${temp_dir}/${archive_filename}" || exit 1
 
     log_info_message "Searching unpacked directory..."
-    if [[ -d "${temp_dir}/${sh_expanded_dirname}" ]]; then
+    if [[ -d "${temp_dir}/${sh_expanded_dirname}" ]]
+    then
         log_info_message "Found directory: ${temp_dir}/${sh_expanded_dirname}"
     else
         log_error_message "Directory ${temp_dir}/${sh_expanded_dirname} was not found"
@@ -239,8 +244,10 @@ function sh_self_update ()
     file_list=("${temp_dir}/${sh_expanded_dirname}"/*)
     shopt -u nullglob
 
-    if (( ${#file_list[@]} > 0 )); then
-        for current_item in "${file_list[@]}"; do
+    if (( ${#file_list[@]} > 0 ))
+    then
+        for current_item in "${file_list[@]}"
+        do
             log_info_message "Copying ${current_item} ..."
             cp -a -t "." "${current_item}"
         done
@@ -251,7 +258,8 @@ function sh_self_update ()
     log_info_message "Recomparing versions of the Linux scripts:"
     log_info_message "- Installed version: ${sh_installed_version}"
     log_info_message "- Available version: ${sh_available_version}"
-    if [[ "${sh_installed_version}" == "${sh_available_version}" ]]; then
+    if [[ "${sh_installed_version}" == "${sh_available_version}" ]]
+    then
         log_info_message "The update of the Linux scripts was successful"
 
         # Postprocessing

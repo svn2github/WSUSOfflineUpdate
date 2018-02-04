@@ -1,11 +1,8 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 30-check-needed-applications.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -94,41 +91,49 @@ function check_needed_applications ()
 
     log_info_message "Checking needed applications..."
 
-    for binary_name in xmlstarlet xml; do
-        if type -P "$binary_name" > /dev/null; then
-            xmlstarlet="$binary_name"
+    for binary_name in xmlstarlet xml
+    do
+        if type -P "${binary_name}" > /dev/null
+        then
+            xmlstarlet="${binary_name}"
             break
         fi
     done
 
-    if [[ -z "$xmlstarlet" ]]; then
+    if [[ -z "${xmlstarlet}" ]]
+    then
         log_info_message "Please install the package xmlstarlet"
         missing_binaries="$(( missing_binaries + 1 ))"
     fi
 
-    for binary_name in cabextract wget; do
-        if ! type -P "$binary_name" > /dev/null; then
-            log_info_message "Please install the package $binary_name"
+    for binary_name in cabextract wget
+    do
+        if ! type -P "${binary_name}" > /dev/null
+        then
+            log_info_message "Please install the package ${binary_name}"
             missing_binaries="$(( missing_binaries + 1 ))"
         fi
     done
 
-    if ! type -P hashdeep > /dev/null; then
-        log_info_message "Please install the command hashdeep,
+    if ! type -P hashdeep > /dev/null
+    then
+        log_info_message "Please install the application hashdeep,
 - from package md5deep for Debian 7 Wheezy
 - from package md5deep for Debian 8 Jessie
 - from package hashdeep for Debian 8 Jessie-Backports
-  Generally, install the package hashdeep, if available
-  Otherwise, install the package md5deep, which used to provide the command hashdeep"
+  Generally, install the package hashdeep, if available;
+  otherwise, install the package md5deep, which used to provide the application hashdeep"
         missing_binaries="$(( missing_binaries + 1 ))"
         echo ""
     fi
 
-    if (( missing_binaries == 1 )); then
-        log_error_message "$missing_binaries needed command is missing"
+    if (( missing_binaries == 1 ))
+    then
+        log_error_message "${missing_binaries} needed application is missing"
         exit 1
-    elif (( missing_binaries > 1 )); then
-        log_error_message "$missing_binaries needed commands are missing"
+    elif (( missing_binaries > 1 ))
+    then
+        log_error_message "${missing_binaries} needed applications are missing"
         exit 1
     fi
 }
@@ -150,19 +155,22 @@ function check_recommended_applications ()
 
     log_info_message "Checking recommended applications..."
 
-    for binary_name in gvfs-trash trash-put; do
-        if type -P "$binary_name" > /dev/null; then
-            linux_trash_handler="$binary_name"
+    for binary_name in gvfs-trash trash-put
+    do
+        if type -P "${binary_name}" > /dev/null
+        then
+            linux_trash_handler="${binary_name}"
             break
         fi
     done
 
-    if [[ -z "$linux_trash_handler" ]]; then
+    if [[ -z "${linux_trash_handler}" ]]
+    then
         log_info_message "Please install a trash handler, to move files into the trash:
 - gvfs-trash from package gvfs-bin for GNOME and LXDE
 - trash-put from package trash-cli for other desktop environments and window managers"
     else
-        log_info_message "Found Linux trash handler: $linux_trash_handler"
+        log_info_message "Found Linux trash handler: ${linux_trash_handler}"
     fi
 }
 

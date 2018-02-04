@@ -1,11 +1,8 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 40-included-downloads.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -42,9 +39,11 @@ function get_included_downloads ()
 {
     local current_download=""
 
-    if (( ${#included_downloads[@]} > 0 )); then
-        for current_download in "${included_downloads[@]}"; do
-            process_included_download "$current_download"
+    if (( ${#included_downloads[@]} > 0 ))
+    then
+        for current_download in "${included_downloads[@]}"
+        do
+            process_included_download "${current_download}"
         done
     fi
     return 0
@@ -54,7 +53,7 @@ function get_included_downloads ()
 function process_included_download ()
 {
     local download_name="$1"
-    local initial_errors="$runtime_errors"
+    local initial_errors="${runtime_errors}"
 
     # All paths are relative to the home directory of the download script.
     local timestamp_pattern="not-available"
@@ -69,12 +68,12 @@ function process_included_download ()
     # The name of the timestamp files is
     # timestamp-${name}-${arch}-${lang}.txt
     #
-    # - $arch is "${update_architecture}" or "all" for
+    # - ${arch} is "${update_architecture}" or "all" for
     #   architecture-independent downloads
-    # - $lang is "${language_list}" or "glb" for global/multilingual
+    # - ${lang} is "${language_list}" or "glb" for global/multilingual
     #   downloads
 
-    case "$download_name" in
+    case "${download_name}" in
         wsus)
             timestamp_pattern="wsus-all-glb"
             hashes_file="../client/md/hashes-wsus.txt"
@@ -130,20 +129,22 @@ function process_included_download ()
     timestamp_file="${timestamp_dir}/timestamp-${timestamp_pattern}.txt"
     static_download_links="${temp_dir}/StaticDownloadLinks-${timestamp_pattern}.txt"
 
-    if same_day "$timestamp_file" "${interval_length}"; then
+    if same_day "${timestamp_file}" "${interval_length}"
+    then
         log_info_message "Skipped processing of \"${timestamp_pattern//-/ }\", because it has already been done less than ${interval_description} ago"
     else
         log_info_message "Start processing of \"${timestamp_pattern//-/ }\" ..."
 
-        verify_integrity_database "$hashed_dir" "$hashes_file"
-        calculate_static_downloads "$download_name" "$static_download_links"
-        download_static_files "$download_dir" "$static_download_links"
-        cleanup_client_directory "$download_dir" "$static_download_links" "not-available" "$static_download_links"
-        verify_digital_file_signatures "$download_dir"
-        create_integrity_database "$hashed_dir" "$hashes_file"
+        verify_integrity_database "${hashed_dir}" "${hashes_file}"
+        calculate_static_downloads "${download_name}" "${static_download_links}"
+        download_static_files "${download_dir}" "${static_download_links}"
+        cleanup_client_directory "${download_dir}" "${static_download_links}" "not-available" "${static_download_links}"
+        verify_digital_file_signatures "${download_dir}"
+        create_integrity_database "${hashed_dir}" "${hashes_file}"
 
-        if (( runtime_errors == initial_errors )); then
-            update_timestamp "$timestamp_file"
+        if (( runtime_errors == initial_errors ))
+        then
+            update_timestamp "${timestamp_file}"
             log_info_message "Done processing of \"${timestamp_pattern//-/ }\""
         else
             log_warning_message "There were $(( runtime_errors - initial_errors )) runtime errors for \"${timestamp_pattern//-/ }\". See the download log for details."
@@ -162,37 +163,38 @@ function calculate_static_downloads ()
 
     log_info_message "Determining static download links ..."
     # Reset output file
-    > "$static_download_links"
+    > "${static_download_links}"
 
-    case "$download_name" in
+    case "${download_name}" in
         wsus)
-            calculate_static_downloads_wsus "$static_download_links"
+            calculate_static_downloads_wsus "${static_download_links}"
         ;;
         cpp)
-            calculate_static_downloads_cpp "$static_download_links"
+            calculate_static_downloads_cpp "${static_download_links}"
         ;;
         dotnet)
-            calculate_static_downloads_dotnet "$static_download_links"
+            calculate_static_downloads_dotnet "${static_download_links}"
         ;;
         msse)
-            calculate_static_downloads_msse "$static_download_links"
+            calculate_static_downloads_msse "${static_download_links}"
         ;;
         wddefs)
-            calculate_static_downloads_wddefs "$static_download_links"
+            calculate_static_downloads_wddefs "${static_download_links}"
         ;;
         wddefs8)
-            calculate_static_downloads_wddefs8 "$static_download_links"
+            calculate_static_downloads_wddefs8 "${static_download_links}"
         ;;
     esac
-    sort_in_place "$static_download_links"
+    sort_in_place "${static_download_links}"
 
     # Since included updates are only statically defined, and there are
     # no service packs, which could be subtracted, it is an unexpected
     # error, if the static downloads list is empty.
-    if ensure_non_empty_file "$static_download_links"; then
+    if ensure_non_empty_file "${static_download_links}"
+    then
         log_info_message "Created file ${static_download_links##*/}"
     else
-        log_warning_message "No downloads found for $download_name"
+        log_warning_message "No downloads found for ${download_name}"
     fi
     return 0
 }
@@ -207,10 +209,12 @@ function calculate_static_downloads_wsus ()
     local static_download_links="$1"
     local current_dir=""
 
-    for current_dir in ../static ../static/custom; do
-        if [[ -s "${current_dir}/StaticDownloadLinks-wsus.txt" ]]; then
+    for current_dir in ../static ../static/custom
+    do
+        if [[ -s "${current_dir}/StaticDownloadLinks-wsus.txt" ]]
+        then
             cat_dos "${current_dir}/StaticDownloadLinks-wsus.txt" \
-                >> "$static_download_links"
+                >> "${static_download_links}"
         fi
     done
     return 0
@@ -222,13 +226,16 @@ function calculate_static_downloads_cpp ()
     local current_dir=""
     local current_arch=""
 
-    for current_dir in ../static ../static/custom; do
+    for current_dir in ../static ../static/custom
+    do
         # Visual C++ runtime libraries always include both 32-bit and
         # 64-bit versions.
-        for current_arch in x86 x64; do
-            if [[ -s "${current_dir}/StaticDownloadLinks-cpp-${current_arch}-glb.txt" ]]; then
+        for current_arch in x86 x64
+        do
+            if [[ -s "${current_dir}/StaticDownloadLinks-cpp-${current_arch}-glb.txt" ]]
+            then
                 cat_dos "${current_dir}/StaticDownloadLinks-cpp-${current_arch}-glb.txt" \
-                    >> "$static_download_links"
+                    >> "${static_download_links}"
             fi
         done
     done
@@ -241,13 +248,15 @@ function calculate_static_downloads_dotnet ()
     local current_dir=""
     local current_lang=""
 
-    for current_dir in ../static ../static/custom; do
+    for current_dir in ../static ../static/custom
+    do
         # English installers for the .Net Frameworks 3.5, 4.6 and
         # 4.7. These are the only full installers for the .Net Frameworks,
         # and they are needed for all other languages as well.
-        if [[ -s "${current_dir}/StaticDownloadLinks-dotnet.txt" ]]; then
+        if [[ -s "${current_dir}/StaticDownloadLinks-dotnet.txt" ]]
+        then
             cat_dos "${current_dir}/StaticDownloadLinks-dotnet.txt" \
-                >> "$static_download_links"
+                >> "${static_download_links}"
         fi
         # Localized installers for language packs. The names of these
         # installers are similar to the full installers, but the file
@@ -260,16 +269,19 @@ function calculate_static_downloads_dotnet ()
         # The search patterns are extracted from the Windows script
         # AddCustomLanguageSupport.cmd. These patterns match those for
         # the file ..\static\custom\StaticDownloadLinks-dotnet.txt.
-        for current_lang in glb ${language_list//,/ }; do
-            if [[ -s "${current_dir}/StaticDownloadLinks-dotnet-x86-${current_lang}.txt" ]]; then
+        for current_lang in glb ${language_list//,/ }
+        do
+            if [[ -s "${current_dir}/StaticDownloadLinks-dotnet-x86-${current_lang}.txt" ]]
+            then
                 grep_dos -F -i -e "dotNetFx40LP_Full_" \
                                -e "NDP452-KB2901907-"  \
                                -e "NDP46-KB3045557-"   \
                                -e "NDP461-KB3102436-"  \
                                -e "NDP462-KB3151800-"  \
                                -e "NDP47-KB3186497-"   \
+                               -e "NDP471-KB4033342-"  \
                     "${current_dir}/StaticDownloadLinks-dotnet-x86-${current_lang}.txt" \
-                    >> "$static_download_links" || true
+                    >> "${static_download_links}" || true
             fi
         done
     done
@@ -282,11 +294,14 @@ function calculate_static_downloads_msse ()
     local current_dir=""
     local current_lang=""
 
-    for current_dir in ../static ../static/custom; do
-        for current_lang in glb ${language_list//,/ }; do
-            if [[ -s "${current_dir}/StaticDownloadLinks-msse-${update_architecture}-${current_lang}.txt" ]]; then
+    for current_dir in ../static ../static/custom
+    do
+        for current_lang in glb ${language_list//,/ }
+        do
+            if [[ -s "${current_dir}/StaticDownloadLinks-msse-${update_architecture}-${current_lang}.txt" ]]
+            then
                 cat_dos "${current_dir}/StaticDownloadLinks-msse-${update_architecture}-${current_lang}.txt" \
-                    >> "$static_download_links"
+                    >> "${static_download_links}"
             fi
         done
     done
@@ -298,10 +313,12 @@ function calculate_static_downloads_wddefs ()
     local static_download_links="$1"
     local current_dir=""
 
-    for current_dir in ../static ../static/custom; do
-        if [[ -s "${current_dir}/StaticDownloadLink-wddefs-${update_architecture}-glb.txt" ]]; then
+    for current_dir in ../static ../static/custom
+    do
+        if [[ -s "${current_dir}/StaticDownloadLink-wddefs-${update_architecture}-glb.txt" ]]
+        then
             cat_dos "${current_dir}/StaticDownloadLink-wddefs-${update_architecture}-glb.txt" \
-                >> "$static_download_links"
+                >> "${static_download_links}"
         fi
     done
     return 0
@@ -312,13 +329,15 @@ function calculate_static_downloads_wddefs8 ()
     local static_download_links="$1"
     local current_dir=""
 
-    for current_dir in ../static ../static/custom; do
-        if [[ -s "${current_dir}/StaticDownloadLinks-msse-${update_architecture}-glb.txt" ]]; then
+    for current_dir in ../static ../static/custom
+    do
+        if [[ -s "${current_dir}/StaticDownloadLinks-msse-${update_architecture}-glb.txt" ]]
+        then
             grep_dos -F -i -e "mpam-fe.exe" \
                            -e "mpam-fex64.exe" \
                            -e "nis_full.exe" \
                 "${current_dir}/StaticDownloadLinks-msse-${update_architecture}-glb.txt" \
-                >> "$static_download_links" || true
+                >> "${static_download_links}" || true
         fi
     done
     return 0

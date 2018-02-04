@@ -1,11 +1,8 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 50-check-wsusoffline-version.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -67,7 +64,8 @@ wou_timestamp_file="${timestamp_dir}/check-wsusoffline-version.txt"
 
 function get_wou_installed_version ()
 {
-    if require_non_empty_file "../static/StaticDownloadLink-this.txt"; then
+    if require_non_empty_file "../static/StaticDownloadLink-this.txt"
+    then
         wou_installed_archive="$(cat_dos ../static/StaticDownloadLink-this.txt)"
         wou_installed_version="$(basename "${wou_installed_archive}" '.zip')"
     else
@@ -87,8 +85,10 @@ function get_wou_available_version ()
 
     log_info_message "Searching for the most recent version of WSUS Offline Update..."
     download_single_file "../static" "http://download.wsusoffline.net/StaticDownloadLink-recent.txt"
-    if (( runtime_errors == initial_errors )); then
-        if require_non_empty_file "../static/StaticDownloadLink-recent.txt"; then
+    if (( runtime_errors == initial_errors ))
+    then
+        if require_non_empty_file "../static/StaticDownloadLink-recent.txt"
+        then
             wou_available_archive="$(cat_dos ../static/StaticDownloadLink-recent.txt)"
             wou_available_version="$(basename "${wou_available_archive}" '.zip')"
             wou_available_hashes="${wou_available_archive/.zip/_hashes.txt}"
@@ -117,15 +117,17 @@ function wsusoffline_initial_installation
     local answer=""
 
     current_dir="$(pwd)"
-    target_dir="$(dirname "$current_dir")"
+    target_dir="$(dirname "${current_dir}")"
 
-    if ! require_non_empty_file "../static/StaticDownloadLink-this.txt"; then
+    if ! require_non_empty_file "../static/StaticDownloadLink-this.txt"
+    then
         log_info_message "There is no version of WSUS Offline Update installed yet."
 
         # Search for the most recent available version of WSUS Offline
         # Update
         get_wou_available_version
-        if [[ "${wou_available_version}" != "not-available" ]]; then
+        if [[ "${wou_available_version}" != "not-available" ]]
+        then
             log_info_message "The most recent version of WSUS Offline Update is ${wou_available_version}."
             log_warning_message "Note, that the wsusoffline archive will be unpacked OUTSIDE of the Linux scripts directory. At this point, you should have created an enclosing directory, which contains the Linux scripts directory, and which will also get the contents of the wsusoffline archive."
             log_warning_message "The target directory, to which the wsusoffline archive will be extracted, is \"${target_dir}\". Do you wish to proceed and install the wsusoffline archive into this directory?"
@@ -167,19 +169,24 @@ function compare_wsusoffline_versions ()
     local -i interval_length="${interval_length_configuration_files}"
     local interval_description="${interval_description_configuration_files}"
 
-    if [[ "${check_for_self_updates}" == "disabled" ]]; then
+    if [[ "${check_for_self_updates}" == "disabled" ]]
+    then
         log_info_message "Searching for new versions of WSUS Offline Update is disabled in preferences.bash"
-    elif same_day "${wou_timestamp_file}" "${interval_length}"; then
+    elif same_day "${wou_timestamp_file}" "${interval_length}"
+    then
         log_info_message "Skipped searching for new versions of WSUS Offline Update, because it has already been done less than ${interval_description} ago"
     else
         # Get the installed version of WSUS Offline Update
         get_wou_installed_version
-        if [[ "${wou_installed_version}" != "not-available" ]]; then
+        if [[ "${wou_installed_version}" != "not-available" ]]
+        then
             # Search for the most recent version of WSUS Offline Update
             get_wou_available_version
-            if [[ "${wou_available_version}" != "not-available" ]]; then
+            if [[ "${wou_available_version}" != "not-available" ]]
+            then
                 # Compare versions
-                if [[ "${wou_installed_version}" == "${wou_available_version}" ]]; then
+                if [[ "${wou_installed_version}" == "${wou_available_version}" ]]
+                then
                     log_info_message "No newer version of WSUS Offline Update found"
                     # The timestamp is updated here, to do the version
                     # check only once daily.
@@ -210,7 +217,8 @@ function confirm_wsusoffline_self_update ()
     local answer=""
 
     log_info_message "Do you want to install the new version now?"
-    if [[ "${unattended_updates:-disabled}" == enabled ]]; then
+    if [[ "${unattended_updates:-disabled}" == enabled ]]
+    then
         cat <<EOF
 ---------------------------------------------------------------------------
 Note: This question automatically selects "Yes" after 30 seconds, to
@@ -276,7 +284,8 @@ function wsusoffline_self_update ()
 
     # The zip archive should be unpacked to a new directory; any existing
     # directories are removed first
-    if [[ -d "${temp_dir}/wsusoffline" ]]; then
+    if [[ -d "${temp_dir}/wsusoffline" ]]
+    then
         rm -r "${temp_dir}/wsusoffline"
     fi
 
@@ -284,7 +293,8 @@ function wsusoffline_self_update ()
     unzip -q "${temp_dir}/${archive_filename}" -d "${temp_dir}" || exit 1
 
     log_info_message "Searching unpacked directory..."
-    if [[ -d "${temp_dir}/wsusoffline" ]]; then
+    if [[ -d "${temp_dir}/wsusoffline" ]]
+    then
         log_info_message "Found directory: ${temp_dir}/wsusoffline"
     else
         log_error_message "Directory ${temp_dir}/wsusoffline was not found"
@@ -296,8 +306,10 @@ function wsusoffline_self_update ()
     file_list=("${temp_dir}"/wsusoffline/*)
     shopt -u nullglob
 
-    if (( ${#file_list[@]} > 0 )); then
-        for current_item in "${file_list[@]}"; do
+    if (( ${#file_list[@]} > 0 ))
+    then
+        for current_item in "${file_list[@]}"
+        do
             log_info_message "Copying ${current_item} ..."
             cp -a -t ".." "${current_item}"
         done
@@ -306,12 +318,14 @@ function wsusoffline_self_update ()
     # Verify installation of the most recent version of WSUS Offline
     # Update
     get_wou_installed_version
-    if [[ "${wou_installed_version}" != "not-available" ]]; then
+    if [[ "${wou_installed_version}" != "not-available" ]]
+    then
         log_info_message "Recomparing WSUS Offline Update versions:"
         log_info_message "- Installed version: ${wou_installed_version}"
         log_info_message "- Available version: ${wou_available_version}"
 
-        if [[ "${wou_installed_version}" == "${wou_available_version}" ]]; then
+        if [[ "${wou_installed_version}" == "${wou_available_version}" ]]
+        then
             log_info_message "The most recent version of WSUS Offline Update was installed successfully"
 
             # Postprocessing
@@ -353,10 +367,14 @@ function check_custom_static_links ()
     file_list=(../static/custom/*.txt)
     shopt -u nullglob
 
-    if (( ${#file_list[@]} > 0 )); then
-        for current_file in "${file_list[@]}"; do
-            cut_dos -d ',' -f 1 "${current_file}" | while read -r static_download_link; do
-                if ! grep -F -i -q "${static_download_link}" ../static/*.txt; then
+    if (( ${#file_list[@]} > 0 ))
+    then
+        for current_file in "${file_list[@]}"
+        do
+            cut_dos -d ',' -f 1 "${current_file}" | while read -r static_download_link
+            do
+                if ! grep -F -i -q "${static_download_link}" ../static/*.txt
+                then
                     log_warning_message "The following download link was not found anymore: ${static_download_link} from file ${current_file}"
                 fi
             done
@@ -378,6 +396,7 @@ function normalize_file_permissions ()
         ./download-updates.bash \
         ./fix-file-permissions.bash \
         ./get-all-updates.bash \
+        ./rebuild-integrity-database.bash \
         ./update-generator.bash \
         ./comparison-linux-windows/compare-integrity-database.bash \
         ./comparison-linux-windows/compare-update-tables.bash

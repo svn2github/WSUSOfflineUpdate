@@ -1,11 +1,8 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 90-finalization.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -44,45 +41,6 @@ function copy_unzip ()
 }
 
 
-# Change the line endings of the hashes files from Linux to DOS style
-# (carriage return/line feed)
-
-function convert_to_dos ()
-{
-    local -a file_list=()
-    local pathname=""
-    local line=""
-
-    log_info_message "Converting hashes files to DOS line endings ..."
-
-    # This function could possibly use grep with the options
-    # --inverted-match or --files-without-match, but these options seem
-    # to set the return value in an inconsistent way.
-    shopt -s nullglob
-    file_list=(../client/md/*.txt)
-    shopt -u nullglob
-
-    if (( ${#file_list[@]} > 0 )); then
-        for pathname in "${file_list[@]}"; do
-            if ! grep -F -q $'\r' "${pathname}"; then
-                log_info_message "Converting ${pathname}"
-
-                while read -r line; do
-                    printf '%s\r\n' "${line}"
-                done < "${pathname}" \
-                     > "${pathname}.tmp"
-
-                mv "${pathname}.tmp" "${pathname}"
-            fi
-        done
-    fi
-
-    log_info_message "Done"
-    echo ""
-    return 0
-}
-
-
 function remind_build_date ()
 {
     local build_date=""
@@ -98,14 +56,14 @@ function remind_build_date ()
     rm -f "../client/autorun.inf"
 
     log_info_message "Reminding build date..."
-    printf '%s\r\n' "$build_date" > "../client/builddate.txt"
+    printf '%s\r\n' "${build_date}" > "../client/builddate.txt"
 
     log_info_message "Creating autorun.inf file..."
     {
         printf '%s\r\n' "[autorun]"
         printf '%s\r\n' "open=UpdateInstaller.exe"
         printf '%s\r\n' "icon=UpdateInstaller.exe,0"
-        printf '%s\r\n' "action=Run WSUS Offline Update v. $wou_version ($build_date)"
+        printf '%s\r\n' "action=Run WSUS Offline Update v. ${wou_version} (${build_date})"
     } > "../client/autorun.inf"
     echo ""
     return 0
@@ -115,11 +73,14 @@ function remind_build_date ()
 function adjust_update_installer_preferences ()
 {
     log_info_message "Adjusting UpdateInstaller.ini file..."
-    if [[ -f ../client/UpdateInstaller.ini ]]; then
-        if [[ "$prefer_seconly" == enabled ]] && grep -F -i -q "seconly=Disabled" ../client/UpdateInstaller.ini; then
+    if [[ -f ../client/UpdateInstaller.ini ]]
+    then
+        if [[ "${prefer_seconly}" == enabled ]] && grep -F -i -q "seconly=Disabled" ../client/UpdateInstaller.ini
+        then
             log_info_message "Option seconly in UpdateInstaller.ini will be changed to Enabled"
             sed -i 's/seconly=Disabled/seconly=Enabled/g' ../client/UpdateInstaller.ini
-        elif [[ "$prefer_seconly" == disabled ]] && grep -F -i -q "seconly=Enabled" ../client/UpdateInstaller.ini; then
+        elif [[ "${prefer_seconly}" == disabled ]] && grep -F -i -q "seconly=Enabled" ../client/UpdateInstaller.ini
+        then
             log_info_message "Option seconly in UpdateInstaller.ini will be changed to Disabled"
             sed -i 's/seconly=Enabled/seconly=Disabled/g' ../client/UpdateInstaller.ini
         else
@@ -140,7 +101,7 @@ function print_disk_usage ()
     find -L "../client" -maxdepth 1 -type d |
         sort |
         xargs -L1 du -L -h -s |
-        tee -a "$logfile"
+        tee -a "${logfile}"
 
     echo ""
     return 0
@@ -150,8 +111,9 @@ function print_disk_usage ()
 function print_summary ()
 {
     log_info_message "Summary"
-    if (( runtime_errors == 0 )); then
-        log_info_message "Download and file verification errors: $runtime_errors"
+    if (( runtime_errors == 0 ))
+    then
+        log_info_message "Download and file verification errors: ${runtime_errors}"
     else
         log_warning_message "Download and file verification errors: ${runtime_errors}"
     fi
@@ -161,7 +123,6 @@ function print_summary ()
 # ========== Commands =====================================================
 
 copy_unzip
-convert_to_dos
 remind_build_date
 adjust_update_installer_preferences
 print_disk_usage

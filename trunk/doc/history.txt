@@ -1389,6 +1389,8 @@ Version 11.1.1 -- 16.01.18
 - Fix: Replaced superseded Office 2016 Security Update kb4011262 (November 2017) by kb4011574 (January 2018)
 --------------------------------------------------------------------------------
 Version ??.?.? -- ??.??.18
+- Included complete rewrite of the Linux scripts version 1.0 (Special thanks to H. Buhrmester)
+- AutoIt script compiler updated to version 3.3.14.3
 - Fix: Incorrect error handling in UpdateInstaller script (Thanks to "Dalai")
 - Fix: Download part erroneously excluded Security Update kb2631813 for Windows 7 x64 and Windows Server 2008 R2
 - Fix: DoUpdate.cmd script threw false warning about active compatibility mode on Server 2016 systems

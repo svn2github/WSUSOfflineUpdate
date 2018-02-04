@@ -1,11 +1,8 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 20-get-sysinternals-helpers.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -69,12 +66,15 @@ function get_sysinternals_helpers ()
     local initial_errors="${runtime_errors}"
 
     # Get Sysinternals Autologon
-    if [[ ! -f ../client/bin/"${autologon_bin}" ]]; then
+    if [[ ! -f ../client/bin/"${autologon_bin}" ]]
+    then
         log_info_message "Downloading Sysinternals Autologon.exe ..."
         download_single_file ../client/bin "${autologon_link}"
-        if (( runtime_errors == initial_errors )); then
+        if (( runtime_errors == initial_errors ))
+        then
             log_info_message "Unpacking Sysinternals Autologon.exe ..."
-            if unzip ../client/bin/"${autologon_archive}" "${autologon_bin}" -d ../client/bin; then
+            if unzip ../client/bin/"${autologon_archive}" "${autologon_bin}" -d ../client/bin
+            then
                 trash_file ../client/bin/"${autologon_archive}"
                 log_info_message "Done"
             else
@@ -88,12 +88,15 @@ function get_sysinternals_helpers ()
 
     # Get Sysinternals Sigcheck
     initial_errors="${runtime_errors}"
-    if [[ ! -f ../bin/"${sigcheck_bin}" ]]; then
+    if [[ ! -f ../bin/"${sigcheck_bin}" ]]
+    then
         log_info_message "Downloading Sysinternals sigcheck.exe ..."
         download_single_file ../bin "${sigcheck_link}"
-        if (( runtime_errors == initial_errors )); then
+        if (( runtime_errors == initial_errors ))
+        then
             log_info_message "Unpacking Sysinternals sigcheck.exe ..."
-            if unzip ../bin/"${sigcheck_archive}" "${sigcheck_bin}" -d ../bin; then
+            if unzip ../bin/"${sigcheck_archive}" "${sigcheck_bin}" -d ../bin
+            then
                 trash_file ../bin/"${sigcheck_archive}"
                 log_info_message "Done"
             else

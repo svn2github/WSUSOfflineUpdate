@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
 #
 # Filename: fix-file-permissions.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -62,6 +59,7 @@ function fix_file_permissions ()
         ./download-updates.bash \
         ./fix-file-permissions.bash \
         ./get-all-updates.bash \
+        ./rebuild-integrity-database.bash \
         ./update-generator.bash \
         ./comparison-linux-windows/compare-integrity-database.bash \
         ./comparison-linux-windows/compare-update-tables.bash

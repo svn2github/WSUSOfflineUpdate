@@ -1,11 +1,8 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 50-superseded-updates.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -43,29 +40,38 @@
 
 function unpack_wsus_catalog_file ()
 {
-    if require_file "${cache_dir}/package.xml"; then
+    if require_file "${cache_dir}/package.xml"
+    then
         log_info_message "Found cached update catalog file package.xml"
     else
         # Remove formated copy of the file
         rm -f "${cache_dir}/package-formated.xml"
+        mkdir -p "${cache_dir}"
 
-        # cabextract sometimes warns about "possible extra bytes at
-        # end of file". These warnings, as well as the result code, can
-        # (and must) be ignored.
-        #
-        # Compared to version 1.0-beta-3, this warning is not filtered
-        # anymore, because it required a redirection of the error output
-        # to standard output, to be filtered with grep.
-        if [[ -f "../client/wsus/wsusscn2.cab" ]]; then
-            mkdir -p "${cache_dir}"
-            log_info_message "Extracting Microsoft's update catalog file package.xml (ignore any warnings about extra bytes at end of file)..."
-            cabextract -q -d "${temp_dir}" -F "package.cab" "../client/wsus/wsusscn2.cab" || true
-            cabextract -q -d "${cache_dir}" -F "package.xml" "${temp_dir}/package.cab" || true
-            xmlstarlet format "${cache_dir}/package.xml" > "${cache_dir}/package-formated.xml"
+        if [[ -f "../client/wsus/wsusscn2.cab" ]]
+        then
+            # cabextract often warns about "possible extra bytes at end of
+            # file", if the file wsusscn2.cab is tested or expanded. These
+            # warnings can be ignored.
+            log_info_message "Extracting Microsoft's update catalog file (ignore any warnings about extra bytes at end of file)..."
+            if cabextract -d "${temp_dir}" -F "package.cab" "../client/wsus/wsusscn2.cab"
+            then
+                if cabextract -d "${cache_dir}" -F "package.xml" "${temp_dir}/package.cab"
+                then
+                    log_info_message "The file package.xml was extracted successfully."
+                    log_info_message "Creating a formated copy of the file package.xml ..."
+                    "${xmlstarlet}" format "${cache_dir}/package.xml" > "${cache_dir}/package-formated.xml"
+                else
+                    rm -f "${timestamp_dir}/timestamp-wsus-all-glb.txt"
+                    fail "The file package.xml could not be extracted. The script cannot continue without this file."
+                fi
+            else
+                rm -f "${timestamp_dir}/timestamp-wsus-all-glb.txt"
+                fail "The file package.cab could not be extracted. The script cannot continue without this file."
+            fi
         else
-            log_error_message "The required file wsusscn2.cab was not found. The script cannot continue without this file. Please rerun the download to get this file."
             rm -f "${timestamp_dir}/timestamp-wsus-all-glb.txt"
-            exit 1
+            fail "The required file wsusscn2.cab was not found. The script cannot continue without this file."
         fi
     fi
     echo ""
@@ -87,20 +93,24 @@ function check_superseded_updates ()
     # The file ../exclude/ExcludeList-superseded-seconly.txt is new in
     # WSUS Offline Update 10.9. If it doesn't exist yet, both files need
     # to be rebuilt.
-    if [[ ! -f ../exclude/ExcludeList-superseded-seconly.txt ]]; then
+    if [[ ! -f ../exclude/ExcludeList-superseded-seconly.txt ]]
+    then
         rm -f ../exclude/ExcludeList-superseded.txt
     fi
     # The file ExcludeList-superseded.txt originally contained the
     # file names only, but in recent versions of WSUS Offline Update,
     # it contains the complete URLs.
-    if [[ -f ../exclude/ExcludeList-superseded.txt ]]; then
-        if ! grep -F -i -q 'http://' ../exclude/ExcludeList-superseded.txt; then
+    if [[ -f ../exclude/ExcludeList-superseded.txt ]]
+    then
+        if ! grep -F -i -q 'http://' ../exclude/ExcludeList-superseded.txt
+        then
             rm -f ../exclude/ExcludeList-superseded.txt
         fi
     fi
     # If the file ../exclude/ExcludeList-superseded.txt does not exist
     # anymore, it needs to be rebuilt.
-    if [[ -f "../exclude/ExcludeList-superseded.txt" ]]; then
+    if [[ -f "../exclude/ExcludeList-superseded.txt" ]]
+    then
         log_info_message "Found valid list of superseded updates"
     else
         rebuild_superseded_updates
@@ -281,7 +291,8 @@ function rebuild_superseded_updates ()
     # be recalculated as well.
     reevaluate_dynamic_updates
 
-    if ensure_non_empty_file "../exclude/ExcludeList-superseded.txt"; then
+    if ensure_non_empty_file "../exclude/ExcludeList-superseded.txt"
+    then
         log_info_message "Created file ExcludeList-superseded.txt"
     else
         fail "File ExcludeList-superseded.txt was not created"

@@ -1,11 +1,8 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: integrity-database.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -61,7 +58,8 @@ function verify_integrity_database ()
     # preferences settings, then this function returns 0 and any existing
     # checksum files will be deleted (since they will be invalid after
     # new downloads).
-    if [[ "$use_integrity_database" == "disabled" ]]; then
+    if [[ "${use_integrity_database}" == "disabled" ]]
+    then
         log_info_message "Verification of integrity database is disabled in preferences.bash"
         rm -f "${hashes_file}"
         return 0
@@ -72,11 +70,13 @@ function verify_integrity_database ()
     # When the script is first run, neither the hashed directory nor
     # the hashes file exists yet. This is not an error; it only means,
     # that the download task must be run once to create the file.
-    if ! require_directory "${hashed_dir}"; then
+    if ! require_directory "${hashed_dir}"
+    then
         log_info_message "The download directory ${hashed_dir} does not exist yet. This is normal during the first run of the script."
         return 0
     fi
-    if ! require_non_empty_file "${hashes_file}"; then
+    if ! require_non_empty_file "${hashes_file}"
+    then
         log_info_message "The checksum file ${hashes_file} does not exist yet. This is normal during the first run of the script."
         return 0
     fi
@@ -85,22 +85,26 @@ function verify_integrity_database ()
     cat_dos "${hashes_file}" | tr '\\' '/' > "${temp_dir}/${hashes_file_basename}"
 
     pushd "../client/md" > /dev/null
-    if [[ "${hashed_dir_truncated}" == "../dotnet" ]]; then
-        if ! hashdeep_output="$(hashdeep -a -vv -k "${temp_dir}/${hashes_file_basename}" -l ../dotnet/*.exe 2>&1)"; then
+    if [[ "${hashed_dir_truncated}" == "../dotnet" ]]
+    then
+        if ! hashdeep_output="$(hashdeep -a -vv -k "${temp_dir}/${hashes_file_basename}" -l ../dotnet/*.exe 2>&1)"
+        then
             runtime_errors="$(( runtime_errors + 1 ))"
         fi
     else
-        if ! hashdeep_output="$(hashdeep -a -vv -k "${temp_dir}/${hashes_file_basename}" -l -r "$hashed_dir_truncated" 2>&1)"; then
+        if ! hashdeep_output="$(hashdeep -a -vv -k "${temp_dir}/${hashes_file_basename}" -l -r "${hashed_dir_truncated}" 2>&1)"
+        then
             runtime_errors="$(( runtime_errors + 1 ))"
         fi
     fi
     popd > /dev/null
 
-    if (( runtime_errors == initial_errors )); then
-        log_info_message "$hashdeep_output"
+    if (( runtime_errors == initial_errors ))
+    then
+        log_info_message "${hashdeep_output}"
         log_info_message "Verified the integrity of existing files in the directory ${hashed_dir}"
     else
-        log_error_message "$hashdeep_output"
+        log_error_message "${hashdeep_output}"
         log_error_message "The directory ${hashed_dir} has changed since last creating the integrity database"
         rm "${hashes_file}"
     fi
@@ -127,23 +131,27 @@ function create_integrity_database ()
     rm -f "${hashes_file}"
 
     # Preconditions
-    if [[ "$use_integrity_database" == "disabled" ]]; then
+    if [[ "${use_integrity_database}" == "disabled" ]]
+    then
         log_info_message "Creation of integrity database is disabled in preferences.bash"
         return 0
     fi
-    if ! require_directory "${hashed_dir}"; then
+    if ! require_directory "${hashed_dir}"
+    then
         log_warning_message "Aborted creation of integrity database, because the directory \"${hashed_dir}\" does not exist"
         return 0
     fi
 
     # Count files to prevent errors and the creation of empty hashdeep
     # files
-    if [[ "${hashed_dir}" == "../client/dotnet" ]]; then
+    if [[ "${hashed_dir}" == "../client/dotnet" ]]
+    then
         filecount="$(find "${hashed_dir}" -maxdepth 1 -type f | wc -l)"
     else
         filecount="$(find "${hashed_dir}" -type f | wc -l)"
     fi
-    if (( filecount == 0 )); then
+    if (( filecount == 0 ))
+    then
         log_warning_message "Aborted creation of integrity database, because the directory \"${hashed_dir}\" is empty"
         return 0
     fi
@@ -158,25 +166,30 @@ function create_integrity_database ()
     # output can be caught in a variable for reference.
 
     pushd "../client/md" > /dev/null
-    if [[ "${hashed_dir}" == "../client/dotnet" ]]; then
-        if ! hashdeep_error_output="$( { hashdeep -c md5,sha1,sha256 -l ../dotnet/*.exe | tr '/' '\\' > "$hashes_file_basename"; } 2>&1 )"; then
+    if [[ "${hashed_dir}" == "../client/dotnet" ]]
+    then
+        if ! hashdeep_error_output="$( { hashdeep -c md5,sha1,sha256 -l ../dotnet/*.exe | tr '/' '\\' | todos_line_endings > "${hashes_file_basename}"; } 2>&1 )"
+        then
             runtime_errors="$(( runtime_errors + 1 ))"
         fi
     else
-        if ! hashdeep_error_output="$( { hashdeep -c md5,sha1,sha256 -l -r "$hashed_dir_truncated" | tr '/' '\\' > "$hashes_file_basename"; } 2>&1 )"; then
+        if ! hashdeep_error_output="$( { hashdeep -c md5,sha1,sha256 -l -r "${hashed_dir_truncated}" | tr '/' '\\' | todos_line_endings > "${hashes_file_basename}"; } 2>&1 )"
+        then
             runtime_errors="$(( runtime_errors + 1 ))"
         fi
     fi
     popd > /dev/null
 
-    if (( runtime_errors == initial_errors )); then
-        if ensure_non_empty_file "${hashes_file}"; then
+    if (( runtime_errors == initial_errors ))
+    then
+        if ensure_non_empty_file "${hashes_file}"
+        then
             log_info_message "Created file ${hashes_file##*/}"
         else
             log_warning_message "File ${hashes_file##*/} was empty"
         fi
     else
-        log_error_message "$hashdeep_error_output"
+        log_error_message "${hashdeep_error_output}"
         log_error_message "Creation of hashes file failed"
         rm -f "${hashes_file}"
     fi
@@ -197,11 +210,13 @@ function verify_embedded_checksums ()
     local sha256_calculated=""  # field 4
     local file_path=""          # field 5
     local sha1_embedded=""      # checksum embedded in the filename
+    local extended_path=""
     local initial_errors="${runtime_errors}"
     mkdir -p "../client/md"
 
     # Preconditions
-    if [[ "$use_integrity_database" == "disabled" ]]; then
+    if [[ "${use_integrity_database}" == "disabled" ]]
+    then
         log_info_message "Verification of embedded file checksums is disabled in preferences.bash"
         rm -f "${hashes_file}"
         return 0
@@ -217,7 +232,7 @@ function verify_embedded_checksums ()
     # 40 hexadecimal digits).
     tail -n +6 "${hashes_file}" |
         tr '\\' '/' |
-        grep -E '_[[:xdigit:]]{40}[.][[:alpha:]]{3}' \
+        grep_dos -E '_[[:xdigit:]]{40}[.][[:alpha:]]{3}' \
             > "${temp_dir}/sha-1-${hashes_file_basename}" || true
 
     while IFS=',' read -r file_size md5_calculated sha1_calculated \
@@ -230,22 +245,30 @@ function verify_embedded_checksums ()
         # to extract the SHA-1 hash, but this was replaced with sed
         # for compatibility.
         sha1_embedded="$(sed 's/.*_\([[:xdigit:]]\{40\}\).*/\1/g' <<< "${file_path}" || true)"
-        if [[ "${sha1_calculated}" != "${sha1_embedded}" ]]; then
-            pushd "../client/md" > /dev/null
-            trash_file "${file_path}"
-            popd > /dev/null
-
+        if [[ "${sha1_calculated}" != "${sha1_embedded}" ]]
+        then
             runtime_errors="$(( runtime_errors + 1 ))"
-            log_error_message "Deleted file ${file_path##*/} due to mismatching SHA-1 message digest."
+            log_error_message "Trashing/deleting file ${file_path##*/} due to mismatching SHA-1 message digests..."
 
-            # Rewrite the hashes file without the deleted file
+            # The paths in the hashdeep files are calculated relative
+            # to the ../client/md directory. They must be corrected
+            # again. The previous solution of changing directories with
+            # pushd/popd does not work anymore, because the log_message
+            # function will not find the log file, if the working
+            # directory is changed.
+            extended_path="${file_path/'../'/'../client/'}"
+            trash_file "${extended_path}"
+
+            # Rewrite the original hashes file (not the copy in the
+            # temporary directory) without the deleted file
             mv "${hashes_file}" "${hashes_file}.bak"
             grep -F -v "${sha1_calculated}" "${hashes_file}.bak" > "${hashes_file}" || true
             rm "${hashes_file}.bak"
         fi
     done < "${temp_dir}/sha-1-${hashes_file_basename}"
 
-    if (( runtime_errors == initial_errors )); then
+    if (( runtime_errors == initial_errors ))
+    then
         log_info_message "Verified embedded SHA1 hashes"
     else
         log_error_message "Verification of embedded SHA1 hashes detected $(( runtime_errors - initial_errors )) errors"

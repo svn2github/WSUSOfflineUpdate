@@ -1,11 +1,8 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: desktop-integration.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -32,7 +29,7 @@
 #     environment.
 #
 #     In Linux, the local trash is the directory
-#     $HOME/.local/share/Trash. Removable drives use a directory
+#     ${HOME}/.local/share/Trash. Removable drives use a directory
 #     .Trash-1000 at the root level of the partition. The number "1000"
 #     is the user id of the first regular user in Debian. It would be
 #     "500" for Fedora.
@@ -41,19 +38,51 @@
 #     support a trash, for example, because the directory /.Trash-1000
 #     could not be created. Then the files are deleted directly with rm.
 #
-#     The global variable $linux_trash_handler is set in the file
+#     The global variable ${linux_trash_handler} is set in the file
 #     20-check-needed-applications.bash.
 
 function trash_file ()
 {
-    if [[ -f "$1" ]]; then
-        if [[ -n "$linux_trash_handler" ]]; then
-            "$linux_trash_handler" "$1" || rm -f "$1"
+    local pathname="$1"
+    local filename="${pathname##*/}"
+
+    if [[ -f "${pathname}" ]]
+    then
+        # Try a Linux trash handler like gvfs-trash or trash-put,
+        # if available
+        if [[ -n "${linux_trash_handler}" ]]
+        then
+            if "${linux_trash_handler}" "${pathname}"
+            then
+                log_info_message "The file ${filename} was moved to trash."
+            else
+                # The trash directory may not be available, if wsusoffline
+                # is installed on an external drive. Then moving files
+                # to the trash may fail. In this case, the file needs
+                # to be deleted directly.
+                if rm "${pathname}"
+                then
+                    log_info_message "The file ${filename} was deleted directly."
+                else
+                    # Deleting a file with rm should always work. If this
+                    # fails, it may indicate more underlying problems,
+                    # e.g. with file ownership and permissions, or with
+                    # virus scanners, which block access to the file
+                    # for other applications.
+                    fail "The file ${filename} could not be deleted."
+                fi
+            fi
         else
-            rm "$1"
+            # Delete the file directly
+            if rm "${pathname}"
+            then
+                log_info_message "The file ${filename} was deleted directly."
+            else
+                fail "The file ${filename} could not be deleted."
+            fi
         fi
     else
-        log_debug_message "${FUNCNAME[0]}: File $1 was not found"
+        log_error_message "${FUNCNAME[0]}: File ${pathname} was not found"
     fi
 
     return 0

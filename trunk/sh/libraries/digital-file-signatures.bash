@@ -1,11 +1,8 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: digital-file-signatures.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -69,7 +66,8 @@
 #     renamed to /usr/bin/wine-development. Then both names should
 #     be checked.
 #
-#     TODO: Two zip archives for Windows 7 are not digitally signed.
+#     TODO: Two zip archives for Windows 7 are not digitally signed. These
+#     need an exception.
 #
 #     TODO: Some updates for the Windows 10, released in April 2017, had
 #     expired digital file signatures. This is not really an error. See
@@ -80,7 +78,6 @@
 function verify_digital_file_signatures ()
 {
     local download_dir="$1"
-    local sigcheck_options=""
     local sigcheck_output=""
     local windows_path=""
     local linux_path=""
@@ -89,28 +86,33 @@ function verify_digital_file_signatures ()
     local initial_errors="${runtime_errors}"
 
     # Check preconditions
-    if [[ "$use_file_signature_verification" == "disabled" ]]; then
+    if [[ "${use_file_signature_verification}" == "disabled" ]]
+    then
         log_info_message "Verification of digital file signatures is disabled in preferences"
         return 0
     fi
-    if ! type -P wine > /dev/null; then
+    if ! type -P wine > /dev/null
+    then
         log_warning_message "Verification of digital file signatures requires wine"
         return 0
     fi
-    if [[ ! -f ../bin/"${sigcheck_bin}" ]]; then
+    if [[ ! -f ../bin/"${sigcheck_bin}" ]]
+    then
         log_warning_message "Verification of digital file signatures requires Sysinternals Sigcheck"
         return 0
     fi
-    if [[ -z "${DISPLAY:-}" ]]; then
+    if [[ -z "${DISPLAY:-}" ]]
+    then
         log_warning_message "The environment variable DISPLAY is not set, either because no X server is running or environment variables are not passed to the script. As a command line application, Sigcheck should still work as expected. wine error messages may be neglected."
     fi
-    if ! require_directory "$download_dir"; then
-        log_error_message "The specified directory $download_dir does not exist."
+    if ! require_directory "${download_dir}"
+    then
+        log_error_message "The specified directory ${download_dir} does not exist."
         return 0
     fi
 
     # Begin processing
-    log_info_message "Verifying digital file signatures for directory $download_dir ..."
+    log_info_message "Verifying digital file signatures for directory ${download_dir} ..."
     # Recent versions of Sigcheck use the option -nobanner instead of -q,
     # but there is way to check the file version in Linux. The online
     # documentation for Sigcheck seems to be wrong, since it doesn't
@@ -121,27 +123,30 @@ function verify_digital_file_signatures ()
     #
     # In Windows, the "banner" is written to standard output and can be
     # easily suppressed, but this may not work with wine.
-    if [[ "$download_dir" == "../client/dotnet" ]]; then
-        #sigcheck_options="/accepteula -q -c"           # for Sigcheck 2.0 - 2.4
-        sigcheck_options="/accepteula -q -c -nobanner"  # for Sigcheck 2.5 and higher
+    if [[ "${download_dir}" == "../client/dotnet" ]]
+    then
+        #local sigcheck_options=( "/accepteula" "-q" "-c" )             # for Sigcheck 2.0 - 2.4
+        local sigcheck_options=(  "/accepteula" "-q" "-c" "-nobanner" ) # for Sigcheck 2.5 and higher
     else
-        #sigcheck_options="/accepteula -q -c -s"
-        sigcheck_options="/accepteula -q -c -s -nobanner"
+        #local sigcheck_options=( "/accepteula" "-q" "-c" "-s" )
+        local sigcheck_options=(  "/accepteula" "-q" "-c" "-s" "-nobanner" )
     fi
-    sigcheck_output="$(wine ../bin/"${sigcheck_bin}" ${sigcheck_options} "${download_dir}" 2> /dev/null | tail -n +2 | unquote)" || true
+    sigcheck_output="$(wine "../bin/${sigcheck_bin}" "${sigcheck_options[@]}" "${download_dir}" 2> /dev/null | tail -n +2 | unquote)" || true
     log_debug_message "Sigcheck output:"
-    log_debug_message "$sigcheck_output"
+    log_debug_message "${sigcheck_output}"
 
-    while IFS=',' read -r windows_path file_validation skip_rest; do
-        if [[ -z "${windows_path}" || -z "${file_validation}" ]]; then
+    while IFS=',' read -r windows_path file_validation skip_rest
+    do
+        if [[ -z "${windows_path}" || -z "${file_validation}" ]]
+        then
             fail "Error parsing Sigcheck output"
         fi
         # Using winepath to convert pathnames is better than hard-coding
         # the translation, but it generates unnecessarily long pathnames,
         # including symbolic links in ~/.wine/dosdevices/z:/
         linux_path="$(winepath --unix "${windows_path}")"
-        log_debug_message "Windows path: $windows_path"
-        log_debug_message "Linux path:   $linux_path"
+        log_debug_message "Windows path: ${windows_path}"
+        log_debug_message "Linux path:   ${linux_path}"
         log_debug_message "Filename:     ${linux_path##*/}"
         log_debug_message "Validation:   ${file_validation}"
 
@@ -159,7 +164,8 @@ function verify_digital_file_signatures ()
             Unsigned)
                 # Usually, all files by Microsoft should be signed, but
                 # this was forgotten for the last version of rootsupd.exe.
-                if [[ "${linux_path##*/}" == "rootsupd.exe" ]]; then
+                if [[ "${linux_path##*/}" == "rootsupd.exe" ]]
+                then
                     log_info_message "Kept unsigned file rootsupd.exe"
                 else
                     trash_file "${linux_path}"
@@ -202,7 +208,8 @@ function verify_digital_file_signatures ()
         esac
     done <<< "${sigcheck_output}"
 
-    if (( runtime_errors == initial_errors )); then
+    if (( runtime_errors == initial_errors ))
+    then
         log_info_message "Verified digital file signatures"
     else
         log_error_message "Verification of digital file signatures detected $(( runtime_errors - initial_errors )) errors"

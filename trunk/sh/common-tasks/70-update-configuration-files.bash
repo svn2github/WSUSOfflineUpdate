@@ -1,11 +1,8 @@
 # This file will be sourced by the shell bash.
 #
 # Filename: 70-update-configuration-files.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -40,12 +37,14 @@ function no_pending_updates ()
 {
     local result_code=1
 
-    if [[ -f "../static/StaticDownloadLink-this.txt" && -f "../static/StaticDownloadLink-recent.txt" ]]; then
-        if diff "../static/StaticDownloadLink-this.txt" "../static/StaticDownloadLink-recent.txt" > /dev/null; then
-            result_code=0
+    if [[ -f "../static/StaticDownloadLink-this.txt" && -f "../static/StaticDownloadLink-recent.txt" ]]
+    then
+        if diff "../static/StaticDownloadLink-this.txt" "../static/StaticDownloadLink-recent.txt" > /dev/null
+        then
+            result_code="0"
         fi
     fi
-    return $result_code
+    return "${result_code}"
 }
 
 # The configuration files in the directories exclude, static,
@@ -77,15 +76,19 @@ function run_update_configuration_files ()
     local interval_description="${interval_description_configuration_files}"
     local -i initial_errors="${runtime_errors}"
 
-    if [[ "${check_for_self_updates}" == "disabled" ]]; then
+    if [[ "${check_for_self_updates}" == "disabled" ]]
+    then
         log_info_message "The update of configuration files for WSUS Offline Update is disabled in preferences.bash"
-    elif same_day "${timestamp_file}" "${interval_length}"; then
+    elif same_day "${timestamp_file}" "${interval_length}"
+    then
         log_info_message "Skipped update of configuration files for WSUS Offline Update, because it has already been done less than ${interval_description} ago"
-    elif no_pending_updates; then
+    elif no_pending_updates
+    then
         remove_obsolete_files
         update_configuration_files
 
-        if (( runtime_errors == initial_errors )); then
+        if (( runtime_errors == initial_errors ))
+        then
             update_timestamp "${timestamp_file}"
         else
             log_error_message "The update of configuration files failed"
@@ -115,7 +118,7 @@ function remove_obsolete_files ()
     rm -f ../client/static/StaticUpdateIds-w100-x86.txt
     rm -f ../client/static/StaticUpdateIds-w100-x64.txt
     # The file ../client/exclude/ExcludeUpdateFiles-modified.txt was
-    # removed in WSUS Offline Update 10.9.
+    # removed in WSUS Offline Update 10.9
     rm -f ../client/exclude/ExcludeUpdateFiles-modified.txt
 
     # *** Windows Server 2003 stuff ***
@@ -137,9 +140,11 @@ function remove_obsolete_files ()
     file_list=(../static/*-win-x86-*.*)
     shopt -u nullglob
 
-    if (( ${#file_list[@]} > 0 )); then
-        for current_file in "${file_list[@]}"; do
-            rm "$current_file"
+    if (( ${#file_list[@]} > 0 ))
+    then
+        for current_file in "${file_list[@]}"
+        do
+            rm "${current_file}"
         done
     fi
 
@@ -161,29 +166,61 @@ function remove_obsolete_files ()
     )
     shopt -u nullglob
 
-    if (( ${#file_list[@]} > 0 )); then
-        for current_file in "${file_list[@]}"; do
-            if [[ -f "$current_file" ]]; then
-                rm "$current_file"
+    if (( ${#file_list[@]} > 0 ))
+    then
+        for current_file in "${file_list[@]}"
+        do
+            if [[ -f "${current_file}" ]]
+            then
+                rm "${current_file}"
+            fi
+        done
+    fi
+
+    # Office 2007 was removed in WSUS Offline Update 11.1
+    shopt -s nullglob
+    file_list=(
+        ../static/StaticDownloadLinks-o2k7-*.txt
+        ../client/static/StaticUpdateIds-o2k7.txt
+    )
+    shopt -u nullglob
+
+    if (( ${#file_list[@]} > 0 ))
+    then
+        for current_file in "${file_list[@]}"
+        do
+            if [[ -f "${current_file}" ]]
+            then
+                rm "${current_file}"
             fi
         done
     fi
 
     # *** Warn if unsupported updates are found ***
-    if [[ -d ../client/wxp || -d ../client/wxp-x64 ]]; then
+    if [[ -d ../client/wxp || -d ../client/wxp-x64 ]]
+    then
         log_warning_message "Windows XP is no longer supported"
     fi
-    if [[ -d ../client/w2k3 || -d ../client/w2k3-x64 ]]; then
+    if [[ -d ../client/w2k3 || -d ../client/w2k3-x64 ]]
+    then
         log_warning_message "Windows Server 2003 is no longer supported"
     fi
-    if [[ -d ../client/w62 ]]; then
+    if [[ -d ../client/w62 ]]
+    then
         log_warning_message "Windows 8 32-bit (w62) is no longer supported"
     fi
-    if [[ -d ../client/o2k3 ]]; then
+    if [[ -d ../client/o2k3 ]]
+    then
         log_warning_message "Office 2003 is no longer supported"
     fi
-    if [[ -d ../client/wle ]]; then
+    if [[ -d ../client/wle ]]
+    then
         log_warning_message "Windows Live Essentials are no longer supported"
+    fi
+    # Office 2007 was removed in WSUS Offline Update 11.1
+    if [[ -d ../client/o2k7 ]]
+    then
+        log_warning_message "Office 2007 no longer supported"
     fi
 
     return 0
@@ -199,14 +236,16 @@ function recursive_download ()
     local filename="${download_link##*/}"
     local initial_errors="${runtime_errors}"
 
-    download_single_file "$download_dir" "$download_link"
-    if (( runtime_errors == initial_errors )); then
+    download_single_file "${download_dir}" "${download_link}"
+    if (( runtime_errors == initial_errors ))
+    then
         # The downloaded file may be empty, which is actually the default
         # state for the "update of static download definitions". These
         # files only contain URLs for configuration files, which have
         # changed since the latest release of WSUS Offline Update.
-        if [[ -s "${download_dir}/${filename}" ]]; then
-            download_multiple_files "$download_dir" "${download_dir}/${filename}"
+        if [[ -s "${download_dir}/${filename}" ]]
+        then
+            download_multiple_files "${download_dir}" "${download_dir}/${filename}"
         fi
     else
         log_warning_message "The download of ${filename} failed."

@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
 #
 # Filename: get-all-updates.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -58,7 +55,8 @@ cd "$(dirname "$(readlink -f "$0")")"
 # Setting the language is needed to get localized installers for Internet
 # Explorer 9 for Windows Vista, Internet Explorer 11 for Windows 7,
 # and for the optional downloads dotnet and msse.
-for update in w60 w60-x64 w61 w61-x64; do
+for update in w60 w60-x64 w61 w61-x64
+do
     ./download-updates.bash "${update}" deu,enu -includesp -includecpp -includedotnet -includewddefs -includemsse
 done
 
@@ -74,16 +72,18 @@ done
 # languages. So, you could actually remove the parameter "enu" here. On
 # the other hand, if you like to include other "custom" languages,
 # they need to be listed here.
-for update in w62-x64 w63 w63-x64 w100 w100-x64; do
+for update in w62-x64 w63 w63-x64 w100 w100-x64
+do
     ./download-updates.bash "${update}" deu,enu -includesp -includecpp -includedotnet -includewddefs8
 done
 
-# Office 2007 - 2013
+# Office 2010 - 2013
 #
 # o2k10-x64 and o2k13-x64 include both 32-bit and 64-bit downloads,
 # just like the Windows script DownloadUpdates.cmd, if 64-bit Office
 # support is enabled with the script AddOffice2010x64Support.cmd.
-for update in o2k7 o2k10-x64 o2k13-x64; do
+for update in o2k10-x64 o2k13-x64
+do
     ./download-updates.bash "${update}" deu,enu -includesp
 done
 

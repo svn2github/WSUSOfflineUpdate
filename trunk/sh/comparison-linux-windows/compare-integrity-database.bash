@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
 #
 # Filename: compare-integrity-database.bash
-# Version: 1.0-beta-5
-# Release date: 2017-08-25
-# Intended compatibility: WSUS Offline Update Version 11.0.1 and newer
 #
-# Copyright (C) 2016-2017 Hartmut Buhrmester
+# Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
@@ -68,8 +65,8 @@
 # ========== Configuration ================================================
 
 # Absolute paths to wsusoffline/client/md on Windows and Linux
-source_md_windows="/media/$(whoami)/SANDISK_3/wsusoffline-windows/client/md"
-source_md_linux="/home/$(whoami)/Projekte/wsusoffline/client/md"
+source_md_windows="/media/$(whoami)/System/wsusoffline_current/client/md"
+source_md_linux="/home/$(whoami)/Projekte/wsusoffline_current/client/md"
 
 # Paths to temporary directories
 temp_md_windows="/tmp/md-windows"
@@ -88,7 +85,8 @@ function create_diff_files ()
     local temp_directory="$2"
     local filename=""
 
-    if [[ -d "${source_directory}" ]]; then
+    if [[ -d "${source_directory}" ]]
+    then
         printf '%s\n' "Processing source directory: ${source_directory} ..."
     else
         printf '%s\n' "Source directory ${source_directory} is missing."
@@ -99,12 +97,14 @@ function create_diff_files ()
     rm -f "${temp_directory}"/*.txt
 
     pushd "${source_directory}" > /dev/null
-    for filename in ./*.txt; do
+    for filename in ./*.txt
+    do
         printf '%s\n' "Processing: ${filename}"
         # Skip the first five lines with hashdeep comments
         tail -n +6 "${filename}" | tr -d '\r' | sort > "${temp_directory}/${filename}"
         # Remove empty files
-        if [[ ! -s "${temp_directory}/${filename}" ]]; then
+        if [[ ! -s "${temp_directory}/${filename}" ]]
+        then
             rm -f "${temp_directory}/${filename}"
         fi
     done
