@@ -1390,6 +1390,7 @@ Version 11.1.1 -- 16.01.18
 --------------------------------------------------------------------------------
 Version ??.?.? -- ??.??.18
 - Included complete rewrite of the Linux scripts version 1.0 (Special thanks to H. Buhrmester)
+- Replaced superseded servicing stack update for Windows 10 Version 1709 kb4058702 (January 3rd, 2018) by kb4074608 (January 30th, 2018) (Thanks to "aker" and A. Pastor)
 - AutoIt script compiler updated to version 3.3.14.3
 - Fix: Incorrect error handling in UpdateInstaller script (Thanks to "Dalai")
 - Fix: Download part erroneously excluded Security Update kb2631813 for Windows 7 x64 and Windows Server 2008 R2
