@@ -74,7 +74,8 @@ function run_update_configuration_files ()
     local timestamp_file="${timestamp_dir}/update-configuration-files.txt"
     local -i interval_length="${interval_length_configuration_files}"
     local interval_description="${interval_description_configuration_files}"
-    local -i initial_errors="${runtime_errors}"
+    local -i initial_errors="0"
+    initial_errors="$(get_error_count)"
 
     if [[ "${check_for_self_updates}" == "disabled" ]]
     then
@@ -87,7 +88,7 @@ function run_update_configuration_files ()
         remove_obsolete_files
         update_configuration_files
 
-        if (( runtime_errors == initial_errors ))
+        if same_error_count "${initial_errors}"
         then
             update_timestamp "${timestamp_file}"
         else
@@ -234,10 +235,11 @@ function recursive_download ()
     local download_dir="$1"
     local download_link="$2"
     local filename="${download_link##*/}"
-    local initial_errors="${runtime_errors}"
+    local -i initial_errors="0"
+    initial_errors="$(get_error_count)"
 
     download_single_file "${download_dir}" "${download_link}"
-    if (( runtime_errors == initial_errors ))
+    if same_error_count "${initial_errors}"
     then
         # The downloaded file may be empty, which is actually the default
         # state for the "update of static download definitions". These

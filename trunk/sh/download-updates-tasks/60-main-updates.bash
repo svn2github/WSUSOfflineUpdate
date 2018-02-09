@@ -27,9 +27,8 @@
 #     and also dynamic updates for the .Net Frameworks.
 #
 #     Global variables from other files
-#     - runtime_errors is defined in the file download-updates.bash
-#     - update_name, update_architecture and language_list are defined
-#       in the file 10-parse-command-line.bash
+#     - The indexed arrays updates_list, architectures_list and
+#       languages_list are defined in the file 10-parse-command-line.bash
 
 # ========== Global variables =============================================
 
@@ -44,40 +43,106 @@ fi
 
 function get_main_updates ()
 {
+    local current_update=""
+    local current_arch=""
     local current_lang=""
 
-    case "${update_name}" in
-        w60 | w60-x64 | w61 | w61-x64 | w62-x64 | w63 | w63-x64 | w100 | w100-x64)
-            if [[ "${include_win_glb}" == "enabled" ]]
-            then
-                process_main_update win x86 glb
-            else
-                log_info_message "Skipped processing of \"win glb\" due to preferences settings"
-                echo ""
-            fi
-            process_main_update "${update_name/-x64/}" "${update_architecture}" glb
-        ;;
-        o2k10 | o2k10-x64 | o2k13 | o2k13-x64)
-            for current_lang in glb ${language_list//,/ }
-            do
-                process_main_update ofc x86 "${current_lang}"
-                process_main_update "${update_name/-x64/}" "${update_architecture}" "${current_lang}"
-            done
-        ;;
-        o2k16 | o2k16-x64)
-            process_main_update ofc x86 glb
-            process_main_update o2k16 "${update_architecture}" glb
-        ;;
-        *)
-            fail "${FUNCNAME[0]} - Unknown update name: ${name}"
-        ;;
-    esac
-
-    # Installers for .Net frameworks, which depend on the architecture,
-    # and dynamic updates for .Net frameworks
-    if [[ "${included_downloads[*]}" == *dotnet* ]]
+    if (( ${#updates_list[@]} > 0 ))
     then
-        process_main_update dotnet "${update_architecture}" glb
+        for current_update in "${updates_list[@]}"
+        do
+            case "${current_update}" in
+                # Common Windows updates
+                win)
+                    if [[ "${localized_win_updates}" == "enabled" ]]
+                    then
+                        for current_lang in "glb" "${languages_list[@]}"
+                        do
+                            process_main_update "win" "x86" "${current_lang}"
+                        done
+                    else
+                        process_main_update "win" "x86" "glb"
+                    fi
+                ;;
+                # Windows XP, 32-bit
+                wxp)
+                    for current_lang in "glb" "${languages_list[@]}"
+                    do
+                        process_main_update "wxp" "x86" "${current_lang}"
+                    done
+                ;;
+                # Windows Server 2003, 32-bit
+                w2k3)
+                    for current_lang in "glb" "${languages_list[@]}"
+                    do
+                        if grep -q -- "^${current_lang} " <<< "${languages_table_w2k3}"
+                        then
+                            process_main_update "w2k3" "x86" "${current_lang}"
+                        else
+                            log_warning_message "Language ${current_lang} is not available for w2k3."
+                        fi
+                    done
+                ;;
+                # Windows XP / Server 2003, 64-bit
+                w2k3-x64)
+                    for current_lang in "glb" "${languages_list[@]}"
+                    do
+                        if grep -q -- "^${current_lang} " <<< "${languages_table_w2k3_x64}"
+                        then
+                            process_main_update "w2k3" "x64" "${current_lang}"
+                        else
+                            log_warning_message "Language ${current_lang} is not available for w2k3-x64."
+                        fi
+                    done
+                ;;
+                # 32-bit Windows updates
+                w60 | w61 | w62 | w63 | w100)
+                    process_main_update "${current_update}" "x86" "glb"
+                ;;
+                # 64-bit Windows updates
+                w60-x64 | w61-x64 | w62-x64 | w63-x64 | w100-x64)
+                    process_main_update "${current_update/-x64/}" "x64" "glb"
+                ;;
+                # 32-bit Office updates (localized), including common "ofc" updates
+                ofc | o2k3 | o2k7 | o2k10 | o2k13)
+                    for current_lang in "glb" "${languages_list[@]}"
+                    do
+                        process_main_update "${current_update}" "x86" "${current_lang}"
+                    done
+                ;;
+                # 32-bit and 64-bit Office updates (localized)
+                o2k10-x64 | o2k13-x64)
+                    for current_lang in "glb" "${languages_list[@]}"
+                    do
+                        process_main_update "${current_update/-x64/}" "x64" "${current_lang}"
+                    done
+                ;;
+                # Office 2016, 32-bit
+                o2k16)
+                    process_main_update "o2k16" "x86" "glb"
+                ;;
+                # Office 2016, 32-bit and 64-bit
+                o2k16-x64)
+                    process_main_update "o2k16" "x64" "glb"
+                ;;
+                # Installers and dynamic updates for .Net frameworks,
+                # which depend on the architecture
+                dotnet)
+                    if (( ${#architectures_list[@]} > 0 ))
+                    then
+                        for current_arch in "${architectures_list[@]}"
+                        do
+                            process_main_update "dotnet" "${current_arch}" "glb"
+                        done
+                    else
+                        log_warning_message "There are no architectures defined for included downloads. They are derived from Windows updates only."
+                    fi
+                ;;
+                *)
+                    fail "${FUNCNAME[0]} - Unknown update name: ${current_update}"
+                ;;
+            esac
+        done
     fi
     return 0
 }
@@ -88,7 +153,8 @@ function process_main_update ()
     local name="$1"
     local arch="$2"
     local lang="$3"
-    local initial_errors="${runtime_errors}"
+    local -i initial_errors="0"
+    initial_errors="$(get_error_count)"
 
     # Create naming scheme.
     #
@@ -128,7 +194,7 @@ function process_main_update ()
     local interval_description="${interval_description_dependent_files}"
 
     case "${name}" in
-        win | w62 | w63 | w100)
+        win | wxp | w2k3 | w62 | w63 | w100)
             timestamp_pattern="${name}-${arch}-${lang}"
             if [[ "${arch}" == "x86" ]]
             then
@@ -142,7 +208,10 @@ function process_main_update ()
             fi
         ;;
         w60 | w61)
-            timestamp_pattern="${name}-${arch}-${language_list}"
+            # The timestamp pattern includes the language list, as passed
+            # on the command-line, because the downloads include localized
+            # installers for Internet Explorer.
+            timestamp_pattern="${name}-${arch}-${language_parameter}"
             if [[ "${arch}" == "x86" ]]
             then
                 hashes_file="../client/md/hashes-${name}-${lang}.txt"
@@ -154,14 +223,17 @@ function process_main_update ()
                 download_dir="../client/${name}-${arch}/${lang}"
             fi
         ;;
-        ofc | o2k10 | o2k13 | o2k16)
+        ofc | o2k3 | o2k7 | o2k10 | o2k13 | o2k16)
             timestamp_pattern="${name}-${arch}-${lang}"
             hashes_file="../client/md/hashes-${name}-${lang}.txt"
             hashed_dir="../client/${name}/${lang}"
             download_dir="../client/${name}/${lang}"
         ;;
         dotnet)
-            timestamp_pattern="${name}-${arch}-${language_list}"
+            # The timestamp pattern includes the language list, as passed
+            # on the command-line, because the downloads may include
+            # additional language packs for languages other than English.
+            timestamp_pattern="${name}-${arch}-${language_parameter}"
             hashes_file="../client/md/hashes-${name}-${arch}-${lang}.txt"
             hashed_dir="../client/${name}/${arch}-${lang}"
             download_dir="../client/${name}/${arch}-${lang}"
@@ -213,12 +285,12 @@ function process_main_update ()
         create_integrity_database "${hashed_dir}" "${hashes_file}"
         verify_embedded_checksums "${hashed_dir}" "${hashes_file}"
 
-        if (( runtime_errors == initial_errors ))
+        if same_error_count "${initial_errors}"
         then
             update_timestamp "${timestamp_file}"
             log_info_message "Done processing of \"${timestamp_pattern//-/ }\""
         else
-            log_warning_message "There were $(( runtime_errors - initial_errors )) runtime errors for \"${timestamp_pattern//-/ }\". See the download log for details."
+            log_warning_message "There were $(get_error_difference "${initial_errors}") runtime errors for \"${timestamp_pattern//-/ }\". See the download log for details."
         fi
     fi
 
@@ -247,29 +319,47 @@ function calculate_static_updates ()
 
     case "${name}" in
         win)
-            # The architecture was removed from the file name in WSUS
-            # Offline Update, version 10.4
-            require_non_empty_file "../static/StaticDownloadLinks-${name}-${lang}.txt" || return 0
+            # Nominally, this contains 32-bit updates (x86) only,
+            # but in the end, it was a mixture of 32-bit and 64-bit
+            # downloads. The architecture was removed from the filename
+            # in WSUS Offline Update, version 10.4. The localized static
+            # download files for win in WSUS Offline Update 9.2.x ESR
+            # are all empty.
+            require_non_empty_file \
+            "../static/StaticDownloadLinks-${name}-${arch}-${lang}.txt" \
+            || require_non_empty_file \
+            "../static/StaticDownloadLinks-${name}-${lang}.txt" \
+            || return 0
         ;;
-        w60 | w61 | w62 | w63 | w100)
+        wxp | w2k3 | w60 | w61 | w62 | w63 | w100)
             # 32-bit and 64-bit downloads use the same naming scheme
-            require_non_empty_file "../static/StaticDownloadLinks-${name}-${arch}-${lang}.txt" || return 0
+            require_non_empty_file \
+            "../static/StaticDownloadLinks-${name}-${arch}-${lang}.txt" \
+            || return 0
         ;;
         dotnet)
             # The global static download files for dotnet may be
             # empty after removing the default German and English
             # installers. Localized updates are added again using the
             # original language from the command line.
-            require_file "../static/StaticDownloadLinks-${name}-${arch}-${lang}.txt" || return 0
+            require_file \
+            "../static/StaticDownloadLinks-${name}-${arch}-${lang}.txt" \
+            || return 0
         ;;
-        ofc)
+        ofc | o2k3 | o2k7)
             # 32-bit downloads only
-            require_non_empty_file "../static/StaticDownloadLinks-${name}-${lang}.txt" || return 0
+            require_non_empty_file \
+            "../static/StaticDownloadLinks-${name}-${lang}.txt" \
+            || return 0
         ;;
         o2k10 | o2k13 | o2k16)
-            # 32-bit and 64-bit downloads with different naming schemes
-            require_non_empty_file "../static/StaticDownloadLinks-${name}-${lang}.txt" ||
-            require_non_empty_file "../static/StaticDownloadLinks-${name}-${arch}-${lang}.txt" || return 0
+            # 32-bit and 64-bit downloads with different naming
+            # schemes. Both are needed, if 64-bit downloads are selected.
+            require_non_empty_file \
+            "../static/StaticDownloadLinks-${name}-${lang}.txt" \
+            || require_non_empty_file \
+            "../static/StaticDownloadLinks-${name}-${arch}-${lang}.txt" \
+            || return 0
         ;;
     esac
 
@@ -299,13 +389,15 @@ function calculate_static_updates ()
         # AddCustomLanguageSupport.cmd
         #
         # There are no global installation files for Internet
-        # Explorer. Static download links for "dotnet ${arch} glb"
-        # are already included in the patterns above. This means, that
-        # glb does not need to be prepended to the language list at
-        # this point.
+        # Explorer. Static download links for "dotnet ${arch} glb" are
+        # already included in the patterns above. This means, that glb
+        # does not need to be added to the language list at this point.
         case "${name}" in
             w60)
-                for current_lang in ${language_list//,/ }
+                # Localized installers for Internet Explorer 8 and 9
+                # on Windows Vista. Only IE 9 is supported in recent
+                # versions of WSUS Offline Update.
+                for current_lang in "${languages_list[@]}"
                 do
                     if [[ -s "${current_dir}/StaticDownloadLinks-ie8-w60-${arch}-${current_lang}.txt" ]]
                     then
@@ -315,7 +407,10 @@ function calculate_static_updates ()
                 done
             ;;
             w61)
-                for current_lang in ${language_list//,/ }
+                # Localized installers for Internet Explorer 9, 10,
+                # and 11 on Windows 7. Only IE 11 is supported in recent
+                # versions of WSUS Offline Update.
+                for current_lang in "${languages_list[@]}"
                 do
                     if [[ -s "${current_dir}/StaticDownloadLinks-ie9-w61-${arch}-${current_lang}.txt" ]]
                     then
@@ -325,7 +420,7 @@ function calculate_static_updates ()
                 done
             ;;
             dotnet)
-                for current_lang in ${language_list//,/ }
+                for current_lang in "${languages_list[@]}"
                 do
                     if [[ -s "${current_dir}/StaticDownloadLinks-dotnet-${arch}-${current_lang}.txt" ]]
                     then
@@ -377,7 +472,15 @@ function calculate_dynamic_updates ()
     local valid_dynamic_links="$4"
 
     case "${name}" in
-        w60 | w61 | w62 | w63 | w100 | dotnet)
+        win)
+            if [[ "${dynamic_win_updates}" == "enabled" ]]
+            then
+                calculate_dynamic_windows_updates "$@"
+            else
+                log_info_message "Dynamic updates for win are disabled in this version of WSUS Offline Update."
+            fi
+        ;;
+        wxp | w2k3 | w60 | w61 | w62 | w63 | w100 | dotnet)
             calculate_dynamic_windows_updates "$@"
         ;;
         ofc)
@@ -409,7 +512,7 @@ function calculate_dynamic_windows_updates ()
     > "${valid_dynamic_links}"
 
     # Extract dynamic download links
-    ${xmlstarlet} tr "../xslt/ExtractDownloadLinks-${name}-${arch}-${lang}.xsl" \
+    "${xmlstarlet}" tr "../xslt/ExtractDownloadLinks-${name}-${arch}-${lang}.xsl" \
         "${cache_dir}/package.xml" \
         > "${temp_dir}/DynamicDownloadLinks-${name}-${arch}-${lang}.txt"
     sort_in_place "${temp_dir}/DynamicDownloadLinks-${name}-${arch}-${lang}.txt"
@@ -510,7 +613,7 @@ function calculate_dynamic_office_updates ()
     # Reset existing files
     > "${valid_dynamic_links}"
 
-    ${xmlstarlet} tr ../xslt/ExtractUpdateCategoriesAndFileIds.xsl \
+    "${xmlstarlet}" tr ../xslt/ExtractUpdateCategoriesAndFileIds.xsl \
         "${cache_dir}/package.xml" \
         > "${temp_dir}/UpdateCategoriesAndFileIds.txt"
 
@@ -623,7 +726,7 @@ function calculate_dynamic_office_updates ()
     cut -d ',' -f 1 "${temp_dir}/OfficeFileAndUpdateIds.txt" > "${temp_dir}/OfficeFileIds.txt"
     remove_duplicates "${temp_dir}/OfficeFileIds.txt"
 
-    ${xmlstarlet} tr ../xslt/ExtractUpdateCabExeIdsAndLocations.xsl \
+    "${xmlstarlet}" tr ../xslt/ExtractUpdateCabExeIdsAndLocations.xsl \
         "${cache_dir}/package.xml" \
         > "${temp_dir}/UpdateCabExeIdsAndLocations.txt"
     sort_in_place "${temp_dir}/UpdateCabExeIdsAndLocations.txt"

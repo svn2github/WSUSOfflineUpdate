@@ -109,6 +109,7 @@ function print_info_block ()
         printf '%s\n' "Script name:       ${script_name}"
         printf '%s\n' "Home directory:    ${home_directory}"
         printf '%s\n' "Working directory: $(pwd)"
+        printf '%s\n' "Temp directory:    ${temp_dir}"
         echo ""
         printf '%s\n' "Configuration variables from the preferences file"
         printf '%s\n' "prefer_seconly:    ${prefer_seconly}"

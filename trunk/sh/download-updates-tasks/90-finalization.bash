@@ -54,6 +54,7 @@ function remind_build_date ()
     # are used for backups or snapshots of the client directory
     rm -f "../client/builddate.txt"
     rm -f "../client/autorun.inf"
+    rm -f "../client/Autorun.inf"
 
     log_info_message "Reminding build date..."
     printf '%s\r\n' "${build_date}" > "../client/builddate.txt"
@@ -111,11 +112,11 @@ function print_disk_usage ()
 function print_summary ()
 {
     log_info_message "Summary"
-    if (( runtime_errors == 0 ))
+    if same_error_count "0"
     then
-        log_info_message "Download and file verification errors: ${runtime_errors}"
+        log_info_message "Download and file verification errors: 0"
     else
-        log_warning_message "Download and file verification errors: ${runtime_errors}"
+        log_warning_message "Download and file verification errors: $(get_error_count)"
     fi
     return 0
 }

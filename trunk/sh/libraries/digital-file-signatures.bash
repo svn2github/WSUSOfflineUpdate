@@ -63,8 +63,9 @@
 #     Cannot find object or property.
 #
 #     TODO: In the Debian package wine-development, /usr/bin/wine is
-#     renamed to /usr/bin/wine-development. Then both names should
-#     be checked.
+#     renamed to /usr/bin/wine-development. Then both names should be
+#     checked. In Debian 9 Stretch, the update-alternatives system is
+#     used to select the preferred wine version.
 #
 #     TODO: Two zip archives for Windows 7 are not digitally signed. These
 #     need an exception.
@@ -83,7 +84,8 @@ function verify_digital_file_signatures ()
     local linux_path=""
     local file_validation=""
     local skip_rest=""
-    local initial_errors="${runtime_errors}"
+    local -i initial_errors="0"
+    initial_errors="$(get_error_count)"
 
     # Check preconditions
     if [[ "${use_file_signature_verification}" == "disabled" ]]
@@ -169,7 +171,7 @@ function verify_digital_file_signatures ()
                     log_info_message "Kept unsigned file rootsupd.exe"
                 else
                     trash_file "${linux_path}"
-                    runtime_errors="$(( runtime_errors + 1 ))"
+                    increment_error_count
                     log_warning_message "Trashed/deleted unsigned file ${linux_path##*/}"
                 fi
             ;;
@@ -177,7 +179,7 @@ function verify_digital_file_signatures ()
             "The digital signature of the object did not verify.")
                 # The file is signed, but damaged.
                 trash_file "${linux_path}"
-                runtime_errors="$(( runtime_errors + 1 ))"
+                increment_error_count
                 log_warning_message "Trashed/deleted damaged file ${linux_path##*/}"
             ;;
             Error*)
@@ -208,11 +210,11 @@ function verify_digital_file_signatures ()
         esac
     done <<< "${sigcheck_output}"
 
-    if (( runtime_errors == initial_errors ))
+    if same_error_count "${initial_errors}"
     then
         log_info_message "Verified digital file signatures"
     else
-        log_error_message "Verification of digital file signatures detected $(( runtime_errors - initial_errors )) errors"
+        log_error_message "Verification of digital file signatures detected $(get_error_difference "${initial_errors}") errors"
     fi
     return 0
 }

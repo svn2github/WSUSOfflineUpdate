@@ -153,13 +153,13 @@ function cleanup_client_directory ()
             # Valid static files can only be deleted manually.
             if grep -F -i -q -r "${filename}" "../static"
             then
-                if [[ "${pathname}" == "../client/ofc/glb/office2010-kb2553065-fullfile-x86-glb.exe" ]]
+                if [[ "${pathname}" == "../client/ofc/glb/office2010-kb2553065-fullfile-x86-glb.exe" && -f "../client/o2k10/glb/office2010-kb2553065-fullfile-x86-glb.exe" ]]
                 then
                     # The file office2010-kb2553065-fullfile-x86-glb.exe
                     # was moved from ../client/ofc/glb to
-                    # ../client/o2k10/glb in WSUS Offline Update 11.1. It
-                    # should be deleted from the former location, to
-                    # not appear twice.
+                    # ../client/o2k10/glb in WSUS Offline Update 11.1. If
+                    # it appears twice, it should be deleted from the
+                    # former location.
                     log_info_message "The file office2010-kb2553065-fullfile-x86-glb.exe will be deleted from directory ../client/ofc/glb"
                 else
                     log_info_message "Kept valid static file ${filename}"

@@ -388,6 +388,14 @@ function restart_script ()
     echo ""
     echo "--------------------------------------------------------------------------------"
     echo ""
+    # The scripts update-generator.bash and downloadupdates.bash create
+    # new temporary directories with random names on each run. The
+    # existing temporary directory must be removed at this point.
+    if [[ -d "${temp_dir}" ]]
+    then
+        #echo "Cleaning up temporary files ..."
+        rm -r "${temp_dir}"
+    fi
     if (( ${#command_line_parameters[@]} > 0 ))
     then
         exec "./${script_name}" "${command_line_parameters[@]}"

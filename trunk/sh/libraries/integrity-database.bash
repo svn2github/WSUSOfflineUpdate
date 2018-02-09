@@ -49,7 +49,8 @@ function verify_integrity_database ()
     local hashed_dir_truncated="${hashed_dir/'client/'/}"
     local hashes_file_basename="${hashes_file##*/}"
     local hashdeep_output=""
-    local initial_errors="${runtime_errors}"
+    local -i initial_errors="0"
+    initial_errors="$(get_error_count)"
     mkdir -p "../client/md"
 
     # Preconditions
@@ -89,17 +90,17 @@ function verify_integrity_database ()
     then
         if ! hashdeep_output="$(hashdeep -a -vv -k "${temp_dir}/${hashes_file_basename}" -l ../dotnet/*.exe 2>&1)"
         then
-            runtime_errors="$(( runtime_errors + 1 ))"
+            increment_error_count
         fi
     else
         if ! hashdeep_output="$(hashdeep -a -vv -k "${temp_dir}/${hashes_file_basename}" -l -r "${hashed_dir_truncated}" 2>&1)"
         then
-            runtime_errors="$(( runtime_errors + 1 ))"
+            increment_error_count
         fi
     fi
     popd > /dev/null
 
-    if (( runtime_errors == initial_errors ))
+    if same_error_count "${initial_errors}"
     then
         log_info_message "${hashdeep_output}"
         log_info_message "Verified the integrity of existing files in the directory ${hashed_dir}"
@@ -126,7 +127,9 @@ function create_integrity_database ()
     local hashes_file_basename="${hashes_file##*/}"
     local filecount=0
     local hashdeep_error_output=""
-    local initial_errors="${runtime_errors}"
+    local -i initial_errors="0"
+    initial_errors="$(get_error_count)"
+
     mkdir -p "../client/md"
     rm -f "${hashes_file}"
 
@@ -170,17 +173,17 @@ function create_integrity_database ()
     then
         if ! hashdeep_error_output="$( { hashdeep -c md5,sha1,sha256 -l ../dotnet/*.exe | tr '/' '\\' | todos_line_endings > "${hashes_file_basename}"; } 2>&1 )"
         then
-            runtime_errors="$(( runtime_errors + 1 ))"
+            increment_error_count
         fi
     else
         if ! hashdeep_error_output="$( { hashdeep -c md5,sha1,sha256 -l -r "${hashed_dir_truncated}" | tr '/' '\\' | todos_line_endings > "${hashes_file_basename}"; } 2>&1 )"
         then
-            runtime_errors="$(( runtime_errors + 1 ))"
+            increment_error_count
         fi
     fi
     popd > /dev/null
 
-    if (( runtime_errors == initial_errors ))
+    if same_error_count "${initial_errors}"
     then
         if ensure_non_empty_file "${hashes_file}"
         then
@@ -211,7 +214,9 @@ function verify_embedded_checksums ()
     local file_path=""          # field 5
     local sha1_embedded=""      # checksum embedded in the filename
     local extended_path=""
-    local initial_errors="${runtime_errors}"
+    local -i initial_errors="0"
+    initial_errors="$(get_error_count)"
+
     mkdir -p "../client/md"
 
     # Preconditions
@@ -247,7 +252,7 @@ function verify_embedded_checksums ()
         sha1_embedded="$(sed 's/.*_\([[:xdigit:]]\{40\}\).*/\1/g' <<< "${file_path}" || true)"
         if [[ "${sha1_calculated}" != "${sha1_embedded}" ]]
         then
-            runtime_errors="$(( runtime_errors + 1 ))"
+            increment_error_count
             log_error_message "Trashing/deleting file ${file_path##*/} due to mismatching SHA-1 message digests..."
 
             # The paths in the hashdeep files are calculated relative
@@ -267,11 +272,11 @@ function verify_embedded_checksums ()
         fi
     done < "${temp_dir}/sha-1-${hashes_file_basename}"
 
-    if (( runtime_errors == initial_errors ))
+    if same_error_count "${initial_errors}"
     then
         log_info_message "Verified embedded SHA1 hashes"
     else
-        log_error_message "Verification of embedded SHA1 hashes detected $(( runtime_errors - initial_errors )) errors"
+        log_error_message "Verification of embedded SHA1 hashes detected $(get_error_difference "${initial_errors}") errors"
     fi
     return 0
 }

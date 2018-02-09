@@ -37,24 +37,36 @@ function show_usage ()
 {
     cat << EOF
 USAGE
-   ./download-updates.bash UPDATE LANGUAGE[,LANGUAGE...] [OPTIONS]
+   ./download-updates.bash UPDATE[,UPDATE...] LANGUAGE[,LANGUAGE...] \
+   [OPTIONS]
 
 UPDATE
-    w60          Windows Server 2008, 32-bit
-    w60-x64      Windows Server 2008, 64-bit
-    w61          Windows 7, 32-bit
-    w61-x64      Windows 7 / Server 2008 R2, 64-bit
-    w62-x64      Windows Server 2012, 64-bit
-    w63          Windows 8.1, 32-bit
-    w63-x64      Windows 8.1 / Server 2012 R2, 64-bit
-    w100         Windows 10, 32-bit
-    w100-x64     Windows 10 / Server 2016, 64-bit
-    o2k10        Office 2010, 32-bit
-    o2k10-x64    Office 2010, 32-bit and 64-bit
-    o2k13        Office 2013, 32-bit
-    o2k13-x64    Office 2013, 32-bit and 64-bit
-    o2k16        Office 2016, 32-bit
-    o2k16-x64    Office 2016, 32-bit and 64-bit
+    w60           Windows Server 2008, 32-bit
+    w60-x64       Windows Server 2008, 64-bit
+    w61           Windows 7, 32-bit
+    w61-x64       Windows 7 / Server 2008 R2, 64-bit
+    w62-x64       Windows Server 2012, 64-bit
+    w63           Windows 8.1, 32-bit
+    w63-x64       Windows 8.1 / Server 2012 R2, 64-bit
+    w100          Windows 10, 32-bit
+    w100-x64      Windows 10 / Server 2016, 64-bit
+    o2k10         Office 2010, 32-bit
+    o2k10-x64     Office 2010, 32-bit and 64-bit
+    o2k13         Office 2013, 32-bit
+    o2k13-x64     Office 2013, 32-bit and 64-bit
+    o2k16         Office 2016, 32-bit
+    o2k16-x64     Office 2016, 32-bit and 64-bit
+    all           All Windows and Office updates, 32-bit and 64-bit
+    all-x86       All Windows and Office updates, 32-bit
+    all-x64       All Windows and Office updates, 64-bit
+    all-win       All Windows updates, 32-bit and 64-bit
+    all-win-x86   All Windows updates, 32-bit
+    all-win-x64   All Windows updates, 64-bit
+    all-ofc       All Office updates, 32-bit and 64-bit
+    all-ofc-x86   All Office updates, 32-bit
+
+    Notes: Multiple updates can be joined to a comma-separated list like
+    "w60,w60-x64".
 
 LANGUAGE
     deu    German
@@ -108,7 +120,11 @@ OPTIONS
    -includewddefs8
         Virus definition files for Windows 8 and higher. These are
         the same virus definition updates as for Microsoft Security
-        Essentials, but without the localized installers.
+        Essentials, and they are downloaded to the same directories,
+        but without the localized installers.
+
+        Therefore, "wddefs8" is a subset of "msse", and you should use
+        -includemsse instead for the internal lists "all" and "all-win".
 EOF
 }
 

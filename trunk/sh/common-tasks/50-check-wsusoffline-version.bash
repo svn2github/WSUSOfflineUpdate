@@ -81,11 +81,12 @@ function get_wou_installed_version ()
 
 function get_wou_available_version ()
 {
-    local -i initial_errors="${runtime_errors}"
+    local -i initial_errors="0"
+    initial_errors="$(get_error_count)"
 
     log_info_message "Searching for the most recent version of WSUS Offline Update..."
     download_single_file "../static" "http://download.wsusoffline.net/StaticDownloadLink-recent.txt"
-    if (( runtime_errors == initial_errors ))
+    if same_error_count "${initial_errors}"
     then
         if require_non_empty_file "../static/StaticDownloadLink-recent.txt"
         then

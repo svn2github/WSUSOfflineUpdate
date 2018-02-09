@@ -1,4 +1,4 @@
-Installationsanleitung für die Linux-Download-Skripte, Version 1.0
+Installationsanleitung für die Linux-Download-Skripte, Version 1.1
 ==================================================================
 WSUS Offline Update enthält bereits die neuen Linux-Skripte. Sie
 brauchen die Linux-Skripte deshalb nicht mehr separat zu installieren,

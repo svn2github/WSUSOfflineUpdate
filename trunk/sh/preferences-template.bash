@@ -86,9 +86,11 @@ check_for_self_updates="enabled"
 unattended_updates="disabled"
 
 # In recent versions of WSUS Offline Update, the directory
-# ../client/win/glb only contains two installers for Silverlight. If you
-# don't need Silverlight, you can change the option include_win_glb to
-# "disabled".
+# ../client/win/glb only contains two installers for Silverlight. Such
+# browser extensions are rarely used anymore. If you don't need
+# Silverlight, you can change the option include_win_glb to "disabled".
+#
+# For the ESR version of WSUS Offline Update, you must leave this enabled.
 include_win_glb="enabled"
 
 

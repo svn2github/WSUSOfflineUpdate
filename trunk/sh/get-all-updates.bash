@@ -50,15 +50,31 @@ set -o errexit
 # of this script and run it from there.
 cd "$(dirname "$(readlink -f "$0")")"
 
+
+# Download using internal lists
+#
+# Using the internal list "all" is a simple way to get all updates for
+# all supported Windows and Office versions:
+
+./download-updates.bash all deu,enu -includesp -includecpp -includedotnet -includewddefs -includemsse
+
+
+# The remaining examples demonstrate, which optional downloads are
+# available for each update. They are all commented out, so that they
+# won't be called twice.
+
+
 # Windows 7, Windows Server 2008 and 2008 R2
 #
 # Setting the language is needed to get localized installers for Internet
 # Explorer 9 for Windows Vista, Internet Explorer 11 for Windows 7,
 # and for the optional downloads dotnet and msse.
-for update in w60 w60-x64 w61 w61-x64
-do
-    ./download-updates.bash "${update}" deu,enu -includesp -includecpp -includedotnet -includewddefs -includemsse
-done
+
+#for update in w60 w60-x64 w61 w61-x64
+#do
+#    ./download-updates.bash "${update}" deu,enu -includesp -includecpp -includedotnet -includewddefs -includemsse
+#done
+
 
 # Windows 8.1 and 10, Windows Server 2012, 2012 R2 and 2016
 #
@@ -72,25 +88,30 @@ done
 # languages. So, you could actually remove the parameter "enu" here. On
 # the other hand, if you like to include other "custom" languages,
 # they need to be listed here.
-for update in w62-x64 w63 w63-x64 w100 w100-x64
-do
-    ./download-updates.bash "${update}" deu,enu -includesp -includecpp -includedotnet -includewddefs8
-done
+
+#for update in w62-x64 w63 w63-x64 w100 w100-x64
+#do
+#    ./download-updates.bash "${update}" deu,enu -includesp -includecpp -includedotnet -includewddefs8
+#done
+
 
 # Office 2010 - 2013
 #
 # o2k10-x64 and o2k13-x64 include both 32-bit and 64-bit downloads,
 # just like the Windows script DownloadUpdates.cmd, if 64-bit Office
 # support is enabled with the script AddOffice2010x64Support.cmd.
-for update in o2k10-x64 o2k13-x64
-do
-    ./download-updates.bash "${update}" deu,enu -includesp
-done
+
+#for update in o2k10-x64 o2k13-x64
+#do
+#    ./download-updates.bash "${update}" deu,enu -includesp
+#done
+
 
 # Office 2016
 #
 # o2k16-x64 includes both 32-bit and 64-bit downloads. One language
 # (any one) is sufficient.
-./download-updates.bash o2k16-x64 deu -includesp
+
+#./download-updates.bash o2k16-x64 deu -includesp
 
 exit 0

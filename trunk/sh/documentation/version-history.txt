@@ -161,3 +161,31 @@ Version 1.0
     - The copyright was updated to 2018.
 
     See the file release_notes_1.0.txt for details.
+
+
+Version 1.1
+
+    Release date: 2018-02-06
+    Intended compatibility: WSUS Offline Update Version 11.1.1 and later
+
+    Changes in this version:
+
+    - The scripts update-generator.bash and download-updates.bash create
+      temporary directories with random names on each run.
+
+    - Both scripts update-generator.bash and download-updates.bash check
+      the user-ID and refuse to run as root.
+
+    - Updates can be joined to a comma-separated list on the command-line,
+      just like the needed languages.
+
+    - The scripts support eight predefined, internal lists for Windows
+      and Office updates.
+
+    - Support of "backports" for old versions of WSUS Offline Update.
+
+    - Internal Changes:
+
+      A separate library error-counter.bash was added.
+
+    See the file release_notes_1.1.txt for details

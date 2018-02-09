@@ -47,20 +47,7 @@ function show_selection_dialogs ()
     select_language
 
     [[ "${debug}" == "disabled" ]] && clear
-    case "${update_name}" in
-        w60 | w60-x64 | w61 | w61-x64)
-            select_options "${options_menu_windows_vista[@]}"
-        ;;
-        w62-x64 | w63 | w63-x64 | w100 | w100-x64)
-            select_options "${options_menu_windows_8[@]}"
-        ;;
-        o2k10 | o2k10-x64 | o2k13 | o2k13-x64 | o2k16 | o2k16-x64)
-            select_options "${options_menu_office[@]}"
-        ;;
-        *)
-            fail "Update ${update_name} was not found."
-        ;;
-    esac
+    select_options
 
     [[ "${debug}" == "disabled" ]] && clear
     confirm_download_command "${download_command[@]}"
@@ -99,14 +86,27 @@ function select_update ()
 
 function select_language ()
 {
+    local valid_languages=()
     local menu_selection=""
     local language_name=""
     local language_description=""
 
+    case "${update_name}" in
+        w2k3)
+            valid_languages=( "${languages_menu_w2k3[@]}" )
+        ;;
+        w2k3-x64)
+            valid_languages=( "${languages_menu_w2k3_x64[@]}" )
+        ;;
+        *)
+            valid_languages=( "${languages_menu[@]}" )
+        ;;
+    esac
+
     echo "Language selection"
     echo "------------------"
     PS3="Please select your language: "
-    select menu_selection in "${languages_menu[@]}"
+    select menu_selection in "${valid_languages[@]}"
     do
         if [[ -n "${menu_selection}" ]]
         then
@@ -127,26 +127,48 @@ function select_language ()
 }
 
 
-# Each positional parameter for the function consists of an option name
-# and its description.
 function select_options ()
 {
+    local valid_options=()
+    local current_option=""
     local option_name=""
     local option_description=""
 
+    case "${update_name}" in
+        wxp)
+            valid_options=( "${options_menu_windows_xp[@]}" )
+        ;;
+        w2k3 | w2k3-x64)
+            valid_options=( "${options_menu_windows_w2k3[@]}" )
+        ;;
+        w60 | w60-x64 | w61 | w61-x64 | all | all-x86 | all-x64 | all-win | all-win-x86 | all-win-x64)
+            valid_options=( "${options_menu_windows_vista[@]}" )
+        ;;
+        w62 | w62-x64 | w63 | w63-x64 | w100 | w100-x64)
+            valid_options=( "${options_menu_windows_8[@]}" )
+        ;;
+        o2k3 | o2k7 | o2k10 | o2k10-x64 | o2k13 | o2k13-x64 | o2k16 | o2k16-x64 | all-ofc | all-ofc-x86)
+            valid_options=( "${options_menu_office[@]}" )
+        ;;
+        *)
+            fail "Update ${update_name} was not found."
+        ;;
+    esac
+
     echo "Optional downloads"
     echo "------------------"
-    while (( $# > 0 ))
-    do
-        read -r option_name option_description <<< "$1"
+    if (( ${#valid_options[@]} > 0 ))
+    then
+        for current_option in "${valid_options[@]}"
+        do
+            read -r option_name option_description <<< "${current_option}"
 
-        if ask_question "Include ${option_description}?"
-        then
-            download_command+=("${option_name}")
-        fi
-
-        shift
-    done
+            if ask_question "Include ${option_description}?"
+            then
+                download_command+=( "${option_name}" )
+            fi
+        done
+    fi
     return 0
 }
 
@@ -161,6 +183,14 @@ function confirm_download_command ()
 
     if ask_question "Do you wish to execute is now?"
     then
+        # The temporary directory of the script update-generator.exe
+        # must be removed at this point. The script download-updates.bash
+        # will create a new temporary directory with a different name.
+        if [[ -d "${temp_dir}" ]]
+        then
+            #echo "Cleaning up temporary files ..."
+            rm -r "${temp_dir}"
+        fi
         exec "${download_command[@]}"
     fi
     return 0

@@ -1,1 +1,1 @@
-1.0 http://downloads.hartmut-buhrmester.de/sh-new-1.0.tar.gz http://downloads.hartmut-buhrmester.de/hashes-sh-new-1.0.txt sh-new-1.0
+1.1 http://downloads.hartmut-buhrmester.de/sh-new-1.1.tgz http://downloads.hartmut-buhrmester.de/hashes-sh-new-1.1.txt sh-new-1.1

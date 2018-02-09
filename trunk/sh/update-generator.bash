@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #
 # Filename: update-generator.bash
-# Version: 1.0
-# Release date: 2018-01-19
-# Intended compatibility: WSUS Offline Update Version 11.1 and later
+# Version: 1.1
+# Release date: 2018-02-06
+# Intended compatibility: WSUS Offline Update Version 11.1.1 and later
 #
 # Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -56,17 +56,25 @@
 # Configuration variables are placed on the top of the script for easy
 # customization. They are considered read-only. Other global variables
 # are defined in the next section below.
-
-readonly script_version="1.0"
-readonly release_date="2018-01-19"
-readonly temp_dir="/tmp/wsusoffline_temp"
+#
+# Note: files and directories with relative paths are defined here,
+# but they are created later after setting the working directory.
+readonly script_version="1.1"
+readonly release_date="2018-02-06"
 readonly timestamp_dir="../timestamps"
 readonly log_dir="../log"
 readonly logfile="${log_dir}/download.log"
 readonly cache_dir="../cache"
 
-# Note: files and directories are defined here, but they are created
-# later after setting the working directory.
+# Create a temporary directory
+if type -P mktemp >/dev/null
+then
+    temp_dir="$(mktemp -d -p "/tmp" update-generator.XXXXXXXXXX)"
+else
+    temp_dir="/tmp/update-generator.temp"
+    mkdir -p "${temp_dir}"
+fi
+readonly temp_dir
 
 # ========== Preferences  =================================================
 
@@ -107,10 +115,6 @@ command_line_parameters=( "$@" )
 # The version of WSUS Offline Update is read from the script
 # DownloadUpdates.cmd.
 wou_version=""
-
-# The variable runtime_errors is used to keep track of download errors
-# and file verification failures.
-declare -ig runtime_errors=0
 
 # ========== Environment variables ========================================
 
@@ -197,7 +201,7 @@ function exit_handler ()
         echo "Exiting..."
     else
         # Keep temporary files for debugging
-        printf '%s\n' "Exiting with error code ${result_code} ..."
+        printf '%s\n' "Exiting with error code ${result_code} (temporary files are kept for debugging)..."
     fi
 
     echo ""
@@ -215,6 +219,15 @@ function trace_on ()
 function trace_off ()
 {
     set +o xtrace
+}
+
+function check_uid ()
+{
+    if (( "${UID}" == 0 ))
+    then
+        echo "This script should not be run as root."
+        exit 1
+    fi
 }
 
 # Normalize the pathname of the script
@@ -356,6 +369,7 @@ function run_scripts ()
 
 function update_generator ()
 {
+    check_uid
     setup_working_directory
     read_preferences
     run_scripts "libraries"

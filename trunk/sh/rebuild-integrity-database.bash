@@ -66,16 +66,17 @@ global_directories="\
 ../w60-x64/glb       hashes-w60-x64-glb.txt
 ../w61/glb           hashes-w61-glb.txt
 ../w61-x64/glb       hashes-w61-x64-glb.txt
+../w62/glb           hashes-w62-glb.txt
 ../w62-x64/glb       hashes-w62-x64-glb.txt
 ../w63/glb           hashes-w63-glb.txt
 ../w63-x64/glb       hashes-w63-x64-glb.txt
 ../w100/glb          hashes-w100-glb.txt
 ../w100-x64/glb      hashes-w100-x64-glb.txt
 ../wddefs            hashes-wddefs.txt
-../win/glb           hashes-win-glb.txt
 ../wsus              hashes-wsus.txt"
 
-office_languages="deu enu ara chs cht csy dan nld fin fra ell heb hun ita jpn kor nor plk ptg ptb rus esn sve trk glb"
+localized_directories=(o2k3 o2k7 o2k10 o2k13 ofc w2k3 w2k3-x64 win wxp)
+languages=(deu enu ara chs cht csy dan nld fin fra ell heb hun ita jpn kor nor plk ptg ptb rus esn sve trk glb)
 
 # ========== Functions ====================================================
 
@@ -85,6 +86,7 @@ function parse_global_directories ()
     local hashes_file=""
     local skip_rest=""
 
+    echo "Parsing global directories..."
     while read -r hashed_dir hashes_file skip_rest
     do
         validate_directory "${hashed_dir}" "${hashes_file}"
@@ -100,9 +102,10 @@ function parse_localized_directories ()
     local hashed_dir=""
     local hashes_file=""
 
-    for update in ofc o2k10 o2k13
+    echo "Parsing localized directories..."
+    for update in "${localized_directories[@]}"
     do
-        for language in ${office_languages}
+        for language in "${languages[@]}"
         do
             hashed_dir="../${update}/${language}"
             hashes_file="hashes-${update}-${language}.txt"
@@ -160,7 +163,7 @@ function create_hashdeep_files ()
     # Preconditions
     [[ -d "${hashed_dir}" || -h "${hashed_dir}" ]] || return 0
 
-    echo "Calculating hashes for directory ${hashed_dir}..."
+    echo "Calculating hashes for directory ${hashed_dir} ..."
     # Remove existing files
     rm -f "${hashes_file}"
 
@@ -269,7 +272,7 @@ else
     mkdir -p "${temp_dir}"
 fi
 
-# Create the checksum directory
+# Create the hashes directory for the integrity database
 mkdir -p ../client/md
 
 # Rebuild integrity database

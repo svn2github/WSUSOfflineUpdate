@@ -235,7 +235,8 @@ function download_static_files ()
     local local_filename=""
     local remote_filename=""
     local skip_rest=""
-    local initial_errors="${runtime_errors}"
+    local -i initial_errors="0"
+    initial_errors="$(get_error_count)"
 
     require_non_empty_file "${input_file}" || return 0
     number_of_links="$(wc -l < "${input_file}")"
@@ -270,11 +271,11 @@ function download_static_files ()
         fi
     done < <(cat_dos "${input_file}")
 
-    if (( runtime_errors == initial_errors ))
+    if same_error_count "${initial_errors}"
     then
         log_info_message "Downloaded/validated ${number_of_links} link(s)"
     else
-        log_warning_message "There were $(( runtime_errors - initial_errors )) runtime errors while downloading/validating links from input file ${input_file##*/}. See the download log for details"
+        log_warning_message "There were $(get_error_difference "${initial_errors}") runtime errors while downloading/validating links from input file ${input_file##*/}. See the download log for details"
     fi
     return 0
 }
@@ -314,6 +315,16 @@ function download_single_file ()
             download_single_file_optimized "$@"
             compare_timestamp "${pathname}"
         ;;
+        # Update for root certificates. Downloads from archive.org don't
+        # allow timestamping.
+        rootsupd.exe)
+            if [[ -f "${pathname}" ]]
+            then
+                log_info_message "File ${filename} has already been downloaded."
+            else
+                download_single_file_optimized "$@"
+            fi
+        ;;
         # All other downloads
         *)
             download_single_file_optimized "$@"
@@ -341,7 +352,7 @@ function download_single_file_optimized ()
         log_debug_message "Download/validation of ${filename} succeeded"
     else
         log_error_message "Download/validation of ${filename} failed"
-        runtime_errors="$(( runtime_errors + 1 ))"
+        increment_error_count
     fi
 
     return 0
@@ -416,7 +427,7 @@ function download_single_file_failsafe ()
                 sleep "$(( try_count * wait_time ))"
             else
                 log_info_message "Maximum number of tries reached. Giving up."
-                runtime_errors="$(( runtime_errors + 1 ))"
+                increment_error_count
             fi
         fi
 
@@ -454,7 +465,7 @@ function download_multiple_files ()
         log_info_message "Downloaded/validated ${number_of_links} link(s)"
     else
         log_error_message "Some downloads from input file ${input_file##*/} failed -- see the download log for details"
-        runtime_errors="$(( runtime_errors + 1 ))"
+        increment_error_count
     fi
 
     return 0
@@ -474,13 +485,15 @@ function download_and_verify ()
     local hashes_link="$3"
     local archive_filename="${archive_link##*/}"
     local hashes_filename="${hashes_link##*/}"
-    local -i initial_errors="${runtime_errors}"
+    local -i initial_errors="0"
+    initial_errors="$(get_error_count)"
 
     log_info_message "Downloading archive and accompanying hashes file..."
     download_single_file "${download_dir}" "${archive_link}"
-    (( runtime_errors == initial_errors )) || exit 1
+    same_error_count "${initial_errors}" || exit 1
+
     download_single_file "${download_dir}" "${hashes_link}"
-    (( runtime_errors == initial_errors )) || exit 1
+    same_error_count "${initial_errors}" || exit 1
 
     log_info_message "Searching downloaded files..."
     if [[ -f "${download_dir}/${archive_filename}" ]]
@@ -529,7 +542,10 @@ function test_internet_connection ()
     # host www.wsusoffline.net". Then the Internet router was too slow to
     # connect to its Internet Service Provider, but subsequent connection
     # tests should succeed.
-    (ping -c 4 -q download.windowsupdate.com 2>&1 | tee -a "${logfile}") || true
+    #
+    # The server download.windowsupdate.com doesn't answer to "pings"
+    # anymore.
+    (ping -c 4 -q www.download.windowsupdate.com 2>&1 | tee -a "${logfile}") || true
     echo ""
     sleep 4
 

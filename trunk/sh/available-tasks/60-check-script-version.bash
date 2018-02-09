@@ -94,7 +94,8 @@ function compare_sh_versions ()
 {
     local -i interval_length="${interval_length_configuration_files}"
     local interval_description="${interval_description_configuration_files}"
-    local -i initial_errors="${runtime_errors}"
+    local -i initial_errors="0"
+    initial_errors="$(get_error_count)"
 
     if [[ "${check_for_self_updates}" == "disabled" ]]
     then
@@ -110,7 +111,7 @@ function compare_sh_versions ()
 
         # Search for the most recent version of the Linux scripts
         download_single_file "./versions" "http://downloads.hartmut-buhrmester.de/available-version.txt"
-        if (( runtime_errors == initial_errors ))
+        if same_error_count "${initial_errors}"
         then
             if require_non_empty_file "./versions/available-version.txt"
             then

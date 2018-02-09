@@ -63,14 +63,15 @@ function get_sysinternals_helpers ()
     local sigcheck_link="${sigcheck_link/http:/https:}"
     local sigcheck_archive="${sigcheck_link##*/}"
 
-    local initial_errors="${runtime_errors}"
+    local -i initial_errors="0"
+    initial_errors="$(get_error_count)"
 
     # Get Sysinternals Autologon
     if [[ ! -f ../client/bin/"${autologon_bin}" ]]
     then
         log_info_message "Downloading Sysinternals Autologon.exe ..."
         download_single_file ../client/bin "${autologon_link}"
-        if (( runtime_errors == initial_errors ))
+        if same_error_count "${initial_errors}"
         then
             log_info_message "Unpacking Sysinternals Autologon.exe ..."
             if unzip ../client/bin/"${autologon_archive}" "${autologon_bin}" -d ../client/bin
@@ -87,12 +88,12 @@ function get_sysinternals_helpers ()
     fi
 
     # Get Sysinternals Sigcheck
-    initial_errors="${runtime_errors}"
+    initial_errors="$(get_error_count)"
     if [[ ! -f ../bin/"${sigcheck_bin}" ]]
     then
         log_info_message "Downloading Sysinternals sigcheck.exe ..."
         download_single_file ../bin "${sigcheck_link}"
-        if (( runtime_errors == initial_errors ))
+        if same_error_count "${initial_errors}"
         then
             log_info_message "Unpacking Sysinternals sigcheck.exe ..."
             if unzip ../bin/"${sigcheck_archive}" "${sigcheck_bin}" -d ../bin
