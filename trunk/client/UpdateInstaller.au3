@@ -7,7 +7,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 11.1.1.931)
+#pragma compile(FileVersion, 11.1.1.932)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -1030,8 +1030,17 @@ While 1
         FileDelete(@WindowsDir & $path_rel_msi_selected)
       EndIf
       If (@OSArch <> "X86") Then
+        $pRedirect = DllStructCreate("ptr")
+        If (@error <> 0) Then
+          If $gergui Then
+            MsgBox(0x2010, "Fehler", "Fehler #" & @error & " beim Aufruf von DllStructCreate.")
+          Else
+            MsgBox(0x2010, "Error", "Error #" & @error & " when calling DllStructCreate.")
+          EndIf
+          ExitLoop
+        EndIf
         DllCall("kernel32.dll", "bool", "Wow64DisableWow64FsRedirection", "ptr*", DllStructGetPtr($pRedirect))
-        If (@error <> 0) OR (_WinAPI_GetLastError() <> 0) Then
+        If (@error <> 0) Then
           If $gergui Then
             MsgBox(0x2010, "Fehler", "Fehler #" & @error & " (API-Fehlercode: " & _WinAPI_GetLastError() & ")" _
                                    & " beim Aufruf von Wow64DisableWow64FsRedirection.")
@@ -1055,7 +1064,7 @@ While 1
       EndIf
       If (@OSArch <> "X86") Then
         DllCall("kernel32.dll", "bool", "Wow64RevertWow64FsRedirection", "ptr", $pRedirect)
-        If (@error <> 0) OR (_WinAPI_GetLastError() <> 0) Then
+        If (@error <> 0) Then
           If $gergui Then
             MsgBox(0x2010, "Fehler", "Fehler #" & @error & " (API-Fehlercode: " & _WinAPI_GetLastError() & ")" _
                                    & " beim Aufruf von Wow64RevertWow64FsRedirection.")

@@ -19,3 +19,4 @@ kb4048960,November 2017 Security Only Quality Update for Windows 7 SP1 and Windo
 kb4054521,December 2017 Security Only Quality Update for Windows 7 SP1 and Windows Server 2008 R2 SP1
 kb4056897,January 2018 Security Only Quality Update for Windows 7 SP1 and Windows Server 2008 R2 SP1
 kb4074587,February 2018 Security Only Quality Update for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4088878,March 2018 Security Only Quality Update for Windows 7 SP1 and Windows Server 2008 R2 SP1

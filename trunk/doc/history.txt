@@ -1391,8 +1391,10 @@ Version 11.1.1 -- 16.01.18
 Version ??.?.? -- ??.??.18
 - Included complete rewrite of the Linux scripts version 1.1 (Special thanks to H. Buhrmester)
 - February 2018 updates added to 'security only' lists for Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems
+- March 2018 updates added to 'security only' lists for Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems
 - Replaced superseded servicing stack update for Windows 10 Version 1709 kb4058702 (January 3rd, 2018) by kb4074608 (January 30th, 2018) (Thanks to "aker" and A. Pastor)
 - Replaced superseded servicing stack update for Windows 10 Version 1709 kb4074608 (January 30th, 2018) by kb4087256 (February 13th, 2018) (Thanks to "aker")
+- Replaced superseded servicing stack update for Windows 10 Version 1709 kb4087256 (February 13th, 2018) by kb4090914 (March 5th, 2018) (Thanks to "aker")
 - AutoIt script compiler updated to version 3.3.14.3
 - Fix: Incorrect error handling in UpdateInstaller script (Thanks to "Dalai")
 - Fix: Incorrect Wow64DisableWow64FsRedirection call in UpdateInstaller script (Thanks to "Dalai")
@@ -1400,3 +1402,4 @@ Version ??.?.? -- ??.??.18
 - Fix: DoUpdate.cmd script threw false warning about active compatibility mode on Server 2016 systems
 - Fix: Replaced superseded Outlook 2010 Security Update kb4011273 (January 2018) by kb4011711 (February 2018)
 - Fix: Microsoft re-released January 2018 Security and Quality Rollup for .NET Framework 4.6 and higher for Windows 7 and Server 2008 R2 (x86/x64) systems (Thanks to H. Buhrmester)
+- Fix: Download part missed 'security only' updates kb2973112, kb3122648 and kb4052978 for Windows 7 x64 and Windows Server 2008 R2

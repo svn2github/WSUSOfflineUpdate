@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=11.1.1+ (r931)
+set WSUSOFFLINE_VERSION=11.1.1+ (r932)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -1066,6 +1066,13 @@ if "%SKIP_SDD%" NEQ "1" (
     if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
   )
   del ..\exclude\ExcludeList-superseded-exclude.ori
+  copy /Y ..\exclude\ExcludeList-superseded-exclude-seconly.txt ..\exclude\ExcludeList-superseded-exclude-seconly.ori >nul
+  %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\exclude %DLDR_LOPT% http://download.wsusoffline.net/ExcludeList-superseded-exclude-seconly.txt
+  echo n | %SystemRoot%\System32\comp.exe ..\exclude\ExcludeList-superseded-exclude-seconly.txt ..\exclude\ExcludeList-superseded-exclude-seconly.ori /A /L /C >nul 2>&1
+  if errorlevel 1 (
+    if exist ..\exclude\ExcludeList-superseded.txt del ..\exclude\ExcludeList-superseded.txt
+  )
+  del ..\exclude\ExcludeList-superseded-exclude-seconly.ori
   copy /Y ..\client\exclude\HideList-seconly.txt ..\client\exclude\HideList-seconly.ori >nul
   %DLDR_PATH% %DLDR_COPT% %DLDR_NVOPT% %DLDR_POPT% ..\client\exclude %DLDR_LOPT% http://download.wsusoffline.net/HideList-seconly.txt
   echo n | %SystemRoot%\System32\comp.exe ..\client\exclude\HideList-seconly.txt ..\client\exclude\HideList-seconly.ori /A /L /C >nul 2>&1
@@ -1131,6 +1138,9 @@ if exist "%TEMP%\ExcludeList-superseded-exclude.txt" (
   %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\ExcludeList-superseded-exclude.txt" "%TEMP%\ExcludeListLocations-superseded-all-unique.txt" >..\exclude\ExcludeList-superseded.txt
 ) else (
   copy /Y "%TEMP%\ExcludeListLocations-superseded-all-unique.txt" ..\exclude\ExcludeList-superseded.txt >nul
+)
+if exist ..\exclude\ExcludeList-superseded-exclude-seconly.txt (
+  type ..\exclude\ExcludeList-superseded-exclude-seconly.txt >>"%TEMP%\ExcludeList-superseded-exclude.txt"
 )
 for %%i in (w61 w62 w63) do (
   for /F %%j in ('dir /B ..\client\static\StaticUpdateIds-%%i*-seconly.txt 2^>nul') do (
