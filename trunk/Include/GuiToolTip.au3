@@ -9,7 +9,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: ToolTip
-; AutoIt Version : 3.3.14.3
+; AutoIt Version : 3.3.14.5
 ; Description ...: Functions that assist with ToolTip control management.
 ;                  ToolTip controls are pop-up windows that display text.  The text usually describes a tool, which is  either  a
 ;                  window, such as a child window or control, or an application-defined rectangular area within a window's client

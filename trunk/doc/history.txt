@@ -1395,7 +1395,8 @@ Version ??.?.? -- ??.??.18
 - Replaced superseded servicing stack update for Windows 10 Version 1709 kb4058702 (January 3rd, 2018) by kb4074608 (January 30th, 2018) (Thanks to "aker" and A. Pastor)
 - Replaced superseded servicing stack update for Windows 10 Version 1709 kb4074608 (January 30th, 2018) by kb4087256 (February 13th, 2018) (Thanks to "aker")
 - Replaced superseded servicing stack update for Windows 10 Version 1709 kb4087256 (February 13th, 2018) by kb4090914 (March 5th, 2018) (Thanks to "aker")
-- AutoIt script compiler updated to version 3.3.14.3
+- AutoIt script compiler updated to version 3.3.14.5
+- Fix: Default UpdateInstaller.ini values will now win against copied %TEMP%\UpdateInstaller.ini values if they have no GUI counterpart
 - Fix: Incorrect error handling in UpdateInstaller script (Thanks to "Dalai")
 - Fix: Incorrect Wow64DisableWow64FsRedirection call in UpdateInstaller script (Thanks to "Dalai")
 - Fix: Download part erroneously excluded Security Update kb2631813 for Windows 7 x64 and Windows Server 2008 R2

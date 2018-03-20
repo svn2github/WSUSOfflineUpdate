@@ -5,11 +5,11 @@
 #include "StructureConstants.au3"
 #include "WinAPIError.au3"
 #include "WinAPIRes.au3"
-#include "WinAPISysInternals.au3"
+#include "WinAPISys.au3"
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: Event_Log
-; AutoIt Version : 3.3.14.3
+; AutoIt Version : 3.3.14.5
 ; Language ......: English
 ; Description ...: Functions that assist Windows System logs.
 ; Description ...: When an error occurs, the system administrator or support technicians must determine what  caused  the  error,
@@ -245,10 +245,11 @@ Func __EventLog_DecodeDesc($tEventLog)
 
     Local $iFlags = BitOR($__EVENTLOG_FORMAT_MESSAGE_FROM_HMODULE, $__EVENTLOG_FORMAT_MESSAGE_IGNORE_INSERTS)
     Local $sDesc = ""
-    For $iI = 1 To $aMsgDLL[0]
+    Local $tBuffer = 0
+	For $iI = 1 To $aMsgDLL[0]
         Local $hDLL = _WinAPI_LoadLibraryEx($aMsgDLL[$iI], $__EVENTLOG_LOAD_LIBRARY_AS_DATAFILE)
         If $hDLL = 0 Then ContinueLoop
-        Local $tBuffer = DllStructCreate("wchar Text[4096]")
+        $tBuffer = DllStructCreate("wchar Text[4096]")
         _WinAPI_FormatMessage($iFlags, $hDLL, $iEventID, 0, $tBuffer, 4096, 0)
         _WinAPI_FreeLibrary($hDLL)
         $sDesc &= DllStructGetData($tBuffer, "Text")
@@ -260,7 +261,7 @@ Func __EventLog_DecodeDesc($tEventLog)
         $hDLL = _WinAPI_LoadLibraryEx($aMsgDLL[$iI], $__EVENTLOG_LOAD_LIBRARY_AS_DATAFILE)
         If $hDLL <> 0 Then
             For $iJ = 1 To $aStrings[0] ;Added to parse secondary replacements
-                Local $tBuffer = DllStructCreate("wchar Text[4096]")
+                $tBuffer = DllStructCreate("wchar Text[4096]")
                 If StringLeft($aStrings[$iJ], 2) == "%%" Then
                     _WinAPI_FormatMessage($iFlags, $hDLL, Int(StringTrimLeft($aStrings[$iJ], 2)), 0, $tBuffer, 4096, 0)
                     If Not @error Then

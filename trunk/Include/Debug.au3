@@ -9,7 +9,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: Debug
-; AutoIt Version : 3.3.14.3
+; AutoIt Version : 3.3.14.5
 ; Language ......: English
 ; Description ...: Functions to help script debugging.
 ; Author(s) .....: Nutster, Jpm, Valik, guinness, water
@@ -563,7 +563,7 @@ EndFunc   ;==>__Debug_ReportNotepadWrite
 ; Description ...: Write on Report
 ; Syntax.........: __Debug_ReportWrite ( $sData [, $bLastError [, $iCurEXT = @extended]} )
 ; Parameters ....:
-; Return values .:
+; Return values .: $iCurEXT
 ; Author ........: jpm
 ; Modified.......:
 ; Remarks .......:

@@ -3,11 +3,12 @@
 #include "Date.au3"
 #include "FileConstants.au3"
 #include "StructureConstants.au3"
+#include "WinAPIConv.au3"
 #include "WinAPIError.au3"
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: FTP
-; AutoIt Version : 3.3.14.3
+; AutoIt Version : 3.3.14.5
 ; Language ......: English
 ; Description ...: Functions that assist with FTP.
 ; Author(s) .....: Wouter, Prog@ndy, jpm, Beege

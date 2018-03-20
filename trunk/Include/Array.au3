@@ -1,13 +1,13 @@
 #include-Once
 
 #include "ArrayDisplayInternals.au3"
-;#include "AutoItConstants.au3"
-;#include "MsgBoxConstants.au3"
-;#include "StringConstants.au3"
+#include "AutoItConstants.au3"
+#include "MsgBoxConstants.au3"
+#include "StringConstants.au3"
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: Array
-; AutoIt Version : 3.3.14.3
+; AutoIt Version : 3.3.14.5
 ; Language ......: English
 ; Description ...: Functions for manipulating arrays.
 ; Author(s) .....: JdeB, Erik Pilsits, Ultima, Dale (Klaatu) Thompson, Cephas,randallc, Gary Frost, GEOSoft,
@@ -63,7 +63,7 @@
 
 ; #GLOBAL CONSTANTS# ============================================================================================================
 Global Enum $ARRAYFILL_FORCE_DEFAULT, $ARRAYFILL_FORCE_SINGLEITEM, $ARRAYFILL_FORCE_INT, $ARRAYFILL_FORCE_NUMBER, _
-			$ARRAYFILL_FORCE_PTR, $ARRAYFILL_FORCE_HWND, $ARRAYFILL_FORCE_STRING, $ARRAYFILL_FORCE_BOOLEAN
+		$ARRAYFILL_FORCE_PTR, $ARRAYFILL_FORCE_HWND, $ARRAYFILL_FORCE_STRING, $ARRAYFILL_FORCE_BOOLEAN
 Global Enum $ARRAYUNIQUE_NOCOUNT, $ARRAYUNIQUE_COUNT
 Global Enum $ARRAYUNIQUE_AUTO, $ARRAYUNIQUE_FORCE32, $ARRAYUNIQUE_FORCE64, $ARRAYUNIQUE_MATCH, $ARRAYUNIQUE_DISTINCT
 ; ===============================================================================================================================
@@ -75,120 +75,120 @@ Global Enum $ARRAYUNIQUE_AUTO, $ARRAYUNIQUE_FORCE32, $ARRAYUNIQUE_FORCE64, $ARRA
 Func _ArrayAdd(ByRef $aArray, $vValue, $iStart = 0, $sDelim_Item = "|", $sDelim_Row = @CRLF, $iForce = $ARRAYFILL_FORCE_DEFAULT)
 
 	If $iStart = Default Then $iStart = 0
-    If $sDelim_Item = Default Then $sDelim_Item = "|"
-    If $sDelim_Row = Default Then $sDelim_Row = @CRLF
-    If $iForce = Default Then $iForce = $ARRAYFILL_FORCE_DEFAULT
-    If Not IsArray($aArray) Then Return SetError(1, 0, -1)
-    Local $iDim_1 = UBound($aArray, $UBOUND_ROWS)
-    Local $hDataType = 0
-    Switch $iForce
-        Case $ARRAYFILL_FORCE_INT
-            $hDataType = Int
-        Case $ARRAYFILL_FORCE_NUMBER
-            $hDataType = Number
-        Case $ARRAYFILL_FORCE_PTR
-            $hDataType = Ptr
-        Case $ARRAYFILL_FORCE_HWND
-            $hDataType = Hwnd
-        Case $ARRAYFILL_FORCE_STRING
-            $hDataType = String
-        Case $ARRAYFILL_FORCE_Boolean
-            $hDataType = "Boolean"
-    EndSwitch
-    Switch UBound($aArray, $UBOUND_DIMENSIONS)
-        Case 1
-            If $iForce = $ARRAYFILL_FORCE_SINGLEITEM Then
-                ReDim $aArray[$iDim_1 + 1]
-                $aArray[$iDim_1] = $vValue
-                Return $iDim_1
-            EndIf
-            If IsArray($vValue) Then
-                If UBound($vValue, $UBOUND_DIMENSIONS) <> 1 Then Return SetError(5, 0, -1)
-                $hDataType = 0
-            Else
-                Local $aTmp = StringSplit($vValue, $sDelim_Item, $STR_NOCOUNT + $STR_ENTIRESPLIT)
-                If UBound($aTmp, $UBOUND_ROWS) = 1 Then
-                    $aTmp[0] = $vValue
-                EndIf
-                $vValue = $aTmp
-            EndIf
-            Local $iAdd = UBound($vValue, $UBOUND_ROWS)
-            ReDim $aArray[$iDim_1 + $iAdd]
-            For $i = 0 To $iAdd - 1
-                If $hDataType = "Boolean" Then
-                    Switch $vValue[$i]
-                        Case "True", "1"
-                            $aArray[$iDim_1 + $i] = True
-                        Case "False", "0", ""
-                            $aArray[$iDim_1 + $i] = False
-                    EndSwitch
+	If $sDelim_Item = Default Then $sDelim_Item = "|"
+	If $sDelim_Row = Default Then $sDelim_Row = @CRLF
+	If $iForce = Default Then $iForce = $ARRAYFILL_FORCE_DEFAULT
+	If Not IsArray($aArray) Then Return SetError(1, 0, -1)
+	Local $iDim_1 = UBound($aArray, $UBOUND_ROWS)
+	Local $hDataType = 0
+	Switch $iForce
+		Case $ARRAYFILL_FORCE_INT
+			$hDataType = Int
+		Case $ARRAYFILL_FORCE_NUMBER
+			$hDataType = Number
+		Case $ARRAYFILL_FORCE_PTR
+			$hDataType = Ptr
+		Case $ARRAYFILL_FORCE_HWND
+			$hDataType = Hwnd
+		Case $ARRAYFILL_FORCE_STRING
+			$hDataType = String
+		Case $ARRAYFILL_FORCE_BOOLEAN
+			$hDataType = "Boolean"
+	EndSwitch
+	Switch UBound($aArray, $UBOUND_DIMENSIONS)
+		Case 1
+			If $iForce = $ARRAYFILL_FORCE_SINGLEITEM Then
+				ReDim $aArray[$iDim_1 + 1]
+				$aArray[$iDim_1] = $vValue
+				Return $iDim_1
+			EndIf
+			If IsArray($vValue) Then
+				If UBound($vValue, $UBOUND_DIMENSIONS) <> 1 Then Return SetError(5, 0, -1)
+				$hDataType = 0
+			Else
+				Local $aTmp = StringSplit($vValue, $sDelim_Item, $STR_NOCOUNT + $STR_ENTIRESPLIT)
+				If UBound($aTmp, $UBOUND_ROWS) = 1 Then
+					$aTmp[0] = $vValue
+				EndIf
+				$vValue = $aTmp
+			EndIf
+			Local $iAdd = UBound($vValue, $UBOUND_ROWS)
+			ReDim $aArray[$iDim_1 + $iAdd]
+			For $i = 0 To $iAdd - 1
+				If String($hDataType) = "Boolean" Then
+					Switch $vValue[$i]
+						Case "True", "1"
+							$aArray[$iDim_1 + $i] = True
+						Case "False", "0", ""
+							$aArray[$iDim_1 + $i] = False
+					EndSwitch
 
-                ElseIf IsFunc($hDataType) Then
-                    $aArray[$iDim_1 + $i] = $hDataType($vValue[$i])
-                Else
-                    $aArray[$iDim_1 + $i] = $vValue[$i]
-                EndIf
-            Next
-            Return $iDim_1 + $iAdd - 1
-        Case 2
-            Local $iDim_2 = UBound($aArray, $UBOUND_COLUMNS)
-            If $iStart < 0 Or $iStart > $iDim_2 - 1 Then Return SetError(4, 0, -1)
-            Local $iValDim_1, $iValDim_2 = 0, $iColCount
-            If IsArray($vValue) Then
-                If UBound($vValue, $UBOUND_DIMENSIONS) <> 2 Then Return SetError(5, 0, -1)
-                $iValDim_1 = UBound($vValue, $UBOUND_ROWS)
-                $iValDim_2 = UBound($vValue, $UBOUND_COLUMNS)
-                $hDataType = 0
-            Else
-                ; Convert string to 2D array
-                Local $aSplit_1 = StringSplit($vValue, $sDelim_Row, $STR_NOCOUNT + $STR_ENTIRESPLIT)
-                $iValDim_1 = UBound($aSplit_1, $UBOUND_ROWS)
-                Local $aTmp[$iValDim_1][0], $aSplit_2
-                For $i = 0 To $iValDim_1 - 1
-                    $aSplit_2 = StringSplit($aSplit_1[$i], $sDelim_Item, $STR_NOCOUNT + $STR_ENTIRESPLIT)
-                    $iColCount = UBound($aSplit_2)
-                    If $iColCount > $iValDim_2 Then
-                        ; Increase array size to fit max number of items on line
-                        $iValDim_2 = $iColCount
-                        ReDim $aTmp[$iValDim_1][$iValDim_2]
-                    EndIf
-                    For $j = 0 To $iColCount - 1
-                        $aTmp[$i][$j] = $aSplit_2[$j]
-                    Next
-                Next
-                $vValue = $aTmp
-            EndIf
-            ; Check if too many columns to fit
-            If UBound($vValue, $UBOUND_COLUMNS) + $iStart > UBound($aArray, $UBOUND_COLUMNS) Then Return SetError(3, 0, -1)
-            ReDim $aArray[$iDim_1 + $iValDim_1][$iDim_2]
-            For $iWriteTo_Index = 0 To $iValDim_1 - 1
-                For $j = 0 To $iDim_2 - 1
-                    If $j < $iStart Then
-                        $aArray[$iWriteTo_Index + $iDim_1][$j] = ""
-                    ElseIf $j - $iStart > $iValDim_2 - 1 Then
-                        $aArray[$iWriteTo_Index + $iDim_1][$j] = ""
-                    Else
-                        If $hDataType = "Boolean" Then
-                            Switch $vValue[$iWriteTo_Index][$j - $iStart]
-                                Case "True", "1"
-                                    $aArray[$iWriteTo_Index + $iDim_1][$j] = True
-                                Case "False", "0", ""
-                                    $aArray[$iWriteTo_Index + $iDim_1][$j] = False
-                            EndSwitch
+				ElseIf IsFunc($hDataType) Then
+					$aArray[$iDim_1 + $i] = $hDataType($vValue[$i])
+				Else
+					$aArray[$iDim_1 + $i] = $vValue[$i]
+				EndIf
+			Next
+			Return $iDim_1 + $iAdd - 1
+		Case 2
+			Local $iDim_2 = UBound($aArray, $UBOUND_COLUMNS)
+			If $iStart < 0 Or $iStart > $iDim_2 - 1 Then Return SetError(4, 0, -1)
+			Local $iValDim_1, $iValDim_2 = 0, $iColCount
+			If IsArray($vValue) Then
+				If UBound($vValue, $UBOUND_DIMENSIONS) <> 2 Then Return SetError(5, 0, -1)
+				$iValDim_1 = UBound($vValue, $UBOUND_ROWS)
+				$iValDim_2 = UBound($vValue, $UBOUND_COLUMNS)
+				$hDataType = 0
+			Else
+				; Convert string to 2D array
+				Local $aSplit_1 = StringSplit($vValue, $sDelim_Row, $STR_NOCOUNT + $STR_ENTIRESPLIT)
+				$iValDim_1 = UBound($aSplit_1, $UBOUND_ROWS)
+				Local $aTmp[$iValDim_1][0], $aSplit_2
+				For $i = 0 To $iValDim_1 - 1
+					$aSplit_2 = StringSplit($aSplit_1[$i], $sDelim_Item, $STR_NOCOUNT + $STR_ENTIRESPLIT)
+					$iColCount = UBound($aSplit_2)
+					If $iColCount > $iValDim_2 Then
+						; Increase array size to fit max number of items on line
+						$iValDim_2 = $iColCount
+						ReDim $aTmp[$iValDim_1][$iValDim_2]
+					EndIf
+					For $j = 0 To $iColCount - 1
+						$aTmp[$i][$j] = $aSplit_2[$j]
+					Next
+				Next
+				$vValue = $aTmp
+			EndIf
+			; Check if too many columns to fit
+			If UBound($vValue, $UBOUND_COLUMNS) + $iStart > UBound($aArray, $UBOUND_COLUMNS) Then Return SetError(3, 0, -1)
+			ReDim $aArray[$iDim_1 + $iValDim_1][$iDim_2]
+			For $iWriteTo_Index = 0 To $iValDim_1 - 1
+				For $j = 0 To $iDim_2 - 1
+					If $j < $iStart Then
+						$aArray[$iWriteTo_Index + $iDim_1][$j] = ""
+					ElseIf $j - $iStart > $iValDim_2 - 1 Then
+						$aArray[$iWriteTo_Index + $iDim_1][$j] = ""
+					Else
+						If String($hDataType) = "Boolean" Then
+							Switch $vValue[$iWriteTo_Index][$j - $iStart]
+								Case "True", "1"
+									$aArray[$iWriteTo_Index + $iDim_1][$j] = True
+								Case "False", "0", ""
+									$aArray[$iWriteTo_Index + $iDim_1][$j] = False
+							EndSwitch
 
-                        ElseIf IsFunc($hDataType) Then
-                            $aArray[$iWriteTo_Index + $iDim_1][$j] = $hDataType($vValue[$iWriteTo_Index][$j - $iStart])
-                        Else
-                            $aArray[$iWriteTo_Index + $iDim_1][$j] = $vValue[$iWriteTo_Index][$j - $iStart]
-                        EndIf
-                    EndIf
-                Next
-            Next
-        Case Else
-            Return SetError(2, 0, -1)
-    EndSwitch
+						ElseIf IsFunc($hDataType) Then
+							$aArray[$iWriteTo_Index + $iDim_1][$j] = $hDataType($vValue[$iWriteTo_Index][$j - $iStart])
+						Else
+							$aArray[$iWriteTo_Index + $iDim_1][$j] = $vValue[$iWriteTo_Index][$j - $iStart]
+						EndIf
+					EndIf
+				Next
+			Next
+		Case Else
+			Return SetError(2, 0, -1)
+	EndSwitch
 
-    Return UBound($aArray, $UBOUND_ROWS) - 1
+	Return UBound($aArray, $UBOUND_ROWS) - 1
 
 EndFunc   ;==>_ArrayAdd
 

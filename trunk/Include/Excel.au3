@@ -1,10 +1,10 @@
 #include-once
-#include <Array.au3>
-#include <ExcelConstants.au3>
+#include "Array.au3"
+#include "ExcelConstants.au3"
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: Microsoft Excel Function Library
-; AutoIt Version : 3.3.14.3
+; AutoIt Version : 3.3.14.5
 ; Language ......: English
 ; Description ...: A collection of functions for accessing and manipulating Microsoft Excel files
 ; Author(s) .....: SEO (Locodarwin), DaLiMan, Stanley Lim, MikeOsdx, MRDev, big_daddy, PsaltyDS, litlmike, water, spiff59, golfinhu, bowmore, GMX, Andreu, danwilli
@@ -225,7 +225,7 @@ Func _Excel_BookOpen($oExcel, $sFilePath, $bReadOnly = Default, $bVisible = Defa
 	Local $oError = ObjEvent("AutoIt.Error", "__Excel_COMErrFunc")
 	#forceref $oError
 	If Not IsObj($oExcel) Or ObjName($oExcel, 1) <> "_Application" Then Return SetError(1, @error, 0)
-	If Not FileExists($sFilePath) Then Return SetError(2, 0, 0)
+	If StringLeft($sFilePath, "HTTP") = 0 And Not FileExists($sFilePath) Then Return SetError(2, 0, 0)
 	If $bReadOnly = Default Then $bReadOnly = False
 	If $bVisible = Default Then $bVisible = True
 	Local $oWorkbook = $oExcel.Workbooks.Open($sFilePath, $bUpdateLinks, $bReadOnly, Default, $sPassword, $sWritePassword)
@@ -247,7 +247,7 @@ Func _Excel_BookOpenText($oExcel, $sFilePath, $iStartRow = Default, $iDataType =
 	#forceref $oError
 	Local $bTab = False, $bSemicolon = False, $bComma = False, $bSpace = False, $aDelimiter[1], $bOther = False, $sOtherChar
 	If Not IsObj($oExcel) Or ObjName($oExcel, 1) <> "_Application" Then Return SetError(1, @error, 0)
-	If Not FileExists($sFilePath) Then Return SetError(2, 0, 0)
+	If StringLeft($sFilePath, "HTTP") = 0 And Not FileExists($sFilePath) Then Return SetError(2, 0, 0)
 	If $iStartRow = Default Then $iStartRow = 1
 	If $sTextQualifier = Default Then $sTextQualifier = $xlTextQualifierDoubleQuote
 	If $bConsecutiveDelimiter = Default Then $bConsecutiveDelimiter = False

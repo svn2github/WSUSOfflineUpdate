@@ -6,7 +6,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: File
-; AutoIt Version : 3.3.14.3
+; AutoIt Version : 3.3.14.5
 ; Language ......: English
 ; Description ...: Functions that assist with files and directories.
 ; Author(s) .....: Brian Keene, Michael Michta, erifash, Jon, JdeB, Jeremy Landes, MrCreatoR, cdkid, Valik, Erik Pilsits, Kurt, Dale, guinness, DXRW4E, Melba23
@@ -139,10 +139,10 @@ Func _FileListToArrayRec($sFilePath, $sMask = "*", $iReturn = $FLTAR_FILESFOLDER
 	Local $iHide_HS = 0, _
 			$sHide_HS = ""
 	; Check for H or S omitted
-	If BitAND($iReturn, $FLTAR_NOSYSTEM) Then
+	If BitAND($iReturn, $FLTAR_NOHIDDEN) Then
 		$iHide_HS += 2
 		$sHide_HS &= "H"
-		$iReturn -= $FLTAR_NOSYSTEM
+		$iReturn -= $FLTAR_NOHIDDEN
 	EndIf
 	If BitAND($iReturn, $FLTAR_NOSYSTEM) Then
 		$iHide_HS += 4

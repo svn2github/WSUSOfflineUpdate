@@ -7,7 +7,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 11.1.1.932)
+#pragma compile(FileVersion, 11.1.1.933)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -48,20 +48,21 @@ Dim Const $target_version_psh         = "2.0"
 
 ; INI file constants
 Dim Const $ini_section_installation   = "Installation"
-Dim Const $ini_value_skipieinst       = "skipieinst"
 Dim Const $ini_value_cpp              = "updatecpp"
 Dim Const $ini_value_mssl             = "instmssl"
 Dim Const $ini_value_dotnet35         = "instdotnet35"
-Dim Const $ini_value_dotnet4          = "instdotnet4"
 Dim Const $ini_value_psh              = "instpsh"
+Dim Const $ini_value_dotnet4          = "instdotnet4"
 Dim Const $ini_value_wmf              = "instwmf"
 Dim Const $ini_value_msse             = "instmsse"
-Dim Const $ini_value_skipdefs         = "skipdefs"
 Dim Const $ini_value_tsc              = "updatetsc"
-Dim Const $ini_value_all              = "all"
-Dim Const $ini_value_seconly          = "seconly"
-Dim Const $ini_value_excludestatics   = "excludestatics"
+; Hidden installation constants
+Dim Const $ini_value_skipieinst       = "skipieinst"
+Dim Const $ini_value_skipdefs         = "skipdefs"
 Dim Const $ini_value_skipdynamic      = "skipdynamic"
+Dim Const $ini_value_all              = "all"
+Dim Const $ini_value_excludestatics   = "excludestatics"
+Dim Const $ini_value_seconly          = "seconly"
 
 Dim Const $ini_section_control        = "Control"
 Dim Const $ini_value_verify           = "verify"
@@ -70,6 +71,7 @@ Dim Const $ini_value_shutdown         = "shutdown"
 
 Dim Const $ini_section_messaging      = "Messaging"
 Dim Const $ini_value_showlog          = "showlog"
+; Hidden messaging constants
 Dim Const $ini_value_showieinfo       = "showieinfo"
 
 Dim Const $ini_section_msi            = "MSI"
@@ -98,7 +100,7 @@ Dim Const $path_rel_msi_all           = "\wouallmsi.txt"
 Dim Const $path_rel_msi_selected      = "\Temp\wouselmsi.txt"
 
 Dim $maindlg, $scriptdir, $mapped, $tabitemfocused, $cpp, $mssl, $dotnet35, $dotnet4, $psh, $wmf, $msse, $tsc, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_donate, $btn_exit, $options, $builddate
-Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos, $msiall, $msipacks[$msimax], $msicount, $msilistfile, $line, $gergui, $pRedirect, $i
+Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos, $msiall, $msipacks[$msimax], $msicount, $msilistfile, $line, $gergui, $pRedirect, $err, $i
 
 Func ShowGUIInGerman()
   If $CmdLine[0] > 0 Then
@@ -159,11 +161,14 @@ Func CheckBoxStateToString($chkbox)
   EndIf
 EndFunc
 
+Func DefaultIniRead($section, $key, $default)
+  Return IniRead($scriptdir & "\" & StringLeft(@ScriptName, StringInStr(@ScriptName, ".", 0, -1)) & "ini", $section, $key, $default)
+EndFunc
+
 Func MyIniRead($section, $key, $default)
 Dim $inifilepath, $result
 
-  $inifilepath = $scriptdir & "\" & StringLeft(@ScriptName, StringInStr(@ScriptName, ".", 0, -1)) & "ini"
-  $result = IniRead($inifilepath, $section, $key, $default)
+  $result = DefaultIniRead($section, $key, $default)
   $inifilepath = @TempDir & "\" & StringLeft(@ScriptName, StringInStr(@ScriptName, ".", 0, -1)) & "ini"
   If FileExists($inifilepath) Then
     $result = IniRead($inifilepath, $section, $key, $result)
@@ -809,8 +814,8 @@ EndIf
 If ( ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) _
  AND FileExists(@ProgramFilesDir & "\Internet Explorer\iexplore.exe") _
  AND ( (IEVersion() = "7") OR (IEVersion() = "8") ) _
- AND (MyIniRead($ini_section_installation, $ini_value_skipieinst, $disabled) = $disabled) _
- AND (MyIniRead($ini_section_messaging, $ini_value_showieinfo, $enabled) = $enabled) ) Then
+ AND (DefaultIniRead($ini_section_installation, $ini_value_skipieinst, $disabled) = $disabled) _
+ AND (DefaultIniRead($ini_section_messaging, $ini_value_showieinfo, $enabled) = $enabled) ) Then
   If $gergui Then
      MsgBox(0x2040, "Information", "Auf diesem System wird die neueste Version des Internet Explorers (IE9)" _
                            & @LF & "automatisch installiert, wenn Sie die Aktualisierung starten.")
@@ -822,8 +827,8 @@ EndIf
 If ( ( (@OSVersion = "WIN_7") OR (@OSVersion = "WIN_2008R2") ) _
  AND FileExists(@ProgramFilesDir & "\Internet Explorer\iexplore.exe") _
  AND ( (IEVersion() = "8") OR (IEVersion() = "9") OR (IEVersion() = "10") ) _
- AND (MyIniRead($ini_section_installation, $ini_value_skipieinst, $disabled) = $disabled) _
- AND (MyIniRead($ini_section_messaging, $ini_value_showieinfo, $enabled) = $enabled) ) Then
+ AND (DefaultIniRead($ini_section_installation, $ini_value_skipieinst, $disabled) = $disabled) _
+ AND (DefaultIniRead($ini_section_messaging, $ini_value_showieinfo, $enabled) = $enabled) ) Then
   If $gergui Then
      MsgBox(0x2040, "Information", "Auf diesem System wird die neueste Version des Internet Explorers (IE11)" _
                            & @LF & "automatisch installiert, wenn Sie die Aktualisierung starten.")
@@ -960,9 +965,6 @@ While 1
         RegWrite($reg_key_windowsupdate, $reg_val_wustatusserver, "REG_SZ", $options)
       EndIf
       $options = ""
-      If MyIniRead($ini_section_installation, $ini_value_skipieinst, $disabled) = $enabled Then
-        $options = $options & " /skipieinst"
-      EndIf
       If IsCheckBoxChecked($cpp) Then
         $options = $options & " /updatecpp"
       EndIf
@@ -984,11 +986,26 @@ While 1
       If IsCheckBoxChecked($msse) Then
         $options = $options & " /instmsse"
       EndIf
-      If MyIniRead($ini_section_installation, $ini_value_skipdefs, $disabled) = $enabled Then
-        $options = $options & " /skipdefs"
-      EndIf
       If IsCheckBoxChecked($tsc) Then
         $options = $options & " /updatetsc"
+      EndIf
+      If DefaultIniRead($ini_section_installation, $ini_value_skipieinst, $disabled) = $enabled Then
+        $options = $options & " /skipieinst"
+      EndIf
+      If DefaultIniRead($ini_section_installation, $ini_value_skipdefs, $disabled) = $enabled Then
+        $options = $options & " /skipdefs"
+      EndIf
+      If DefaultIniRead($ini_section_installation, $ini_value_skipdynamic, $disabled) = $enabled Then
+        $options = $options & " /skipdynamic"
+      EndIf
+      If DefaultIniRead($ini_section_installation, $ini_value_all, $disabled) = $enabled Then
+        $options = $options & " /all"
+      EndIf
+      If DefaultIniRead($ini_section_installation, $ini_value_excludestatics, $disabled) = $enabled Then
+        $options = $options & " /excludestatics"
+      EndIf
+      If DefaultIniRead($ini_section_installation, $ini_value_seconly, $disabled) = $enabled Then
+        $options = $options & " /seconly"
       EndIf
       If IsCheckBoxChecked($verify) Then
         $options = $options & " /verify"
@@ -1005,18 +1022,6 @@ While 1
       If IsCheckBoxChecked($showlog) Then
         $options = $options & " /showlog"
       EndIf
-      If MyIniRead($ini_section_installation, $ini_value_all, $disabled) = $enabled Then
-        $options = $options & " /all"
-      EndIf
-      If MyIniRead($ini_section_installation, $ini_value_seconly, $disabled) = $enabled Then
-        $options = $options & " /seconly"
-      EndIf
-      If MyIniRead($ini_section_installation, $ini_value_excludestatics, $disabled) = $enabled Then
-        $options = $options & " /excludestatics"
-      EndIf
-      If MyIniRead($ini_section_installation, $ini_value_skipdynamic, $disabled) = $enabled Then
-        $options = $options & " /skipdynamic"
-      EndIf
       $msilistfile = FileOpen(@WindowsDir & $path_rel_msi_selected, 10)
       If $msilistfile <> -1 Then
         For $i = 0 To $msicount - 1
@@ -1030,6 +1035,7 @@ While 1
         FileDelete(@WindowsDir & $path_rel_msi_selected)
       EndIf
       If (@OSArch <> "X86") Then
+        _WinAPI_SetLastError(0)
         $pRedirect = DllStructCreate("ptr")
         If (@error <> 0) Then
           If $gergui Then
@@ -1040,12 +1046,13 @@ While 1
           ExitLoop
         EndIf
         DllCall("kernel32.dll", "bool", "Wow64DisableWow64FsRedirection", "ptr*", DllStructGetPtr($pRedirect))
-        If (@error <> 0) Then
+        $err = @error 
+        If ($err <> 0) Then
           If $gergui Then
-            MsgBox(0x2010, "Fehler", "Fehler #" & @error & " (API-Fehlercode: " & _WinAPI_GetLastError() & ")" _
+            MsgBox(0x2010, "Fehler", "Fehler #" & $err & " (API-Fehlercode: " & _WinAPI_GetLastError() & ")" _
                                    & " beim Aufruf von Wow64DisableWow64FsRedirection.")
           Else
-            MsgBox(0x2010, "Error", "Error #" & @error & " (API error code: " & _WinAPI_GetLastError() & ")" _
+            MsgBox(0x2010, "Error", "Error #" & $err & " (API error code: " & _WinAPI_GetLastError() & ")" _
                                   & " when calling Wow64DisableWow64FsRedirection.")
           EndIf
           ExitLoop
@@ -1064,12 +1071,13 @@ While 1
       EndIf
       If (@OSArch <> "X86") Then
         DllCall("kernel32.dll", "bool", "Wow64RevertWow64FsRedirection", "ptr", $pRedirect)
-        If (@error <> 0) Then
+        $err = @error 
+        If ($err <> 0) Then
           If $gergui Then
-            MsgBox(0x2010, "Fehler", "Fehler #" & @error & " (API-Fehlercode: " & _WinAPI_GetLastError() & ")" _
+            MsgBox(0x2010, "Fehler", "Fehler #" & $err & " (API-Fehlercode: " & _WinAPI_GetLastError() & ")" _
                                    & " beim Aufruf von Wow64RevertWow64FsRedirection.")
           Else
-            MsgBox(0x2010, "Error", "Error #" & @error & " (API error code: " & _WinAPI_GetLastError() & ")" _
+            MsgBox(0x2010, "Error", "Error #" & $err & " (API error code: " & _WinAPI_GetLastError() & ")" _
                                   & " when calling Wow64RevertWow64FsRedirection.")
           EndIf
         EndIf

@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=11.1.1+ (r932)
+set WSUSOFFLINE_VERSION=11.1.1+ (r933)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -35,28 +35,28 @@ echo %DATE% %TIME% - Info: Used path "%~dp0" on %COMPUTERNAME% (user: %USERNAME%
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/verify /skipieinst /updatecpp /instmssl /instdotnet35 /instdotnet4 /instpsh /instwmf /instmsse /skipdefs /updatetsc /instmsi /autoreboot /shutdown /showlog /all /seconly /excludestatics /skipdynamic) do (
+for %%i in (/updatecpp /instmssl /instdotnet35 /instpsh /instdotnet4 /instwmf /instmsse /updatetsc /skipieinst /skipdefs /skipdynamic /all /excludestatics /seconly /verify /autoreboot /shutdown /showlog /instmsi) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected>>%UPDATE_LOGFILE%
 )
-if /i "%1"=="/verify" set VERIFY_MODE=/verify
-if /i "%1"=="/skipieinst" set SKIP_IEINST=/skipieinst
 if /i "%1"=="/updatecpp" set UPDATE_CPP=/updatecpp
 if /i "%1"=="/instmssl" set INSTALL_MSSL=/instmssl
 if /i "%1"=="/instdotnet35" set INSTALL_DOTNET35=/instdotnet35
-if /i "%1"=="/instdotnet4" set INSTALL_DOTNET4=/instdotnet4
 if /i "%1"=="/instpsh" set INSTALL_PSH=/instpsh
+if /i "%1"=="/instdotnet4" set INSTALL_DOTNET4=/instdotnet4
 if /i "%1"=="/instwmf" set INSTALL_WMF=/instwmf
 if /i "%1"=="/instmsse" set INSTALL_MSSE=/instmsse
-if /i "%1"=="/skipdefs" set SKIP_DEFS=/skipdefs
 if /i "%1"=="/updatetsc" set UPDATE_TSC=/updatetsc
-if /i "%1"=="/instmsi" set INSTALL_MSI=/instmsi
+if /i "%1"=="/skipieinst" set SKIP_IEINST=/skipieinst
+if /i "%1"=="/skipdefs" set SKIP_DEFS=/skipdefs
+if /i "%1"=="/skipdynamic" set SKIP_DYNAMIC=/skipdynamic
+if /i "%1"=="/all" set LIST_MODE_IDS=/all
+if /i "%1"=="/excludestatics" set LIST_MODE_UPDATES=/excludestatics
+if /i "%1"=="/seconly" set LIST_MODE_IDS=/seconly
+if /i "%1"=="/verify" set VERIFY_MODE=/verify
 if /i "%1"=="/autoreboot" set BOOT_MODE=/autoreboot
 if /i "%1"=="/shutdown" set FINISH_MODE=/shutdown
 if /i "%1"=="/showlog" set SHOW_LOG=/showlog
-if /i "%1"=="/all" set LIST_MODE_IDS=/all
-if /i "%1"=="/seconly" set LIST_MODE_IDS=/seconly
-if /i "%1"=="/excludestatics" set LIST_MODE_UPDATES=/excludestatics
-if /i "%1"=="/skipdynamic" set SKIP_DYNAMIC=/skipdynamic
+if /i "%1"=="/instmsi" set INSTALL_MSI=/instmsi
 shift /1
 goto EvalParams
 

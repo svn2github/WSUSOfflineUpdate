@@ -6,7 +6,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: WinAPI Extended UDF Library for AutoIt3
-; AutoIt Version : 3.3.14.3
+; AutoIt Version : 3.3.14.5
 ; Description ...: Additional variables, constants and functions for the WinAPIConv.au3
 ; Author(s) .....: Yashied, jpm
 ; ===============================================================================================================================
@@ -553,22 +553,22 @@ EndFunc   ;==>_WinAPI_SwapWord
 
 ; #FUNCTION# ====================================================================================================================
 ; Author ........: Paul Campbell (PaulIA)
-; Modified.......: JPM, Alexander Samuelsson (AdmiralAlkex)
+; Modified.......: JPM, Alexander Samuelsson (AdmiralAlkex), Melba23
 ; ===============================================================================================================================
-Func _WinAPI_WideCharToMultiByte($vUnicode, $iCodePage = 0, $bRetString = True)
+Func _WinAPI_WideCharToMultiByte($vUnicode, $iCodePage = 0, $bRetNoStruct = True, $bRetBinary = False)
 	Local $sUnicodeType = "wstr"
 	If Not IsString($vUnicode) Then $sUnicodeType = "struct*"
 	Local $aResult = DllCall("kernel32.dll", "int", "WideCharToMultiByte", "uint", $iCodePage, "dword", 0, $sUnicodeType, $vUnicode, "int", -1, _
 			"ptr", 0, "int", 0, "ptr", 0, "ptr", 0)
 	If @error Or Not $aResult[0] Then Return SetError(@error + 20, @extended, "")
 
-	Local $tMultiByte = DllStructCreate("byte[" & $aResult[0] & "]")
+	Local $tMultiByte = DllStructCreate((($bRetBinary) ? ("byte") : ("char")) & "[" & $aResult[0] & "]")
 
 	$aResult = DllCall("kernel32.dll", "int", "WideCharToMultiByte", "uint", $iCodePage, "dword", 0, $sUnicodeType, $vUnicode, _
 			"int", -1, "struct*", $tMultiByte, "int", $aResult[0], "ptr", 0, "ptr", 0)
 	If @error Or Not $aResult[0] Then Return SetError(@error + 10, @extended, "")
 
-	If $bRetString Then Return DllStructGetData($tMultiByte, 1)
+	If $bRetNoStruct Then Return DllStructGetData($tMultiByte, 1)
 	Return $tMultiByte
 EndFunc   ;==>_WinAPI_WideCharToMultiByte
 
