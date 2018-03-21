@@ -7,7 +7,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 11.1.1.933)
+#pragma compile(FileVersion, 11.1.1.934)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -100,7 +100,7 @@ Dim Const $path_rel_msi_all           = "\wouallmsi.txt"
 Dim Const $path_rel_msi_selected      = "\Temp\wouselmsi.txt"
 
 Dim $maindlg, $scriptdir, $mapped, $tabitemfocused, $cpp, $mssl, $dotnet35, $dotnet4, $psh, $wmf, $msse, $tsc, $verify, $autoreboot, $shutdown, $showlog, $btn_start, $btn_donate, $btn_exit, $options, $builddate
-Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos, $msiall, $msipacks[$msimax], $msicount, $msilistfile, $line, $gergui, $pRedirect, $err, $i
+Dim $dlgheight, $groupwidth, $txtwidth, $txtheight, $btnwidth, $btnheight, $txtxoffset, $txtyoffset, $txtxpos, $txtypos, $msiall, $msipacks[$msimax], $msicount, $msilistfile, $line, $gergui, $pRedirect, $i
 
 Func ShowGUIInGerman()
   If $CmdLine[0] > 0 Then
@@ -1037,22 +1037,23 @@ While 1
       If (@OSArch <> "X86") Then
         _WinAPI_SetLastError(0)
         $pRedirect = DllStructCreate("ptr")
-        If (@error <> 0) Then
+        If (@error <> 0) OR (_WinAPI_GetLastError() <> 0) Then
           If $gergui Then
-            MsgBox(0x2010, "Fehler", "Fehler #" & @error & " beim Aufruf von DllStructCreate.")
+            MsgBox(0x2010, "Fehler", "Fehler #" & @error & " (API-Fehlercode: " & _WinAPI_GetLastError() & ")" _
+                                   & " beim Aufruf von DllStructCreate.")
           Else
-            MsgBox(0x2010, "Error", "Error #" & @error & " when calling DllStructCreate.")
+            MsgBox(0x2010, "Error", "Error #" & @error & " (API error code: " & _WinAPI_GetLastError() & ")" _
+                                  & " when calling DllStructCreate.")
           EndIf
           ExitLoop
         EndIf
         DllCall("kernel32.dll", "bool", "Wow64DisableWow64FsRedirection", "ptr*", DllStructGetPtr($pRedirect))
-        $err = @error 
-        If ($err <> 0) Then
+        If (@error <> 0) OR (_WinAPI_GetLastError() <> 0) Then
           If $gergui Then
-            MsgBox(0x2010, "Fehler", "Fehler #" & $err & " (API-Fehlercode: " & _WinAPI_GetLastError() & ")" _
+            MsgBox(0x2010, "Fehler", "Fehler #" & @error & " (API-Fehlercode: " & _WinAPI_GetLastError() & ")" _
                                    & " beim Aufruf von Wow64DisableWow64FsRedirection.")
           Else
-            MsgBox(0x2010, "Error", "Error #" & $err & " (API error code: " & _WinAPI_GetLastError() & ")" _
+            MsgBox(0x2010, "Error", "Error #" & @error & " (API error code: " & _WinAPI_GetLastError() & ")" _
                                   & " when calling Wow64DisableWow64FsRedirection.")
           EndIf
           ExitLoop
@@ -1070,14 +1071,14 @@ While 1
         EndIf
       EndIf
       If (@OSArch <> "X86") Then
+        _WinAPI_SetLastError(0)
         DllCall("kernel32.dll", "bool", "Wow64RevertWow64FsRedirection", "ptr", $pRedirect)
-        $err = @error 
-        If ($err <> 0) Then
+        If (@error <> 0) OR (_WinAPI_GetLastError() <> 0) Then
           If $gergui Then
-            MsgBox(0x2010, "Fehler", "Fehler #" & $err & " (API-Fehlercode: " & _WinAPI_GetLastError() & ")" _
+            MsgBox(0x2010, "Fehler", "Fehler #" & @error & " (API-Fehlercode: " & _WinAPI_GetLastError() & ")" _
                                    & " beim Aufruf von Wow64RevertWow64FsRedirection.")
           Else
-            MsgBox(0x2010, "Error", "Error #" & $err & " (API error code: " & _WinAPI_GetLastError() & ")" _
+            MsgBox(0x2010, "Error", "Error #" & @error & " (API error code: " & _WinAPI_GetLastError() & ")" _
                                   & " when calling Wow64RevertWow64FsRedirection.")
           EndIf
         EndIf
