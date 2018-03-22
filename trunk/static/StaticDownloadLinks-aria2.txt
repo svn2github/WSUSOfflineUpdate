@@ -1,2 +1,2 @@
-http://download.wsusoffline.net/aria2c-x86.exe
-http://download.wsusoffline.net/aria2c-x64.exe
+https://github.com/aria2/aria2/releases/download/release-1.33.1/aria2-1.33.1-win-32bit-build1.zip
+https://github.com/aria2/aria2/releases/download/release-1.33.1/aria2-1.33.1-win-64bit-build1.zip

@@ -7,7 +7,9 @@ if errorlevel 1 goto NoExtensions
 
 cd /D "%~dp0"
 
-set WGET_PATH=..\bin\wget.exe
+if /i "%PROCESSOR_ARCHITECTURE%"=="AMD64" (set WGET_PATH=..\bin\wget64.exe) else (
+  if /i "%PROCESSOR_ARCHITEW6432%"=="AMD64" (set WGET_PATH=..\bin\wget64.exe) else (set WGET_PATH=..\bin\wget.exe)
+)
 if not exist %WGET_PATH% goto NoWGet
 
 :EvalParams
