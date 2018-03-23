@@ -918,6 +918,7 @@ Version 9.2.4 -- 23.03.18
 - NOTE: This is an extended support release for older platforms only (Windows XP, Server 2003, Vista and 8)
 - NOTE: Don't mix this release with recent versions (10.x or newer). Use a dedicated path instead (e.g. C:\wsusoffline9.2.x).
 - NOTE: Don't use one of the deprecated platforms for downloading. Use a supported platform instead.
+- Microsoft Silverlight updated to v. 5.1.30514.0 (Thanks to "harry" and H. Buhrmester)
 - Removed obsolete Remote Desktop Client installation (Thanks to H. Buhrmester)
 - Fix: Download part missed ten updates for .NET Frameworks (Thanks to "Denniss" and H. Buhrmester)
 --------------------------------------------------------------------------------
