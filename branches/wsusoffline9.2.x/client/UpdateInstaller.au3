@@ -1,11 +1,11 @@
-; ***  WSUS Offline Update 9.2.3 - Installer  ***
+; ***  WSUS Offline Update 9.2.4 - Installer  ***
 ; ***       Author: T. Wittrock, Kiel         ***
 ; ***   Dialog scaling added by Th. Baisch    ***
 
 #include <GUIConstants.au3>
 #RequireAdmin
 
-Dim Const $caption                    = "WSUS Offline Update 9.2.3 - Installer"
+Dim Const $caption                    = "WSUS Offline Update 9.2.4 - Installer"
 Dim Const $wou_hostname               = "www.wsusoffline.net"
 Dim Const $donationURL                = "http://www.wsusoffline.net/donate.html"
 

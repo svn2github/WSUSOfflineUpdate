@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 9.2.2
+WSUS Offline Update 9.2.4
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -913,4 +913,11 @@ Version 9.2.3 -- 02.09.17
 - Updated C++ Redistributable Runtime Libraries (Thanks to "Denniss")
 - Updated .NET Frameworks 4.x (Thanks to "Denniss" and "aker")
 - Reduced UpdateGenerator targets (Thanks to "Denniss")
+--------------------------------------------------------------------------------
+Version 9.2.4 -- 23.03.18
+- NOTE: This is an extended support release for older platforms only (Windows XP, Server 2003, Vista and 8)
+- NOTE: Don't mix this release with recent versions (10.x or newer). Use a dedicated path instead (e.g. C:\wsusoffline9.2.x).
+- NOTE: Don't use one of the deprecated platforms for downloading. Use a supported platform instead.
+- Removed obsolete Remote Desktop Client installation (Thanks to H. Buhrmester)
+- Fix: Download part missed ten updates for .NET Frameworks (Thanks to "Denniss" and H. Buhrmester)
 --------------------------------------------------------------------------------

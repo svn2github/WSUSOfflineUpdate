@@ -73,7 +73,6 @@ set WMP_VER_TARGET_MAJOR=11
 set WMP_TARGET_ID=wmp11-windowsxp-x86
 set TSC_VER_TARGET_MAJOR=6
 set TSC_VER_TARGET_MINOR=1
-set TSC_TARGET_ID=969084
 set WOU_ENDLESS=3
 goto SetOfficeName
 
@@ -106,7 +105,6 @@ if /i "%OS_ARCH%"=="x64" (
 ) else (
   set TSC_VER_TARGET_MAJOR=6
   set TSC_VER_TARGET_MINOR=0
-  set TSC_TARGET_ID=925876
   if exist "%TEMP%\wou_ie_kbids.txt" del "%TEMP%\wou_ie_kbids.txt"
   for /F %%i in ('dir /B /S ..\ie*-kb???????-*.exe') do (
     for /F "tokens=3 delims=-" %%j in ("%%~ni") do echo %%j>>"%TEMP%\wou_ie_kbids.txt"
@@ -149,7 +147,6 @@ set WMP_VER_TARGET_MAJOR=11
 if %OS_DOMAIN_ROLE% LEQ 1 (
   set TSC_VER_TARGET_MAJOR=6
   set TSC_VER_TARGET_MINOR=1
-  set TSC_TARGET_ID=969084
 ) else (
   set TSC_VER_TARGET_MAJOR=6
   set TSC_VER_TARGET_MINOR=0
@@ -202,7 +199,6 @@ set DOTNET4_VER_TARGET_BUILD=01500
 set WMP_VER_TARGET_MAJOR=12
 set TSC_VER_TARGET_MAJOR=6
 set TSC_VER_TARGET_MINOR=3
-set TSC_TARGET_ID_FILE=..\static\StaticUpdateIds-rdc-w61.txt
 set WMF_VER_TARGET_MAJOR=4
 set WMF_VER_TARGET_MINOR=0
 set WMF_TARGET_ID=2819745
