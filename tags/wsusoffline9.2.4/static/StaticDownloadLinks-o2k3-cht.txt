@@ -1,0 +1,4 @@
+http://download.microsoft.com/download/f/6/4/f64688cc-e40d-4070-a6d8-12b5ac44d501/Office2003SP3-KB923618-FullFile-CHT.exe
+http://download.microsoft.com/download/9/7/8/978205f7-f1f8-4559-afb3-43aa2d271819/WordViewer2003SP3-KB934736-FullFile-CHT.exe
+http://download.microsoft.com/download/D/E/1/DE1B638E-8EBB-46E5-8DF9-F24E59103408/office2003-KB975051-FullFile-CHT.exe
+http://download.microsoft.com/download/E/8/E/E8E4A577-34B8-4F7B-8C29-609313726FC3/office2003-KB2760494-FullFile-CHT.exe

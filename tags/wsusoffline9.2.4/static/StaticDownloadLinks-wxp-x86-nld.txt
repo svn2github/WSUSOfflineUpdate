@@ -1,0 +1,14 @@
+http://xpsp.dlservice.microsoft.com/download/e/a/1/ea15b9ae-f5d4-4971-8d31-22ce257ed30a/WindowsXP-KB936929-SP3-x86-NLD.exe
+http://download.microsoft.com/download/6/8/B/68BE321D-540C-4B2F-9E78-699117D7D1D4/WindowsXP-KB968930-x86-NLD.exe
+http://download.microsoft.com/download/c/8/9/c8906739-1129-466a-ac3b-a5656e83c4da/wmp11-windowsxp-x86-nl-nl.exe
+http://download.windowsupdate.com/msdownload/update/software/secu/2011/09/windows-nl-nl-kb2564958_9bb9d2e2150ddc905cce403b2b02abd1a1dee144.exe
+http://download.microsoft.com/download/F/5/E/F5E103A8-DA90-4F7B-B871-9F9257E70A4C/WindowsXP-KB4012598-x86-Custom-NLD.exe
+http://download.microsoft.com/download/D/D/5/DD514657-176F-45CC-A1AC-05FA4565ED7E/WindowsXP-KB4012583-x86-Custom-NLD.exe
+http://download.microsoft.com/download/7/E/3/7E36169D-D16A-4D55-8FD4-B04EF6CC777C/WindowsXP-KB4022747-x86-Custom-NLD.exe
+http://download.microsoft.com/download/2/3/A/23AC5855-B49F-498D-AE32-A92081C22F6F/IE8-WindowsXP-KB4018271-x86-Custom-NLD.exe
+http://download.microsoft.com/download/D/C/2/DC295C38-3EF4-4532-BDA1-67ECD2FBBD0C/WindowsXP-KB4018466-x86-Custom-NLD.exe
+http://download.microsoft.com/download/D/2/9/D29C5B06-E96A-4F2C-92E9-CA42D6B0781C/WindowsXP-KB3197835-x86-Custom-NLD.exe
+http://download.microsoft.com/download/8/B/3/8B3893AC-2343-442C-898F-2E7E47246122/WindowsXP-KB4024323-x86-Custom-NLD.exe
+http://download.microsoft.com/download/9/E/B/9EBE4F9A-8CC9-4260-AAF3-38DD285E876B/WindowsXP-KB4025218-x86-Custom-NLD.exe
+http://download.microsoft.com/download/F/2/A/F2AC3DC1-C301-4B3D-BAA3-69AADFA850AC/WindowsXP-KB4024402-x86-Custom-NLD.exe
+http://download.microsoft.com/download/9/E/E/9EE81407-4F5F-43D8-8922-A5896CDDB4DE/WindowsXP-KB4019204-x86-Custom-NLD.exe
