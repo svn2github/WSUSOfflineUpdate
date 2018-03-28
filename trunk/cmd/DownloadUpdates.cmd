@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=11.2
+set WSUSOFFLINE_VERSION=11.2.1
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -220,7 +220,7 @@ if exist custom\SetAria2EnvVars.cmd (
   if /i "%PROCESSOR_ARCHITECTURE%"=="AMD64" (set DLDR_PATH=..\bin\wget64.exe) else (
     if /i "%PROCESSOR_ARCHITEW6432%"=="AMD64" (set DLDR_PATH=..\bin\wget64.exe) else (set DLDR_PATH=..\bin\wget.exe)
   )
-  set DLDR_COPT=-N
+  set DLDR_COPT=-N --progress=bar:noscroll
   set DLDR_LOPT=-a %DOWNLOAD_LOGFILE%
   set DLDR_IOPT=-i
   set DLDR_POPT=-P
