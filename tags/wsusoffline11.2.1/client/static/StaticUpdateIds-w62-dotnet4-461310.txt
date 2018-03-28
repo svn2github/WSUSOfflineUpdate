@@ -1,0 +1,1 @@
+kb4055000,January 2018 Security and Quality Rollup for the .NET Framework 4.6, 4.6.1, 4.6.2, 4.7 and 4.7.1 for Windows Server 2012

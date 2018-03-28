@@ -1,0 +1,108 @@
+Installationsanleitung für die Linux-Download-Skripte, Version 1.1
+==================================================================
+WSUS Offline Update enthält bereits die neuen Linux-Skripte. Sie
+brauchen die Linux-Skripte deshalb nicht mehr separat zu installieren,
+wie es für die ersten beta-Versionen nötig war. Sie sollten aber die
+benötigten Pakete aus ihrer Linux-Distribution überprüfen.
+
+
+Installieren Sie die benötigten und empfohlenen Pakete
+------------------------------------------------------
+Bei Debian und von Debian abgeleiteten Distributionen müssen Sie zwischen
+den Paketen md5deep und hashdeep unterscheiden.
+
+Die Entwickler sind mit ihrem Projekt von SourceForge nach GitHub
+umgezogen, und sie haben ihr Projekt von md5deep in hashdeep umbenannt:
+
+http://md5deep.sourceforge.net/
+https://github.com/jessek/hashdeep/
+
+Debian hat diesen Schritt nachvollzogen und das Paket md5deep in
+hashdeep umbenannt. Dieser Wechsel erfolgte im Sommer 2015 mit den
+Debian 8 Jessie-Backports. Die allgemeine Regel für Debian und von
+Debian abgeleitete Distributionen lautet deshalb: Installieren Sie das
+Paket md5deep, wenn die Distribution älter ist als 2015. Installieren
+Sie das Paket hashdeep in allen aktuellen Distributionen.
+
+* Für Debian 7 Wheezy:
+
+  su -
+  aptitude install cabextract md5deep wget xmlstarlet trash-cli
+
+
+* Für Debian 8 Jessie-Backports und neuer:
+
+  su -
+  aptitude install cabextract hashdeep wget xmlstarlet trash-cli
+
+
+* Für Ubuntu 14.04LTS Trusty:
+
+  sudo apt-get install cabextract md5deep wget xmlstarlet trash-cli
+
+
+* Für Ubuntu 16.04LTS Xenial und neuer:
+
+  sudo apt-get install cabextract hashdeep wget xmlstarlet trash-cli
+
+
+Andere Distributionen, die nicht auf Debian basieren, scheinen den
+Paketnamen md5deep beizubehalten.
+
+Beachten Sie, dass beide Pakete md5deep und hashdeep eine Reihe von
+ähnlichen Anwendungen installieren: hashdeep, md5deep, sha1deep,
+sha256deep, tigerdeep und whirlpooldeep. In WSUS Offline Update müssen
+Sie immer die Anwendung "hashdeep" verwenden, unabhängig vom Paketnamen.
+
+
+Laden Sie das wsusoffline-Archiv herunter und entpacken Sie es
+--------------------------------------------------------------
+Laden Sie das neueste wsusoffline-Archiv von der Downloadseite
+http://download.wsusoffline.net/ herunter und entpacken Sie es. Beachten
+Sie, dass das Zip-Archiv von einer Hashes-Datei begleitet wird. Sie
+können das Archiv damit überprüfen:
+
+  hashdeep -a -v -v -l -k wsusoffline1111_hashes.txt wsusoffline1111.zip
+
+Die neuen Linux-Skripte sind im Verzeichnis "sh" enthalten. Da das
+wsusoffline-Archiv unter Windows erstellt wurde, sind die Skripte noch
+nicht ausführbar. Rufen Sie das Skript fix-file-permissions.bash einmal
+auf mit:
+
+  bash fix-file-permissions.bash
+
+um die Skripte update-generator.bash, download-updates.bash,
+get-all-updates.bash und einige andere ausführbar zu machen.
+
+Sie können dann das Skript update-generator.bash aufrufen, um
+interaktiv ein Update, eine Sprache und die verfügbaren Optionen
+auszuwählen. Dieses Skript erlaubt allerdings keine Mehrfachauswahl
+für Update und Sprache.
+
+Sie können auch das Skript get-all-updates.bash als Vorlage verwenden:
+Dieses Skript lädt alle Updates mit allen verfügbaren Optionen für
+die Standardsprachen Deutsch und Englisch herunter. Es kann beliebig
+angepasst werden – kommentieren Sie einfach alle Punkte aus, die sie
+nicht benötigen.
+
+
+Anmerkungen
+-----------
+Die Linux-Skripte funktionieren nicht alleine – sie benötigen die
+Konfigurationsdateien der wsusoffline-Installation. Außerdem können
+die Linux-Download-Skripte nur die Windows-Download-Skripte ersetzen,
+also zum Beispiel DownloadUpdates.cmd. Um die Downloads zu installieren,
+werden auch die Dateien im Verzeichnis client benötigt, zum Beispiel
+der UpdateInstaller.exe.
+
+Sie sollten die Linux-Skripte deshalb nicht mehr separat herunterladen,
+wie es für die ersten beta-Versionen noch nötig war. Laden Sie einfach
+das aktuellste wsusoffline-Archiv herunter und benutzen Sie die Skripte
+im Verzeichnis "sh".
+
+Wenn Sie das Verzeichnis wsusoffline kopieren oder verschieben
+möchten, achten Sie bitte darauf, das Änderungsdatum aller Dateien
+beizubehalten. Dies ist für die korrekte Funktion von WSUS Offline
+Update notwendig.
+
+Sie finden die komplette Dokumentation im Verzeichnis "documentation".

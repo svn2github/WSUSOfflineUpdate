@@ -1,0 +1,91 @@
+Release Notes for Version 1.1
+
+Release date: 2018-02-06
+Intended compatibility: WSUS Offline Update Version 11.1.1 and later
+
+Changes in this version:
+
+The scripts update-generator.bash and download-updates.bash create
+temporary directories with random names on each run.
+
+    These temporary directories are created with mktemp, using the
+    templates:
+    - /tmp/update-generator.XXXXXXXXXX
+    - /tmp/download-updates.XXXXXXXXXX
+
+    The temporary directory of a script is removed, if the script exits
+    without errors. It is preserved for further examination, if the
+    script exits with an error code.
+
+
+Both scripts update-generator.bash and download-updates.bash check the
+user-ID and refuse to run as root.
+
+    These scripts don't need root privileges. Running the scripts as
+    root and then again as a regular user will mess up ownership and file
+    permissions: Some files will belong to root, and then they can't be
+    modified by regular users anymore.
+
+
+Updates can be joined to a comma-separated list on the command-line,
+just like the needed languages.
+
+    For example, instead of running:
+
+    ./download-updates.bash w61 deu,enu -includesp
+    ./download-updates.bash w61-x64 deu,enu -includesp
+    ./download-updates.bash w63 deu,enu -includesp
+    ./download-updates.bash w63-x64 deu,enu -includesp
+
+    you can now write:
+
+    ./download-updates.bash w61,w61-x64,w63,w63-x64 deu,enu -includesp
+
+
+The scripts support eight predefined, internal lists for Windows and
+Office updates.
+
+    The lists are:
+
+    all         all-win         all-ofc
+    all-x86     all-win-x86     all-ofc-x86
+    all-x64     all-win-x64
+
+    They are defined as:
+
+    all           All Windows and Office updates, 32-bit and 64-bit
+    all-x86       All Windows and Office updates, 32-bit
+    all-x64       All Windows and Office updates, 64-bit
+    all-win       All Windows updates, 32-bit and 64-bit
+    all-win-x86   All Windows updates, 32-bit
+    all-win-x64   All Windows updates, 64-bit
+    all-ofc       All Office updates, 32-bit and 64-bit
+    all-ofc-x86   All Office updates, 32-bit
+
+    Note, that 64-bit Office updates are always downloaded in addition
+    to 32-bit Office updates. Therefore, a list all-ofc-x64 would be
+    the same as the list all-ofc. This is just, how the Windows script
+    AddOffice2010x64Support.cmd works.
+
+    The internal lists can be combined with single updates. For example,
+    to get all Windows updates, but a single Office update, you could
+    write:
+
+    ./download-updates.bash all-win,o2k16-x64 deu,enu -includesp
+
+
+Support of "backports" for old versions of WSUS Offline Update.
+
+    The support of internal lists required some rearrangements of
+    the code. This makes it easier to create "backports" to support
+    earlier versions of WSUS Offline Update. Basically, the scripts
+    update-generator.bash and download-updates.bash now support all
+    updates from Windows XP to Windows 10, and from Office 2003 to
+    2016. The library updates-and-languages.bash determines the valid
+    updates for a specific version of WSUS Offline Update. A backport
+    for the ESR version 9.2.3 will be released soon as a separate archive.
+
+
+Internal Changes:
+
+    A separate library error-counter.bash was added.
