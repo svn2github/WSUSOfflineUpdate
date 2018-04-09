@@ -1412,3 +1412,5 @@ Version 11.2.1 -- 28.03.18
 - Fix: Scrolling progress bar could cause wget.exe to crash (Thanks to "Alex", "Dalai" and "boco")
 - Fix: Download part erroneously excluded Security Update kb2813347 for RDP client 7.0 under Windows 7 x64 and Windows Server 2008 R2
 --------------------------------------------------------------------------------
+Version ??.? -- ??.??.??
+- Replaced superseded November 2017 Servicing stack update (kb4049065) by March 2018 Servicing stack update (kb4089510) for Windows 10 Version 1607 (Thanks to "boco")
