@@ -68,3 +68,6 @@ kb4074594,February 2018 Security Monthly Quality Rollup for Windows 8.1 and Wind
 kb4088875,March 2018 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
 kb4088877,March 2018 Security Monthly Quality Rollup for Windows Server 2012
 kb4088876,March 2018 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4093118,April 2018 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4093123,April 2018 Security Monthly Quality Rollup for Windows Server 2012
+kb4093114,April 2018 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2

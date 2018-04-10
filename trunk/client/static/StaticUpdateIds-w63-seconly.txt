@@ -19,3 +19,4 @@ kb4054522,December 2017 Security Only Quality Update for Windows 8.1 and Windows
 kb4056898,January 2018 Security Only Quality Update for Windows 8.1 and Windows Server 2012 R2
 kb4074597,February 2018 Security Only Quality Update for Windows 8.1 and Windows Server 2012 R2
 kb4088879,March 2018 Security Only Quality Update for Windows 8.1 and Windows Server 2012 R2
+kb4093115,April 2018 Security Only Quality Update for Windows 8.1 and Windows Server 2012 R2
