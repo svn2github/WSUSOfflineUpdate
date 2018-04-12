@@ -1415,3 +1415,6 @@ Version 11.2.1 -- 28.03.18
 Version 11.2.2 -- ??.??.??
 - April 2018 updates added to 'security only' lists for Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems
 - Replaced superseded November 2017 Servicing stack update (kb4049065) by March 2018 Servicing stack update (kb4089510) for Windows 10 Version 1607 (Thanks to "boco")
+- Replaced superseded March 2018 Servicing stack update (kb4089510) by April 2018 Servicing stack update (kb4093137) for Windows 10 Version 1607 (Thanks to "aker")
+- Replaced superseded November 2017 Servicing stack update (kb4049011) by April 2018 Servicing stack update (kb4093432) for Windows 10 Version 1703 (Thanks to "aker")
+- Replaced superseded March 2018 Servicing stack update (kb4090914) by April 2018 Servicing stack update (kb4099989) for Windows 10 Version 1709 (Thanks to "aker")

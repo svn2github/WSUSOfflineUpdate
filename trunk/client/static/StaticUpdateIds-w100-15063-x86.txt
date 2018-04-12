@@ -1,1 +1,1 @@
-kb4049011,November 2017 Servicing stack update for Windows 10 Version 1703
+kb4093432,April 2018 Servicing stack update for Windows 10 Version 1703
