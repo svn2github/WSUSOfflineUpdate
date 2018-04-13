@@ -6,7 +6,7 @@
 #include <GUIConstants.au3>
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Generator")
-#pragma compile(FileVersion, 11.2.1.945)
+#pragma compile(FileVersion, 11.2.1.946)
 #pragma compile(InternalName, "Generator")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateGenerator.exe)
@@ -2241,7 +2241,7 @@ While 1
           ContinueLoop
         EndIf
       EndIf
-      If (IsLangOfficeChecked() OR IsCheckBoxChecked($o2k16_glb)) Then
+      If IsLangOfficeChecked() Then
         If RunScripts("ofc glb", IsCheckBoxChecked($imageonly), DetermineDownloadSwitches($includesp, $dotnet, $seconly, $msse, $wddefs, $verifydownloads, AuthProxy($proxy, $proxypwd), $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse, $wddefs, $usbclean), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
         EndIf
@@ -2539,6 +2539,11 @@ While 1
       If IsCheckBoxChecked($o2k16_glb) Then
         If RunScripts("o2k16 glb", IsCheckBoxChecked($imageonly), DetermineDownloadSwitches($includesp, $dotnet, $seconly, $msse, $wddefs, $verifydownloads, AuthProxy($proxy, $proxypwd), $wsus), False, DetermineISOSwitches($includesp, $dotnet, $msse, $wddefs, $usbclean), False, GUICtrlRead($usbpath)) <> 0 Then
           ContinueLoop
+        EndIf
+        If (NOT IsLangOfficeChecked()) Then
+          If RunScripts("ofc glb", IsCheckBoxChecked($imageonly), DetermineDownloadSwitches($includesp, $dotnet, $seconly, $msse, $wddefs, $verifydownloads, AuthProxy($proxy, $proxypwd), $wsus), IsCheckBoxChecked($cdiso), DetermineISOSwitches($includesp, $dotnet, $msse, $wddefs, $usbclean), IsCheckBoxChecked($usbcopy), GUICtrlRead($usbpath)) <> 0 Then
+            ContinueLoop
+          EndIf
         EndIf
       EndIf
 

@@ -1418,3 +1418,5 @@ Version 11.2.2 -- ??.??.??
 - Replaced superseded March 2018 Servicing stack update (kb4089510) by April 2018 Servicing stack update (kb4093137) for Windows 10 Version 1607 (Thanks to "aker")
 - Replaced superseded November 2017 Servicing stack update (kb4049011) by April 2018 Servicing stack update (kb4093432) for Windows 10 Version 1703 (Thanks to "aker")
 - Replaced superseded March 2018 Servicing stack update (kb4090914) by April 2018 Servicing stack update (kb4099989) for Windows 10 Version 1709 (Thanks to "aker")
+- Removed warning about missing quality compatibility registry value from DoUpdate.cmd script (Thanks to "boco")
+- Fix: UpdateGenerator script did not create ISO image if only Office 2016 was selected (Thanks to "JonesHL")
