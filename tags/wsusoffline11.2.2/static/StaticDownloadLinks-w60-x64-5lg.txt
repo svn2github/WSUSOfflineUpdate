@@ -1,0 +1,11 @@
+http://download.microsoft.com/download/8/3/b/83b8c814-b000-44a4-b667-8c1f58727b8b/Windows6.0-KB936330-X64-wave0.exe
+http://download.microsoft.com/download/4/7/3/473B909B-7B52-49FE-A443-2E2985D3DFC3/Windows6.0-KB948465-X64.exe
+http://download.microsoft.com/download/3/C/8/3C8CF51E-1D9D-4DAA-AAEA-5C48D1CD055C/Windows6.0-KB968930-x64.msu
+http://download.microsoft.com/download/2/5/8/258CF867-DA0A-439A-ACD5-D808C013C749/Windows6.0-KB969084-x64.msu
+http://download.microsoft.com/download/5/5/B/55BAB264-02AB-40C0-8B59-438FA4AC22A0/Windows6.0-KB2416470-x64.msu
+http://download.microsoft.com/download/8/8/8/8880BE12-D67C-47AE-A6CD-4A532A48EAB8/Windows6.0-KB971512-x64.msu
+http://download.microsoft.com/download/5/0/4/50407EAD-4E01-46A7-9E89-7F3D1C10D7C2/Windows6.0-KB2117917-x64.msu
+http://download.microsoft.com/download/7/C/3/7C3BA535-1D8C-4A87-9F1D-163BBA971CA9/IE9-WindowsVista-x64-enu.exe
+http://download.microsoft.com/download/8/3/2/83205D42-C4DE-435E-AF10-4919CBDB3A13/IE9-WindowsVista-x64-deu.exe
+http://download.microsoft.com/download/E/7/6/E76850B8-DA6E-4FF5-8CCE-A24FC513FD16/Windows6.0-KB2506146-x64.msu
+http://download.microsoft.com/download/3/E/F/3EF7CF0F-661B-480E-8D60-76F6E378C20C/Windows6.0-KB2506014-x64.msu
