@@ -1422,3 +1422,7 @@ Version 11.2.2 -- 16.04.18
 - Removed warning about missing quality compatibility registry value from DoUpdate.cmd script (Thanks to "boco")
 - Fix: UpdateGenerator script did not create ISO image if only Office 2016 was selected (Thanks to "JonesHL")
 --------------------------------------------------------------------------------
+Version ??.? -- ??.??.??
+- Support removed for Windows 10 Version 1511 since Microsoft discontinued support for it on April 10th, 2018 (see https://support.microsoft.com/en-us/help/4093109/windows-10-update-kb4093109) (Thanks to "aker" and "boco")
+- Fix: Removed compression and UPX packing options from CompileAutoItScripts.cmd script in order to reduce false AV scanner alerts (Thanks to "Dalai")
+- Fix: Download part did not exclude superseded February 2018 security update kb4074592 for Windows 10 Version 1703 (x86) systems

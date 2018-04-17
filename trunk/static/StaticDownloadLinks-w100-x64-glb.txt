@@ -1,5 +1,4 @@
 http://download.windowsupdate.com/d/msdownload/update/software/crup/2016/06/windows10.0-kb3173427-x64_e3da65fe753d24a1759cdd029028cde743a62a23.msu
-http://download.windowsupdate.com/d/msdownload/update/software/crup/2017/08/windows10.0-kb4035632-x64_ea26f11d518e5e363fe9681b290a56a6afe15a81.msu
 http://download.windowsupdate.com/d/msdownload/update/software/crup/2018/03/windows10.0-kb4093137-x64_d4372b516a4e91705f68f5d38c0e1b0abf8072c9.msu
 http://download.windowsupdate.com/d/msdownload/update/software/crup/2018/03/windows10.0-kb4093432-x64_9e8286a1838f9cfd7c6e12ac4f4d947d3129f62a.msu
 http://download.windowsupdate.com/d/msdownload/update/software/crup/2018/04/windows10.0-kb4099989-x64_92747a09f1eb45b52276c8f0b301202e54e9c6d8.msu
