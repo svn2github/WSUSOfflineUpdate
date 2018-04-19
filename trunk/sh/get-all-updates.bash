@@ -70,10 +70,7 @@ cd "$(dirname "$(readlink -f "$0")")"
 # Explorer 9 for Windows Vista, Internet Explorer 11 for Windows 7,
 # and for the optional downloads dotnet and msse.
 
-#for update in w60 w60-x64 w61 w61-x64
-#do
-#    ./download-updates.bash "${update}" deu,enu -includesp -includecpp -includedotnet -includewddefs -includemsse
-#done
+# ./download-updates.bash w60,w60-x64,w61,w61-x64 deu,enu -includesp -includecpp -includedotnet -includewddefs -includemsse
 
 
 # Windows 8.1 and 10, Windows Server 2012, 2012 R2 and 2016
@@ -89,10 +86,7 @@ cd "$(dirname "$(readlink -f "$0")")"
 # the other hand, if you like to include other "custom" languages,
 # they need to be listed here.
 
-#for update in w62-x64 w63 w63-x64 w100 w100-x64
-#do
-#    ./download-updates.bash "${update}" deu,enu -includesp -includecpp -includedotnet -includewddefs8
-#done
+# ./download-updates.bash w62-x64,w63,w63-x64,w100,w100-x64 deu,enu -includesp -includecpp -includedotnet -includewddefs8
 
 
 # Office 2010 - 2013
@@ -101,10 +95,7 @@ cd "$(dirname "$(readlink -f "$0")")"
 # just like the Windows script DownloadUpdates.cmd, if 64-bit Office
 # support is enabled with the script AddOffice2010x64Support.cmd.
 
-#for update in o2k10-x64 o2k13-x64
-#do
-#    ./download-updates.bash "${update}" deu,enu -includesp
-#done
+# ./download-updates.bash o2k10-x64,o2k13-x64 deu,enu -includesp
 
 
 # Office 2016
@@ -112,6 +103,6 @@ cd "$(dirname "$(readlink -f "$0")")"
 # o2k16-x64 includes both 32-bit and 64-bit downloads. One language
 # (any one) is sufficient.
 
-#./download-updates.bash o2k16-x64 deu -includesp
+# ./download-updates.bash o2k16-x64 deu -includesp
 
 exit 0

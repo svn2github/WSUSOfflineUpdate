@@ -268,8 +268,13 @@ function rebuild_superseded_updates ()
     excludelist_overrides_seconly=(
         ../exclude/ExcludeList-superseded-exclude.txt
         ../exclude/custom/ExcludeList-superseded-exclude.txt
-        ../client/static/StaticUpdateIds-*-seconly.txt
-        ../client/static/custom/StaticUpdateIds-*-seconly.txt
+        ../exclude/ExcludeList-superseded-exclude-seconly.txt
+        ../client/static/StaticUpdateIds-w61*-seconly.txt
+        ../client/static/StaticUpdateIds-w62*-seconly.txt
+        ../client/static/StaticUpdateIds-w63*-seconly.txt
+        ../client/static/custom/StaticUpdateIds-w61*-seconly.txt
+        ../client/static/custom/StaticUpdateIds-w62*-seconly.txt
+        ../client/static/custom/StaticUpdateIds-w63*-seconly.txt
     )
     shopt -u nullglob
 

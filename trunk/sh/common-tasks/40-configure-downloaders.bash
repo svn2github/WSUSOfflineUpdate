@@ -55,8 +55,8 @@ supported_downloaders="${supported_downloaders:-"wget aria2c"}"
 # the output is written to the logfile. Then the output is similar to
 # aria2 and curl.
 #
-# But Wget 1.18 is not available for Debian 8 stable/Jessie, and so the
-# options --show-progress and --start-pos=0 are not used for now.
+# The function set_wget_progress_style checks the Wget version and set
+# the progress style to "bar:noscroll", if Wget 1.18 or later is detected.
 #
 # The Wget option --unlink is useful, if hard links are used to create
 # local snapshots or backups, but it is not available in old versions
@@ -96,29 +96,101 @@ supported_downloaders="${supported_downloaders:-"wget aria2c"}"
 # --use-head=true does NOT solve this problem, but creates more problems
 # with the download of the virus definition files.
 
-readonly wget_common_options="--verbose --progress=dot:mega --timestamping --timeout=60 --no-http-keep-alive" # Add "--show-progress" for Wget 1.18
-readonly wget_optimized_options="--tries=10 --waitretry=10"
-readonly wget_failsafe_options="--server-response --tries=1 --no-cache" # --no-dns-cache --start-pos=0
-readonly wget_spider_option="--spider"
+# Wget options
 
-readonly wget_logfile_prefix="--append-output="
-readonly wget_download_dir_prefix="--directory-prefix="
-readonly wget_inputfile_prefix="--input-file="
+wget_common_options=(
+    --verbose
+    --timestamping
+    --timeout=60
+    --no-http-keep-alive
+)
 
-readonly wget_connection_test_a="--spider --verbose --tries=1 --timeout=10"
-readonly wget_connection_test_b="--spider --debug   --tries=1 --timeout=10"
+wget_optimized_options=(
+    --tries=10
+    --waitretry=10
+)
 
-readonly aria2c_common_options="--conditional-get=true --remote-time=true --allow-overwrite=true --auto-file-renaming=false --timeout=60 --enable-http-keep-alive=false"
-readonly aria2c_optimized_options="--log-level=notice --max-tries=10 --retry-wait=10"
-readonly aria2c_failsafe_options="--log-level=info --max-tries=1 --always-resume=false --max-resume-failure-tries=0 --remove-control-file=true --http-no-cache=true"
-readonly aria2c_spider_option="--dry-run=true"
+wget_failsafe_options=(
+    --server-response
+    --tries=1
+    --no-cache
+)
+# TODO: There may be some more options, which could be useful for the
+# failsafe download:
+#
+# The option --no-dns-cache could be useful, but it doesn't make any
+# difference, if wget is restarted for every download. Also, wget cannot
+# influence the dns resolution of the operating system in any way.
+#
+# The option --start-pos=0 can be used to restart a download from scratch,
+# but this is now done by deleting any partial files and not using the
+# --continue option.
 
-readonly aria2c_logfile_prefix="--log="
-readonly aria2c_download_dir_prefix="--dir="
-readonly aria2c_inputfile_prefix="--input-file="
+wget_connection_test_a=(
+    --spider
+    --verbose
+    --tries=1
+    --timeout=10
+)
 
-readonly aria2c_connection_test_a="--dry-run=true --log-level=notice --max-tries=1 --timeout=10 --force-sequential=true"
-readonly aria2c_connection_test_b="--dry-run=true --log-level=info   --max-tries=1 --timeout=10 --force-sequential=true"
+wget_connection_test_b=(
+    --spider
+    --debug
+    --tries=1
+    --timeout=10
+)
+
+wget_spider_option="--spider"
+wget_logfile_prefix="--append-output="
+wget_download_dir_prefix="--directory-prefix="
+wget_inputfile_prefix="--input-file="
+
+# Aria2 options
+
+aria2c_common_options=(
+    --conditional-get=true
+    --remote-time=true
+    --allow-overwrite=true
+    --auto-file-renaming=false
+    --timeout=60
+    --enable-http-keep-alive=false
+)
+
+aria2c_optimized_options=(
+    --log-level=notice
+    --max-tries=10
+    --retry-wait=10
+)
+
+aria2c_failsafe_options=(
+    --log-level=info
+    --max-tries=1
+    --always-resume=false
+    --max-resume-failure-tries=0
+    --remove-control-file=true
+    --http-no-cache=true
+)
+
+aria2c_connection_test_a=(
+    --dry-run=true
+    --log-level=notice
+    --max-tries=1
+    --timeout=10
+    --force-sequential=true
+)
+
+aria2c_connection_test_b=(
+    --dry-run=true
+    --log-level=info
+    --max-tries=1
+    --timeout=10
+    --force-sequential=true
+)
+
+aria2c_spider_option="--dry-run=true"
+aria2c_logfile_prefix="--log="
+aria2c_download_dir_prefix="--dir="
+aria2c_inputfile_prefix="--input-file="
 
 # The connection test should only use complete URLs. While web servers
 # usually offer a standard document like index.html for incomplete URLs,
@@ -126,27 +198,80 @@ readonly aria2c_connection_test_b="--dry-run=true --log-level=info   --max-tries
 # and "download.microsoft.com". These servers may respond with "503
 # Service Unavailable" or "403 Forbidden", if only the domain name
 # is used.
-
-readonly connection_test_urls="http://download.windowsupdate.com/microsoftupdate/v6/wsusscan/wsusscn2.cab"
-#readonly connection_test_urls="http://www.wsusoffline.net/ http://download.windowsupdate.com/microsoftupdate/v6/wsusscan/wsusscn2.cab"
+#
+# The test could use examples from all needed servers, to detect possible
+# problems early.
+connection_test_urls=(
+    http://download.wsusoffline.net/StaticDownloadLink-recent.txt
+    http://download.windowsupdate.com/microsoftupdate/v6/wsusscan/wsusscn2.cab
+)
 
 # ========== Global variables =============================================
 
 downloader=""
 
-common_options=""
-optimized_options=""
-failsafe_options=""
-spider_option=""
+common_options=()
+optimized_options=()
+failsafe_options=()
 
+connection_test_a=()
+connection_test_b=()
+
+spider_option=""
 logfile_prefix=""
 download_dir_prefix=""
 inputfile_prefix=""
 
-connection_test_a=""
-connection_test_b=""
-
 # ========== Functions ====================================================
+
+# Wget 1.18 and later may use the combination "--show-progress
+# --progress=bar:noscroll". This will display a progress bar in the
+# terminal window, while detailed information about the connection is
+# still written to the log file. It is described in the manual page as:
+#
+# --show-progress
+#   Force wget to display the progress bar in any verbosity.
+#
+#   [...]
+#
+#   This option will also force the progress bar to be printed to
+#   stderr when used alongside the --logfile option.
+#
+#
+# Earlier Wget versions always use a dot display, if the output is
+# written to a log file. Only the verbosity can be reduced with the option
+# "--progress=dot:mega".
+
+function set_wget_progress_style ()
+{
+    local version_string=""
+    local -i major_version="0"
+    local -i minor_version="0"
+    local skip_rest=""
+
+    if type -p wget >/dev/null
+    then
+        version_string="$(wget --version | head -n 1 | cut -d " " -f 3)"
+        log_info_message "Wget version: ${version_string}"
+
+        IFS="." read -r major_version minor_version skip_rest <<< "${version_string}"
+        log_debug_message "Wget major version: ${major_version}"
+        log_debug_message "Wget minor version: ${minor_version}"
+        log_debug_message "Wget other version: ${skip_rest}"
+
+        if (( major_version == 1 )) && (( minor_version >= 18 ))
+        then
+            log_info_message "Wget uses progress bar"
+            wget_common_options+=( --show-progress --progress=bar:noscroll )
+        else
+            log_info_message "Wget uses dot display"
+            wget_common_options+=( --progress=dot:mega )
+        fi
+    else
+        log_warning_message "Wget was not found"
+    fi
+    return 0
+}
 
 function configure_downloaders ()
 {
@@ -164,31 +289,31 @@ function configure_downloaders ()
     case "${downloader}" in
         wget)
             log_info_message "Setting download options for GNU Wget..."
-            common_options="${wget_common_options}"
-            optimized_options="${wget_optimized_options}"
-            failsafe_options="${wget_failsafe_options}"
-            spider_option="${wget_spider_option}"
+            common_options=( "${wget_common_options[@]}" )
+            optimized_options=( "${wget_optimized_options[@]}" )
+            failsafe_options=( "${wget_failsafe_options[@]}" )
 
+            connection_test_a=( "${wget_connection_test_a[@]}" )
+            connection_test_b=( "${wget_connection_test_b[@]}" )
+
+            spider_option="${wget_spider_option}"
             logfile_prefix="${wget_logfile_prefix}"
             download_dir_prefix="${wget_download_dir_prefix}"
             inputfile_prefix="${wget_inputfile_prefix}"
-
-            connection_test_a="${wget_connection_test_a}"
-            connection_test_b="${wget_connection_test_b}"
         ;;
         aria2c)
             log_info_message "Setting download options for Aria2..."
-            common_options="${aria2c_common_options}"
-            optimized_options="${aria2c_optimized_options}"
-            failsafe_options="${aria2c_failsafe_options}"
-            spider_option="${aria2c_spider_option}"
+            common_options=( "${aria2c_common_options[@]}" )
+            optimized_options=( "${aria2c_optimized_options[@]}" )
+            failsafe_options=( "${aria2c_failsafe_options[@]}" )
 
+            connection_test_a=( "${aria2c_connection_test_a[@]}" )
+            connection_test_b=( "${aria2c_connection_test_b[@]}" )
+
+            spider_option="${aria2c_spider_option}"
             logfile_prefix="${aria2c_logfile_prefix}"
             download_dir_prefix="${aria2c_download_dir_prefix}"
             inputfile_prefix="${aria2c_inputfile_prefix}"
-
-            connection_test_a="${aria2c_connection_test_a}"
-            connection_test_b="${aria2c_connection_test_b}"
         ;;
         *)
             fail "No supported downloader found"
@@ -310,7 +435,12 @@ function download_single_file ()
             fi
         ;;
         # WSUS Offline Update configuration files
-        ExcludeList-superseded-exclude.txt | HideList-seconly.txt | StaticDownloadFiles-modified.txt | ExcludeDownloadFiles-modified.txt | StaticUpdateFiles-modified.txt)
+        ExcludeList-superseded-exclude.txt \
+        | ExcludeList-superseded-exclude-seconly.txt \
+        | HideList-seconly.txt \
+        | StaticDownloadFiles-modified.txt \
+        | ExcludeDownloadFiles-modified.txt \
+        | StaticUpdateFiles-modified.txt)
             set_timestamp "${pathname}"
             download_single_file_optimized "$@"
             compare_timestamp "${pathname}"
@@ -344,7 +474,7 @@ function download_single_file_optimized ()
     local filename="${download_link##*/}"
     mkdir -p "${download_dir}"
 
-    if "${downloader}" ${common_options} ${optimized_options} \
+    if "${downloader}" "${common_options[@]}" "${optimized_options[@]}" \
         "${logfile_prefix}${logfile}" \
         "${download_dir_prefix}${download_dir}" \
         "${download_link}"
@@ -379,16 +509,16 @@ function download_single_file_failsafe ()
     local download_dir="$1"
     local download_link="$2"
     local filename="${download_link##*/}"
-    local result_code=1
-    local try_count=1
-    local max_tries=10
-    local wait_time=10
+    local -i result_code="1"
+    local -i try_count="1"
+    local -i max_tries="10"
+    local -i wait_time="10"
     mkdir -p "${download_dir}"
 
     until (( result_code == 0 )) || (( try_count > max_tries ))
     do
         log_info_message "Downloading/validating ${filename}, try ${try_count} ..."
-        if "${downloader}" ${common_options} ${failsafe_options} \
+        if "${downloader}" "${common_options[@]}" "${failsafe_options[@]}" \
             "${logfile_prefix}${logfile}" \
             "${download_dir_prefix}${download_dir}" \
             "${download_link}"
@@ -457,7 +587,7 @@ function download_multiple_files ()
 
     log_info_message "Downloading/validating ${number_of_links} link(s) from input file ${input_file##*/} ..."
 
-    if "${downloader}" ${common_options} ${optimized_options} \
+    if "${downloader}" "${common_options[@]}" "${optimized_options[@]}" \
         "${logfile_prefix}${logfile}" \
         "${download_dir_prefix}${download_dir}" \
         "${inputfile_prefix}${input_file}"
@@ -536,31 +666,37 @@ function download_and_verify ()
 
 function test_internet_connection ()
 {
-    log_info_message "Wake up sleeping DSL modems and routers..."
-
-    # The first test sometimes fails with the error message "ping: unknown
+    # Send a series of pings first. This is meant to wake up DSL modems
+    # and routers, which usually go offline after some time of inactivity.
+    #
+    # This test sometimes fails with the error message "ping: unknown
     # host www.wsusoffline.net". Then the Internet router was too slow to
     # connect to its Internet Service Provider, but subsequent connection
     # tests should succeed.
     #
-    # The server download.windowsupdate.com doesn't answer to "pings"
-    # anymore.
-    (ping -c 4 -q www.download.windowsupdate.com 2>&1 | tee -a "${logfile}") || true
+    # Both server names download.windowsupdate.com and
+    # www.download.windowsupdate.com should work, and they may
+    # resolve to the same Microsoft or Akamai servers in the content
+    # delivery network. But sometimes, one of these servers may not be
+    # reached. These are usually temporary errors.
+
+    log_info_message "Wake up sleeping DSL modems and routers..."
+    (ping -c 4 -q download.windowsupdate.com 2>&1 | tee -a "${logfile}") || true
     echo ""
     sleep 4
 
     log_info_message "Testing the Internet connection..."
-    if "${downloader}" ${connection_test_a} \
+    if "${downloader}" "${connection_test_a[@]}" \
         "${logfile_prefix}${logfile}" \
-        ${connection_test_urls}
+        "${connection_test_urls[@]}"
     then
         log_info_message "Connection test succeeded"
     else
         log_info_message "Retrying with increased verbosity in 10 seconds..."
         sleep 10
-        if "${downloader}" ${connection_test_b} \
+        if "${downloader}" "${connection_test_b[@]}" \
             "${logfile_prefix}${logfile}" \
-            ${connection_test_urls}
+            "${connection_test_urls[@]}"
         then
             log_info_message "Connection test succeeded"
         else
@@ -601,6 +737,7 @@ function export_proxy_servers ()
 
 # ========== Commands =====================================================
 
+set_wget_progress_style
 configure_downloaders
 export_proxy_servers
 test_internet_connection

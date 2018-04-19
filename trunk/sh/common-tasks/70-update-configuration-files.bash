@@ -263,6 +263,7 @@ function update_configuration_files ()
     log_info_message "Updating static and exclude definitions for download and update..."
 
     download_single_file "../exclude" "http://download.wsusoffline.net/ExcludeList-superseded-exclude.txt"
+    download_single_file "../exclude" "http://download.wsusoffline.net/ExcludeList-superseded-exclude-seconly.txt"
     download_single_file "../client/exclude" "http://download.wsusoffline.net/HideList-seconly.txt"
     recursive_download "../static" "http://download.wsusoffline.net/StaticDownloadFiles-modified.txt"
     recursive_download "../exclude" "http://download.wsusoffline.net/ExcludeDownloadFiles-modified.txt"

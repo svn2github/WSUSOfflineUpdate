@@ -201,7 +201,7 @@ function validate_embedded_hashes ()
 
     # Skip the comments and read the hashes file starting at line 6.
     # Only records with embedded SHA-1 hashes (a hexadecimal number of
-    # 40 digits length) are extraced.
+    # 40 digits length) are extracted.
     tail -n +6 "${hashes_file}" |
         tr '\\' '/' |
         tr -d '\r' |
