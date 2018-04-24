@@ -1427,3 +1427,4 @@ Version ??.? -- ??.??.??
 - Included complete rewrite of the Linux scripts version 1.3 (Special thanks to H. Buhrmester)
 - Fix: Removed compression and UPX packing options from CompileAutoItScripts.cmd script in order to reduce false AV scanner alerts (Thanks to "Dalai")
 - Fix: Download part did not exclude superseded February 2018 security update kb4074592 for Windows 10 Version 1703 (x86) systems
+- Fix: Corrected static and exclude definitions for .NET Frameworks' updates
