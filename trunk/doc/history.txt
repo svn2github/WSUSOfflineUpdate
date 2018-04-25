@@ -1428,3 +1428,4 @@ Version ??.? -- ??.??.??
 - Fix: Removed compression and UPX packing options from CompileAutoItScripts.cmd script in order to reduce false AV scanner alerts (Thanks to "Dalai")
 - Fix: Download part did not exclude superseded February 2018 security update kb4074592 for Windows 10 Version 1703 (x86) systems
 - Fix: Corrected static and exclude definitions for .NET Frameworks' updates
+- Fix: Corrected error handling for DllStructCreate / Wow64DisableWow64FsRedirection calls in UpdateInstaller script (Thanks to R. Krause, "pasha", "aker" and "Dalai")

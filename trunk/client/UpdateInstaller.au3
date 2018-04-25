@@ -7,7 +7,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 11.2.2.951)
+#pragma compile(FileVersion, 11.2.2.952)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -1035,18 +1035,8 @@ While 1
         FileDelete(@WindowsDir & $path_rel_msi_selected)
       EndIf
       If (@OSArch <> "X86") Then
-        _WinAPI_SetLastError(0)
         $pRedirect = DllStructCreate("ptr")
-        If (@error <> 0) OR (_WinAPI_GetLastError() <> 0) Then
-          If $gergui Then
-            MsgBox(0x2010, "Fehler", "Fehler #" & @error & " (API-Fehlercode: " & _WinAPI_GetLastError() & ")" _
-                                   & " beim Aufruf von DllStructCreate.")
-          Else
-            MsgBox(0x2010, "Error", "Error #" & @error & " (API error code: " & _WinAPI_GetLastError() & ")" _
-                                  & " when calling DllStructCreate.")
-          EndIf
-          ExitLoop
-        EndIf
+        _WinAPI_SetLastError(0)
         DllCall("kernel32.dll", "bool", "Wow64DisableWow64FsRedirection", "ptr*", DllStructGetPtr($pRedirect))
         If (@error <> 0) OR (_WinAPI_GetLastError() <> 0) Then
           If $gergui Then
