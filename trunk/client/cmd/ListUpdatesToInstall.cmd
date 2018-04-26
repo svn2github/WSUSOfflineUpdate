@@ -36,9 +36,9 @@ for /F "tokens=1* delims=kbKB,;" %%i in (%1) do (
 )
 if not exist "%TEMP%\StaticUpdateIds.txt" goto :eof
 if exist "%TEMP%\InstalledUpdateIds.txt" (
-  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\InstalledUpdateIds.txt" "%TEMP%\StaticUpdateIds.txt" >>"%TEMP%\MissingUpdateIds.txt"
+  %SystemRoot%\System32\findstr.exe /L /I /V /G:"%TEMP%\InstalledUpdateIds.txt" "%TEMP%\StaticUpdateIds.txt" >>"%TEMP%\AllStaticUpdateIds.txt"
 ) else (
-  type "%TEMP%\StaticUpdateIds.txt" >>"%TEMP%\MissingUpdateIds.txt"
+  type "%TEMP%\StaticUpdateIds.txt" >>"%TEMP%\AllStaticUpdateIds.txt"
 )
 del "%TEMP%\StaticUpdateIds.txt"
 goto :eof
@@ -46,6 +46,7 @@ goto :eof
 :NoMoreParams
 rem *** Add statically defined update ids ***
 if "%EXC_STATICS%"=="1" goto ListFiles
+if exist "%TEMP%\AllStaticUpdateIds.txt" del "%TEMP%\AllStaticUpdateIds.txt"
 if "%OS_NAME%"=="w100" (
   call :EvalStatics ..\static\custom\StaticUpdateIds-%OS_NAME%-%OS_VER_BUILD%-%OS_ARCH%.txt
   call :EvalStatics ..\static\StaticUpdateIds-%OS_NAME%-%OS_VER_BUILD%-%OS_ARCH%.txt
@@ -77,6 +78,19 @@ if "%O2K13_VER_MAJOR%" NEQ "" (
 if "%O2K16_VER_MAJOR%" NEQ "" (
   call :EvalStatics ..\static\custom\StaticUpdateIds-o2k16.txt
   call :EvalStatics ..\static\StaticUpdateIds-o2k16.txt
+)
+for %%i in ("%TEMP%\AllStaticUpdateIds.txt") do if %%~zi==0 del %%i
+if exist "%TEMP%\AllStaticUpdateIds.txt" (
+  if exist "%TEMP%\MissingUpdateIds.txt" (
+    if exist "%TEMP%\MissingDynamicIds.txt" del "%TEMP%\MissingDynamicIds.txt"
+    ren "%TEMP%\MissingUpdateIds.txt" MissingDynamicIds.txt
+    type "%TEMP%\AllStaticUpdateIds.txt" >>"%TEMP%\MissingUpdateIds.txt"
+    type "%TEMP%\MissingDynamicIds.txt" >>"%TEMP%\MissingUpdateIds.txt"
+    del "%TEMP%\MissingDynamicIds.txt"
+    del "%TEMP%\AllStaticUpdateIds.txt"
+  ) else (
+    ren "%TEMP%\AllStaticUpdateIds.txt" MissingUpdateIds.txt
+  )
 )
 
 :ListFiles
