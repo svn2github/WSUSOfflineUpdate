@@ -1428,5 +1428,6 @@ Version ??.? -- ??.??.??
 - Static updates will now be installed before dynamically determined ones
 - Fix: Removed compression and UPX packing options from CompileAutoItScripts.cmd script in order to reduce false AV scanner alerts (Thanks to "Dalai")
 - Fix: Download part did not exclude superseded February 2018 security update kb4074592 for Windows 10 Version 1703 (x86) systems
+- Fix: Removed redundant static download definitions for July 2016 Servicing stack update kb3173427 for Windows 10 Version 1507 (x86/x64)
 - Fix: Corrected static and exclude definitions for .NET Frameworks' updates
 - Fix: Corrected error handling for DllStructCreate / Wow64DisableWow64FsRedirection calls in UpdateInstaller script (Thanks to R. Krause, "pasha", "aker" and "Dalai")

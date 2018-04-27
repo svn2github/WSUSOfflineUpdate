@@ -26,3 +26,4 @@ windows6.1-kb3031432
 windows8-rt-kb3173426
 windows8-rt-kb3018238
 windows8.1-kb3173424
+windows10.0-kb3173427
