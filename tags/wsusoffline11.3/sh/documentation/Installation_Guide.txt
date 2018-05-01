@@ -1,0 +1,103 @@
+Installation guide for the Linux download scripts, version 1.1
+==============================================================
+WSUS Offline Update already includes the new Linux download scripts. You
+don't need to install the Linux scripts separately, as it was necessary
+for the first beta versions, but you should review the needed packages
+from your Linux distribution.
+
+
+Install the required and recommended packages
+---------------------------------------------
+For Debian and Debian-derived distributions, you need to distinguish
+between the packages md5deep and hashdeep.
+
+The upstream developers moved their project from SourceForge to GitHub,
+and they renamed their project from md5deep to hashdeep:
+
+http://md5deep.sourceforge.net/
+https://github.com/jessek/hashdeep/
+
+Debian followed this move and renamed the package md5deep to hashdeep,
+starting with Debian 8 Jessie-Backports in summer 2015. The general
+rule for Debian and Debian-derived distributions then is: Install the
+package md5deep, if the distribution was released before 2015. Install
+the package hashdeep for all recent distributions.
+
+* For Debian 7 Wheezy:
+
+  su -
+  aptitude install cabextract md5deep wget xmlstarlet trash-cli
+
+
+* For Debian 8 Jessie-Backports and newer:
+
+  su -
+  aptitude install cabextract hashdeep wget xmlstarlet trash-cli
+
+
+* For Ubuntu 14.04LTS Trusty:
+
+  sudo apt-get install cabextract md5deep wget xmlstarlet trash-cli
+
+
+* For Ubuntu 16.04LTS Xenial and newer:
+
+  sudo apt-get install cabextract hashdeep wget xmlstarlet trash-cli
+
+
+Other distributions, which are not Debian-based, seem to stay with the
+package name md5deep.
+
+Note, that both packages md5deep and hashdeep install a series of
+related applications: hashdeep, md5deep, sha1deep, sha256deep, tigerdeep,
+and whirlpooldeep. Throughout WSUS Offline Update, you always need the
+application "hashdeep", regardless of the package name.
+
+
+Download and unpack the wsusoffline archive
+-------------------------------------------
+Download the newest wsusoffline archive from the download page
+http://download.wsusoffline.net/ and unpack it. Note, that the zip archive
+comes with an accompanying hashes files. You can use it to verify the
+download with:
+
+  hashdeep -a -v -v -l -k wsusoffline1111_hashes.txt wsusoffline1111.zip
+
+The new Linux scripts are included in the "sh" subdirectory. Due to
+the packaging on Windows, the scripts are not yet executable. Run the
+included script fix-file-permissions.bash once as:
+
+  bash fix-file-permissions.bash
+
+to make the scripts update-generator.bash, download-updates.bash,
+get-all-updates.bash, and some others executable.
+
+You can then use the script update-generator.bash to interactively select
+one update, language and the available options to download. This script
+doesn't allow multiple selections for update and language, though.
+
+You can also use the script get-all-updates.bash as a template: This
+script downloads all updates with all available options for the default
+languages German and English. But it is also meant for customization
+– you can simply comment out or delete all items you don't need.
+
+
+Notes
+-----
+The new Linux scripts don't work alone – they need the
+configuration files from the wsusoffline installation. Also, the
+Linux download scripts can only replace the Windows download scripts,
+e.g. DownloadUpdates.cmd. To install the updates, you surely need the
+files in the client directory, e.g. the application UpdateInstaller.exe.
+
+Therefore, you should not download the Linux scripts separately, as it
+was necessary for the first beta versions. Just get the latest wsusoffline
+archive and find the Linux scripts in the "sh" subdirectory.
+
+If you need to copy or move the wsusoffline directory, please make sure
+to keep the modification date of all files. You could use "cp --archive"
+or "cp --preserve" instead of just "cp". This is important for all files
+throughout WSUS Offline Update.
+
+You can find the complete documentation is in the subdirectory
+"documentation".
