@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 11.2.2
+WSUS Offline Update 11.3
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1422,7 +1422,7 @@ Version 11.2.2 -- 16.04.18
 - Removed warning about missing quality compatibility registry value from DoUpdate.cmd script (Thanks to "boco")
 - Fix: UpdateGenerator script did not create ISO image if only Office 2016 was selected (Thanks to "JonesHL")
 --------------------------------------------------------------------------------
-Version ??.? -- ??.??.??
+Version 11.3 -- 01.05.18
 - Support removed for Windows 10 Version 1511 since Microsoft discontinued support for it on April 10th, 2018 (see https://support.microsoft.com/en-us/help/4093109/windows-10-update-kb4093109) (Thanks to "aker" and "boco")
 - Included complete rewrite of the Linux scripts version 1.3 (Special thanks to H. Buhrmester)
 - Static updates will now be installed before dynamically determined ones
@@ -1431,3 +1431,4 @@ Version ??.? -- ??.??.??
 - Fix: Removed redundant static download definitions for July 2016 Servicing stack update kb3173427 for Windows 10 Version 1507 (x86/x64)
 - Fix: Corrected static and exclude definitions for .NET Frameworks' updates
 - Fix: Corrected error handling for DllStructCreate / Wow64DisableWow64FsRedirection calls in UpdateInstaller script (Thanks to R. Krause, "pasha", "aker" and "Dalai")
+--------------------------------------------------------------------------------
