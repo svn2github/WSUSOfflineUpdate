@@ -1,4 +1,7 @@
 *ndp3*
+*ndp45-*
+*ndp46-*
+*NDP46-*
 *o2k*
 *oxp*
 *ofc*
@@ -15,6 +18,5 @@
 */*/x64-glb/*
 *vcredist*_x64*
 *dotnetfx35*
-*NDP46-KB3045557*
 *Silverlight_x64*
 *.au3

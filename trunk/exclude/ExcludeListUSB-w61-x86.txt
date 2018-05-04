@@ -1,4 +1,6 @@
 ndp3
+ndp45-
+ndp46-
 ofc\
 o2k\
 oxp\
@@ -23,6 +25,5 @@ w62-x64\
 w63-x64\
 w100-x64\
 dotnetfx35
-NDP46-KB3045557
 _x64
 .au3

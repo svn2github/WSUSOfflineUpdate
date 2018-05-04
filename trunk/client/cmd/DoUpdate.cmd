@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=11.3
+set WSUSOFFLINE_VERSION=11.3+ (r957)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -918,8 +918,8 @@ if "%OS_NAME%"=="w60" (
   set DOTNET4_FILENAME=..\dotnet\NDP46-KB3045557-x86-x64-AllOS-ENU.exe
   set DOTNET4LP_FILENAME=..\dotnet\NDP46-KB3045557-x86-x64-AllOS-%OS_LANG%.exe
 ) else (
-  set DOTNET4_FILENAME=..\dotnet\NDP471-KB4033342-x86-x64-AllOS-ENU.exe
-  set DOTNET4LP_FILENAME=..\dotnet\NDP471-KB4033342-x86-x64-AllOS-%OS_LANG%.exe
+  set DOTNET4_FILENAME=..\dotnet\NDP472-KB4054530-x86-x64-AllOS-ENU.exe
+  set DOTNET4LP_FILENAME=..\dotnet\NDP472-KB4054530-x86-x64-AllOS-%OS_LANG%.exe
 )
 if "%OS_SRV_CORE%"=="1" (
   set DOTNET4_INSTOPTS=/q /norestart

@@ -9,6 +9,7 @@
 *w63*
 *w100*
 */*/x86-glb/*
-*NDP462-*
+*NDP472-*
+*ndp472-*
 *Silverlight_x64*
 *.au3

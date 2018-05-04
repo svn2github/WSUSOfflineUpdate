@@ -1,4 +1,7 @@
 *ndp3*
+*ndp45-*
+*ndp46-*
+*NDP46-*
 *o2k*
 *oxp*
 *ofc*
@@ -11,5 +14,4 @@
 *w100*
 */*/x86-glb/*
 *dotnetfx35*
-*NDP46-KB3045557*
 *.au3

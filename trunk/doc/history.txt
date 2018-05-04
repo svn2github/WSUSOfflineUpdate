@@ -1432,3 +1432,6 @@ Version 11.3 -- 01.05.18
 - Fix: Corrected static and exclude definitions for .NET Frameworks' updates
 - Fix: Corrected error handling for DllStructCreate / Wow64DisableWow64FsRedirection calls in UpdateInstaller script (Thanks to R. Krause, "pasha", "aker" and "Dalai")
 --------------------------------------------------------------------------------
+Version ??.? -- ??.??.18
+- .NET Framework 4 updated to v. 4.7.2 (Thanks to "boco" and "aker")
+- Fix: ISO and USB filters adjusted

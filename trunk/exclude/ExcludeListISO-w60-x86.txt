@@ -13,6 +13,7 @@
 *w100*
 */*/x64-glb/*
 *vcredist*_x64*
-*NDP462-*
+*NDP472-*
+*ndp472-*
 *Silverlight_x64*
 *.au3

@@ -1,6 +1,7 @@
 *ndp3*
 *ndp45-*
 *ndp46-*
+*NDP46-*
 *o2k*
 *oxp*
 *ofc*
@@ -14,6 +15,5 @@
 *wddefs*
 */*/x86-glb/*
 *dotnetfx35*
-*NDP46-KB3045557*
 *MSEInstall*
 *.au3
