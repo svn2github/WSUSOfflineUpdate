@@ -292,6 +292,7 @@ function calculate_static_downloads_dotnet ()
                                -e "NDP462-KB3151800-"  \
                                -e "NDP47-KB3186497-"   \
                                -e "NDP471-KB4033342-"  \
+                               -e "NDP472-KB4054530-"  \
                     "${current_dir}/StaticDownloadLinks-dotnet-x86-${current_lang}.txt" \
                     >> "${static_download_links}" || true
             fi

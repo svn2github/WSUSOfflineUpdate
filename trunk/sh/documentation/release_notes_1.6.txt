@@ -1,0 +1,17 @@
+Release Notes for Version 1.6
+
+Release date: 2018-05-04
+Intended compatibility: WSUS Offline Update Version 11.3 and later
+
+Changes in this version:
+
+- Added support for .NET Framework 4.7.2
+
+- Bug fix: The function create_integrity_database did not create a hashes
+  file, if the hashed directory was an alias.
+
+  To prevent the creation of empty hashdeep files, the function
+  create_integrity_database counts the number of files in the hashed
+  directory. This was done by using "find" and "wc", but find by default
+  does not follows aliases. The new implementation lets the bash itself
+  calculate the file count.

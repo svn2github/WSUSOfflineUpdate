@@ -48,9 +48,12 @@ function log_message ()
     return 0
 }
 
+# TODO: Terminal colors influence the line width. Lines with colors are
+# shorter than those without.
 function log_info_message ()
 {
-    log_message "Info: $*"
+    printf '%s\n' "${bold}${brightgreen}Info:${reset_all} $*" | fold -s -w "${COLUMNS}"
+    printf '%s\n' "$(date "+%F %T") - Info: $*" >> "${logfile}"
     return 0
 }
 
@@ -58,7 +61,8 @@ function log_info_message ()
 # examined.
 function log_warning_message ()
 {
-    log_message "Warning: $*"
+    printf '%s\n' "${bold}${brightyellow}Warning:${reset_all} $*" | fold -s -w "${COLUMNS}"
+    printf '%s\n' "$(date "+%F %T") - Warning: $*" >> "${logfile}"
     return 0
 } 1>&2
 
@@ -69,15 +73,18 @@ function log_warning_message ()
 # should continue anyway.
 function log_error_message ()
 {
-    log_message "Error: $*"
+    printf '%s\n' "${bold}${brightred}Error:${reset_all} $*" | fold -s -w "${COLUMNS}"
+    printf '%s\n' "$(date "+%F %T") - Error: $*" >> "${logfile}"
     return 0
 } 1>&2
 
 # Failures are programming errors of the type "This should never happen".
 function fail ()
 {
-    log_message "Failure: $*"
+    printf '%s\n' "${bold}${brightred}Failure:${reset_all} $*" | fold -s -w "${COLUMNS}"
+    printf '%s\n' "$(date "+%F %T") - Failure: $*" >> "${logfile}"
     show_backtrace
+    echo "The script will now exit"
     exit 1
 } 1>&2
 
@@ -87,7 +94,8 @@ function log_debug_message ()
 {
     if [[ "${debug}" == "enabled" ]]
     then
-        log_message "Debug: $*"
+        printf '%s\n' "${bold}${brightblue}Debug:${reset_all} $*" | fold -s -w "${COLUMNS}"
+        printf '%s\n' "$(date "+%F %T") - Debug: $*" >> "${logfile}"
     fi
     return 0
 } 1>&2
@@ -153,5 +161,12 @@ function ask_question ()
     done
     return 0
 }
+
+# Example code
+# log_info_message "Information"
+# log_warning_message "Warning"
+# log_error_message "Error"
+# debug=enabled log_debug_message "Debug"
+# fail "Failure"
 
 return 0

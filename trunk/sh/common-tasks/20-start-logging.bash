@@ -97,6 +97,7 @@ function print_info_block ()
         printf '%s\n' "Kernel name:    ${kernel_name}"
         printf '%s\n' "Kernel details: ${kernel_details}"
         printf '%s\n' "Bash version:   ${BASH_VERSION}"
+        printf '%s\n' "Terminal type:  ${TERM:-}"
         echo ""
         printf '%s\n' "Linux distribution" "${linux_details}"
         echo ""

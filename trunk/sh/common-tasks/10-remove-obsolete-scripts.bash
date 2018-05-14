@@ -64,7 +64,73 @@ function remove_obsolete_scripts ()
     rm -f ./documentation/Kurzinstallationsanleitung.txt
 }
 
+# The files ExcludeList-superseded.txt and
+# ExcludeList-superseded-seconly.txt are
+# renamed to ExcludeList-Linux-superseded.txt and
+# ExcludeList-Linux-superseded-seconly.txt in version 1.5 of the Linux
+# download scripts. Existing files may be kept and renamed, if they are
+# sorted in C-style, and if they use Linux line endings.
+#
+# If the exclude lists were created on Windows, they are kept as is at
+# this point. They may still be removed later, if a new version of WSUS
+# Offline Update or the WSUS catalog file is available.
+
+function rename_exclude_lists ()
+{
+    if [[ -f "../exclude/ExcludeList-superseded.txt" ]]
+    then
+        # Testing the expected sort order. GNU sort uses a C-style sort,
+        # if the environment variable LC_ALL=C is set.
+        if sort --check=quiet "../exclude/ExcludeList-superseded.txt"
+        then
+            # Testing the line endings. A carriage return can be passed
+            # to grep with the "ANSI-C quoting" of the bash.
+            if ! grep -F -q $'\r' "../exclude/ExcludeList-superseded.txt"
+            then
+                if [[ ! -f "../exclude/ExcludeList-Linux-superseded.txt" ]]
+                then
+                    # Any refactoring, e.g. renaming existing files,
+                    # should be done first, but the script should not
+                    # create any output yet. Logging should start with
+                    # the script 20-start-logging.bash, which inserts
+                    # a divider line into the log and prints a header
+                    # with the script name. Any previous output will
+                    # look out of place.
+                    #
+                    #echo "Renaming ExcludeList-superseded.txt to ExcludeList-Linux-superseded.txt"
+                    mv "../exclude/ExcludeList-superseded.txt" \
+                       "../exclude/ExcludeList-Linux-superseded.txt"
+                else
+                    #echo "Could not rename ExcludeList-superseded.txt"
+                    rm "../exclude/ExcludeList-superseded.txt"
+                fi
+            fi
+        fi
+    fi
+
+    if [[ -f "../exclude/ExcludeList-superseded-seconly.txt" ]]
+    then
+        if sort --check=quiet "../exclude/ExcludeList-superseded-seconly.txt"
+        then
+            if ! grep -F -q $'\r' "../exclude/ExcludeList-superseded-seconly.txt"
+            then
+                if [[ ! -f "../exclude/ExcludeList-Linux-superseded-seconly.txt" ]]
+                then
+                    #echo "Renaming ExcludeList-superseded-seconly.txt to ExcludeList-Linux-superseded-seconly.txt"
+                    mv "../exclude/ExcludeList-superseded-seconly.txt" \
+                       "../exclude/ExcludeList-Linux-superseded-seconly.txt"
+                else
+                    #echo "Could not rename ExcludeList-superseded-seconly.txt"
+                    rm "../exclude/ExcludeList-superseded-seconly.txt"
+                fi
+            fi
+        fi
+    fi
+    return 0
+}
+
 # ========== Commands =====================================================
 
 remove_obsolete_scripts
+rename_exclude_lists
 return 0

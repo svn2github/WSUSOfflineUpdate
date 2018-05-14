@@ -34,9 +34,9 @@
 
 if [[ "${prefer_seconly}" == enabled ]]
 then
-    used_superseded_updates_list=../exclude/ExcludeList-superseded-seconly.txt
+    used_superseded_updates_list="../exclude/ExcludeList-Linux-superseded-seconly.txt"
 else
-    used_superseded_updates_list=../exclude/ExcludeList-superseded.txt
+    used_superseded_updates_list="../exclude/ExcludeList-Linux-superseded.txt"
 fi
 
 # ========== Functions ====================================================
@@ -75,6 +75,9 @@ function get_main_updates ()
                 w2k3)
                     for current_lang in "glb" "${languages_list[@]}"
                     do
+                        # The option -F is not used at this point,
+                        # because the search string should be anchored
+                        # to the beginning of the line.
                         if grep -q -- "^${current_lang} " <<< "${languages_table_w2k3}"
                         then
                             process_main_update "w2k3" "x86" "${current_lang}"
@@ -503,7 +506,7 @@ function calculate_dynamic_windows_updates ()
     local -a exclude_lists_windows=()
 
     require_non_empty_file "../xslt/ExtractDownloadLinks-${name}-${arch}-${lang}.xsl" || return 0
-    require_non_empty_file "../exclude/ExcludeList-superseded.txt" || fail "The required file ExcludeList-superseded.txt is missing"
+    require_non_empty_file "${used_superseded_updates_list}" || fail "The required file ${used_superseded_updates_list} is missing"
     require_non_empty_file "${cache_dir}/package.xml" || fail "The required file package.xml is missing"
 
     log_info_message "Determining dynamic update links ..."
@@ -602,7 +605,7 @@ function calculate_dynamic_office_updates ()
 
     # Preconditions
     [[ "${name}" == ofc ]] || return 0
-    require_non_empty_file "../exclude/ExcludeList-superseded.txt" || fail "The required file ExcludeList-superseded.txt is missing"
+    require_non_empty_file "${used_superseded_updates_list}" || fail "The required file ${used_superseded_updates_list} is missing"
     require_non_empty_file "${cache_dir}/package.xml" || fail "The required file package.xml is missing"
 
     log_info_message "Determining dynamic update links ..."
@@ -780,11 +783,11 @@ function calculate_dynamic_office_updates ()
     # join -v1 does a "left join" and returns lines, which are unique
     # on the left side.
     #
-    # TODO: The two alternate lists ExcludeList-superseded.txt and
-    # ExcludeList-superseded-seconly.txt only make a difference
-    # for Windows 7, 8 and 8.1 and the corresponding Windows Server
-    # versions. For Office updates, the file ExcludeList-superseded.txt
-    # could be used as before.
+    # TODO: The two alternate lists ExcludeList-Linux-superseded.txt
+    # and ExcludeList-Linux-superseded-seconly.txt only make a
+    # difference for Windows 7, 8 and 8.1 and the corresponding
+    # Windows Server versions. For Office updates, the file
+    # ExcludeList-Linux-superseded.txt could be used as before.
     if [[ -s "${used_superseded_updates_list}" ]]
     then
         join -v1 "${temp_dir}/DynamicDownloadLinks-${name}-${lang}.txt" \

@@ -241,6 +241,25 @@ inputfile_prefix=""
 # Earlier Wget versions always use a dot display, if the output is
 # written to a log file. Only the verbosity can be reduced with the option
 # "--progress=dot:mega".
+#
+# Unfortunately, Wget 1.8 will seriously mess up the output, if there
+# is any sort of output redirection. This may happen in cron jobs or
+# batch jobs, or when simply piping the output through cat:
+#
+# ./download-updates.bash w60 deu,enu -includesp 2>&1 | cat
+#
+# cat just copies the input to output, but Wget itself will mess up its
+# display: The progress is indicated by dots in the terminal window,
+# but all in one line. The columns with downloaded file size, percentage
+# and remaining time are written to the log file.
+#
+# In this example, the terminal type will be properly set, and testing for
+# a "dumb" terminal does not work. Instead, the file descriptors should
+# be checked, if they are attached to a terminal. Since Wget writes all
+# messages to error output, both descriptors 1 and 2 (standard output
+# and error output) should be tested. If one of these descriptors is
+# redirected, then the dot display will be used as a fall back, without
+# the option --show-progress.
 
 function set_wget_progress_style ()
 {
@@ -252,7 +271,7 @@ function set_wget_progress_style ()
     if type -p wget >/dev/null
     then
         version_string="$(wget --version | head -n 1 | cut -d " " -f 3)"
-        log_info_message "Wget version: ${version_string}"
+        log_debug_message "Wget version: ${version_string}"
 
         IFS="." read -r major_version minor_version skip_rest <<< "${version_string}"
         log_debug_message "Wget major version: ${major_version}"
@@ -261,10 +280,18 @@ function set_wget_progress_style ()
 
         if (( major_version == 1 )) && (( minor_version >= 18 ))
         then
-            log_info_message "Wget uses progress bar"
-            wget_common_options+=( --show-progress --progress=bar:noscroll )
+            if [[ -t 1 ]] && [[ -t 2 ]]
+            then
+                # Both file descriptors are attached to a terminal window
+                log_info_message "Setting Wget display options: Wget ${version_string} uses progress bar"
+                wget_common_options+=( --show-progress --progress=bar:noscroll )
+            else
+                # One or both file descriptor(s) is/are redirected
+                log_info_message "Setting Wget display options: Wget ${version_string} uses dot display as a fall back for non-interactive sessions"
+                wget_common_options+=( --progress=dot:mega )
+            fi
         else
-            log_info_message "Wget uses dot display"
+            log_info_message "Setting Wget display options: Wget ${version_string} uses dot display"
             wget_common_options+=( --progress=dot:mega )
         fi
     else

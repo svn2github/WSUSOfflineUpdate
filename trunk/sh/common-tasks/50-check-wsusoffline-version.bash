@@ -409,11 +409,18 @@ function normalize_file_permissions ()
 function reschedule_updates_after_wou_update ()
 {
     log_info_message "Reschedule updates..."
+    # The function reevaluate_all_updates removes the timestamps for
+    # all updates, so that they are reevaluated on the next run.
     reevaluate_all_updates
-    rm -f "../exclude/ExcludeList-superseded.txt"
-    rm -f "../exclude/ExcludeList-superseded-seconly.txt"
     rm -f "../timestamps/check-sh-version.txt"
     rm -f "../timestamps/update-configuration-files.txt"
+    # Lists of superseded updates, Windows version
+    rm -f "../exclude/ExcludeList-superseded.txt"
+    rm -f "../exclude/ExcludeList-superseded-seconly.txt"
+    # Lists of superseded updates, Linux version
+    rm -f "../exclude/ExcludeList-Linux-superseded.txt"
+    rm -f "../exclude/ExcludeList-Linux-superseded-seconly.txt"
+
     return 0
 }
 

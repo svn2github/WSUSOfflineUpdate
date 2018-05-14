@@ -235,14 +235,22 @@ function compare_timestamp ()
                     log_info_message "The WSUS catalog file ${filename} was updated. Superseded and dynamic updates will be recalculated."
                     rm -f "${cache_dir}/package.xml"
                     rm -f "${cache_dir}/package-formated.xml"
+                    # Lists of superseded updates, Windows version
                     rm -f "../exclude/ExcludeList-superseded.txt"
                     rm -f "../exclude/ExcludeList-superseded-seconly.txt"
+                    # Lists of superseded updates, Linux version
+                    rm -f "../exclude/ExcludeList-Linux-superseded.txt"
+                    rm -f "../exclude/ExcludeList-Linux-superseded-seconly.txt"
                     reevaluate_dynamic_updates
                 ;;
                 *)
                     log_info_message "The configuration file ${filename} was updated. All updates will be recalculated."
+                    # Lists of superseded updates, Windows version
                     rm -f "../exclude/ExcludeList-superseded.txt"
                     rm -f "../exclude/ExcludeList-superseded-seconly.txt"
+                    # Lists of superseded updates, Linux version
+                    rm -f "../exclude/ExcludeList-Linux-superseded.txt"
+                    rm -f "../exclude/ExcludeList-Linux-superseded-seconly.txt"
                     reevaluate_all_updates
                 ;;
             esac
@@ -259,8 +267,8 @@ function compare_timestamp ()
 
 # After downloading new versions of the file wsusscn2.cab, and
 # subsequently rebuilding the list of superseded updates, all dynamic
-# updates must be recalculated. Static downloads don't need to be
-# recalculated.
+# updates must be recalculated. Static downloads like the dotnet
+# installers don't need to be recalculated.
 
 function reevaluate_dynamic_updates ()
 {
@@ -271,13 +279,26 @@ function reevaluate_dynamic_updates ()
     then
         shopt -s nullglob
         file_list=(
-            "${timestamp_dir}"/timestamp-w6*.txt
+            "${timestamp_dir}"/timestamp-wxp-*.txt
+            "${timestamp_dir}"/timestamp-w2k3-*.txt
+            "${timestamp_dir}"/timestamp-w60-*.txt
+            "${timestamp_dir}"/timestamp-w61-*.txt
+            "${timestamp_dir}"/timestamp-w62-*.txt
+            "${timestamp_dir}"/timestamp-w63-*.txt
             "${timestamp_dir}"/timestamp-w100-*.txt
             "${timestamp_dir}"/timestamp-dotnet-x86-*.txt
             "${timestamp_dir}"/timestamp-dotnet-x64-*.txt
             "${timestamp_dir}"/timestamp-ofc-*.txt
         )
         shopt -u nullglob
+
+        # The ESR version uses dynamic win updates.
+        if [[ "${dynamic_win_updates}" == "enabled" ]]
+        then
+            shopt -s nullglob
+            file_list+=( "${timestamp_dir}"/timestamp-win-*.txt )
+            shopt -u nullglob
+        fi
 
         if (( ${#file_list[@]} > 0 ))
         then
@@ -310,7 +331,7 @@ function reevaluate_all_updates ()
     if [[ -d "${timestamp_dir}" ]]
     then
         shopt -s nullglob
-        file_list=("${timestamp_dir}"/timestamp-*.txt)
+        file_list=( "${timestamp_dir}"/timestamp-*.txt )
         shopt -u nullglob
 
         if (( ${#file_list[@]} > 0 ))

@@ -67,9 +67,6 @@
 #     checked. In Debian 9 Stretch, the update-alternatives system is
 #     used to select the preferred wine version.
 #
-#     TODO: Two zip archives for Windows 7 are not digitally signed. These
-#     need an exception.
-#
 #     TODO: Some updates for the Windows 10, released in April 2017, had
 #     expired digital file signatures. This is not really an error. See
 #     the discussion in the forum:
@@ -82,6 +79,7 @@ function verify_digital_file_signatures ()
     local sigcheck_output=""
     local windows_path=""
     local linux_path=""
+    local filename=""
     local file_validation=""
     local skip_rest=""
     local -i initial_errors="0"
@@ -95,7 +93,7 @@ function verify_digital_file_signatures ()
     fi
     if ! type -P wine > /dev/null
     then
-        log_warning_message "Verification of digital file signatures requires wine"
+        log_warning_message "Please install the package wine to verify digital file signatures with Sysinternals Sigcheck"
         return 0
     fi
     if [[ ! -f ../bin/"${sigcheck_bin}" ]]
@@ -133,6 +131,13 @@ function verify_digital_file_signatures ()
         #local sigcheck_options=( "/accepteula" "-q" "-c" "-s" )
         local sigcheck_options=(  "/accepteula" "-q" "-c" "-s" "-nobanner" )
     fi
+
+    # TODO: the error output of sigcheck should not be discarded, but
+    # wine itself will also create lots of error messages. This should
+    # be sorted out somehow...
+    #
+    # The result code of sigcheck cannot be tested, because it is masked
+    # by wine.
     sigcheck_output="$(wine "../bin/${sigcheck_bin}" "${sigcheck_options[@]}" "${download_dir}" 2> /dev/null | tail -n +2 | unquote)" || true
     log_debug_message "Sigcheck output:"
     log_debug_message "${sigcheck_output}"
@@ -144,12 +149,20 @@ function verify_digital_file_signatures ()
             fail "Error parsing Sigcheck output"
         fi
         # Using winepath to convert pathnames is better than hard-coding
-        # the translation, but it generates unnecessarily long pathnames,
+        # this translation, but it generates unnecessarily long pathnames,
         # including symbolic links in ~/.wine/dosdevices/z:/
+        #
+        # It also uses wine to convert the file paths, and this is much
+        # slower than just translating in the path in the shell.
+        #
+        # The resulting file path could be further shortened with
+        # readlink -f.
         linux_path="$(winepath --unix "${windows_path}")"
+        filename="${linux_path##*/}"
+
         log_debug_message "Windows path: ${windows_path}"
         log_debug_message "Linux path:   ${linux_path}"
-        log_debug_message "Filename:     ${linux_path##*/}"
+        log_debug_message "Filename:     ${filename}"
         log_debug_message "Validation:   ${file_validation}"
 
         case "${file_validation}" in
@@ -164,23 +177,26 @@ function verify_digital_file_signatures ()
                 :
             ;;
             Unsigned)
-                # Usually, all files by Microsoft should be signed, but
+                # Usually, all files from Microsoft should be signed, but
                 # this was forgotten for the last version of rootsupd.exe.
-                if [[ "${linux_path##*/}" == "rootsupd.exe" ]]
+                #
+                # Furthermore, there are two unsigned zip archives for
+                # Windows 7, which need to be excluded from removal.
+                if [[ "${filename}" == "rootsupd.exe" || "${filename}" == *.zip ]]
                 then
-                    log_info_message "Kept unsigned file rootsupd.exe"
+                    log_info_message "Kept unsigned file ${filename}"
                 else
-                    trash_file "${linux_path}"
                     increment_error_count
-                    log_warning_message "Trashed/deleted unsigned file ${linux_path##*/}"
+                    log_error_message "Trashing/deleting file ${filename} because it is unsigned..."
+                    trash_file "${linux_path}"
                 fi
             ;;
             "Not a cryptographic message or the cryptographic message is not formatted correctly." | \
             "The digital signature of the object did not verify.")
                 # The file is signed, but damaged.
-                trash_file "${linux_path}"
                 increment_error_count
-                log_warning_message "Trashed/deleted damaged file ${linux_path##*/}"
+                log_error_message "Trashing/deleting file ${filename} because the digital file signature could not be verified..."
+                trash_file "${linux_path}"
             ;;
             Error*)
                 # Error -2146762495 (0x800b0101) means, that the
@@ -197,7 +213,7 @@ function verify_digital_file_signatures ()
                 #
                 # In both cases, the file may be still valid and should
                 # not be deleted.
-                log_warning_message "Received \"${file_validation}\" for file ${linux_path##*/}"
+                log_warning_message "Received \"${file_validation}\" for file ${filename}"
             ;;
             *)
                 # Empty files are "Unsigned", but very small files, with
@@ -205,7 +221,7 @@ function verify_digital_file_signatures ()
                 # "Invalid parameter.". This message may be localized
                 # as "Ungueltiger Parameter" in German. Of course,
                 # the filename does not correspond to any known parameter.
-                log_warning_message "Unknown result \"${file_validation}\" for file ${linux_path##*/}"
+                log_warning_message "Unknown result \"${file_validation}\" for file ${filename}"
             ;;
         esac
     done <<< "${sigcheck_output}"

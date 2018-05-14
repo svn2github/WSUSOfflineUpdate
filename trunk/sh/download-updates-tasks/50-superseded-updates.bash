@@ -79,37 +79,27 @@ function unpack_wsus_catalog_file ()
 }
 
 
-# The file ../exclude/ExcludeList-superseded.txt will be deleted, if
-# one of the following three files has changed:
+# The files ExcludeList-Linux-superseded.txt and
+# ExcludeList-Linux-superseded-seconly.txt will be deleted, if a new
+# version of WSUS Offline Update or the Linux download scripts is
+# installed, or if one of the following configurations files has changed:
 #
 # ../exclude/ExcludeList-superseded-exclude.txt
 # ../client/exclude/HideList-seconly.txt
 # ../client/wsus/wsusscn2.cab
 #
-# The function check_superseded_updates does some more tests and then
-# tests, if the file ../exclude/ExcludeList-superseded.txt still exists.
+# The function check_superseded_updates then checks, if the exclude
+# lists still exist.
+#
+# Previously, this function did some more checks, but since the files
+# ExcludeList-superseded.txt and ExcludeList-superseded-seconly.txt were
+# renamed in version 1.5 of the Linux download scripts, these tests are
+# not needed anymore.
+
 function check_superseded_updates ()
 {
-    # The file ../exclude/ExcludeList-superseded-seconly.txt is new in
-    # WSUS Offline Update 10.9. If it doesn't exist yet, both files need
-    # to be rebuilt.
-    if [[ ! -f ../exclude/ExcludeList-superseded-seconly.txt ]]
-    then
-        rm -f ../exclude/ExcludeList-superseded.txt
-    fi
-    # The file ExcludeList-superseded.txt originally contained the
-    # file names only, but in recent versions of WSUS Offline Update,
-    # it contains the complete URLs.
-    if [[ -f ../exclude/ExcludeList-superseded.txt ]]
-    then
-        if ! grep -F -i -q 'http://' ../exclude/ExcludeList-superseded.txt
-        then
-            rm -f ../exclude/ExcludeList-superseded.txt
-        fi
-    fi
-    # If the file ../exclude/ExcludeList-superseded.txt does not exist
-    # anymore, it needs to be rebuilt.
-    if [[ -f "../exclude/ExcludeList-superseded.txt" ]]
+    if [[ -f "../exclude/ExcludeList-Linux-superseded.txt" \
+       && -f "../exclude/ExcludeList-Linux-superseded-seconly.txt" ]]
     then
         log_info_message "Found valid list of superseded updates"
     else
@@ -119,11 +109,12 @@ function check_superseded_updates ()
 }
 
 
-# The function rebuild_superseded_updates calculates two alternate files
-# with superseded updates:
+# The function rebuild_superseded_updates calculates two alternate lists
+# of superseded updates:
 #
-# ../exclude/ExcludeList-superseded.txt
-# ../exclude/ExcludeList-superseded-seconly.txt
+# ../exclude/ExcludeList-Linux-superseded.txt
+# ../exclude/ExcludeList-Linux-superseded-seconly.txt
+
 function rebuild_superseded_updates ()
 {
     local -a excludelist_overrides=()
@@ -132,7 +123,11 @@ function rebuild_superseded_updates ()
     # Preconditions
     require_file "${cache_dir}/package.xml" || fail "The required file package.xml is missing"
 
-    # Create a new file ExcludeList-superseded.txt from package.xml and
+    # Delete existing files, just to be sure
+    rm -f "../exclude/ExcludeList-Linux-superseded.txt"
+    rm -f "../exclude/ExcludeList-Linux-superseded-seconly.txt"
+
+    # Create a new file ExcludeList-Linux-superseded.txt from package.xml and
     # ExcludeList-superseded-exclude.txt
     log_info_message "Determining superseded updates (please be patient, this will take a while)..."
 
@@ -256,9 +251,12 @@ function rebuild_superseded_updates ()
     # nonetheless. Therefore, theses KB numbers are removed from the
     # file ExcludeListLocations-superseded-all.txt again.
     #
-    # The file ../exclude/ExcludeList-superseded-seconly.txt" is new
-    # in WSUS Offline Update 10.9. It is created by applying additional
-    # exclude lists with security-only updates.
+    # The file ExcludeList-superseded-seconly.txt was introduced in WSUS
+    # Offline Update 10.9. It is created by applying additional exclude
+    # lists with security-only updates.
+    #
+    # The Linux scripts use the name
+    # ExcludeList-Linux-superseded-seconly.txt instead since version 1.5.
     excludelist_overrides=(
         ../exclude/ExcludeList-superseded-exclude.txt
         ../exclude/custom/ExcludeList-superseded-exclude.txt
@@ -280,27 +278,27 @@ function rebuild_superseded_updates ()
 
     apply_exclude_lists \
         "${temp_dir}/ExcludeListLocations-superseded-all.txt" \
-        "../exclude/ExcludeList-superseded.txt" \
+        "../exclude/ExcludeList-Linux-superseded.txt" \
         "${temp_dir}/ExcludeList-superseded-exclude.txt" \
         "${excludelist_overrides[@]}"
-    sort_in_place "../exclude/ExcludeList-superseded.txt"
+    sort_in_place "../exclude/ExcludeList-Linux-superseded.txt"
 
     apply_exclude_lists \
         "${temp_dir}/ExcludeListLocations-superseded-all.txt" \
-        "../exclude/ExcludeList-superseded-seconly.txt" \
+        "../exclude/ExcludeList-Linux-superseded-seconly.txt" \
         "${temp_dir}/ExcludeList-superseded-exclude-seconly.txt" \
         "${excludelist_overrides_seconly[@]}"
-    sort_in_place "../exclude/ExcludeList-superseded-seconly.txt"
+    sort_in_place "../exclude/ExcludeList-Linux-superseded-seconly.txt"
 
     # After recalculating superseded updates, all dynamic updates must
     # be recalculated as well.
     reevaluate_dynamic_updates
 
-    if ensure_non_empty_file "../exclude/ExcludeList-superseded.txt"
+    if ensure_non_empty_file "../exclude/ExcludeList-Linux-superseded.txt"
     then
-        log_info_message "Created file ExcludeList-superseded.txt"
+        log_info_message "Created file ExcludeList-Linux-superseded.txt"
     else
-        fail "File ExcludeList-superseded.txt was not created"
+        fail "File ExcludeList-Linux-superseded.txt was not created"
     fi
     return 0
 }

@@ -9,7 +9,7 @@ benötigten Pakete aus ihrer Linux-Distribution überprüfen.
 Installieren Sie die benötigten und empfohlenen Pakete
 ------------------------------------------------------
 Bei Debian und von Debian abgeleiteten Distributionen müssen Sie zwischen
-den Paketen md5deep und hashdeep unterscheiden.
+den Paketen "md5deep" und "hashdeep" unterscheiden.
 
 Die Entwickler sind mit ihrem Projekt von SourceForge nach GitHub
 umgezogen, und sie haben ihr Projekt von md5deep in hashdeep umbenannt:
@@ -49,10 +49,43 @@ Sie das Paket hashdeep in allen aktuellen Distributionen.
 Andere Distributionen, die nicht auf Debian basieren, scheinen den
 Paketnamen md5deep beizubehalten.
 
+* Für Fedora 27 (nach "username"):
+
+  sudo dnf install -y cabextract md5deep wget xmlstarlet trash-cli
+
+
 Beachten Sie, dass beide Pakete md5deep und hashdeep eine Reihe von
 ähnlichen Anwendungen installieren: hashdeep, md5deep, sha1deep,
 sha256deep, tigerdeep und whirlpooldeep. In WSUS Offline Update müssen
 Sie immer die Anwendung "hashdeep" verwenden, unabhängig vom Paketnamen.
+
+
+Optionale Pakete
+----------------
+Die oben genannte Pakete sind notwendig, um die Linux-Download-Skripte
+in ihrer Standard-Konfiguration zu verwenden. Es gibt einige optionale
+Funktionen, die die Installation von weiteren Paketen erfordern:
+
+- Die Verifikation von digitalen Datei-Signaturen funktioniert bislang
+  nur halb, weil die Microsoft Root-Zertifikate in Linux nicht verfügbar
+  sind. Dies wird im Manual.pdf diskutiert. Wenn Sie es trotzdem probieren
+  möchten, müssen sie "wine" installieren, um Sysinternals Sigcheck
+  unter Linux laufen zu lassen.
+
+  Die meisten Sicherheits-Updates können aber auch verifiziert werden,
+  indem die SHA-1-Hashe, die in die Dateinamen eingesetzt wurden, mit
+  den von hashdeep berechneten Werten verglichen werden.
+
+- Der alternative Downloader Aria2 kann mehrfache simultane Verbindungen
+  verwenden, was besonders bei langsamen Internet-Verbindungen hilfreich
+  sein kann. Er wird mit dem Paket "aria2" installiert.
+
+  Es gibt jedoch ein Problem mit den Timestamping, das dazu führen kann,
+  dass bereits vorhandene Dateien erneut heruntergeladen werden. Dies
+  wird im Manual.pdf genauer beschrieben.
+
+- Im Verzeichnis available-tasks gibt es ein sehr einfaches "copy to
+  target" Skript, das "rsync" benötigt.
 
 
 Laden Sie das wsusoffline-Archiv herunter und entpacken Sie es

@@ -105,8 +105,8 @@ function verify_integrity_database ()
         log_info_message "${hashdeep_output}"
         log_info_message "Verified the integrity of existing files in the directory ${hashed_dir}"
     else
-        log_error_message "${hashdeep_output}"
-        log_error_message "The directory ${hashed_dir} has changed since last creating the integrity database"
+        log_warning_message "${hashdeep_output}"
+        log_warning_message "The directory ${hashed_dir} has changed since last creating the integrity database"
         rm "${hashes_file}"
     fi
 
@@ -125,7 +125,8 @@ function create_integrity_database ()
     # will be called from wsusoffline/client/md/.
     local hashed_dir_truncated="${hashed_dir/'client/'/}"
     local hashes_file_basename="${hashes_file##*/}"
-    local filecount=0
+    local -a file_list=()
+    local -i filecount="0"
     local hashdeep_error_output=""
     local -i initial_errors="0"
     initial_errors="$(get_error_count)"
@@ -147,12 +148,23 @@ function create_integrity_database ()
 
     # Count files to prevent errors and the creation of empty hashdeep
     # files
-    if [[ "${hashed_dir}" == "../client/dotnet" ]]
-    then
-        filecount="$(find "${hashed_dir}" -maxdepth 1 -type f | wc -l)"
-    else
-        filecount="$(find "${hashed_dir}" -type f | wc -l)"
-    fi
+    case "${hashed_dir}" in
+        "../client/msse" | "../client/wddefs")
+            shopt -s nullglob
+            file_list=(
+                "${hashed_dir}/x64-glb"/*.*
+                "${hashed_dir}/x86-glb"/*.*
+            )
+            shopt -u nullglob
+            filecount="${#file_list[@]}"
+        ;;
+        *)
+            shopt -s nullglob
+            file_list=( "${hashed_dir}"/*.* )
+            shopt -u nullglob
+            filecount="${#file_list[@]}"
+        ;;
+    esac
     if (( filecount == 0 ))
     then
         log_warning_message "Aborted creation of integrity database, because the directory \"${hashed_dir}\" is empty"
