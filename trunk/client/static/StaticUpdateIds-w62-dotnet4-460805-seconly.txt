@@ -1,1 +1,2 @@
 kb4054181,January 2018 Security only update for the .NET Framework 4.6, 4.6.1, 4.6.2, 4.7 and 4.7.1 for Windows Server 2012
+kb4096235,May 2018 Security only update for the .NET Framework 4.6, 4.6.1, 4.6.2, 4.7 and 4.7.1 for Windows Server 2012

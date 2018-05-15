@@ -1,1 +1,1 @@
-kb4054993,January 2018 Security and Quality Rollup for the .NET Framework 4.5.2 for Windows 8.1 and Windows Server 2012 R2
+kb4095876,May 2018 Security and Quality Rollup for the .NET Framework 4.5.2 for Windows 8.1 and Windows Server 2012 R2
