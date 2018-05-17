@@ -1435,6 +1435,7 @@ Version 11.3 -- 01.05.18
 Version ??.? -- ??.??.18
 - .NET Framework 4 updated to v. 4.7.2 (Thanks to "boco" and "aker")
 - Included complete rewrite of the Linux scripts version 1.6 (Special thanks to H. Buhrmester)
+- Aria2 download utility updated to v. 1.34.0 (Thanks to "harry")
 - May 2018 updates added to 'security only' lists for Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems
 - Integrated .NET Framework May 2018 Security and Quality Rollups
 - Replaced superseded April 2018 Servicing stack update (kb4099989) by May 2018 Servicing stack update (kb4131372) for Windows 10 Version 1709 (Thanks to "boco")

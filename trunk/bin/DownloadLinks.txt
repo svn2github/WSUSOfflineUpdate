@@ -2,5 +2,3 @@ http://www.autoitscript.com/autoit3/
 https://eternallybored.org/misc/wget/
 http://www.info-zip.org/UnZip.html
 http://sourceforge.net/projects/tumagcc/files/
-http://update.microsoft.com/redist/wuredist.cab
-https://github.com/aria2/aria2/releases
