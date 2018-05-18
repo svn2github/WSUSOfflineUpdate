@@ -7,7 +7,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 11.3.0.961)
+#pragma compile(FileVersion, 11.3.0.962)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -19,6 +19,7 @@ Dim Const $wou_hostname               = "www.wsusoffline.net"
 Dim Const $donationURL                = "http://www.wsusoffline.net/donate.html"
 
 ; Registry constants
+Dim Const $reg_key_wsh_hklm64         = "HKLM64\Software\Microsoft\Windows Script Host\Settings"
 Dim Const $reg_key_wsh_hklm           = "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Script Host\Settings"
 Dim Const $reg_key_wsh_hkcu           = "HKEY_CURRENT_USER\Software\Microsoft\Windows Script Host\Settings"
 Dim Const $reg_key_ie                 = "HKEY_LOCAL_MACHINE\Software\Microsoft\Internet Explorer"
@@ -236,9 +237,16 @@ EndFunc
 Func WSHAvailable()
 Dim $reg_val
 
-  $reg_val = RegRead($reg_key_wsh_hklm, $reg_val_enabled)
-  If ($reg_val = "0") Then
-    Return 0
+  If (@OSArch <> "X86") Then
+    $reg_val = RegRead($reg_key_wsh_hklm64, $reg_val_enabled)
+    If ($reg_val = "0") Then
+      Return 0
+    EndIf
+  Else
+    $reg_val = RegRead($reg_key_wsh_hklm, $reg_val_enabled)
+    If ($reg_val = "0") Then
+      Return 0
+    EndIf
   EndIf
   $reg_val = RegRead($reg_key_wsh_hkcu, $reg_val_enabled)
   If ($reg_val = "0") Then
