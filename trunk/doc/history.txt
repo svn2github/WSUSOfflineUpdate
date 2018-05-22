@@ -1442,6 +1442,7 @@ Version ??.? -- ??.??.18
 - Replaced superseded April 2018 Servicing stack update (kb4093137) by May 2018 Servicing stack update (kb4132216) for Windows 10 Version 1607 (Thanks to "aker")
 - Replaced superseded April 2018 Servicing stack update (kb4093432) by May 2018 Servicing stack update (kb4132649) for Windows 10 Version 1703 (Thanks to "aker")
 - Replaced superseded April 2018 Servicing stack update (kb4099989) by May 2018 Servicing stack update (kb4131372) for Windows 10 Version 1709 (Thanks to "boco")
+- Replaced superseded May 8th 2018 Servicing stack update (kb4131372) by May 21st 2018 Servicing stack update (kb4132650) for Windows 10 Version 1709 (Thanks to "aker")
 - Excluded several obsolete updates for Windows 10 Version 1511 (Thanks to "aker")
 - Removed obsolete static download definitions for PowerPoint Viewer SP2 (kb2687456) (Thanks to "aker")
 - Fix: Corrected Windows Script Host status detection in UpdateInstaller script (Thanks to "pk68" and "Dalai")

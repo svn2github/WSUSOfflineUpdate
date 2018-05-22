@@ -7,7 +7,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 11.3.0.962)
+#pragma compile(FileVersion, 11.3.0.963)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -239,14 +239,11 @@ Dim $reg_val
 
   If (@OSArch <> "X86") Then
     $reg_val = RegRead($reg_key_wsh_hklm64, $reg_val_enabled)
-    If ($reg_val = "0") Then
-      Return 0
-    EndIf
   Else
     $reg_val = RegRead($reg_key_wsh_hklm, $reg_val_enabled)
-    If ($reg_val = "0") Then
-      Return 0
-    EndIf
+  EndIf
+  If ($reg_val = "0") Then
+    Return 0
   EndIf
   $reg_val = RegRead($reg_key_wsh_hkcu, $reg_val_enabled)
   If ($reg_val = "0") Then
