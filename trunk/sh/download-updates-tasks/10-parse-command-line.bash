@@ -323,9 +323,24 @@ function parse_remaining_parameters ()
 
 function print_command_line_summary ()
 {
+    local architectures_list_serialized="-"
+
+    # The list of architectures may be empty, if only Office update
+    # are selected. Bash up to version 4.3 will treat empty arrays as
+    # "unset", even if the array variables were properly declared and
+    # initialized. This is fixed in bash version 4.4.
+    if (( ${#architectures_list[@]} > 0 ))
+    then
+        architectures_list_serialized="${architectures_list[*]}"
+    fi
+    # This test is not necessary for the other lists, because they should
+    # never be empty. One update and language must be specified on the
+    # command line, and the list of included updates is initialized with
+    # "wsus".
+
     log_info_message "Final lists after processing command-line arguments. dotnet, if selected, appears twice to handle both installers and dynamic updates.
 - Updates:       ${updates_list[*]}
-- Architectures: ${architectures_list[*]} (depends on Windows updates only)
+- Architectures: ${architectures_list_serialized} (depends on Windows updates only)
 - Languages:     ${languages_list[*]}
 - Downloads:     ${downloads_list[*]}
 "

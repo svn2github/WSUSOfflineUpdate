@@ -1,1 +1,1 @@
-1.6 http://downloads.hartmut-buhrmester.de/sh-1.6.tgz http://downloads.hartmut-buhrmester.de/sh-1.6_hashes.txt sh-1.6
+1.7 http://downloads.hartmut-buhrmester.de/sh-1.7.tgz http://downloads.hartmut-buhrmester.de/sh-1.7_hashes.txt sh-1.7

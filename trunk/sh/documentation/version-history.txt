@@ -269,6 +269,21 @@ Version 1.6
     - Added support for .NET Framework 4.7.2
 
     - Bug fix: The function create_integrity_database did not create a
-      hashes file, if the hashed directory was an alias.
+      hashes file, if the hashed directory was a symbolic link.
 
     See the file release_notes_1.6.txt for details.
+
+
+Version 1.7
+
+    Release date: 2018-05-25
+    Intended compatibility: WSUS Offline Update Version 11.3 and later
+
+    Changes in this version:
+
+    - Bug fix: The script download-updates.bash may crash, if running
+      in bash version 4.3, for example as of Debian 8 Jessie, and only
+      Office Updates are selected.
+
+    See the file release_notes_1.7.txt for details.
+

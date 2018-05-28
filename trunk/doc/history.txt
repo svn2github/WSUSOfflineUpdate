@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update 11.3
+WSUS Offline Update 11.4
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 ................................................................................
 
@@ -1432,8 +1432,8 @@ Version 11.3 -- 01.05.18
 - Fix: Corrected static and exclude definitions for .NET Frameworks' updates
 - Fix: Corrected error handling for DllStructCreate / Wow64DisableWow64FsRedirection calls in UpdateInstaller script (Thanks to R. Krause, "pasha", "aker" and "Dalai")
 --------------------------------------------------------------------------------
-Version ??.? -- ??.??.18
-- Included complete rewrite of the Linux scripts version 1.6 (Special thanks to H. Buhrmester)
+Version 11.4 -- 28.05.18
+- Included complete rewrite of the Linux scripts version 1.7 (Special thanks to H. Buhrmester)
 - May 2018 updates added to 'security only' lists for Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems
 - Integrated .NET Framework May 2018 Security and Quality Rollups
 - .NET Framework 4 updated to v. 4.7.2 (Thanks to "boco" and "aker")
@@ -1446,4 +1446,6 @@ Version ??.? -- ??.??.18
 - Excluded several obsolete updates for Windows 10 Version 1511 (Thanks to "aker")
 - Removed obsolete static download definitions for PowerPoint Viewer SP2 (kb2687456) (Thanks to "aker")
 - Fix: Corrected Windows Script Host status detection in UpdateInstaller script (Thanks to "pk68" and "Dalai")
+- Fix: Hardened CompileAutoItScripts.cmd, MakeRelease.cmd and PrepareReleaseTree.cmd scripts by adding quotes to %~dps0 based calls (Thanks to "aker")
 - Fix: ISO and USB filters adjusted
+--------------------------------------------------------------------------------

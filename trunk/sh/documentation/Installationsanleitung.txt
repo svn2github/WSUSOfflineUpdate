@@ -1,4 +1,4 @@
-Installationsanleitung für die Linux-Download-Skripte, Version 1.1
+Installationsanleitung für die Linux-Download-Skripte, Version 1.7
 ==================================================================
 WSUS Offline Update enthält bereits die neuen Linux-Skripte. Sie
 brauchen die Linux-Skripte deshalb nicht mehr separat zu installieren,
@@ -95,7 +95,7 @@ http://download.wsusoffline.net/ herunter und entpacken Sie es. Beachten
 Sie, dass das Zip-Archiv von einer Hashes-Datei begleitet wird. Sie
 können das Archiv damit überprüfen:
 
-  hashdeep -a -v -v -l -k wsusoffline1111_hashes.txt wsusoffline1111.zip
+  hashdeep -a -v -v -l -k wsusoffline113_hashes.txt wsusoffline113.zip
 
 Die neuen Linux-Skripte sind im Verzeichnis "sh" enthalten. Da das
 wsusoffline-Archiv unter Windows erstellt wurde, sind die Skripte noch
@@ -117,6 +117,13 @@ Dieses Skript lädt alle Updates mit allen verfügbaren Optionen für
 die Standardsprachen Deutsch und Englisch herunter. Es kann beliebig
 angepasst werden – kommentieren Sie einfach alle Punkte aus, die sie
 nicht benötigen.
+
+Sobald die Skripte ausführbar sind, können sie aus dem
+Skript-Verzeichnis aufgerufen werden mit:
+
+  ./update-generator.bash
+  ./get-all-updates.bash
+  ./download-updates.bash w60 deu,enu -includesp
 
 
 Anmerkungen

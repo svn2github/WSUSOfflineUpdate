@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
 # Filename: download-updates.bash
-# Version: 1.6
-# Modification date: 2018-05-04
+# Version: 1.7
+# Modification date: 2018-05-25
 # Intended compatibility: WSUS Offline Update Version 11.3 and later
 #
 # Copyright (C) 2016-2018 Hartmut Buhrmester
@@ -153,8 +153,8 @@
 #
 # Note: files and directories with relative paths are defined here,
 # but they are created later after setting the working directory.
-readonly script_version="1.6"
-readonly release_date="2018-05-04"
+readonly script_version="1.7"
+readonly release_date="2018-05-25"
 readonly timestamp_dir="../timestamps"
 readonly log_dir="../log"
 readonly logfile="${log_dir}/download.log"

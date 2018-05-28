@@ -11,13 +11,13 @@ if not exist %TARGET_DIR% goto InvalidParam
 
 rem *** Copy scripts and binaries ***
 echo Copying scripts and binaries...
-pushd %~dps0
+pushd "%~dps0"
 xcopy *.* %TARGET_DIR% /E /Q /Y /EXCLUDE:exclude\ExcludeList-ReleaseTree.txt
 popd
 
 rem *** Compile AutoIt-Scripts ***
 pushd %TARGET_DIR%
-call %~dps0CompileAutoItScripts.cmd
+call "%~dps0CompileAutoItScripts.cmd"
 popd
 goto EoF
 

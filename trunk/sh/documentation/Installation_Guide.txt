@@ -1,4 +1,4 @@
-Installation guide for the Linux download scripts, version 1.1
+Installation guide for the Linux download scripts, version 1.7
 ==============================================================
 WSUS Offline Update already includes the new Linux download scripts. You
 don't need to install the Linux scripts separately, as it was necessary
@@ -93,7 +93,7 @@ http://download.wsusoffline.net/ and unpack it. Note, that the zip archive
 comes with an accompanying hashes files. You can use it to verify the
 download with:
 
-  hashdeep -a -v -v -l -k wsusoffline1111_hashes.txt wsusoffline1111.zip
+  hashdeep -a -v -v -l -k wsusoffline113_hashes.txt wsusoffline113.zip
 
 The new Linux scripts are included in the "sh" subdirectory. Due to
 the packaging on Windows, the scripts are not yet executable. Run the
@@ -112,6 +112,13 @@ You can also use the script get-all-updates.bash as a template: This
 script downloads all updates with all available options for the default
 languages German and English. But it is also meant for customization
 – you can simply comment out or delete all items you don't need.
+
+Once the scripts are executable, they can be run from the script
+directory with:
+
+  ./update-generator.bash
+  ./get-all-updates.bash
+  ./download-updates.bash w60 deu,enu -includesp
 
 
 Notes
