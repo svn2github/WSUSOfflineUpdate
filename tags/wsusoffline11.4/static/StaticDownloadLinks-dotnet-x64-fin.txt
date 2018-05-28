@@ -1,0 +1,3 @@
+http://download.microsoft.com/download/a/c/7/ac7ec2f2-38b3-4066-b0be-6475b55a113c/dotnetfx35langpack_x64fi.exe
+http://download.microsoft.com/download/B/C/F/BCF148FA-90B4-4F1B-A47E-08E377E87BF4/NDP46-KB3045557-x86-x64-AllOS-FIN.exe
+http://download.microsoft.com/download/1/0/5/10515CF6-16F6-4E93-A685-4F9B9C95D5F6/NDP472-KB4054530-x86-x64-AllOS-FIN.exe

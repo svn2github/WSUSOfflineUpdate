@@ -1,0 +1,3 @@
+http://download.microsoft.com/download/f/a/2/fa24f36b-cdcb-415c-8acf-11e33a21a358/dotnetfx35langpack_x64ja.exe
+http://download.microsoft.com/download/5/A/0/5A055608-2D3C-40D3-B0A8-5AF98A83D2E0/NDP46-KB3045557-x86-x64-AllOS-JPN.exe
+http://download.microsoft.com/download/b/9/5/b95136c0-58a0-48df-821a-d05319a86852/enu_NETFX/amd64_ndp472-kb4054530-x86-x64-allos-jpn_exe/ndp472-kb4054530-x86-x64-allos-jpn.exe

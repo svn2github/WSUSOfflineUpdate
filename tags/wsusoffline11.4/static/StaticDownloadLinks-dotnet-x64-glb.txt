@@ -1,0 +1,2 @@
+http://download.microsoft.com/download/d/7/2/d728b7b9-454b-4b57-8270-45dac441b0ec/dotnetfx35langpack_x64de.exe
+http://download.windowsupdate.com/c/msdownload/update/software/updt/2017/10/ndp46-kb4041778-x64_1e36c362f9f6c4dfdef1a3c0abe4fb560ec7f25c.exe

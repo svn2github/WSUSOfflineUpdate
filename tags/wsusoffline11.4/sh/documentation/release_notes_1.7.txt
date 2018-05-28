@@ -1,0 +1,35 @@
+Release Notes for Version 1.7
+
+Release date: 2018-05-25
+Intended compatibility: WSUS Offline Update Version 11.3 and later
+
+Changes in this version:
+
+- Bug fix: The script download-updates.bash may crash, if running in
+  bash version 4.3, for example as of Debian 8 Jessie, and only Office
+  Updates are selected.
+
+  While parsing the command-line parameters, the script
+  download-updates.bash creates four internal lists for the needed
+  updates, architectures, languages and included downloads.
+
+  The list of architectures will be empty, if only Office updates are
+  selected. This list determines the architectures of the included
+  downloads .NET Frameworks, Windows Defender and Microsoft Security
+  Essentials. These downloads should match the specified Windows versions,
+  not the Office versions.
+
+  There is an old bug in bash up to version 4.3: Empty arrays are
+  treated as "unset", even if the array variables are declared and
+  initialized. This bug is solved in bash 4.4, as of Debian 9 Stretch.
+
+  bash: nounset treats empty array as unset, contrary to man. page
+  https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=529627
+
+  For the script this means, that the length of the array must be checked,
+  before it is read. This has already been done in most places, but it
+  had to be added to the function print_command_line_summary.
+
+  This solves the bug reports
+  http://forums.wsusoffline.net/viewtopic.php?f=9&t=8072 and
+  http://forums.wsusoffline.net/viewtopic.php?f=9&t=8090 .
