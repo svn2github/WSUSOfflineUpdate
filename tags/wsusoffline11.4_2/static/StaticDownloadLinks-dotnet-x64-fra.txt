@@ -1,0 +1,3 @@
+http://download.microsoft.com/download/e/6/1/e6168525-de7f-49ce-971b-62e6c8738c38/dotnetfx35langpack_x64fr.exe
+http://download.microsoft.com/download/7/8/B/78B918FC-AA96-4E5B-8A7D-B516D4E34B54/NDP46-KB3045557-x86-x64-AllOS-FRA.exe
+http://download.microsoft.com/download/b/9/5/b95136c0-58a0-48df-821a-d05319a86852/enu_NETFX/amd64_ndp472-kb4054530-x86-x64-allos-fra_exe/ndp472-kb4054530-x86-x64-allos-fra.exe
