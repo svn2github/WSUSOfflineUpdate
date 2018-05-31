@@ -31,6 +31,11 @@ if /i "%2"=="/verify" (
   shift /2
   goto EvalParams
 )
+if /i "%2"=="/showdismprogress" (
+  set DISM_PROGRESS=1
+  shift /2
+  goto EvalParams
+)
 if /i "%2"=="/errorsaswarnings" (
   set ERRORS_AS_WARNINGS=1
   shift /2
@@ -165,6 +170,7 @@ for %%i in (0 1641 3010 3011) do if %ERR_LEVEL% EQU %%i goto InstSuccess
 goto InstFailure
 
 :InstDism
+if "%DISM_PROGRESS%" NEQ "1" set DISM_QPARAM=/Quiet
 if "%OS_NAME%"=="w100" (
   if exist %SystemRoot%\Sysnative\Dism.exe (
     for /F "tokens=3" %%i in ('%SystemRoot%\Sysnative\Dism.exe /Online /Get-PackageInfo /PackagePath:%1 /English ^| %SystemRoot%\System32\find.exe /I "Applicable"') do (
@@ -178,9 +184,9 @@ if "%OS_NAME%"=="w100" (
 )
 echo Installing %1...
 if exist %SystemRoot%\Sysnative\Dism.exe (
-  %SystemRoot%\Sysnative\Dism.exe /Online /Quiet /NoRestart /Add-Package /PackagePath:%1 /IgnoreCheck
+  %SystemRoot%\Sysnative\Dism.exe /Online %DISM_QPARAM% /NoRestart /Add-Package /PackagePath:%1 /IgnoreCheck
 ) else (
-  %SystemRoot%\System32\Dism.exe /Online /Quiet /NoRestart /Add-Package /PackagePath:%1 /IgnoreCheck
+  %SystemRoot%\System32\Dism.exe /Online %DISM_QPARAM% /NoRestart /Add-Package /PackagePath:%1 /IgnoreCheck
 )
 set ERR_LEVEL=%errorlevel%
 if "%IGNORE_ERRORS%"=="1" goto InstSuccess

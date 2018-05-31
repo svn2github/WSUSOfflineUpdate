@@ -7,7 +7,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 11.4.0.967)
+#pragma compile(FileVersion, 11.4.0.968)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -74,6 +74,7 @@ Dim Const $ini_section_messaging      = "Messaging"
 Dim Const $ini_value_showlog          = "showlog"
 ; Hidden messaging constants
 Dim Const $ini_value_showieinfo       = "showieinfo"
+Dim Const $ini_value_showdismprogress = "showdismprogress"
 
 Dim Const $ini_section_msi            = "MSI"
 
@@ -1026,6 +1027,9 @@ While 1
       EndIf
       If IsCheckBoxChecked($showlog) Then
         $options = $options & " /showlog"
+      EndIf
+      If DefaultIniRead($ini_section_messaging, $ini_value_showdismprogress, $disabled) = $enabled Then
+        $options = $options & " /showdismprogress"
       EndIf
       $msilistfile = FileOpen(@WindowsDir & $path_rel_msi_selected, 10)
       If $msilistfile <> -1 Then

@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=11.4
+set WSUSOFFLINE_VERSION=11.4+ (r968)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -35,7 +35,7 @@ echo %DATE% %TIME% - Info: Used path "%~dp0" on %COMPUTERNAME% (user: %USERNAME%
 
 :EvalParams
 if "%1"=="" goto NoMoreParams
-for %%i in (/updatecpp /instmssl /instdotnet35 /instpsh /instdotnet4 /instwmf /instmsse /updatetsc /skipieinst /skipdefs /skipdynamic /all /excludestatics /seconly /verify /autoreboot /shutdown /showlog /instmsi) do (
+for %%i in (/updatecpp /instmssl /instdotnet35 /instpsh /instdotnet4 /instwmf /instmsse /updatetsc /skipieinst /skipdefs /skipdynamic /all /excludestatics /seconly /verify /autoreboot /shutdown /showlog /showdismprogress /instmsi) do (
   if /i "%1"=="%%i" echo %DATE% %TIME% - Info: Option %%i detected>>%UPDATE_LOGFILE%
 )
 if /i "%1"=="/updatecpp" set UPDATE_CPP=/updatecpp
@@ -56,6 +56,7 @@ if /i "%1"=="/verify" set VERIFY_MODE=/verify
 if /i "%1"=="/autoreboot" set BOOT_MODE=/autoreboot
 if /i "%1"=="/shutdown" set FINISH_MODE=/shutdown
 if /i "%1"=="/showlog" set SHOW_LOG=/showlog
+if /i "%1"=="/showdismprogress" set DISM_MODE=/showdismprogress
 if /i "%1"=="/instmsi" set INSTALL_MSI=/instmsi
 shift /1
 goto EvalParams
@@ -337,7 +338,7 @@ set RECALL_REQUIRED=1
 goto Installed
 :SPw6Now
 echo %DATE% %TIME% - Info: Installing most recent Service Pack>>%UPDATE_LOGFILE%
-call InstallListedUpdates.cmd %VERIFY_MODE% /unattend /forcerestart
+call InstallListedUpdates.cmd %VERIFY_MODE% %DISM_MODE% /unattend /forcerestart
 if errorlevel 1 goto InstError
 set RECALL_REQUIRED=1
 goto Installed
@@ -366,7 +367,7 @@ if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing Windows 8.1 / Server 2012 R2 Update Rollup April 2014...
   echo %DATE% %TIME% - Info: Installing Windows 8.1 / Server 2012 R2 Update Rollup April 2014>>%UPDATE_LOGFILE%
-  call InstallListedUpdates.cmd %VERIFY_MODE% /errorsaswarnings
+  call InstallListedUpdates.cmd %VERIFY_MODE% %DISM_MODE% /errorsaswarnings
   if not errorlevel 1 (
     if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
     echo. >%SystemRoot%\Temp\wou_w63upd1_tried.txt
@@ -400,7 +401,7 @@ if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing Windows 8.1 / Server 2012 R2 Update Rollup Nov. 2014...
   echo %DATE% %TIME% - Info: Installing Windows 8.1 / Server 2012 R2 Update Rollup Nov. 2014>>%UPDATE_LOGFILE%
-  call InstallListedUpdates.cmd %VERIFY_MODE% /errorsaswarnings
+  call InstallListedUpdates.cmd %VERIFY_MODE% %DISM_MODE% /errorsaswarnings
   if not errorlevel 1 (
     if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
     echo. >%SystemRoot%\Temp\wou_w63upd2_tried.txt
@@ -527,7 +528,7 @@ call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing Internet Explorer 9 prerequisites...
-  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /ignoreerrors
+  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% %DISM_MODE% /ignoreerrors
   if not errorlevel 1 (
     if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
     echo. >%SystemRoot%\Temp\wou_iepre_tried.txt
@@ -575,7 +576,7 @@ call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing Internet Explorer 10/11 prerequisites...
-  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /ignoreerrors
+  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% %DISM_MODE% /ignoreerrors
   if not errorlevel 1 (
     if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
     echo. >%SystemRoot%\Temp\wou_iepre_tried.txt
@@ -806,7 +807,7 @@ call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing .NET Framework 3.5 SP1 Family Update...
-  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /ignoreerrors
+  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% %DISM_MODE% /ignoreerrors
 )
 set RECALL_REQUIRED=1
 set DOTNET35_FILENAME=
@@ -905,7 +906,7 @@ call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing .NET Framework 4 prerequisite...
-  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /errorsaswarnings
+  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% %DISM_MODE% /errorsaswarnings
 ) else (
   echo Warning: .NET Framework 4 prerequisite installation file ^(kb%DOTNET4_PREREQ_ID%^) not found.
   echo %DATE% %TIME% - Warning: .NET Framework 4 prerequisite installation file ^(kb%DOTNET4_PREREQ_ID%^) not found>>%UPDATE_LOGFILE%
@@ -967,7 +968,7 @@ call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing .NET Framework 3.5 custom updates...
-  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /ignoreerrors
+  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% %DISM_MODE% /ignoreerrors
 )
 :SkipDotNet35CustomInst
 rem *** Install .NET Framework 4 - Custom ***
@@ -988,7 +989,7 @@ call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing .NET Framework 4 custom updates...
-  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /ignoreerrors
+  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% %DISM_MODE% /ignoreerrors
 )
 :SkipDotNet4CustomInst
 if "%RECALL_REQUIRED%"=="1" goto Installed
@@ -1028,7 +1029,7 @@ call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing Windows PowerShell 2.0...
-  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /errorsaswarnings
+  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% %DISM_MODE% /errorsaswarnings
 ) else (
   echo Warning: Windows PowerShell 2.0 installation file ^(kb%PSH_TARGET_ID%^) not found.
   echo %DATE% %TIME% - Warning: Windows PowerShell 2.0 installation file ^(kb%PSH_TARGET_ID%^) not found>>%UPDATE_LOGFILE%
@@ -1072,7 +1073,7 @@ call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing Windows Management Framework...
-  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /errorsaswarnings
+  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% %DISM_MODE% /errorsaswarnings
 ) else (
   echo Warning: Windows Management Framework installation file ^(kb%WMF_TARGET_ID%^) not found.
   echo %DATE% %TIME% - Warning: Windows Management Framework installation file ^(kb%WMF_TARGET_ID%^) not found>>%UPDATE_LOGFILE%
@@ -1111,7 +1112,7 @@ call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing most recent Remote Desktop Client...
-  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /errorsaswarnings
+  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% %DISM_MODE% /errorsaswarnings
 ) else (
   echo Warning: Remote Desktop Client installation file^(s^) not found.
   echo %DATE% %TIME% - Warning: Remote Desktop Client installation file^(s^) not found>>%UPDATE_LOGFILE%
@@ -1189,7 +1190,7 @@ call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
 if exist "%TEMP%\UpdatesToInstall.txt" (
   echo Installing most recent Office Service Pack^(s^)...
-  call InstallListedUpdates.cmd %VERIFY_MODE% /errorsaswarnings
+  call InstallListedUpdates.cmd %VERIFY_MODE% %DISM_MODE% /errorsaswarnings
 ) else (
   echo Warning: Office Service Pack installation file^(s^) not found.
   echo %DATE% %TIME% - Warning: Office Service Pack installation file^(s^) not found>>%UPDATE_LOGFILE%
@@ -1365,7 +1366,7 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
   call :EnableWUSvc
   call :AdjustWUSvc
   echo Installing Windows Update scan prerequisites...
-  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /ignoreerrors
+  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% %DISM_MODE% /ignoreerrors
   if not errorlevel 1 (
     if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
     echo. >%SystemRoot%\Temp\wou_wupre_tried.txt
@@ -1431,7 +1432,7 @@ if not exist "%TEMP%\UpdatesToInstall.txt" goto SkipUpdates
 call :StopWUSvc
 set WUSVC_STOPPED=1
 echo Installing updates...
-call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% /errorsaswarnings
+call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% %DISM_MODE% /errorsaswarnings
 if errorlevel 1 goto InstError
 if "%USERNAME%"=="WOUTempAdmin" (
   if "%FINISH_MODE%"=="/shutdown" (
@@ -1636,7 +1637,7 @@ if "%RECALL_REQUIRED%"=="1" (
     )
     if "%USERNAME%" NEQ "WOUTempAdmin" (
       echo Preparing automatic recall...
-      call PrepareRecall.cmd "%~f0" %VERIFY_MODE% %SKIP_IEINST% %UPDATE_CPP% %INSTALL_MSSL% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_WMF% %INSTALL_MSSE% %SKIP_DEFS% %UPDATE_TSC% %INSTALL_OFV% %INSTALL_MSI% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %LIST_MODE_IDS% %LIST_MODE_UPDATES% %SKIP_DYNAMIC%
+      call PrepareRecall.cmd "%~f0" %VERIFY_MODE% %SKIP_IEINST% %UPDATE_CPP% %INSTALL_MSSL% %INSTALL_DOTNET35% %INSTALL_DOTNET4% %INSTALL_PSH% %INSTALL_WMF% %INSTALL_MSSE% %SKIP_DEFS% %UPDATE_TSC% %INSTALL_OFV% %INSTALL_MSI% %BOOT_MODE% %FINISH_MODE% %SHOW_LOG% %DISM_MODE% %LIST_MODE_IDS% %LIST_MODE_UPDATES% %SKIP_DYNAMIC%
     )
     if exist %SystemRoot%\System32\bcdedit.exe (
       echo Adjusting boot sequence for next reboot...

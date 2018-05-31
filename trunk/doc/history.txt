@@ -1449,3 +1449,5 @@ Version 11.4 -- 28.05.18
 - Fix: Hardened CompileAutoItScripts.cmd, MakeRelease.cmd and PrepareReleaseTree.cmd scripts by adding quotes to %~dps0 based calls (Thanks to "aker")
 - Fix: ISO and USB filters adjusted
 --------------------------------------------------------------------------------
+Version ??.? -- ??.??.??
+- Added /showdismprogress switch to DoUpdate.cmd and InstallOSUpdate.cmd scripts as well as corresponding key to [Messaging] section of UpdateInstaller.ini file (Thanks to "negg" and "boco")
