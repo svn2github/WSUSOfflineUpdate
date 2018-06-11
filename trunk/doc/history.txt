@@ -1451,4 +1451,5 @@ Version 11.4 -- 28.05.18
 --------------------------------------------------------------------------------
 Version ??.? -- ??.??.??
 - C++ 2017 Redistributable Runtime Libraries updated to v. 14.14.26429.4 (Thanks to "aker")
+- Removed obsolete code for updating Windows Installer and Windows Script Host from DoUpdate.cmd script
 - Added /showdismprogress switch to DoUpdate.cmd and InstallOSUpdate.cmd scripts as well as corresponding key to [Messaging] section of UpdateInstaller.ini file (Thanks to "negg" and "boco")

@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=11.4+ (r969)
+set WSUSOFFLINE_VERSION=11.4+ (r970)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -416,68 +416,6 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
 )
 :SPw100
 :SkipSPInst
-
-rem *** Install Windows Installer ***
-echo Checking Windows Installer version...
-if %MSI_VER_MAJOR% LSS %MSI_VER_TARGET_MAJOR% goto InstallMSI
-if %MSI_VER_MAJOR% GTR %MSI_VER_TARGET_MAJOR% goto SkipMSIInst
-if %MSI_VER_MINOR% LSS %MSI_VER_TARGET_MINOR% goto InstallMSI
-if %MSI_VER_MINOR% GTR %MSI_VER_TARGET_MINOR% goto SkipMSIInst
-if %MSI_VER_BUILD% LSS %MSI_VER_TARGET_BUILD% goto InstallMSI
-if %MSI_VER_BUILD% GTR %MSI_VER_TARGET_BUILD% goto SkipMSIInst
-if %MSI_VER_REVIS% GEQ %MSI_VER_TARGET_REVIS% goto SkipMSIInst
-:InstallMSI
-if "%MSI_TARGET_ID%"=="" (
-  echo Warning: Environment variable MSI_TARGET_ID not set.
-  echo %DATE% %TIME% - Warning: Environment variable MSI_TARGET_ID not set>>%UPDATE_LOGFILE%
-  goto SkipMSIInst
-)
-if /i "%OS_ARCH%"=="x64" (
-  set MSI_FILENAME=..\%OS_NAME%-%OS_ARCH%\glb\*%MSI_TARGET_ID%*-%OS_ARCH%.*
-) else (
-  set MSI_FILENAME=..\%OS_NAME%\glb\*%MSI_TARGET_ID%*-%OS_ARCH%.*
-)
-dir /B %MSI_FILENAME% >nul 2>&1
-if errorlevel 1 (
-  echo Warning: File %MSI_FILENAME% not found.
-  echo %DATE% %TIME% - Warning: File %MSI_FILENAME% not found>>%UPDATE_LOGFILE%
-  goto SkipMSIInst
-)
-echo Installing most recent Windows Installer...
-for /F %%i in ('dir /B %MSI_FILENAME%') do (
-  if /i "%OS_ARCH%"=="x64" (
-    call InstallOSUpdate.cmd ..\%OS_NAME%-%OS_ARCH%\glb\%%i %VERIFY_MODE% /quiet /norestart
-  ) else (
-    call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /quiet /norestart
-  )
-  if not errorlevel 1 set REBOOT_REQUIRED=1
-)
-set MSI_FILENAME=
-:SkipMSIInst
-
-rem *** Install Windows Script Host ***
-echo Checking Windows Script Host version...
-if %WSH_VER_MAJOR% LSS %WSH_VER_TARGET_MAJOR% goto InstallWSH
-if %WSH_VER_MAJOR% GTR %WSH_VER_TARGET_MAJOR% goto SkipWSHInst
-if %WSH_VER_MINOR% LSS %WSH_VER_TARGET_MINOR% goto InstallWSH
-if %WSH_VER_MINOR% GTR %WSH_VER_TARGET_MINOR% goto SkipWSHInst
-if %WSH_VER_BUILD% LSS %WSH_VER_TARGET_BUILD% goto InstallWSH
-if %WSH_VER_BUILD% GTR %WSH_VER_TARGET_BUILD% goto SkipWSHInst
-if %WSH_VER_REVIS% GEQ %WSH_VER_TARGET_REVIS% goto SkipWSHInst
-:InstallWSH
-set WSH_FILENAME=..\%OS_NAME%\glb\scripten.exe
-if not exist %WSH_FILENAME% (
-  echo Warning: File %WSH_FILENAME% not found.
-  echo %DATE% %TIME% - Warning: File %WSH_FILENAME% not found>>%UPDATE_LOGFILE%
-  goto SkipWSHInst
-)
-echo Installing most recent Windows Script Host...
-for /F %%i in ('dir /B %WSH_FILENAME%') do (
-  call InstallOSUpdate.cmd ..\%OS_NAME%\glb\%%i %VERIFY_MODE% /quiet /norestart
-  if not errorlevel 1 set REBOOT_REQUIRED=1
-)
-set WSH_FILENAME=
-:SkipWSHInst
 
 rem *** Install Internet Explorer ***
 if "%OS_SRV_CORE%"=="1" goto SkipIEInst
