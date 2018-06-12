@@ -17,3 +17,4 @@ kb4074589,February 2018 Security Only Quality Update for Windows Server 2012
 kb4088880,March 2018 Security Only Quality Update for Windows Server 2012
 kb4093122,April 2018 Security Only Quality Update for Windows Server 2012
 kb4103726,May 2018 Security Only Quality Update for Windows Server 2012
+kb4284846,June 2018 Security Only Quality Update for Windows Server 2012
