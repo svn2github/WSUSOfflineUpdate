@@ -23,6 +23,8 @@ windows6.1-kb2552343
 windows6.1-kb2631813
 windows6.1-kb3004375
 windows6.1-kb3031432
+windows6.1-kb2973112
+windows6.1-kb3122648
 windows8-rt-kb3173426
 windows8-rt-kb3018238
 windows8.1-kb3173424

@@ -1455,3 +1455,4 @@ Version ??.? -- ??.??.??
 - Removed obsolete code for updating Windows Installer and Windows Script Host from DoUpdate.cmd script
 - Added /showdismprogress switch to DoUpdate.cmd and InstallOSUpdate.cmd scripts as well as corresponding key to [Messaging] section of UpdateInstaller.ini file (Thanks to "negg" and "boco")
 - Fix: Replaced superseded Outlook 2010 Security Update kb4011711 (February 2018) by kb4022205 (June 2018)
+- Fix: Download part missed Security Updates kb2973112 and kb3122648 for .NET Framework 3.5.1 on Windows 7 / Server 2008 R2 (x86/x64) systems
