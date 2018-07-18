@@ -1457,3 +1457,4 @@ Version ??.? -- ??.??.??
 - Added June 2018 Servicing stack update (kb4338853) for Windows 10 Version 1803 (Thanks to "aker")
 - Fix: Replaced superseded Outlook 2010 Security Update kb4011711 (February 2018) by kb4022205 (June 2018)
 - Fix: Download part missed Security Updates kb2973112 and kb3122648 for .NET Framework 3.5.1 on Windows 7 / Server 2008 R2 (x86/x64) systems
+- Fix: Microsoft modified download URL for .NET Framework 4.7.2 offline installation file (Thanks to "boco", "aker" and the community)
