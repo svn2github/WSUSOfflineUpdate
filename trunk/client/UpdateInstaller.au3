@@ -7,7 +7,7 @@
 #RequireAdmin
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Installer")
-#pragma compile(FileVersion, 11.4.0.977)
+#pragma compile(FileVersion, 11.4.0.978)
 #pragma compile(InternalName, "Installer")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateInstaller.exe)
@@ -285,7 +285,7 @@ Func DotNet4TargetVersion()
   If ( (@OSVersion = "WIN_VISTA") OR (@OSVersion = "WIN_2008") ) Then
     Return "4.6.00081"
   Else
-    Return "4.7.03081"
+    Return "4.7.03062"
   EndIf
 EndFunc
 

@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=11.4+ (r977)
+set WSUSOFFLINE_VERSION=11.4+ (r978)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -692,10 +692,15 @@ copy /Y ..\static\StaticDownloadLinks-dotnet.txt "%TEMP%\StaticDownloadLinks-dot
 if exist ..\static\custom\StaticDownloadLinks-dotnet.txt (
   type ..\static\custom\StaticDownloadLinks-dotnet.txt >>"%TEMP%\StaticDownloadLinks-dotnet.txt"
 )
-%DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% "%TEMP%\StaticDownloadLinks-dotnet.txt" %DLDR_POPT% ..\client\dotnet
-if errorlevel 1 (
-  del "%TEMP%\StaticDownloadLinks-dotnet.txt"
-  goto DownloadError
+for /F "usebackq tokens=*" %%i in ("%TEMP%\StaticDownloadLinks-dotnet.txt") do (
+  %DLDR_PATH% %DLDR_COPT% %DLDR_POPT% ..\client\dotnet %%i
+  if errorlevel 1 (
+    if exist ..\client\dotnet\%%~nxi del ..\client\dotnet\%%~nxi
+    echo Warning: Download of %%i failed.
+    echo %DATE% %TIME% - Warning: Download of %%i failed>>%DOWNLOAD_LOGFILE%
+  ) else (
+    echo %DATE% %TIME% - Info: Downloaded/validated %%i to ..\client\dotnet>>%DOWNLOAD_LOGFILE%
+  )
 )
 echo %DATE% %TIME% - Info: Downloaded/validated installation files for .NET Frameworks 3.5 SP1 and 4.x>>%DOWNLOAD_LOGFILE%
 call :DownloadCore dotnet %TARGET_ARCH%-glb %TARGET_ARCH% %SKIP_PARAM%
