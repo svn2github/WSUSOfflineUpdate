@@ -1,0 +1,1 @@
+kb4338604,July 2018 Security only update for the .NET Framework 4.6, 4.6.1, 4.6.2, 4.7, 4.7.1 and 4.7.2 for Windows Server 2012

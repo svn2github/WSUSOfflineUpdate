@@ -1,1 +1,1 @@
-kb4095874,May 2018 Security and Quality Rollup for the .NET Framework 3.5.1 for Windows 7 and Windows Server 2008 R2
+kb4338423,July 2018 Security and Quality Rollup for the .NET Framework 3.5.1 for Windows 7 and Windows Server 2008 R2
