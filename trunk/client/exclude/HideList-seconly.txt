@@ -89,3 +89,6 @@ kb4338815,July 2018 Security Monthly Quality Rollup for Windows 8.1 and Windows 
 kb4340556,July 2018 Security and Quality Rollup for .NET Framework 3.5.1, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7, 4.7.1 and 4.7.2 on Windows 7 and Windows Server 2008 R2
 kb4340557,July 2018 Security and Quality Rollup for .NET Framework 3.5 SP1, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7, 4.7.1 and 4.7.2 on Windows Server 2012
 kb4340558,July 2018 Security and Quality Rollup for .NET Framework 3.5 SP1, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7, 4.7.1 and 4.7.2 on Windows 8.1 and Windows Server 2012 R2
+kb4343900,August 2018 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4343901,August 2018 Security Monthly Quality Rollup for Windows Server 2012
+kb4343898,August 2018 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
