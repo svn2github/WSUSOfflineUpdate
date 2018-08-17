@@ -1463,3 +1463,6 @@ Version ??.? -- ??.??.??
 - Fix: Download part missed Security Updates kb2973112 and kb3122648 for .NET Framework 3.5.1 on Windows 7 / Server 2008 R2 (x86/x64) systems
 - Fix: ISO and USB filters for w61 and newer erroneously excluded ndp46-* patches
 - Fix: Replaced superseded Outlook 2010 Security Update kb4011711 (February 2018) by kb4022205 (June 2018)
+- Fix: Replaced superseded Outlook 2010 Security Update kb4022205 (June 2018) by kb4032222 (August 2018)
+- Fix: Replaced superseded Skype for Business 2015 Security Update kb4011179 (October 2017) by kb4022225 (July 2018)
+- Fix: Replaced superseded Skype for Business 2016 Security Update kb4011159 (October 2017) by kb4022221 (July 2018)

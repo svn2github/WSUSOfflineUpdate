@@ -4,4 +4,4 @@ http://download.microsoft.com/download/9/3/2/932F9D8F-0A5C-4DD9-9A8E-FD3FF9B7B02
 http://download.microsoft.com/download/0/1/0/0108A748-0CAA-4A66-AF33-4979A4C20017/convloc2010-kb3213626-fullfile-x64-glb.exe
 http://download.microsoft.com/download/5/8/3/583D14FE-14D7-4CE2-98B5-C3C2883DAA07/visio2010-kb3114872-fullfile-x64-glb.exe
 http://download.microsoft.com/download/6/6/6/666512D1-CE04-49AC-BFCE-9A47EA838AC5/onenoteloc2010-kb3114885-fullfile-x64-glb.exe
-http://download.microsoft.com/download/7/2/D/72D75970-9607-48DA-9E04-EE8FD77C3600/outlookloc2010-kb4022205-fullfile-x64-glb.exe
+http://download.microsoft.com/download/C/D/4/CD475FB8-DFDB-4739-80E8-EEF9E7FFC71C/outlookloc2010-kb4032222-fullfile-x64-glb.exe
