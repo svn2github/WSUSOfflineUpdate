@@ -7,3 +7,4 @@ kb4040967,September 2017 Security only update for the .NET Framework 3.5 SP1 for
 kb4054177,January 2018 Security only update for the .NET Framework 3.5 SP1 for Windows 8.1 and Windows Server 2012 R2
 kb4095515,May 2018 Security only update for the .NET Framework 3.5 SP1 for Windows 8.1 and Windows Server 2012 R2
 kb4338613,July 2018 Security only update for the .NET Framework 3.5 SP1 for Windows 8.1 and Windows Server 2012 R2
+kb4344178,August 2018 Security only update for the .NET Framework 3.5 SP1 for Windows 8.1 and Windows Server 2012 R2
