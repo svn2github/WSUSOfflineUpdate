@@ -6,7 +6,7 @@
 #include <GUIConstants.au3>
 #pragma compile(CompanyName, "T. Wittrock")
 #pragma compile(FileDescription, "WSUS Offline Update Generator")
-#pragma compile(FileVersion, 11.4.0.984)
+#pragma compile(FileVersion, 11.4.0.985)
 #pragma compile(InternalName, "Generator")
 #pragma compile(LegalCopyright, "GNU GPLv3")
 #pragma compile(OriginalFilename, UpdateGenerator.exe)
@@ -121,6 +121,7 @@ Dim Const $path_max_length          = 192
 Dim Const $path_invalid_chars       = "!%&()^+,;="
 Dim Const $paths_rel_structure      = "\bin\,\client\bin\,\client\cmd\,\client\exclude\,\client\opt\,\client\static\,\cmd\,\exclude\,\iso\,\log\,\static\,\xslt\"
 Dim Const $path_rel_builddate       = "\client\builddate.txt"
+Dim Const $path_rel_catalogdate     = "\client\catalogdate.txt"
 Dim Const $path_rel_clientini       = "\client\UpdateInstaller.ini"
 Dim Const $path_rel_win_glb         = "\client\win\glb"
 
@@ -208,6 +209,20 @@ Func LastDownloadRun()
 Dim $result
 
   $result = FileReadLine(@ScriptDir & $path_rel_builddate)
+  If @error Then
+    If $gergui Then
+      $result = "[Kein]"
+    Else
+      $result = "[None]"
+    EndIf
+  EndIf
+  Return $result
+EndFunc
+
+Func CatalogDate()
+Dim $result
+
+  $result = FileReadLine(@ScriptDir & $path_rel_catalogdate)
   If @error Then
     If $gergui Then
       $result = "[Kein]"
@@ -750,9 +765,9 @@ Dim $result
   If $result = 0 Then
     $runany = True
     If $gergui Then
-      GUICtrlSetData($buildlbl, "Letzter Download: " & LastDownloadRun())
+      GUICtrlSetData($buildlbl, "Letzter Download: " & LastDownloadRun() & ", Katalogdatum: " & CatalogDate())
     Else
-      GUICtrlSetData($buildlbl, "Last download: " & LastDownloadRun())
+      GUICtrlSetData($buildlbl, "Last download: " & LastDownloadRun() & ", catalog date: " & CatalogDate())
     EndIf
   Else
     WinSetState($maindlg, $maindlg, @SW_RESTORE)
@@ -1054,25 +1069,25 @@ EndIf
 $txtxpos = $txtxoffset
 $txtypos = $txtyoffset
 If $gergui Then
-  GUICtrlCreateLabel("Lade Microsoft-Updates für...", $txtxpos, $txtypos, 3 * $groupwidth / 4, $txtheight)
+  GUICtrlCreateLabel("Lade Microsoft-Updates für...", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 Else
-  GUICtrlCreateLabel("Download Microsoft updates for...", $txtxpos, $txtypos, 3 * $groupwidth / 4, $txtheight)
+  GUICtrlCreateLabel("Download Microsoft updates for...", $txtxpos, $txtypos, $groupwidth / 2, $txtheight)
 EndIf
 
 ;  Medium info group
-$txtxpos = $txtxoffset + 3 * $groupwidth / 4
+$txtxpos = $txtxoffset + $groupwidth / 2 + $txtxoffset
 $txtypos = 0
 If $gergui Then
-  GUICtrlCreateGroup("Repository-Info", $txtxpos, $txtypos, $groupwidth / 4 + 2 * $txtxoffset, 2 * $txtheight)
+  GUICtrlCreateGroup("Repository-Info", $txtxpos, $txtypos, $groupwidth / 2 + $txtxoffset, 2 * $txtheight)
 Else
-  GUICtrlCreateGroup("Repository info", $txtxpos, $txtypos, $groupwidth / 4 + 2 * $txtxoffset, 2 * $txtheight)
+  GUICtrlCreateGroup("Repository info", $txtxpos, $txtypos, $groupwidth / 2 + $txtxoffset, 2 * $txtheight)
 EndIf
 $txtxpos = $txtxpos + $txtxoffset
 $txtypos = $txtypos + 1.5 * $txtyoffset + 2
 If $gergui Then
-  $buildlbl = GUICtrlCreateLabel("Letzter Download: " & LastDownloadRun(), $txtxpos, $txtypos, $groupwidth / 4, $txtheight)
+  $buildlbl = GUICtrlCreateLabel("Letzter Download: " & LastDownloadRun() & ", Katalogdatum: " & CatalogDate(), $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
 Else
-  $buildlbl = GUICtrlCreateLabel("Last download: " & LastDownloadRun(), $txtxpos, $txtypos, $groupwidth / 4, $txtheight)
+  $buildlbl = GUICtrlCreateLabel("Last download: " & LastDownloadRun() & ", catalog date: " & CatalogDate(), $txtxpos, $txtypos, $groupwidth / 2 - $txtxoffset, $txtheight)
 EndIf
 
 ;  Tab control

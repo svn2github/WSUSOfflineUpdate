@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=11.4+ (r984)
+set WSUSOFFLINE_VERSION=11.4+ (r985)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update download (v. %WSUSOFFLINE_VERSION%) for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -1696,6 +1696,10 @@ if "%SKIP_DL%"=="1" goto EoF
 rem *** Remind build date ***
 echo Reminding build date...
 echo %DATE:~-11%>..\client\builddate.txt
+echo Reminding catalog date...
+for /F "tokens=4" %%i in ('%SIGCHK_PATH% /accepteula -q -nobanner ..\client\wsus\wsusscn2.cab ^| %SystemRoot%\System32\findstr.exe /I "Signing"') do (
+  echo %%i>..\client\catalogdate.txt
+)
 rem *** Create autorun.inf file ***
 echo Creating autorun.inf file...
 echo [autorun]>..\client\autorun.inf

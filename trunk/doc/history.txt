@@ -1459,6 +1459,7 @@ Version ??.? -- ??.??.??
 - Removed obsolete code for updating Windows Installer and Windows Script Host from DoUpdate.cmd script
 - Added /showdismprogress switch to DoUpdate.cmd and InstallOSUpdate.cmd scripts as well as corresponding key to [Messaging] section of UpdateInstaller.ini file (Thanks to "negg" and "boco")
 - Added June 2018 Servicing stack update (kb4338853) for Windows 10 Version 1803 (Thanks to "aker")
+- UpdateGenerator script will now show signature date of catalog file wsusscn2.cab (Thanks to "boco" and "aker")
 - Fix: Microsoft re-released .NET Framework 4.7.2 (Thanks to "boco", "aker" and the community)
 - Fix: DownloadUpdates.cmd script exited with error on invalid static definitions for .NET Frameworks
 - Fix: Download part missed Security Updates kb2973112 and kb3122648 for .NET Framework 3.5.1 on Windows 7 / Server 2008 R2 (x86/x64) systems
