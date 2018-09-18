@@ -1457,7 +1457,7 @@ Version ??.? -- ??.??.??
 - Integrated .NET Framework July 2018 Security and Quality Rollups
 - Integrated .NET Framework August 2018 Security and Quality Rollups
 - Integrated .NET Framework September 2018 Security and Quality Rollups
-- C++ 2017 Redistributable Runtime Libraries updated to v. 14.14.26429.4 (Thanks to "aker")
+- C++ 2017 Redistributable Runtime Libraries updated to v. 14.15.26706.0 (Thanks to "harry")
 - Removed obsolete code for updating Windows Installer and Windows Script Host from DoUpdate.cmd script
 - Added /showdismprogress switch to DoUpdate.cmd and InstallOSUpdate.cmd scripts as well as corresponding key to [Messaging] section of UpdateInstaller.ini file (Thanks to "negg" and "boco")
 - Added June 2018 Servicing stack update (kb4338853) for Windows 10 Version 1803 (Thanks to "aker")
