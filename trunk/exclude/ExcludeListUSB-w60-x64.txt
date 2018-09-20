@@ -24,3 +24,4 @@ w100-x64\
 NDP472-
 Silverlight_x64
 .au3
+.cpp

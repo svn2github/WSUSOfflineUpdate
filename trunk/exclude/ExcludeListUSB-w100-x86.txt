@@ -28,3 +28,4 @@ dotnetfx35
 MSEInstall
 _x64
 .au3
+.cpp

@@ -16,3 +16,4 @@
 *dotnetfx35*
 *MSEInstall*
 *.au3
+*.cpp

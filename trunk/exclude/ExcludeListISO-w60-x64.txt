@@ -13,3 +13,4 @@
 *ndp472-*
 *Silverlight_x64*
 *.au3
+*.cpp

@@ -14,3 +14,4 @@
 */*/x86-glb/*
 *dotnetfx35*
 *.au3
+*.cpp

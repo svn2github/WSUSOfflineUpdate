@@ -1470,3 +1470,4 @@ Version ??.? -- ??.??.??
 - Fix: Replaced superseded Outlook 2010 Security Update kb4022205 (June 2018) by kb4032222 (August 2018)
 - Fix: Replaced superseded Skype for Business 2015 Security Update kb4011179 (October 2017) by kb4022225 (July 2018)
 - Fix: Replaced superseded Skype for Business 2016 Security Update kb4011159 (October 2017) by kb4022221 (July 2018)
+- Fix: ISO and USB filters corrected (Thanks to H. Buhrmester)

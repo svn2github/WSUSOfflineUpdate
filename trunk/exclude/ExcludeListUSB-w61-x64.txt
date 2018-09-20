@@ -25,3 +25,4 @@ w63-x64\
 w100-x64\
 dotnetfx35
 .au3
+.cpp

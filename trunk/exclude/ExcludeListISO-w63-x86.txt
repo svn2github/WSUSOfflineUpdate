@@ -21,3 +21,4 @@
 *MSEInstall*
 *Silverlight_x64*
 *.au3
+*.cpp
