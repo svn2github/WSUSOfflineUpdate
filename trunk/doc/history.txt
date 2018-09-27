@@ -1460,6 +1460,7 @@ Version ??.? -- ??.??.??
 - C++ 2017 Redistributable Runtime Libraries updated to v. 14.15.26706.0 (Thanks to "harry")
 - Removed obsolete code for updating Windows Installer and Windows Script Host from DoUpdate.cmd script
 - Added /showdismprogress switch to DoUpdate.cmd and InstallOSUpdate.cmd scripts as well as corresponding key to [Messaging] section of UpdateInstaller.ini file (Thanks to "negg" and "boco")
+- Servicing stack updates for Windows 10 will now be treated as scan prerequisite updates (Thanks to "boco" and "aker")
 - Replaced superseded May 21st 2018 Servicing stack update (kb4132650) by July 2018 Servicing stack update (kb4339420) for Windows 10 Version 1709 (Thanks to "aker")
 - Replaced superseded June 2018 Servicing stack update (kb4338853) by September 2018 Servicing stack update (kb4456655) for Windows 10 Version 1803 (Thanks to "aker")
 - UpdateGenerator script will now show signature date of catalog file wsusscn2.cab (Thanks to "boco" and "aker")

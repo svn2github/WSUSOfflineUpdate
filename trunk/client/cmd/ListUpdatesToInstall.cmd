@@ -25,6 +25,7 @@ goto EvalParams
 
 :EvalStatics
 if not exist %1 goto :eof
+for %%i in (%1) do if %%~zi==0 goto :eof
 if exist "%TEMP%\StaticUpdateIds.txt" del "%TEMP%\StaticUpdateIds.txt"
 for /F "tokens=1* delims=kbKB,;" %%i in (%1) do (
   if exist "%TEMP%\MissingUpdateIds.txt" (

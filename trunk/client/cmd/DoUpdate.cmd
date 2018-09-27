@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=11.4+ (r990)
+set WSUSOFFLINE_VERSION=11.4+ (r991)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1284,17 +1284,28 @@ if "%SKIP_DYNAMIC%"=="/skipdynamic" (
   echo %DATE% %TIME% - Info: Skipped determination of missing updates on demand>>%UPDATE_LOGFILE%
   goto ListInstalledIds
 )
-if not exist ..\static\StaticUpdateIds-wupre-%OS_NAME%.txt goto ListMissingIds
 if exist %SystemRoot%\Temp\wou_wupre_tried.txt goto ListMissingIds
 echo Checking Windows Update scan prerequisites...
 %CSCRIPT_PATH% //Nologo //B //E:vbs ListInstalledUpdateIds.vbs
 if exist "%TEMP%\MissingUpdateIds.txt" del "%TEMP%\MissingUpdateIds.txt"
-for /F "tokens=1* delims=kbKB,;" %%i in (..\static\StaticUpdateIds-wupre-%OS_NAME%.txt) do (
-  if exist "%TEMP%\InstalledUpdateIds.txt" (
-    %SystemRoot%\System32\find.exe /I "%%i" "%TEMP%\InstalledUpdateIds.txt" >nul 2>&1
-    if errorlevel 1 echo %%i>>"%TEMP%\MissingUpdateIds.txt"
-  ) else (
-    echo %%i>>"%TEMP%\MissingUpdateIds.txt"
+if exist ..\static\StaticUpdateIds-wupre-%OS_NAME%.txt (
+  for /F "tokens=1* delims=kbKB,;" %%i in (..\static\StaticUpdateIds-wupre-%OS_NAME%.txt) do (
+    if exist "%TEMP%\InstalledUpdateIds.txt" (
+      %SystemRoot%\System32\find.exe /I "%%i" "%TEMP%\InstalledUpdateIds.txt" >nul 2>&1
+      if errorlevel 1 echo %%i>>"%TEMP%\MissingUpdateIds.txt"
+    ) else (
+      echo %%i>>"%TEMP%\MissingUpdateIds.txt"
+    )
+  )
+)
+if exist ..\static\StaticUpdateIds-wupre-%OS_NAME%-%OS_VER_BUILD%.txt (
+  for /F "tokens=1* delims=kbKB,;" %%i in (..\static\StaticUpdateIds-wupre-%OS_NAME%-%OS_VER_BUILD%.txt) do (
+    if exist "%TEMP%\InstalledUpdateIds.txt" (
+      %SystemRoot%\System32\find.exe /I "%%i" "%TEMP%\InstalledUpdateIds.txt" >nul 2>&1
+      if errorlevel 1 echo %%i>>"%TEMP%\MissingUpdateIds.txt"
+    ) else (
+      echo %%i>>"%TEMP%\MissingUpdateIds.txt"
+    )
   )
 )
 call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
