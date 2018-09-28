@@ -43,7 +43,7 @@
 # ========== Configuration ================================================
 
 # Absolute paths to wsusoffline/client/ofc on Windows and Linux
-source_ofc_windows="/media/$(whoami)/System/wsusoffline_current/client/ofc"
+source_ofc_windows="/media/$(whoami)/Windows/wsusoffline_current/client/ofc"
 source_ofc_linux="/home/$(whoami)/Projekte/wsusoffline_current/client/ofc"
 
 # Paths to temporary directories

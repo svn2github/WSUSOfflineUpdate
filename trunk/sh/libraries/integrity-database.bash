@@ -105,14 +105,14 @@ function verify_integrity_database ()
         log_info_message "${hashdeep_output}"
         log_info_message "Verified the integrity of existing files in the directory ${hashed_dir}"
     else
-        log_warning_message "${hashdeep_output}"
-        log_warning_message "The directory ${hashed_dir} has changed since last creating the integrity database"
+        log_error_message "${hashdeep_output}"
+        log_error_message "The directory ${hashed_dir} has changed since last creating the integrity database"
         rm "${hashes_file}"
     fi
 
     # Integrity database verification errors are only reported and
     # written to the logfile. The script may just go on, because the
-    # hashdeep files will be rebuilt anyway.
+    # hashdeep files will be deleted and rebuilt anyway.
     return 0
 }
 

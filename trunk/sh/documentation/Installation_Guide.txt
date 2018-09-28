@@ -1,5 +1,8 @@
-Installation guide for the Linux download scripts, version 1.7
-==============================================================
+Installation guide for the Linux download scripts
+=================================================
+Last updated for version 1.10 (2018-08-09)
+
+
 WSUS Offline Update already includes the new Linux download scripts. You
 don't need to install the Linux scripts separately, as it was necessary
 for the first beta versions, but you should review the needed packages
@@ -26,23 +29,23 @@ the package hashdeep for all recent distributions.
 * For Debian 7 Wheezy:
 
   su -
-  aptitude install cabextract md5deep wget xmlstarlet trash-cli
+  aptitude install cabextract md5deep wget xmlstarlet trash-cli rsync dialog
 
 
 * For Debian 8 Jessie-Backports and newer:
 
   su -
-  aptitude install cabextract hashdeep wget xmlstarlet trash-cli
+  aptitude install cabextract hashdeep wget xmlstarlet trash-cli rsync dialog
 
 
 * For Ubuntu 14.04LTS Trusty:
 
-  sudo apt-get install cabextract md5deep wget xmlstarlet trash-cli
+  sudo apt-get install cabextract md5deep wget xmlstarlet trash-cli rsync dialog
 
 
 * For Ubuntu 16.04LTS Xenial and newer:
 
-  sudo apt-get install cabextract hashdeep wget xmlstarlet trash-cli
+  sudo apt-get install cabextract hashdeep wget xmlstarlet trash-cli rsync dialog
 
 
 Other distributions, which are not Debian-based, seem to keep the package
@@ -50,13 +53,23 @@ name md5deep.
 
 * For Fedora 27 (thanks to "username"):
 
-  sudo dnf install -y cabextract md5deep wget xmlstarlet trash-cli
+  sudo dnf install -y cabextract md5deep wget xmlstarlet trash-cli rsync dialog
 
 
 Note, that both packages md5deep and hashdeep install a series of
 related applications: hashdeep, md5deep, sha1deep, sha256deep, tigerdeep,
 and whirlpooldeep. Throughout WSUS Offline Update, you always need the
 application "hashdeep", regardless of the package name.
+
+The script copy-to-target.bash, which was introduced in in version 1.8,
+requires "rsync" to run.
+
+The script update-generator.bash uses the external utility "dialog", to
+create nicely formated dialogs to select updates, languages and included
+downloads. All dialogs allow multiple selections.
+
+If "dialog" is not installed, these dialogs are created with the internal
+command "select" of the Bash, which only allows a single selection.
 
 
 Install optional packages
@@ -82,9 +95,6 @@ require the installation of additional packages:
   to download existing files again. This is explained in more details
   in the Manual.pdf.
 
-- There is a very basic "copy to target" script in the directory
-  available-tasks. It requires "rsync" to run.
-
 
 Download and unpack the wsusoffline archive
 -------------------------------------------
@@ -105,16 +115,15 @@ to make the scripts update-generator.bash, download-updates.bash,
 get-all-updates.bash, and some others executable.
 
 You can then use the script update-generator.bash to interactively select
-one update, language and the available options to download. This script
-doesn't allow multiple selections for update and language, though.
+your updates, languages and optional downloads.
 
 You can also use the script get-all-updates.bash as a template: This
 script downloads all updates with all available options for the default
 languages German and English. But it is also meant for customization
 – you can simply comment out or delete all items you don't need.
 
-Once the scripts are executable, they can be run from the script
-directory with:
+Once the scripts are executable, you can run them from the script
+directory with, for example:
 
   ./update-generator.bash
   ./get-all-updates.bash

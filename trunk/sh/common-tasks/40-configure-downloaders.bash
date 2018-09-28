@@ -701,14 +701,14 @@ function test_internet_connection ()
     # connect to its Internet Service Provider, but subsequent connection
     # tests should succeed.
     #
-    # Both server names download.windowsupdate.com and
-    # www.download.windowsupdate.com should work, and they may
+    # The server names download.windowsupdate.com and
+    # www.download.windowsupdate.com should also work, and they may
     # resolve to the same Microsoft or Akamai servers in the content
-    # delivery network. But sometimes, one of these servers may not be
-    # reached. These are usually temporary errors.
+    # delivery network, but some of these servers don't seem to respond
+    # to ping requests.
 
     log_info_message "Wake up sleeping DSL modems and routers..."
-    (ping -c 4 -q download.windowsupdate.com 2>&1 | tee -a "${logfile}") || true
+    (ping -c 4 -q www.wsusoffline.net 2>&1 | tee -a "${logfile}") || true
     echo ""
     sleep 4
 

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #
 # Filename: download-updates.bash
-# Version: 1.7
-# Modification date: 2018-05-25
-# Intended compatibility: WSUS Offline Update Version 11.3 and later
+# Version: 1.10
+# Modification date: 2018-08-09
+# Intended compatibility: WSUS Offline Update Version 11.4 and later
 #
 # Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>
@@ -147,18 +147,21 @@
 
 # ========== Configuration ================================================
 
-# Configuration variables are placed on the top of the script for easy
-# customization. They are considered read-only. Other global variables
-# are defined in the next section below.
+# Configuration variables are placed at the top of the script for easy
+# customization. The script version and release date are considered
+# read-only. The other variables should still be writable to allow
+# libraries to test them and provide standard parameters for other
+# scripts.
 #
 # Note: files and directories with relative paths are defined here,
 # but they are created later after setting the working directory.
-readonly script_version="1.7"
-readonly release_date="2018-05-25"
-readonly timestamp_dir="../timestamps"
-readonly log_dir="../log"
-readonly logfile="${log_dir}/download.log"
-readonly cache_dir="../cache"
+#
+readonly script_version="1.10"
+readonly release_date="2018-08-09"
+timestamp_dir="../timestamps"
+log_dir="../log"
+logfile="${log_dir}/download.log"
+cache_dir="../cache"
 
 # Create a temporary directory
 if type -P mktemp >/dev/null
@@ -168,7 +171,6 @@ else
     temp_dir="/tmp/download-updates.temp"
     mkdir -p "${temp_dir}"
 fi
-readonly temp_dir
 
 # ========== Preferences  =================================================
 
@@ -206,7 +208,7 @@ home_directory=""
 command_line="$0 $*"
 command_line_parameters=( "$@" )
 
-# The version of WSUS Offline Update is read from the script
+# The version of WSUS Offline Update is extracted from the script
 # DownloadUpdates.cmd.
 wou_version=""
 
@@ -224,66 +226,6 @@ wou_version=""
 # LC_TIME is needed to get locale independent time strings.
 export LC_ALL=C
 export LC_TIME=C
-
-# Try to get the height and width of the terminal window. These
-# environment variables are usually set in interactive sessions, but
-# they are not inherited by scripts.
-#
-# If the script is running within a terminal emulator window, then tput
-# can report its dimensions. This does not work, if the script is started
-# with "at", "batch" or "env -i", or if it is running as a cron job. An
-# example output with an empty environment is:
-#
-# $ env -i tput cols
-# tput: No value for $TERM and no -T specified
-# $ echo $?
-# 2
-#
-# Terminal colors can also be set with tput, rather than hard-coding the
-# escape sequences. A colored output should only be used, if the output
-# is directly to a terminal window.
-#
-# The test -t of POSIX shells ensures, that both file descriptors 1 and
-# 2 (standard output and error output) are attached to a terminal. It
-# detects, if the script is running as a cron job or batch job, or if
-# the output is redirected to a file or piped to another command.
-if [[ -t 1 ]] && [[ -t 2 ]]
-then
-    COLUMNS="$(tput cols)" || true
-    LINES="$(tput lines)"  || true
-
-    # Text formatting and foreground colors
-    bold="$(tput bold)"             || true
-    darkred="$(tput setaf 1)"       || true
-    darkgreen="$(tput setaf 2)"     || true
-    darkyellow="$(tput setaf 3)"    || true
-    darkblue="$(tput setaf 4)"      || true
-    brightred="$(tput setaf 9)"     || true
-    brightgreen="$(tput setaf 10)"  || true
-    brightyellow="$(tput setaf 11)" || true
-    brightblue="$(tput setaf 12)"   || true
-    reset_all="$(tput sgr0)"        || true
-fi
-
-# If the height and width could not be set with tput, they will be set
-# to default values.
-COLUMNS="${COLUMNS:-80}"
-LINES="${LINES:-24}"
-export COLUMNS
-export LINES
-
-# If colors cannot be used, then the text formatting variables are set
-# to empty strings.
-bold="${bold:-}"
-darkred="${darkred:-}"
-darkgreen="${darkgreen:-}"
-darkyellow="${darkyellow:-}"
-darkblue="${darkblue:-}"
-brightred="${brightred:-}"
-brightgreen="${brightgreen:-}"
-brightyellow="${brightyellow:-}"
-brightblue="${brightblue:-}"
-reset_all="${reset_all:-}"
 
 # ========== Shell options ================================================
 
@@ -335,7 +277,7 @@ function exit_handler ()
         echo "Exiting..."
     else
         # Keep temporary files for debugging
-        printf '%s\n' "Exiting with error code ${result_code}  (temporary files are kept for debugging)..."
+        printf '%s\n' "Exiting with error code ${result_code} (temporary files are kept for debugging)..."
     fi
 
     echo ""

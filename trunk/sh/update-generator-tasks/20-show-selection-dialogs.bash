@@ -1,6 +1,6 @@
 # This file will be sourced by the shell bash.
 #
-# Filename: 10-show-selection-dialogs.bash
+# Filename: 20-show-selection-dialogs.bash
 #
 # Copyright (C) 2016-2018 Hartmut Buhrmester
 #                         <zo3xaiD8-eiK1iawa@t-online.de>

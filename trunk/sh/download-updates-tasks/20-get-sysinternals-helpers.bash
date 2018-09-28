@@ -66,48 +66,57 @@ function get_sysinternals_helpers ()
     local -i initial_errors="0"
     initial_errors="$(get_error_count)"
 
+    log_info_message "Searching Sysinternals helper applications Autologon and Sigcheck..."
+
     # Get Sysinternals Autologon
-    if [[ ! -f ../client/bin/"${autologon_bin}" ]]
+    if [[ -f "../client/bin/${autologon_bin}" ]]
     then
-        log_info_message "Downloading Sysinternals Autologon.exe ..."
-        download_single_file ../client/bin "${autologon_link}"
+        log_info_message "Found ../client/bin/${autologon_bin}"
+    else
+        log_info_message "Downloading and installing Sysinternals Autologon.exe ..."
+        download_single_file "../client/bin" "${autologon_link}"
         if same_error_count "${initial_errors}"
         then
-            log_info_message "Unpacking Sysinternals Autologon.exe ..."
-            if unzip ../client/bin/"${autologon_archive}" "${autologon_bin}" -d ../client/bin
+            log_info_message "Extracting Sysinternals Autologon.exe ..."
+            if unzip "../client/bin/${autologon_archive}" "${autologon_bin}" -d "../client/bin"
             then
-                trash_file ../client/bin/"${autologon_archive}"
-                log_info_message "Done"
+                log_info_message "Trashing/deleting archive ${autologon_archive} ..."
+                trash_file "../client/bin/${autologon_archive}"
+                log_info_message "Installed Sysinternals Autologon.exe"
             else
-                log_error_message "Unpacking of Autologon.exe failed"
+                log_error_message "Extracting Autologon.exe failed"
             fi
         else
             log_error_message "Download of Autologon.exe failed"
         fi
         echo ""
     fi
+    #echo ""
 
     # Get Sysinternals Sigcheck
     initial_errors="$(get_error_count)"
-    if [[ ! -f ../bin/"${sigcheck_bin}" ]]
+    if [[ -f "../bin/${sigcheck_bin}" ]]
     then
-        log_info_message "Downloading Sysinternals sigcheck.exe ..."
-        download_single_file ../bin "${sigcheck_link}"
+        log_info_message "Found ../bin/${sigcheck_bin}"
+    else
+        log_info_message "Downloading and installing Sysinternals sigcheck.exe ..."
+        download_single_file "../bin" "${sigcheck_link}"
         if same_error_count "${initial_errors}"
         then
-            log_info_message "Unpacking Sysinternals sigcheck.exe ..."
-            if unzip ../bin/"${sigcheck_archive}" "${sigcheck_bin}" -d ../bin
+            log_info_message "Extracting Sysinternals sigcheck.exe ..."
+            if unzip "../bin/${sigcheck_archive}" "${sigcheck_bin}" -d "../bin"
             then
-                trash_file ../bin/"${sigcheck_archive}"
-                log_info_message "Done"
+                log_info_message "Trashing/deleting archive ${sigcheck_archive} ..."
+                trash_file "../bin/${sigcheck_archive}"
+                log_info_message "Installed Sysinternals sigcheck.exe"
             else
-                log_error_message "Unpacking of sigcheck.exe failed"
+                log_error_message "Extracting sigcheck.exe failed"
             fi
         else
             log_error_message "Download of sigcheck.exe failed"
         fi
-        echo ""
     fi
+    echo ""
     return 0
 }
 

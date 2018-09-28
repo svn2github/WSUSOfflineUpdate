@@ -65,7 +65,7 @@
 # ========== Configuration ================================================
 
 # Absolute paths to wsusoffline/client/md on Windows and Linux
-source_md_windows="/media/$(whoami)/System/wsusoffline_current/client/md"
+source_md_windows="/media/$(whoami)/Windows/wsusoffline_current/client/md"
 source_md_linux="/home/$(whoami)/Projekte/wsusoffline_current/client/md"
 
 # Paths to temporary directories

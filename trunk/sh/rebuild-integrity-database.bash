@@ -2,8 +2,7 @@
 #
 # Filename: rebuild-integrity-database.bash
 #
-# Copyright (C) 2016-2018 Hartmut Buhrmester
-#                         <zo3xaiD8-eiK1iawa@t-online.de>
+# Copyright (C) 2018 Hartmut Buhrmester <zo3xaiD8-eiK1iawa@t-online.de>
 #
 # License
 #

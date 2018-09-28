@@ -267,9 +267,12 @@ function compare_timestamp ()
 
 # After downloading new versions of the file wsusscn2.cab, and
 # subsequently rebuilding the list of superseded updates, all dynamic
-# updates must be recalculated. Static downloads like the dotnet
-# installers don't need to be recalculated.
-
+# updates must be recalculated. Static downloads don't need to be
+# recalculated.
+#
+# The .NET Framework installers (dotnet-all-*) are all statically defined.
+# They do not need to be reevaluated at this point.
+#
 function reevaluate_dynamic_updates ()
 {
     local -a file_list=()

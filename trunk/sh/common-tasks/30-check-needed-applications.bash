@@ -57,7 +57,7 @@ linux_trash_handler=""
 # the binary "xmlstarlet".
 #
 # In Debian, the binary name was "xmlstarlet" or "xml", depending on
-# the architecture, but that was solved in 2006:
+# the architecture, but this was solved in 2006:
 #
 # Debian Bug report logs - #312932
 # wrong binary name (xmlstarlet instead of xml) on i386
@@ -78,7 +78,7 @@ linux_trash_handler=""
 # So, while major Linux distributions use the binary name "xmlstarlet",
 # I'm not sure about more archaic distributions, which like to use the
 # unmodified upstream source, or the BSDs. Therefore, it may still be
-# needed to check both binary names.
+# necessary to check both binary names.
 #
 # Still, there is only one package to install: xmlstarlet. It was a
 # mistake of the old Linux script, to request the installation of two
@@ -102,7 +102,7 @@ function check_needed_applications ()
 
     if [[ -z "${xmlstarlet}" ]]
     then
-        log_info_message "Please install the package xmlstarlet"
+        log_error_message "Please install the package xmlstarlet"
         missing_binaries="$(( missing_binaries + 1 ))"
     fi
 
@@ -110,18 +110,18 @@ function check_needed_applications ()
     do
         if ! type -P "${binary_name}" > /dev/null
         then
-            log_info_message "Please install the package ${binary_name}"
+            log_error_message "Please install the package ${binary_name}"
             missing_binaries="$(( missing_binaries + 1 ))"
         fi
     done
 
     if ! type -P hashdeep > /dev/null
     then
-        log_info_message "Please install the application hashdeep,
+        log_error_message "Please install the application hashdeep,
 - from package md5deep for Debian 7 Wheezy
 - from package md5deep for Debian 8 Jessie
 - from package hashdeep for Debian 8 Jessie-Backports
-  Generally, install the package hashdeep, if available;
+- Generally, install the package hashdeep, if available;
   otherwise, install the package md5deep, which used to provide the application hashdeep"
         missing_binaries="$(( missing_binaries + 1 ))"
         echo ""
@@ -136,9 +136,10 @@ function check_needed_applications ()
         log_error_message "${missing_binaries} needed applications are missing"
         exit 1
     fi
+    return 0
 }
 
-# Recommended applications: gvfs-trash or trash-put
+# Recommended applications: gvfs-trash or trash-put, rsync
 #
 # It is safer to put outdated files into the trash than to delete them
 # directly. Suitable trash handlers are:
@@ -148,6 +149,9 @@ function check_needed_applications ()
 # - trash-put from package trash-cli, as a command-line interface to the
 #   trash, which is desktop-independent. This should also work without
 #   any graphical user interface.
+#
+# rsync is needed for the script copy-to-target.bash, which was introduced
+# in version 1.8.
 
 function check_recommended_applications ()
 {
@@ -166,15 +170,27 @@ function check_recommended_applications ()
 
     if [[ -z "${linux_trash_handler}" ]]
     then
-        log_info_message "Please install a trash handler, to move files into the trash:
+        log_warning_message "Please install a trash handler, to move files into the trash:
 - gvfs-trash from package gvfs-bin for GNOME and LXDE
 - trash-put from package trash-cli for other desktop environments and window managers"
     else
         log_info_message "Found Linux trash handler: ${linux_trash_handler}"
     fi
+
+    if ! type -P rsync > /dev/null
+    then
+        log_warning_message "Please install the package rsync, if you like to use the script copy-to-target.bash"
+    fi
+
+    if ! type -P dialog > /dev/null
+    then
+        log_warning_message "Please install the package dialog, to display nicely formated dialogs in the terminal window"
+    fi
+
+    return 0
 }
 
-# Optional applications: Aria2, wine, rsync
+# Optional applications: Aria2, wine
 #
 # These applications are not tested by the script, but can be installed
 # for some additional functionality.
@@ -194,9 +210,6 @@ function check_recommended_applications ()
 #
 # wine is needed to run Sysinternals Sigcheck.exe, but verifying file
 # signatures doesn't really work without the necessary root certificates.
-#
-# rsync is used by the optional task 70-synchronize-with-target.bash,
-# to copy the client directory to an external drive.
 
 # ========== Commands =====================================================
 

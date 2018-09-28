@@ -394,6 +394,7 @@ function normalize_file_permissions ()
 {
     log_info_message "Normalize file permissions..."
     chmod +x \
+        ./copy-to-target.bash \
         ./download-updates.bash \
         ./fix-file-permissions.bash \
         ./get-all-updates.bash \

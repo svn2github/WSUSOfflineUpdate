@@ -1,5 +1,8 @@
-Installationsanleitung für die Linux-Download-Skripte, Version 1.7
-==================================================================
+Installationsanleitung für die Linux-Download-Skripte
+=====================================================
+Zuletzt aktualisiert für Version 1.10 (2018-08-09)
+
+
 WSUS Offline Update enthält bereits die neuen Linux-Skripte. Sie
 brauchen die Linux-Skripte deshalb nicht mehr separat zu installieren,
 wie es für die ersten beta-Versionen nötig war. Sie sollten aber die
@@ -27,23 +30,23 @@ Sie das Paket hashdeep in allen aktuellen Distributionen.
 * Für Debian 7 Wheezy:
 
   su -
-  aptitude install cabextract md5deep wget xmlstarlet trash-cli
+  aptitude install cabextract md5deep wget xmlstarlet trash-cli rsync dialog
 
 
 * Für Debian 8 Jessie-Backports und neuer:
 
   su -
-  aptitude install cabextract hashdeep wget xmlstarlet trash-cli
+  aptitude install cabextract hashdeep wget xmlstarlet trash-cli rsync dialog
 
 
 * Für Ubuntu 14.04LTS Trusty:
 
-  sudo apt-get install cabextract md5deep wget xmlstarlet trash-cli
+  sudo apt-get install cabextract md5deep wget xmlstarlet trash-cli rsync dialog
 
 
 * Für Ubuntu 16.04LTS Xenial und neuer:
 
-  sudo apt-get install cabextract hashdeep wget xmlstarlet trash-cli
+  sudo apt-get install cabextract hashdeep wget xmlstarlet trash-cli rsync dialog
 
 
 Andere Distributionen, die nicht auf Debian basieren, scheinen den
@@ -51,13 +54,24 @@ Paketnamen md5deep beizubehalten.
 
 * Für Fedora 27 (nach "username"):
 
-  sudo dnf install -y cabextract md5deep wget xmlstarlet trash-cli
+  sudo dnf install -y cabextract md5deep wget xmlstarlet trash-cli rsync dialog
 
 
 Beachten Sie, dass beide Pakete md5deep und hashdeep eine Reihe von
 ähnlichen Anwendungen installieren: hashdeep, md5deep, sha1deep,
 sha256deep, tigerdeep und whirlpooldeep. In WSUS Offline Update müssen
 Sie immer die Anwendung "hashdeep" verwenden, unabhängig vom Paketnamen.
+
+Das in der Version 1.8 neu eingeführte Skript copy-to-target.bash
+benötigt "rsync".
+
+Das Skript update-generator.bash verwendet den externen Befehl "dialog",
+um die Auswahldialoge für Updates, Sprachen und optionale Downloads
+anzuzeigen. Diese Dialoge erlauben alle eine Mehrfachauswahl.
+
+Wenn "dialog" nicht installiert ist, werden die Dialoge mit dem internen
+Befehl "select" der Bash erzeugt, doch dieser Befehl erlaubt nur eine
+einfache Auswahl.
 
 
 Optionale Pakete
@@ -84,9 +98,6 @@ Funktionen, die die Installation von weiteren Paketen erfordern:
   dass bereits vorhandene Dateien erneut heruntergeladen werden. Dies
   wird im Manual.pdf genauer beschrieben.
 
-- Im Verzeichnis available-tasks gibt es ein sehr einfaches "copy to
-  target" Skript, das "rsync" benötigt.
-
 
 Laden Sie das wsusoffline-Archiv herunter und entpacken Sie es
 --------------------------------------------------------------
@@ -107,10 +118,8 @@ auf mit:
 um die Skripte update-generator.bash, download-updates.bash,
 get-all-updates.bash und einige andere ausführbar zu machen.
 
-Sie können dann das Skript update-generator.bash aufrufen, um
-interaktiv ein Update, eine Sprache und die verfügbaren Optionen
-auszuwählen. Dieses Skript erlaubt allerdings keine Mehrfachauswahl
-für Update und Sprache.
+Sie können dann das Skript update-generator.bash aufrufen, um interaktiv
+ihre Updates, Sprachen und optionale Downloads auszuwählen.
 
 Sie können auch das Skript get-all-updates.bash als Vorlage verwenden:
 Dieses Skript lädt alle Updates mit allen verfügbaren Optionen für

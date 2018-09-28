@@ -41,6 +41,11 @@
 #     This is only needed once after the first installation. The
 #     self-update scripts should take care of adjusting file permissions
 #     in the future.
+#
+#     The main scripts can then be called with:
+#
+#     ./update-generator.bash
+#     ./download-updates.bash <update> <language>
 
 # ========== Functions ====================================================
 
@@ -50,12 +55,13 @@ function fix_file_permissions ()
     # but it may only work in Linux and FreeBSD. Remove the option -f for
     # BSD readlink on Mac OS X. If there are problems with resolving the
     # installation path, change directly into the installation directory
-    # of this script and run it script from there.
+    # of this script and run it from there.
     cd "$(dirname "$(readlink -f "$0")")" || exit 1
 
     # Ensure, that Linux scripts are executable (excluding libraries,
     # tasks and the preferences file, since these files are sourced)
     chmod +x \
+        ./copy-to-target.bash \
         ./download-updates.bash \
         ./fix-file-permissions.bash \
         ./get-all-updates.bash \
@@ -63,6 +69,8 @@ function fix_file_permissions ()
         ./update-generator.bash \
         ./comparison-linux-windows/compare-integrity-database.bash \
         ./comparison-linux-windows/compare-update-tables.bash
+
+    return 0
 }
 
 # ========== Commands =====================================================

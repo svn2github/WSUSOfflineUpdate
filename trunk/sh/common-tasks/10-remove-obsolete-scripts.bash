@@ -62,6 +62,32 @@ function remove_obsolete_scripts ()
     # Installation_Guide.txt and Installationsanleitung.txt.
     rm -f ./documentation/Quick_installation_guide.txt
     rm -f ./documentation/Kurzinstallationsanleitung.txt
+
+    # Obsolete files in version 1.8
+    #
+    # The script available-tasks/70-synchronize-with-target.bash
+    # is obsolete with version 1.8, because a more elaborate script
+    # copy-to-target.bash was introduced.
+    #
+    # The new file documentation/changelog.txt has the same information
+    # as the version-history.txt, but in reverse order.
+    #
+    # The file NEWS.txt replaces the former release_notes_[version].txt,
+    # but it is not really necessary, to delete the old files now.
+    rm -f ./available-tasks/70-synchronize-with-target.bash
+    rm -f ./documentation/version-history.txt
+
+    # Obsolete files in version 1.9
+    #
+    # The script update-generator.bash uses a new script to create the
+    # selection dialogs with the external utility "dialog".
+    #
+    # The existing script 10-show-selection-dialogs.bash is used as a
+    # fallback and simply renamed to 20-show-selection-dialogs.bash.
+    #
+    rm -f ./update-generator-tasks/10-show-selection-dialogs.bash
+
+    return 0
 }
 
 # The files ExcludeList-superseded.txt and

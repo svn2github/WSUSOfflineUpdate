@@ -23,18 +23,125 @@
 #
 # Description
 #
-#     Most message functions are written to display some text in the
-#     terminal, and to write the same information to the log file.
+#     Most message functions display some text in the terminal window and
+#     write the same information to the log file. Colors and bold text
+#     are used to highlight the log levels Info, Warning, Error and Debug.
+#
+#     Terminal colors are set with tput, which is safer than hard-coding
+#     the escape sequences. But tput uses the environment variable
+#     ${TERM}, to determine, if terminal colors can be used:
+#
+#     - It does work, if ${TERM} is set to xterm-256color or
+#       rxvt-256color.
+#     - It does not work with ${TERM} set to xterm, xterm-color, rxvt
+#       or rxvt-color. Then only bold text will be used.
+#     - If ${TERM} is set to "dumb", then no text formating will be
+#       used. bash uses this value, if it is running as a cron job.
+#
+#     The correct terminal type should be set in the preferences of
+#     the terminal emulator application. If this is not possible, you
+#     could also define this environment variable in a settings file
+#     like ~/.bashrc with:
+#
+#     export TERM=xterm-256color
+#     export TERM=rxvt-256color
+#
+#     This script does not set ${TERM} itself, but it sets the environment
+#     variables ${LINES} and ${COLUMNS}.
 
+# ========== Environment variables ========================================
 
-# Testing global variables used in this file
-: "${COLUMNS:?variable is not set}"
-: "${logfile:?variable is not set}"
-: "${debug:?variable is not set}"
+# Try to get the height and width of the terminal window and export them
+# as ${LINES} and ${COLUMNS}. These environment variables are usually
+# set in interactive sessions, but they are not inherited by scripts.
+#
+# If the script is running within a terminal emulator window, then tput
+# can report its dimensions. This does not work, if the script is started
+# with "at", "batch", "env -i", or if it is running as a cron job. An
+# example output with an empty environment is:
+#
+# $ env -i tput cols
+# tput: No value for $TERM and no -T specified
+# $ echo $?
+# 2
+#
+# Terminal colors can also be set with tput, rather than hard-coding the
+# escape sequences. A colored output should only be used, if the output
+# is directly written to a terminal window.
+#
+# The test -t of POSIX shells ensures, that both file descriptors 1 and
+# 2 (standard output and error output) are attached to a terminal. It
+# detects, if the script is running as a cron job or batch job, or if
+# the output is redirected to a file or piped to another command.
+#
+if [[ -t 1 ]] && [[ -t 2 ]]
+then
+    COLUMNS="$(tput cols)" || true
+    LINES="$(tput lines)"  || true
 
+    # Text formatting and foreground colors
+    #
+    bold="$(tput bold)"             || true
+    darkred="$(tput setaf 1)"       || true
+    darkgreen="$(tput setaf 2)"     || true
+    darkyellow="$(tput setaf 3)"    || true
+    darkblue="$(tput setaf 4)"      || true
+    brightred="$(tput setaf 9)"     || true
+    brightgreen="$(tput setaf 10)"  || true
+    brightyellow="$(tput setaf 11)" || true
+    brightblue="$(tput setaf 12)"   || true
+    reset_all="$(tput sgr0)"        || true
+fi
+
+# If the height and width could not be set with tput, they will be set
+# to default values.
+#
+COLUMNS="${COLUMNS:-80}"
+LINES="${LINES:-24}"
+export COLUMNS
+export LINES
+
+# If colors cannot be used, then the text formatting variables are set
+# to empty strings.
+#
+bold="${bold:-}"
+darkred="${darkred:-}"
+darkgreen="${darkgreen:-}"
+darkyellow="${darkyellow:-}"
+darkblue="${darkblue:-}"
+brightred="${brightred:-}"
+brightgreen="${brightgreen:-}"
+brightyellow="${brightyellow:-}"
+brightblue="${brightblue:-}"
+reset_all="${reset_all:-}"
+
+# ========== Global variables =============================================
+
+# The global variables logfile and debug should always be set by the
+# scripts, which source this library. For example, ${logfile} is set
+# to "../log/download.log" by the scripts download-updates.bash and
+# update-generator.bash.
+#
+# To make this file more self-contained and supply reasonably defaults
+# for other scripts, ${logfile} is set to "messages.log", and ${debug}
+# is set to "disabled" with standard parameters.
+#
+logfile="${logfile:-messages.log}"
+debug="${debug:-disabled}"
+
+# ========== Functions ====================================================
+
+# If long lines are displayed in a terminal window, then the terminal
+# emulator often breaks lines within words, which makes the text hard
+# to read. This can be prevented by wrapping the text to the length of
+# the terminal window with fold --spaces.
+#
+# TODO: Terminal colors influence the line width. Lines with colors are
+# shorter than those without.
+#
 # printf '%s\n' should be used instead of echo, except for simple messages
-# without escape characters or variables. fold --spaces prevents line
-# breaks within words.
+# without escape characters or variables.
+#
 function show_message ()
 {
     printf '%s\n' "$*" | fold -s -w "${COLUMNS}"
@@ -48,8 +155,10 @@ function log_message ()
     return 0
 }
 
-# TODO: Terminal colors influence the line width. Lines with colors are
-# shorter than those without.
+# By default, terminal emulators use bold text for bright colors. This
+# can be disabled in XTerm and KDE Konsole, but not in most other terminal
+# emulators. To ensure the wanted style, "bold" should be set anyway.
+#
 function log_info_message ()
 {
     printf '%s\n' "${bold}${brightgreen}Info:${reset_all} $*" | fold -s -w "${COLUMNS}"
