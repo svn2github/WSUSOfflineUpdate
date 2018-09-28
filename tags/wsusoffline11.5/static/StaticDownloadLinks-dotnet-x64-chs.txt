@@ -1,0 +1,3 @@
+http://download.microsoft.com/download/7/7/b/77b96978-c805-4674-a9b0-43351e86b41f/dotnetfx35langpack_x64zh-CHS.exe
+http://download.microsoft.com/download/B/4/B/B4BB144A-E89A-47F0-9321-106DDC18ACDE/NDP46-KB3045557-x86-x64-AllOS-CHS.exe
+http://download.microsoft.com/download/D/E/D/DEDCBE28-6398-47FE-8E96-3D55F524F211/NDP472-KB4054530-x86-x64-AllOS-CHS.exe

@@ -1,0 +1,6 @@
+http://download.microsoft.com/download/5/8/3/58362B10-6044-4DD4-84C7-FF62CEE3A229/proofloc2013-kb2880463-fullfile-x64-glb.exe
+http://download.microsoft.com/download/F/2/E/F2E593B9-A5A7-4A99-BEE0-FCC3BF60F6BB/conv2013-kb3213564-fullfile-x64-glb.exe
+http://download.microsoft.com/download/1/F/E/1FE178BA-B1C7-430F-9097-E5A873C076C4/lyncmso2013-kb3039779-fullfile-x64-glb.exe
+http://download.microsoft.com/download/0/7/E/07E3B3F6-23D8-4BB8-A5E1-32171F6DD91C/lynchelploc2013-kb3191937-fullfile-x64-glb.exe
+http://download.microsoft.com/download/B/D/8/BD8A00E6-B131-4AB2-9D9A-867628B767B5/lync2013-kb4022225-fullfile-x64-glb.exe
+http://download.microsoft.com/download/3/C/3/3C39EBC9-1AC9-4955-A606-E21235255DBC/eqnedt322013-kb4011580-fullfile-x64-glb.exe

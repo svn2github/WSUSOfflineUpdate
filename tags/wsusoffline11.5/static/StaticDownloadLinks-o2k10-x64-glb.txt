@@ -1,0 +1,7 @@
+http://download.microsoft.com/download/4/1/C/41CADC65-8F27-4387-A1FF-1A7A3AF03F0F/office2010-kb2553065-fullfile-x64-glb.exe
+http://download.microsoft.com/download/D/4/1/D4173859-30C8-4A43-BBFA-9D8898E6391D/proofloc2010-kb3203468-fullfile-x64-glb.exe
+http://download.microsoft.com/download/9/3/2/932F9D8F-0A5C-4DD9-9A8E-FD3FF9B7B02C/wordloc2010-kb2965313-fullfile-x64-glb.exe
+http://download.microsoft.com/download/0/1/0/0108A748-0CAA-4A66-AF33-4979A4C20017/convloc2010-kb3213626-fullfile-x64-glb.exe
+http://download.microsoft.com/download/5/8/3/583D14FE-14D7-4CE2-98B5-C3C2883DAA07/visio2010-kb3114872-fullfile-x64-glb.exe
+http://download.microsoft.com/download/6/6/6/666512D1-CE04-49AC-BFCE-9A47EA838AC5/onenoteloc2010-kb3114885-fullfile-x64-glb.exe
+http://download.microsoft.com/download/C/D/4/CD475FB8-DFDB-4739-80E8-EEF9E7FFC71C/outlookloc2010-kb4032222-fullfile-x64-glb.exe

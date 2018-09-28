@@ -1,0 +1,4 @@
+http://download.microsoft.com/download/F/7/C/F7C4E06B-26A9-4A8B-8AD4-672FCF8355DD/conv2016-kb3213551-fullfile-x86-glb.exe
+http://download.microsoft.com/download/C/4/6/C46C4441-44AF-4841-A637-F0C0F49BE476/visio2016-kb3115041-fullfile-x86-glb.exe
+http://download.microsoft.com/download/B/8/9/B89F89DF-97AC-4A0D-944D-8A685204DB9A/lync2016-kb4022221-fullfile-x86-glb.exe
+http://download.microsoft.com/download/B/1/8/B1898198-4774-45DE-AA79-3089603F5BC4/eqnedt322016-kb4011574-fullfile-x86-glb.exe

@@ -1,0 +1,3 @@
+http://download.microsoft.com/download/5/f/5/5f5ab722-6045-4864-bcbc-6b5a7651dc40/dotnetfx35langpack_x64ko.exe
+http://download.microsoft.com/download/2/4/6/246497D9-B00F-4353-8C3E-12B04A83E4A6/NDP46-KB3045557-x86-x64-AllOS-KOR.exe
+http://download.microsoft.com/download/b/9/5/b95136c0-58a0-48df-821a-d05319a86852/enu_NETFX/amd64_ndp472-kb4054530-x86-x64-allos-kor_exe/ndp472-kb4054530-x86-x64-allos-kor.exe

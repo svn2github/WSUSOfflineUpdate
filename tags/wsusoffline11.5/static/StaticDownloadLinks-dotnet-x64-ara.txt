@@ -1,0 +1,3 @@
+http://download.microsoft.com/download/6/6/4/66488d18-e069-4b3e-a0b5-5be3af0702bd/dotnetfx35langpack_x64ar.exe
+http://download.microsoft.com/download/B/B/B/BBBA772C-8E15-4528-BD70-C490AD255B3D/NDP46-KB3045557-x86-x64-AllOS-ARA.exe
+http://download.microsoft.com/download/b/9/5/b95136c0-58a0-48df-821a-d05319a86852/enu_NETFX/amd64_ndp472-kb4054530-x86-x64-allos-ara_exe/ndp472-kb4054530-x86-x64-allos-ara.exe

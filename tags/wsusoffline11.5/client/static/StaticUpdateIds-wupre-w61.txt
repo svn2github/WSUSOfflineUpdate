@@ -1,0 +1,3 @@
+kb3177467,September 2016 Servicing stack update for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb3172605,July 2016 update rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb2552343,Time-out error occurs when you install a Windows Update package that contains drivers on a computer that is running Windows 7 or Windows Server 2008 R2

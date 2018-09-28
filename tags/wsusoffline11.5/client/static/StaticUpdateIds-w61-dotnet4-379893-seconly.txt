@@ -1,0 +1,8 @@
+kb4014566,April 2017 Security update for the .NET Framework 4.5.2 for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4014599,May 2017 Security only update for the .NET Framework 4.5.2 for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4040960,September 2017 Security only update for the .NET Framework 4.5.2 for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4054172,January 2018 Security only update for the .NET Framework 4.5.2 for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4095519,May 2018 Security only update for the .NET Framework 4.5.2 for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4338602,July 2018 Security only update for the .NET Framework 4.5.2 for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4344173,August 2018 Security only update for the .NET Framework 4.5.2 for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4457030,September 2018 Security only update for the .NET Framework 4.5.2 for Windows 7 SP1 and Windows Server 2008 R2 SP1

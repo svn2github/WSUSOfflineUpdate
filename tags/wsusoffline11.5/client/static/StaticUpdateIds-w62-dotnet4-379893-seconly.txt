@@ -1,0 +1,8 @@
+kb4014564,April 2017 Security update for the .NET Framework 4.5.2 for Windows Server 2012
+kb4014597,May 2017 Security only update for the .NET Framework 4.5.2 for Windows Server 2012
+kb4040959,September 2017 Security only update for the .NET Framework 4.5.2 for Windows Server 2012
+kb4054171,January 2018 Security only update for the .NET Framework 4.5.2 for Windows Server 2012
+kb4095518,May 2018 Security only update for the .NET Framework 4.5.2 for Windows Server 2012
+kb4338601,July 2018 Security only update for the .NET Framework 4.5.2 for Windows Server 2012
+kb4344172,August 2018 Security only update for the .NET Framework 4.5.2 for Windows Server 2012
+kb4457029,September 2018 Security only update for the .NET Framework 4.5.2 for Windows Server 2012

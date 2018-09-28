@@ -1,0 +1,103 @@
+kb3185330,October 2016 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb3185332,October 2016 Security Monthly Quality Rollup for Windows Server 2012
+kb3185331,October 2016 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb3188740,October 2016 Security and Quality Rollup for .NET Framework 3.5.1 on Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb3188741,October 2016 Security and Quality Rollup for .NET Framework 3.5 on Windows Server 2012
+kb3188743,October 2016 Security and Quality Rollup for .NET Framework 3.5 on Windows 8.1 and Windows Server 2012 R2
+kb3197868,November 2016 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb3197877,November 2016 Security Monthly Quality Rollup for Windows Server 2012
+kb3197874,November 2016 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb3207752,December 2016 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb3205409,December 2016 Security Monthly Quality Rollup for Windows Server 2012
+kb3205401,December 2016 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb3205402,December 2016 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, and 4.6.2 on Windows 7 and Windows Server 2008 R2
+kb3205403,December 2016 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, and 4.6.2 on Windows Server 2012
+kb3205404,December 2016 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, and 4.6.2 on Windows 8.1 and Windows Server 2012 R2
+kb3212646,January 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4012215,March 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4012217,March 2017 Security Monthly Quality Rollup for Windows Server 2012
+kb4012216,March 2017 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4015549,April 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4015551,April 2017 Security Monthly Quality Rollup for Windows Server 2012
+kb4015550,April 2017 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4014981,April 2017 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, and 4.6.2 on Windows 7 and Windows Server 2008 R2
+kb4014982,April 2017 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, and 4.6.2 on Windows Server 2012
+kb4014983,April 2017 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, and 4.6.2 on Windows 8.1 and Windows Server 2012 R2
+kb4019264,May 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4019216,May 2017 Security Monthly Quality Rollup for Windows Server 2012
+kb4019215,May 2017 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4019112,May 2017 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, and 4.6.2 on Windows 7 and Windows Server 2008 R2
+kb4019113,May 2017 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, and 4.6.2 on Windows Server 2012
+kb4019114,May 2017 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, and 4.6.2 on Windows 8.1 and Windows Server 2012 R2
+kb4022719,June 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4022724,June 2017 Security Monthly Quality Rollup for Windows Server 2012
+kb4022726,June 2017 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4025341,July 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4025331,July 2017 Security Monthly Quality Rollup for Windows Server 2012
+kb4025336,July 2017 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4034664,August 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4034665,August 2017 Security Monthly Quality Rollup for Windows Server 2012
+kb4034681,August 2017 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4038777,September 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4038799,September 2017 Security Monthly Quality Rollup for Windows Server 2012
+kb4038792,September 2017 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4041083,September 2017 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, 4.6.2 and 4.7 on Windows 7 and Windows Server 2008 R2
+kb4041084,September 2017 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, 4.6.2 and 4.7 on Windows Server 2012
+kb4041085,September 2017 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, 4.6.2 and 4.7 on Windows 8.1 and Windows Server 2012 R2
+kb4041681,October 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4041690,October 2017 Security Monthly Quality Rollup for Windows Server 2012
+kb4041693,October 2017 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4048957,November 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4048959,November 2017 Security Monthly Quality Rollup for Windows Server 2012
+kb4048958,November 2017 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4049016,November 2017 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, 4.6.2 and 4.7 on Windows 7 and Windows Server 2008 R2
+kb4049018,November 2017 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, 4.6.2 and 4.7 on Windows Server 2012
+kb4049017,November 2017 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, 4.6.2 and 4.7 on Windows 8.1 and Windows Server 2012 R2
+kb4054518,December 2017 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4054520,December 2017 Security Monthly Quality Rollup for Windows Server 2012
+kb4054519,December 2017 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4056894,January 2018 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4056896,January 2018 Security Monthly Quality Rollup for Windows Server 2012
+kb4056895,January 2018 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4055532,January 2018 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7 and 4.7.1 on Windows 7 and Windows Server 2008 R2
+kb4055265,January 2018 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7 and 4.7.1 on Windows Server 2012
+kb4055266,January 2018 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7 and 4.7.1 on Windows 8.1 and Windows Server 2012 R2
+kb4074598,February 2018 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4074593,February 2018 Security Monthly Quality Rollup for Windows Server 2012
+kb4074594,February 2018 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4076492,February 2018 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7 and 4.7.1 on Windows 7 and Windows Server 2008 R2
+kb4076493,February 2018 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7 and 4.7.1 on Windows Server 2012
+kb4076494,February 2018 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7 and 4.7.1 on Windows 8.1 and Windows Server 2012 R2
+kb4088875,March 2018 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4088877,March 2018 Security Monthly Quality Rollup for Windows Server 2012
+kb4088876,March 2018 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4093118,April 2018 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4093123,April 2018 Security Monthly Quality Rollup for Windows Server 2012
+kb4093114,April 2018 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4103718,May 2018 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4103730,May 2018 Security Monthly Quality Rollup for Windows Server 2012
+kb4103725,May 2018 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4099633,May 2018 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7 and 4.7.1 on Windows 7 and Windows Server 2008 R2
+kb4099634,May 2018 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7 and 4.7.1 on Windows Server 2012
+kb4099635,May 2018 Security and Quality Rollup for .NET Framework 3.5, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7 and 4.7.1 on Windows 8.1 and Windows Server 2012 R2
+kb4284826,June 2018 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4284855,June 2018 Security Monthly Quality Rollup for Windows Server 2012
+kb4284815,June 2018 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4338818,July 2018 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4338830,July 2018 Security Monthly Quality Rollup for Windows Server 2012
+kb4338815,July 2018 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4340556,July 2018 Security and Quality Rollup for .NET Framework 3.5.1, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7, 4.7.1 and 4.7.2 on Windows 7 and Windows Server 2008 R2
+kb4340557,July 2018 Security and Quality Rollup for .NET Framework 3.5 SP1, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7, 4.7.1 and 4.7.2 on Windows Server 2012
+kb4340558,July 2018 Security and Quality Rollup for .NET Framework 3.5 SP1, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7, 4.7.1 and 4.7.2 on Windows 8.1 and Windows Server 2012 R2
+kb4343900,August 2018 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4343901,August 2018 Security Monthly Quality Rollup for Windows Server 2012
+kb4343898,August 2018 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4345590,August 2018 Security and Quality Rollup for .NET Framework 3.5.1, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7, 4.7.1 and 4.7.2 on Windows 7 and Windows Server 2008 R2
+kb4345591,August 2018 Security and Quality Rollup for .NET Framework 3.5 SP1, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7, 4.7.1 and 4.7.2 on Windows Server 2012
+kb4345592,August 2018 Security and Quality Rollup for .NET Framework 3.5 SP1, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7, 4.7.1 and 4.7.2 on Windows 8.1 and Windows Server 2012 R2
+kb4457144,September 2018 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4457135,September 2018 Security Monthly Quality Rollup for Windows Server 2012
+kb4457129,September 2018 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4457918,September 2018 Security and Quality Rollup for .NET Framework 3.5.1, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7, 4.7.1 and 4.7.2 on Windows 7 and Windows Server 2008 R2
+kb4457919,September 2018 Security and Quality Rollup for .NET Framework 3.5 SP1, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7, 4.7.1 and 4.7.2 on Windows Server 2012
+kb4457920,September 2018 Security and Quality Rollup for .NET Framework 3.5 SP1, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7, 4.7.1 and 4.7.2 on Windows 8.1 and Windows Server 2012 R2

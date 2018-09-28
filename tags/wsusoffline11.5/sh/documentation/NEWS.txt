@@ -1,0 +1,273 @@
+NEWS for Version 1.10 (2018-08-09)
+Intended compatibility: WSUS Offline Update 11.4 and later
+
+  - Fix: USB filters for w61 and newer erroneously excluded ndp46-*
+    patches.
+
+    The private copies of the files ExcludeListUSB-*.txt
+    were patched according to Changeset 981:
+    http://trac.wsusoffline.net/trac.fcgi/changeset/981
+
+    Actually, in the files ExcludeListISO-*.txt, only
+    the lower-case filter *ndp46-* was removed, while the
+    upper-case filter *NDP46-* is kept. This excludes the two
+    installation files NDP46-KB3045557-x86-x64-AllOS-ENU.exe and
+    NDP46-KB3045557-x86-x64-AllOS-DEU.exe, but not the dynamic updates
+    for .NET Framework 4.6.
+
+    A possible reason for this distinction is to keep the size of ISO
+    images below 4.7 GB. Excluding large installers may be needed to
+    reach this goal.
+
+    This distinction is not used for the ExcludeListUSB-*.txt files,
+    because the filters for xcopy.exe are not case-sensitive, and copying
+    to an external USB device does not have the same limitations for
+    the overall file size as creating ISO images.
+
+  - The script 10-show-selection-dialogs-with-dialog.bash was made
+    more configurable, by moving the variable parts of the dialogs to
+    a configuration section.
+
+  - Small corrections to the installation guide.
+
+
+NEWS for Version 1.9 (2018-07-30)
+Intended compatibility: WSUS Offline Update 11.4 and later
+
+- The script update-generator.bash now uses the external utility "dialog",
+  to display nicely formated dialogs in the terminal window.
+
+  All three dialogs for updates, languages and optional downloads allow
+  multiple selections. This allows to get all needed updates with a
+  single call of the download script download-updates.bash.
+
+  The existing script, which uses the internal command "select" of the
+  bash, is kept as a fallback, if dialog is not installed. This command
+  only allows single selections.
+
+  The new script 10-show-selection-dialogs-with-dialog.bash
+  is based on a mockup, which I once created for
+  the now obsolete script DownloadUpdates.sh:
+  http://forums.wsusoffline.net/viewtopic.php?f=9&t=4061
+
+
+NEWS for Version 1.8 (2018-07-27)
+Intended compatibility: WSUS Offline Update 11.4 and later
+
+- The documentation of the Linux download scripts is organized more like
+  the Linux documentation in the directory /usr/share/doc.
+
+  The file NEWS.txt replaces the former release_notes_[version].txt. It
+  contains detailed information about the last five versions in reverse
+  order.
+
+  The file changelog.txt replaces the former version-history.txt. It
+  contains a summary of the changes for all versions in reverse order.
+
+- The file 70-synchronize-with-target.bash was replaced with a more
+  elaborate script copy-to-target.bash.
+
+  The usage is:
+
+    ./copy-to-target.bash <update> <destination-directory> [<option> ...]
+
+  The <update> can be one of:
+
+    all           All Windows and Office updates, 32-bit and 64-bit
+    all-x86       All Windows and Office updates, 32-bit
+    all-win-x64   All Windows updates, 64-bit
+    all-ofc       All Office updates, 32-bit and 64-bit
+    wxp           Windows XP, 32-bit                    (ESR version only)
+    w2k3          Windows Server 2003, 32-bit           (ESR version only)
+    w2k3-x64      Windows XP / Server 2003, 64-bit      (ESR version only)
+    w60           Windows Vista / Server 2008, 32-bit
+    w60-x64       Windows Vista / Server 2008, 64-bit
+    w61           Windows 7, 32-bit
+    w61-x64       Windows 7 / Server 2008 R2, 64-bit
+    w62           Windows 8, 32-bit                     (ESR version only)
+    w62-x64       Windows 8 / Server 2012, 64-bit
+    w63           Windows 8.1, 32-bit
+    w63-x64       Windows 8.1 / Server 2012 R2, 64-bit
+    w100          Windows 10, 32-bit                (current version only)
+    w100-x64      Windows 10 / Server 2016, 64-bit  (current version only)
+
+  The available options for the update parameter are determined by
+  the installed files wsusoffline/exclude/ExcludeListUSB-*.txt, which
+  are meant for the Windows script CopyToTarget.cmd. There is a strict
+  one-to-one relationship:
+
+    Update        Used exclude list
+    ------        -----------------
+    all           ExcludeListUSB-all.txt
+    all-x86       ExcludeListUSB-all-x86.txt
+    all-win-x64   ExcludeListUSB-all-x64.txt
+    all-ofc       ExcludeListUSB-ofc.txt
+    wxp-x86       ExcludeListUSB-wxp-x86.txt   (ESR version only)
+    w2k3          ExcludeListUSB-w2k3-x86.txt  (ESR version only)
+    w2k3-x64      ExcludeListUSB-w2k3-x64.txt  (ESR version only)
+    w60           ExcludeListUSB-w60-x86.txt
+    w60-x64       ExcludeListUSB-w60-x64.txt
+    w61           ExcludeListUSB-w61-x86.txt
+    w61-x64       ExcludeListUSB-w61-x64.txt
+    w62           ExcludeListUSB-w62-x86.txt   (ESR version only)
+    w62-x64       ExcludeListUSB-w62-x64.txt
+    w63           ExcludeListUSB-w63-x86.txt
+    w63-x64       ExcludeListUSB-w63-x64.txt
+    w100          ExcludeListUSB-w100-x86.txt  (current version only)
+    w100-x64      ExcludeListUSB-w100-x64.txt  (current version only)
+
+  The Windows script CopyToTarget.cmd uses xcopy.exe, and the exclude
+  lists had to be edited to work with rsync on Linux. Therefore, the
+  Linux script now uses its own set of these files. Some files are also
+  renamed to match the names of the command-line parameters.
+
+  The destination directory is the directory, to which files are copied
+  or hard-linked. It should be specified without a trailing slash,
+  because otherwise rsync may create an additional directory within the
+  destination directory.
+
+  The options are:
+
+    -includesp         Include service packs
+    -includecpp        Include Visual C++ Runtime Libraries
+    -includedotnet     Include .NET Frameworks
+    -includewddefs     Include Windows Defender virus definitions for
+                       the built-in Defender of Windows Vista and 7.
+    -includemsse       Include Microsoft Security Essentials. The virus
+                       definitions are also used for the built-in Defender
+                       of Windows 8, 8.1 and 10.
+    -cleanup           Tell rsync to delete obsolete files from included
+                       directories. This does not delete excluded files
+                       or directories.
+    -delete-excluded   Tell rsync to delete obsolete files from included
+                       directories and also all excluded files and
+                       directories. Use this option with caution,
+                       e.g. try it with the option -dryrun first.
+    -hardlink <dir>    Create hard links instead of copying files. The
+                       link directory should be specified with an
+                       absolute path, otherwise it will be relative to
+                       the destination directory. The link directory
+                       and the destination directory must be on the same
+                       file system.
+    -dryrun            Run rsync without copying or deleting
+                       anything. This is useful for testing.
+
+  The operation "per language" is not supported, because it is not needed
+  anymore. It was useful for Windows XP and Server 2003, because these
+  Windows versions had localized updates. But all Windows versions since
+  Vista have global/multilingual updates, and Office updates are all
+  lumped together, with most updates in the ofc/glb directory.
+
+  There are two known differences in the results between the Windows
+  script CopyToTarget.cmd and the new Linux script copy-to-target.bash
+  ( see http://forums.wsusoffline.net/viewtopic.php?f=5&t=8258 ):
+
+  1. The original file wsusoffline/exclude/ExcludeListUSB-w60-x86.txt
+     misses an entry for vcredist2017_x64.exe. This means, that this
+     file is not excluded by the Windows script, if the update "w60"
+     is selected.
+
+  2. The file wsusoffline/client/bin/IfAdmin.cpp is only excluded by the
+     Windows script CopyToTarget.cmd, if the option /includedotnet is NOT
+     used. Then the file wsusoffline/exclude/ExcludeListISO-dotnet.txt
+     is appended to the filter file. With xcopy.exe, the line "cpp\"
+     matches both the directory "cpp" (as expected) and the source file
+     "IfAdmin.cpp".
+
+     But the file IfAdmin.cpp is neither needed for download nor for
+     installation, and it should always be excluded. It is only included
+     in WSUS Offline Update, because the GPL demands, that the source
+     code of all utilities should be made available somewhere.
+
+- Internal changes
+
+  * The definition of the environment variables LINES and COLUMNS, and of
+    the terminal colors was moved from the scripts update-generator.bash
+    and download-updates.bash to the library messages.bash.
+
+    These variables are only used in the library messages.bash, and then
+    they should be defined there. The library messages.bash also provides
+    standard values for the global variables logfile and debug, to make
+    the library more self-contained and suitable for other scripts.
+
+  * Hashdeep errors while checking the integrity of existing files are
+    now reported as errors, not as warnings.
+
+    Before each download run, the integrity of existing files is verified
+    with hashdeep. As a forensic tool, hashdeep treats all changes to the
+    examined directory as errors, including the manual removal of files.
+
+    There are rarely real problems at this point, and the fix is
+    to delete the corresponding hashdeep files in the directory
+    wsusoffline/client/md. They will be rebuilt on the next download run.
+
+    But this is actually the normal progress: The hashdeep files will
+    be deleted and rebuilt after each download run anyway. Therefore,
+    hashdeep errors for the verification of existing files were only
+    reported as "warnings".
+
+    Hashdeep errors for existing files still increment an internal counter
+    for runtime errors, and for consistency they are now reported as
+    "errors".
+
+  * Corrected the copyright year of the files error-counter.bash and
+    rebuild-integrity-database.bash to "2018".
+
+    These files were added in 2018, but due to lazy copy-and-past the
+    copyright was set to 2016-2018.
+
+
+Release Notes for Version 1.7
+
+  Release date: 2018-05-25
+  Intended compatibility: WSUS Offline Update Version 11.3 and later
+
+  Changes in this version:
+
+  - Bug fix: The script download-updates.bash may crash, if running in
+    bash version 4.3, for example as of Debian 8 Jessie, and only Office
+    Updates are selected.
+
+    While parsing the command-line parameters, the script
+    download-updates.bash creates four internal lists for the needed
+    updates, architectures, languages and included downloads.
+
+    The list of architectures will be empty, if only Office updates are
+    selected. This list determines the architectures of the included
+    downloads .NET Frameworks, Windows Defender and Microsoft Security
+    Essentials. These downloads should match the specified Windows
+    versions, not the Office versions.
+
+    There is an old bug in bash up to version 4.3: Empty arrays are
+    treated as "unset", even if the array variables are declared and
+    initialized. This bug is solved in bash 4.4, as of Debian 9 Stretch.
+
+    bash: nounset treats empty array as unset, contrary to man. page
+    https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=529627
+
+    For the script this means, that the length of the array must be
+    checked, before it is read. This has already been done in most places,
+    but it had to be added to the function print_command_line_summary.
+
+    This solves the bug reports
+    http://forums.wsusoffline.net/viewtopic.php?f=9&t=8072 and
+    http://forums.wsusoffline.net/viewtopic.php?f=9&t=8090 .
+
+
+Release Notes for Version 1.6
+
+  Release date: 2018-05-04
+  Intended compatibility: WSUS Offline Update Version 11.3 and later
+
+  Changes in this version:
+
+  - Added support for .NET Framework 4.7.2
+
+  - Bug fix: The function create_integrity_database did not create a
+    hashes file, if the hashed directory was a symbolic link.
+
+    To prevent the creation of empty hashdeep files, the function
+    create_integrity_database counts the number of files in the hashed
+    directory. This was done by using "find" and "wc", but find by
+    default does not follows symbolic links. The new implementation lets
+    the bash itself calculate the file count.
