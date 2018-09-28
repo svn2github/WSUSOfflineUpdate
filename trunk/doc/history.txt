@@ -1464,6 +1464,7 @@ Version ??.? -- ??.??.??
 - Replaced superseded May 21st 2018 Servicing stack update (kb4132650) by July 2018 Servicing stack update (kb4339420) for Windows 10 Version 1709 (Thanks to "aker")
 - Replaced superseded June 2018 Servicing stack update (kb4338853) by September 2018 Servicing stack update (kb4456655) for Windows 10 Version 1803 (Thanks to "aker")
 - UpdateGenerator script will now show signature date of catalog file wsusscn2.cab (Thanks to "boco" and "aker")
+- Excluded several obsolete dynamic updates for Office 2003 and 2007, Excel Converter, Excel Viewer and Visio Viewer (Thanks to "Denniss")
 - Fix: Microsoft re-released .NET Framework 4.7.2 (Thanks to "boco", "aker" and the community)
 - Fix: DownloadUpdates.cmd script exited with error on invalid static definitions for .NET Frameworks
 - Fix: Download part missed Security Updates kb2973112 and kb3122648 for .NET Framework 3.5.1 on Windows 7 / Server 2008 R2 (x86/x64) systems
