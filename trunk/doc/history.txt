@@ -1478,3 +1478,4 @@ Version 11.5 -- 28.09.18
 --------------------------------------------------------------------------------
 Version ??.? -- ??.??.??
 - October 2018 updates added to 'security only' lists for Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems
+- November 2018 updates added to 'security only' lists for Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems

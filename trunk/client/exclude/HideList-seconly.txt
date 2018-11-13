@@ -104,3 +104,6 @@ kb4457920,September 2018 Security and Quality Rollup for .NET Framework 3.5 SP1,
 kb4462923,October 2018 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
 kb4462929,October 2018 Security Monthly Quality Rollup for Windows Server 2012
 kb4462926,October 2018 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
+kb4467107,November 2018 Security Monthly Quality Rollup for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4467701,November 2018 Security Monthly Quality Rollup for Windows Server 2012
+kb4467697,November 2018 Security Monthly Quality Rollup for Windows 8.1 and Windows Server 2012 R2
