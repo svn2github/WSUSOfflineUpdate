@@ -1479,3 +1479,7 @@ Version 11.5 -- 28.09.18
 Version ??.? -- ??.??.??
 - October 2018 updates added to 'security only' lists for Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems
 - November 2018 updates added to 'security only' lists for Windows 7 / 8.1 and Server 2008 R2 / 2012 / 2012 R2 (x86/x64) systems
+- Fix: Replaced superseded Outlook 2010 Security Update kb4032222 (August 2018) by kb4461529 (November 2018)
+- Fix: Replaced superseded Skype for Business 2015 Security Update kb4022225 (July 2018) by kb4461487 (November 2018)
+- Fix: Added missing Project 2016 Security Update kb4461478 (November 2018)
+- Fix: Replaced superseded Skype for Business 2016 Security Update kb4022221 (July 2018) by kb4461473 (November 2018)
