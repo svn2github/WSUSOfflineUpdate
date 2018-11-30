@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=11.5+ (r997)
+set WSUSOFFLINE_VERSION=11.5+ (r998)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1784,6 +1784,15 @@ if exist .\custom\FinalizationHook.cmd (
   call FinalizationHook.cmd
   popd
   echo %DATE% %TIME% - Info: Executed custom finalization hook ^(Errorlevel: %errorlevel%^)>>%UPDATE_LOGFILE%
+)
+if "%RECALL_REQUIRED%" NEQ "1" (
+  if exist .\custom\FinalizationHookFinal.cmd (
+    echo Executing final custom finalization hook...
+    pushd .\custom
+    call FinalizationHookFinal.cmd
+    popd
+    echo %DATE% %TIME% - Info: Executed final custom finalization hook ^(Errorlevel: %errorlevel%^)>>%UPDATE_LOGFILE%
+  )
 )
 cd ..
 echo Ending WSUS Offline Update at %TIME%...
