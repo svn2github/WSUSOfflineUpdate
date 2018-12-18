@@ -1483,6 +1483,7 @@ Version ??.? -- ??.??.??
 - Integrated .NET Framework December 2018 Security and Quality Rollups
 - Introduced FinalizationHookFinal.cmd to be called once at the very end of the updating process (Thanks to "sborisv", "boco" and "Dalai")
 - Fix: Replaced superseded Outlook 2010 Security Update kb4032222 (August 2018) by kb4461529 (November 2018)
+- Fix: Replaced superseded Outlook 2010 Security Update kb4461529 (November 2018) by kb4461576 (December 2018)
 - Fix: Replaced superseded Skype for Business 2015 Security Update kb4022225 (July 2018) by kb4461487 (November 2018)
 - Fix: Added missing Project 2016 Security Update kb4461478 (November 2018)
 - Fix: Replaced superseded Skype for Business 2016 Security Update kb4022221 (July 2018) by kb4461473 (November 2018)
