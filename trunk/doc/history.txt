@@ -1483,6 +1483,12 @@ Version ??.? -- ??.??.??
 - Integrated .NET Framework December 2018 Security and Quality Rollups
 - Wget download utility updated to version 1.20 (Thanks to "boco")
 - C++ 2017 Redistributable Runtime Libraries updated to v. 14.16.27012.6 (Thanks to "harry")
+- Replaced superseded July 2016 Servicing stack update (kb3173427) by April 2018 Servicing stack update (kb4093430) for Windows 10 Version 1507 (Thanks to "aker")
+- Added November 2018 Servicing stack update (kb4465659) for Windows Server 2016 and Windows 10 Version 1607 (Thanks to "aker")
+- Replaced superseded May 2018 Servicing stack update (kb4132649) by November 2018 Servicing stack update (kb4465660) for Windows 10 Version 1703 (Thanks to "aker")
+- Replaced superseded July 2018 Servicing stack update (kb4339420) by December 2018 Servicing stack update (kb4477136) for Windows 10 Version 1709 (Thanks to "aker")
+- Replaced superseded September 2018 Servicing stack update (kb4456655) by December 2018 Servicing stack update (kb4477137) for Windows 10 Version 1803 (Thanks to "aker")
+- Added November 2018 Servicing stack update (kb4470788) for Windows Server 2019 and Windows 10 Version 1809 (Thanks to "aker")
 - Introduced FinalizationHookFinal.cmd to be called once at the very end of the updating process (Thanks to "sborisv", "boco" and "Dalai")
 - Support added for ...\exclude\custom\ExcludeList-superseded-exclude-seconly.txt (Thanks to H. Buhrmester)
 - Fix: Replaced superseded Outlook 2010 Security Update kb4032222 (August 2018) by kb4461529 (November 2018)
