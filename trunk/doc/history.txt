@@ -1497,3 +1497,4 @@ Version ??.? -- ??.??.??
 - Fix: Added missing Project 2016 Security Update kb4461478 (November 2018)
 - Fix: Replaced superseded Skype for Business 2016 Security Update kb4022221 (July 2018) by kb4461473 (November 2018)
 - Fix: Download part (seconly) missed Security Update kb3003743 for Windows 7 / Server 2008 R2 (x86/x64) systems
+- Fix: FinalizationHook.cmd and FinalizationHookFinal.cmd scripts were interrupted by reboot (Thanks to "CockRobbin")

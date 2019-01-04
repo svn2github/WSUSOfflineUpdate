@@ -9,7 +9,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=11.5+ (r1003)
+set WSUSOFFLINE_VERSION=11.5+ (r1004)
 title %~n0 %*
 echo Starting WSUS Offline Update (v. %WSUSOFFLINE_VERSION%) at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -1497,6 +1497,26 @@ set NISDEFS_VER_TARGET_REVIS=
 if "%REBOOT_REQUIRED%" NEQ "1" goto NoUpdates
 goto Installed
 
+:FinalHooks
+rem *** Execute custom finalization hook ***
+if exist .\custom\FinalizationHook.cmd (
+  echo Executing custom finalization hook...
+  pushd .\custom
+  call FinalizationHook.cmd
+  popd
+  echo %DATE% %TIME% - Info: Executed custom finalization hook ^(Errorlevel: %errorlevel%^)>>%UPDATE_LOGFILE%
+)
+if "%RECALL_REQUIRED%" NEQ "1" (
+  if exist .\custom\FinalizationHookFinal.cmd (
+    echo Executing final custom finalization hook...
+    pushd .\custom
+    call FinalizationHookFinal.cmd
+    popd
+    echo %DATE% %TIME% - Info: Executed final custom finalization hook ^(Errorlevel: %errorlevel%^)>>%UPDATE_LOGFILE%
+  )
+)
+goto :eof
+
 :RebootOrShutdown
 if "%SHOW_LOG%"=="/showlog" call PrepareShowLogFile.cmd
 if "%FINISH_MODE%"=="/shutdown" (
@@ -1562,6 +1582,7 @@ if exist %SystemRoot%\woubak-pwrscheme-temp.txt (
 if "%USERNAME%"=="WOUTempAdmin" (
   echo Cleaning up automatic recall...
   call CleanupRecall.cmd
+  call :FinalHooks
   call :RebootOrShutdown
 )
 if "%BOOT_MODE%"=="/autoreboot" goto :eof
@@ -1594,16 +1615,20 @@ if "%RECALL_REQUIRED%"=="1" (
       echo %DATE% %TIME% - Info: Adjusted boot sequence for next reboot>>%UPDATE_LOGFILE%
     )
     echo Rebooting...
+    call :FinalHooks
     %SystemRoot%\System32\shutdown.exe /r /f /t 3
+    goto EoF
   ) else goto ManualRecall
 ) else (
   call :Cleanup
   if "%USERNAME%" NEQ "WOUTempAdmin" (
     if "%BOOT_MODE%"=="/autoreboot" (
+      call :FinalHooks
       call :RebootOrShutdown
       goto EoF
     )
     if "%FINISH_MODE%"=="/shutdown" (
+      call :FinalHooks
       call :RebootOrShutdown
       goto EoF
     )
@@ -1613,6 +1638,7 @@ if "%RECALL_REQUIRED%"=="1" (
     echo %DATE% %TIME% - Info: Installation successful>>%UPDATE_LOGFILE%
     echo.
     echo 
+    call :FinalHooks
   )
 )
 goto EoF
@@ -1624,6 +1650,7 @@ echo Installation successful. Please reboot your system now and recall Update af
 echo %DATE% %TIME% - Info: Installation successful (Updates pending)>>%UPDATE_LOGFILE%
 echo.
 echo 
+call :FinalHooks
 goto EoF
 
 :NoExtensions
@@ -1755,6 +1782,7 @@ if "%NO_MISSING_IDS%"=="1" (
 )
 echo.
 call :Cleanup
+call :FinalHooks
 goto EoF
 
 :ListError
@@ -1774,26 +1802,10 @@ goto Error
 :Error
 set ERROR_OCCURRED=1
 call :Cleanup
+call :FinalHooks
 goto EoF
 
 :EoF
-rem *** Execute custom finalization hook ***
-if exist .\custom\FinalizationHook.cmd (
-  echo Executing custom finalization hook...
-  pushd .\custom
-  call FinalizationHook.cmd
-  popd
-  echo %DATE% %TIME% - Info: Executed custom finalization hook ^(Errorlevel: %errorlevel%^)>>%UPDATE_LOGFILE%
-)
-if "%RECALL_REQUIRED%" NEQ "1" (
-  if exist .\custom\FinalizationHookFinal.cmd (
-    echo Executing final custom finalization hook...
-    pushd .\custom
-    call FinalizationHookFinal.cmd
-    popd
-    echo %DATE% %TIME% - Info: Executed final custom finalization hook ^(Errorlevel: %errorlevel%^)>>%UPDATE_LOGFILE%
-  )
-)
 cd ..
 echo Ending WSUS Offline Update at %TIME%...
 echo %DATE% %TIME% - Info: Ending WSUS Offline Update>>%UPDATE_LOGFILE%
