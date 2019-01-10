@@ -7,3 +7,4 @@ kb4338600,July 2018 Security only update for the .NET Framework 4.5.2 for Window
 kb4344171,August 2018 Security only update for the .NET Framework 4.5.2 for Windows 8.1 and Windows Server 2012 R2
 kb4457028,September 2018 Security only update for the .NET Framework 4.5.2 for Windows 8.1 and Windows Server 2012 R2
 kb4470491,December 2018 Security only update for the .NET Framework 4.5.2 for Windows 8.1 and Windows Server 2012 R2
+kb4480074,January 2019 Security only update for the .NET Framework 4.5.2 for Windows 8.1 and Windows Server 2012 R2

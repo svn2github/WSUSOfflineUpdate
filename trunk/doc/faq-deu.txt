@@ -54,7 +54,7 @@ A: Ja, Sie haben die Möglichkeit, das Verhalten der Download- und Update-Skripte
 Möchten Sie dem Download ein Update hinzufügen, so tragen Sie dessen Download-URL in die entsprechende Datei StaticDownloadLinks-<Plattform>[-<Architektur>]-<Sprache>.txt im Verzeichnis "...\static\custom" ein. Bitte vergessen Sie dabei nicht den abschließenden Zeilenumbruch (<CR><LF>).
   
 2. Hinzufügen von Updates zur Installation
-Möchten Sie ein Update zur Installation hinzufügen, so tragen Sie dessen "knowledge base id" (KBxxxxxx bzw. nur xxxxxx) in die entsprechende Datei StaticUpdateIds-<Plattform>[-<Architektur>].txt im Verzeichnis "...\client\static\custom" ein. Bitte vergessen Sie dabei nicht den abschließenden Zeilenumbruch (<CR><LF>).
+Möchten Sie ein Update zur Installation hinzufügen, so tragen Sie dessen "knowledge base id" (KBxxxxxx bzw. nur xxxxxx) in die entsprechende Datei StaticUpdateIds-<Plattform>[-<Architektur>].txt im Verzeichnis "...\client\static\custom" ein. Bitte vergessen Sie dabei nicht den abschließenden Zeilenumbruch (<CR><LF>). Die Updates könnten beispielsweise unter .\client\win\glb gelagert werden; da wird bei jeder Windows-Version nachgesehen.
 --------------------------------------------------------------------------------
 F: Kann ich die dynamische Update-Ermittlung während des Downloads / der Installation überspringen, um nur meine statischen Definitionen zu verwenden?
 A: Ja.

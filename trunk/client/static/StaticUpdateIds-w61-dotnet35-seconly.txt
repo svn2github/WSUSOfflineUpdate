@@ -10,3 +10,4 @@ kb4338612,July 2018 Security only update for the .NET Framework 3.5.1 for Window
 kb4344177,August 2018 Security only update for the .NET Framework 3.5.1 for Windows 7 SP1 and Windows Server 2008 R2 SP1
 kb4457055,September 2018 Security only update for the .NET Framework 3.5.1 for Windows 7 SP1 and Windows Server 2008 R2 SP1
 kb4470600,December 2018 Security only update for the .NET Framework 3.5.1 for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4480085,January 2019 Security only update for the .NET Framework 3.5.1 for Windows 7 SP1 and Windows Server 2008 R2 SP1

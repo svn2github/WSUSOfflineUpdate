@@ -59,7 +59,7 @@ For adding an update to be downloaded, insert its download URL into the matching
 
 2. Adding updates to installation routines
 
-Add an update to installation by inserting its knowledge base ID (KBxxxxxx or simply xxxxxx) into the matching "StaticUpdateIds-<platform>[-<architecture>].txt file (directory "...\client\static\custom"). Please don't forget a trailing <CR><LF>.
+Add an update to installation by inserting its knowledge base ID (KBxxxxxx or simply xxxxxx) into the matching "StaticUpdateIds-<platform>[-<architecture>].txt file (directory "...\client\static\custom"). Please don't forget a trailing <CR><LF>. For example, the updates could be stored under \Client \win \glb; there is checked with every Windows version.
 --------------------------------------------------------------------------------
 Q: Can I skip the dynamic update determination during downloading/installation in order to use my static definitions only?
 A: Yes.

@@ -29,3 +29,4 @@ kb4457145,September 2018 Security Only Quality Update for Windows 7 SP1 and Wind
 kb4462915,October 2018 Security Only Quality Update for Windows 7 SP1 and Windows Server 2008 R2 SP1
 kb4467106,November 2018 Security Only Quality Update for Windows 7 SP1 and Windows Server 2008 R2 SP1
 kb4471328,December 2018 Security Only Quality Update for Windows 7 SP1 and Windows Server 2008 R2 SP1
+kb4480960,January 2019 Security Only Quality Update for Windows 7 SP1 and Windows Server 2008 R2 SP1
