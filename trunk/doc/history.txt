@@ -1496,6 +1496,8 @@ Version ??.? -- ??.??.??
 - FAQs adjusted (Thanks to "jonas")
 - Fix: Replaced superseded Outlook 2010 Security Update kb4032222 (August 2018) by kb4461529 (November 2018)
 - Fix: Replaced superseded Outlook 2010 Security Update kb4461529 (November 2018) by kb4461576 (December 2018)
+- Fix: Replaced superseded Outlook 2010 Security Update kb4461576 (December 2018) by kb4461623 (January 2019)
+- Fix: Replaced superseded Word 2010 Security Update kb2965313 (MS15-116) by kb4461625 (January 2019) and required kb4461614 and kb4461579
 - Fix: Replaced superseded Skype for Business 2015 Security Update kb4022225 (July 2018) by kb4461487 (November 2018)
 - Fix: Added missing Project 2016 Security Update kb4461478 (November 2018)
 - Fix: Replaced superseded Skype for Business 2016 Security Update kb4022221 (July 2018) by kb4461473 (November 2018)
